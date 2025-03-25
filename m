@@ -1,123 +1,160 @@
-Return-Path: <linux-kernel+bounces-575943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E04A70921
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:40:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FDAA70922
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D0AF7A44D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A67BA16F835
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8173E1ADC7C;
-	Tue, 25 Mar 2025 18:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUPm3Es2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CBC1AB6D4;
+	Tue, 25 Mar 2025 18:40:28 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD021190679;
-	Tue, 25 Mar 2025 18:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790DD190679;
+	Tue, 25 Mar 2025 18:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928019; cv=none; b=oExew6mWOKMv9GApukcV8M6A3A+F32yT38XgoubpOy74ZPX7t0E19TcspXrj9oq9P7W4x3rgr9fp28S+alZZs0arguy9rkXld1p5X1Mlw5857QoRtnqc6XAIoimiI9HVciTyZlQs1Q/Th+T2u1JkoMTjaIzeobnNGRD0UU707os=
+	t=1742928028; cv=none; b=VVLo5E2r0tPpL0xsDOzS3/5GD7xnRwHNdq/NVg/OApeadyxiZ86ErARd55dwfKsix6HZ6sIdD2+45mt2PI9SnPLqgPs3V+2YT3cbrMliuZtG98wEoioRSqYW4m2gaQSkcplslTmWJt8ufbEptAvXyET73Zc0ouBlzHSpgoROSXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928019; c=relaxed/simple;
-	bh=46bS5zblPi4Cgi/GNAZgCaWw2aUsl90BI6FA+un2euk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qJYracd/y+GhHBZh9LsYBE+ni1lf5tbWb8fUNGXyn8rR0O8fHG46S8J36P1gXPhCXSXKTvn5LDKWF1+VyFtema5YXbSwjkskrJPO1PUoqKRoVuZMW0SXqceuVtId8qgN0IwzzKxtuju35tIXZ24FhyMe1E36oFUo82BPD7TMvCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUPm3Es2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F7FC4CEE4;
-	Tue, 25 Mar 2025 18:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742928017;
-	bh=46bS5zblPi4Cgi/GNAZgCaWw2aUsl90BI6FA+un2euk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nUPm3Es2dRzj3FRgaG8tA42h7dX9GKnc4DWwth7T3WvuzXc906Khs8/oiG+pElZL1
-	 NBj6FKVCaG7M3fZ6xEGWVVOFCiXlRuMNeht3jfPQXN7lvwo2MtMmHY78ggOa65t4jm
-	 X7vV2dV8pwjTa+prQTkQaZkcgazfzXHO9jDyMXibvYFFYsuoinn4vszAwj5BSt3/Ad
-	 ukHZb4Q5yi9eKwjWd+9DqWVQ82lADzEtqIrvU0yaSOkngD1cCaAgaB/uNnU1RGu2DH
-	 gF6kh1+j2oZfHZABDa83+4bbQ7xzC4QxSmfox0s0BsJaFUyUsFjEXr6AAzfQkysc/e
-	 00oRHgNpTDBAA==
-Date: Tue, 25 Mar 2025 11:40:15 -0700
-From: Kees Cook <kees@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
-CC: Oleg Nesterov <oleg@redhat.com>,
- syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
- viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250325-stilbruch-deeskalation-f212bb2499de@brauner>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com> <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com> <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com> <20250325100936.GC29185@redhat.com> <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com> <20250325132136.GB7904@redhat.com> <20250325-bretter-anfahren-39ee9eedf048@brauner> <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com> <20250325-stilbruch-deeskalation-f212bb2499de@brauner>
-Message-ID: <AA35714D-AB8B-4CC5-B298-2F1E00C4B3ED@kernel.org>
+	s=arc-20240116; t=1742928028; c=relaxed/simple;
+	bh=MLk+dsT0FjWvcnVOCjx4fsC4BnHgimBM0JuFTMio7co=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FdNCjnYNZKuLo6dPGUoZ5BK8fYBkN5qe9PWxWoJIG6qUQvOAD8dxUlZxQHHh/fBoZl92GPm4YQluyYtzIMHLxQxaS/MQHz25k+7NuLYsrsOeyfG8Wy7Iw/4CUncJ6MUoIF28IWOYTpR7Uw+yJfskfYJ7J9PyUnmCQce1ezsibQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A05C4CEE4;
+	Tue, 25 Mar 2025 18:40:27 +0000 (UTC)
+Date: Tue, 25 Mar 2025 14:41:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] tracing: fprobe-events: Register fprobe-events only
+ when it is enabled
+Message-ID: <20250325144111.48fc4ec3@gandalf.local.home>
+In-Reply-To: <174212770238.348872.12106623852892827796.stgit@devnote2>
+References: <174212767109.348872.18231451508464729427.stgit@devnote2>
+	<174212770238.348872.12106623852892827796.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 16 Mar 2025 21:21:42 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Currently fprobe events are registered when it is defined. Thus it will
+> give some overhead even if it is disabled. This changes it to register the
+> fprobe only when it is enabled.
+> 
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  include/linux/fprobe.h      |    8 +
+>  kernel/trace/fprobe.c       |   29 +++--
+>  kernel/trace/trace_fprobe.c |  234 +++++++++++++++++++++----------------------
+>  3 files changed, 140 insertions(+), 131 deletions(-)
+> 
+> diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
+> index 702099f08929..9635a24d5a25 100644
+> --- a/include/linux/fprobe.h
+> +++ b/include/linux/fprobe.h
+> @@ -94,6 +94,8 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num);
+>  int register_fprobe_syms(struct fprobe *fp, const char **syms, int num);
+>  int unregister_fprobe(struct fprobe *fp);
+>  bool fprobe_is_registered(struct fprobe *fp);
+> +int fprobe_alloc_ip_list_from_filter(const char *filter, const char *notfilter,
+> +	unsigned long **addrs);
+>  #else
+>  static inline int register_fprobe(struct fprobe *fp, const char *filter, const char *notfilter)
+>  {
+> @@ -115,6 +117,12 @@ static inline bool fprobe_is_registered(struct fprobe *fp)
+>  {
+>  	return false;
+>  }
+> +static inline int fprobe_alloc_ip_list_from_filter(const char *filter,
+> +						   const char *notfilter,
+> +						   unsigned long **addrs)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif
+>  
+>  /**
+> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> index 33082c4e8154..05050f1c2239 100644
+> --- a/kernel/trace/fprobe.c
+> +++ b/kernel/trace/fprobe.c
+> @@ -486,6 +486,24 @@ static int ip_list_from_filter(const char *filter, const char *notfilter,
+>  	return match.index ?: -ENOENT;
+>  }
+>  
+> +#define FPROBE_IPS_MAX	INT_MAX
+> +
+> +int fprobe_alloc_ip_list_from_filter(const char *filter, const char *notfilter,
+> +				     unsigned long **addrs)
+> +{
+> +	int ret;
+> +
+> +	/* Count the number of ips from filter. */
+> +	ret = ip_list_from_filter(filter, notfilter, NULL, FPROBE_IPS_MAX);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*addrs = kcalloc(ret, sizeof(unsigned long), GFP_KERNEL);
+> +	if (!*addrs)
+> +		return -ENOMEM;
+> +	return ip_list_from_filter(filter, notfilter, *addrs, ret);
 
-On March 25, 2025 7:46:15 AM PDT, Christian Brauner <brauner@kernel=2Eorg>=
- wrote:
->On Tue, Mar 25, 2025 at 03:15:06PM +0100, Mateusz Guzik wrote:
->> On Tue, Mar 25, 2025 at 2:30=E2=80=AFPM Christian Brauner <brauner@kern=
-el=2Eorg> wrote:
->> >
->> > On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
->> > > On 03/25, Mateusz Guzik wrote:
->> > > >
->> > > > On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redh=
-at=2Ecom> wrote:
->> > > > >
->> > > > > On 03/24, Mateusz Guzik wrote:
->> > > > > >
->> > > > > > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@r=
-edhat=2Ecom> wrote:
->> > > > > > >
->> > > > > > > So to me it would be better to have the trivial fix for sta=
-ble,
->> > > > > > > exactly because it is trivially backportable=2E Then cleanu=
-p/simplify
->> > > > > > > this logic on top of it=2E
->> > > > > >
->> > > > > > So I got myself a crap testcase with a CLONE_FS'ed task which=
- can
->> > > > > > execve and sanity-checked that suid is indeed not honored as =
-expected=2E
->> > > > >
->> > > > > So you mean my patch can't fix the problem?
->> > > >
->> > > > No, I think the patch works=2E
->> > > >
->> > > > I am saying the current scheme is avoidably hard to reason about=
-=2E
->> > >
->> > > Ah, OK, thanks=2E Then I still think it makes more sense to do the
->> > > cleanups you propose on top of this fix=2E
->> >
->> > I agree=2E We should go with Oleg's fix that in the old scheme and us=
-e
->> > that=2E And then @Mateusz your cleanup should please go on top!
->>=20
->> Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later th=
-is week=2E
->
->Ok, I've taken the patch as I've got a first round of fixes to send
->already=2E
+This was in the old code, but I'm wondering. Does this code prevent modules
+from being loaded and unloaded too?
 
-Thanks!=20
+I'm asking because if we call the first instance of ip_list_from_filter()
+and it finds a list of functions from a module, and then that module is
+unloaded, the ip_list_from_filter() will return a failure, and *addrs would
+be a memory leak.
 
-Acked-by: Kees Cook <kees@kernel=2Eorg>
+-- Steve
 
-
---=20
-Kees Cook
+> +}
+> +
+>  static void fprobe_fail_cleanup(struct fprobe *fp)
+>  {
+>  	kfree(fp->hlist_array);
+> @@ -528,8 +546,6 @@ static int fprobe_init(struct fprobe *fp, unsigned long *addrs, int num)
+>  	return 0;
+>  }
+>  
+> -#define FPROBE_IPS_MAX	INT_MAX
+> -
+>  /**
+>   * register_fprobe() - Register fprobe to ftrace by pattern.
+>   * @fp: A fprobe data structure to be registered.
+> @@ -549,14 +565,7 @@ int register_fprobe(struct fprobe *fp, const char *filter, const char *notfilter
+>  	if (!fp || !filter)
+>  		return -EINVAL;
+>  
+> -	ret = ip_list_from_filter(filter, notfilter, NULL, FPROBE_IPS_MAX);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	addrs = kcalloc(ret, sizeof(unsigned long), GFP_KERNEL);
+> -	if (!addrs)
+> -		return -ENOMEM;
+> -	ret = ip_list_from_filter(filter, notfilter, addrs, ret);
+> +	ret = fprobe_alloc_ip_list_from_filter(filter, notfilter, &addrs);
+>  	if (ret > 0)
+>  		ret = register_fprobe_ips(fp, addrs, ret);
+>  
 
