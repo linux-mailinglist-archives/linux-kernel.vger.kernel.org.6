@@ -1,92 +1,77 @@
-Return-Path: <linux-kernel+bounces-576185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7468A70C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:37:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6429DA70C06
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C7C8412B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB4B57A2A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8298B269B12;
-	Tue, 25 Mar 2025 21:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921E253F26;
+	Tue, 25 Mar 2025 21:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fE6qmdVo"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SuzzHNzM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9DF26A0BE;
-	Tue, 25 Mar 2025 21:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E071F1300
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742938423; cv=none; b=CUhQP4pzTxPVcweM24MOn+/QFTC+8xigRfzF9vW/b0O3ba08uxEMobYBKJLBTYmOivXUiZqm6HJzU1jfOOaDXtBV+nPBwFTgLCIEg0QUL+CNFVUeG2Fz2A1rR9bHYf1S1mUVNpr6VQzrC/JoU+ystrIFb8aS0bH3uHu5chy6wUQ=
+	t=1742938123; cv=none; b=aIL6M4GI2DBXWbMdBFvz/GYSQUSijaXHnhcxx18N2Ems1I9PCzV8+LV3HQ5lTM+kExPxRYazOtqTa6DjfuJmo1vZ/Cn2eA2oFxz0bfovzKdx/OuDnu5DPsld40mFbJ46N/4JeU3qhRjVBgskeeBYuIWhxWuFNL5uBi0BxUkDSUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742938423; c=relaxed/simple;
-	bh=RIwz438r/s63gFgZUecLnaG9eUlgOCD/aBHrHYdi1fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WUTS5FKnQioDsiWVCnqlO2+MYPmf4OWclUE/Lw80zyxKC6fQtvYjmI74ZLViMQ95j5w5Lob+cUUZnnYoON2NtjQMRtRb+FdOm9dX27garfEytBfs0n7E5vX21H3ekvM1z8L/qrYG9M+QRyar7drpPXPVEBBsn0lCvXIyEIallL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fE6qmdVo; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742938420;
-	bh=RIwz438r/s63gFgZUecLnaG9eUlgOCD/aBHrHYdi1fU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fE6qmdVoLeoyvxhGvbETHLH1YV26mbH3mMvegjz3h2UZnSa9rlRpRneZd4uoNIHgR
-	 4/xdGSCsf6N/hE3857KIJzgSs9hER/pAqmTJt2iXH9+seX8WODDqpA82/V9EhP9PIv
-	 u1Oe+gP/RfyJT+bb4QdliV2LpM8JriVnZofm3be9dafb3gCRUbky6hzJhnWDOxfq0h
-	 fFHG2nXsLnlksJ1wWGj03mfOyE0bMCF1T6mopAxa+gz5UOf05zGmjqbx8aQfjkOpUZ
-	 7RWENWT8rykqGJqMpkV5Pc6ANpUr3zlg0ao8g2P8Ucdq5MWlLYwfpwT5hkbj7CYm9H
-	 aL1toeb1yZs7g==
-Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	s=arc-20240116; t=1742938123; c=relaxed/simple;
+	bh=aIZN0H+vRPvUvu/EgbjorzUci/LLtLkNYYQsA1h8uN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=quEwRGQQiU9zOcGss6t1/NXJbNSdvF0G5MCALZwRTesiqE/mvsctXYz1t5gmHx75g1Co/rAUTwdXLjsMudocRjOj1Onzf87I3Pum9fHcOW6wPhI0orQ3TMoGjxvR7+2ErjpC5kRmWz2zHYVPA+GQ9IvLG/lcfgOBsAXBGEZTiAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SuzzHNzM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742938120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MsV2w/Rn5mfBpb+ogTXQ4dOfXGpaAgBdA4ur9xVQST4=;
+	b=SuzzHNzM9+d+0aIpw68D8bO4ufIseFP/D/ZV0T5YoKVHNvMBLHsl9alL4+4t1YZwk8zZGj
+	vEr9bKu9/qNOJN8AZqxj/JsXWLDfUuUaq7AcXpiCQYNEp8v5zfci27aNvgcDYNptm7ByCR
+	4GfxkxQB4lHaGICnRyChWhPrVW7p92E=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-82-1Esz6RrROoSxfU32bi7beA-1; Tue,
+ 25 Mar 2025 17:28:37 -0400
+X-MC-Unique: 1Esz6RrROoSxfU32bi7beA-1
+X-Mimecast-MFC-AGG-ID: 1Esz6RrROoSxfU32bi7beA_1742938115
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2067517E0865;
-	Tue, 25 Mar 2025 22:33:36 +0100 (CET)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1160E19560BB;
+	Tue, 25 Mar 2025 21:28:35 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.80.20])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C772819541A5;
+	Tue, 25 Mar 2025 21:28:31 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: Maxime Ripard <mripard@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	Dmitry Perchanov <dmitry.perchanov@intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	kernel@collabora.com
-Subject: [PATCH v4 6/6] arm64: dts: rockchip: Add rkvdec2 Video Decoder on rk3588(s)
-Date: Tue, 25 Mar 2025 17:22:22 -0400
-Message-ID: <20250325213303.826925-7-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325213303.826925-1-detlev.casanova@collabora.com>
-References: <20250325213303.826925-1-detlev.casanova@collabora.com>
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org (open list:RUST:Keyword:\b(?i:rust)\b)
+Subject: [PATCH 0/2] drm: Make some resolution info unsigned
+Date: Tue, 25 Mar 2025 17:27:03 -0400
+Message-ID: <20250325212823.669459-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,107 +79,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+During the review of some of my patches for KMS bindings in Rust, it was
+pointed out we have some areas of DRM that are storing resolutions as
+signed integers when it doesn't really make sense. Since there's no real
+usecase for this and it's a bit more obvious when writing rust code then
+it is in C, let's fix this.
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
+Lyude Paul (2):
+  drm/edid: Use unsigned int in drm_add_modes_noedid()
+  drm/mode_config: Make drm_mode_config.(max|min)_(width|height) signed
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index c3abdfb04f8f4..636c287b94e0a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1237,6 +1237,70 @@ vepu121_3_mmu: iommu@fdbac800 {
- 		#iommu-cells = <0>;
- 	};
- 
-+	vdec0: video-decoder@fdc38000 {
-+		compatible = "rockchip,rk3588-vdec";
-+		reg = <0x0 0xfdc38000 0x0 0x100>,
-+		      <0x0 0xfdc38100 0x0 0x500>,
-+		      <0x0 0xfdc38600 0x0 0x100>;
-+		reg-names = "link", "function", "cache";
-+		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CA>,
-+			 <&cru CLK_RKVDEC0_CORE>, <&cru CLK_RKVDEC0_HEVC_CA>;
-+		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
-+				  <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
-+		assigned-clock-rates = <800000000>, <600000000>,
-+				       <600000000>, <1000000000>;
-+		iommus = <&vdec0_mmu>;
-+		power-domains = <&power RK3588_PD_RKVDEC0>;
-+		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CA>,
-+			 <&cru SRST_RKVDEC0_CORE>, <&cru SRST_RKVDEC0_HEVC_CA>;
-+		reset-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		sram = <&vdec0_sram>;
-+	};
-+
-+	vdec0_mmu: iommu@fdc38700 {
-+		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-+		reg = <0x0 0xfdc38700 0x0 0x40>, <0x0 0xfdc38740 0x0 0x40>;
-+		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
-+		clock-names = "aclk", "iface";
-+		power-domains = <&power RK3588_PD_RKVDEC0>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	vdec1: video-decoder@fdc40000 {
-+		compatible = "rockchip,rk3588-vdec";
-+		reg = <0x0 0xfdc40000 0x0 0x100>,
-+		      <0x0 0xfdc40100 0x0 0x500>,
-+		      <0x0 0xfdc40600 0x0 0x100>;
-+		reg-names = "link", "function", "cache";
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CA>,
-+			 <&cru CLK_RKVDEC1_CORE>, <&cru CLK_RKVDEC1_HEVC_CA>;
-+		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
-+				  <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
-+		assigned-clock-rates = <800000000>, <600000000>,
-+				       <600000000>, <1000000000>;
-+		iommus = <&vdec1_mmu>;
-+		power-domains = <&power RK3588_PD_RKVDEC1>;
-+		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CA>,
-+			 <&cru SRST_RKVDEC1_CORE>, <&cru SRST_RKVDEC1_HEVC_CA>;
-+		reset-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		sram = <&vdec1_sram>;
-+	};
-+
-+	vdec1_mmu: iommu@fdc40700 {
-+		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-+		reg = <0x0 0xfdc40700 0x0 0x40>, <0x0 0xfdc40740 0x0 0x40>;
-+		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
-+		clock-names = "aclk", "iface";
-+		power-domains = <&power RK3588_PD_RKVDEC0>;
-+		#iommu-cells = <0>;
-+	};
-+
- 	av1d: video-codec@fdc70000 {
- 		compatible = "rockchip,rk3588-av1-vpu";
- 		reg = <0x0 0xfdc70000 0x0 0x800>;
-@@ -2883,6 +2947,16 @@ system_sram2: sram@ff001000 {
- 		ranges = <0x0 0x0 0xff001000 0xef000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-+
-+		vdec0_sram: codec-sram@0 {
-+			reg = <0x0 0x78000>;
-+			pool;
-+		};
-+
-+		vdec1_sram: codec-sram@78000 {
-+			reg = <0x78000 0x77000>;
-+			pool;
-+		};
- 	};
- 
- 	pinctrl: pinctrl {
+ drivers/gpu/drm/drm_edid.c    | 2 +-
+ include/drm/drm_edid.h        | 2 +-
+ include/drm/drm_mode_config.h | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+
+base-commit: 5da39dce1fa3c81dc6552a16a9f748ba2980d630
 -- 
-2.49.0
+2.48.1
 
 
