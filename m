@@ -1,217 +1,223 @@
-Return-Path: <linux-kernel+bounces-574709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F5EA6E8C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:03:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52771A6E8C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:05:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D297A3001
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:02:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E120C3A9F31
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DA71A3151;
-	Tue, 25 Mar 2025 04:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5A118BBAE;
+	Tue, 25 Mar 2025 04:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYkbUssC"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ssvXJiv4"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A173A4A05;
-	Tue, 25 Mar 2025 04:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742875374; cv=none; b=AHo4KWob556m/KuPt4jpxAoXe5BclgdpokhpCMWB5poWC6ERmdfd3N/xff82i7ARxGQvR4Fda/Udrv3JbH2EybgKGiv+pj7EUhK/HuWQVPQto5q9oMItrha5JAm3Pr9oO4/mwn4dKDeLtHls91nBO9Smuc6zrKnVDiR3FI7bKho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742875374; c=relaxed/simple;
-	bh=0QleKfKx3+7JEbvAep9cx/z5aVsYDS0vLUk7PkcEwag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGmbVY4ee7XuFRV5EdSIBh8wC/87sjDQvlvWSiaFewWgniz3P+j36MfJ2UZbUdxzZqW4O9NC6GbyprpJkNomN9mZ0O7invr+14/0SutupL26rGtQK/CfCUNUOSQBJTDF7GzQU8kh88N5ZYzaJ18I32lrKRjaLzl0x6QHEgwOFNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYkbUssC; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4774193fdffso24484371cf.1;
-        Mon, 24 Mar 2025 21:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742875371; x=1743480171; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGInYOKpBu6xGCgfKciFdK87cegZomp2gFItoPQocck=;
-        b=QYkbUssCThtefZ6eAu19ixBTTEddKJP5hUhTHKn4x7ORLyE4K1S7GU6gYkDJGwB13B
-         r+9ziPGRv0JRndu2P31oeF6p2LTg86vQ7RbKKPAXdmMHY2H4axFy9L7A7htfrf4KepSC
-         ne69xe2Vu5RoU53oqqdl16LvUdib3gvtukqGaDG0XWn4LEyJCg6WWi8kuSnte0WrH8Z8
-         oWGhDgLQIV7pFvTkG8GlGkfMqGP3InJsL3oqvvrlhVBwls+G8QHJqDYO788un4Bab8bO
-         nf2gK+W/gFNFF7LZMLi01y4hPyI/ZZGJflttyrVbV2ys9kEOtVbY78U5mSkKzzisn1hM
-         GGuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742875371; x=1743480171;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KGInYOKpBu6xGCgfKciFdK87cegZomp2gFItoPQocck=;
-        b=SIsy9zr7DxvFhpOhoTqIeLLYcOdZ5YBgt7Ao7evM8kx2dL2t+C92zOUZM+BtZZ9swn
-         +aEw+usxUsmi6FmZ79zPJiMPYTVXOMrcTXMVFSONbEi72meQDNKhbKxRtWBy6zxqcJUS
-         njGvjHSXw9xHLv+7gm+yUt7lJ6pHVf3GrnIfmz7AqneBPvOI6SIg9ilIhc1pV/D7ZGtC
-         6zxXeRql0LJQ7pn9y4HGbw+jCGZQ60qplizIt4dBd1x4dTRMdpiCSf/++nb8kLCgq1/1
-         WOA3e3Cr7d23j077JcO6H4r+9l7ABFtZ8g8YrVksH90Ys07KK4XqhO93n9QgTSAP67+g
-         /oQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE5yEC9itrtKa2vUfZHR/68ZkhsD0tpFeO3DvKSBohxunBZCoAEJmQw/ezr/qP8VCjDcblEtw25mQby9MMepA=@vger.kernel.org, AJvYcCVpRVL05/jXWdQQ0MW1em8Ihx1RfzuS/dU+HIfsV/Tq9Oazwhyts30HBLmj5kg6JmkqhsnkhMD04TAw@vger.kernel.org, AJvYcCXPmVTu5hAm2KFLZxASrjpfXiYjhmGQLzwj3o4ZHj4jbcCVRSUP6uYeRhTsYr/fN/if+pEuowQRXmh2Z1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPWgsK46AZviSgcy1rKMIrm56zVjRM+k+09mlzc4oan2lugjx7
-	ToM6GVqNyv6HjqZF/OjhcuZW5L3G6NhvKxKhuJ/A/uPf4cGpjUec
-X-Gm-Gg: ASbGncsvecGyQlictBHpAz7zQbQP/0U+X6dA1zXuKAqgj6oYvpfjKBtQpuK+OkpeBJw
-	c261zC4CqnQZk59R6t9lVI9Ke2dEhvVodvA0WgJ3Pn0okGYzOYsbqKqViZ3CH/P9gc7sEKfMMs2
-	FWX7Cm7Xu/f7sjiLhMDWRK3kKEIOMyDfw1ONRu5q/FwbLzecGy40Yg0oH31VSMBcctdRbnzTnSd
-	bfV/DZ+Mq0lztlmlkLL8h5RSOFgjogYagUtIQzbFPOTQohljXAP7WM7OcF2ff4UDq9g6GYm0qgu
-	VS/VT3yp3JRW/G4FIuKTiAYFYYKXX4vtJ+iE+tZRB9rV0JsTGWMYG8Glv4QcTs6mJBSeJU7dz9f
-	ZVeyOw7/pvJgtsYffSx2ngyWdaMp/cwVq8sk=
-X-Google-Smtp-Source: AGHT+IGgVbi/YlG27PUIcuRctsRoEQHsggM20XkTEzCPpJTzpTw4pxS0MwqWHBizCL/grByDThmSNA==
-X-Received: by 2002:a05:622a:8c4:b0:476:8cad:72d7 with SMTP id d75a77b69052e-4771dd6086amr247712261cf.8.1742875371191;
-        Mon, 24 Mar 2025 21:02:51 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d179f42sm55669171cf.25.2025.03.24.21.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 21:02:50 -0700 (PDT)
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 50714120007C;
-	Tue, 25 Mar 2025 00:02:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-13.internal (MEProxy); Tue, 25 Mar 2025 00:02:50 -0400
-X-ME-Sender: <xms:6iriZ8oxNAkGrfM0mRWiGFfg5hdpITz2bCv0nG7JqDzMQ8iGwfyocg>
-    <xme:6iriZyrLIiqShoE_EqGU0JBJC4D7ln7xWEqV8LR_4g3QKiJoFw-MyLxXVvvAPm2Lq
-    XCXk6P_itMkvEo_EQ>
-X-ME-Received: <xmr:6iriZxOVcOG6x_xgnP3v9nye8ABWdGoUIhGBUULddb-FKZKgoEtTrNhN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieduieegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeel
-    tdfhgfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedujedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthgrmhhirhgusehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghl
-    vgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrh
-    ihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghi
-    lhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvg
-    dprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmghhroh
-    hsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:6iriZz73RU_t0RmI_MYZwAaVH9GULDlMd0xqudLhye4QEZ8s6bIixw>
-    <xmx:6iriZ769V4qAtattThW_488CU8zjYkCl6pMGTaEvh1F27VhvYunZjg>
-    <xmx:6iriZzga4-veHxbaLFmuAU1qp2lrJx0oyowqbu-2ACz3ofiF6-GSuQ>
-    <xmx:6iriZ14Lfqd0hucK2yc13v4PE8DUmADu41QQUKzWEy6Va4GXDMdKbw>
-    <xmx:6iriZ-IXOpYWm-GjaFspaA957CmkcCdLltVTT_JWhI2Yle1xHZ7ot4H8>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Mar 2025 00:02:49 -0400 (EDT)
-Date: Mon, 24 Mar 2025 21:02:48 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 3/5] rust: list: use consistent type parameter names
-Message-ID: <Z-Iq6Okk1j3ImH1u@Mac.home>
-References: <20250324-list-no-offset-v1-0-afd2b7fc442a@gmail.com>
- <20250324-list-no-offset-v1-3-afd2b7fc442a@gmail.com>
- <67e1d1b3.050a0220.4c4ff.6e89@mx.google.com>
- <CAJ-ks9moCO83cGkKuONR-2JMN61x18T2UVO98jhspDR=uyaVqw@mail.gmail.com>
- <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1DF4A05
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742875547; cv=fail; b=TrIV1jSsWh+Xwj2cJoqiuIU06tw7xNxYxNQphedgyE2BKdeHraeDyvcss6vZ3SSLaFpoKleoAYfKElBVYObuktatv1rRn53DlhjneyAuMxrqZ3LyR/U5ZYKhfv9YJCK+4lH/rMFHWHlV89joYjmyuGB0y2tmTUwpQ+JHhWXH1pc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742875547; c=relaxed/simple;
+	bh=KKsL9KqRpDgg3l0i9b/87N3l/48tWkhXhSHOTtEfETY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ayaFfW2HZXZPxbF4FfkWgG8Ytd8R2ugnS9Gid/8VOuEYHPmjLliaRJbaWOdXhRckQQV9hQzHz6pA++Pb5v/sTBc/XEIbWLAV83UraSVG96yfCwtLE7mG03TrFqiPSVfXnrwcNWXxDKVkYtuym1Bd9L23TCXVK10ZCCM3eeRXKMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ssvXJiv4; arc=fail smtp.client-ip=40.107.93.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rN0EnEF13GGxU/F44sTN3FKBEieOD7U4qheNlQQztxJYkddZWd2FG34J5NUaac27yq6Y1QAwQOIqO4wPPlldgluWDIsbvnbPTxOlDWONsIQsX8b8C3K6gFMrLDmfZpj/CgGXDzeMLIFuuDCcm8cpXGzlwwA0vCLW8UAf1e9Q6vQ0aZjLeaDWk+aXzLuKY5BZ4BRR1qC9fJeiHP1gIp7V1I1KIk7u1Y/huMIFIsq1phmtm4ziCPbkcBwP0V/rqSVhzOc8IXOcKfmJI4q6hIQHq1XpsDvd2xuSSICSyu9bDd454/e9FDpd3IAZUJhTIOvWiR73M+Qm9vgvR5a4QozCKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2PyghMy124BY7OKKZEmlMo2Q2t36iU//mkJt1OoH/DA=;
+ b=FTnmrV75Vgag6EA0LBAjUEz2CoMIM6DrbAIogWMLwTcBssSvE2Kna9dlpneqsIfz9mNepIE7+08QShMNpeKConeJpjES8YNaQazkA493w7OlNzCHcSFhl8DOH257NR7Dwf42p/3VKwQF2/7OahvGBi1H0O74pNs+hh7w9WFDDcw3ppjPkQ8Oi7Y4axsEghydNm6EvSAGGqjtAh2+5PbVHb8rQYSW26vokZBpWCrrqAP3RMQgwKClIYXqsGdeUe7mvUfIb43FgSJ7dCO2+WatakxontfbOBW0ntUxInNN9Orw4G8CViAzK9LG39U3+3xcXNRNtw8vHRdWsFV0+0ET3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PyghMy124BY7OKKZEmlMo2Q2t36iU//mkJt1OoH/DA=;
+ b=ssvXJiv4PNQNaLMI0kJj7lo4uXKH/PZc2XlRgT2lZykqNoRbtI2Og0PnAFnQjc2kEvOXsP79wSwwF7wb7zFSXgyLJkiuBwRP4BkYSbKlg+ZUuFRWXb87MtSBgLcr5olWUnYosOKqyYsgB/rh9PZorb3MQplQkDqedEI68RD0LKX3L9cjsRff24Z2UflY8VZgSEilvisQwQgrpHdmghBp1hbSh8gycRKHKrT1rBNm3A7Ziw2SnjcT+FYomSo1RstvFloaFPiHRIoskeMAwZ7jQGFYh/zCyxSyX05puWN6UJ4znpc7tG4oW7EdOh4xO0qpBGk4sw24U3okNWBiY2zvww==
+Received: from BY5PR20CA0033.namprd20.prod.outlook.com (2603:10b6:a03:1f4::46)
+ by DS0PR12MB7852.namprd12.prod.outlook.com (2603:10b6:8:147::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 04:05:41 +0000
+Received: from CO1PEPF000075F4.namprd03.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::4d) by BY5PR20CA0033.outlook.office365.com
+ (2603:10b6:a03:1f4::46) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
+ 25 Mar 2025 04:05:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000075F4.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 25 Mar 2025 04:05:41 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
+ 2025 21:05:26 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
+ 2025 21:05:26 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 24 Mar 2025 21:05:25 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
+	<kevin.tian@intel.com>, <baolu.lu@linux.intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <nathan@kernel.org>, <arnd@arndb.de>
+Subject: [PATCH v5 0/3] iommu: Clean up cookie and sw_msi in struct iommu_domain
+Date: Mon, 24 Mar 2025 21:05:14 -0700
+Message-ID: <cover.1742871535.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F4:EE_|DS0PR12MB7852:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c762a29-a0a5-404d-c3e7-08dd6b524ef8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7053199007|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sHFlg5z15xnwQ4imkn7bbRu//RC8uP5Z0GJzhUCbw3QlcUOtm6sqzgSv9iat?=
+ =?us-ascii?Q?IydER9Ev5Lt0PR9RwDhcDnUyPQQgZQAYZP2fLaPj51Wl2OaUpmOOM/jJ677O?=
+ =?us-ascii?Q?nX1Onf5GFhPiVWOIkEpDi2LQfCHnZEQ/MJbdaYqdwNzyeWWG8w+NzU6cSxjq?=
+ =?us-ascii?Q?Ruce4CvHikkd8NL9b5ScqPFssXJ8gyKFx6IkA0J3v6eQj8epcD+0lezL8k7+?=
+ =?us-ascii?Q?wu+97ZSHPskqn9TeqcV5QdBYSnEdVyjzpEG1su6ljkZu2H157/P+pFQUcQgY?=
+ =?us-ascii?Q?hGYSgFI49od8jqOXFgHDLUylfTw1aTARXjMYu+CqGoX/KP9xPDtFmnnp7zQH?=
+ =?us-ascii?Q?+3unzJuh8s3AeZJcRUGvbQp2Eu7JR8OBEqMgPtKP5nyzM0GhuA57Jm3wSeL8?=
+ =?us-ascii?Q?Auuxu4ODqFDTBEuMHgOanOWVqP/ML3j2DOTaq+kGCe3cXurOB9A1W+oO2Nqy?=
+ =?us-ascii?Q?H9SdKDhzwv/t1TXeLc21lEM0HmDR2EbrNi8+zF7nZcTX0Mq0er9IurpaC+a+?=
+ =?us-ascii?Q?tco4j5MdiRlTM/fRpVB+hcg+wDrl58P3x+z9LIUzzKE9bdaj+x5aKWmCleya?=
+ =?us-ascii?Q?m1KvgLi7QMy9TpcpFm0reChGIbPt+DPOgK3GfWBRtKOHJJ4/+PZLTQY9S9l2?=
+ =?us-ascii?Q?zwQpFyTYcA1SlyCYkcqPmVFKjWTofmqp/GWqbVRuvLRYZipgxw1sUBVudDgH?=
+ =?us-ascii?Q?ZcT+AXwLSYYNxVRNKQl/EhaOZuVNP/e1t3uMWeixag6e8b30XG/6L/A12/ac?=
+ =?us-ascii?Q?jrmptMoVbmlHn/4jE/h897icAIVpA5NQLQp6q2TQtnMPoMTcFiQupwbDKTx3?=
+ =?us-ascii?Q?d9xGo12KgsLgd1DX56NOp0Uw+zc3mU1zrHlZSXuRbz+C9FFW5kUEfyOrcarT?=
+ =?us-ascii?Q?26VQSrILsqwZ2YPoySjFMMidCpXQXhfy4i8uZ1uIe12dNJsBcrVFjkbSI0xR?=
+ =?us-ascii?Q?xu37Y4tubEgfD3ntiQJ4VEEimFDwsSA0pe9bDhdLEEbsvmyGhFcEzRDTLKXS?=
+ =?us-ascii?Q?JcnucQKAQOTeQDQ7Y6YDfQqKBFC26ewGjMsoGbZAK3Nyt2Z5WkK51BBIJXGu?=
+ =?us-ascii?Q?JA/0NffBxQxJ7AaB8OL2OYbvM5BPZBEJa/L7DDK7e6aiVBTfcBUufSe4lVaP?=
+ =?us-ascii?Q?UkzEoxqe9129v02MD681A5DeoZY0TYAIh75fTkNRK21bg6GHSxHHWSLk0mQn?=
+ =?us-ascii?Q?2uB43gV4oBy8KqU0oupDgMK986vzY/GPbIXqstWn7GwPvw5zLH7CKjpPud+C?=
+ =?us-ascii?Q?GxokOiMzd37BKClUPSeQIy55KB46eRjWuG23EtRM8uUh/O7i697074reyb0T?=
+ =?us-ascii?Q?wBpENl+lPewIHXTDPWPeNrMWwHvcY9sjsEenDRAOp7Tj89jf38mDm6wwNeqk?=
+ =?us-ascii?Q?cMd9ceYfJIO6uQKjhJ0u128VaK+LdQWbi/OaJyaO2AzwINZrbTG03x940kZc?=
+ =?us-ascii?Q?jaWOrcCzrahUyg+RBCKugJdIi/rCe1+o0WllMxNeNANib6m4ndbRrlY8uDmL?=
+ =?us-ascii?Q?hVtH6fs2BMWuD9w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7053199007)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 04:05:41.1957
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c762a29-a0a5-404d-c3e7-08dd6b524ef8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7852
 
-On Mon, Mar 24, 2025 at 05:56:57PM -0400, Tamir Duberstein wrote:
-> On Mon, Mar 24, 2025 at 5:51 PM Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > On Mon, Mar 24, 2025 at 5:42 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > >
-> > > On Mon, Mar 24, 2025 at 05:33:45PM -0400, Tamir Duberstein wrote:
-> > > > Refer to the type parameters of `impl_has_list_links{,_self_ptr}!` by
-> > > > the same name used in `impl_list_item!`.
-> > > >
-> > > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > > > ---
-> > > >  rust/kernel/list/impl_list_item_mod.rs | 10 +++++-----
-> > > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/impl_list_item_mod.rs
-> > > > index 5ed66fdce953..9d2102138c48 100644
-> > > > --- a/rust/kernel/list/impl_list_item_mod.rs
-> > > > +++ b/rust/kernel/list/impl_list_item_mod.rs
-> > > > @@ -41,7 +41,7 @@ unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut ListLinks<ID> {
-> > > >  /// Implements the [`HasListLinks`] trait for the given type.
-> > > >  #[macro_export]
-> > > >  macro_rules! impl_has_list_links {
-> > > > -    ($(impl$(<$($implarg:ident),*>)?
-> > > > +    ($(impl$(<$($generics:ident),*>)?
-> > > >         HasListLinks$(<$id:tt>)?
-> > > >         for $self:ty
-> > > >         { self$(.$field:ident)* }
-> > > > @@ -51,7 +51,7 @@ macro_rules! impl_has_list_links {
-> > > >          //
-> > > >          // The behavior of `raw_get_list_links` is not changed since the `addr_of_mut!` macro is
-> > > >          // equivalent to the pointer offset operation in the trait definition.
-> > > > -        unsafe impl$(<$($implarg),*>)? $crate::list::HasListLinks$(<$id>)? for $self {
-> > > > +        unsafe impl$(<$($generics),*>)? $crate::list::HasListLinks$(<$id>)? for $self {
-> > > >              const OFFSET: usize = ::core::mem::offset_of!(Self, $($field).*) as usize;
-> > > >
-> > > >              #[inline]
-> > > > @@ -81,16 +81,16 @@ pub unsafe trait HasSelfPtr<T: ?Sized, const ID: u64 = 0>
-> > > >  /// Implements the [`HasListLinks`] and [`HasSelfPtr`] traits for the given type.
-> > > >  #[macro_export]
-> > > >  macro_rules! impl_has_list_links_self_ptr {
-> > > > -    ($(impl$({$($implarg:tt)*})?
-> > > > +    ($(impl$({$($generics:tt)*})?
-> > >
-> > > While you're at it, can you also change this to be
-> > >
-> > >         ($(impl$(<$($generics:tt)*>)?
-> > >
-> > > ?
-> > >
-> > > I don't know why we chose <> for impl_has_list_links, but {} for
-> > > impl_has_list_links_self_ptr ;-)
-> >
-> > This doesn't work in all cases:
-> >
-> > error: local ambiguity when calling macro `impl_has_work`: multiple
-> > parsing options: built-in NTs tt ('generics') or 1 other option.
-> >    --> ../rust/kernel/workqueue.rs:522:11
-> >     |
-> > 522 |     impl<T> HasWork<Self> for ClosureWork<T> { self.work }
-> >
-> > The reason that `impl_has_list_links` uses <> and all others use {} is
-> > that `impl_has_list_links` is the only one that captures the generic
-> > parameter as an `ident`, the rest use `tt`. So we could change
+A few things in iommu_domain structure (such as iova_cookie, iommufd_hwpt,
+fault handler, and etc) are exclusive to certain types of iommu_domains.
+So, all of them can be seen as domain cookies in different cookie types.
 
-Why impl_has_list_links uses generics at `ident` but rest use `tt`? I'm
-a bit curious.
+Furthermore, iova_cookie is shared with the msi_cookie use case. It could
+be cleaner by decoupling these too.
 
-Regards,
-Boqun
+Define an enum iommu_domain_cookie_type to fit all those cookies in.
 
-> > `impl_has_list_links` to use {}, but not the other way around.
-> 
-> I've changed it to `{}` so it's consistent everywhere.
+Since there are only two sw_msi implementations, check domain->cookie_type
+in iommu_dma_prepare_msi() to call the corresponding sw_msi function.
+
+This is a clean-up series for the previous sw_msi Part-1 core series. It's
+on github:
+https://github.com/nicolinc/iommufd/commits/iommufd_msi_cleanup-v5
+
+Changelog
+v5
+ * Add IMPORT line for IOMMUFD_INTERNAL and change IOMMUFD_DRIVER_CORE
+   to a "bool" module, fixing build module errors reported by Arnd:
+   https://lore.kernel.org/all/20250324210329.2809869-1-arnd@kernel.org/
+ * In iommu_dma_prepare_msi(), let all IDENTITY DOMAINs pass through,
+   fixing the regression with IDENTITY domains reported by Nathan:
+   https://lore.kernel.org/linux-iommu/20250324162558.GA198799@ax162/
+v4
+ https://lore.kernel.org/all/cover.1741294235.git.nicolinc@nvidia.com/
+ * Rebase on top of a bug fix for hwpt_iommufd cookie
+   https://lore.kernel.org/all/20250305211800.229465-1-nicolinc@nvidia.com/
+ * Add Reviewed-by from Robin and Kevin
+ * Add missing "break;" in iommu_domain_free()
+ * Drop "linux/msi.h" header from the iommufd/device code
+ * Set iommufd_sw_msi_install's SYMBOL to "IOMMUFD_INTERNAL"
+ * Update commit messages for typo fixing and size comparison
+ * Add a local msi_page_list to cache cookie_msi_pages(domain) return
+ * Add an inline iommufd_group_setup_msi() for !CONFIG_IRQ_MSI_IOMMU
+v3
+ https://lore.kernel.org/all/cover.1741034885.git.nicolinc@nvidia.com/
+ * Integrate Robin's patch
+   https://lore.kernel.org/linux-iommu/4e68d5820be06adc1b34fc0d1c9399481151daee.1740742271.git.robin.murphy@arm.com/
+   replacing private_data_owner with the new cookie_type
+ * Move iommu_sw_msi stub from the public header to iommu-priv.h
+v2
+ https://lore.kernel.org/all/cover.1740705776.git.nicolinc@nvidia.com/
+ * Drop sw_msi function pointer
+ * Add a new private_data_owner tag in iommu_domain
+ * Let iommu core call the two sw_msi implementations directly
+v1
+ https://lore.kernel.org/all/cover.1740600272.git.nicolinc@nvidia.com/
+
+Thanks
+Nicolin
+
+Nicolin Chen (2):
+  iommufd: Move iommufd_sw_msi and related functions to driver.c
+  iommu: Drop sw_msi from iommu_domain
+
+Robin Murphy (1):
+  iommu: Sort out domain user data
+
+ drivers/iommu/iommufd/Kconfig           |   2 +-
+ drivers/iommu/dma-iommu.h               |  14 ++
+ drivers/iommu/iommu-priv.h              |  13 ++
+ drivers/iommu/iommufd/iommufd_private.h |   7 +-
+ include/linux/iommu.h                   |  35 ++--
+ drivers/iommu/dma-iommu.c               | 208 ++++++++++++------------
+ drivers/iommu/iommu-sva.c               |   1 +
+ drivers/iommu/iommu.c                   |  36 +++-
+ drivers/iommu/iommufd/device.c          | 131 +--------------
+ drivers/iommu/iommufd/driver.c          | 126 ++++++++++++++
+ drivers/iommu/iommufd/hw_pagetable.c    |   6 +-
+ 11 files changed, 323 insertions(+), 256 deletions(-)
+
+
+base-commit: da0c56520e880441d0503d0cf0d6853dcfb5f1a4
+-- 
+2.43.0
+
 
