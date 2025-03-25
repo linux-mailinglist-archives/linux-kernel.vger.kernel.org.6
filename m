@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-576299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9831A70D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:24:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206BBA70DA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112703A83CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6374189EF24
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB064269D1D;
-	Tue, 25 Mar 2025 23:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79B526A0BD;
+	Tue, 25 Mar 2025 23:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnP5NOkZ"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C36IW42v"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147A625FA1C;
-	Tue, 25 Mar 2025 23:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC451624DD;
+	Tue, 25 Mar 2025 23:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742945079; cv=none; b=MMtJU44ZYC0DRQlBFRfTIW9+uqP5rlb+zy+Mfby+R8iBz8dOhp3sJUUpRWz6MmDeopbH8o9aso5Jep8gD3ZY/pb7/k3LQrOC+KH7yW/NPwDUiJyqKpHK48wMot17azKoBy5vzFh/Nu4I8M6Tl27G5PACzjBHgduVJN7VS0L2i10=
+	t=1742945532; cv=none; b=pn2Q3+8kgqZUh5SezTkDPu9UBrBY3hYiR6WTnPjCRz24JP/FkccpNYBKrpbGDt6MD3mv1flRNINCurzpc9O3/gA8aCMNKBrbfmSbWOKiG5hPan6f2fukurDQ/ffpIW8AgfMd4zORoQiqp6vq7oJfkZIrLVhoEHrZgniTxTphrWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742945079; c=relaxed/simple;
-	bh=mXs6H3oUDdJrT8iiX5WZDDmaBw4vJekRy6YT2nK6t/U=;
+	s=arc-20240116; t=1742945532; c=relaxed/simple;
+	bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JOE71L6wyc/NPoH7uew/vPPABF3lNkNp7FFy5U+jrrJ/VwcJgPxEx+hJbVLJE5stkRsLKJ0wo71HSXX5QOSfxEBxMraQySxbSRX8DZz/jYBlCGdTjgtYcXL2zUIieFOBf1+I1fNhL8JnkTDI5xgvZpBY8Pq1KJuSTzd8GxScr0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnP5NOkZ; arc=none smtp.client-ip=209.85.216.43
+	 To:Cc:Content-Type; b=GNErjIcuch4bDZTh85MZI31r8G/3/9/O/45lx3+c5ivEvTzKRwBebe6t0Eg1hYh3RsAJTXVp1W9ZgdDrjQeMPHMkyOLNmgzrWAfjc+zbC3jbjF3RQakKW/l0BveEFb5PSpYCXFwofscmQWWGb3WnWSJzNJdEoQoEOEH9JoxWumg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C36IW42v; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3032a9c7cfeso1279552a91.1;
-        Tue, 25 Mar 2025 16:24:37 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a6bso64335101fa.1;
+        Tue, 25 Mar 2025 16:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742945077; x=1743549877; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742945528; x=1743550328; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=reNdsD3iYuO2qUkRkB3QZH4YVcnvK0Jr4eMsQnbWgOg=;
-        b=WnP5NOkZZq4WpgPcm4Bh/qCoSG0lX6lWuvhXaNBT6QhVcZ8fLI8XS/Qfw9EzlMcIFa
-         tdVq/5WBe6goQn6Ww3ekzEJZHzl/FBub2pYGAMjQd4ubkmhoPhM/r9G3mu7iXDhdzu+S
-         fsVqzWekiIlqSAvKy95ZbFqFmC2J5W5rf+bbAl4v2oP3U61HNmahUifTdkGh9uYYKVby
-         3f6uu9SZh2VpHhuGaHWUafly7LPFI7WNaPzzhDTb9uBcpYARu3vqfxyzCwhw82CjiSoH
-         Dq9nt//v2XSmgGxHw/rsovZSZxEn3s5J+enZBsFnQYPUgsKy/XazXoF4Z7PU0lEsLWWD
-         SYVw==
+        bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
+        b=C36IW42vSDX8AsfdN9ifM3U4YtkmuaYPPaQpdjFyT+zEpNKJFlO3NSMRMUoeo27+YJ
+         Ikf//JM+d/mpMqVbXuqyDdZ/yAjqGPWlaBikVhMANovhXviej+nCJqlH+vqnGLNK8NyX
+         ko9kVj09MQovDSGULzPkJmCMx7ywVBUaJ4HUpuUtVPHetpLr6+eWg81Q7jc3IpeE449t
+         DjeMTH8DKx3RWZv/ky+oA39RpktJ7sTgW5oEXGvgQ7rjj6yxxOR3XW6/GDFJVROMryIf
+         HHix0K/kAfWdvj6gjqcVOneCa4mT3URApTtcpc8DDepFyx89IhsQ0gwQ9E7XAKOyj9jL
+         6NSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742945077; x=1743549877;
+        d=1e100.net; s=20230601; t=1742945528; x=1743550328;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=reNdsD3iYuO2qUkRkB3QZH4YVcnvK0Jr4eMsQnbWgOg=;
-        b=DRN65Vl+sdfWZvsuQLH3R+yNobVKsKOCs2dUsxcKWbMtAAdMVNvRe5gZD9pMInfiCy
-         Ja8ZGhRFKDx/yDK+Z7NmqnuEh156k7J8JftrliQ+Pr9w8maVlOYxHpARTt1M/yurl6xJ
-         7iO30epmR4ADaZiwYMDyFvH3xvTsZ6Yaj8AQ3mI7juuLO16V01UlVyvNd6Po6B1FPL86
-         x9F/nXODE6J37uUYc0kr5byiYh987GE7mlkbtDnAagGpo5s3/quIWExpAx4pxbxVoqO8
-         FauHZVhMFJFNyepCxhRLBxFkcLmlIIHySnIdsKNwWMSmYZIgF1CfF7+NXspXFRh/dL9l
-         84zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKKiq3YX42F6TwAvIssabSIuMDt3Bge9orZZwF55+ajiQ96F3V0ryA2xImRb1MTehvVpOPqBASb0orghw=@vger.kernel.org, AJvYcCVOKJAvDP1oK4YziM+LyA/UivhMj+6yPvin16W7q5dR/VndLC46IfcNmd2/ebzMlejo0Zk6+wLSXTt8qiLmKnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvfFrmTKRzioM89D9HGbCEnUXsKyh2LNBOp8ECied76yIThbf+
-	ESUAJBCM0a+AJSmaDx7dSl74ot1YrpzGv1DLuxUFf4FCq1fjyXWg9vDPDmbYdjLXs67WRP32+vt
-	mRVuoa90BUGhizaRCpQqtXi3LlzA=
-X-Gm-Gg: ASbGncuA0twvIHhPONPwQyQQp1CWxgdLRSyIzC4OMmt0gGRde9Z790YnGpi5vD1SAC9
-	Z8f1yL2BS+3HSF+cCyYSX1ToSp+U9jPicuC+H79l2x6GwvgB4bLOvgo9JElXkmNre2daGNnk24K
-	iayU8GgNB69bQTqY/wjKdrQA3dVg==
-X-Google-Smtp-Source: AGHT+IG/b4WcatCGkVzxwi7SGzWpFJnbsb49yP+SUqQGqgu0Dx7YfD5IjzHfsC/xCneQV0PI8FZ26LIsT/lKkHvMLVU=
-X-Received: by 2002:a17:90b:4acc:b0:2fe:b77a:2eba with SMTP id
- 98e67ed59e1d1-3036b3c5905mr2953150a91.1.1742945077076; Tue, 25 Mar 2025
- 16:24:37 -0700 (PDT)
+        bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
+        b=RvfA+9HP/7lBjf1goX/JrDR75gn642jTkOl6HOsPvIxGwP5R8ivtoEZ/x9GKgX8Iqh
+         JpOFhJK01mn+exee4syb/GXuQkywvIdjdFJH+kV5A5sbLyypFt1p9K7+3fwghGtRlI5i
+         c4AS1CYjlP4MNOeaQ5fnD9M/taluK/Zt5JAudDfnizEcy+iCHYbRQ8BEKFwazXs4k/9e
+         TPinBKWgC6MeaeeNOPE2iE5qiJgxq82o5kMEJg4CF5awxyDNOeP4HXTyis2/KfYFcFrg
+         ZZi4WB5bQpF5+5msKILR6zRS5YhRGt1THyTHVW8OozowEFr5wWhlx7Go/DYom+gak21S
+         ignQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Zkmkwsz4K+Pf9Jfp9tunpIBAnRFRiBSX0Gxr5WXyZ+Y87F1q3u9ALJT2DcztjzHT/n/U1XvQ+EhCqAs=@vger.kernel.org, AJvYcCUItrrFj7aqsGua/D7qmedLOKXeqykvMINUP3z7Rt68B0QH9DL0A0eK+vncwb5sBxUtRb3YYiPO@vger.kernel.org, AJvYcCUKTXz+tJJHbe0BtIy5LOTkE38/sV4ydf8bEdoIs2SSUgqpSHPUbOypENZfm7svqauZmRHHmlg4yb+r@vger.kernel.org, AJvYcCUUQCucInV3MyysM5xIxXrItWXcLOlQMYafQYlwQ5TBNlBTx+3Uifn1L9lVUSW2LOM4yUxJdwHD+Q/K2Ps4@vger.kernel.org, AJvYcCVj2Z0irQ6dTQc77IbeVSIqBjbcidIcrJsZgaVldCkj2reRzd5iULllxwK7hbI6bJtutANNQFDkyPkef1dU@vger.kernel.org, AJvYcCVq3uoRUKRXOra7ilvFfY79SSSUG5JxPq+CjPJDNQq0BbPUsmNP7enCxoD8tdmMC9lOTjimwS+xHQWFTTJ1spk=@vger.kernel.org, AJvYcCW4/1Ln6s2vkAnQZ+/R8wzrmlJN3H+/5B+Ajlowb9owh+70vkUYnybvJaS+38mDOCIlzNPDJb4byErG@vger.kernel.org, AJvYcCWPr0j3nVRh3zqJDUPpP5rbcH4ZOyvR2W5aA5leZ0IhdaT8iM18Wu9JK0ecUHG/GYvhAPPWJx1JXNPsIKkoi0Bp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGy8QSgrQfbauiTH8lWmOHKEd9W+6RQNXnHTt1frIKTakFxyZI
+	sbSuLZcAxREy/szvwBH+k85ShR3i81Fuj+895CHZAwrc0Jz9SgYgkraKrBjKomjfx3pU33ph3Bo
+	UFlKJYGq6vp5kUM5AgIPIxELViHY=
+X-Gm-Gg: ASbGncsVI2Amp7e1bgffpm2CZROuDYDD0S68NfyW1hSy4aMkNE1vzleehXtoMOv+O7j
+	0v1MNMellL20JIBfD3lhH9IHTxHlb5cY8CFzYWh2E3umnks7iYmvv362mQYbOYEdoQ2DzbpFTkE
+	8OCiL2v2ZxxeSGfapcsJkgjvIJMU9K4uoRHauLBFUQbExgTZTbuPxhVKkIuvg=
+X-Google-Smtp-Source: AGHT+IFxHYJ+0IsL/dVIF9u+EAWIllGZhFdwDLi1uT8DJOuKNoI5GnEZcD+Vh9CnqpoEAhYqpPdcD4a8c0fhXk8RIyI=
+X-Received: by 2002:a2e:bc1b:0:b0:30b:a9b7:7dfa with SMTP id
+ 38308e7fff4ca-30d7e214c8dmr68301441fa.3.1742945528268; Tue, 25 Mar 2025
+ 16:32:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87pliljcvy.fsf@kernel.org> <87tt7md1s6.fsf@kernel.org> <87r02pb9jq.fsf@kernel.org>
-In-Reply-To: <87r02pb9jq.fsf@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 26 Mar 2025 00:24:23 +0100
-X-Gm-Features: AQ5f1JqvZFzEMqVnNXLtSTWV1jxoKKe9mo-MCjsPt76Pbv7UlAFukcmXGWhZnLU
-Message-ID: <CANiq72kV=9YA+jMEJYv-Aqb1pzB528OZcN4wU3_-jJGP8HjBkg@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust `hrtimer` support for v6.15
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com> <CANiq72kYt2mYG8FA=U6C4CPUGfAwDFZ8Jji5SH2Yt2NnOHua0w@mail.gmail.com>
+In-Reply-To: <CANiq72kYt2mYG8FA=U6C4CPUGfAwDFZ8Jji5SH2Yt2NnOHua0w@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 25 Mar 2025 19:31:32 -0400
+X-Gm-Features: AQ5f1Jr6QN6jniT-TQODJ_8YxxFjZq1wvjuil1EsgVPT_xGsnF65ZNPxsL_Gs5g
+Message-ID: <CAJ-ks9kjY0i4ZHe6WJ=6Peo+6nN-5cPkuWQu1iYva_mH=356cw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] rust: reduce `as` casts, enable related lints
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 22, 2025 at 12:16=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
+On Tue, Mar 25, 2025 at 4:23=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
->   https://github.com/rust-for-linux/linux.git tags/rust-hrtimer-for-v6.15=
--v3
+> On Tue, Mar 25, 2025 at 9:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+> >
+> > Changes in v7:
+> > - Add patch to enable `clippy::ref_as_ptr`.
+> > - Link to v6: https://lore.kernel.org/r/20250324-ptr-as-ptr-v6-0-49d1b7=
+fd4290@gmail.com
+>
+> Please slow down -- at least wait a few days between revisions (unless
+> there is a particular reason that requires it, of course).
 
-Merged into `rust-next` -- thank you!
+Thanks, certainly no urgency here. In this particular case this isn't
+a true revision: the difference between v7 and v6 is the presence of
+an additional patch.
 
-Cheers,
-Miguel
+> We are in the merge window anyway, so there is no urgency to resend
+> since these cannot go in, and you may want to rebase on top of -rc1
+> when it gets released so that you can cover most/all cases added by
+> then.
+
+While it's true that this won't be picked up for some time (and that's
+ok), I wanted to get Benno's eyes on it sooner than later. Is there a
+workflow (within the mailing list) for such a case, or do folks go out
+of band in this situation?
+
+Thanks!
+Tamir
 
