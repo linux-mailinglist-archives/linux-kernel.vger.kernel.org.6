@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-575454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA58A702F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3813CA702B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0D6881809
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28050881A80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6262561C3;
-	Tue, 25 Mar 2025 13:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CB625A2C1;
+	Tue, 25 Mar 2025 13:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlLqryfm"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ui1HN22k"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BE52561DF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7DC258CFE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742910003; cv=none; b=CnIIeKALoaP+UqVjXJ83nBDTqBvA4fzWcN4wDeJe+N2fgh10OUo78FCnty1b+vc4T2jKV5MGOuvuWY0ILwLnXArns8Kn4nllv4RCedb/NQE+kc1nNfojuxS72ma2RRuCK2x1Bs6lPbwBV0Wv5oQ0NbadAhHsC2PlXMYXfCQ4464=
+	t=1742910012; cv=none; b=AtEDgvJeMQsQwtPYwVt6wEum47ZP667TD7voVavjnqYsLKzbbZOF+4mOnNFTbHpn2mxnkfsFm2nx4j9WjqdaGRXp7+OlAOXq3li3LzDUXIe4eefj0tE8YIWYP3K3/MSyJlUPFk/m/ht/9rLdqlcitPk5dXkx/xqBenY4PHGnTXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742910003; c=relaxed/simple;
-	bh=Y+wkkkI1ImlZcIydvSmVT0/OeD+6AQ2WWZKTRFVLzog=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EVf2p7f139BHWVg/ae9/hQHIiEMsw4VFusabmqm4xN7RCfHV1yD76VN68vL7qSM8e2z7Bjm0SrS5XqAj6yG73Hb6OgJoiV1NjRCDik94bhI1ek02phLS1gNb8Rbr/+xdYNfgwVUe2cXuaQtYVLLaqr1HDPtUOPVXE3SnbWAycv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SlLqryfm; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22438c356c8so112388455ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:40:01 -0700 (PDT)
+	s=arc-20240116; t=1742910012; c=relaxed/simple;
+	bh=gfN7cMZt0m00PoH2OI1tjaBb8cDZ7CVfoz0QzMwPGX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pJMVQu3cDL0uvgVJyVlJ0hCFolE8FigpWdpugIeLTbDhuBakuvdcTkhCPYsBT+AOc2z9wYrhsloNMxM8PfsTuQQ0j2tnwbFNaqpwcqIhZDtcoDKPb8PVbfy8RmRnm0jCIlNGWRAEg2uiQmlgtllhqpczMtXd6m9KoJxCgPb/93Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ui1HN22k; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3913290f754so709655f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742910001; x=1743514801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O7KyW+xgbNLxpFA5rGlR0S7Pnfhh1eWTcPlYyA5iw4I=;
-        b=SlLqryfmiCbf05yL/VGNt1RoJ6xHJUBNOZVr8pn8i6jVAzIEpUgI6U39OpwVP0IYHM
-         NxTVEK0OlGG043WcB2LVKbVmQmJJudtG7TO/lN2uoRbg1wRR3gzXs6ZQhKzxfdDf4bST
-         YKNs4bPmbazHLsgdoF6pVTxJW1ZuPb3SHvC1DbjtUDJ1WFdwlzSHGX9PTaAVc9lWyzBg
-         jlJagCCzYe0nvgDsrCdru0IbSPPzzy12SyiUp9fvO8c9qgSEGUQcaH4xY+h9sbSrLIwM
-         1gPMOuc8IylcEpoP+sUbI/8FD262iifHKKgS0OXffy5U+w/vxFVIC3gQWO1cIZSqd/Kc
-         AP7w==
+        d=suse.com; s=google; t=1742910007; x=1743514807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7feDy+sWNSv66+UsfBQ6A5DM/YLrYmP4DUJwBvM+h4=;
+        b=Ui1HN22kJpuZD90teILb9gy2OYpbPArAIOw3efszye3l5MJtDJxoKLkJYeC0B2zsve
+         9py+xSB26tzwrU47gjgU0JPa+rh0ULmgN4oTTNRiQKpnsxW93WF+C2igIAGghnLbMeKN
+         5bCEAaIuEpqFHCQR0aCzZOzljD/jKtEuWzyV8iZFg/U779yVkF2CoIiorZS4NGzbPPNW
+         1lNy7BdrVp2xbZVAwUBmttQ0bJ/F/RIZRcDL4TRaD6LC14svkPTK3Ldl+VClSKEuO+/c
+         TfMAaGeGJ/DrSdBayOmRkkBt2l8h//ytmq5XOOjlVMdRm7I+StIBN6fuyPDNEKe9vosB
+         5LRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742910001; x=1743514801;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O7KyW+xgbNLxpFA5rGlR0S7Pnfhh1eWTcPlYyA5iw4I=;
-        b=m0vD+WWDAAO3CeShcNdFGVcIv09L5mmnFVz9NPU9zRnKNV/5uHappPSyyJ+qvcNhuY
-         Xbg6qmSoVbAOpHtcMYqbS9qeW3tedDOVl0E7yxKVV7NYAM69c+Zk0pg+X0vHRmLr70dH
-         w9H2YsYH2pEiZU3SemR+NilVYv77Pe0Qqlh/9f9s47V6Bg+oMh+KZf9uZ2Xh7jtE4/ll
-         ouNDB7nlyur2bNqQ5BO72GVuK7/64/fGKwgzOerk2lrOrfTpUzelbJz1AA01Jx21pAWi
-         HAQjAxTtjICBPKUyYKQufpvyktB3vGv6JT7sw13EqtCIT24L62pzz7W3wrBynmWd6r2t
-         TChQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBCqqwu1tlPBAz7NjjFHgjluOPy/X58QbDqWytlnKM9cEsQne/tKqW2dhVdcPmcOlxBd9goXyLoVG7+Ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBbwn/dzoCMMC5x5iierUYxtuKmdkMbxWw91Xb2lcBfSIpk94R
-	enY+ZV74sHXM8TX+DxZzPVwLCiQKbcsDYlGlLSDYdL2SZhkAeGuw7zAxdo5N6xU=
-X-Gm-Gg: ASbGncvbgpmG5HwphvroJCS/bKYYw1dQbHG7MceWh4EmrPMGDjC/Mcbxf46fXM41mzJ
-	5D1hW+1TryuDFHxJ3PlOUKGWfJvnsgMbHy4MuOjBZIYwwX6hWNd7ocGRa32/s8F6Ss/DxQmiBPL
-	legEnLaNtqnVuz46vp1pO6/KiGqqkD4WNT7JAlEVM2zmkK0DGqKgnRwhZMbEK/+my22gvZugavo
-	RkAp/zvIjOy7m6s/cpH0BbKDYar37PwTRmObQybPnwi48fYa9VB8Re5qSadpIAyNuROx7FoGyc2
-	v1JFUeUukbhOFefwFzY0FvKGeZZjXq6DXfnM11ZFmF9U+iq8+gA=
-X-Google-Smtp-Source: AGHT+IHvVrvPTJwd0z4OCcD5xwNgUnMEn+Ser2wZNJvtcUuuwq6dAQ+8wvnkPBi/iVdn3KIckQ1WoA==
-X-Received: by 2002:a17:903:283:b0:224:1e7a:43fe with SMTP id d9443c01a7336-22780e2a566mr231323245ad.46.1742910000734;
-        Tue, 25 Mar 2025 06:40:00 -0700 (PDT)
-Received: from localhost ([147.11.105.124])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227e452ec63sm13133435ad.192.2025.03.25.06.39.59
+        d=1e100.net; s=20230601; t=1742910007; x=1743514807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k7feDy+sWNSv66+UsfBQ6A5DM/YLrYmP4DUJwBvM+h4=;
+        b=QQvGMkSF7anzm7zSttW10UZV9DWFz6PRJZLrDrcDOmyXhG8yh07KxfBPwm5l5dZ0UH
+         J7l2U3Bkrws8XdoEuPoCXh6h4TiZXJIa35QsdMvJp/duSXeNDK7fUJ7cRTiZTHboux7z
+         3yDHPK4uc0mhBmwzGj/tF1X3So03s+xrO2zm/BPjyhaLtN0hgW1Di+q1nIFmQBrTDGhX
+         HXsE1debrW+Vj/Nn6YFNLDGYLC8WSBtqMQDS5/xU60kP8+Sd0khz1VcEUZ0XOphYq6SM
+         G9o/RpXmwmG130b0hmP1gKRqewuaHxX3LAD1HHRbIIVHuUyiRX898ryR7m6y803//r8J
+         WITw==
+X-Gm-Message-State: AOJu0YwKotHodpyPwC0UN81+dyOndUUX69FwrYaqc88ZEY9/dWnn3oSx
+	Ri25SGM9sdFit69HrLB+V12GPgjt60xV9De3S2/9//FL52p44UIWzAvI8Rq9beMrjdBXYyfU+Ge
+	4
+X-Gm-Gg: ASbGncvrLFpFWxc+V8CzS1HztQOWcISXidpO9dmT1ECUb+n8aPA7b/oMuj+H5SNlVTd
+	uXo4js+vcbphTvcwBiLSdIJO4eP2SgkAPs/WaRQ7yZhXstHrEo9+ST+cHwTk3q1rfo2ufPyogB3
+	30W1NDh1ac+qvH0aMXd5TuTV4xuMFJDvKmXWmqHZ/pa19m0xkj2ZMdDdTEgUtJkf3tMNuw2WL8d
+	6eEtyCl7nKUElbYnfW2AIEwaK5CFLCBxqRy7A1g+PybFssmOdmGK8XugqaHLNjb3jqDUhQqi0N3
+	7wS/HIePqk27nQJzIOKRf5gjiy/PmlZy5hxn
+X-Google-Smtp-Source: AGHT+IED2TuBVJz/QsKt7tFUBFUnL7V28VtfeqSnvq7Lx3KDoQ/LLrNVxkuZwXYlKSIof6+LVtQOcQ==
+X-Received: by 2002:a5d:5f8c:0:b0:38d:d69e:1316 with SMTP id ffacd0b85a97d-3997f8f4a93mr5708785f8f.1.1742910007335;
+        Tue, 25 Mar 2025 06:40:07 -0700 (PDT)
+Received: from localhost ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f15fsm56604616d6.34.2025.03.25.06.40.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 06:40:00 -0700 (PDT)
-From: Liwei Song <liwei.song.lsong@gmail.com>
-To: MiquelRaynal <miquel.raynal@bootlin.com>,
-	RichardWeinberger <richard@nod.at>,
-	VigneshRaghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	liwei.song.lsong@gmail.com
-Subject: [PATCH] mtd: core: add sync between read/write and unbind device
-Date: Tue, 25 Mar 2025 21:39:52 +0800
-Message-ID: <20250325133954.3699535-1-liwei.song.lsong@gmail.com>
-X-Mailer: git-send-email 2.47.1
+        Tue, 25 Mar 2025 06:40:06 -0700 (PDT)
+From: Petr Tesarik <ptesarik@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Petr Tesarik <ptesarik@suse.com>
+Subject: [PATCH v2] usb: core: warn if a GFP zone flag is passed to hcd_buffer_alloc()
+Date: Tue, 25 Mar 2025 14:40:00 +0100
+Message-ID: <20250325134000.575794-1-ptesarik@suse.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250320154733.392410-1-ptesarik@suse.com>
+References: <20250320154733.392410-1-ptesarik@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,211 +90,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When unbinding mtd device or qspi controller with a high frequency
-reading to /dev/mtd0 device, there will be Calltrace as below:
+Remove a misleading comment and issue a warning if a zone modifier is
+specified when allocating a hcd buffer.
 
-$ while true; do cat /dev/mtd0 >/dev/null; done &
-$ echo ff8d2000.spi  > /sys/bus/platform/drivers/cadence-qspi/unbind
+There is no valid use case for a GFP zone modifier in hcd_buffer_alloc():
+- PIO mode can use any kernel-addressable memory
+- dma_alloc_coherent() ignores memory zone bits
 
-Internal error: synchronous external abort: 0000000096000210 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 3 UID: 0 PID: 466 Comm: cat Not tainted 6.14.0-rc7-yocto-standard+ #1
-Hardware name: SoCFPGA Stratix 10 SoCDK (DT)
-pc : cqspi_indirect_read_execute.isra.0+0x188/0x330
-lr : cqspi_indirect_read_execute.isra.0+0x21c/0x330
-Call trace:
- cqspi_indirect_read_execute.isra.0+0x188/0x330 (P)
- cqspi_exec_mem_op+0x8bc/0xe40
- spi_mem_exec_op+0x3e0/0x478
- spi_mem_no_dirmap_read+0xa8/0xc8
- spi_mem_dirmap_read+0xdc/0x150
- spi_nor_read_data+0x120/0x198
- spi_nor_read+0xf0/0x280
- mtd_read_oob_std+0x80/0x98
- mtd_read_oob+0x9c/0x168
- mtd_read+0x6c/0xd8
- mtdchar_read+0xdc/0x288
- vfs_read+0xc8/0x2f8
- ksys_read+0x70/0x110
- __arm64_sys_read+0x24/0x38
- invoke_syscall+0x5c/0x130
- el0_svc_common.constprop.0+0x48/0xf8
- do_el0_svc+0x28/0x40
- el0_svc+0x30/0xd0
- el0t_64_sync_handler+0x144/0x168
- el0t_64_sync+0x198/0x1a0
-Code: 927e7442 aa1a03e0 8b020342 d503201f (b9400321)
----[ end trace 0000000000000000 ]---
+This function is called by usb_alloc_coherent() and indirectly by
+usb_submit_urb(). Despite the comment, no in-tree users currently pass
+GFP_DMA.
 
-Or:
-$ while true; do cat /dev/mtd0 >/dev/null; done &
-$ echo spi0.0 > /sys/class/mtd/mtd0/device/driver/unbind
-
-Unable to handle kernel paging request at virtual address 00000000000012e8
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 UID: 0 PID: 459 Comm: cat Not tainted 6.14.0-rc7-yocto-standard+ #1
-Hardware name: SoCFPGA Stratix 10 SoCDK (DT)
-pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : spi_mem_exec_op+0x3e8/0x478
-lr : spi_mem_exec_op+0x3e0/0x478
-Call trace:
- spi_mem_exec_op+0x3e8/0x478 (P)
- spi_mem_no_dirmap_read+0xa8/0xc8
- spi_mem_dirmap_read+0xdc/0x150
- spi_nor_read_data+0x120/0x198
- spi_nor_read+0xf0/0x280
- mtd_read_oob_std+0x80/0x98
- mtd_read_oob+0x9c/0x168
- mtd_read+0x6c/0xd8
- mtdchar_read+0xdc/0x288
- vfs_read+0xc8/0x2f8
- ksys_read+0x70/0x110
- __arm64_sys_read+0x24/0x38
- invoke_syscall+0x5c/0x130
- el0_svc_common.constprop.0+0x48/0xf8
- do_el0_svc+0x28/0x40
- el0_svc+0x30/0xd0
- el0t_64_sync_handler+0x144/0x168
- el0t_64_sync+0x198/0x1a0
-Code: f9400842 d63f0040 2a0003f4 f94002a1 (f9417437)
----[ end trace 0000000000000000 ]---
-
-when unbind is running, the memory allocated to qspi controller and
-mtd device is freed during unbinding, but open/close and reading device
-are still running, if the reading process get read lock and start
-excuting, there will be above illegal memory access. This issue also
-can be repruduced on many other platforms like ls1046 and nxpimx8 which
-have qspi flash.
-
-In this patch, register a spi bus notifier which will called before
-unbind process free device memory, and add a new member mtd_event_remove
-to block mtd open/read, then wait for the running task to be finished,
-then free memory is safe to be run.
-
-Signed-off-by: Liwei Song <liwei.song.lsong@gmail.com>
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
 ---
- drivers/mtd/mtdcore.c   | 57 +++++++++++++++++++++++++++++++++++++++++
- include/linux/mtd/mtd.h |  2 ++
- 2 files changed, 59 insertions(+)
+ drivers/usb/core/buffer.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 724f917f91ba..d35c2ecd5d11 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -34,6 +34,10 @@
- 
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+#include <linux/mtd/spi-nor.h>
-+#include <linux/delay.h>
- 
- #include "mtdcore.h"
- 
-@@ -422,6 +426,48 @@ static int mtd_reboot_notifier(struct notifier_block *n, unsigned long state,
- 	return NOTIFY_DONE;
+diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
+index 87230869e1fa..10844cd42e66 100644
+--- a/drivers/usb/core/buffer.c
++++ b/drivers/usb/core/buffer.c
+@@ -108,10 +108,6 @@ void hcd_buffer_destroy(struct usb_hcd *hcd)
  }
  
-+static int mtd_remove_notifier_call(struct notifier_block *nb,
-+				    unsigned long event, void *data)
-+{
-+	struct device *dev = data;
-+	struct spi_device *spi = to_spi_device(dev);
-+	struct spi_mem *mem = spi_get_drvdata(spi);
-+	struct spi_nor *nor = mem->drvpriv;
-+	struct mtd_info *master = &nor->mtd;
-+	struct mtd_info *child, *next;
-+	int ret;
-+	bool removed;
-+
-+	switch (event) {
-+	case BUS_NOTIFY_BOUND_DRIVER:
-+		master->mtd_event_remove = false;
-+		break;
-+	case BUS_NOTIFY_DEL_DEVICE:
-+	case BUS_NOTIFY_UNBIND_DRIVER:
-+		mutex_lock(&mtd_table_mutex);
-+		master->mtd_event_remove = true;
-+		mutex_unlock(&mtd_table_mutex);
-+
-+		while (1) {
-+			removed = true;
-+			list_for_each_entry_safe(child, next, &master->partitions, part.node) {
-+				mutex_lock(&mtd_table_mutex);
-+				ret = kref_read(&child->refcnt);
-+				if (ret > 1)
-+					removed = false;
-+				mutex_unlock(&mtd_table_mutex);
-+			}
-+			msleep(500);
-+			if (removed)
-+				break;
-+		}
-+
-+		break;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- /**
-  * mtd_wunit_to_pairing_info - get pairing information of a wunit
-  * @mtd: pointer to new MTD device info structure
-@@ -1099,6 +1145,11 @@ int mtd_device_parse_register(struct mtd_info *mtd, const char * const *types,
- 		register_reboot_notifier(&mtd->reboot_notifier);
- 	}
  
-+	if (!mtd->mtd_remove_nb.notifier_call) {
-+		mtd->mtd_remove_nb.notifier_call = mtd_remove_notifier_call;
-+		bus_register_notifier(&spi_bus_type, &mtd->mtd_remove_nb);
-+	}
+-/* sometimes alloc/free could use kmalloc with GFP_DMA, for
+- * better sharing and to leverage mm/slab.c intelligence.
+- */
+-
+ void *hcd_buffer_alloc(
+ 	struct usb_bus		*bus,
+ 	size_t			size,
+@@ -128,6 +124,12 @@ void *hcd_buffer_alloc(
+ 	if (hcd->localmem_pool)
+ 		return gen_pool_dma_alloc(hcd->localmem_pool, size, dma);
+ 
++	/*
++	 * Zone modifiers are ignored by DMA API, and PIO should always use
++	 * GFP_KERNEL.
++	 */
++	WARN_ON_ONCE(mem_flags & GFP_ZONEMASK);
 +
- out:
- 	if (ret) {
- 		nvmem_unregister(mtd->otp_user_nvmem);
-@@ -1127,6 +1178,9 @@ int mtd_device_unregister(struct mtd_info *master)
- 		memset(&master->reboot_notifier, 0, sizeof(master->reboot_notifier));
- 	}
- 
-+	bus_unregister_notifier(&spi_bus_type, &master->mtd_remove_nb);
-+	memset(&master->mtd_remove_nb, 0, sizeof(master->mtd_remove_nb));
-+
- 	nvmem_unregister(master->otp_user_nvmem);
- 	nvmem_unregister(master->otp_factory_nvmem);
- 
-@@ -1243,6 +1297,9 @@ int __get_mtd_device(struct mtd_info *mtd)
- 	struct mtd_info *master = mtd_get_master(mtd);
- 	int err;
- 
-+	if (master->mtd_event_remove)
-+		return -ENODEV;
-+
- 	if (master->_get_device) {
- 		err = master->_get_device(mtd);
- 		if (err)
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index 8d10d9d2e830..74a17eb207ad 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -290,6 +290,7 @@ struct mtd_info {
- 	/* Kernel-only stuff starts here. */
- 	const char *name;
- 	int index;
-+	bool mtd_event_remove;
- 
- 	/* OOB layout description */
- 	const struct mtd_ooblayout_ops *ooblayout;
-@@ -369,6 +370,7 @@ struct mtd_info {
- 	bool oops_panic_write;
- 
- 	struct notifier_block reboot_notifier;  /* default mode before reboot */
-+	struct notifier_block mtd_remove_nb;
- 
- 	/* ECC status information */
- 	struct mtd_ecc_stats ecc_stats;
+ 	/* some USB hosts just use PIO */
+ 	if (!hcd_uses_dma(hcd)) {
+ 		*dma = ~(dma_addr_t) 0;
 -- 
-2.40.0
+2.48.1
 
 
