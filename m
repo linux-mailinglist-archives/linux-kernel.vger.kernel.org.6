@@ -1,156 +1,196 @@
-Return-Path: <linux-kernel+bounces-575839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7C1A707D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:13:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391CCA707D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEAD16C263
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D478C1883CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E555025FA1B;
-	Tue, 25 Mar 2025 17:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7E62E339B;
+	Tue, 25 Mar 2025 17:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BDvF6d8I"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahSCyNqj"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608192561AD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF9F25FA1B;
+	Tue, 25 Mar 2025 17:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922811; cv=none; b=At6dDPxLiyFRx9Z84+PDG2gRlWYDBEqnA9wa0cqpZF/SHb4KC9XX9A76yOqc/WEvevWK2CNkq7TsUXAA0y6jai6vVjIF2eqy1DJoyYwmNR0A0GW+LxJaQHxlPgdJ9UUQzP+XQG1/OfePSKshiAlFQYfLFWvo+OdvomtCoCOCCLk=
+	t=1742922890; cv=none; b=O6wrPDqCCY1ZjplxyTUE6SY1qfjEbukfaBeDU8dOGe/UjQFmfo0cU6zMfaqBpRXfdwpX9TVDFNsaOEbfDHg4ixxTga0VvFjUp99Skb+KPYLVjOYeQtkxBBAolyyzUD4emIbhUlpZvutCDLkmEZCOC41Bq4/Lw5OZ5cHUoczbJNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922811; c=relaxed/simple;
-	bh=cHMGTELfsdVgVpogKAdgWd/mwqRTPxY6INt118OB4Uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NCmjKmj7I/jqiULSlQLx+Tc63QfNvwqR6WYV6LiOpAG+flM3zsK5LEWoSer/Y+ss8inKYDK7OD9HOzqOIyB1yzOXbR+8qkuuZY6RkqR/hVD5TN5VEk0vimeDy6DC+F7mQjkF/22CrRYTJOb+yTTiTfRnE8dsMud9lT1kdYxD10M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BDvF6d8I; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A0C6540E0219;
-	Tue, 25 Mar 2025 17:13:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UHT_K_i8EGDY; Tue, 25 Mar 2025 17:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742922804; bh=yvXTl5sy7JBuIL7c56tpjCj24YNNiRGj4Zb1aDBMvkc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BDvF6d8I40taBLjKD9b923O2DOZl1zkacqWkovwIhakuiHEdgjsMm+m9f+3D0lJ14
-	 dyu0Hmxr2OsvKRhBsdM8BBSbuP0XJy5sf1/jGkpuUF1gJQaAVTK8xwsUSksw4r8i3w
-	 07gihT2NntKpdDDvfKgO1dF4fN/2kyewRGWZ8m+PS1vCij4yF2/oVAB+TLL5j2v89u
-	 8taEr1SRt6Q1eBqbqlYcvuZwcZ6FE9QgerFar9cr4xeK+EwtbJqniltI/zRbNhLLnT
-	 lTzIzXLj8TTM/0QprmChuDHwRe6tUoqeh8HH6HO94sYmnXJeSIv3O/LK23o/UtPler
-	 HoOSiuigvq2SEwii7q4aFdNlW+iAnHvIDVEoNG4vcQMCoL1Zht24mR7IH623MtEj/Q
-	 r3J/xiXX9fm85+xawqHoNmdlB5miBgCN655O2Hk2aBQvZBA3X6QBsMTLvd+lo854q1
-	 YEViX8lTpNp9nXKGfcPsCIkOCnzSmPlIykeq6mQcz1g3+I845asB7bRM2arjorwdx0
-	 Pqd2lNvuDW2OH3JB+Duqpax65mgkonmXL1fMDtT2KZHwL3GbZuzEso+SWPSX1zP2zK
-	 A5dsU0338h7gbOQ7K2AyjuhHjbRNz37n49eJUwsI1jVNWj7tF0JFsopZkW1P+dQist
-	 N3wg7JrCosLROXw2LlfUv0Qw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5B6EC40E0214;
-	Tue, 25 Mar 2025 17:13:21 +0000 (UTC)
-Date: Tue, 25 Mar 2025 18:13:20 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cache for v6.15
-Message-ID: <20250325171320.GAZ-LkMAFoSM7ZhDqq@fat_crate.local>
+	s=arc-20240116; t=1742922890; c=relaxed/simple;
+	bh=7LjuFHI+9x6bjZK/FeC+1TifxlFCEgZtEhKL3VJCkJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2AfUzlY9BoWG2Bv9/yzgss7PRag2n0X2FxGfV9r3zSiGg/PtZMRXBe+y0qA0lom1N+ITjFBhejH/XscBWSZvMRjGQGj4QD4U/UAfIxQehUVoLGZdfOPadl2PC/+SDc5PLxFcXN1ExwBCWpUAxvcep8geVKVX0L+E4YJcbygLp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahSCyNqj; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39149bccb69so5205280f8f.2;
+        Tue, 25 Mar 2025 10:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742922887; x=1743527687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QLnwbdMaL1/FwcJKrrohuVnu32gSpBukuyMJRAcqUuU=;
+        b=ahSCyNqjBqgKtmZRcIN1ij9XOpPD2vovZzsHll63bNdcRrwL+9nIBsxqfXWcm0QJOb
+         dAENJx1OkDh5eMHAcJlfR3+WHRcAmUP4FRZw4un6DW6C441jq6FywWWQAVQcw/Aa1Wib
+         oE8O3t4j0AAyCOVxGzzye/TExb8Z7i64nz6VUrOMwRZqXja+1ulPEPxpONY+qgXp7r8u
+         MaOPjjm3964XysIXFczlNZgJzFciOmf+XJdPqPqKwYb5J1KyHc6cVrskBJQME0yStXVR
+         Qu3xzAC/Or9lvGNFbIC7lPKq1eRqlsuojEpU0bOKHRB+c8slLT5nFqBepfWgThqe+OXW
+         fZ4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742922887; x=1743527687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QLnwbdMaL1/FwcJKrrohuVnu32gSpBukuyMJRAcqUuU=;
+        b=kCSd6ywXIc/nIdOkuqA2N5UQVzU+bj0IR+p880lR5isO3OBe5ukR62eSKcYDM0AgWP
+         gNLfW/lg82K3LfYgdyUfRfwo/3L9EzEUetj4k6n/F6A8W+RUNBPXp3dI2ovuPmGXoc0e
+         5NXCkts5nniwau0ZAxg4cq+SyQifl0QcBh4aVTKAay3BQGfoia83PSFSJTbyre8hWw4J
+         4CyLfu6ruMfvRvFl+l0ZH4LDWV6iItArWimMT1K9/AJMlyWlEwzwt9M3ca81BD+lffHa
+         +WFYUNElJa8/FNbp2LC2KDMzQ5wQ2CkQa4oQbx85gdoM2NHdy2Zwcqzp15aXrLIFPlMv
+         ACtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkMceX2p2ocLITyuSFReCpe9ZOFAbxpSlEP6V9snF1XSos7PK8D87vJ1pQxb6u18laUFCBBOZWS1A=@vger.kernel.org, AJvYcCWWnuvdIUZet8SQVKCRnkmLAwP6Wiw8ARc2UmCr/xQniUELZo0kU0pTjpBOrJqG7u490JbPmDfVUvXqdf8=@vger.kernel.org, AJvYcCX+52sPWhPYhJjvIYnkXPXRR8XQYRtmLT2SMrtiE39FTWlgZAZqzCiIFsI1qbUL8zGw7jTaMAsc/zyl/bNI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtLFnKryr7pfijLaB8y13NKLt4Z38/cYF6/XnB6oiGQaIvfFz8
+	5jTdAJmOS59LzWntZ88mU4h+FxMi+f2u9U025Xyls/dp2OS03qJ6
+X-Gm-Gg: ASbGncsy1xCsVYMdxighPpchr5Y3WtLejYRvjrt2ieJApFO7T08If0GdHzomTYf1zA+
+	UPgUc2uVd9q7FT/siSveFkAI2cbnA4UQUNnRlg+3L5ClHDoRAZUNPaq053VQVg1dWxwbbtZYlQf
+	nD79ogRIpK9UWBinQF+uBlkl0b5xvDeIW1v/ae86TQFHg9fcSa/vGYm9/99EjtmpG0s0XOodQhu
+	rNi1Ht83Z2rMKHwBYkGzGcOyCsDmHtSGDYsYPT1fuuJqYJ73ODotxWWxwO13tTBE8ix/Ar04QFh
+	UF3fvm09I9hRAVnj9CF6wRDFAS8eDAl5R3FA8R5DV9wyL57ozAd3QTTvtfdEHQeJxGDYWxAOOmR
+	Mx5J109sLtIAAdKgTnedrXvOrIfoTY30=
+X-Google-Smtp-Source: AGHT+IHgo0Q0bPOcCYzchQiU6TCha3M2YaTp1OkI/gjnRtvmyKxZA1brxp4uLScoHj6BKvWm0D0joQ==
+X-Received: by 2002:a05:6000:188e:b0:391:31c8:ba59 with SMTP id ffacd0b85a97d-3997f8f26b5mr14688915f8f.4.1742922886794;
+        Tue, 25 Mar 2025 10:14:46 -0700 (PDT)
+Received: from orome (p200300e41f4bef00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:ef00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e674fsm14021551f8f.80.2025.03.25.10.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 10:14:45 -0700 (PDT)
+Date: Tue, 25 Mar 2025 18:14:43 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
+	"digetx@gmail.com" <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+Message-ID: <cao4thtbeenv6b5rbp5icijr7knp3k25zmzg7u7vdxi62hfyrt@ymchhtpwskke>
+References: <20250320132144.34764-1-akhilrajeev@nvidia.com>
+ <2rlnnjixgd65u6gbqxfuhzu5humehvjth7iysj23xvuv5fi2ft@i5su6kfrqnt5>
+ <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mbx6h5ohg5ujq2jw"
 Content-Disposition: inline
-
-Hi Linus,
-
-please pull the x86/cache lineup for v6.15.
-
-Thx.
-
----
-
-The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
-
-  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cache_for_v6.15
-
-for you to fetch changes up to 823beb31e55673bf2fd21374e095eec73a761ee7:
-
-  x86/resctrl: Move get_{mon,ctrl}_domain_from_cpu() to live with their callers (2025-03-12 12:24:58 +0100)
-
-----------------------------------------------------------------
-- First part of the MPAM work: split the architectural part of resctrl from the
-  filesystem part so that ARM's MPAM varian of resource control can be added
-  later while sharing the user interface with x86 (James Morse)
-
-----------------------------------------------------------------
-James Morse (30):
-      x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no monitors
-      x86/resctrl: Add a helper to avoid reaching into the arch code resource list
-      x86/resctrl: Remove fflags from struct rdt_resource
-      x86/resctrl: Use schema type to determine how to parse schema values
-      x86/resctrl: Use schema type to determine the schema format string
-      x86/resctrl: Remove data_width and the tabular format
-      x86/resctrl: Add max_bw to struct resctrl_membw
-      x86/resctrl: Generate default_ctrl instead of sharing it
-      x86/resctrl: Add helper for setting CPU default properties
-      x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
-      x86/resctrl: Expose resctrl fs's init function to the rest of the kernel
-      x86/resctrl: Move rdt_find_domain() to be visible to arch and fs code
-      x86/resctrl: Move resctrl types to a separate header
-      x86/resctrl: Add an arch helper to reset one resource
-      x86/resctrl: Move monitor exit work to a resctrl exit call
-      x86/resctrl: Move monitor init work to a resctrl init call
-      x86/resctrl: Rewrite and move the for_each_*_rdt_resource() walkers
-      x86/resctrl: Move the is_mbm_*_enabled() helpers to asm/resctrl.h
-      x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
-      x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
-      x86/resctrl: Move mba_mbps_default_event init to filesystem code
-      x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
-      x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
-      x86/resctrl: Allow an architecture to disable pseudo lock
-      x86/resctrl: Make prefetch_disable_bits belong to the arch code
-      x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
-      x86/resctrl: Move RFTYPE flags to be managed by resctrl
-      x86/resctrl: Handle throttle_mode for SMBA resources
-      x86/resctrl: Move get_config_index() to a header
-      x86/resctrl: Move get_{mon,ctrl}_domain_from_cpu() to live with their callers
-
- MAINTAINERS                               |   1 +
- arch/x86/Kconfig                          |   7 +
- arch/x86/include/asm/resctrl.h            |  36 +++-
- arch/x86/kernel/cpu/resctrl/Makefile      |   5 +-
- arch/x86/kernel/cpu/resctrl/core.c        | 181 +++++--------------
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  93 ++++++----
- arch/x86/kernel/cpu/resctrl/internal.h    | 201 +++++----------------
- arch/x86/kernel/cpu/resctrl/monitor.c     | 119 +++++++++----
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  55 +++---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 284 ++++++++++++++++++++++--------
- include/linux/resctrl.h                   | 212 ++++++++++++++++++++--
- include/linux/resctrl_types.h             |  54 ++++++
- 12 files changed, 769 insertions(+), 479 deletions(-)
- create mode 100644 include/linux/resctrl_types.h
+In-Reply-To: <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
 
 
--- 
-Regards/Gruss,
-    Boris.
+--mbx6h5ohg5ujq2jw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+MIME-Version: 1.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
+On Fri, Mar 21, 2025 at 01:09:32PM +0000, Akhil R wrote:
+> > > For SMBUS block read, do not continue to read if the message length
+> > > passed from the device is '0' or greater than the maximum allowed byt=
+es.
+> > >
+> > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > > ---
+> > > v1->v2: Add check for the maximum data as well.
+> > >
+> > >  drivers/i2c/busses/i2c-tegra.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-=
+tegra.c
+> > > index 87976e99e6d0..049b4d154c23 100644
+> > > --- a/drivers/i2c/busses/i2c-tegra.c
+> > > +++ b/drivers/i2c/busses/i2c-tegra.c
+> > > @@ -1395,6 +1395,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *=
+adap,
+> > struct i2c_msg msgs[],
+> > >  			ret =3D tegra_i2c_xfer_msg(i2c_dev, &msgs[i],
+> > MSG_END_CONTINUE);
+> > >  			if (ret)
+> > >  				break;
+> > > +
+> > > +			/* Validate message length before proceeding */
+> > > +			if (msgs[i].buf[0] =3D=3D 0 || msgs[i].buf[0] >
+> > I2C_SMBUS_BLOCK_MAX)
+> >=20
+> > I wonder if this can ever happen. Looking at the implementation of the
+> > i2c_smbus_{read,write}_i2c_block_data() functions, they already cap the
+> > length at I2C_SMBUS_BLOCK_MAX.
+> >=20
+> > I suppose some user could be explicitly sending off messages with bad
+> > lengths, but wouldn't it be better to return an error in that case
+> > instead of just aborting silently?
+>=20
+> For SMBUS read, if I understood it correctly, the check happens after the=
+ whole data
+> is read. So, I believe it makes sense to abort the operation before an er=
+roneous read.
+>=20
+> I have not verified this violation, but I think the error for I2C_SMBUS_B=
+LOCK_MAX will
+> also be printed at i2c_smbus_read_i2c_block_data() functions even though =
+we return
+> silently from the driver.
+>=20
+> The check for '0' is not printed anywhere, but it is probably, okay? Ther=
+e is no data to
+> be read anyway. Please let me know your thoughts.
+
+I don't feel strongly either way. I think it's ultimately up to Wolfram
+and Andi to decide how they want host drivers to handle this. Na=C3=AFvely I
+would say that it's better for the core to check for validity, if
+possible, and refuse invalid messages or transfers, so that host drivers
+don't have to repeat these checks.
+
+It's also not clear to me how this should be handled if multiple
+messages are submitted and one of them ends up being invalid. Multiple
+messages in one means they are probably a logically atomic set, so any
+error should impact all of them.
+
+However, these are all issues that can be resolved at a later point or
+not, and this patch looks correct (worst case it's doing too much
+checking), so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--mbx6h5ohg5ujq2jw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfi5IMACgkQ3SOs138+
+s6HHTw/+PeOIPsaHfi1pl2ATeqelhwaOzvQK3qIYbNmfneM/eChVeb/as0cr+Fb0
+nYDYQ8mW+2HagWwz2ROgJcdZ8kKwOm+7QumnmPhKOE+kN3Khaf5wP5LKdLJRqhMD
+u5ocGlseFO1c8eynmhtyZgp7LhCViYgJNOkHU5zZixDf65Zh6481/Ssf/YvhHZOc
+2yoJeXl3/SLvHAlmRuYzAVPkP7WTfnCBzb/ziFS5LIm/IXqIflcOk59QBYx/5OXJ
+w8fWa2Ysuv9Rmue9uYpr9F2pN9LBAgt0/MuIXhUPyqQ/5EY9JZ+N8IKfjV/X8a+5
+/OszCOLHtZmgeS2dVUEwT5vKjSp2h7CxBuk0SsmMzVBxWGb1JKlsSBRo+8Vb1Adm
+QlhTSZrTVwFFmKapL5xKqigAWiujfu//4eVrQ9IM8LQ4Ow7LjXnFhps5w5C6Id6l
+fATsXL3p6b0cpuQVZWUrrfKbxCFOvE1XXRD4V4+ENkOe1ULR4PBkyi2jKxHqhPNo
+SG7GWWXmt3q5IY7Nv4fmCYS3lM1QhJyeuNZR2ksK0PkBCUiovNDDMwDVKuhd7OHN
+K4wensrK1DXmU/khTsx7Yn/ZDAAGWZt33HP5qePCh1i1s946y6iqXF0wyFY5Nyyd
+N2ubAvh8BMAjiA1nScI4a4AHBT8piLZNLhoz9w3knUUCnhLjprM=
+=x6ig
+-----END PGP SIGNATURE-----
+
+--mbx6h5ohg5ujq2jw--
 
