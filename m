@@ -1,118 +1,206 @@
-Return-Path: <linux-kernel+bounces-574811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC13A6EA6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:22:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD9AA6EA36
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA0B3B1BDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0A9188BAE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5159253B54;
-	Tue, 25 Mar 2025 07:20:23 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7A520E6F7;
-	Tue, 25 Mar 2025 07:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D759F23497B;
+	Tue, 25 Mar 2025 07:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+vvW9E1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B5718C92F;
+	Tue, 25 Mar 2025 07:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887223; cv=none; b=o2A4pBz9ZFFpoI7QD8GnfS9k6n/EcVRTmED1KyF3rky2gMo2Xa7DAoJQMxhtVArR28MfTOaW1Uc/siFCNkeD6Pjdko42eGVJUYTehMHFG6pQk/Me5pJ8MfLX+7mykYGLUMpmur2x7lZnqQ8BjfsFY/BmNovifTuy7uMCR3qT4i0=
+	t=1742886891; cv=none; b=OJyU1HVEvS3Z8rtoqA/nY34cDoaF17/o6NYniZiRoAhiOfo3xbOysQLro4fMTo685ltT9W2DQ2Q1CSAzUPaD4y6Kg3//QcZTk4GHDmt8+1SBIuSk66wqxYTelA0Z5L06HW/Vb7FafpJOBjKhQQtfc4p+9ooiUOHOgeh3OT1Tlpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887223; c=relaxed/simple;
-	bh=kHHaPODkvtdGvxf9qarpBVrrEOuOfLu3WIWAlckAWtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jpL0/YxwuJXcuHey0/s2zIDM5I9WkHXoDMG+Mdmju49Is9Uu8X8wUbP8+hAI/qt7XFGyRkafjNIFb1vA7hDE0AxLbubx2QSoUVg9VZFEGMtD+M8/xhkJGgR2EHeAx6RR94Ff5A+FLF7wJMQEUaKKUKs12AlWNDoJFHd5xUOUrbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZMLk83dyNz9sSm;
-	Tue, 25 Mar 2025 08:13:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id w1R402GlpRmr; Tue, 25 Mar 2025 08:13:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZMLk82p2tz9sSj;
-	Tue, 25 Mar 2025 08:13:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4A99B8B765;
-	Tue, 25 Mar 2025 08:13:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Q_Gt9WeIslhN; Tue, 25 Mar 2025 08:13:36 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC7668B763;
-	Tue, 25 Mar 2025 08:13:35 +0100 (CET)
-Message-ID: <b192632a-7b30-4227-96b8-84a587c45fa2@csgroup.eu>
-Date: Tue, 25 Mar 2025 08:13:35 +0100
+	s=arc-20240116; t=1742886891; c=relaxed/simple;
+	bh=1TWK6NEmpcH3Tnhy1DMaTugnC9yzYdJK+FhaUnOaf+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UoeXML92347KCvXfYAOjeV26APYT5Dz4UE7mqROHKg0HKdwAQw6en0N7yJUFQtVY3gQwYtjRI8jeJCLR5iE3Z4P/OvD52IPCjJ585WiZ/TWBN5e5X7vjs+sqrsqkXILwPDYlkpB/3dhqVscrQ3R45AnnIMBlOQobt5w271TpE8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+vvW9E1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8873C4CEE8;
+	Tue, 25 Mar 2025 07:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742886890;
+	bh=1TWK6NEmpcH3Tnhy1DMaTugnC9yzYdJK+FhaUnOaf+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W+vvW9E1INkCFnuFICYOL75WUKw5cWaz7HZXJHR0tQ3VZspFw8SLwGpALyQRj8xw2
+	 X3WK8q8q9hGyDIqJUBGH4HZ/dFqoUBbtDxHGIml2Yfi+cCdBCcnneiN7NqA7ARK3LZ
+	 jpGUih43Ag4baQS3CNOEBoLkpkpA8sqwy76vSpH82Iu4K9bS9Cy9qbafKPDPlhMmAx
+	 T2mzcyVjBMoFhMKAksOW/O43OO5Z0Fgf5C/42ylQ1IBrFSXrp9xkw/+wmw8TNZ6Hjx
+	 Q38BNMqJaLglsWwH0eWi0l69R7kzCKdwpysmIeOC3GXd3q4P+tH8FRzpi86g81RmYc
+	 P955aOIhJGtEA==
+Date: Tue, 25 Mar 2025 08:14:44 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v3] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <Z-JX5ImltdTFoFgr@gmail.com>
+References: <20250325043316.874518-1-edumazet@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfio: pci: Advertise INTx only if LINE is connected
-To: Shivaprasad G Bhat <sbhat@linux.ibm.com>, alex.williamson@redhat.com,
- jgg@ziepe.ca, kevin.tian@intel.com
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, yi.l.liu@intel.com,
- Yunxiang.Li@amd.com, pstanner@redhat.com, maddy@linux.ibm.com,
- linuxppc-dev@lists.ozlabs.org
-References: <174231895238.2295.12586708771396482526.stgit@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <174231895238.2295.12586708771396482526.stgit@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325043316.874518-1-edumazet@google.com>
 
 
+* Eric Dumazet <edumazet@google.com> wrote:
 
-Le 18/03/2025 à 18:29, Shivaprasad G Bhat a écrit :
-> On POWER systems, when the device is behind the io expander,
-> not all PCI slots would have the PCI_INTERRUPT_LINE connected.
-> The firmware assigns a valid PCI_INTERRUPT_PIN though. In such
-> configuration, the irq_info ioctl currently advertizes the
-> irq count as 1 as the PCI_INTERRUPT_PIN is valid.
+> eBPF programs can be run 50,000,000 times per second on busy servers.
 > 
-> The patch adds the additional check[1] if the irq is assigned
-> for the PIN which is done iff the LINE is connected.
+> Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
+> hundreds of calls sites are patched from text_poke_bp_batch()
+> and we see a huge loss of performance due to false sharing
+> on bp_desc.refs lasting up to three seconds.
 > 
-> [1]: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fqemu-devel%2F20250131150201.048aa3bf.alex.williamson%40redhat.com%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Ce0fb1d4bf2064e115ce408dd6642796b%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638779157886704638%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=egZuT5CZsC6S%2Bd7bZTuO4RcKL8IJREPbxIMGZZkZeMQ%3D&reserved=0
+>    51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
+>             |
+>             |--46.45%--poke_int3_handler
+>             |          exc_int3
+>             |          asm_exc_int3
+>             |          |
+>             |          |--24.26%--cls_bpf_classify
+>             |          |          tcf_classify
+>             |          |          __dev_queue_xmit
+>             |          |          ip6_finish_output2
+>             |          |          ip6_output
+>             |          |          ip6_xmit
+>             |          |          inet6_csk_xmit
+>             |          |          __tcp_transmit_skb
 > 
-> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-> Suggested-By: Alex Williamson <alex.williamson@redhat.com>
+> Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
+> 
+> Before the patch, on a host with 240 cores (480 threads):
+> 
+> sysctl -wq kernel.bpf_stats_enabled=0
+> 
+> text_poke_bp_batch(nr_entries=164) : Took 2655300 usec
+> 
+> bpftool prog | grep run_time_ns
+> ...
+> 105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+> 3009063719 run_cnt 82757845 : average cost is 36 nsec per call
+> 
+> After this patch:
+> 
+> sysctl -wq kernel.bpf_stats_enabled=0
+> 
+> text_poke_bp_batch(nr_entries=164) : Took 702 usec
+> 
+> $ bpftool prog | grep run_time_ns
+> ...
+> 105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+> 1928223019 run_cnt 67682728 : average cost is 28 nsec per call
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
 > ---
->   drivers/vfio/pci/vfio_pci_core.c |    4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 586e49efb81b..4ce70f05b4a8 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -734,6 +734,10 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
->   			return 0;
->   
->   		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-> +#if IS_ENABLED(CONFIG_PPC64)
-> +		if (!vdev->pdev->irq)
-> +			pin = 0;
-> +#endif
+>  arch/x86/kernel/alternative.c | 30 ++++++++++++++++++------------
+>  1 file changed, 18 insertions(+), 12 deletions(-)
 
-I see no reason for #ifdef here, please instead do:
+Thanks for the updates. I've further improved the changelog (see 
+attached below), and have tentatively applied it to 
+tip:x86/alternatives.
 
-	if (IS_ENABLED(CONFIG_PPC64) && !vdev->pdev->irq)
+Thanks,
 
-See 
-https://docs.kernel.org/process/coding-style.html#conditional-compilation
+	Ingo
 
->   
->   		return pin ? 1 : 0;
->   	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
-> 
-> 
-> 
+==============================>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 25 Mar 2025 04:33:16 +0000
+Subject: [PATCH] x86/alternatives: Improve code-patching scalability by removing false sharing in poke_int3_handler()
+
+eBPF programs can be run 50,000,000 times per second on busy servers.
+
+Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
+hundreds of calls sites are patched from text_poke_bp_batch()
+and we see a huge loss of performance due to false sharing
+on bp_desc.refs lasting up to three seconds.
+
+   51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
+            |
+            |--46.45%--poke_int3_handler
+            |          exc_int3
+            |          asm_exc_int3
+            |          |
+            |          |--24.26%--cls_bpf_classify
+            |          |          tcf_classify
+            |          |          __dev_queue_xmit
+            |          |          ip6_finish_output2
+            |          |          ip6_output
+            |          |          ip6_xmit
+            |          |          inet6_csk_xmit
+            |          |          __tcp_transmit_skb
+
+Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
+
+Before the patch, on a host with 240 cores (480 threads):
+
+  $ sysctl -wq kernel.bpf_stats_enabled=0
+
+  text_poke_bp_batch(nr_entries=164) : Took 2655300 usec
+
+  $ bpftool prog | grep run_time_ns
+  ...
+  105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+  3009063719 run_cnt 82757845 : average cost is 36 nsec per call
+
+After this patch:
+
+  $ sysctl -wq kernel.bpf_stats_enabled=0
+
+  text_poke_bp_batch(nr_entries=164) : Took 702 usec
+
+  $ bpftool prog | grep run_time_ns
+  ...
+  105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+  1928223019 run_cnt 67682728 : average cost is 28 nsec per call
+
+Ie. text-patching performance improved 3700x: from 2.65 seconds
+to 0.0007 seconds.
+
+Since the atomic_cond_read_acquire(refs, !VAL) spin-loop was not triggered
+even once in my tests, add an unlikely() annotation, because this appears
+to be the common case.
+
+[ mingo: Improved the changelog some more. ]
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lore.kernel.org/r/20250325043316.874518-1-edumazet@google.com
 
 
