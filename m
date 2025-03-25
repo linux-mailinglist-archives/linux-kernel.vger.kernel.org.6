@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-575923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5C1A708EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:18:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFFFA708F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61E43A7819
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B6A3AB8C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92A2195980;
-	Tue, 25 Mar 2025 18:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61086199254;
+	Tue, 25 Mar 2025 18:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="cAhb6xx5"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEnhZwo1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AC8176AB5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28B618DB36;
+	Tue, 25 Mar 2025 18:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742926686; cv=none; b=A3a1YreSNz++EyvM7a9SI6ME72Sro2G5mXIZypgUjenQkzzKi/sys8kQSabwPXlH8bfspH5OJB/ntBuYF7g4O4OOvlEKGsYQA5K7usrK5a31ardxVtmzlWYTcynBCnYsb40kdzLO6dJRLHwH0G0BUCndrOaiBHlBoQIUzloL75E=
+	t=1742926879; cv=none; b=VlQdNtx+BeX44EAIK6xxAUZT6RgIBmWeEfvgr4RTEZ2X4AikLQcOiklkgLB3zcFnghBm11U8VF/905J/k82JfRTRp4CVuuhwKWba8+HMSKAY4QA4VzwPFEknyq4sSzGsPwDboFK8qw329cEYwFUA4rdQI2a5EfYFoDALOhXRn/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742926686; c=relaxed/simple;
-	bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJi17HgYcSqw/qz/Rwk48AQgm8LLhUQ6Ou/5hbzV+oQVBLZePTlEjg0aZ7SCoQ8pbO5dN70U1YJ01T2BMuMnf+oAm18ya2HpyhoRYioo/B7riij7sChFZXuwDcSvqhKqIrocX6lS+s8Yk2pZV93zSESsCSa5CQKztxwey3QHQqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=cAhb6xx5; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85b43b60b6bso3843439f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1742926684; x=1743531484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
-        b=cAhb6xx5/FqYSdd/1pORUOfxDXuZwjI1+wO/qNjf+5iOaxo5aH6OrERWlUwDuyLJxz
-         VKCHKuRLynpMWRS0zezpKRoORVHrqW/R7Y+YDgw9karI/FqV/q15HB11/8XpAn9SK2bP
-         m/NPF0zyV73OYAN0tWiQJvRCSrf0Jgqrziu9qNDjPz9ss1hTIqsnRx4tw97dZBol3kiv
-         57gmth1WbMErq9QcPwMjCvFiiXaQqgKUpbMzBgdUhs8E6H3UdfuQrape7k5yPTaGJ4Ky
-         5IQiS22e7hQsHmDDGnP30mYfnghmmT46fk28Bnrtzo154xFqt15ve1u4/V2wMI10bh3N
-         jvxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742926684; x=1743531484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
-        b=M6PWb/qYv1eTSG6TdROepoyeiu5lfn6bZIc85wWtfmRnSAnCsPo+U8LegEm1N2UDXt
-         2dDWBcg8GLGPGdZ7xBAz+ied7J/mFTlOd1we6HF/NLeQ4nmeQN07VWbf7URU7DfeokPY
-         a42NVYKDvIKg2O7Fd6Qa9uqToSNk/3EX13PbPyp83hMgOLS9mbZ1UcyDf1Mcj1goAoBf
-         UnNQMNKTq73POaM3B8fXsh5u9oQDsNGu30HwfeYNN2psPEsLIxVGcaqeRHOf5zA3zjmm
-         QHMcDRxOgkY6Xd/KPo9ntd+EexJkyphpcsgumussl+QhAgwPWPVDvC8z8Dabwi/+3k5+
-         Vouw==
-X-Forwarded-Encrypted: i=1; AJvYcCVP6ULdD7NA3rQfWMWR/mprcyNKS3K0EOLKgJ/J5tEE+xHpoGe9kV1cKh91/WinMr1Eab1v3CwnGCBI+e8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfviZ11tkiDb/kEpDI/1zoIwyRnK/jWB5AOpQQURh+8BIUL1lB
-	JdXTOGUJrr1JduBwgHT7dCU4uvm7+gMdAE7lsVZ5s5YDz03P8JEETgzRY5EpQS8=
-X-Gm-Gg: ASbGnctd7pP8Zin09WFhVdm2i+yyq1UYApZR9uHLsOowols1E8oMHJcVxlZs4pFQRPv
-	FuUs9xgc7G9c9b5/oP9u4SmDZXBxflUyBX9XGGKcnHceJRggaQ40o5G3gJV5hLHpHneAiLpQE/8
-	umLpBmfyzlflKoxEewFbaNpc6Q57swK1I+GhHafj04jSwoUjFCbvtoKQAfhtfXmdeupeGp0ly+w
-	0xHcyobSu0dr+ItrRYEkgTe2mBt91lEBjvT9b4Bd2X4xpri7EJotb94nBBDm/2Fylet4AY4LOc4
-	PGkWIKGy2D84tV7Q+JJvR7BfyA==
-X-Google-Smtp-Source: AGHT+IHerZJCcUba5+2uQMpJ6FxRljVNwdYl2gum46dsHYwuSY7HzXegJqiAeVDE22k7LOpkVelMjg==
-X-Received: by 2002:a05:6602:b8f:b0:85b:36cc:201b with SMTP id ca18e2360f4ac-85e751c2403mr101382339f.2.1742926683683;
-        Tue, 25 Mar 2025 11:18:03 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8152:1b37::2b6:1])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bc13d74sm217164439f.11.2025.03.25.11.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 11:18:03 -0700 (PDT)
-Date: Tue, 25 Mar 2025 13:18:00 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-ima-devel@lists.sourceforge.net,
-	linux-integrity@vger.kernel.org,
-	linux-ima-user@lists.sourceforge.net,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@cloudfalre.com
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-Message-ID: <Z-LzWCbROAI2H2Dx@CMGLRV3>
-References: <20250325181616.79540-2-fred@cloudflare.com>
+	s=arc-20240116; t=1742926879; c=relaxed/simple;
+	bh=mrqiPuMeH3Bzk+l9brzohImr4AuP1M10UqnJWbfgMbo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pF9KrXIYk7s9jBq9YlP8UEavghwVPYj625B5D5HqqNQ6kjD62ZvbfPbX7E7hH5JpF/h0hKeLyhAOuRTmKm6hbichxP+n9egSxemsug853cj11HWybaiFzmQcwEje73JbwKvxuS0PQxqJiZx217EcQGD1gAxfaL85ZYoaNy11ZX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEnhZwo1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F313C4CEE4;
+	Tue, 25 Mar 2025 18:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742926879;
+	bh=mrqiPuMeH3Bzk+l9brzohImr4AuP1M10UqnJWbfgMbo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hEnhZwo17O2rCjOGq7cAs0weKt+0+OAWjyguivCnV4oXdyrebrxDGKvzy1dgv3qOS
+	 Dx9KLhi1tB9N1B9/50yBtc5AEYJ1vKD8RFKcLmtc+dydh/L0rod+8L8I/nvlmY4hBs
+	 XDoNUbKJYwbHSvkOnRkzjidHey7wmdRfYzw17PRganh5wLQlG7puqvvq+E5lDkM1x1
+	 5eQ35IJv4+T9xL3UxG0nAAlwnk5W4kidPbIXqoWt05XDk7M850PTUI544z/laAwnp4
+	 aF5DgxkGx/AD0CnnaQo3oWUdqX+Q0momeoEcgAnmuY0llHI3I8j5eJAERKmAsOw7u3
+	 LWTWPpZUx20Wg==
+Message-ID: <7f13200d-9310-46a2-8424-51dcb0f2dbb7@kernel.org>
+Date: Tue, 25 Mar 2025 19:21:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325181616.79540-2-fred@cloudflare.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: display: panel: Add Visionox G2647FB105
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: Alexander Baransky <sanyapilot496@gmail.com>, neil.armstrong@linaro.org,
+ quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ robh@kernel.org, dri-devel@lists.freedesktop.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250325155756.703907-1-sanyapilot496@gmail.com>
+ <20250325155756.703907-2-sanyapilot496@gmail.com>
+ <ed62d5f3-a728-4d11-9b59-28496ed267db@kernel.org>
+ <190ba70d-89bd-4e46-b7e5-7b93d706d84f@jiaxyga.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <190ba70d-89bd-4e46-b7e5-7b93d706d84f@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-My mistake, this is PATCH v2. I forgot to change the subject in git
-send-email. I can resend if that's needed.
+On 25/03/2025 19:16, Danila Tikhonov wrote:
+>>> +  vsp-supply:
+>>> +    description: Positive source voltage rail
+>> Are you sure these are real voltage rails on the device? Weirdly similar
+>> to some old Samsung AMOLED panels...
+> Hello Krzysztof,
+> 
+> I was somewhat intrigued by your observation, especially since I have
+> some schematics for this device. The patch correctly adds four
+> regulators – ibb, lab, vdd (3p0), and vio (1p8).
+> 
+> This situation arises from Xiaomi’s tendency to use different panels in
+> various revisions of the same device. Although, AFAIK, the
+> sm7150-xiaomi-toco/tucana was released with only one possible variation
+> (which this series adds), the sm7150-xiaomi-davinci offers a different
+> perspective. The latter was initially produced with a samsung,ams639rq08
+> panel (which I had added previously), yet official service centers have
+> replaced the factory panel with the visionox,g1639fp106 during repairs.
+> This suggests that, in terms of power configuration, the
+> samsung,ams639rq08 and the visionox,g1639fp106 panels are effectively
+> identical.
+> 
+> It is therefore likely that the visionox,g2647fb105 from this series
+> follows the same way.
+> 
+> Nevertheless, it is reassuring that I can confirm these findings with
+> the schematics rather than relying on mere guesswork xD
 
+Great, appreciated, thanks for checking. Some parts of above -
+similarities including replacement of factory panel - might be good for
+commit msg. Please add them. With that and simplifying the commit
+sentence style:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
