@@ -1,126 +1,149 @@
-Return-Path: <linux-kernel+bounces-575588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C4DA70484
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:04:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A62A70488
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F283ABBC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:03:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8792188DD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9C258CD6;
-	Tue, 25 Mar 2025 15:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192925A326;
+	Tue, 25 Mar 2025 15:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hvMhKkNg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5Xv1Thi"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8786C208AD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C781EB3E;
+	Tue, 25 Mar 2025 15:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915036; cv=none; b=beLgjD3GexG2FHa5BeE4uMuvy0PJS92+3bmbpfrbKHwxjj85o79dFF35tgMghQlj4fF+Bsva9cB9a7/LjA3+FitjP9dYQR+PHv2//jPqp1/Su3vDwfGLFHWdHtsnCWT62gljYivse0mZzIR0ILFAkbIkZ8t7rVwAG1JsPmmZkxM=
+	t=1742915118; cv=none; b=JM5DaNxXLBuARWBy3JPFgyj+JtdQXzkT4ZSnRFHaQlQU/jhCGdisXN+eUinFKBcrkL6qcW4WDM7XQUM1+NrVPL66X2NC1kuLYZ76rULHfoUGSR4omp1woN8LNFfZNqE9byVIb+smGwr7gxxNvvzYTV76LA1xOHcc4U51CG/tk2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915036; c=relaxed/simple;
-	bh=kFbh0LlV4qyD9Zc+BpYtdVXJlfeuU7uh04pxDYsqlmE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bpIYUKHVQTt8uwXbohRcum5HKiQ5fVddGc6wccml1zq9/bi2uFKOGSxwxQmrLlVHnZvnh7V9CTIJfQXhCwcpc9M+xFfOn07QtLfofMZn+TksXe7iesJRRGxUOfhBAxrPAbk4LQUwPso5INg8mAJeRBhwy/eiy8lUUWIQgQ1oFWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hvMhKkNg; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742915034; x=1774451034;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=kFbh0LlV4qyD9Zc+BpYtdVXJlfeuU7uh04pxDYsqlmE=;
-  b=hvMhKkNg8HTY5nHWqfH1XQZmdVe8BLcbF2cxGJTcmWd64vo7zGAcx1bJ
-   XhRCduvuqYm+aVxxqQwoz9REawBh0LoDgAj9ALeGNGmFZd1C02PPQPLVA
-   a1gJfZesRhRcoNhpDyFARM8RLG7rouzyF6rWPF1MbjO27WIEgYsVy2CsL
-   4jFIzRewfJOyKQS+7exsqr/vBpvS2Ku1/mukHIAOXcxP0nGrOG32xKGW6
-   Ky5PDl1OsuSgFXZM8sgN9htYMArZhYoEkvl5DcbfGx7dTmiAmh1ScaNVU
-   SVdFvH4eKkBh/husIWzj3L1qZ6sRuaTDujOEK6dT/w+1QYQH+7YJ24Lpn
-   A==;
-X-CSE-ConnectionGUID: aHreRGUMQLyM6lmqTYMJlw==
-X-CSE-MsgGUID: C9zrUPzLTveUOXz/7+XJiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="31769682"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="31769682"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:03:53 -0700
-X-CSE-ConnectionGUID: DMDtKWK4Rae/QIGFg7jTfg==
-X-CSE-MsgGUID: tg4WBIDZRqSUcwN/2lvOmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="124374348"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.134])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:03:50 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: devbrones <jonas.cronholm@protonmail.com>,
- maarten.lankhorst@linux.intel.com, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
- Headsets with Product ID 0xB403
-In-Reply-To: <20250325-annoying-precise-uakari-6b6438@houat>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
- <875xjxa2rk.fsf@intel.com> <20250325-inquisitive-ebony-mouse-bdf185@houat>
- <87pli58jze.fsf@intel.com> <20250325-annoying-precise-uakari-6b6438@houat>
-Date: Tue, 25 Mar 2025 17:03:46 +0200
-Message-ID: <87h63h884t.fsf@intel.com>
+	s=arc-20240116; t=1742915118; c=relaxed/simple;
+	bh=xm5YteKI5jO3OTAAhxdRHYin5uAOhZ+7H+TKvjsGoOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZ3/GqILcYJ08mLmoSgKyvQ3M5+8gn7ZdSeDzH1gpL3i97wglL4cnkh1QEmguVDncfqAPmPbYzDYurgIaNZqtc+8ovKAiNOfrBCHosAKp3AcQmjvMPWWZuN0cfTfOQ4vlL5ra1E3eUt1Iya+VHhBt3KIpc8UIeOtphwaKjNj1j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5Xv1Thi; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-227aaa82fafso59856395ad.2;
+        Tue, 25 Mar 2025 08:05:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742915115; x=1743519915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jWxFqrH9YL7/eofO5H8remEpyysGR/mTITCg0OMFQQA=;
+        b=X5Xv1ThivUKh8Hj3wBPTAitwS4f0s9VCiDMIZEhg3D8ivrwxiaO/M0s1PLk4SWBd7N
+         TwHoZE8TpK/jgRBoUUzdof5p53UvsS6sSxPiIHlCx3ypXzq1iN+Deoku3kYZGlmwY/Aa
+         AXgqUFqmq6f3V92wfQjSFwB18VzWSo9SCtoacA8zSMLNwZhaEGnK/ic42nr6Oo8Cv6t4
+         vcYQoaqIMdZR7FQDrWEvHMlt44UOQg11/xb1DkShs6n/8AoSmeCSxXbk13otXE0BWfAj
+         3nahJ0ZSm60MLS4pVRoF8qbDybc8Lm4+R3daluhOxhd4WiBjwezhR7X7XHLy94TdV8AE
+         zxXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742915115; x=1743519915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jWxFqrH9YL7/eofO5H8remEpyysGR/mTITCg0OMFQQA=;
+        b=ro8m14SRgsApB7gdhIdMPApIwRHP2it2ZluE74+foYj1uK5dk4eP3vpPvo+Szc+WRb
+         QmRhlb3BGw1iCpdTbRP463AkCJWkUv8h9G6qQcqRit8TFDo11pozJGqDRwvvAhmtySfj
+         wCIwG1lMhCfxgDq0EKHdXPJfAyqEPVtM59zl5danTtbmoHJQ9gRosjqfe4SmkhZ0fxSR
+         JbzE09roNy5fG1+Sp6N/9YaCaaaASzjr7f+ldcayUnuXHaf/3moNcNyAS0pP1HKvLoB3
+         7pEQxMuWZKClUv8AMz6FxLDxba9t0tY21ZlBV9RzDN3U53yRFKQxHxpSC/Eh7oF58NBW
+         l6Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUc/4msoTaAo9NgEFk6ttGPVd4qrju9a+AHZ56xDb45tlOcZr2Gxfecz04hR4RxwlECjxZfk18Ewir7RmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv/XmxVabk/D3KvefEVLabe6TVihZTlzrsg6kK5UiYx5w8mTmS
+	OiRwo0xyInzIr5PZLR7IIDbwH2Zq4fVrvJEgTJuU9C28sFIWyLVP
+X-Gm-Gg: ASbGncu6WGs+mOEigYJK2Ee4sFDd4EUuFOkX0lyXSAiQfskpD11m2q5dDUSD4K8G0ro
+	PTJWmFFjtIE/TiWY4qjV2cglPVBkyJ8M0Pruj/w9tHW5OqiX2TK2j4F5cwpy5a/Yf+hLWmCrlA4
+	b8/XFFFRbOyA+VvaZs287j3srDo1Xbt7/uuHkNTMEljcL0pLYS2LPhUHHmpbkYRz0fJaS1EeEmz
+	6c6zf4ed+/qHqcCBlZxtA9P3TvXVV1tx+Q+oLyw5oNKZsJfZNheUwxiDfZ3e1D9kBi8V4kCHBm5
+	qbmBqUHsjQtAJnZYgjSZMCXgNk8OsDgA1nD0XwZQRYcuxsoSsw==
+X-Google-Smtp-Source: AGHT+IEbgo3Hy66xsrTg9MyfAa0va92/DyNS2eEJDABFCbZ4iS9Zyj4XDtelwQfOL8CYWqpdLvIuvg==
+X-Received: by 2002:a17:902:e549:b0:224:194c:694c with SMTP id d9443c01a7336-22780d9bd43mr314595225ad.28.1742915114714;
+        Tue, 25 Mar 2025 08:05:14 -0700 (PDT)
+Received: from localhost ([2401:4900:1cc8:c20:fcca:cfc0:f5e:747e])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22780f45e1asm91021775ad.80.2025.03.25.08.05.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 08:05:14 -0700 (PDT)
+From: Sharwesh05 <sharweshraajan@gmail.com>
+To: tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sharwesh05 <sharweshraajan@gmail.com>
+Subject: [PATCH] 	modified:   sound/pci/hda/patch_realtek.c
+Date: Tue, 25 Mar 2025 20:35:10 +0530
+Message-ID: <20250325150510.31452-1-sharweshraajan@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Mar 2025, Maxime Ripard <mripard@kernel.org> wrote:
-> On Tue, Mar 25, 2025 at 12:47:49PM +0200, Jani Nikula wrote:
->> On Tue, 25 Mar 2025, Maxime Ripard <mripard@kernel.org> wrote:
->> > On Tue, Mar 25, 2025 at 11:16:47AM +0200, Jani Nikula wrote:
->> >> On Sat, 22 Mar 2025, devbrones <jonas.cronholm@protonmail.com> wrote:
->> >> > This fixes a bug where some Playstation VR Headsets would not be assigned
->> >> > the EDID_QUIRK_NON_DESKTOP quirk, causing them to be inaccessible by
->> >> > certain software under Wayland.
->> >> 
->> >> Please file a bug over at [1], and attach the EDID on that bug, so we
->> >> have some clue what's going on.
->> >>
->> >> [1] https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new
->> >
->> > I'd rather have them in the commit log. Nobody uses gitlab issues for
->> > drm-misc, and those kind of issues are just lingering around and
->> > becoming stale.
->> 
->> For this one, it's fine as long as we preserve the raw EDID for
->> posterity. Unless the EDID does indicate VR and we need to dig deeper,
->> that is.
->
-> What I was trying to say is if "posterity" means "a forever open issue
-> in drm-misc", then no, sorry, that doesn't work for me.
+---
+ sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-I want to check the EDID before we merge the quirk.
-
-If the EDID does not indicate VR, we can merge. I want the EDID
-preserved so we can track them down later if we need to drop or modify
-the quirks.
-
-If the EDID does indicate VR, either the quirk is unnecessary or there's
-a bug somewhere. This requires further debugging, and we must not merge
-the quirk.
-
-
-BR,
-Jani.
-
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index a84857a3c2bf..8c2375476952 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4739,6 +4739,21 @@ static void alc245_fixup_hp_mute_led_coefbit(struct hda_codec *codec,
+ 		snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
+ 	}
+ }
++static void alc245_fixup_hp_mute_led_v1_coefbit(struct hda_codec *codec,
++					    const struct hda_fixup *fix,
++						int action)
++{
++	struct alc_spec *spec = codec->spec;
++
++	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		spec->mute_led_polarity = 0;
++		spec->mute_led_coef.idx = 0x0b;
++		spec->mute_led_coef.mask = 3 << 2;
++		spec->mute_led_coef.on = 1 << 3;
++		spec->mute_led_coef.off = 0;
++		snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
++	}
++}
+ 
+ /* turn on/off mic-mute LED per capture hook by coef bit */
+ static int coef_micmute_led_set(struct led_classdev *led_cdev,
+@@ -7883,6 +7898,7 @@ enum {
+ 	ALC245_FIXUP_TAS2781_SPI_2,
+ 	ALC287_FIXUP_YOGA7_14ARB7_I2C,
+ 	ALC245_FIXUP_HP_MUTE_LED_COEFBIT,
++	ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT,
+ 	ALC245_FIXUP_HP_X360_MUTE_LEDS,
+ 	ALC287_FIXUP_THINKPAD_I2S_SPK,
+ 	ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD,
+@@ -10126,6 +10142,10 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC285_FIXUP_THINKPAD_HEADSET_JACK,
+ 	},
++	[ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc245_fixup_hp_mute_led_v1_coefbit,
++	},
+ 	[ALC245_FIXUP_HP_MUTE_LED_COEFBIT] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc245_fixup_hp_mute_led_coefbit,
+@@ -10569,6 +10589,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8a0f, "HP Pavilion 14-ec1xxx", ALC287_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8a20, "HP Laptop 15s-fq5xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x8a25, "HP Victus 16-d1xxx (MB 8A25)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
++	SND_PCI_QUIRK(0x103c, 0x8bcd, "HP Omen 16-xd0xxx (MB 8BCD)", ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8a28, "HP Envy 13", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8a29, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8a2a, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
 -- 
-Jani Nikula, Intel
+2.48.1
+
 
