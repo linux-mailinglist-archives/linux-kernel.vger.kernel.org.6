@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-575578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4200EA70460
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:57:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99639A70466
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C724188E6B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41DF3B0175
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8126525B687;
-	Tue, 25 Mar 2025 14:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BD425B67D;
+	Tue, 25 Mar 2025 14:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CTzPC1gG"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J56m4qYg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E1627456;
-	Tue, 25 Mar 2025 14:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC96125A633
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914627; cv=none; b=RcWvhEoFme07KPir2x+cNj/4oqUmmNfmjdgYQdZHxelMFLf8ReKobVlTKHiL4RLmdF3MuXUpgH25/AsQBkVINs7ui58Pw7QeRvzKHqLwp6MkEk40CpjhfpXU7PJ8tL6llLaXXsvTVsm9LrdYK5QQPLxlBGSBgVd951HfDeVYpK8=
+	t=1742914642; cv=none; b=pbhxQDQKWHaQ3n9eDkX8JZiSoVVHle+Ulz117lLGm/+BOK6TORr+bEtvJJO58k5E8MoHIVXnxKhZe6Nwd3IgHNOig3hWrX8d382oemBa5ol8o+GVd+YyrWBr2c/TYnouEvcNEex1X636zpp+xkyYjVrl7fCqIagHhZBCmT3YnbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914627; c=relaxed/simple;
-	bh=RYqHjWw3KTpaby0u6OwaBZc7ufnS+zuGBANKdwMFpf4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=FEQwdj67ZLe/o2WFhQGihAaTqppVD+KFf1S0js3BWNvOTyl/SZoykmAzNaqxslB6QzMXSuu0/92DNk0YQW7R7eB5d8Y1ajGBiSJKTwRoVrjH75Bjp7xG3k0LK2qJJeee6zmTTlzrgRKz83tcWuvxvEJnEjCRMrtGL505p1ekuP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CTzPC1gG; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0172D2047D;
-	Tue, 25 Mar 2025 14:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742914623;
+	s=arc-20240116; t=1742914642; c=relaxed/simple;
+	bh=1DDCb/rE5y0uCUgnbi2crL4gY7ukwSS2UrHJ0uyjq0k=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mSfh52PrV54OAHcUwZmUSTZwXjy37grgXHeQdObhMYvYN3Ofa21a4Tt3UauEMnLfUX0gAG/Fy53xLZ75KLUc0GTAMI2gDCwCeuI/c7m3vmy4x4yjcmudQbO5H9YY55piuHTm2YFEs/iXaKbwXT+K7n+3VvsGrGprJy/V1pLRkWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J56m4qYg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742914639;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MBZ1CEC0QSASEo3c9ilc08bpvWeK9tdZuZ0/dmDvxvo=;
-	b=CTzPC1gG1AcpU3Wp/Ap7na1XuvEWAIpIK6mF+neWSzfzTXp4iAIUOckj8vJzz/fx63Ek5n
-	QeobZgh5fGmjoCDSjULN2or9wbUH3VEX+j0cUUV/7pOUgaZMbohWVzSi9wxbSk+muJ+YFz
-	h4Xi5fYctiSsjW9QYZFVScarprkW0MkT1oFkXIe2mqvAb2cphiDLOYzMLVjnAWsBX72c+o
-	+C/x1Jy/yt9dA80LnyyMPoy8L/ka+JPz+4w/cjq4gwzPWbrmNIusORtacSh3P4LibJg1as
-	VnlKeFUuR1soGL8rBQPfY78CQXZOrwjrJHfiHTTumWuuLOeE9K0ALiuITVrz0g==
+	bh=fGpw7+lzDBqKQi13meiBn0xCYbAhrMYmTI+bEs2bkbo=;
+	b=J56m4qYg4tyKbhv2CRAmwpxdGTtGCrmCFdbswCbncZApatj0XEWiZQhSZAzw8MvDb8uXrS
+	X6wY4+O57cI1GaTpPSmI/lPYbke1RpXEw4167c68TjZgV+NEqiXDzXuPRBkkuodaZ7wQZu
+	gfX4XtfjK56uuY6NwZGFNCzTQZpVTqc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-A5ejn08zOveas5Y-gAvnng-1; Tue, 25 Mar 2025 10:57:18 -0400
+X-MC-Unique: A5ejn08zOveas5Y-gAvnng-1
+X-Mimecast-MFC-AGG-ID: A5ejn08zOveas5Y-gAvnng_1742914638
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c544d2c34fso871683985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:57:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742914638; x=1743519438;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGpw7+lzDBqKQi13meiBn0xCYbAhrMYmTI+bEs2bkbo=;
+        b=Hj35hrT6nOMA136JM5t9akjM+KG1DqgZwTRzoEeOfhWqAoUacKSrguHQb6nESKHsLT
+         wqYumuQ8gCdQQFh5+baoJ4e7TlGAeL7yRK/tgbo7LLG+dRzfeN6AZdN9caUTT/KnG30X
+         1jwdG0t/Sn0r0AWtir74CSCnSogNs/cWkfZpGa9pfL03T1ypdy/Kqj35QWl8R/VECQ51
+         +JuHkH3+E5hXXeJBGZoEd7Bn56ttf58pDE1f615joGwlmhgImtEbnce5AmBhWTB89JY0
+         mdspHuTUp1IBMxBQ/5ZVyC7SKshTTrDxYITa4DfpHEl4lfqEdaSiO247Pr+CQG4W9IJR
+         Qy8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWoBYWwsE1QVeK/js/DscvGS5yjtrwRLgZMJNxlpcQPpqVrqGlqj8vt3Ie1ngBCatv8Zh07LFsTrNxuuXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGb02oYiJzPAO1bwkRZzg/6u7ZyiKTRpNAzG37RE0bjVb5Kx8U
+	dBaNhe7p7voLDb7LxZOR5DgRk/ieXAeziA6c+yxu/XVlyzeO79Yjg7UgU7e5o5ys67OgT9ibEaX
+	jdck8FcMdb+AhnORXgd5FCAtehMDJRMbtNl1LEJ72anaK0t3ewangtmYFtKcl1g==
+X-Gm-Gg: ASbGncuamnuq92ebwZtucNqLbDTbbvr8PYHKrlqQ1gz5ZTkuBU78rgOzg1LcnqeO4da
+	UJZKM17BwgxX4r6b2lc5i05Q08z9upD+UdNFAN67FNzgsdY6V5mputaALSdqbG3qlO48yKxQZgB
+	9fYPCXhQxJq8d32hEy89iyTpY7r+TiX4Nvvkpbo4hzcwWgDHIKW/qp4IRg7sDVtgexRoLks4G10
+	YGPxPrCYSIR8fqpihwy7ZkQjQH7dUJu+DrF51JbrSfshiTyEzlVyL1S9PtFd87sGEGC0R7q8C7S
+	0/M0/8vWTpKAsgJKJ6BYmfKc5Yg0+F+DVzqUNFx5X3ssqaWmHQRfynIv7yOOSg==
+X-Received: by 2002:a05:620a:198e:b0:7c5:5791:122b with SMTP id af79cd13be357-7c5ba1ea609mr2241139185a.37.1742914637805;
+        Tue, 25 Mar 2025 07:57:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdw4wa5MlvyVnws/DGXFKT5gLLg1vPYIG4jsjd3K++5hHCV3YaqI48me4hpLE7Ev6rVqlKmA==
+X-Received: by 2002:a05:620a:198e:b0:7c5:5791:122b with SMTP id af79cd13be357-7c5ba1ea609mr2241135985a.37.1742914637381;
+        Tue, 25 Mar 2025 07:57:17 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ed0a9sm647869685a.65.2025.03.25.07.57.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 07:57:16 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <e4974c9e-057f-4f3f-ae2e-67a5da51df01@redhat.com>
+Date: Tue, 25 Mar 2025 10:57:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 25 Mar 2025 15:57:01 +0100
-Message-Id: <D8PFO3LSGWQD.38SX4PSHQ84W2@bootlin.com>
-Subject: Re: [PATCH v5 09/11] input: keyboard: Add support for MAX7360
- keypad
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
- <Z9qybcY7VyQBvZMv@smile.fi.intel.com>
-In-Reply-To: <Z9qybcY7VyQBvZMv@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with expedited
+ RCU synchronization
+To: Waiman Long <llong@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Peter Zijlstra
+ <peterz@infradead.org>, Breno Leitao <leitao@debian.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, aeh@meta.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, jhs@mojatatu.com,
+ kernel-team@meta.com, Erik Lundgren <elundgren@meta.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+References: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
+ <20250324121202.GG14944@noisy.programming.kicks-ass.net>
+ <CANn89iKykrnUVUsqML7dqMuHx6OuGnKWg-xRUV4ch4vGJtUTeg@mail.gmail.com>
+ <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
+ <67e1b2c4.050a0220.353291.663c@mx.google.com>
+ <67e1fd15.050a0220.bc49a.766e@mx.google.com>
+ <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com> <Z-Il69LWz6sIand0@Mac.home>
+ <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+Content-Language: en-US
+In-Reply-To: <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed Mar 19, 2025 at 1:02 PM CET, Andy Shevchenko wrote:
-> On Tue, Mar 18, 2025 at 05:26:25PM +0100, Mathieu Dubois-Briand wrote:
-> > Add driver for Maxim Integrated MAX7360 keypad controller, providing
-> > support for up to 64 keys, with a matrix of 8 columns and 8 rows.
+On 3/25/25 10:52 AM, Waiman Long wrote:
+> I agree that the commit that I mentioned is not relevant to the 
+> current case. You are right that is_dynamic_key() is the only function 
+> that is problematic, the other two are protected by the lockdep_lock. 
+> So they are safe. Anyway, I believe that the actual race happens in 
+> the iteration of the hashed list in is_dynamic_key(). The key that you 
+> save in the lockdep_key_hazptr in your proposed patch should never be 
+> the key (dead_key) that is passed to lockdep_unregister_key(). In 
+> is_dynamic_key():
 >
-> ...
+>     hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
+>                 if (k == key) {
+>                         found = true;
+>                         break;
+>                 }
+>         }
 >
-> > +	help
-> > +	  If you say yes here you get support for the keypad controller on th=
-e
-> > +	  Maxim MAX7360 I/O Expander.
-> > +
-> > +	  To compile this driver as a module, choose M here: the
-> > +	  module will be called max7360_keypad.
+> key != k (dead_key), but before accessing its content to get to 
+> hash_entry, an interrupt/NMI can happen. In the mean time, the 
+> structure holding the key is freed and its content can be overwritten 
+> with some garbage. When interrupt/NMI returns, hash_entry can point to 
+> anything leading to crash or an infinite loop.  Perhaps we can use 
+> some kind of synchronization mechanism between is_dynamic_key() and 
+> lockdep_unregister_key() to prevent this kind of racing. For example, 
+> we can have an atomic counter associated with each head of the hashed 
+> table. is_dynamic_key() can increment the counter if it is not zero to 
+> proceed and lockdep_unregister_key() have to make sure it can safely 
+> decrement the counter to 0 before going ahead. Just a thought!
 >
-> One paragraph is wrapped way too late or too early, can you make them app=
-rox.
-> the same in terms of a line width?
->
+Well, that is essentially an arch_rwlock_t for each list head.
 
-Thanks. I had a look at all other Kconfigs, I believe they are all fixed
-now.
-
-> > +
-> > +	input_set_capability(input, EV_MSC, MSC_SCAN);
-> > +	if (autorepeat)
-> > +		__set_bit(EV_REP, input->evbit);
-> > +
-> > +	input_set_drvdata(input, max7360_keypad);
-> > +
-> > +	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL, max7360_keyp=
-ad_irq,
-> > +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->
-> What's wrong with the interrupt flags provided by firmware description?
->
-
-So same question as for the GPIO driver: IRQF_TRIGGER_LOW from the
-firmware, but IRQF_ONESHOT from the driver? Or should everything come
-from the firmware?
-
-Thanks again for your review.
-Mathieu
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers,
+Longman
 
 
