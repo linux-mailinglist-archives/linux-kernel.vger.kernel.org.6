@@ -1,258 +1,950 @@
-Return-Path: <linux-kernel+bounces-575283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8376BA6FAEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:17:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36288A6FE33
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC2917A255B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193B83BB492
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296A1256C83;
-	Tue, 25 Mar 2025 12:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B349A27BF77;
+	Tue, 25 Mar 2025 12:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="extbD/m+"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8302580CB;
-	Tue, 25 Mar 2025 12:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Db/QgCVy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B5F258CE4;
+	Tue, 25 Mar 2025 12:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905019; cv=none; b=dPWbY2mIEsiMwxCTUZBKwC27LkJlH8EgHCH2Hbm11tGi2s/32MGbJE0+PM/am8gyDCJ9STcELW3YF1El6ovGgXo0X9CwOkjxVrcSdimEvOsOoaQl3G8kGtaZiq9dKjDPZxgOHgQn5BDjQF8woIDZ8J2n3eP9WzJggBffFNZCK28=
+	t=1742905423; cv=none; b=f5oS/lpZG7jrApvgmApBozBIAW3qi9Rsh8439iojC8PRL2AXTV+YcfOBtj1nWfpFxJqQpWBTFwW01AtvwJGBKZFn7P+l3WvVxwqhoPLUChMLqxZLZSVLrh9mZXTE1UzgrhHwF/arft1gPgO5sbpcUs1upWPQl0c59jhhuQCI0XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905019; c=relaxed/simple;
-	bh=NcEPb55Rco6EjfgmgRqxo9YOOSFOucPfaWT3g07OCLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IfTsWsSSKZM5Aern4xrVyETbzwOrZBkxInhKSCm1mQdMiSN9z/O+5HWGLj34BA7fP+ucUaqPerR14pQyHmSXPZysUwZ80qPEAlP1eYwAOT1YRvR66OxilDnjogsvRiuPkeZJRa0z4WZsJxsWXECnK8olwSev/WW+BSq9evQJtKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=extbD/m+; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=rnao7tYHGP/XCO8pJr95a8UIsRVe2QvBuKZ594nf8Qk=;
-	b=extbD/m+mQB7gssuj51WZuVMW15Wa1YryIk/AwXIPLk5lENT7oDHlrFT5CJkcP
-	Wm8asJYT4MpshdvzBOkX/jzuyBRmmhT7v+hLw6SvJgdsiyhdBQgzS7vLKu/1MV86
-	yszyV/lg6CcyIo7sntPHehSHsAqY0/fH0G9ZfAm5M+dhU=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3n1SJnuJnE9JrBw--.50275S2;
-	Tue, 25 Mar 2025 20:16:11 +0800 (CST)
-Message-ID: <f2725090-e199-493d-9ae3-e807d65f647b@163.com>
-Date: Tue, 25 Mar 2025 20:16:09 +0800
+	s=arc-20240116; t=1742905423; c=relaxed/simple;
+	bh=UIaebIfG0R9TIRnbdttpSpkeO01MnZQH6Hjy2o37EAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fzKrZFrRNVSJCWibAqqXqfg3QD54dd226rKN9Q+8kum8/3xR7vChlXV8lbrXxZkqq68ZwH7wkWwf+dyNB6JILMSt2geNStkJ8d3cqqmecvTRvr1KdUICGkZNAo+rX7b5DYCGNQwgU+SD+GwkSi2Q06Xk8ariI5Tm1Mk+ES+QWvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Db/QgCVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AABC4CEE9;
+	Tue, 25 Mar 2025 12:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742905422;
+	bh=UIaebIfG0R9TIRnbdttpSpkeO01MnZQH6Hjy2o37EAI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Db/QgCVyTP1KMjCiu2milpvC3qkLDNwk3mVRrlKUi/lDDidPq6IZsGUssESgSnXHT
+	 8tlLCgF2DLpUf5AyzRz+b6VUbZToe3eNsINg1A5sW1DeN4FI3h6hqjvjGodEGNG3Mh
+	 rXbNckGFXXUat8nF+OjELG2T7OAsRhxP5N1Ozf+PiFG4kcl8ToY6X3gRUFGuT59V6Y
+	 YP+P1HiohUl8j+H6MaYzerQ0EVmocVtWqxn3ORYHJ6nPM6nrsNgTMbiFmnMTsB/FvM
+	 VXYwY9CxVXMJeL/4Uaem46fFV73JfQLtYq07lKQaPXQyFsbq4ou++k7Q2Nf95Q6DAD
+	 7iBflbn0swm5A==
+From: guoren@kernel.org
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	torvalds@linux-foundation.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	anup@brainfault.org,
+	atishp@atishpatra.org,
+	oleg@redhat.com,
+	kees@kernel.org,
+	tglx@linutronix.de,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	brauner@kernel.org,
+	akpm@linux-foundation.org,
+	rostedt@goodmis.org,
+	edumazet@google.com,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	gaohan@iscas.ac.cn,
+	shihua@iscas.ac.cn,
+	jiawei@iscas.ac.cn,
+	wuwei2016@iscas.ac.cn,
+	drew@pdp7.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	ctsai390@andestech.com,
+	wefu@redhat.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	guoren@kernel.org,
+	xiao.w.wang@intel.com,
+	qingfang.deng@siflower.com.cn,
+	leobras@redhat.com,
+	jszhang@kernel.org,
+	conor.dooley@microchip.com,
+	samuel.holland@sifive.com,
+	yongxuan.wang@sifive.com,
+	luxu.kernel@bytedance.com,
+	david@redhat.com,
+	ruanjinjie@huawei.com,
+	cuiyunhui@bytedance.com,
+	wangkefeng.wang@huawei.com,
+	qiaozhe@iscas.ac.cn
+Cc: ardb@kernel.org,
+	ast@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	maple-tree@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-atm-general@lists.sourceforge.net,
+	linux-btrfs@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	linux-nfs@vger.kernel.org,
+	linux-sctp@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [RFC PATCH V3 29/43] rv64ilp32_abi: locking/atomic: Use BITS_PER_LONG for scripts
+Date: Tue, 25 Mar 2025 08:16:10 -0400
+Message-Id: <20250325121624.523258-30-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
+References: <20250325121624.523258-1-guoren@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
- finding the capabilities
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
- thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250323164852.430546-1-18255117159@163.com>
- <20250323164852.430546-4-18255117159@163.com>
- <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com>
- <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com>
- <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
- <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com>
- <26dcba54-93c1-dda4-c5e2-e324e9d50b09@linux.intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <26dcba54-93c1-dda4-c5e2-e324e9d50b09@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n1SJnuJnE9JrBw--.50275S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw1UAFy5WF1xCryUZw4Dtwb_yoW7ur1xpF
-	W5tF15KF4kJr47Grn2va1FqF1ayr90yFy5X34kG34UZwn093WfGFWqkay5CFn7CFs7Jr1j
-	qayjqr93ur90yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxUbo2fim2FegAAAsD
 
+From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
+In RV64ILP32 ABI systems, BITS_PER_LONG equals 32 and determines
+code selection, not CONFIG_64BIT.
 
-On 2025/3/25 19:15, Ilpo Järvinen wrote:
-> On Tue, 25 Mar 2025, Hans Zhang wrote:
->> On 2025/3/24 23:02, Ilpo Järvinen wrote:
->>>>>>     +static u32 cdns_pcie_read_cfg(void *priv, int where, int size)
->>>>>> +{
->>>>>> +	struct cdns_pcie *pcie = priv;
->>>>>> +	u32 val;
->>>>>> +
->>>>>> +	if (size == 4)
->>>>>> +		val = readl(pcie->reg_base + where);
->>>>>
->>>>> Should this use cdns_pcie_readl() ?
->>>>
->>>> pci_host_bridge_find_*capability required to read two or four bytes.
->>>>
->>>> reg = read_cfg(priv, cap_ptr, 2);
->>>> or
->>>> header = read_cfg(priv, pos, 4);
->>>>
->>>> Here I mainly want to write it the same way as size == 2 and size == 1.
->>>> Or size == 4 should I write it as cdns_pcie_readl() ?
->>>
->>> As is, it seems two functions are added for the same thing for the case
->>> with size == 4 with different names which feels duplication. One could add
->>> cdns_pcie_readw() and cdns_pcie_readb() too but perhaps cdns_pcie_readl()
->>> should just call this new function instead?
->>
->> Hi Ilpo,
->>
->> Redefine a function with reference to DWC?
-> 
-> This patch was about cadence so my comment above what related to that.
-> 
+Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+---
+ include/linux/atomic/atomic-long.h | 174 ++++++++++++++---------------
+ scripts/atomic/gen-atomic-long.sh  |   4 +-
+ 2 files changed, 89 insertions(+), 89 deletions(-)
 
-Hi Ilpo,
-
-Thanks your for reply. Let's look at the main problem first.
-
->> u32 dw_pcie_read_dbi(struct dw_pcie *pci, u32 reg, size_t size)
->>    dw_pcie_read(pci->dbi_base + reg, size, &val);
->>      dw_pcie_read
->>
->> int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->> {
->> 	if (!IS_ALIGNED((uintptr_t)addr, size)) {
->> 		*val = 0;
->> 		return PCIBIOS_BAD_REGISTER_NUMBER;
->> 	}
->>
->> 	if (size == 4) {
->> 		*val = readl(addr);
->> 	} else if (size == 2) {
->> 		*val = readw(addr);
->> 	} else if (size == 1) {
->> 		*val = readb(addr);
->> 	} else {
->> 		*val = 0;
->> 		return PCIBIOS_BAD_REGISTER_NUMBER;
->> 	}
->>
->> 	return PCIBIOS_SUCCESSFUL;
->> }
->> EXPORT_SYMBOL_GPL(dw_pcie_read);
->>
->>>
->>>>>> +	else if (size == 2)
->>>>>> +		val = readw(pcie->reg_base + where);
->>>>>> +	else if (size == 1)
->>>>>> +		val = readb(pcie->reg_base + where);
->>>>>> +
->>>>>> +	return val;
->>>>>> +}
->>>>>> +
->>>>>> +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
->>>>>> +{
->>>>>> +	return pci_host_bridge_find_capability(pcie,
->>>>>> cdns_pcie_read_cfg, cap);
->>>>>> +}
->>>>>> +
->>>>>> +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
->>>>>> +{
->>>>>> +	return pci_host_bridge_find_ext_capability(pcie,
->>>>>> cdns_pcie_read_cfg,
->>>>>> cap);
->>>>>> +}
->>>>>
->>>>> I'm really wondering why the read config function is provided directly
->>>>> as
->>>>> an argument. Shouldn't struct pci_host_bridge have some ops that can
->>>>> read
->>>>> config so wouldn't it make much more sense to pass it and use the func
->>>>> from there? There seems to ops in pci_host_bridge that has read(), does
->>>>> that work? If not, why?
->>>>>
->>>>
->>>> No effect.
->>>
->>> I'm not sure what you meant?
->>>
->>>> Because we need to get the offset of the capability before PCIe
->>>> enumerates the device.
->>>
->>> Is this to say it is needed before the struct pci_host_bridge is created?
->>>
->>>> I originally added a separate find capability related
->>>> function for CDNS in the following patch. It's also copied directly from
->>>> DWC.
->>>> Mani felt there was too much duplicate code and also suggested passing a
->>>> callback function that could manipulate the registers of the root port of
->>>> DWC
->>>> or CDNS.
->>>
->>> I very much like the direction this patchset is moving (moving shared
->>> part of controllers code to core), I just feel this doesn't go far enough
->>> when it's passing function pointer to the read function.
->>>
->>> I admit I've never written a controller driver so perhaps there's
->>> something detail I lack knowledge of but I'd want to understand why
->>> struct pci_ops (which exists both in pci_host_bridge and pci_bus) cannot
->>> be used?
->>>
->>
->>
->> I don't know if the following code can make it clear to you.
->>
->> static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
->> 	.host_init	= qcom_pcie_host_init,
->>                    pcie->cfg->ops->post_init(pcie);
->>                      qcom_pcie_post_init_2_3_3
->>                        dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
->> };
->>
->> int dw_pcie_host_init(struct dw_pcie_rp *pp)
->>    bridge = devm_pci_alloc_host_bridge(dev, 0);
-> 
-> It does this almost immediately:
-> 
->      bridge->ops = &dw_pcie_ops;
-> 
-> Can we like add some function into those ops such that the necessary read
-> can be performed? Like .early_root_config_read or something like that?
-> 
-> Then the host bridge capability finder can input struct pci_host_bridge
-> *host_bridge and can do host_bridge->ops->early_root_cfg_read(host_bridge,
-> ...). That would already be a big win over passing the read function
-> itself as a pointer.
-> 
-> Hopefully having such a function in the ops would allow moving other
-> common controller driver functionality into PCI core as well as it would
-> abstract the per controller read function (for the time before everything
-> is fully instanciated).
-> 
-> Is that a workable approach?
->
-
-I'll try to add and test it in your way first.
-
-Another problem here is that I've seen some drivers invoke 
-dw_pcie_find_*capability before if (pp->ops->init) {. When I confirm it, 
-or I'll see if I can cover all the issues.
-
-If I pass the test, I will provide the temporary patch here, please 
-check whether it is OK, and then submit the next version. If not, we'll 
-discuss it.
-
-Thank you very much for your advice.
-
->>    if (pp->ops->host_init)
->>      pp->ops = &qcom_pcie_dw_ops;  // qcom here needs to find capability
->>
->>    pci_host_probe(bridge); // pcie enumerate flow
->>      pci_scan_root_bus_bridge(bridge);
->>        pci_register_host_bridge(bridge);
->>          bus->ops = bridge->ops;   // Only pci bus ops can be used
->>
->>
-
-
-Best regards,
-Hans
+diff --git a/include/linux/atomic/atomic-long.h b/include/linux/atomic/atomic-long.h
+index f86b29d90877..e31e0bdf9e26 100644
+--- a/include/linux/atomic/atomic-long.h
++++ b/include/linux/atomic/atomic-long.h
+@@ -9,7 +9,7 @@
+ #include <linux/compiler.h>
+ #include <asm/types.h>
+ 
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ typedef atomic64_t atomic_long_t;
+ #define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
+ #define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
+@@ -34,7 +34,7 @@ typedef atomic_t atomic_long_t;
+ static __always_inline long
+ raw_atomic_long_read(const atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_read(v);
+ #else
+ 	return raw_atomic_read(v);
+@@ -54,7 +54,7 @@ raw_atomic_long_read(const atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_read_acquire(const atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_read_acquire(v);
+ #else
+ 	return raw_atomic_read_acquire(v);
+@@ -75,7 +75,7 @@ raw_atomic_long_read_acquire(const atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_set(atomic_long_t *v, long i)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_set(v, i);
+ #else
+ 	raw_atomic_set(v, i);
+@@ -96,7 +96,7 @@ raw_atomic_long_set(atomic_long_t *v, long i)
+ static __always_inline void
+ raw_atomic_long_set_release(atomic_long_t *v, long i)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_set_release(v, i);
+ #else
+ 	raw_atomic_set_release(v, i);
+@@ -117,7 +117,7 @@ raw_atomic_long_set_release(atomic_long_t *v, long i)
+ static __always_inline void
+ raw_atomic_long_add(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_add(i, v);
+ #else
+ 	raw_atomic_add(i, v);
+@@ -138,7 +138,7 @@ raw_atomic_long_add(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_add_return(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_return(i, v);
+ #else
+ 	return raw_atomic_add_return(i, v);
+@@ -159,7 +159,7 @@ raw_atomic_long_add_return(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_add_return_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_return_acquire(i, v);
+ #else
+ 	return raw_atomic_add_return_acquire(i, v);
+@@ -180,7 +180,7 @@ raw_atomic_long_add_return_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_add_return_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_return_release(i, v);
+ #else
+ 	return raw_atomic_add_return_release(i, v);
+@@ -201,7 +201,7 @@ raw_atomic_long_add_return_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_add_return_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_return_relaxed(i, v);
+ #else
+ 	return raw_atomic_add_return_relaxed(i, v);
+@@ -222,7 +222,7 @@ raw_atomic_long_add_return_relaxed(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_add(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_add(i, v);
+ #else
+ 	return raw_atomic_fetch_add(i, v);
+@@ -243,7 +243,7 @@ raw_atomic_long_fetch_add(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_add_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_add_acquire(i, v);
+@@ -264,7 +264,7 @@ raw_atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_add_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_add_release(i, v);
+ #else
+ 	return raw_atomic_fetch_add_release(i, v);
+@@ -285,7 +285,7 @@ raw_atomic_long_fetch_add_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_add_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_add_relaxed(i, v);
+@@ -306,7 +306,7 @@ raw_atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_sub(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_sub(i, v);
+ #else
+ 	raw_atomic_sub(i, v);
+@@ -327,7 +327,7 @@ raw_atomic_long_sub(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_sub_return(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_sub_return(i, v);
+ #else
+ 	return raw_atomic_sub_return(i, v);
+@@ -348,7 +348,7 @@ raw_atomic_long_sub_return(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_sub_return_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_sub_return_acquire(i, v);
+ #else
+ 	return raw_atomic_sub_return_acquire(i, v);
+@@ -369,7 +369,7 @@ raw_atomic_long_sub_return_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_sub_return_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_sub_return_release(i, v);
+ #else
+ 	return raw_atomic_sub_return_release(i, v);
+@@ -390,7 +390,7 @@ raw_atomic_long_sub_return_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_sub_return_relaxed(i, v);
+ #else
+ 	return raw_atomic_sub_return_relaxed(i, v);
+@@ -411,7 +411,7 @@ raw_atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_sub(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_sub(i, v);
+ #else
+ 	return raw_atomic_fetch_sub(i, v);
+@@ -432,7 +432,7 @@ raw_atomic_long_fetch_sub(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_sub_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_sub_acquire(i, v);
+@@ -453,7 +453,7 @@ raw_atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_sub_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_sub_release(i, v);
+ #else
+ 	return raw_atomic_fetch_sub_release(i, v);
+@@ -474,7 +474,7 @@ raw_atomic_long_fetch_sub_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_sub_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_sub_relaxed(i, v);
+@@ -494,7 +494,7 @@ raw_atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_inc(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_inc(v);
+ #else
+ 	raw_atomic_inc(v);
+@@ -514,7 +514,7 @@ raw_atomic_long_inc(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_inc_return(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_return(v);
+ #else
+ 	return raw_atomic_inc_return(v);
+@@ -534,7 +534,7 @@ raw_atomic_long_inc_return(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_inc_return_acquire(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_return_acquire(v);
+ #else
+ 	return raw_atomic_inc_return_acquire(v);
+@@ -554,7 +554,7 @@ raw_atomic_long_inc_return_acquire(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_inc_return_release(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_return_release(v);
+ #else
+ 	return raw_atomic_inc_return_release(v);
+@@ -574,7 +574,7 @@ raw_atomic_long_inc_return_release(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_inc_return_relaxed(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_return_relaxed(v);
+ #else
+ 	return raw_atomic_inc_return_relaxed(v);
+@@ -594,7 +594,7 @@ raw_atomic_long_inc_return_relaxed(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_inc(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_inc(v);
+ #else
+ 	return raw_atomic_fetch_inc(v);
+@@ -614,7 +614,7 @@ raw_atomic_long_fetch_inc(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_inc_acquire(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_inc_acquire(v);
+ #else
+ 	return raw_atomic_fetch_inc_acquire(v);
+@@ -634,7 +634,7 @@ raw_atomic_long_fetch_inc_acquire(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_inc_release(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_inc_release(v);
+ #else
+ 	return raw_atomic_fetch_inc_release(v);
+@@ -654,7 +654,7 @@ raw_atomic_long_fetch_inc_release(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_inc_relaxed(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_inc_relaxed(v);
+ #else
+ 	return raw_atomic_fetch_inc_relaxed(v);
+@@ -674,7 +674,7 @@ raw_atomic_long_fetch_inc_relaxed(atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_dec(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_dec(v);
+ #else
+ 	raw_atomic_dec(v);
+@@ -694,7 +694,7 @@ raw_atomic_long_dec(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_dec_return(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_return(v);
+ #else
+ 	return raw_atomic_dec_return(v);
+@@ -714,7 +714,7 @@ raw_atomic_long_dec_return(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_dec_return_acquire(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_return_acquire(v);
+ #else
+ 	return raw_atomic_dec_return_acquire(v);
+@@ -734,7 +734,7 @@ raw_atomic_long_dec_return_acquire(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_dec_return_release(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_return_release(v);
+ #else
+ 	return raw_atomic_dec_return_release(v);
+@@ -754,7 +754,7 @@ raw_atomic_long_dec_return_release(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_dec_return_relaxed(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_return_relaxed(v);
+ #else
+ 	return raw_atomic_dec_return_relaxed(v);
+@@ -774,7 +774,7 @@ raw_atomic_long_dec_return_relaxed(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_dec(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_dec(v);
+ #else
+ 	return raw_atomic_fetch_dec(v);
+@@ -794,7 +794,7 @@ raw_atomic_long_fetch_dec(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_dec_acquire(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_dec_acquire(v);
+ #else
+ 	return raw_atomic_fetch_dec_acquire(v);
+@@ -814,7 +814,7 @@ raw_atomic_long_fetch_dec_acquire(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_dec_release(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_dec_release(v);
+ #else
+ 	return raw_atomic_fetch_dec_release(v);
+@@ -834,7 +834,7 @@ raw_atomic_long_fetch_dec_release(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_dec_relaxed(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_dec_relaxed(v);
+ #else
+ 	return raw_atomic_fetch_dec_relaxed(v);
+@@ -855,7 +855,7 @@ raw_atomic_long_fetch_dec_relaxed(atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_and(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_and(i, v);
+ #else
+ 	raw_atomic_and(i, v);
+@@ -876,7 +876,7 @@ raw_atomic_long_and(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_and(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_and(i, v);
+ #else
+ 	return raw_atomic_fetch_and(i, v);
+@@ -897,7 +897,7 @@ raw_atomic_long_fetch_and(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_and_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_and_acquire(i, v);
+@@ -918,7 +918,7 @@ raw_atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_and_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_and_release(i, v);
+ #else
+ 	return raw_atomic_fetch_and_release(i, v);
+@@ -939,7 +939,7 @@ raw_atomic_long_fetch_and_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_and_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_and_relaxed(i, v);
+@@ -960,7 +960,7 @@ raw_atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_andnot(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_andnot(i, v);
+ #else
+ 	raw_atomic_andnot(i, v);
+@@ -981,7 +981,7 @@ raw_atomic_long_andnot(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_andnot(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_andnot(i, v);
+ #else
+ 	return raw_atomic_fetch_andnot(i, v);
+@@ -1002,7 +1002,7 @@ raw_atomic_long_fetch_andnot(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_andnot_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_andnot_acquire(i, v);
+@@ -1023,7 +1023,7 @@ raw_atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_andnot_release(i, v);
+ #else
+ 	return raw_atomic_fetch_andnot_release(i, v);
+@@ -1044,7 +1044,7 @@ raw_atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_andnot_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_andnot_relaxed(i, v);
+@@ -1065,7 +1065,7 @@ raw_atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_or(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_or(i, v);
+ #else
+ 	raw_atomic_or(i, v);
+@@ -1086,7 +1086,7 @@ raw_atomic_long_or(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_or(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_or(i, v);
+ #else
+ 	return raw_atomic_fetch_or(i, v);
+@@ -1107,7 +1107,7 @@ raw_atomic_long_fetch_or(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_or_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_or_acquire(i, v);
+@@ -1128,7 +1128,7 @@ raw_atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_or_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_or_release(i, v);
+ #else
+ 	return raw_atomic_fetch_or_release(i, v);
+@@ -1149,7 +1149,7 @@ raw_atomic_long_fetch_or_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_or_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_or_relaxed(i, v);
+@@ -1170,7 +1170,7 @@ raw_atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
+ static __always_inline void
+ raw_atomic_long_xor(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	raw_atomic64_xor(i, v);
+ #else
+ 	raw_atomic_xor(i, v);
+@@ -1191,7 +1191,7 @@ raw_atomic_long_xor(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_xor(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_xor(i, v);
+ #else
+ 	return raw_atomic_fetch_xor(i, v);
+@@ -1212,7 +1212,7 @@ raw_atomic_long_fetch_xor(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_xor_acquire(i, v);
+ #else
+ 	return raw_atomic_fetch_xor_acquire(i, v);
+@@ -1233,7 +1233,7 @@ raw_atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_xor_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_xor_release(i, v);
+ #else
+ 	return raw_atomic_fetch_xor_release(i, v);
+@@ -1254,7 +1254,7 @@ raw_atomic_long_fetch_xor_release(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_xor_relaxed(i, v);
+ #else
+ 	return raw_atomic_fetch_xor_relaxed(i, v);
+@@ -1275,7 +1275,7 @@ raw_atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_xchg(atomic_long_t *v, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_xchg(v, new);
+ #else
+ 	return raw_atomic_xchg(v, new);
+@@ -1296,7 +1296,7 @@ raw_atomic_long_xchg(atomic_long_t *v, long new)
+ static __always_inline long
+ raw_atomic_long_xchg_acquire(atomic_long_t *v, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_xchg_acquire(v, new);
+ #else
+ 	return raw_atomic_xchg_acquire(v, new);
+@@ -1317,7 +1317,7 @@ raw_atomic_long_xchg_acquire(atomic_long_t *v, long new)
+ static __always_inline long
+ raw_atomic_long_xchg_release(atomic_long_t *v, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_xchg_release(v, new);
+ #else
+ 	return raw_atomic_xchg_release(v, new);
+@@ -1338,7 +1338,7 @@ raw_atomic_long_xchg_release(atomic_long_t *v, long new)
+ static __always_inline long
+ raw_atomic_long_xchg_relaxed(atomic_long_t *v, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_xchg_relaxed(v, new);
+ #else
+ 	return raw_atomic_xchg_relaxed(v, new);
+@@ -1361,7 +1361,7 @@ raw_atomic_long_xchg_relaxed(atomic_long_t *v, long new)
+ static __always_inline long
+ raw_atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_cmpxchg(v, old, new);
+ #else
+ 	return raw_atomic_cmpxchg(v, old, new);
+@@ -1384,7 +1384,7 @@ raw_atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
+ static __always_inline long
+ raw_atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_cmpxchg_acquire(v, old, new);
+ #else
+ 	return raw_atomic_cmpxchg_acquire(v, old, new);
+@@ -1407,7 +1407,7 @@ raw_atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
+ static __always_inline long
+ raw_atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_cmpxchg_release(v, old, new);
+ #else
+ 	return raw_atomic_cmpxchg_release(v, old, new);
+@@ -1430,7 +1430,7 @@ raw_atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
+ static __always_inline long
+ raw_atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_cmpxchg_relaxed(v, old, new);
+ #else
+ 	return raw_atomic_cmpxchg_relaxed(v, old, new);
+@@ -1454,7 +1454,7 @@ raw_atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
+ static __always_inline bool
+ raw_atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_try_cmpxchg(v, (s64 *)old, new);
+ #else
+ 	return raw_atomic_try_cmpxchg(v, (int *)old, new);
+@@ -1478,7 +1478,7 @@ raw_atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
+ static __always_inline bool
+ raw_atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_try_cmpxchg_acquire(v, (s64 *)old, new);
+ #else
+ 	return raw_atomic_try_cmpxchg_acquire(v, (int *)old, new);
+@@ -1502,7 +1502,7 @@ raw_atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
+ static __always_inline bool
+ raw_atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_try_cmpxchg_release(v, (s64 *)old, new);
+ #else
+ 	return raw_atomic_try_cmpxchg_release(v, (int *)old, new);
+@@ -1526,7 +1526,7 @@ raw_atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
+ static __always_inline bool
+ raw_atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_try_cmpxchg_relaxed(v, (s64 *)old, new);
+ #else
+ 	return raw_atomic_try_cmpxchg_relaxed(v, (int *)old, new);
+@@ -1547,7 +1547,7 @@ raw_atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+ static __always_inline bool
+ raw_atomic_long_sub_and_test(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_sub_and_test(i, v);
+ #else
+ 	return raw_atomic_sub_and_test(i, v);
+@@ -1567,7 +1567,7 @@ raw_atomic_long_sub_and_test(long i, atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_dec_and_test(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_and_test(v);
+ #else
+ 	return raw_atomic_dec_and_test(v);
+@@ -1587,7 +1587,7 @@ raw_atomic_long_dec_and_test(atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_inc_and_test(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_and_test(v);
+ #else
+ 	return raw_atomic_inc_and_test(v);
+@@ -1608,7 +1608,7 @@ raw_atomic_long_inc_and_test(atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_add_negative(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_negative(i, v);
+ #else
+ 	return raw_atomic_add_negative(i, v);
+@@ -1629,7 +1629,7 @@ raw_atomic_long_add_negative(long i, atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_add_negative_acquire(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_negative_acquire(i, v);
+ #else
+ 	return raw_atomic_add_negative_acquire(i, v);
+@@ -1650,7 +1650,7 @@ raw_atomic_long_add_negative_acquire(long i, atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_add_negative_release(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_negative_release(i, v);
+ #else
+ 	return raw_atomic_add_negative_release(i, v);
+@@ -1671,7 +1671,7 @@ raw_atomic_long_add_negative_release(long i, atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_add_negative_relaxed(long i, atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_negative_relaxed(i, v);
+ #else
+ 	return raw_atomic_add_negative_relaxed(i, v);
+@@ -1694,7 +1694,7 @@ raw_atomic_long_add_negative_relaxed(long i, atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_fetch_add_unless(v, a, u);
+ #else
+ 	return raw_atomic_fetch_add_unless(v, a, u);
+@@ -1717,7 +1717,7 @@ raw_atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
+ static __always_inline bool
+ raw_atomic_long_add_unless(atomic_long_t *v, long a, long u)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_add_unless(v, a, u);
+ #else
+ 	return raw_atomic_add_unless(v, a, u);
+@@ -1738,7 +1738,7 @@ raw_atomic_long_add_unless(atomic_long_t *v, long a, long u)
+ static __always_inline bool
+ raw_atomic_long_inc_not_zero(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_not_zero(v);
+ #else
+ 	return raw_atomic_inc_not_zero(v);
+@@ -1759,7 +1759,7 @@ raw_atomic_long_inc_not_zero(atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_inc_unless_negative(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_inc_unless_negative(v);
+ #else
+ 	return raw_atomic_inc_unless_negative(v);
+@@ -1780,7 +1780,7 @@ raw_atomic_long_inc_unless_negative(atomic_long_t *v)
+ static __always_inline bool
+ raw_atomic_long_dec_unless_positive(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_unless_positive(v);
+ #else
+ 	return raw_atomic_dec_unless_positive(v);
+@@ -1801,7 +1801,7 @@ raw_atomic_long_dec_unless_positive(atomic_long_t *v)
+ static __always_inline long
+ raw_atomic_long_dec_if_positive(atomic_long_t *v)
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	return raw_atomic64_dec_if_positive(v);
+ #else
+ 	return raw_atomic_dec_if_positive(v);
+@@ -1809,4 +1809,4 @@ raw_atomic_long_dec_if_positive(atomic_long_t *v)
+ }
+ 
+ #endif /* _LINUX_ATOMIC_LONG_H */
+-// eadf183c3600b8b92b91839dd3be6bcc560c752d
++// 1b27315f1248fc8d43401372db7dd5895889c5be
+diff --git a/scripts/atomic/gen-atomic-long.sh b/scripts/atomic/gen-atomic-long.sh
+index 9826be3ba986..7667305381fc 100755
+--- a/scripts/atomic/gen-atomic-long.sh
++++ b/scripts/atomic/gen-atomic-long.sh
+@@ -55,7 +55,7 @@ cat <<EOF
+ static __always_inline ${ret}
+ raw_atomic_long_${atomicname}(${params})
+ {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	${retstmt}raw_atomic64_${atomicname}(${argscast_64});
+ #else
+ 	${retstmt}raw_atomic_${atomicname}(${argscast_32});
+@@ -77,7 +77,7 @@ cat << EOF
+ #include <linux/compiler.h>
+ #include <asm/types.h>
+ 
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ typedef atomic64_t atomic_long_t;
+ #define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
+ #define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
+-- 
+2.40.1
 
 
