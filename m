@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-575200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFB7A6F29C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:27:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E2DA6F327
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F0916B9C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1F33B1DC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1C8254B09;
-	Tue, 25 Mar 2025 11:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D09255252;
+	Tue, 25 Mar 2025 11:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f0UULc8Q"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WCsG5u1j"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277512F3B;
-	Tue, 25 Mar 2025 11:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659632E337C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902033; cv=none; b=ZRY9g9MxUwoPmQdMmv/Esp5y0vBhp3ZGd7xarUcoXUKcIROEHlGkqbAuoNFv3DNDFb762F1epXnLDsD6BPs6QQ2NIylxhgWk0IFTnaGSXB30/HCmxW0ca2QmC32b7TV8LRgXXz06tVGp472aXW2FOh22lowjZUzveDvdtNEkg0g=
+	t=1742902118; cv=none; b=GwkpTXKGCvBO8N3L7g7gkrxwzScsGQMpy0wY8OOMzfw71MloQ9eX2yEAzHFzX2EWD1k/9P5s3UCTGe3XL3fIGiBPApAqw8mq3gx8mJU0Oz5AyH08Vp/awlKL1Xkp/1UtTLeY3MH1LMoVZA3wRk2zJNU3UkkGAj1ILZloM+9LopY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902033; c=relaxed/simple;
-	bh=LHRJNm4y9hcDnYFIsgbkIebsO0SzBKkTA6w6Z7ABlwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WYoJcH5Jx0Y+vWzpBlXYpfMMBe+6jiM1A+rR/93XiV1aBMC+Esgf5z4gp8/NewN4RpcyJcsiuVfZkb4DXkJEa+/HRFyKaVHqSlvBXxc3+bgIvu6/C+OMjCTuaF1oKfaHo9yoUGdXr/RgstXKQKX0l0Zv48FBKeR90QYpatZr79g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f0UULc8Q; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8315643152;
-	Tue, 25 Mar 2025 11:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742902029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lfrh2U3s5gJkhXevgALQGNGwSRMvmBuZkh+1nqK6iiw=;
-	b=f0UULc8QP2HFxL2IDc1MxICDn1HxX6bk+rIOjyQkUMX8Jftk/Cg8VIU6gyn7iz3houuF69
-	ZYqGoajDkXeshwoA46cMlw/AQD6DC4aHfs97vZSZiPKi2RlxnoTSbUDHscqs6D0dn9tqiq
-	VOsMsdojlkK0P8vxpZtWHWe2Z6oFn6ZBPbDm9VfVvW+tj5k1I7azoSt7pShbjVrolDC9q9
-	zZyDj5V3bNNHVh4UFW3gPDsLSBn5V8BFJ7Hm556Oh2Bw6j3pl94NH8hZZH+PejapK/mKIg
-	2R0hccHCWaeP2BeJ3Fg7sWueDGZoao27rAjws7KaRrYLt3TZuZrKE+pYWACsoQ==
-Date: Tue, 25 Mar 2025 12:27:06 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
- Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
- Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net-next v4 2/8] net: ethtool: netlink: Allow
- per-netdevice DUMP operations
-Message-ID: <20250325122706.5287774d@kmaincent-XPS-13-7390>
-In-Reply-To: <20250324104012.367366-3-maxime.chevallier@bootlin.com>
-References: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
-	<20250324104012.367366-3-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742902118; c=relaxed/simple;
+	bh=UO8dfzamLTX2JBW7RLYiyPDW7DzGn85Kh3aNNI3GHiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X8/qAEVHXxgTDd5aB4t5QhmAM0cpdXwPx2h7qEvdSTN/v1ajzcb7Pu8O3kG4alRWsu0b2PgFF50pD9bhS0zB0vgCuEfhu698SaC6gR6cBBqECRSHPnZQLNCndmuWJr2kIDZuiiZYc1uK0ygnoLrZVCAI+kwGEP5Shmd2VG/CRuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WCsG5u1j; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf861f936so7587115e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:28:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742902115; x=1743506915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWNNlWrDDTHRDetmUwitBfFYLgudVtk8IZ3jqGfYZ54=;
+        b=WCsG5u1jdNfCcxz+I8haCKDnu0JUffPbWy7gZ1hVWnNNU75ofgfT35f5TfSrSdrwCx
+         PGAcxzjQYnMbdo0QTcd4fygLjpadFH9qFFG/yoaL5VBjaL5Kh8FukrwQVHNVdvxYMYsB
+         hlE2zPtpprVekIpEZKgbIrmQt4AHvXV09si97/sOai3s9Piy1/EM7m42WO1RYg8lPk0Z
+         idXY9Gl/+PQgzMx6aHX6i+Qthw+qGBmionG7om/6LsRBuO6h+gsfUDxY42lHovP2NdT3
+         4ozN09jEJe1X8O2ZZTUYawMpfHjIHPTWd80fwSO+IlLpAn8MFj8mbuHIQsbcuNX4HUjy
+         Z9Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742902115; x=1743506915;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cWNNlWrDDTHRDetmUwitBfFYLgudVtk8IZ3jqGfYZ54=;
+        b=H42FTuL5uMWQQuAhjdUgRvXCaEjJsFqQde7RX7JAgoYyjDTcobFWNsUiURZiiulrAD
+         mUBsxkUDuyigOhFfjPwkv4UyWH0WKLyd2e5ga8peaYHYDfbd0SOiEyoneu4FW0jOfb+4
+         YKNylonBIucxEG7p5bB+ZsYcxorPpl+UJ4ANmVDfrZcnRDKuYWxkJn//o0DqBpbZL9xy
+         tvQ1NS+Ai714qP3qzpK95ne1fxlKAtbP1gPVaq14ycp1YLE94vqKLz0wSqQGiKU6qVHj
+         NNpSr7xd81lKotGpFHUhuxAPxZOI2aLw7xy5M7Zak3v4pI1mtqRGFc7MID1cwnBPrjQt
+         dvVg==
+X-Forwarded-Encrypted: i=1; AJvYcCViGbt28MDY8p5lnVOPkwbn0n+ISwtJ2qBM9waRFi2VmztSq2KhEw2GHaj0BkoCYUGVJXJuv5fVTy9hd3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNFTERBLXSrr2BsKs53HeZrRIelYJFTuJxaGt/T8S8dNIX2YxG
+	k0L1cDw8wJQL+8AG+fZZWxcZF7cY8sCjYaxJAQ+GLrxvj3djo5YjAahMhWAdzXk=
+X-Gm-Gg: ASbGncvIQXoYtrUfPEjSZIikSwshUNOUodHEkmONOK3X00ZoVfNKJSHvdqd5a8O4wwW
+	Miew+ZUWTMH/uX9BEE1gFoOGx/jEE833mHeifXJ3pELMYPyLErLxcs3fMotht9CW/hlRKXaD4fy
+	+nyGrCMX0xfS2+V5S9MOHJKAzD+R6glL2GgZk7IV4WHcqGCYydKTHss3PmrKQeIY0IY1hEcAYnu
+	iV4MoM4c5ulWqj8RaWKEYc8LyHwWYMAht20t28mxAxhr6I1C1yJTv2fIqDqUneZx1vCiIj8LmrN
+	i8NuO3gjxyEz8VHYLdYP7LNsuQ/AZxC/O7Q5Vbq9li/pLA7A5g5jk2KpeHQLQaFD1vOYabGhYQ=
+	=
+X-Google-Smtp-Source: AGHT+IFHzP4Sr7LQGlH83Rzwb5FEq9rXadH6+A7sEk6BhIwA8PuYSxvqLr8adBKSw70sesFvFbJhyQ==
+X-Received: by 2002:a05:600c:46c3:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-43d50a53d12mr59059975e9.8.1742902114704;
+        Tue, 25 Mar 2025 04:28:34 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd181b6sm146773755e9.9.2025.03.25.04.28.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 04:28:34 -0700 (PDT)
+Message-ID: <5946b0aa-ffdd-4269-b8f4-d1db1aa88493@linaro.org>
+Date: Tue, 25 Mar 2025 12:28:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: mfd: Correct indentation and style in
+ DTS example
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Colin Foster <colin.foster@in-advantage.com>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Marek Vasut <marek.vasut+renesas@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jeff LaBundy <jeff@labundy.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20250324125239.82098-1-krzysztof.kozlowski@linaro.org>
+ <20250324125239.82098-2-krzysztof.kozlowski@linaro.org>
+ <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
- egvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-On Mon, 24 Mar 2025 11:40:04 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On 24/03/2025 14:31, Geert Uytterhoeven wrote:
+>> -    pwmleds {
+>> -            compatible = "pwm-leds";
+>> -
+>> -            led-1 {
+>> -                    pwms = <&iqs620a_pwm 0 1000000>;
+>> -                    max-brightness = <255>;
+>> +            iqs620a_pwm: pwm {
+>> +                compatible = "azoteq,iqs620a-pwm";
+>> +                #pwm-cells = <2>;
+>>              };
+>> +        };
+>>      };
+>>
+>>    - |
+> 
+> The removal of the pwmleds node belongs in patch [1/2].
+> The rest LGTM.
 
-> We have a number of netlink commands in the ethnl family that may have
-> multiple objects to dump even for a single net_device, including :
->=20
->  - PLCA, PSE-PD, phy: one message per PHY device
->  - tsinfo: one message per timestamp source (netdev + phys)
->  - rss: One per RSS context
->=20
-> To get this behaviour, these netlink commands need to roll a custom
-> ->dumpit(). =20
->=20
-> To prepare making per-netdev DUMP more generic in ethnl, introduce a
-> member in the ethnl ops to indicate if a given command may allow
-> pernetdev DUMPs (also referred to as filtered DUMPs).
+True, I lost it in the context. Thanks.
 
-...
-
-> +
->  /* generic ->start() handler for GET requests */
->  static int ethnl_default_start(struct netlink_callback *cb)
->  {
-> @@ -636,10 +659,10 @@ static int ethnl_default_start(struct netlink_callb=
-ack
-> *cb) }
-> =20
->  	ret =3D ethnl_default_parse(req_info, &info->info, ops, false);
-> -	if (req_info->dev) {
-> -		/* We ignore device specification in dump requests but as the
-> -		 * same parser as for non-dump (doit) requests is used, it
-> -		 * would take reference to the device if it finds one
-> +	if (req_info->dev && !ops->allow_pernetdev_dump) {
-> +		/* We ignore device specification in unfiltered dump requests
-> +		 * but as the same parser as for non-dump (doit) requests is
-> +		 * used, it would take reference to the device if it finds
-
-This means the dump will have a different behavior in case of filtered dump
-(allow_pernetdev_dump) or standard dump.
-The standard dump will drop the interface device so it will dump all interf=
-aces
-even if one is specified.
-The filtered dump will dump only the specified interface.=20
-Maybe it would be nice to have the same behavior for the dump for all the
-ethtool command.
-Even if this change modify the behavior of the dump for all the ethtool com=
-mands
-it won't be an issue as the filtered dump did not exist before, so I suppos=
-e it
-won't break anything. IMHO it is safer to do it now than later, if existing
-ethtool command adds support for filtered dump.
-We should find another way to know the parser is called from dump or doit.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Best regards,
+Krzysztof
 
