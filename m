@@ -1,191 +1,132 @@
-Return-Path: <linux-kernel+bounces-575156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F72A6EE5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFE6A6EE5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7420A189A13C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D681189127A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6860255230;
-	Tue, 25 Mar 2025 11:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A2255238;
+	Tue, 25 Mar 2025 11:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A10xKCKd"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0WikFTV"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE9C1C84A6;
-	Tue, 25 Mar 2025 11:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0983A1DBB13;
+	Tue, 25 Mar 2025 11:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900474; cv=none; b=Py1l7McjmjwbmblJ6FBuEc/MX2qk5dLyEOTMPWrPiSnwGQNp1NaGGP/lHWcJWTYO0umjK3eFy9mTWEezcaxKOJyH5jzGvemJJm09iUKcJVFRnandslQV1Fy6RBdUpl7SkbSsK4ocRlrv0KZ5zzKNi550BThZHYLHo910tUsvd2w=
+	t=1742900526; cv=none; b=q8wuXiveKCfD5/eM5+6KPcjd1PD+f9KxwDuQbGVZVMS6VELPue2wtdg7GZ8hgolWRkBcQJAmQkw1DQ0awLyH7OG4XRUzR/uKO5F7fDDtd7sZemeGntkTQk8+NUnkG4FgKXILPbucNrk2dAeU/6SS6lIKt+7iMTZLeRHk/BS5Njk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900474; c=relaxed/simple;
-	bh=JuaCPk3ExOlK9zmbI7EVpJxzROVhN5sSw+lzcIaED0g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pnjD/j8Ma3zxExRfgrb5QHS6HNcrxOu6TkPM5vtzZcch3h9G9el8xEiL2EYGuVxYsMVIue1aOmfCJuU0ne6Bmuuk/6vyU9CCNJbvM4s4jR68xEJVvzEoik2yCWXqdv1O1KxsYnrWz1bjdusY5yfQhN0ecNIKKf3CaDZkI5N22SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A10xKCKd; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1742900526; c=relaxed/simple;
+	bh=d9cJHqgdTihL3x/ENZcpztbun5BBaD+cuvBq0dxZnOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tpSbVwRaUmDI2mUk4G+LCe3rJHEhI7s+HN6bnCo2PoAiobLbUS7x8wJaMMhVeOgTbrs29N0937G5ltMPe6HsMkAUAOOIe7hBnYA5qBbwU6GZ7C00lUxL+a7h+BWEEVNUEUDst47YjQLrxVhBRaDeoe49hTT982odO9yV710pXZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0WikFTV; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2255003f4c6so102950855ad.0;
-        Tue, 25 Mar 2025 04:01:12 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso3957226a12.0;
+        Tue, 25 Mar 2025 04:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742900472; x=1743505272; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742900523; x=1743505323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AFQjpijP51sT2xR77PHLhJDe/bbbSDnZKMZrsva8hbs=;
-        b=A10xKCKdjessy1wXQjLc64esrVidFJjGozCZ3CQhcf4feOCY67u+6SET6G7sI/zVY+
-         UOWV3EhP1PYi+TNdj+K++aNr5ZvVGtBGKEhT7Ko7cniqW3ZDUFxQr04ClS09FptpGxEF
-         G85vmszaK1IuSW22neeaqc54jX+1VygroNntfwqYhL5fNANg/9VSmVg/GypRrhGYl3HY
-         cngd8gO+H7cFxSsmzwDcw7g/nCWVVlR6vVdu8xXsmaa1of87BN5A85mKPhG2KkUctTg1
-         9lDxoSgGDy+96atsRlA0lBJVcajMrsNgO/QwCsGuoAECeKgl6PLNIhY6vNkd3p6UelSv
-         zAeQ==
+        bh=d9cJHqgdTihL3x/ENZcpztbun5BBaD+cuvBq0dxZnOU=;
+        b=T0WikFTVOkpAml5aiE+M4i88TH8N2jSCRAKakiRvjCYztWsDUcm389FmqUx8JNsIue
+         LjcDyPW2Jvq8drkTnis3DMdH8cOp9OdI2siCah9TZfO3VzSXKrhp2F3x7bcUXCzl2C9m
+         B8QylHfur4Qw/fTaNAWzuZSgMiSLW/k7mshoyQyE+TTYYqnD+CBshWsSgs2EJjr4Zq20
+         TPA1va71TKqSOKNA9uYhIr/KDwrL1aeeR+e8Bnh1SS7rFVGrnZt+88PIQ4tvZ8zlicSL
+         I/OD9oLNAMNleGdatvJpzTWdcjVxFrC7AiImg5eSQoGNViJ7mnNI45S+mq/535QDzhP/
+         dBmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742900472; x=1743505272;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742900523; x=1743505323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AFQjpijP51sT2xR77PHLhJDe/bbbSDnZKMZrsva8hbs=;
-        b=fdrkgqPhsTpuid0D8n/FfOql+MuLZou9J6qqDNn7XeS5PvRtCzFVBgFkQe2mTqFPF1
-         /8TgR/EL61tixvIcnj60F1x+T52t1Z5Dq89ujj0CeS81P5Tp5GFRiZpHfT5CfWrLIMPI
-         8ilYWajmafhZ9ApFVUC7nQMKjW5KFLx1s3a6xW8SyIFXP6/3uwfAo9kIeZV62D2UFwtj
-         Gyjg9m67FFr/b17I6lD9M3Xx3t2mM3eB/H424INuBzSVlvWTda+Rba8YJhrKxjJMyLNQ
-         44uHryhhfDLlHSuvy5wLeDT/zn26az4M4ftuDDgfSEccrqUy57QUNKkNjFz9v92dxPqF
-         v/6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVz+7OFFREpast537KCFDjHJmGV6pS0M9a4EH0Wv3O5Ll+qqoxIpU4/guZdhW+qPVusg4BZ3ZtlW/xTLcw=@vger.kernel.org, AJvYcCWMBF7nHZItDDzd4qkdnQdClKb0zDeQC6WfGrxSXcJBGlt+biZEuyqp4aYMY2Etp85ZsWeYud4h8eMnmZb3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHdGjILCeeReKvafBEoAIt9MoPCks9iqTxvEGpstec3ziL54eV
-	5g1Q6xexfTMgjv4z+2n3qQgy2oN6ER90/qbI4gNPvAoB6A/wf9BC
-X-Gm-Gg: ASbGncvLAiolICybwvVMNontMpdAEMsvgxMZUpTjbaefn0Dr+PFfMr8aehM9xD/qw3g
-	sZA68pxDlde79TjtDRn2lm6QIiKMOJz1k2pgWPvl8hCeef+hgLfB72rxioKwhZFFgqzsLnR6V+z
-	L+95Yrma9Av6iJ3eWllNCkqQxoRkydn/6TWcT8K15YcnUvBLPeR7WYzD7AWDWaZufaaeUJ7/9cx
-	SETmbzMNEjC9xzPwpnCEcsPvHTJ7GBe3G1iyu1Eb9znxRiqxLQWKvIZEZOeBFhy0V8KoJBoizGw
-	1dlVyUQGikWFS5ZQVJRClUYD1wx35hgqJbkiauZuvE9/6Mzb0HlKPZc0HAj8IucVtEXabqNEsf3
-	BFpkgc+MzpnChUBFxt7ssVaH2gQ==
-X-Google-Smtp-Source: AGHT+IE/9aU5DXDSbNLr6CpVc3OhmADZ8TZGgoBnPhuMD9l4jDbW2fGVkGfWJrE5J2PwPPFItN+9FQ==
-X-Received: by 2002:a05:6a20:2585:b0:1f5:7eb5:72c7 with SMTP id adf61e73a8af0-1fe4300f7d1mr26494791637.29.1742900471815;
-        Tue, 25 Mar 2025 04:01:11 -0700 (PDT)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp. [210.128.90.14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a27d9a13sm8842971a12.6.2025.03.25.04.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 04:01:11 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: john.ogness@linutronix.de
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pmladek@suse.com,
-	ryotkkr98@gmail.com,
-	samuel.holland@sifive.com
-Subject: Re: [PATCH] serial: sifive: Switch to nbcon console
-Date: Tue, 25 Mar 2025 20:01:07 +0900
-Message-Id: <20250325110107.28570-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <84sen2fo4b.fsf@jogness.linutronix.de>
-References: <84sen2fo4b.fsf@jogness.linutronix.de>
+        bh=d9cJHqgdTihL3x/ENZcpztbun5BBaD+cuvBq0dxZnOU=;
+        b=Ks9GmP6xzN/87D8hCMrdTKdQz4bxmEKtCBx3FLm8bveBhzC3k2JbN/V/kCyPbS9srY
+         yC3R5214Bc40kDVD7bpyKQ2Y0tj8fqY6fJ4PUZglpmmZps8BuLbAFo6U8yynlWr6MCe2
+         lSOQ4UUZRZDIUwLvFN7svuFnldYgQKxNRLAarXk1+kLSMT2y3nzbr2ojiuXHAWYKZqfV
+         EEyQ6SY3ohljxKXmurKqKs5n+e9f1Jb7v1MeYXi/FM/wBXMV/qLLaJSuvZSnZGKYqq5D
+         mjPf9H87hUTwTFfMW9CFXcGR7NqrqonrC8n5kDMflLKF4P4tetQsM4UmKPfDF2GAQjki
+         pb/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUFMXtpfVYvDNUzCD0SW8UEArcbwYbK6pwC/KvShsqYbfqejpr/R2bTH1wETM6H9qrwnfUD28ZeHI2Y1goi@vger.kernel.org, AJvYcCWqkC25dIUDypyAcCX+C+FEMdle7xC9EtPavmgDfgiDMrH6bPbFJmAHGMJnUByLctWz9K92tcGvtAyiVcFg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyluq0q/SscEr/k3iuXBHN3xsVqOVDQALWsYyqevK5tWFumvoGH
+	ffvND+MaEg/tzwgKwBKaXAUmuiUFmRR6TF5CsJEkWELOkbPcJ6FEWjudiYdzZLcKWpmfi2WgXbN
+	Sfku0FQsARWmAZtznA8FXAN1KDuA=
+X-Gm-Gg: ASbGncvhvJ533F59gvMxQCfpUPLOn4Edbe714zGQblhW27jbYN07rMIkUaRxQgT4iOH
+	+5kGHZ/6ZM58uNYZ9U5nyHZ3CDRrzorGQ6p8OeuvtZJgCh8cqAmOX2bVgKB26TLKLKqnQ+K2zzp
+	GqrXIWi2f5LqAt2afEx6kgAKGldA==
+X-Google-Smtp-Source: AGHT+IFf9rx3WECjEtLq0ZqViTHfUFRFGehddqyhnNTT7jlnRQnvfLKXkrgWtM1qJqSBXUtHqRaIXigkjTorXFYAqao=
+X-Received: by 2002:a17:907:7fa8:b0:ac3:25ea:822 with SMTP id
+ a640c23a62f3a-ac3cdb2ab93mr1976495266b.4.1742900522951; Tue, 25 Mar 2025
+ 04:02:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+ <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+ <20250325100936.GC29185@redhat.com>
+In-Reply-To: <20250325100936.GC29185@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 25 Mar 2025 12:01:48 +0100
+X-Gm-Features: AQ5f1JpTONFO0gbZ_zxBvlJ_8LU60QgkNDlC1LnIvICNvskd11D8aTb39EJsvyQ
+Message-ID: <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
-
-On Mon, 24 Mar 2025 16:30:20 +0106, John Ogness wrote:
->On 2025-03-23, Ryo Takakura <ryotkkr98@gmail.com> wrote:
->> Add the necessary callbacks(write_atomic, write_thread, device_lock
->> and device_unlock) and CON_NBCON flag to switch the sifive console
->> driver to perform as nbcon console.
->>
->> Both ->write_atomic() and ->write_thread() will check for console
->> ownership whenever they are accessing registers.
->>
->> The ->device_lock()/unlock() will provide the additional serilization
->> necessary for ->write_thread() which is called from dedicated printing
->> thread.
->>
->> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wr=
+ote:
 >
->This driver has the same issue that the 8250 previously had. The
->->startup() and ->shutdown() callbacks are called without the port
->lock. However, the sifive driver is accessing SIFIVE_SERIAL_IE_OFFS in
->these callbacks and this register is also accessed by the ->write()
->callback. This needs to be synchronized.
-
-I see. Thanks for pointing out.
-(I didn't know about console_on_rootfs() and what it does. Interesting!)
-
->The related 8250 patches fixing this are startup [0] and shutdown [1]. I
->am assuming the following change would be sufficient:
+> On 03/24, Mateusz Guzik wrote:
+> >
+> > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@redhat.com>=
+ wrote:
+> > >
+> > > So to me it would be better to have the trivial fix for stable,
+> > > exactly because it is trivially backportable. Then cleanup/simplify
+> > > this logic on top of it.
+> >
+> > So I got myself a crap testcase with a CLONE_FS'ed task which can
+> > execve and sanity-checked that suid is indeed not honored as expected.
 >
->diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
->index d032de6199af..1de1b2a5833d 100644
->--- a/drivers/tty/serial/sifive.c
->+++ b/drivers/tty/serial/sifive.c
->@@ -564,8 +564,11 @@ static void sifive_serial_break_ctl(struct uart_port *port, int break_state)
-> static int sifive_serial_startup(struct uart_port *port)
-> {
->       struct sifive_serial_port *ssp = port_to_sifive_serial_port(port);
->+      unsigned long flags;
->
->+      uart_port_lock_irqsave(&ssp->port, &flags);
->       __ssp_enable_rxwm(ssp);
->+      uart_port_unlock_irqrestore(&ssp->port, flags);
->
->       return 0;
-> }
->@@ -573,9 +576,12 @@ static int sifive_serial_startup(struct uart_port *port)
-> static void sifive_serial_shutdown(struct uart_port *port)
-> {
->       struct sifive_serial_port *ssp = port_to_sifive_serial_port(port);
->+      unsigned long flags;
->
->+      uart_port_lock_irqsave(&ssp->port, &flags);
->       __ssp_disable_rxwm(ssp);
->       __ssp_disable_txwm(ssp);
->+      uart_port_unlock_irqrestore(&ssp->port, flags);
-> }
->
-> /**
->
->The fix should be applied first (and likely Cc stable) since it is
->fixing an existing mainline problem.
+> So you mean my patch can't fix the problem?
 
-Ok, I will add a patch in the next version and cc stable.
+No, I think the patch works.
 
->Your patch also needs the synchronization. The ->write_atomic() callback
->does not use the port lock. However, the uart_port_*() functions also
->take the nbcon console ownership, so they synchronize against
->->write_atomic() callbacks.
+I am saying the current scheme is avoidably hard to reason about.
 
-I see, nice!
-
->Otherwise, this patch looks good. If the ->startup() and ->shutdown()
->callbacks are fixed in a previous patch, feel free to add:
 >
->Reviewed-by: John Ogness <john.ogness@linutronix.de>
+> > Anyhow, the plan would be to serialize on the bit, synchronized with
+> > the current spin lock. copy_fs would call a helper to wait for it to
+> > clear, would still bump ->users under the spin lock.
+> >
+> > This would decouple the handling from cred_mutex and avoid weirdness
+> > like clearing the ->in_exec flag when we never set it.
 >
->to this patch.
-
-I'll add in the next verison.
-Thanks for reviewing!
-
-Sincerely,
-Ryo Takakura
-
->John Ogness
+> I don't really understand the idea, but as I said I won't argue with
+> another solution.
 >
->[0] https://lore.kernel.org/lkml/20230525093159.223817-2-john.ogness@linutronix.de
->[1] https://lore.kernel.org/lkml/20230525093159.223817-9-john.ogness@linutronix.de
+
+I'll try to ship later today so that there will be something concrete
+to comment on.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
