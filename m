@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-574832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16150A6EA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:32:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A6AA6EA8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0317C1702A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FE93B7C63
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC06A253F36;
-	Tue, 25 Mar 2025 07:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F8C253B60;
+	Tue, 25 Mar 2025 07:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdDdm/mo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD3aPTjI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7DF204587;
-	Tue, 25 Mar 2025 07:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57781199EB7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887860; cv=none; b=tRc0zt6z8CR+F17bvYJQ14ie+FfMYPxn2tCP47+yDfAw9brp6qPAcB6fMseJbveNcJZLAg7voZ68XwFfHd7K9ITc6Zco6XNTb7hU2EG4MQ6As0DMbfeC+LTZcA+JDTKESivJyUDqR6cLQWxuQ9L+rQuH5Oj1o+Pta/PUJUHtT2M=
+	t=1742887909; cv=none; b=qCMXfne/+yz1BxswuquPYluooHMz6UiNkJnXdrXRZyw+niINM2YORNqrTqVdj/690UmopfKKQa31dg3KR2ail86ICEzCe6G61uhATYtGAyIWnR6/cjQ0sNpLhSogGz2Lc7isM6W9L47BL4rGXtdwcGx68rkhChalRL8yNrYcAGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887860; c=relaxed/simple;
-	bh=Vvng3ysxtW7IwqS51XyxzvL6Hikv4VbimRutNp3343Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2z1T2q5jWfTXkfPctXENnSCky5pOknL2RU9sueFf+0IP4GP5fZRxuhrGI1+QgHlTml27tJcl/UyA3DJVjMU92zDXcl0PJPSELqjowlLrpuVq3SQ7pqSUs2nFgpCtaJa9p25KutjGGeOv9wm4ZxeYb/Cd2kB3PwMbgHE8QkQ/dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdDdm/mo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED8AC4CEE8;
-	Tue, 25 Mar 2025 07:30:55 +0000 (UTC)
+	s=arc-20240116; t=1742887909; c=relaxed/simple;
+	bh=IQxe5ZB2omP4K06R4i46loG52z4yhoz/4TI5QBwYyNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDelk7ikQwSruiwcZlE3Md49+3ryL3KJ0pPso5CqvAEyVcQ/RjIp7xExVkLoU6vKU6B+zKqlHZVZPNj16IsmBd+ql/uQeGTbDcnhB5oEJrdgbxDjsyHlZ2o/MctlzYawHf06ZzKB0CTeZey8vi0OF52VJT975Wixe7w9tukPf8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD3aPTjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A525C4CEED;
+	Tue, 25 Mar 2025 07:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742887859;
-	bh=Vvng3ysxtW7IwqS51XyxzvL6Hikv4VbimRutNp3343Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jdDdm/moxgEvh23QQcGUvaWgfufNWwq3GCNosiP4Z1xIblohvHz0UXUvQGramT0v/
-	 GYIiVAdbdl3yn1PAzaIArhqTBEBiKKGh1d9dKKM+UqZ0Vy/lGSJbX7K/eIS6QWNL0T
-	 2UwVFkqM5R/imyn1aTqnvdAJe7m9nwXoNsfwshgG4EO8GOZ3KEfTlzBl3sktfpQKYi
-	 JwIl1EkJ7mU+tw//dmikc3HlS4o9o+QVqfyEMOuNsvSpPwgJC6olPWaI2RzSpv1ziM
-	 3z6WrigrcwjlZnANWeUw+6X9klkiN398Vk/itrD/oYGFKfWxcLaUEBA9XdAG3ajFHc
-	 O9XQuMDxb1flA==
-Message-ID: <ea79cee4-8c47-4054-bd17-2097ada4e583@kernel.org>
-Date: Tue, 25 Mar 2025 08:30:53 +0100
+	s=k20201202; t=1742887908;
+	bh=IQxe5ZB2omP4K06R4i46loG52z4yhoz/4TI5QBwYyNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TD3aPTjI/W7X8yRzl5xZy0pUHD6W0BoezoQ4ACPdwQLWfx3iMHRu9qyytbcju6Wr1
+	 e+pkOHcnXpIzrHPIl6JINFO9tzhLzDnL9ECrfNVBmn9c43lNtcCNv/H8NEp0aS/PKb
+	 7cyeZQe6iAko9Xcufq1fgOuSxT6h6hRGtBrbDg/KJpMbIEEnfTL6KCnpLU6qR2QQr0
+	 55uNojT56g/K71aU/1oKi1v/HwhHe2mJ19U6pzHP4YsAW+eeEJ3k7lVZrsNBAI774Y
+	 7DB4MifdogsqdD8rpypEmHTT5kMQpzszNgxCk9Hikuo3O5wNrfsgFeqxh8vz+9xI7n
+	 uR2k9vu95XKSg==
+Date: Tue, 25 Mar 2025 08:31:43 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Vernon Lovejoy <vlovejoy@redhat.com>
+Subject: Re: [PATCH 2/2] x86/dumpstack: Fix broken unwinding from exception
+ stacks
+Message-ID: <Z-Jb3xEcQWKn_uqe@gmail.com>
+References: <20250325-2025-03-unwind-fixes-v1-0-acd774364768@google.com>
+ <20250325-2025-03-unwind-fixes-v1-2-acd774364768@google.com>
+ <CAG48ez0=dtR85yhy07jqvq9YC__3ocT_N_hpJMN4v-FfMs-PsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez0=dtR85yhy07jqvq9YC__3ocT_N_hpJMN4v-FfMs-PsA@mail.gmail.com>
 
-On 27/02/2025 19:08, Yuvaraj Ranganathan wrote:
-> The initial QCE node change is reverted by the following patch 
-> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
 
-Use commit SHA syntax (see submitting patches, checkpatch).
+* Jann Horn <jannh@google.com> wrote:
 
-> because of the build warning,
+> On Tue, Mar 25, 2025 at 3:01 AM Jann Horn <jannh@google.com> wrote:
+> > Originally, get_stack_pointer() used the regs provided by the caller; after
+> > that commit, get_stack_pointer() instead uses the regs at the top of the
+> > stack frame the unwinder is looking at. Often, there are no such regs at
+> > all, and "regs" is NULL, causing get_stack_pointer() to fall back to the
+> > task's current stack pointer, which is not what we want here, but probably
+> > happens to mostly work. Other times, the original regs will point to
+> > another regs frame - in that case, the linear guess unwind logic in
+> > show_trace_log_lvl() will start unwinding too far up the stack, causing the
+> > first frame found by the proper unwinder to never be visited, resulting in
+> > a stack trace consisting purely of guess lines.
 > 
->   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->     ...
->     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+> I guess the subject line is kind of misleading - maybe "x86/dumpstack:
+> Fix misplaced assignment in unwinder" would be better?
 
-Not relevant warning.
+Well, it's a bug and the code is broken that results in subpar stack 
+dumps from exception contexts that fall back to the guess-dumper, 
+right?
 
+So I've edited the subject line to:
 
+   x86/dumpstack: Fix inaccurate unwinding from exception stacks due to misplaced assignment
 
-Best regards,
-Krzysztof
+But I'd have no problem calling it broken either - even if the bug 
+doesn't crash anything.
+
+Thanks,
+
+	Ingo
 
