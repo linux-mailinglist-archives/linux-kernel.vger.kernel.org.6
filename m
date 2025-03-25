@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-574841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19180A6EAA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:36:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC190A6EAA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EE947A289D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A90D1897104
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604F255223;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53E625524E;
 	Tue, 25 Mar 2025 07:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cyMqqdtu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ujb+hZDE"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iihnV50G";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MpuUEiQy"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2E253F35;
-	Tue, 25 Mar 2025 07:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996662F3B;
+	Tue, 25 Mar 2025 07:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742888174; cv=none; b=hxODYqqfzF6qC0O9hpfG6SVV3Yj2pF+kukcCQFXgtE4/Xdq/IVUgWk/Q9YM1OkX9Zcn29EGTO7WhXN5iWvUltHd8VfFoHaRVv6u7cjf1iuNDUXihsO18rVSV3Z9ZHjbUB8y2Vg1Rf0U+gL7YhVEkgD7zUl0tqwZwHbpfqF2rjB8=
+	t=1742888175; cv=none; b=lsyESqm80hIMXHI2IqiS+Bt/PCjmT5SUdE0oPa/2cprMwUX/oSriflHUzQdh1Izbrri6o+1NEHrblcccnUEaCne+Sq90gRyhUMZvVXKicpoOR1J6dknHQ9cKpMuimTuaA5eAVuDG40ucfi7SqzY8vWpEtuN/4pJKmIjErwKxgS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742888174; c=relaxed/simple;
-	bh=XcJyY3wGKpcT423ocmHs5TJMHF+prodiNcMBActqDc4=;
+	s=arc-20240116; t=1742888175; c=relaxed/simple;
+	bh=DnuYk0x+SFvyp22G1fTfcg7WJqmettww7pG88pBXaEg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FRXCWio9hCJaLz9LOa19ZglZfGTbDTOcOFtqsKvgiiBUiABhtNFm4mGh5tIXOz5f4vP4IK5o0gfgQfUiGjBrZHun7TGInvhFrOyiP3JG2t19ToWUHzGW/LwmV3tM1P5RReHkonddx90S2uT7lVXlZT9qPjyfO2TmVcuADL5XlEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cyMqqdtu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ujb+hZDE; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=DyObrzr++x3L6+F0tvDVNMy6PSVmyPUQ4eYUitc8S6i6228FwcLPFxiV1Bu+sKp/6XGjCvSERRxK5QQTBRAynlEddBfF099zWWLGWe7RJwHGN+/LvUQS11QSv5nkU/ad/H5XJY7ohyeaiZvo1sQYlSuragtmdtBxP2ia1foYdBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iihnV50G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MpuUEiQy; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 07:36:10 -0000
+Date: Tue, 25 Mar 2025 07:36:11 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1742888171;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ez7An6mqQ0YdyzErr2athNp0PxN4F4F6r9ilmzYyhIc=;
-	b=cyMqqdtul7YR/oHbNspvRS6kw61QHJwVrhScxsmJ7jnBrqwc2xj3GM4SVSFuXJvwi8iq0C
-	1xHvzNWoHKki+ljb7CVmspNQZsBXuelXNEhrcWx4Vk9LGXC2DghB3gCDNQYdHdB/06XbQY
-	FHbWHZKF78SLU5jyzg7AI9j82E+kS2Cv5ukKid+iqmR+7QN7pIoPCuAALa5w5pcna/3BdQ
-	PHieUHaQVgJLSmtvCFDMUpYClMDUjd8pKQ9SMzKygjRCV24PucY/pO9FPVuU7OhsB0v6u6
-	aUjWqqfDfPu9kI3E26NJYqzBgGTxeFK/pD6PocgoyQFHhw2m3uWULRw3Epg31g==
+	bh=vFdC9KBiiTclmsO/8q/IgoobOgIKfUMYwcYMtL2Af2c=;
+	b=iihnV50GClZYgz2PxreCB8UH3rTCyb118LIyrpDwTSzx/oVJSfCIh+6K+ZuRfAsaEPOF0B
+	fzTk+7ED0FbMw9nNbKO6C54h2wZHeufG30UAP50gyHGSpPf1kRjes99+vZmLxFiSkbIr+9
+	UmXLm/287n1VkUcRtwJiekenOvMsoWiY1hl7g1iGB/llzsxjCAxK1RhbfRsFFQAERe6rsq
+	CM94kDYZSE31gjKk773DOm8Vvb/0i3WVlIn6tiksWAKkyG/b6uiZgwKDc45qKcw2yryXKc
+	U2zTffLMIUxEMnvpr0aRqz/0fqdRvu7vHLQCDyCgz3fQ8EPUp+nqaTIHG7fs4Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1742888171;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,28 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ez7An6mqQ0YdyzErr2athNp0PxN4F4F6r9ilmzYyhIc=;
-	b=Ujb+hZDEWs7JCQDdZ7Q/i3WmcdIPb3+USaYofJFjdhsS68aY8oCEhl6OJqrcP19nMUAEhY
-	DRF8kunsG8T+seCA==
+	bh=vFdC9KBiiTclmsO/8q/IgoobOgIKfUMYwcYMtL2Af2c=;
+	b=MpuUEiQyrk6vrXVNj8nZeWiMxepuyg2/Q4wU6+U6Yq7zlEvDUo90GJ/j0vj9M+xSGSu+Hl
+	DKTZz/w/Rbt62NAg==
 From:
  tip-bot2 for Mateusz =?utf-8?q?Jo=C5=84czyk?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/Kconfig: Document CONFIG_PCI_MMCONFIG
+Subject: [tip: x86/urgent] x86/Kconfig: Update lists in X86_EXTENDED_PLATFORM
 Cc: mat.jonczyk@o2.pl, David Heideberg <david@ixit.cz>,
  Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250321-x86_x2apic-v3-5-b0cbaa6fa338@ixit.cz>
-References: <20250321-x86_x2apic-v3-5-b0cbaa6fa338@ixit.cz>
+In-Reply-To: <20250321-x86_x2apic-v3-4-b0cbaa6fa338@ixit.cz>
+References: <20250321-x86_x2apic-v3-4-b0cbaa6fa338@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174288817046.14745.11802846447168020418.tip-bot2@tip-bot2>
+Message-ID: <174288817105.14745.14614627013694495488.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,56 +83,67 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     21d8fb8d4e7071b2e60bc48c217ff1b4ce8cb855
-Gitweb:        https://git.kernel.org/tip/21d8fb8d4e7071b2e60bc48c217ff1b4ce8=
-cb855
+Commit-ID:     4047e8773fb627df3779291d9138e425537573af
+Gitweb:        https://git.kernel.org/tip/4047e8773fb627df3779291d9138e425537=
+573af
 Author:        Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl>
-AuthorDate:    Fri, 21 Mar 2025 21:48:47 +01:00
+AuthorDate:    Fri, 21 Mar 2025 21:48:46 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 22 Mar 2025 08:08:20 +01:00
+CommitterDate: Sat, 22 Mar 2025 08:02:16 +01:00
 
-x86/Kconfig: Document CONFIG_PCI_MMCONFIG
+x86/Kconfig: Update lists in X86_EXTENDED_PLATFORM
 
-This configuration option had no help text, so add it.
+The order of the entries matches the order they appear in Kconfig.
 
-CONFIG_EXPERT is enabled on some distribution kernels, so people using a
-distribution kernel's configuration as a starting point will see this
-option.
+In 2011, AMD Elan was moved to Kconfig.cpu and the dependency on
+X86_EXTENDED_PLATFORM was dropped in:
 
-[ mingo: Standardized the new Kconfig text a bit. ]
+  ce9c99af8d4b ("x86, cpu: Move AMD Elan Kconfig under "Processor family"")
+
+Support for Moorestown MID devices was removed in 2012 in:
+
+  1a8359e411eb ("x86/mid: Remove Intel Moorestown")
+
+SGI 320/540 (Visual Workstation) was removed in 2014 in:
+
+  c5f9ee3d665a ("x86, platforms: Remove SGI Visual Workstation")
 
 Signed-off-by: Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl>
 Signed-off-by: David Heideberg <david@ixit.cz>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250321-x86_x2apic-v3-5-b0cbaa6fa338@ixit.cz
+Link: https://lore.kernel.org/r/20250321-x86_x2apic-v3-4-b0cbaa6fa338@ixit.cz
 ---
- arch/x86/Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/Kconfig | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 917cd2f..a079ecf 100644
+index d6155b9..917cd2f 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -2902,6 +2902,19 @@ config PCI_MMCONFIG
- 	default y
- 	depends on PCI && (ACPI || JAILHOUSE_GUEST)
- 	depends on X86_64 || (PCI_GOANY || PCI_GOMMCONFIG)
-+	help
-+	  Add support for accessing the PCI configuration space as a memory
-+	  mapped area. It is the recommended method if the system supports
-+	  this (it must have PCI Express and ACPI for it to be available).
-+
-+	  In the unlikely case that enabling this configuration option causes
-+	  problems, the mechanism can be switched off with the 'pci=3Dnommconf'
-+	  command line parameter.
-+
-+	  Say N only if you are sure that your platform does not support this
-+	  access method or you have problems caused by it.
-+
-+	  Say Y otherwise.
+@@ -542,16 +542,20 @@ config X86_EXTENDED_PLATFORM
+ 	  CONFIG_64BIT.
 =20
- config PCI_OLPC
- 	def_bool y
+ 	  32-bit platforms (CONFIG_64BIT=3Dn):
+-		Goldfish (Android emulator)
+-		AMD Elan
++		Goldfish (mostly Android emulator)
++		Intel CE media processor (CE4100) SoC
++		Intel MID (Mobile Internet Device)
++		Intel Quark
+ 		RDC R-321x SoC
+-		SGI 320/540 (Visual Workstation)
++		STA2X11-based (e.g. Northville)
+=20
+ 	  64-bit platforms (CONFIG_64BIT=3Dy):
+ 		Numascale NumaChip
+ 		ScaleMP vSMP
+ 		SGI Ultraviolet
+ 		Merrifield/Moorefield MID devices
++		Goldfish (mostly Android emulator)
++		Intel MID (Mobile Internet Device)
+=20
+ 	  If you have one of these systems, or if you want to build a
+ 	  generic distribution kernel, say Y here - otherwise say N.
 
