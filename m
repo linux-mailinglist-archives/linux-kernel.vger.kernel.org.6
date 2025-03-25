@@ -1,72 +1,53 @@
-Return-Path: <linux-kernel+bounces-575940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0787A70919
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AEFA7091B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4815A16C2A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58DDE16C2D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9157A1AB531;
-	Tue, 25 Mar 2025 18:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B985A1AB6D4;
+	Tue, 25 Mar 2025 18:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lsfzlgQc"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dir+ebun"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799B19AA56;
-	Tue, 25 Mar 2025 18:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EA0190679;
+	Tue, 25 Mar 2025 18:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742927706; cv=none; b=PhX3fwjw2CoVPQJM+wYw13hgD5kLlWT1Ss6uhfD1gLnqCHT+3OCNa1Lpe/yqiCcsH3yfMYVB+1hMx8FM2QhaLUh/KoqoDDWmY1BvbBhVwnevCmhLfQ5pj0ExKLNnZDOrDwIa5cdQ8m+udk3eYBd6IEOtDRUBvvbkqH3vSoBNZpQ=
+	t=1742927764; cv=none; b=I1L/d48u9mgOAXPHAdbYhk9u5pOw8JV9HKElZ6YtnPxFKKnF83R1Zki3T2+PKvfCsH1CaO8cyjkXt9EbwWjZlBImGWpuSpZPKVnOXhOmF7xETftpSfKeI2PBdgIljZ1DXjf8nurOWBLNUkbrGFrlCqUAjYXZM5f8fQkv1londV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742927706; c=relaxed/simple;
-	bh=TOauyI8xFEXS/sGMrKEVJ4dnfjywQ64iJTKnxTwebgY=;
+	s=arc-20240116; t=1742927764; c=relaxed/simple;
+	bh=w+7Li448Kkx5T5mvWuA7o6lNSzeRXpD6Dihs32MoXwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkShpBGS51HOWyd6CFkAww2EldcyDAQATD+YPtodJunooAxbzISBv+AFKEOlg7zaQyC3cekNA/KRwpILofiJhP5nrABmOVt+3SumOZR71aw1E7getwR/ZvBdfMx9B2VCu825AvbC157JKhdebvNu58tfEEuU7mbMyWfGZ7Ahtxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=lsfzlgQc; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8PfMnHO9Jr/5p3LhcxmDnjH01NR00rn1zMezuF9k4Fc=; b=lsfzlgQcngfqocAuSOnkdfNuHE
-	ozY1MQv8GQucMbiTiyJqAOqpmRwPg3iSQA2T9MbvKGoSDz1MaPjMCqE1yJUohC8aROuxmNtmfN2bq
-	bKZfcjteDlv3e6cLHpq99hb9wsUzDk5C4WP3K4sow0d1UdB6pjucFSrTrwhZLTDBeqb7AagDTUoAg
-	bCThj2Kr4lquWOfRFTFQ8GIKoj4vIM1Ls5ClcRE+pIjis6voPQtGHdDjM5MycM2reZJrfKPcPEQic
-	o4pGvXTodI7eCNSRbRRXSNME/MqJ4QSgCdRTub4Oa/j1CM10xCWjOI3XEJi49cQCguW2nSKATGW6b
-	qU7h0r1Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50456)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tx970-0005Ax-0R;
-	Tue, 25 Mar 2025 18:34:54 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tx96x-0003Wu-2H;
-	Tue, 25 Mar 2025 18:34:51 +0000
-Date: Tue, 25 Mar 2025 18:34:51 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Rengarajan.S@microchip.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, Thangaraj.S@microchip.com,
-	Woojung.Huh@microchip.com, pabeni@redhat.com,
-	o.rempel@pengutronix.de, edumazet@google.com, kuba@kernel.org,
-	phil@raspberrypi.org, kernel@pengutronix.de, horms@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, maxime.chevallier@bootlin.com
-Subject: Re: [PATCH net-next v5 5/6] net: usb: lan78xx: Integrate EEE support
- with phylink LPI API
-Message-ID: <Z-L3S78A1WBbGIf4@shell.armlinux.org.uk>
-References: <20250319084952.419051-1-o.rempel@pengutronix.de>
- <20250319084952.419051-6-o.rempel@pengutronix.de>
- <7e362f545ac58f35a88f29a3ca36009f7c97090b.camel@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8geLuQ+WxSnwpNRkG3C2/qK7A1aTyjXYyocngL1/t4cUNsZMK40dn1i7xxTXgpzfjJyE68J/ovHCpUgVgWOUyWxQ1hK1FhC3E0K1eCkZ3LfAjOK4MZyQqake0DRAoZsmdxJxzG0gmkiiQoGcBRjiSQFZ8z7qqrvbHWhndyezXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dir+ebun; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DB7C4CEE4;
+	Tue, 25 Mar 2025 18:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742927763;
+	bh=w+7Li448Kkx5T5mvWuA7o6lNSzeRXpD6Dihs32MoXwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dir+ebunYRqT/TkgwYLbmDOdCv3n9PkaU5hPkgpPdiGgg4+9lFrQePwTEi9eljnoG
+	 yLbNKGEuG9FRxmbVbXE1RPuU5stvfVhT08w9oE2a1fM+vXTDOrY6hPwEtNT5LutiEr
+	 oVzxPtNCKKAAAPdyiTspL861qLsKC8+5X4TRtSrdQs0GhBCjEjmYsDKVjjF1PXv8/t
+	 lHXk534w2Fbia/5XW0njpnX724ua4F9GvvJkcBfnYrDTiQpOsZ3wS8ogVVFA3wJYqL
+	 0PunP8/EnykVaT9zs1c/1f4NdfAej83Wrnf95N7AlaEtOnLlGpoDyt7PnmMR37VZUo
+	 HSc8JoXxkMJ0Q==
+Date: Tue, 25 Mar 2025 13:36:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: edac: altera: socfpga: Convert to YAML
+Message-ID: <174292776178.2114668.8032806349344866356.robh@kernel.org>
+References: <20250325173139.27634-1-matthew.gerlach@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,81 +56,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7e362f545ac58f35a88f29a3ca36009f7c97090b.camel@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250325173139.27634-1-matthew.gerlach@altera.com>
 
-On Tue, Mar 25, 2025 at 05:51:05PM +0000, Rengarajan.S@microchip.com wrote:
-> Hi Oleksij,
+
+On Tue, 25 Mar 2025 10:31:39 -0700, Matthew Gerlach wrote:
+> Convert the device tree bindings for the Altera SoCFPGA ECC
+> Manager from text to yaml.
 > 
-> On Wed, 2025-03-19 at 09:49 +0100, Oleksij Rempel wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you
-> > know the content is safe
-> > 
-> > Refactor Energy-Efficient Ethernet (EEE) support in the LAN78xx
-> > driver to
-> > fully integrate with the phylink Low Power Idle (LPI) API. This
-> > includes:
-> > 
-> > - Replacing direct calls to `phy_ethtool_get_eee` and
-> > `phy_ethtool_set_eee`
-> >   with `phylink_ethtool_get_eee` and `phylink_ethtool_set_eee`.
-> > - Implementing `.mac_enable_tx_lpi` and `.mac_disable_tx_lpi` to
-> > control
-> >   LPI transitions via phylink.
-> > - Configuring `lpi_timer_default` to align with recommended values
-> > from
-> >   LAN7800 documentation.
-> > - ensure EEE is disabled on controller reset
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> > changes v5:
-> > - remove redundant error prints
-> > changes v2:
-> > - use latest PHYlink TX_LPI API
-> > ---
-> >  drivers/net/usb/lan78xx.c | 111 +++++++++++++++++++++++-------------
-> > --
-> >  1 file changed, 67 insertions(+), 44 deletions(-)
-> > 
-> > diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> > index 9ff8e7850e1e..074ac4d1cbcb 100644
-> > --- a/drivers/net/usb/lan78xx.c
-> > +++ b/drivers/net/usb/lan78xx.c
-> > 
-> > +static int lan78xx_mac_eee_enable(struct lan78xx_net *dev, bool
-> > enable)
-> > +{
-> > +       u32 mac_cr = 0;
-> > +
-> > +       if (enable)
-> > +               mac_cr |= MAC_CR_EEE_EN_;
-> > +
-> > +       /* make sure TXEN and RXEN are disabled before reconfiguring
-> > MAC */
-> > +       return lan78xx_update_reg(dev, MAC_CR, MAC_CR_EEE_EN_,
-> > mac_cr);
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> ---
+> v3:
+>  - Remove redundant $ref and description from compatible entries.
+>  - Add $ref and description for altr,sysmgr-syscon entry.
+>  - Fix description of altr,ecc-parent of sdmmca-ecc@ff8c8c00.
+>  - Successfully validated Cyclone5, Arria5/10, Stratix10, and Agilex.
+>  - Rename yaml file.
 > 
-> Is it possible to add a check to make sure TXEN and RXEN are disabled
-> before updating the MAC. Is it taken care by phylink itself?
+> v2:
+>  - Fix $id: path.
+>  - Remove unneeded '|'.
+>  - Move vendor properties last (but before child nodes).
+>  - Add appropriate blank lines.
+>  - Don't break ABI.
+>  - Avoid changing existing DTSI and DTS.
+> ---
+>  .../edac/altr,socfpga-ecc-manager.yaml        | 323 +++++++++++++++
+>  .../bindings/edac/socfpga-eccmgr.txt          | 383 ------------------
+>  MAINTAINERS                                   |   5 +
+>  3 files changed, 328 insertions(+), 383 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/edac/socfpga-eccmgr.txt
+> 
 
-I suspect this is not true.
+Applied, thanks!
 
-On link up, the order of calls that phylink makes is:
-
-	pcs_link_up()
-	mac_link_up()
-	pcs_enable_eee()
-	mac_enable_tx_lpi()
-
-From what I can see, TXEN and RXEN are set by lan78xx_start_tx_path()
-and lan78xx_start_rx_path(). These are called from lan78xx_open(),
-which *might* happen way before the link comes up. Given the placement
-of phy_start() (now phylink_start()) then the above sequence can happen
-at *any* moment from that call to phy*_start() onwards, maybe midway
-through these two functions.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
