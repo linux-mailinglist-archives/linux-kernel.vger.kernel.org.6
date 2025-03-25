@@ -1,219 +1,199 @@
-Return-Path: <linux-kernel+bounces-574688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6007BA6E88A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:13:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C0A6E88D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718833AF5FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9531895819
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20DC1A23BA;
-	Tue, 25 Mar 2025 03:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D651A3162;
+	Tue, 25 Mar 2025 03:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MC4e9bUx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNg/JsMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4B51A072C;
-	Tue, 25 Mar 2025 03:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11EA1A23B8;
+	Tue, 25 Mar 2025 03:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742872401; cv=none; b=EkLUi0F+t4qmj+/UQMOM/6Zf97E0zwTi5AK6ht860Zb2NNzOkNjn63GpLVN+sutheMjh+/mHBvqp3tWeACquesQ7wqs261KyPk6FVlUkhwdbkF7v5qTu81WM7QQ4u+DP+yDYkPM6jS0yUcfEUeTzp+UPgk6LthGVkbwaRpzABFs=
+	t=1742872401; cv=none; b=rUOhI7RlNqRepwrP/+dI4xP1iVULxNTe5cUq3yZsj3vYtcVkCYccMKfRBx76ZzMkVhqHjy0scIaBVy2HAImBr83xr3QuW4L+n1RGHfjTckWv3BmZHfIfzm3O0c/BSGBzsmxgmw/ujI/NIdubwJE9GNkAnVjP0NPGmSxwqm80LWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742872401; c=relaxed/simple;
-	bh=E5E+SasWAzmDnR3MDJcTIVlbgU8JQ/HWkUH11MrnKDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C/qwENCTyMMtc8LmXE4or3MDyGwBzezIwupj307Ub2OUEBkSFrooqU0nDLea0ozaCQr7mf7xjRh0suKl8eeA1bvK/W27MSAiUIptkYeRCamLFcenZlcWELs8MX7htLOOaO2rxB2cuaV2jRXjMY0/7zZsJa7Yu5L7R/UJtfzYjpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MC4e9bUx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OIlWkq025925;
-	Tue, 25 Mar 2025 03:12:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rQ7cgtzuqO4DhE1RlYh2UYPnVaMrrglIVihyRrbs1zA=; b=MC4e9bUxUv+eNk8l
-	bcxILeTNQ81165jcKPnncsZ6FhWnU9g2hsomTd622n1/h6L7c5jKjggwCDctqWBL
-	ct5H8vM9UTjM9kFI4IXJIGsZq0RR+cHDrtzVMR8QiNSXypdkooZzZR0I5jD+QnTE
-	tUO5SYhiU1Sa8jsdnMbUNj+a5qR1Wd/0zo+MQAUG3thYP6/swpn1qN/HRryaVvoS
-	Mmbv8HIisu2jYCo3pLhUISfV41w4JAY/BLh3Pgzzx9VjBiH6h8pN89xF9jsdONAG
-	n1geKYSUyhuN8tVC3FvzbZ68wG0aKziuMZjMC12bDQWVq37jw7o6pVW67D6POTBm
-	kqt8WQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnphqt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 03:12:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P3Cquu016163
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 03:12:52 GMT
-Received: from [10.216.37.30] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 20:12:45 -0700
-Message-ID: <430ed11c-0490-45be-897b-27cad9682371@quicinc.com>
-Date: Tue, 25 Mar 2025 08:42:42 +0530
+	bh=KziQK7EppF5DOtBo7utcqARNBAi9Ars+fyKXqAXwwQY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=XFF1IQ0wd3tdxzJ19pbddcmt394zviBb0gstM7eC9YAUoO52OIw9/CobM+FihpF1V+SMD+0+ND76k8w193DOj1HxydIFqwGLYr66jN8u761A6cPehXD7Er6R0S7dnv7E+ZDdlJdYLVznT1N15lCsBERptDOV3gl0ccpT2Yep3wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNg/JsMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2960C4CEDD;
+	Tue, 25 Mar 2025 03:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742872401;
+	bh=KziQK7EppF5DOtBo7utcqARNBAi9Ars+fyKXqAXwwQY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=vNg/JsMrXRn+fPXc9o2GtWX/1TEHmPJwgwn5rQ/kSlOKCEtPKAntisR79WOG74aSr
+	 TC1tvxs4yaJ1ObDFIe01JX+PM1/DqIGoID2HwBHNUYwM+3qwTM8dNOr918LcZjvNpL
+	 uIAxYA8NCggQjrZvsBzKhZPi36TadgbTBdCwpC/kI05Wyj2Ell5jq2PZDgSqgZT7VN
+	 TB9gzlMjyd0hCssyjV+x/VnQ2MeWUhII9q06rv52KYSUXWhouGByhtWsbsWfTP50CJ
+	 b7A6ETi46LP21piNgCckqLYmwwtsRNnfY8CuJwNHZ0FeKsHRIJpGfrFJrHTKAi92a9
+	 7NoWTwPdzVlAQ==
+Date: Mon, 24 Mar 2025 22:13:19 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] phy: qcom-qmp-ufs: Add PHY Configuration support
- for sm8750
-To: <neil.armstrong@linaro.org>, Melody Olvera <quic_molvera@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, Manish Pandey <quic_mapa@quicinc.com>,
-        "Linux
- regressions mailing list" <regressions@lists.linux.dev>
-References: <20250310-sm8750_ufs_master-v2-0-0dfdd6823161@quicinc.com>
- <20250310-sm8750_ufs_master-v2-2-0dfdd6823161@quicinc.com>
- <1526d8a4-9606-4fb3-bb86-79bd8eb8a789@linaro.org>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <1526d8a4-9606-4fb3-bb86-79bd8eb8a789@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e21f35 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=vcR0Wi4gQSUtL0Q4ZNYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=fsdK_YakeE02zTmptMdW:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: RKjLOZTbSq54X9vtTLN_7PzxMYE2-NJY
-X-Proofpoint-GUID: RKjLOZTbSq54X9vtTLN_7PzxMYE2-NJY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_01,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250021
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+ andrew@codeconstruct.com.au, tingkaic@nvidia.com, 
+ devicetree@vger.kernel.org, dkodihalli@nvidia.com, 
+ linux-arm-kernel@lists.infradead.org, leohu@nvidia.com, 
+ linux-kernel@vger.kernel.org, gpiccoli@igalia.com, tony.luck@intel.com, 
+ linux-aspeed@lists.ozlabs.org, kees@kernel.org, openbmc@lists.ozlabs.org, 
+ joel@jms.id.au, Paul Menzel <pmenzel@molgen.mpg.de>, 
+ Mars Yang <maryang@nvidia.com>, linux-hardening@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+To: Willie Thai <wthai@nvidia.com>
+In-Reply-To: <20250324175926.222473-1-wthai@nvidia.com>
+References: <20250324175926.222473-1-wthai@nvidia.com>
+Message-Id: <174287235976.1618206.14203259564478820837.robh@kernel.org>
+Subject: Re: [PATCH v4 0/3] Add device tree for Nvidia's GB200NVL BMC
 
 
-
-On 3/24/2025 11:40 PM, Neil Armstrong wrote:
-> Hi,
+On Mon, 24 Mar 2025 17:59:23 +0000, Willie Thai wrote:
+> The GB200NVL BMC is an Aspeed Ast2600 based BMC
+> for Nvidia Blackwell GB200NVL platform.
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
 > 
-> On 10/03/2025 22:12, Melody Olvera wrote:
->> From: Nitin Rawat <quic_nitirawa@quicinc.com>
->>
->> Add SM8750 specific register layout and table configs. The serdes
->> TX RX register offset has changed for SM8750 and hence keep UFS
->> specific serdes offsets in a dedicated header file.
->>
->> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Co-developed-by: Manish Pandey <quic_mapa@quicinc.com>
->> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v6.h |   7 +
->>   .../qualcomm/phy-qcom-qmp-qserdes-txrx-ufs-v7.h    |  67 ++++++++
->>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c            | 180 +++++++++++ 
->> +++++++++-
->>   3 files changed, 246 insertions(+), 8 deletions(-)
->>
+> Co-developed-by: Mars Yang <maryang@nvidia.com>
+> Signed-off-by: Mars Yang <maryang@nvidia.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
+> Signed-off-by: Willie Thai <wthai@nvidia.com>
+> ---
+> Changes v1 -> v2:
+>   - Fix the SOB name [Krzysztof]
+>   - Fix warnings from scripts/checkpatch.pl run [Krzysztof]
+>   - Fix DTS coding style [Krzysztof]
+>   - Move pinctrl override to the bottom [Krzysztof]
+>   - Drop bootargs [Krzysztof]
+>   - Follow DTS coding style and change naming for leds node [Krzysztof]
+>   - Change flash 0 status property [Krzysztof]
+>   - Change the phy-mode to rgmii [Andrew]
+>   - Remove the max-speed in mac0 [Andrew]
+>   - Put gpio line name in one line per group of 8 gpios, but keep some b/c they can exceed length limit [Paul]
+> Changes v2 -> v3:
+>   - Fix missing new line [Krzysztof]
+>   - Fix missing binding define, adding it in the patch no.1 of this patch set v3 [Krzysztof, Rob]
+>   - Fix DTS coding style [Krzysztof]
+>   - Modify nodes name to generic name for: i2c expander pca9546, gpio expander pca9555, power monitor lm5066i, fan controller max31790 [Krzysztof]
+>   - Skip mac setting and wait till the delay issue in phy-mode fix from Aspeed SOC vendor side [Andrew]
+>   - Remove i2c-scl-clk-low-timeout-us which is Apseed proprietary property [Mars]
+> Changes v3 -> v4:
+>   - Order binding patch first in the patch set [Andrew Jeffery]
+>   - Make the commit message more concise [Krzysztof]
+>   - Remove stray blank lines [Krzysztof]
+>   - Remove unnecessary comments [Krzysztof]
+>   - Remove underscore, repalce by dash symbol in node name [Krzysztof]
+>   - Remove disable-master property in i2c as it is downstream added property [Rob, Andrew Jeffery]
+>   - Remove #address-cells, #size-cells in nxp,pca9555 and maxim,max31790 as they are no longer defined [Rob, Andrew Jeffery]
+> ---
 > 
-> <snip>
+> Willie Thai (3):
+>   dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
+>   dt-bindings: pinctrl: aspeed,ast2600-pinctrl
+>   ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
 > 
-> This change breaks UFS on the SM8550-HDK:
+>  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+>  .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    1 +
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts | 1149 +++++++++++++++++
+>  4 files changed, 1152 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
 > 
-> [    7.418161] qcom-qmp-ufs-phy 1d80000.phy: phy initialization timed-out
-> [    7.427021] phy phy-1d80000.phy.0: phy poweron failed --> -110
-> [    7.493514] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
-> ...
-
-Hi Neil,
-
-Thanks for testing and reporting.
-I did tested this patch on SM8750 MTP, SM8750 QRD, SM8650 MTP, SM8550 
-MTP and SM8850 QRD all of these have rate B and hence no issue.
-
-Unfortunately only SM8550 HDK platform which UFS4.0 and RateA couldn't 
-get tested. As we know SM8550 with gear 5 only support rate A.
-
-I was applying rate B setting without checking for mode type. Since
-SM8550 is only platform which support only rate A with UFS4.0 . Hence
-this could be the issue.
-
-Meanwhile can you help test at your end with below change and let me if 
-it resolves for you. I will also try at my end to test as well.
-
-=============================================================================
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c 
-b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-index 45b3b792696e..b33e2e2b5014 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-@@ -1754,7 +1754,8 @@ static void qmp_ufs_init_registers(struct qmp_ufs 
-*qmp, const struct qmp_phy_cfg
-                 qmp_ufs_init_all(qmp, &cfg->tbls_hs_overlay[i]);
-         }
-
--       qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
-+       if (qmp->mode == PHY_MODE_UFS_HS_B)
-+               qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
-  }
-
-=================================================================================
-
-
-Thanks,
-Nitin
-
+> --
+> 2.25.1
 > 
-> GIT bisect points to:
-> b02cc9a176793b207e959701af1ec26222093b05 is the first bad commit
-> Author: Nitin Rawat <quic_nitirawa@quicinc.com>
-> Date:   Mon Mar 10 14:12:30 2025 -0700
 > 
->      phy: qcom-qmp-ufs: Add PHY Configuration support for sm8750
 > 
-> bisect log:
-> git bisect start 'ff7f9b199e3f' 'v6.14-rc1'
-> git bisect good 36c18c562846300d4e59f1a65008800b787f4fe4
-> git bisect good 85cf0293c3a75726e7bc54d3efdc5dc783debc07
-> git bisect good b2cd73e18cec75f917d14b9188f82a2fdef64ebe
-> git bisect bad b247639d33ad16ea76797268fd0eef08d8027dfd
-> git bisect good 9b3f2dfdad1cc0ab90a0fa371c8cbee08b2446e3
-> git bisect bad 8dc30c3e4cf8c4e370cf08bd09eb87b0deccd3de
-> git bisect bad 100aeb03a437f30300894091627e4406605ee3cb
-> git bisect bad b2a1a2ae7818c9d8da12bf7b1983c8b9f5fb712b
-> git bisect good 8f831f272b4c89aa13b45bd010c2c18ad97a3f1b
-> git bisect good e45cc62c23428eefbae18a9b4d88d10749741bdd
-> git bisect bad ebf198f17b5ac967db6256f4083bbcbdcc2a3100
-> git bisect good 12185bc38f7667b1d895b2165a8a47335a4cf31b
-> git bisect bad e46e59b77a9e6f322ef1ad08a8874211f389cf47
-> git bisect bad b02cc9a176793b207e959701af1ec26222093b05
-> 
-> CI run: https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba- 
-> tester/-/jobs/229880#L1281
-> 
-> #regzbot introduced: b02cc9a17679
-> 
-> Neil
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250324175926.222473-1-wthai@nvidia.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+
+
+
+
 
 
