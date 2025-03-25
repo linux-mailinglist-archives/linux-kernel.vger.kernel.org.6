@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-575669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC95AA70590
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE21A70599
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63E63A7866
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C07E1695CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A09F2571A9;
-	Tue, 25 Mar 2025 15:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC482343C1;
+	Tue, 25 Mar 2025 15:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0m1A4SS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tij9wJA1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33E81FAC34;
-	Tue, 25 Mar 2025 15:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED29318A6AB;
+	Tue, 25 Mar 2025 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742917871; cv=none; b=AweQScqiZRSTY6J2KtoSLxncSoVA0IdUWRI5Sk2bOyb6bxRfUg2L9RGoUx8cPEIq456MVYYUG35cAMHrqL6A6cMKhFyDyd/sOD5NbT8zDp5tNGeMb/VqqC7VcXq570rCvyaT5ZwEpg9heZr5c+xPU+eAYCCWL2Sy5Bt533IMEzo=
+	t=1742918108; cv=none; b=NKFJpVuAkKsTU1re18DuxGDH1rV6YPUQU0SBjWO6Zh2lUJjbxAo3hhAFzvwp8XNvhEhwelpz5U60HDyPWcwhoDNFH3zpryBlSEwiiZzfTLEDzkYK0HZNEOkUjsDaYvbryAde38wQlill/kde0QRZ4v3YXSiVkoW2HniM4UR92RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742917871; c=relaxed/simple;
-	bh=T0A9JesaY6l1nc8qgwaVPd5jDDCHVENKy2TJK3KE8Ic=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JHvz5Fe8TIhrdDG2ytH9AgbhVHwPTTAdZ+ySNJETkBQOJ2b3BpxBT23OpeuQBuu5gyylaD14u1ui6L147Wu6YomkMXo63vvJMdCrEsAHGc9SjUA+A20ap755gCdiEO40uYC9c8q32SS+BRuqYXO3h4VSwjhxuNMI23V1qX0QYPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0m1A4SS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 961EBC4CEE4;
-	Tue, 25 Mar 2025 15:51:09 +0000 (UTC)
+	s=arc-20240116; t=1742918108; c=relaxed/simple;
+	bh=/sWusNH0/d1dasvfDJ3IgNRXiLJFey3D01NjmmoGY1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6poz+5plDpqp8wJ2DdqNhNlhPewbu7KTD4Jgbss1jlz+S+XmofkbSG4oxiCZuUEw8KXjnNM7qJl6QqJHeL524G1Js1LM7FaIH+DkyFA/Q0kphICY6VCAJSiey6Q1z6oCOSS/luT1zcwrfhQXd7+yZ0XYltd+tjNO1NzdR+dREI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tij9wJA1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA5EC4CEE4;
+	Tue, 25 Mar 2025 15:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742917870;
-	bh=T0A9JesaY6l1nc8qgwaVPd5jDDCHVENKy2TJK3KE8Ic=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=J0m1A4SS8Y/jTwu+azp24fmehuM8FykEVtUiPLA7S5R8SMU1abSUcP2421pLIzsdW
-	 XdSu98FaoQBFQhFO8FXPQGl9d1MpxFaDkjX/Bj3mKNp6r0ISahhy/hdI++Nn9hqfR/
-	 qsIWZzwUFoQsRIb7sOJGaiFdKBtlDGtRHtL8OyM7mAt/U08fptEcusEG69IOmI1/Uj
-	 bwQXnmSOxvFcg8zACs7b71ky+Q6f938xaqpn9aIRDA5EoGrc957DPNGk0tN32zhZDw
-	 3hbAMaKr+c6m+5cDEDVwzUUQYQhWYHXQH0MP27RvUQVu9l+xUPFvuHzQcvQJ88kttU
-	 oLbtRDdQz5z/Q==
+	s=k20201202; t=1742918107;
+	bh=/sWusNH0/d1dasvfDJ3IgNRXiLJFey3D01NjmmoGY1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tij9wJA1v1Yh9o+hC/dgptP076g+fLxSWf1M+2I2y6vb8+Ynts5xup4zmTE62n7h6
+	 wcEuQ0JXZWx8Ic/NpD3/wCylr0+g4Gg40zNHgXrrVpls5GVQ/SockmwgYhmwWYF2Zx
+	 awAn4bYwVNfv2ybmaijmxr4W7oNzrH8X6HJg5RW0JStl/bq6yWZVWnkU2TjgRyl6pp
+	 BSgOVEQY+OtRNB5q2gQXWEEOcXeDRqsMTpBULVRrpYAhhc5ExBQBw9DyYSzswGF2ca
+	 qQiQYcbSNo9DQrrVOareNfbKxUvnhjfH5aiA3TUeKwMWplL2Q3xnM+eW7E6XJf4tES
+	 FCd/4oB+FlSpw==
+Date: Tue, 25 Mar 2025 15:55:02 +0000
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: npache@redhat.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- patches@opensource.cirrus.com
-In-Reply-To: <20250323170529.197205-1-rf@opensource.cirrus.com>
-References: <20250323170529.197205-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] firmware: cs_dsp: Ensure cs_dsp_load[_coeff]() returns
- 0 on success
-Message-Id: <174291786934.56229.8841259212687977896.b4-ty@kernel.org>
-Date: Tue, 25 Mar 2025 15:51:09 +0000
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Vishwaroop A <va@nvidia.com>,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <499703ae-dba1-49a6-869b-a60b44c2a85f@sirena.org.uk>
+References: <20241126134529.936451-3-va@nvidia.com>
+ <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
+ <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
+ <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
+ <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
+ <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
+ <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
+ <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
+ <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
+ <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F4WbcsPWDlVylFlJ"
+Content-Disposition: inline
+In-Reply-To: <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
+X-Cookie: Visit beautiful Vergas, Minnesota.
 
-On Sun, 23 Mar 2025 17:05:29 +0000, Richard Fitzgerald wrote:
-> Set ret = 0 on successful completion of the processing loop in
-> cs_dsp_load() and cs_dsp_load_coeff() to ensure that the function
-> returns 0 on success.
-> 
-> All normal firmware files will have at least one data block, and
-> processing this block will set ret == 0, from the result of either
-> regmap_raw_write() or cs_dsp_parse_coeff().
-> 
-> [...]
 
-Applied to
+--F4WbcsPWDlVylFlJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Tue, Mar 25, 2025 at 02:05:01PM +0100, Thierry Reding wrote:
 
-Thanks!
+> Mark, would another alternative be to add something like a sysfs export
+> attribute? Something that you'd write a controller/chipselect pair to in
+> order to create a spidev device? That has the benefit of removing this
+> entirely from device tree where it doesn't belong, but still makes this
+> option available to users that would otherwise have to resort to hacks.
 
-[1/1] firmware: cs_dsp: Ensure cs_dsp_load[_coeff]() returns 0 on success
-      commit: 2593f7e0dc93a898a84220b3fb180d86f1ca8c60
+Possibly?  I think I've lost track of what the use case is here, usually
+for the spidev stuff DT overlays seem like they're the right thing but
+perhaps this is different?  If we are doing this at runtime sysfs seems
+like a reasonable way to trigger it, though you'd still need the DT to
+describe the controller and the chipselects that are available.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--F4WbcsPWDlVylFlJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfi0dUACgkQJNaLcl1U
+h9ARpgf+IUdIkCNbqFahvFbW/Ee0iGxUVn8zZMvbwl5WkkiIDfyqOt10rfwVWjXR
+gkJhcwUpBLZVSoYm9+f/8y+toWLCYqdvZeuIMHt3E6l/0tVrChLqScaH9PtHI6sD
+0z+BybR/AxvcDlhn4sWXbCZBufdGIp+cUmUp47N/N36nRFGaforGi22UCIct+0g7
+hfcGVHmSd9MzbK0FNa5f7xTQth9LE+lch1NNg1ZK6LxdvClsMtZ6elQW9bUjz6d8
+RaYHUHlxuq6mvtJot8F+c7/GAwsb5U4vTfsXxul4phRgWDH40XzeQY7ocRJ5v/N1
+TPEv31ss3uWqHlZZq51wMoxJM4Qlgg==
+=hzVh
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--F4WbcsPWDlVylFlJ--
 
