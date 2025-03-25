@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-576207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1F7A70C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:51:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F27A70C63
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3B93B6784
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2089188BD6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801FD268FFA;
-	Tue, 25 Mar 2025 21:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAAD265CC8;
+	Tue, 25 Mar 2025 21:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vNWKcaF9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w3n2/ARM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JIZDf1IB"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F1E1A8F60;
-	Tue, 25 Mar 2025 21:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D80B1DD0F6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742939334; cv=none; b=HUeclsyFmKrHMZjOzuwN5SjINM8j86NclY0nYWQboMZ0jnOurfOn0w2xbGjtULWuem7WaCYRZp0DBTYsFNjA7nnq8+Rbfz7bg+BTtOlqm3XRDYjBhGibQ9V2YVOW0zOzTsEgfiJexcIDxHHkvrjpGriQ50ZcSKXgLaEq9GjPsBE=
+	t=1742939358; cv=none; b=K9KskgfuSVdQ9mYrETQSUiq0PanHCdNJZ0GYQJN15s0RtoBTHPwfDUrIR8fj/RG8WEVigFCxnlhOs/53fSHuYStLEK1R8U52aS9k9VlqR+vPpSw1DXJll2GiFtdUTCPs1w4N1zWGII0eHHr1jfcbeFCvxnIV3m+tZTZ9xs6zt/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742939334; c=relaxed/simple;
-	bh=FAJPQswga/rCguHs40Ezy1lKZ2ggl4FcpKvteTPRhOU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CEa5iUnSEmCEsk4s/oWhpPqENI0ZAEQ6dhANpEhicbih2S0cfFRJ93vHPXFkw9ldnqtLheGjgbyCFSDk6GAMyt27oKcvO4XOyxqrcf78nlzjwwovCtHWw3/lxqahW3jbrPCtGDK81/7QZjvM8ph1fo6vGehwqS8rx6iZtZRQeCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vNWKcaF9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w3n2/ARM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 21:48:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742939329;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Trc3lr1MI/DR/dpo7OS/gpOP28oHutpl0Zr17wM3BH4=;
-	b=vNWKcaF96ufQgPKL3cE6fH3fPNEYHT8WVutuUgvRn7X9s+FTnRUgKUJUCFzkbYkd9ILhTy
-	SJCK+l2SD8/GoCqG8qmJeRPWMU6uvmjQK5DeMixL5qeX4SL3u25OhVIT4ivHwnIeGBbywt
-	5MmL5wmPlV8+SLnxgrKUqE90zKq+97bZC5e8Bm0Q/Rc3P+BKiXjkbqls1V5IYt3f2LJQlc
-	XiWDzBwLCz/mXB2cGcYQT7lIivcq6jUCfO1fUYaqh/9qx8y1erqFYjN6D6ykFXVD3FyHRt
-	soLz/2ODZvgZ5H6IUdD4WaaAyRegR/C+I/IeBecx79s31B/ipk4dqBy+hy67sA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742939329;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Trc3lr1MI/DR/dpo7OS/gpOP28oHutpl0Zr17wM3BH4=;
-	b=w3n2/ARMO87LeEC/Ipv4PrezalVmcarHk/a5qqj4cmEzJSn9W3SXofxpaDFO1xl67z8WTI
-	YUfxGgY2ChTLN5AA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/bitops: Use TZCNT mnemonic in <asm/bitops.h>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- Juergen Gross <jgross@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250325175215.330659-1-ubizjak@gmail.com>
-References: <20250325175215.330659-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1742939358; c=relaxed/simple;
+	bh=nwPA9SIOejPkzpLh4ULI5UAZazEYdl1cPdB+6K4iWgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvxiJQtN/DyKH2Q87jOlNg+Dr0gpoh/iQcm9rllTw+XQfNmA3q/sDxf5FBxsVX7aLeyE8rI01049z+aCFIXnd30omuQ1bPxzn792UIuaBT6juDncsJlp13QmBDV9CO77LVqE3CNSpp8EjSv512dS27d9U/zpOQq8okuve4WSEmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JIZDf1IB; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d59c8f0979so927795ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1742939356; x=1743544156; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3q3oNbCpD8Yr3ggdluYQ7Oxw70IpYfziH8ybf4Z46oM=;
+        b=JIZDf1IBK6HRknqS/sEe4rhtGMl/yx8f7Pzs+nD/xM0r/y+7YzzjqmRa58iaGCQiOR
+         yz7yDUaUw8qGsbNnJTtyrrmM+cRcKpq2GjdfDJTTTQFaGslA19DpP5iPjGLAkXtaVPxJ
+         ujJDo8nSE62ff4soKYBtrB6bnvQmjMhjAvmbzl6TUJYRo4awdJ7XPxVnqEPV6099zjIn
+         bCbZMx/hQpJObCxsFgdb4Js5mvGNG47DSi6v9553csCBN5NthIqktyDZsstHua04jnL6
+         4uJL61p3HfdGWlUTWVhs+onO9SOcMO8iSBgVj5gyEpuvflXUYvnuT8omussBVMaL28k7
+         12Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742939356; x=1743544156;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3q3oNbCpD8Yr3ggdluYQ7Oxw70IpYfziH8ybf4Z46oM=;
+        b=rg2NWjKsy5+OMO0UtWK+ZHae7AegTLHwM1aZpEy0Rqbk72anb9I3zb8B8gEB4PmrAq
+         +b0FuNqtTrJ/1tjKHXUKvMEaocPcEknuJ1mD4nQ4DbalxqSMabEHdow+m+nzrqOwcLbj
+         sOdVwVMdOxw8I8L3Z6u1gC01k1oahO8UWukclLyCEtBGoNQzsQXSE8we72CC/LLiMcQo
+         cFO5iKAzdaeHARtDycUDHKzTGqpHLaQ2I1+jMO+0IT2ILs3aBxaxqos1qmRATO690/Ts
+         4Im9IgRTj9nWrU6VZ6c6Xh+sl8wdFuBeE1cXWI/eb/mW2HxnktqaM8O0sGYNBFTGNxyi
+         NHxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYUATVhKG9JXmceE31TxxbAsOYZPIDWtYhMZOQN1wyvUe+FKUBmLjweukkx4Nx6MvgTKcHCXb/Ydvu+fI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy79V8RSyVu9GIr4e+9XWpL/AMKqfoYWiY5G1gf7Qxke9KsOkiB
+	vx6IBCdyc3cZeOWj9L8Ge5GCnHrt0pg9EoopE9Ahw/bSaZebDHdRy3p+na65zEM=
+X-Gm-Gg: ASbGnctNhaMDdKp8yj38egvB1GYN99dmgJrWhFxiCo5RuN1lhGcYnfdQMF0LxvIhdEs
+	05P/UU6o6n+OELtgoapRVky2QMbQNOK75kiyR2N3QBP3k/dZuDisn0LphH1lIX2JzysA10a/g1o
+	JTcq7JY/+IaVOf3QPR/mpfQP1yQNBNuohitj+Vus2eNUO5ZyW/eNuaLj3FvxLRMaVMb3GxWkKnW
+	YXFlx/VjEqMm/2fBEC6CbNUqRXwh42Adz8FtDbwoFtEgMypGRlO+tFwM5XpYrGK0M+ZhANUg2vR
+	rx1sjUYF+I7bRTQZEZfT7H2oUVOA0ovYB6OZCTkF0g9TWxjLRGzhRugP6428MQ==
+X-Google-Smtp-Source: AGHT+IFj7uKpDfJR5Iim77+HbZSnDjrxpbs+tP0WU77QjYNPslcMwQz6BHnLAD6zLR0ygkvZ39o04g==
+X-Received: by 2002:a05:6e02:4401:20b0:3d1:4a69:e58f with SMTP id e9e14a558f8ab-3d5c20b2c25mr15007025ab.2.1742939356043;
+        Tue, 25 Mar 2025 14:49:16 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.6.166])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdcfeffsm2556607173.30.2025.03.25.14.49.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 14:49:15 -0700 (PDT)
+Message-ID: <a20d5849-770e-420d-b707-83a50c37810b@sifive.com>
+Date: Tue, 25 Mar 2025 16:49:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174293932910.14745.11013941982683227927.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/4] riscv: dts: Add EIC7700 pin controller node
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+ Pritesh Patel <pritesh.patel@einfochips.com>,
+ Min Lin <linmin@eswincomputing.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, =?UTF-8?B?6bKB546J5p6X?=
+ <luyulin@eswincomputing.com>, =?UTF-8?B?5a6B5a6H?=
+ <ningyu@eswincomputing.com>, Lin Feng <fenglin@eswincomputing.com>
+References: <20250325141311.758787-1-emil.renner.berthing@canonical.com>
+ <20250325141311.758787-4-emil.renner.berthing@canonical.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20250325141311.758787-4-emil.renner.berthing@canonical.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/asm branch of tip:
+On 2025-03-25 9:13 AM, Emil Renner Berthing wrote:
+> Add node for the pin controller on the ESWIN EIC7700 SoC and gpio-ranges
+> properties mapping GPIOs to pins.
+> 
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> ---
+>  arch/riscv/boot/dts/eswin/eic7700.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/eswin/eic7700.dtsi b/arch/riscv/boot/dts/eswin/eic7700.dtsi
+> index 9cef940f07e4..7226647919b7 100644
+> --- a/arch/riscv/boot/dts/eswin/eic7700.dtsi
+> +++ b/arch/riscv/boot/dts/eswin/eic7700.dtsi
+> @@ -312,6 +312,13 @@ porta: gpio-port@0 {
+>  					<324>, <325>, <326>, <327>, <328>, <329>, <330>,
+>  					<331>, <332>, <333>, <334>;
+>  				gpio-controller;
+> +				gpio-ranges = <&pinctrl  0 12  1>,
+> +					      <&pinctrl  1 14 12>,
+> +					      <&pinctrl 13  1  4>,
+> +					      <&pinctrl 17 32  1>,
+> +					      <&pinctrl 18 40  5>,
+> +					      <&pinctrl 23 51  7>,
+> +					      <&pinctrl 30 68  2>;
+>  				ngpios = <32>;
+>  				#gpio-cells = <2>;
+>  			};
+> @@ -320,6 +327,9 @@ portb: gpio-port@1 {
+>  				compatible = "snps,dw-apb-gpio-port";
+>  				reg = <1>;
+>  				gpio-controller;
+> +				gpio-ranges = <&pinctrl  0 70  3>,
+> +					      <&pinctrl  3 79  7>,
+> +					      <&pinctrl 10 89 22>;
+>  				ngpios = <32>;
+>  				#gpio-cells = <2>;
+>  			};
+> @@ -328,6 +338,7 @@ portc: gpio-port@2 {
+>  				compatible = "snps,dw-apb-gpio-port";
+>  				reg = <2>;
+>  				gpio-controller;
+> +				gpio-ranges = <&pinctrl 0 111 32>;
+>  				ngpios = <32>;
+>  				#gpio-cells = <2>;
+>  			};
+> @@ -336,9 +347,15 @@ portd: gpio-port@3 {
+>  				compatible = "snps,dw-apb-gpio-port";
+>  				reg = <3>;
+>  				gpio-controller;
+> +				gpio-ranges = <&pinctrl 0 143 16>;
+>  				ngpios = <16>;
+>  				#gpio-cells = <2>;
+>  			};
+>  		};
+> +
+> +		pinctrl: pinctrl@51600080 {
+> +			compatible = "eswin,eic7700-pinctrl";
+> +			reg = <0x0 0x51600080 0x0 0xff80>;
 
-Commit-ID:     0717b1392dc7e3f350e5a5d25ea794aa92210684
-Gitweb:        https://git.kernel.org/tip/0717b1392dc7e3f350e5a5d25ea794aa92210684
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Tue, 25 Mar 2025 18:52:01 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 22:38:29 +01:00
+Per the TRM, the MMIO range is 2M-128B large, so the size should be 0x1fff80.
+Other than that, the rest looks good (especially, the GPIO ranges match what I
+have), so:
 
-x86/bitops: Use TZCNT mnemonic in <asm/bitops.h>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
-Current minimum required version of binutils is 2.25,
-which supports TZCNT instruction mnemonic.
+> +		};
+>  	};
+>  };
 
-Replace "REP; BSF" in variable__{ffs,ffz}() function
-with this proper mnemonic.
-
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lore.kernel.org/r/20250325175215.330659-1-ubizjak@gmail.com
----
- arch/x86/include/asm/bitops.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index 100413a..bbaf75e 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -248,7 +248,7 @@ arch_test_bit_acquire(unsigned long nr, const volatile unsigned long *addr)
- 
- static __always_inline unsigned long variable__ffs(unsigned long word)
- {
--	asm("rep; bsf %1,%0"
-+	asm("tzcnt %1,%0"
- 		: "=r" (word)
- 		: ASM_INPUT_RM (word));
- 	return word;
-@@ -267,7 +267,7 @@ static __always_inline unsigned long variable__ffs(unsigned long word)
- 
- static __always_inline unsigned long variable_ffz(unsigned long word)
- {
--	asm("rep; bsf %1,%0"
-+	asm("tzcnt %1,%0"
- 		: "=r" (word)
- 		: "r" (~word));
- 	return word;
 
