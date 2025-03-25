@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-574689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C0A6E88D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:13:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036AAA6E88F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9531895819
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9B03AF7AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D651A3162;
-	Tue, 25 Mar 2025 03:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA471A5BA6;
+	Tue, 25 Mar 2025 03:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNg/JsMr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJ/8rdmg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11EA1A23B8;
-	Tue, 25 Mar 2025 03:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B621A3172;
+	Tue, 25 Mar 2025 03:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742872401; cv=none; b=rUOhI7RlNqRepwrP/+dI4xP1iVULxNTe5cUq3yZsj3vYtcVkCYccMKfRBx76ZzMkVhqHjy0scIaBVy2HAImBr83xr3QuW4L+n1RGHfjTckWv3BmZHfIfzm3O0c/BSGBzsmxgmw/ujI/NIdubwJE9GNkAnVjP0NPGmSxwqm80LWA=
+	t=1742872403; cv=none; b=VVueYtLFHuCSSeIb6vR9ex1kL8Jq4v5jmsZ6KaKnYq+iXI5OuWwRqIywRS51sMQv9WguTapCyu70a3axOW6QEBRuPiKOFn+ce5eiVDFADsrYdUV00xarh/8tZfZSrDj1INkk8IpTyNKVf3+XAi5SEU0Ny9NTsQVdNK8q71CtTuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742872401; c=relaxed/simple;
-	bh=KziQK7EppF5DOtBo7utcqARNBAi9Ars+fyKXqAXwwQY=;
+	s=arc-20240116; t=1742872403; c=relaxed/simple;
+	bh=E7hVehIeYXHEFzo2cwihH0hixCMqgRhmdfHFRgEeypc=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XFF1IQ0wd3tdxzJ19pbddcmt394zviBb0gstM7eC9YAUoO52OIw9/CobM+FihpF1V+SMD+0+ND76k8w193DOj1HxydIFqwGLYr66jN8u761A6cPehXD7Er6R0S7dnv7E+ZDdlJdYLVznT1N15lCsBERptDOV3gl0ccpT2Yep3wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNg/JsMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2960C4CEDD;
-	Tue, 25 Mar 2025 03:13:20 +0000 (UTC)
+	 Message-Id:Subject; b=hxGEO7U0QFacAI572sIeUBmVrhsyqVf+gVdxRGac0oVpQFNmwp5f3Qss4HGxhTqpgq/RccnEPLu/IdGmTVOJqBk+H7k3OGLlPSbxR7jybAk/h0hZWdVcrdPe0cIYH5TjYPmE3VPkBTP2dJgA/Lx0ueMB1gbBfVLL4edfpaKiPLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJ/8rdmg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30809C4CEDD;
+	Tue, 25 Mar 2025 03:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742872401;
-	bh=KziQK7EppF5DOtBo7utcqARNBAi9Ars+fyKXqAXwwQY=;
+	s=k20201202; t=1742872402;
+	bh=E7hVehIeYXHEFzo2cwihH0hixCMqgRhmdfHFRgEeypc=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=vNg/JsMrXRn+fPXc9o2GtWX/1TEHmPJwgwn5rQ/kSlOKCEtPKAntisR79WOG74aSr
-	 TC1tvxs4yaJ1ObDFIe01JX+PM1/DqIGoID2HwBHNUYwM+3qwTM8dNOr918LcZjvNpL
-	 uIAxYA8NCggQjrZvsBzKhZPi36TadgbTBdCwpC/kI05Wyj2Ell5jq2PZDgSqgZT7VN
-	 TB9gzlMjyd0hCssyjV+x/VnQ2MeWUhII9q06rv52KYSUXWhouGByhtWsbsWfTP50CJ
-	 b7A6ETi46LP21piNgCckqLYmwwtsRNnfY8CuJwNHZ0FeKsHRIJpGfrFJrHTKAi92a9
-	 7NoWTwPdzVlAQ==
-Date: Mon, 24 Mar 2025 22:13:19 -0500
+	b=ZJ/8rdmgejL5ITSuOME+enjRg5eUU+Nk4/jaCfVmLOZdqVbUIHzu3UUpdIiIh0wFV
+	 crk+JWcbsM9tidy0Rj0wpAiKiQwCoTV6jLxecNH2LqUt4ph2Im88XI601JjfyoXOjg
+	 CNay8ntkC/3jAEtnWf+sB2edz89pd7FVSqHzSO/r5UYyHLfSc9zHOCQO5B+Hqx34jd
+	 nZTrg4igkAFmj0fxQbn2kLQpbFvhsSig3T1RDFmmfayXF46Ul1FjUlitv5Kdd+VogW
+	 x3VSfKpNA5ObqmwFJiPLkh/uvMxI9iz2RQwAtD8sQXsrEiPOwFinmVjDSO2vACyw7g
+	 iauhapHA3WZEg==
+Date: Mon, 24 Mar 2025 22:13:21 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,81 +50,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, Andrew Lunn <andrew@lunn.ch>, 
- andrew@codeconstruct.com.au, tingkaic@nvidia.com, 
- devicetree@vger.kernel.org, dkodihalli@nvidia.com, 
- linux-arm-kernel@lists.infradead.org, leohu@nvidia.com, 
- linux-kernel@vger.kernel.org, gpiccoli@igalia.com, tony.luck@intel.com, 
- linux-aspeed@lists.ozlabs.org, kees@kernel.org, openbmc@lists.ozlabs.org, 
- joel@jms.id.au, Paul Menzel <pmenzel@molgen.mpg.de>, 
- Mars Yang <maryang@nvidia.com>, linux-hardening@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>
-To: Willie Thai <wthai@nvidia.com>
-In-Reply-To: <20250324175926.222473-1-wthai@nvidia.com>
-References: <20250324175926.222473-1-wthai@nvidia.com>
-Message-Id: <174287235976.1618206.14203259564478820837.robh@kernel.org>
-Subject: Re: [PATCH v4 0/3] Add device tree for Nvidia's GB200NVL BMC
+Cc: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Heiko Stuebner <heiko@sntech.de>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+In-Reply-To: <20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org>
+References: <20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org>
+Message-Id: <174287236051.1618248.4100886448951731382.robh@kernel.org>
+Subject: Re: [PATCH 0/5] arm64: dts: rockchip: add ROCK 5B+ support
 
 
-On Mon, 24 Mar 2025 17:59:23 +0000, Willie Thai wrote:
-> The GB200NVL BMC is an Aspeed Ast2600 based BMC
-> for Nvidia Blackwell GB200NVL platform.
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
+On Mon, 24 Mar 2025 18:04:21 +0100, Sebastian Reichel wrote:
+> This series adds support for the ROCK 5B+, which (as the name suggests)
+> is an improved version of the ROCK 5B. It also adds initial USB-C
+> support for both the ROCK 5B and the 5B+.
 > 
-> Co-developed-by: Mars Yang <maryang@nvidia.com>
-> Signed-off-by: Mars Yang <maryang@nvidia.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-> Signed-off-by: Willie Thai <wthai@nvidia.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
-> Changes v1 -> v2:
->   - Fix the SOB name [Krzysztof]
->   - Fix warnings from scripts/checkpatch.pl run [Krzysztof]
->   - Fix DTS coding style [Krzysztof]
->   - Move pinctrl override to the bottom [Krzysztof]
->   - Drop bootargs [Krzysztof]
->   - Follow DTS coding style and change naming for leds node [Krzysztof]
->   - Change flash 0 status property [Krzysztof]
->   - Change the phy-mode to rgmii [Andrew]
->   - Remove the max-speed in mac0 [Andrew]
->   - Put gpio line name in one line per group of 8 gpios, but keep some b/c they can exceed length limit [Paul]
-> Changes v2 -> v3:
->   - Fix missing new line [Krzysztof]
->   - Fix missing binding define, adding it in the patch no.1 of this patch set v3 [Krzysztof, Rob]
->   - Fix DTS coding style [Krzysztof]
->   - Modify nodes name to generic name for: i2c expander pca9546, gpio expander pca9555, power monitor lm5066i, fan controller max31790 [Krzysztof]
->   - Skip mac setting and wait till the delay issue in phy-mode fix from Aspeed SOC vendor side [Andrew]
->   - Remove i2c-scl-clk-low-timeout-us which is Apseed proprietary property [Mars]
-> Changes v3 -> v4:
->   - Order binding patch first in the patch set [Andrew Jeffery]
->   - Make the commit message more concise [Krzysztof]
->   - Remove stray blank lines [Krzysztof]
->   - Remove unnecessary comments [Krzysztof]
->   - Remove underscore, repalce by dash symbol in node name [Krzysztof]
->   - Remove disable-master property in i2c as it is downstream added property [Rob, Andrew Jeffery]
->   - Remove #address-cells, #size-cells in nxp,pca9555 and maxim,max31790 as they are no longer defined [Rob, Andrew Jeffery]
+> Sebastian Reichel (5):
+>       arm64: dts: rockchip: move rock 5b to include file
+>       arm64: dts: rockchip: move rock 5b to include file
+>       dt-bindings: arm: rockchip: Add Radxa ROCK 5B+
+>       arm64: dts: rockchip: add Rock 5B+
+>       arm64: dts: rockchip: add USB-C support for ROCK 5B and 5B+
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml          |    5 +
+>  arch/arm64/boot/dts/rockchip/Makefile              |    1 +
+>  .../boot/dts/rockchip/rk3588-rock-5b-plus.dts      |  117 +++
+>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |  952 +----------------
+>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi   | 1087 ++++++++++++++++++++
+>  5 files changed, 1220 insertions(+), 942 deletions(-)
 > ---
+> base-commit: 76728fe54f547950f73c9dc446beb2e31604abd7
+> change-id: 20250324-rock5bp-for-upstream-fd85b00b593b
 > 
-> Willie Thai (3):
->   dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
->   dt-bindings: pinctrl: aspeed,ast2600-pinctrl
->   ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
-> 
->  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
->  .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    1 +
->  arch/arm/boot/dts/aspeed/Makefile             |    1 +
->  .../aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts | 1149 +++++++++++++++++
->  4 files changed, 1152 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-> 
+> Best regards,
 > --
-> 2.25.1
+> Sebastian Reichel <sre@kernel.org>
 > 
 > 
 > 
@@ -144,53 +108,91 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250324175926.222473-1-wthai@nvidia.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e780000/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb@1e790000/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: power-controller: power-domain@12: Unevaluated properties are not allowed ('domain-supply' was unexpected)
+	from schema $id: http://devicetree.org/schemas/power/rockchip,power-controller.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: vop@fdd90000: clocks: [[33, 605], [33, 604], [33, 609], [33, 610], [33, 611], [33, 612], [33, 603], [107], [108]] is too long
+	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip-vop2.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: vop@fdd90000: clock-names: ['aclk', 'hclk', 'dclk_vp0', 'dclk_vp1', 'dclk_vp2', 'dclk_vp3', 'pclk_vop', 'pll_hdmiphy0', 'pll_hdmiphy1'] is too long
+	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip-vop2.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fddb0000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fddb0000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fdde0000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fdde0000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /rng@fe378000: failed to match any schema with compatible: ['rockchip,rk3588-rng']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fe4e0000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fe4e0000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fe4f0000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fe4f0000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fddb8000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fddb8000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: spdif-tx@fdde8000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif'] is too long
+	'rockchip,rk3066-spdif' was expected
+	'rockchip,rk3228-spdif' was expected
+	'rockchip,rk3328-spdif' was expected
+	'rockchip,rk3366-spdif' was expected
+	'rockchip,rk3368-spdif' was expected
+	'rockchip,rk3399-spdif' was expected
+	'rockchip,rk3568-spdif' was expected
+	'rockchip,rk3588-spdif' is not one of ['rockchip,rk3128-spdif', 'rockchip,rk3188-spdif', 'rockchip,rk3288-spdif', 'rockchip,rk3308-spdif']
+	from schema $id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /spdif-tx@fdde8000: failed to match any schema with compatible: ['rockchip,rk3588-spdif', 'rockchip,rk3568-spdif']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /hdmi_receiver@fdee0000: failed to match any schema with compatible: ['rockchip,rk3588-hdmirx-ctrler', 'snps,dw-hdmi-rx']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dtb: /hdmi_receiver@fdee0000: failed to match any schema with compatible: ['rockchip,rk3588-hdmirx-ctrler', 'snps,dw-hdmi-rx']
+arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: vop@fdd90000: clocks: [[33, 605], [33, 604], [33, 609], [33, 610], [33, 611], [33, 612], [33, 603], [107], [108]] is too long
+	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip-vop2.yaml#
 
 
 
