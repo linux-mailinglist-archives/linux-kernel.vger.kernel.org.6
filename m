@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-575346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBC0A70008
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF93A70149
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BAF176770
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5976419A35D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E803025A63D;
-	Tue, 25 Mar 2025 12:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D24D26B94F;
+	Tue, 25 Mar 2025 12:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Bzp3415B"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UkvuKz3f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5238E55B;
-	Tue, 25 Mar 2025 12:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EF62566EA;
+	Tue, 25 Mar 2025 12:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905903; cv=none; b=nKkDaPOVhXRRz6uNzIp7dWUYjKwejQxWmovYfc2EgVTfDoLNCxrWpEY+8GvzD57icZC9759Sx5mgadzueTendrt+l4Pe/yHf6qWFogJP0i9gDWCcKk/ac5i/i+B76qTffZTj+Vl+fDHHFudyjOC6/olUrl+ae99XkaAJqKzkov4=
+	t=1742906290; cv=none; b=fUETc2zoPxDEOlfzCeu7oLrOq604NyvezbWOpe87SAYc5v2Wa1rQwSXW+b91CASk8KkeKAEj9bnjYY9ZFA0FpOOskGm0PC4bA6D1bA7MkhAfAfOhDn9WPZ9X9QBPZ+9ZvKefMZC9RXjKL/e0Atqeyyq7eZUkQPVa2Uh9JWKfRJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905903; c=relaxed/simple;
-	bh=BLS3C9BQsZM6oZ6LWax/ituF9yyqB6mvONm7l2h6Ot0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DYXClU5pLCMRSaRi2o0LVK50GiRD8uQj6Xy6pYQnyCkjIR8T39mJqGK2KSMFgO/PT3rTXq+4zAGjZ2JocJyV4q3ef5B1POFxWeMltPKhMkZa8D+Jkj5YKd2dHGTEhKuSMxzCTlgbqgNbM/fru0Ta2f80yiLhBdn1AZKxIOqSpOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Bzp3415B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B49C4CEE4;
-	Tue, 25 Mar 2025 12:31:43 +0000 (UTC)
+	s=arc-20240116; t=1742906290; c=relaxed/simple;
+	bh=mrTKcMHuNKBPMTcRWR+EuzE4dMj9aW+kwF5iI0urW9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SReoAwq+eCQJGuEnPb/au6Fczcto9iUNbWE0df2qkfLwSmdyfFIA28BrbmtsdzkoZNS41y7rXbbOZfmJmNhMGQCfALypu9Tniy7n6OhjbVzf6H4UntbcOdXG6A8cVnkkx0o0yRI43mf51WtO/SNHoq0r6+sB0g40Aj3CDSjJ/LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UkvuKz3f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1EFDC4CEE4;
+	Tue, 25 Mar 2025 12:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742905903;
-	bh=BLS3C9BQsZM6oZ6LWax/ituF9yyqB6mvONm7l2h6Ot0=;
+	s=korg; t=1742906290;
+	bh=mrTKcMHuNKBPMTcRWR+EuzE4dMj9aW+kwF5iI0urW9w=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Bzp3415B7I42+oiWc3T76RpMjKU+6eOI+92DNYDscAhnEHA/HRFDM1dEsVHRGkYc1
-	 s7B3cKfCOD/0hEunQ6AOMdv7Z35gYbU2mGm5MhG7nwO7XNlc6cVck5Ic2L0RX16xHM
-	 3pBeEZYm+nNoaNgn0Eod3EEH82bWcn2kZ3D0gVpk=
+	b=UkvuKz3fcm6YrdnD6ARUnitVPoAXUpamSmYQyEjYzbeme57DbMWNyzki/6ii94JjM
+	 XVMd0u25bD4XSIMZYE22M7M7FlVlViG44l+y5IaKSvQ4g8grtR+AIYwmYz/1FZsA4g
+	 IZLNn83Ofzs/qJZwDuBiYkrPISBwnOvJqU37j4XU=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	hargar@microsoft.com,
 	broonie@kernel.org
-Subject: [PATCH 6.13 000/119] 6.13.9-rc1 review
-Date: Tue, 25 Mar 2025 08:20:58 -0400
-Message-ID: <20250325122149.058346343@linuxfoundation.org>
+Subject: [PATCH 6.12 000/116] 6.12.21-rc1 review
+Date: Tue, 25 Mar 2025 08:21:27 -0400
+Message-ID: <20250325122149.207086105@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,17 +69,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.9-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.21-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.13.y
+X-KernelTest-Branch: linux-6.12.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.13.9-rc1
+X-KernelTest-Version: 6.12.21-rc1
 X-KernelTest-Deadline: 2025-03-27T12:21+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.13.9 release.
-There are 119 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.12.21 release.
+There are 116 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -87,9 +87,9 @@ Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.9-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.21-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
 and the diffstat can be found below.
 
 thanks,
@@ -100,10 +100,19 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.13.9-rc1
+    Linux 6.12.21-rc1
 
 Arthur Mongodin <amongodin@randorisec.fr>
     mptcp: Fix data stream corruption in the address announcement
+
+Zi Yan <ziy@nvidia.com>
+    mm/huge_memory: drop beyond-EOF folios with the right number of refs
+
+Justin Klaassen <justin@tidylabs.net>
+    arm64: dts: rockchip: fix u2phy1_host status for NanoPi R4S
+
+Eder Zulian <ezulian@redhat.com>
+    libsubcmd: Silence compiler warning
 
 Dietmar Eggemann <dietmar.eggemann@arm.com>
     Revert "sched/core: Reduce cost of sched_move_task when config autogroup"
@@ -137,9 +146,6 @@ Pavel Begunkov <asml.silence@gmail.com>
 
 Namjae Jeon <linkinjeon@kernel.org>
     ksmbd: fix incorrect validation for num_aces field of smb_acl
-
-Jay Cornwall <jay.cornwall@amd.com>
-    drm/amdkfd: Fix instruction hazard in gfx12 trap handler
 
 Philip Yang <Philip.Yang@amd.com>
     drm/amdkfd: Fix user queue validation on Gfx7/8
@@ -213,9 +219,6 @@ Shakeel Butt <shakeel.butt@linux.dev>
 Ye Bin <yebin10@huawei.com>
     proc: fix UAF in proc_get_inode()
 
-Zi Yan <ziy@nvidia.com>
-    mm/huge_memory: drop beyond-EOF folios with the right number of refs
-
 Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
     mm/page_alloc: fix memory accept before watermarks gets initialized
 
@@ -236,12 +239,6 @@ Kamal Dasu <kamal.dasu@broadcom.com>
 
 Dragan Simic <dsimic@manjaro.org>
     arm64: dts: rockchip: Add missing PCIe supplies to RockPro64 board dtsi
-
-Dragan Simic <dsimic@manjaro.org>
-    arm64: dts: rockchip: Add avdd HDMI supplies to RockPro64 board dtsi
-
-Justin Klaassen <justin@tidylabs.net>
-    arm64: dts: rockchip: fix u2phy1_host status for NanoPi R4S
 
 Quentin Schulz <quentin.schulz@cherry.de>
     arm64: dts: rockchip: fix pinmux of UART5 for PX30 Ringneck on Haikou
@@ -303,9 +300,6 @@ Andreas Kemnade <andreas@kemnade.info>
 Masami Hiramatsu (Google) <mhiramat@kernel.org>
     tracing: tprobe-events: Fix leakage of module refcount
 
-Hans Verkuil <hverkuil@xs4all.nl>
-    media: rtl2832_sdr: assign vb2 lock before vb2_queue_init
-
 Guillaume Nault <gnault@redhat.com>
     Revert "gre: Fix IPv6 link-local address generation."
 
@@ -360,9 +354,6 @@ Masami Hiramatsu (Google) <mhiramat@kernel.org>
 David Lechner <dlechner@baylibre.com>
     ARM: davinci: da850: fix selecting ARCH_DAVINCI_DA8XX
 
-Huisong Li <lihuisong@huawei.com>
-    soc: hisilicon: kunpeng_hccs: Fix incorrect string assembly
-
 Jeffrey Hugo <quic_jhugo@quicinc.com>
     accel/qaic: Fix possible data corruption in BOs > 2G
 
@@ -371,9 +362,6 @@ Arkadiusz Bokowy <arkadiusz.bokowy@gmail.com>
 
 Dan Carpenter <dan.carpenter@linaro.org>
     Bluetooth: Fix error code in chan_alloc_skb_cb()
-
-Horatiu Vultur <horatiu.vultur@microchip.com>
-    reset: mchp: sparx5: Fix for lan966x
 
 Junxian Huang <huangjunxian6@hisilicon.com>
     RDMA/hns: Fix wrong value of max_sge_rd
@@ -432,11 +420,14 @@ Phil Elwell <phil@raspberrypi.com>
 Stefan Wahren <wahrenst@gmx.net>
     ARM: dts: bcm2711: Fix xHCI power-domain
 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-    Revert "arm64: dts: qcom: sdm845: Affirm IDR0.CCTW on apps_smmu"
-
 Peng Fan <peng.fan@nxp.com>
     soc: imx8m: Unregister cpufreq and soc dev in cleanup path
+
+Marek Vasut <marex@denx.de>
+    soc: imx8m: Use devm_* to simplify probe failure handling
+
+Marek Vasut <marex@denx.de>
+    soc: imx8m: Remove global soc_uid
 
 Cosmin Ratiu <cratiu@nvidia.com>
     xfrm_output: Force software GSO only in tunnel mode
@@ -476,70 +467,66 @@ Diffstat:
  arch/arm/mach-shmobile/headsmp.S                   |   1 +
  arch/arm64/boot/dts/broadcom/bcm2712.dtsi          |   2 +-
  .../boot/dts/freescale/imx8mm-verdin-dahlia.dtsi   |   6 +-
- .../arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi |  16 +-
+ .../arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi |  16 +--
  .../boot/dts/freescale/imx8mp-verdin-dahlia.dtsi   |   6 +-
- arch/arm64/boot/dts/qcom/sdm845.dtsi               |   1 -
- .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  12 +
- .../arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi |   2 +-
- arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi |  14 +
+ .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  12 ++
+ arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi |   2 +
  arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dts |   1 -
  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |   1 -
  arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi     |   1 -
- arch/arm64/include/asm/kvm_host.h                  |  23 +-
- arch/arm64/kernel/fpsimd.c                         |  25 -
- arch/arm64/kvm/arm.c                               |   9 -
- arch/arm64/kvm/fpsimd.c                            | 100 +--
+ arch/arm64/include/asm/kvm_host.h                  |  23 +---
+ arch/arm64/kernel/fpsimd.c                         |  25 ----
+ arch/arm64/kvm/arm.c                               |   9 --
+ arch/arm64/kvm/fpsimd.c                            | 100 ++------------
  arch/arm64/kvm/hyp/entry.S                         |   5 +
- arch/arm64/kvm/hyp/include/hyp/switch.h            | 133 ++--
+ arch/arm64/kvm/hyp/include/hyp/switch.h            | 133 +++++++++++++-----
  arch/arm64/kvm/hyp/nvhe/hyp-main.c                 |  11 +-
- arch/arm64/kvm/hyp/nvhe/pkvm.c                     |  30 -
- arch/arm64/kvm/hyp/nvhe/switch.c                   | 140 ++--
- arch/arm64/kvm/hyp/vhe/switch.c                    |  21 +-
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                     |  29 ----
+ arch/arm64/kvm/hyp/nvhe/switch.c                   | 140 ++++++++++---------
+ arch/arm64/kvm/hyp/vhe/switch.c                    |  21 ++-
  arch/riscv/boot/dts/starfive/jh7110-pinfunc.h      |   2 +-
  drivers/accel/qaic/qaic_data.c                     |   9 +-
  drivers/ata/libata-core.c                          |  14 +-
  drivers/dpll/dpll_core.c                           |   2 +-
  drivers/firmware/efi/libstub/randomalloc.c         |   4 +
  drivers/firmware/imx/imx-scu.c                     |   1 +
- drivers/firmware/qcom/qcom_qseecom_uefisecapp.c    |  18 +-
+ drivers/firmware/qcom/qcom_qseecom_uefisecapp.c    |  18 +--
  drivers/firmware/qcom/qcom_scm.c                   |   4 +-
  drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             |  22 +-
- drivers/gpu/drm/amd/amdgpu/nv.c                    |  20 +-
- drivers/gpu/drm/amd/amdgpu/soc15.c                 |  21 +-
- drivers/gpu/drm/amd/amdgpu/vi.c                    |  43 +-
- drivers/gpu/drm/amd/amdkfd/cwsr_trap_handler.h     | 703 +++++++++++----------
- .../gpu/drm/amd/amdkfd/cwsr_trap_handler_gfx12.asm |  82 +--
+ drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             |  22 +--
+ drivers/gpu/drm/amd/amdgpu/nv.c                    |  20 +--
+ drivers/gpu/drm/amd/amdgpu/soc15.c                 |  21 ++-
+ drivers/gpu/drm/amd/amdgpu/vi.c                    |  43 +++---
  drivers/gpu/drm/amd/amdkfd/kfd_queue.c             |  12 +-
  drivers/gpu/drm/amd/amdkfd/kfd_svm.c               |   8 +-
  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   2 +-
- .../gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c  |  11 +
+ .../gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c  |  11 ++
  drivers/gpu/drm/amd/pm/amdgpu_pm.c                 |   2 +
- .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  96 +--
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  96 +++++++------
  drivers/gpu/drm/radeon/radeon_vce.c                |   2 +-
  drivers/gpu/drm/scheduler/sched_entity.c           |  11 +-
  drivers/gpu/drm/v3d/v3d_sched.c                    |   9 +-
  drivers/gpu/drm/xe/xe_bo.h                         |   2 -
  drivers/gpu/drm/xe/xe_dma_buf.c                    |   2 +-
  drivers/gpu/host1x/dev.c                           |   6 +
- drivers/i2c/busses/i2c-omap.c                      |  26 +-
+ drivers/i2c/busses/i2c-omap.c                      |  26 +---
  drivers/infiniband/hw/bnxt_re/qplib_fp.c           |   2 -
  drivers/infiniband/hw/bnxt_re/qplib_rcfw.h         |   3 +-
  drivers/infiniband/hw/hns/hns_roce_alloc.c         |   4 +-
  drivers/infiniband/hw/hns/hns_roce_cq.c            |   1 +
- drivers/infiniband/hw/hns/hns_roce_hem.c           |  16 +-
+ drivers/infiniband/hw/hns/hns_roce_hem.c           |  16 ++-
  drivers/infiniband/hw/hns/hns_roce_main.c          |   2 +-
- drivers/infiniband/hw/hns/hns_roce_qp.c            |  20 +-
+ drivers/infiniband/hw/hns/hns_roce_qp.c            |  20 +--
  drivers/infiniband/hw/mlx5/ah.c                    |  14 +-
- drivers/infiniband/sw/rxe/rxe.c                    |  25 +-
- drivers/media/dvb-frontends/rtl2832_sdr.c          |   2 +-
+ drivers/infiniband/sw/rxe/rxe.c                    |  25 +---
  drivers/mmc/host/atmel-mci.c                       |   4 +-
- drivers/mmc/host/sdhci-brcmstb.c                   |  10 +
- drivers/net/can/flexcan/flexcan-core.c             |  18 +-
- drivers/net/can/rcar/rcar_canfd.c                  |  28 +-
- drivers/net/can/usb/ucan.c                         |  43 +-
+ drivers/mmc/host/sdhci-brcmstb.c                   |  10 ++
+ drivers/net/can/flexcan/flexcan-core.c             |  18 ++-
+ drivers/net/can/rcar/rcar_canfd.c                  |  28 ++--
+ drivers/net/can/usb/ucan.c                         |  43 +++---
  drivers/net/ethernet/microsoft/mana/gdma_main.c    |  14 +-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  32 +-
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  32 +++--
  drivers/net/ethernet/ti/icssg/icssg_prueth.c       |   1 +
  drivers/net/ethernet/ti/icssg/icssg_prueth.h       |   2 +
  drivers/net/ethernet/ti/icssg/icssg_stats.c        |   4 +
@@ -547,15 +534,13 @@ Diffstat:
  drivers/pmdomain/amlogic/meson-secure-pwrc.c       |   2 +-
  drivers/regulator/core.c                           |  12 +-
  drivers/regulator/dummy.c                          |   2 +-
- drivers/reset/reset-microchip-sparx5.c             |  19 +-
- drivers/soc/hisilicon/kunpeng_hccs.c               |   4 +-
- drivers/soc/imx/soc-imx8m.c                        |  26 +-
+ drivers/soc/imx/soc-imx8m.c                        | 151 ++++++++++-----------
  drivers/soc/qcom/pdr_interface.c                   |   8 +-
  fs/libfs.c                                         |   2 +-
  fs/netfs/write_collect.c                           |   3 +-
  fs/proc/generic.c                                  |  10 +-
  fs/proc/inode.c                                    |   6 +-
- fs/proc/internal.h                                 |  14 +
+ fs/proc/internal.h                                 |  14 ++
  fs/smb/server/smbacl.c                             |   5 +-
  include/linux/key.h                                |   1 +
  include/linux/libata.h                             |   2 +
@@ -563,32 +548,33 @@ Diffstat:
  include/net/bluetooth/hci.h                        |   2 +-
  include/net/mana/gdma.h                            |  11 +-
  io_uring/net.c                                     |   5 +-
- kernel/dma/direct.c                                |  28 +-
- kernel/sched/core.c                                |  21 +-
- kernel/trace/trace_fprobe.c                        |  30 +-
+ kernel/dma/direct.c                                |  28 ++--
+ kernel/sched/core.c                                |  21 +--
+ kernel/trace/trace_fprobe.c                        |  30 ++--
  mm/filemap.c                                       |  13 +-
  mm/huge_memory.c                                   |   2 +-
- mm/memcontrol.c                                    |   9 +
+ mm/memcontrol.c                                    |   9 ++
  mm/migrate.c                                       |  10 +-
  mm/page_alloc.c                                    |  14 +-
  net/atm/lec.c                                      |   3 +-
  net/batman-adv/bat_iv_ogm.c                        |   3 +-
  net/batman-adv/bat_v_ogm.c                         |   3 +-
  net/bluetooth/6lowpan.c                            |   7 +-
- net/core/lwtunnel.c                                |  65 +-
+ net/core/lwtunnel.c                                |  65 +++++++--
  net/core/neighbour.c                               |   1 +
  net/devlink/core.c                                 |   2 +-
  net/ipv6/addrconf.c                                |  15 +-
  net/ipv6/ioam6_iptunnel.c                          |   8 +-
  net/ipv6/route.c                                   |   5 +-
- net/ipv6/tcpv6_offload.c                           |  21 +-
+ net/ipv6/tcpv6_offload.c                           |  21 ++-
  net/mptcp/options.c                                |   6 +-
  net/xdp/xsk_buff_pool.c                            |   2 +-
- net/xfrm/xfrm_output.c                             |  43 +-
+ net/xfrm/xfrm_output.c                             |  43 +++++-
  security/keys/gc.c                                 |   4 +-
  security/keys/key.c                                |   2 +
+ tools/lib/subcmd/parse-options.c                   |   2 +-
  tools/testing/selftests/mm/run_vmtests.sh          |   4 +-
- 124 files changed, 1344 insertions(+), 1116 deletions(-)
+ 119 files changed, 944 insertions(+), 819 deletions(-)
 
 
 
