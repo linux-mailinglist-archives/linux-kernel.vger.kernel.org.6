@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-575050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E20DA6ECF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:48:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DA0A6EC67
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EC03A7127
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617671891D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BE21DF988;
-	Tue, 25 Mar 2025 09:45:47 +0000 (UTC)
-Received: from mx2.aip.ooo (mx2.aip.ooo [185.232.107.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DD319B5B4;
+	Tue, 25 Mar 2025 09:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TNZotc1l"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475481DB125;
-	Tue, 25 Mar 2025 09:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.232.107.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA6C19AD70
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895946; cv=none; b=FRr7j7c69XmJoiFRrJycSRhzi98HI1qG3m1bVnyTMlmadEPRm5bWlMMFLmfumSsZauTr2Uz7YLzolMEay8oEOPUa9RShoi0peKB40/el+AOZkvWp0rL+s9uhrkXVQ3LdSqVd8pBR6lshRXVLg97iaUuHfjkrSM15dQnK2+SpIhA=
+	t=1742894648; cv=none; b=YvBQ1ZD2WgCQaH5eEiK1n9s8U6zxkjWdmYIvV5lyzMBFJR5hhk7PcKA5pggcdsfcc+GPEbLVeIDifJpoKZbBOzfE0maNOrsHBUKzaXsPcyY1nvWcnx7jLVRdIV4l9vK7/l+StrNGDrN3lzDlI2rXuYRZ4rNW2w8pRaZuyTDXRRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895946; c=relaxed/simple;
-	bh=hHMCEXxzUqIp7Lmp8dSlKc13OfFAgtId5ffLRKJJG+8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dDVCw28jn+huseZdVgRBDK9sE2/2W44zUcWNQjW0+fYdQEC8hzGFmURbnK9bo+HqItd2Geb2aLGdUc6OZtFpjChR5rmnj10oNyaaFTrjcUzFM2I1i42xqfHyTynTg/rak1FFDC05HSRxmRYB3K9rWiWmBxSRRNqu/ZCjf87eIn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyberprotect.ru; spf=pass smtp.mailfrom=cyberprotect.ru; arc=none smtp.client-ip=185.232.107.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyberprotect.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberprotect.ru
-Received: from aip-exch-2.aip.ooo ([10.77.28.102] helo=aip-exch.aip.ooo)
-	by mx2.aip.ooo with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <Pavel.Paklov@cyberprotect.ru>)
-	id 1tx0VW-004s05-AC; Tue, 25 Mar 2025 12:23:38 +0300
-Received: from 10.77.154.78 (10.77.154.78) by AIP-EXCH-2.aip.ooo
- (10.77.28.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 25 Mar
- 2025 12:23:37 +0300
-From: Pavel Paklov <Pavel.Paklov@cyberprotect.ru>
-To: Joerg Roedel <joro@8bytes.org>
-CC: <pavel.paklov@cyberprotect.ru>, Pavel Paklov
-	<Pavel.Paklov@cyberprotect.ru>, Suravee Suthikulpanit
-	<suravee.suthikulpanit@amd.com>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Wan Zongshun <Vincent.Wan@amd.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <stable@vger.kernel.org>
-Subject: [PATCH] iommu/amd: Fix potential buffer overflow in parse_ivrs_acpihid
-Date: Tue, 25 Mar 2025 09:22:44 +0000
-Message-ID: <20250325092259.392844-1-Pavel.Paklov@cyberprotect.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742894648; c=relaxed/simple;
+	bh=WKSdyyWdbOrrB2GtMXBa3yozgKmGzqntr0g9P6Fuj0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+SuJ/TRI6gTXiz7Ygm3UGCtr2GcsC6yB85+V4rsYRjJIvjUKVhWTQDeXKpqoyO6JtvjNHKd2zKfoHHsMx1GJIdFLVZ5lwGvMXm0Rel/V5YCDFwthO88d7+ezX9pLg8wIboKQyKJMLiifITcwETFSxzi+7KRjrHSD2EowOZYzB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TNZotc1l; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=M2XC
+	jN8ZzB8SWx2S8eg0fINVA/TLJBMOOUyiFYmczRE=; b=TNZotc1l21HpNgiHMcjw
+	kA6m+17/ldkX7TCKYgobUoEry2Duy+052aO76l2UckjkmgCs5sdVxln6PmVd9LIr
+	/O3jxBw09RSZeZRlyvqa0BuWLr3u2zaOZxNfA74la2RxLpWn14mnc7WujZmX5Wb6
+	wwM0WaTJ3hDZSM4j9CRTN1ZojTno4vPyNAjDk1hkO4rlPX/Ue57eFYjcGSiawIbD
+	nUpvPInXaOQr94JvLsAMUTm8fNX1BZY+2uyz960TXho9NBdLDU0idHYbcgxERSyc
+	/d/kgPmDK6x9e8DwCREDKaJHGMm7VD+z4jACJqgicNNaHrOUqcGjLvC5HWkm4HEm
+	mQ==
+Received: (qmail 2971569 invoked from network); 25 Mar 2025 10:24:02 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 10:24:02 +0100
+X-UD-Smtp-Session: l3s3148p1@biAASCcx/N4gAwDPXyTHAJp038nK7dx+
+Date: Tue, 25 Mar 2025 10:24:01 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v2 19/57] irqdomain: i2c: Switch to
+ irq_domain_create_linear()
+Message-ID: <Z-J2MYLduKQG_hMN@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de,
+	maz@kernel.org, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>,
+	linux-i2c@vger.kernel.org
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-20-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 10.77.28.102
-X-SA-Exim-Mail-From: Pavel.Paklov@cyberprotect.ru
-X-SA-Exim-Scanned: No (on mx2.aip.ooo); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5lHTfxxyxduE7jo5"
+Content-Disposition: inline
+In-Reply-To: <20250319092951.37667-20-jirislaby@kernel.org>
 
-There is a string parsing logic error which can lead to an overflow of hid
-or uid buffers. Comparing ACPIID_LEN against a total string length doesn't
-take into account the lengths of individual hid and uid buffers so the
-check is insufficient in some cases. For example if the length of hid 
-string is 4 and the length of the uid string is 260, the length of str 
-will be equal to ACPIID_LEN + 1 but uid string will overflow uid buffer 
-which size is 256.
 
-The same applies to the hid string with length 13 and uid string with 
-length 250.
+--5lHTfxxyxduE7jo5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Check the length of hid and uid strings separately to prevent 
-buffer overflow.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> +	data->irq = irq_domain_create_linear(of_fwnode_handle(client->dev.of_node),
+> +					     data->chip->nchans,
+> +					     &irq_domain_simple_ops, data);
 
-Fixes: ca3bf5d47cec ("iommu/amd: Introduces ivrs_acpihid kernel parameter")
-Cc: stable@vger.kernel.org
-Signed-off-by: Pavel Paklov <Pavel.Paklov@cyberprotect.ru>
----
- drivers/iommu/amd/init.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Waiting for v3 here because of the suggested switch to dev_fwnode().
 
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index cb536d372b12..fb82f8035c0f 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -3677,6 +3677,14 @@ static int __init parse_ivrs_acpihid(char *str)
- 	while (*uid == '0' && *(uid + 1))
- 		uid++;
- 
-+	if (strlen(hid) >= ACPIHID_HID_LEN) {
-+		pr_err("Invalid command line: hid is too long\n");
-+		return 1;
-+	} else if (strlen(uid) >= ACPIHID_UID_LEN) {
-+		pr_err("Invalid command line: uid is too long\n");
-+		return 1;
-+	}
-+
- 	i = early_acpihid_map_size++;
- 	memcpy(early_acpihid_map[i].hid, hid, strlen(hid));
- 	memcpy(early_acpihid_map[i].uid, uid, strlen(uid));
--- 
-2.43.0
 
+--5lHTfxxyxduE7jo5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfidi0ACgkQFA3kzBSg
+KbYCng/+OYOcM/oJ5CdKuJYVo3ZPnr4K0F3yC2hSjh8NgMJIGa/dGhovGlBYF53j
+zqALsQeAsbi5nMLAoVW8qLL0ldZEYevKndyUi13NLxXzTZTA6VlihbTPEqTNUNPY
+v6/UG4AYriJHj3fkMPWdxrma8lCyho5d4RwTXp/4rUAzLgssMVT44vJHvABL0bSf
+QjIPkBzhs3eyLnWcAxrB6UjwnrnJo6f0LHUWXW0ylE1nxRdJQb5+vcWE16nqqDoP
+WDdyxSwGb4RNmR+ys1RzZY8k1lmAbOeLGXKirwGCk71VzKugOdjV6WBt5ro2Yzro
+/C0YXdTlRkA1RrzvRxJgVLCwF1pK0Fn3Trp/RJe+BNVpQoAiCQcR5K8ODlQs7p6M
+FrqkmcR+YBuNjW+ca3NZUgGvJZ0/fBdpBc+0IvNUw1owfezXsCEJwQRhksyCYzKS
+bfoP3jnN8u6HRD9guy/wVsIVywlxKf1/uaEUhV7sLJONTz41OqZOTt7gmricK4HN
+MnI5fk05TU7P1UxVY0SkxIoaON4t0/AkAH3JZ7XhDVkUsuBPuRebDZlsMe9nV5sw
+lwMPCmBdmtwEdLid0UNiAbjOu3+YOwq2o3KfRmBEhWGdDDIrL+wqG6JPDS4xv+1b
+mXxFyEZ8uT7SyslHmtYQOKn2Dz7HWq9dTMYLBBxBu06W7LJvN2U=
+=YqdK
+-----END PGP SIGNATURE-----
+
+--5lHTfxxyxduE7jo5--
 
