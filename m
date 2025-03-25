@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-575632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACD6A70507
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:29:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1E2A7050A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B78189C618
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BD7189D05B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5E125C6E2;
-	Tue, 25 Mar 2025 15:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393A61F4E4B;
+	Tue, 25 Mar 2025 15:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpabP0Fy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ss/sdlnT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDF125A2DD;
-	Tue, 25 Mar 2025 15:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123513D8A0;
+	Tue, 25 Mar 2025 15:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742916458; cv=none; b=UFUYFdsd6Zn+yjoWpjZ7XPPnXg2vuQRuusWRSZzrDjvMAde4XcQiq16C8t1FIeo1C7G41PAfJW/MaUcCDqyD/9fJ3JT5/MnQd5lMYt/lFQn7b/kfCFZr4/YBmwFY7E308bMda+fZhAzbqAsCf3g/wj26KuMUmf44pTQNTuebFuM=
+	t=1742916473; cv=none; b=HqwBaeTq3s7NJaw+aSgJCVDqRuN5TO84uTvUCGhHb7EpFFT6X8vQyigqo4PrEvZbCp4J9Q3IiyOi19zA7lrnWbGqDeNSJGsvQhWF0EI9co9F07GizTx9Nx6yVpeZikJrGPkipypMInC/V/FLxhLcoRa4THLXEqX3rXuCV9ZMCh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742916458; c=relaxed/simple;
-	bh=kBSdYtzA9BOEoK+BTjkYPoIMn3M4gtTS4Y3w0W6TsA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pPV1dBZ9eG4YN2MPces4zQvMpfcyMzrx86xm/3+k/gkiuNs4HWWlTvFu4Lh8YvExMORxmyg6jMl9Cm69c5X4GtxEC5ynbb5ZVor52Noh4zoVOZKffTNtAQQQWBvCQGkpw08Np2g7rpPsuxTZO8FZ079VJb8RCoUhZjZX8SWEq5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpabP0Fy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C778C4CEE4;
-	Tue, 25 Mar 2025 15:27:36 +0000 (UTC)
+	s=arc-20240116; t=1742916473; c=relaxed/simple;
+	bh=3vBzB0bC4Yz0py1GjLKu6FQytam9E2Tto+wWFuf5NgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7VxjoO5fl8yZJjvWj0XQxj6QEPCWrjjQm+L0EpqdS+bsPoJINEYPU7ynDQ6rCDeFSgiLm46/Oz3EjoTBxtSTxMNzfr58TbUYQCRhWF4AA6sUMAesaMGRnvxYKIBYUEXXl0sHEjK1weBTVNckNGhUuPGwXDHLXQqJ2o4vgi3y/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ss/sdlnT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4413DC4CEE4;
+	Tue, 25 Mar 2025 15:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742916458;
-	bh=kBSdYtzA9BOEoK+BTjkYPoIMn3M4gtTS4Y3w0W6TsA0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XpabP0FyMI9754psd6hZwF0ek3DOl/IO725jDQA5BgN7MLEuyyiCnSZYyED+qmPa7
-	 pulPx2PzAWLlCekAgRiczGkGK4ngc8Y7BeqySZF1FDpZhwobAzuPKfanNP+BSrIPrv
-	 YjI1YsVHLcYb00nVG9HNIr8IyQzCkl1yvKj9y1EyCnIgTahWZkHM+Tw/cGGIYb13mu
-	 Qiv66lchO+3/SKpFO3a9Eaka9OBV8tWpPWXq+kXDSw1WcKh50yX448ckeyII15HUdg
-	 dFE6dnotAIsR2fQ23rv2hvSbD+JZuNa2mCTFaaNn0Tt07ZcDbI3fkQyvCCZfQb3BsZ
-	 S3tnsdhkSpX5Q==
-Message-ID: <a5cccd3a-ff63-4adc-aec1-ad61a58a4b25@kernel.org>
-Date: Tue, 25 Mar 2025 15:27:34 +0000
+	s=k20201202; t=1742916473;
+	bh=3vBzB0bC4Yz0py1GjLKu6FQytam9E2Tto+wWFuf5NgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ss/sdlnTE6NzWizQPrks2yd7B7N8OaAN41OuF4vjLlBPs3PJA/grti5Yhnlj85vf0
+	 Atjmv/Rlz18L5wgzEmVg1itZ4Ekqajb6hwM+A1G03AI13FimkbqwtMde9PCVm5ZxM4
+	 ZTHvrEAw/jGus5/yXkmdEHOjlwsnYgF5Sso3VtpXQWfcPpWfY8owCfX7hnW0w7GK1F
+	 2KGwGpAvH4Q2p4GeG8Z0vcHd2QufIsqprjOUSsL74NqXTYN+QQl7pSyPbC4GABsjVd
+	 hUx6Mpzg+AYaXSTeP7XaJRfsBduhMcnAQyEk8OW2RZ0SfvpvxFGQO7tUZJPT5tH7fd
+	 ZGUl/+2beVV9w==
+Date: Tue, 25 Mar 2025 15:27:47 +0000
+From: Simon Horman <horms@kernel.org>
+To: tang.dongxing@zte.com.cn
+Cc: krzk@kernel.org, davem@davemloft.net, feng.wei8@zte.com.cn,
+	shao.mingyin@zte.com.cn, xie.ludan@zte.com.cn, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yang.guang5@zte.com.cn,
+	yang.yang29@zte.com.cn, ye.xingchen@zte.com.cn, xu.xin16@zte.com.cn
+Subject: Re: [PATCH] net: atm: use sysfs_emit_at() instead of scnprintf()
+Message-ID: <20250325152747.GU892515@horms.kernel.org>
+References: <20250320114253.GJ280585@kernel.org>
+ <20250321104557426O89NLhm9SSuAOJwRDq75V@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250324]/tool/bpf/bpftool fails to complie on
- linux-next-20250324
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
- jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com,
- williams@redhat.com, rostedt@goodmis.org
-References: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
- <8b0b2a41-203d-41f8-888d-2273afb877d0@qmon.net>
- <Z+KXN0KjyHlQPLUj@linux.ibm.com>
- <15370998-6a91-464d-b680-931074889bc1@kernel.org>
- <CAP4=nvQ23pcQQ+bf6ddVWXd4zAXfUTqQxDrimqhsrB-sBXL_ew@mail.gmail.com>
- <CAP4=nvTUWvnZvcBhn0dcUQueZNuOFY1XqTeU5N3FEjNmj4yHDA@mail.gmail.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <CAP4=nvTUWvnZvcBhn0dcUQueZNuOFY1XqTeU5N3FEjNmj4yHDA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321104557426O89NLhm9SSuAOJwRDq75V@zte.com.cn>
 
-> My commits sets BPFTOOL to bpftool since otherwise, the feature check
-> would fail, as BPFTOOL wouldn't be defined, since it is not passed to
-> the feature detection make call.
-
-
-Sorry I don't understand the issue, why not simply rename the variable
-that you introduced in tools/build/feature/Makefile at the same time, as
-well? That should solve it, no? This way you don't have to export it
-from the rtla Makefiles. Or am I missing something?
-
-
-2025-03-25 16:09 UTC+0100 ~ Tomas Glozar <tglozar@redhat.com>
-> út 25. 3. 2025 v 15:59 odesílatel Tomas Glozar <tglozar@redhat.com> napsal:
->> Shouldn't the selftests always test the in-tree bpftool instead of the
->> system one? Let's say there is a stray BPFTOOL environmental variable.
->> In that case, the tests will give incorrect, possibly false negative
->> results, if the user is expecting selftests to test what is in the
->> kernel tree. If it is intended to also be able to test with another
-
-
-I think this was the intent.
-
-
->> version of bpftool, we can work around the problem by removing the
->> BPFTOOL definition from tools/scripts/Makefile.include and exporting
->> it from the rtla Makefiles instead, to make sure the feature tests see
->> it. The problem with that is, obviously, that future users of the
->> bpftool feature check would have to do the same, or they would always
->> fail, unless the user sets BPFTOOL as an environment variable
->> themselves.
+On Fri, Mar 21, 2025 at 10:45:57AM +0800, tang.dongxing@zte.com.cn wrote:
+> >On Mon, Mar 17, 2025 at 05:09:02PM +0800, tang.dongxing@zte.com.cn wrote:
+> >> >On 17/03/2025 08:51, tang.dongxing@zte.com.cn wrote:> From: TangDongxing <tang.dongxing@zte.com.cn>
+> >> >> 
+> >> >> Follow the advice in Documentation/filesystems/sysfs.rst:
+> >> >> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> >> >> the value to be returned to user space.
+> >> >> 
+> >> >> Signed-off-by: Tang Dongxing <tang.dongxing@zte.com.cn>Dear ZTE,
+> >> >
+> >> >Can you slow down? You sent a bunch of emails with similar issues which
+> >> >means that dozen of maintainers will deal with the same issues
+> >> >independently. This looks like another vivo or huawei style submission,
+> >> >leading to bugs sneaked via flood of patches.
+> >> >
+> >> >First, fix the name used in the SoB (see submitting patches) to match
+> >> >Latin transcription.
+> >> >
+> >> >Second, use proper SoB chain, see submitting patches.
+> >> >
+> >> >Third, really, really be sure that what you send is correct. You already
+> >> >got quite responses, but you still keep sending patches.
+> >> >
+> >> >Fourth, respond to received feedback instead of flooding us with more of
+> >> >this!
+> >> 
+> >> Dear Krzysztof,
+> >> Thank you for your feedback. I apologize for my previous submissions.
+> >> Regarding the issues you've pointed out:
+> >> I will correct the name used in the SoB to ensure it matches the Latin transcription as required.
+> >> I will double-check my work before sending any further updates.
+> >> I appreciate your guidance and will follow the submission guidelines more carefully going forward. If you have any further advice or resources to help me improve my submissions, I would be grateful for your input.
+> >> Best regards, 
+> >> Tang Dongxing
+> >
+> >Thanks Tang Dongxing,
+> >
+> >Further to Krzystof's comments: please coordinate with your colleague
+> >Xie Ludan who has also posted a patch in this area.
+> >
+> >  https://lore.kernel.org/all/20250317152933756kWrF1Y_e-2EKtrR_GGegq@zte.com.cn/
+> >
+> >It will be much easier for review if there is a single patch
+> >that addresses these issues for ATM.
+> >
+> >Also, please consider reading the following guidance on processes
+> >for the networking subsystem of the Linux kernel. These are similar
+> >but different to other subsystems.
+> >
+> >  https://docs.kernel.org/process/maintainer-netdev.html
 > 
-> Or the selftests and other users could use another variable, like
-> BPFTOOL_TEST or BPFTOOL_INTERNAL. Not sure what you BPF folks think
-> about that. I believe assuming BPFTOOL refers to the system bpftool
-> (just like it does for all the other tools) is quite reasonable.
+> Dear SimonHroman,
+> 
+> Thank you for your guidance. I have contacted Xie Ludan,
+> we recommend that the community review be based on the https://lore.kernel.org/all/20250317152933756kWrF1Y_e-2EKtrR_GGegq@zte.com.cn/
+
+Thanks, understood.
+
+> I will carefully read the the networking subsystem guidance before sending any further updates.
+
+Likewise, thanks.
 
 
-The variable name needs to change either for rtla + probe, or for all
-BPF utilities relying on it, indeed. As far as I can see, this is the
-sched_ext and runqslower utilities as well as the selftests for bpf,
-sched_ext, and hid. I'd argue that the variable has been in use in the
-Makefiles for these tools and selftests for a while, and renaming it
-might produce errors for anyone already using it to pass a specfic
-version of bpftool to try.
-
-
-> The reason why I opted to use the system bpftool is that bpftool
-> itself has a lot of dependencies
-
-
-Note: Not that many dependencies, most of them are optional. For
-bootstrap bpftool we pass -lelf, -lz, sometimes -lzstd.
-
-Quentin
 
