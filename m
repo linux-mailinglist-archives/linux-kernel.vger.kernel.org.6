@@ -1,183 +1,178 @@
-Return-Path: <linux-kernel+bounces-575362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E42FA7016A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:23:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF85A70183
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0074F171661
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02EB219A1235
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD8C262801;
-	Tue, 25 Mar 2025 12:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3781E2627F9;
+	Tue, 25 Mar 2025 12:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdMZNpU1"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqVurBCK"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6201B85FD;
-	Tue, 25 Mar 2025 12:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAA718BC3B;
+	Tue, 25 Mar 2025 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742906732; cv=none; b=hkqXrLgIuHpxdyNLDveiMHYg8tYrdlbv3JTwoDW0zgWx3xuKW7NxGE/lNPglH7S9Uk6udpU/Q9ObvcZ+l83TyCHjC16ZQIIYdKl/kv5m8xTpeoyBP+SjqWXrxHFsE6MWFeesTcQQbuXk+v51d13Px+p2iT+lmscY/VIuIFw3HDY=
+	t=1742906806; cv=none; b=kjFjvS91zF9hGWf0JhC/XtjrQN2Pm339LxBkfgKeOpNTlfH4S68WzPPUZYbEsDg2rCiBRC6vBB2EFQG+Nx84sVRAeJkh26mVvM7GV6a0CETiMH9DSdjhJCWRrqKNHwJUiutep5/Zq4xDwMWmX53dsoidR0F8/RxSGwfx1vJthFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742906732; c=relaxed/simple;
-	bh=etoP08AoKZtuZl84RAwLoOiSki62COEcAOZ7N/k0MIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+WitzP0WYENoUz96dDjO79Xz+z3X/vzsQy3nTbXLTjGvHsvLhBGk2XNwFo4OcW7zNiUXJD+HasZkzzdbRjkyTMUzsenoerYXm62pbcXVT8QBDzNDBrWqjODJhdu4LJZ6dIySWyaOe6L7PLR7P7VGJ5+0RuIPDBqVzrVrEHY8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdMZNpU1; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1742906806; c=relaxed/simple;
+	bh=kNEU5Ty6m4T1RSoMTaERB61oyU0WcjBnDwB9tcH+z2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PQ91uFYzGyBnhhxhbZaoH5o0Qpd2GZ3v6ZScEEeazjD8kljlJVBbFhoX3+kqA1DrFIG3bEZreEEvDxZzXNTHbYEBnTNAZADBS7EPc1Pf3bOUNm6Hrt/rLemIoIrn2wk2Ev8RpyS/pEVMZr1U68t6SYEzvEH0269UvF1CHxgTIEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqVurBCK; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so39525685e9.3;
-        Tue, 25 Mar 2025 05:45:30 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22409077c06so115714665ad.1;
+        Tue, 25 Mar 2025 05:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742906729; x=1743511529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSa7I/akXEAX+WMr4yb3n8ucSGDNYu+Pa5yhxPlOXx0=;
-        b=NdMZNpU1pw2VznRqMwq1+2KskrWQbIeBJkxIbF172aqHebfGtacCw5VlUhMxe4ho1R
-         6xqzm/EQUMj+WoPF/owjud6R89g/vAIgJvA8JmSBAoCFlYCobNaDYFy8nXWj+68EaArO
-         d8p276yQdE2fHzEQPgNMozu9SRc2P9+d/w2UsMREx0IpxRN7+mvjHZRuDvgglMsUx+op
-         AlUAiYuFebrIDGrkTHik8KNS/MhIxc84qpYLR+VvvI70ucmpO4nmNoF3w0dpsfIYMhTq
-         EVOBztfjizMZSmIq+wJ9o88dH4+gDDff3lT/7txaoeosoKes8zqco3Up5RvCI/Sn5OhU
-         IDCw==
+        d=gmail.com; s=20230601; t=1742906804; x=1743511604; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=aInV8hQRf6vE66+NMLSQP/qvF3TWUTWoboKCTyFkzPM=;
+        b=cqVurBCK0x7Q+k1pnRBoUjkWGH5OecP+EM+qk6SH0Jf1hjhyZy5VMJP8Z6R1Waac+G
+         m7rvojm0tpdAi2Szxmp53gvEqqhUjUNnmXoYPjBT2G2UkN7c+FT1myjBXxFHaZKeVii8
+         JhKlZIvvMoas6NmvYDPb/TesAJjF2XHfVamQg882j6TmioMvTBdCzNRE1mQfL9DjDTMI
+         eSKwSUz28/setAJmW7KQmuicLfC2CvHCDFQ35et6G88+sGUZaiL3l4KwJqBeUK/nHNjc
+         S6Rp6gLfPoyBPhkfChVhh49men70o8zGfISTgbEkWDO9rDalMzmUIKZO6doCaKZIE6me
+         L4zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742906729; x=1743511529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742906804; x=1743511604;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gSa7I/akXEAX+WMr4yb3n8ucSGDNYu+Pa5yhxPlOXx0=;
-        b=wyREASU3G+bPpbwaDhuU3Q8PoZypx/CynE1pY9znBSphndTmEKqJhM9AhCSlDcACvF
-         RVNxAPam9iNCwfMjypAux7jEYUIvZVfjQNHcn4T9GuIaMYEPBuIy9AjHmHly34oJLvXp
-         5is0RiTIM4PvwKVrSIYpd/Gq0mQxRnKopW1iM79MZP+WbDrebaNWObpcLrWVyvWwCqar
-         kn3jlotPdj6J2BTgDP8CR6huBDsaLEWoG77S7n8S86ivTPx4c5SQZTA9qgFGvOLi8qF5
-         xAjuGaeWQH2Qv5Q7zi8kQ1MNzY3wGxhD/W5foAINVp/SspI30aSCv99PCVHPaNO6lfhv
-         EOmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkB3tJJc4Hm3mE44Km2E3fLeIqlc0NV1O156Spq51sz1IHIrjdL4S5tlNowQlZ3+WC0qHMo8emNuH1hws=@vger.kernel.org, AJvYcCWQmoLnZV4A+N6JwxDFuI8EmmLv7/9OF68iXymvpiZidP3rVqBnweIGaQAlNQtqJ1II3hv5PRq2jn/v@vger.kernel.org, AJvYcCXHZs3ct38panvDVW7p8D9pf6uRGnDgoNnmcKM46iNtm4m3J5T2ckWPtWdg50qtL9LMEyrQOWncHQiJ57WP@vger.kernel.org, AJvYcCXLHijQM+7I+qGpU/QKC9rNTSHW8RaFYwlg9uwGmk4KlKmbSbpKZkl9hzUDBFgcRuIbtoib0UcFQxkU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBnoqAD7F2vWUNZi8+Opd9HbTZmzF2+hON6KY9BaskyAuNy+jl
-	Rzk4HC5DqF7Dw2tVn9kMPshFPVGs4YClqvpZmDUC2TM0zLUI8934
-X-Gm-Gg: ASbGncs/BUOAAs9oWXm/IbhQrVGf0J3xWgLppTwVP6xPx4lBsWvs0LxSnhE8/uYwKo4
-	6leCwGo3owr1A9e7L1UTa/8jY5PiruCYtodgwga3IqmrI5T06j17UnCaxlLIdu/40E4YOmxSABV
-	taGSTKc9XoHzMKr/UFs+ci0aq2iKRd8a4/+EqgUD1I6DFCbP34gAGmA4Y2R4tvRLnep5MvbB53Y
-	x2ex0PQUV64v8eQvquh9CmH9zru1DR3M5LjiO7mTRZuzqbj92ix4UO8BgvbTVR8pL2t5xtgUoXw
-	is/xrJ4pObMNP0jh8XeNqQcUJgG01z41d787eVFCfI8y8GU8jnL4YKgTxtJuYWcULoeCOMyaqC4
-	P6m2rRV9pc9TJS0dD4qczWZqXGBPdJ1VtCJO8n6pyCQ==
-X-Google-Smtp-Source: AGHT+IFdARdk+/q7cuJYaSe5KqZD7COsq6XvV6kr3Ih+IpEeyty+QcYuulDT663rN+ubH6y7PNuClg==
-X-Received: by 2002:a05:600c:1d8f:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-43d509f44f2mr176018735e9.16.1742906729241;
-        Tue, 25 Mar 2025 05:45:29 -0700 (PDT)
-Received: from orome (p200300e41f4bef00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:ef00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd0a9sm151377025e9.38.2025.03.25.05.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 05:45:28 -0700 (PDT)
-Date: Tue, 25 Mar 2025 13:45:26 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Vishwaroop A <va@nvidia.com>, 
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
- controller
-Message-ID: <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
-References: <20241126134529.936451-1-va@nvidia.com>
- <20241126134529.936451-3-va@nvidia.com>
- <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
- <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
- <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
- <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
- <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
- <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
- <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
+        bh=aInV8hQRf6vE66+NMLSQP/qvF3TWUTWoboKCTyFkzPM=;
+        b=DftW359UB/Ip/LLPc1EhKsmfOUJ4k+kLF8LEO2qTPSr5QTq565LHlslq433da3WKDr
+         A3TQXYb/SX0NLCTJhIp94QU25UKiOPkLeF9yzHWLf6yOTpfRtk4jRoLVyZqdxM+fRp0N
+         KZ8fUzLD9nMp0MLbGSgwyU3NOH1igIiJq5nsUetnqgyPe4oaXA0iyuY6hOszRcdF4P7d
+         ToTFS68qqrKCmYjJVCsYAJP4a+CsWf7GbMCnv+IeyLqRPKeSpmpVp+4uFHd3UVT5xHIe
+         RUGoIqFxz89TvO3g6xtSEUB4ubGGL26MT3nOkA6+LIRF/wDEyFFZuhrViDQGCv6GallQ
+         e7Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1HI/pZAJOrN7PeyqqTXDG1Nc0a7oHTtMY/XKw3/ry9w2gy7VAmch3Iq858LW4K+xwTgIgtnIUPnDwIfC@vger.kernel.org, AJvYcCX4KKCHZ7ldf4SDC95jOynlkbSq7hEf5vgYa2xSem5hY349yBXde7IfKeeE/nTsA+1Z6awpKSi1rF/nLA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy62iOnAL0oQ1jHGPCDUqdCWkUvxfoV7Rx2Yi4lCuRLq92/2yWP
+	oJT54/cOR/PEmyr9QJE+OsUOyqrV/ClIlE86wiQmQOf2MhEvipbgy1BunQ==
+X-Gm-Gg: ASbGncuu2BYbGZJMkIb5ehJkRc7JUwVwsufkVlYsXDXWsTThC76/ZHrrCnXPfWTGJBe
+	Jhb/KPstJOdg6ubwhV7ZQWF8px209AqXJtnKS/66JXQq18lE1VhnG99E18Hap4BzLq749fLOJgw
+	VZkVJ0RxaMO6Radc6POEME19shBIU5g5lGjj/dVDB9piSlKba/uvjXwr9i7pb9edIaNimdldLl+
+	8PheeUbx9QFSXy4yUyYxqO3/jvoBl0PcNIVV5vdQ9FWi+TF6zYevfwAIoVJPQiP3GcWBgLVAXdK
+	3R+vmdMwcDzZ/erTzZMgV9aVv0thQbjP6apqTFcL6yGxU1sa27KYGRjv7vQN2KUNdGfW4s1L15Y
+	81cKylXfCWpjBxX9ysw==
+X-Google-Smtp-Source: AGHT+IHubCkNkdQqRNq5surmbfP8w4wYu7OFK+dLjG2tjH+9mevggwzoNXlK5cwjzNF04EQLZhkBkw==
+X-Received: by 2002:a17:903:178b:b0:21f:6bda:e492 with SMTP id d9443c01a7336-22780e09daamr305388055ad.35.1742906803769;
+        Tue, 25 Mar 2025 05:46:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f45f35sm89273125ad.90.2025.03.25.05.46.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 05:46:43 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <78352732-6494-4c29-a79b-879a8898bac5@roeck-us.net>
+Date: Tue, 25 Mar 2025 05:46:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="juqd7brllbpcvgf2"
-Content-Disposition: inline
-In-Reply-To: <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Add support for CCD temperatures in AMD 1Ah CPUs model
+ 0x40..0x4f
+To: David Hows <david@hows.id.au>, Clemens Ladisch <clemens@ladisch.de>,
+ Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z-KQHKm0nBWvYNI1@archibald.hows.id.au>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Z-KQHKm0nBWvYNI1@archibald.hows.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---juqd7brllbpcvgf2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
- controller
-MIME-Version: 1.0
+On 3/25/25 04:14, David Hows wrote:
+> ---
 
-On Tue, Mar 25, 2025 at 12:10:19PM +0000, Mark Brown wrote:
-> On Tue, Mar 25, 2025 at 10:36:29AM +0000, Jon Hunter wrote:
-> > On 27/11/2024 17:31, Mark Brown wrote:
->=20
-> > > You can put 'spidev' in as the compatible and get the warning, we don=
-'t
-> > > require specific compatibles if the Linux device ID is good enough.  =
-If
-> > > you genuinely just have bare wires you're probably able to cope with =
-the
-> > > warning.  If something is actually connected you should use the
-> > > compatible for whatever that is, if spidev makes sense for it then
-> > > that'd be OK to add to spidev.
->=20
-> > We finally got back to this. Looks like just having 'spidev' as the
-> > compatible does not work. Apparently, it use to work and yes you would =
-get
-> > the warning, but that no longer seems to be the case. I see a few others
-> > have been doing similar things and hacking their device-trees in differ=
-ent
-> > ways [0].
->=20
-> Huh, OK.  I don't recall any deliberate SPI change for that.
+The subject should start with "hwmon: (k10temp)". Also, it should really say
+something like "Add support for Zen5 Ryzen Desktop" or similar to better
+describe what it actually does.
 
-People in the discussion that Jon linked to indicated that it was this
-patch that caused the "regression":
+Every patch needs a description. Please see
+Documentation/process/submitting-patches.rst for guidance.
 
-commit 6840615f85f6046039ebc4989870ddb12892b7fc
-Author: Mark Brown <broonie@kernel.org>
-Date:   Thu Sep 23 18:00:23 2021 +0100
-    spi: spidev: Add SPI ID table
-   =20
-    Currently autoloading for SPI devices does not use the DT ID table, it =
-uses
-    SPI modalises. Supporting OF modalises is going to be difficult if not
-    impractical, an attempt was made but has been reverted, so ensure that
-    module autoloading works for this driver by adding an id_table listing =
-the
-    SPI IDs for everything.
-   =20
-    Fixes: 96c8395e2166 ("spi: Revert modalias changes")
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-    Link: https://lore.kernel.org/r/20210923170023.1683-1-broonie@kernel.org
-    Signed-off-by: Mark Brown <broonie@kernel.org>
+Thanks,
+Guenter
 
-If you say that the regression wasn't deliberate, maybe we should look
-at fixing this so that people don't have to work around stuff?
+>   drivers/hwmon/k10temp.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+> index d0b4cc9a5011..cc2ad7a324f9 100644
+> --- a/drivers/hwmon/k10temp.c
+> +++ b/drivers/hwmon/k10temp.c
+> @@ -502,6 +502,13 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   			k10temp_get_ccd_support(data, 12);
+>   			break;
+>   		}
+> +	} else if (boot_cpu_data.x86 == 0x1a) {
+> +		switch (boot_cpu_data.x86_model) {
+> +		case 0x40 ... 0x4f:	/* Zen5 Ryzen Desktop*/
+> +			data->ccd_offset = 0x308;
+> +			k10temp_get_ccd_support(data, 8);
+> +			break;
+> +		}
+>   	}
+>   
+>   	for (i = 0; i < ARRAY_SIZE(tctl_offset_table); i++) {
 
-Thierry
-
---juqd7brllbpcvgf2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfipWIACgkQ3SOs138+
-s6EEeRAAvrnIRjGZ4twQvpRENci9TEsWE7Q8l9qO4bVt2DlFaAD9AtKmLPkay7Gb
-GKV+MbGhtg0v2x2Xjmh/p/XN8vw1xE2Zb7TvwZUEHfq8ILvkLeTXszIIgNcLGzu5
-NuQKT9Nu3IXQm/79t4FeFr8xroQwVpj9t3w9sZMi29fxC5GMzKnXzAM0Pji/8efr
-V6n7lSl6Jg8Nj3rn0vAubMlSnXT/2/YrEFQ6zcUUJnNQD6NO/oWNF/KDrg9Vi1S4
-7E6FuT05edRhODgRogOFpn0FWbPIaqEcGz/5asck04du5IhZ+54iwSNcjQ/aoi19
-99sNQCOLK99QwbfA0eigeZiBrbhfkTdQNFxWPgUP4PWeofoC2zYd5KF8RPhgS0Vq
-9mRSkHl1R6npGLBXFVxKj4H4DjaYPXtbNYvz7hT4so2iSXv9FL3bRGvKpJs+51Mh
-Kgp/17DUK9TtauU75m+09fVshB0mJXHZaKbhU2bqKbdonQYSla3soWyGZ+YwjyIH
-YHZaxTCxF/OVVmSqUDTKEOIFsOf+8lx28aOWBxlBvYjmlnqpimbTgHCa0Kd2m/eW
-o7IUC5ButbfbLNwPmowFGv8Msg9xfVZrSIotvMq5exucMi42PYPbSedGVCqnNP3N
-EfjsQGFCE1ldOE13Bm1AB3cWr/k9Ak8WFErUuXUecisivAgFAvI=
-=/BYC
------END PGP SIGNATURE-----
-
---juqd7brllbpcvgf2--
 
