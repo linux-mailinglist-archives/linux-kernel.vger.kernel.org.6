@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-575515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276D8A70379
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:20:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91052A70391
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD03016EACA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA56188E27B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E1A25A2B2;
-	Tue, 25 Mar 2025 14:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7214259CB1;
+	Tue, 25 Mar 2025 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="CNJSVftO"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="vsRan22Y"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC6125A62B;
-	Tue, 25 Mar 2025 14:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888072571A7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912371; cv=none; b=qTqIJqWzJ/X11UtUFJq3duMgTj78OgJceyIw6zD+g/xUO6S2V6W0ML3UMlUc7GbGB6PYmfA+O/Y9m3XdyymVTjlyyMk7Fq1EXyxyPCzmSjtIcRdX2LswvuCGImB/DHZj66iKcqhhVnCvCyvbiky1ffGj5t7GLC5G4yXgr8WjdiI=
+	t=1742912433; cv=none; b=oYAaLDZpljt/wctWXxm3fgmaPsqeGjYXr67JDp8QQ8xeyPrulTAd/klhVPCzcD3vVT62e6CwIffdJDUJrJwN53b36stCVlerAPINCZXtArSPfFqHgQ7ONyl+qo8im5VnafiU6k/gv5RvEIrpwhs1U2PXfoDo5qA0o3ieBC7csi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912371; c=relaxed/simple;
-	bh=GmM9nc0h7Rpsda36dj+2kNnrsCf+HAeRmCa1HiIvXRQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7wvCdBozfZ8H9YNgWT45GRvSRNUkXdF02yd+8og3suph4kK4eRPmsM7kvDr128BGLe8IUvlGnRsooLOQJkkbI2Y8vGiobMPuE/adSG7XIA9lPdGXQQVxk3lmvuTdBDm8Qbutx6eJu38zPDIqdQ18xELW1BkZgITvb0cfbNIDHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=CNJSVftO; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 1BAD5C001E;
-	Tue, 25 Mar 2025 17:19:28 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 1BAD5C001E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1742912368; bh=xOIKQhfLeGn+BFImddppcHEQgCWq+xEUuCyR1dMleec=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=CNJSVftOKCqRKX5+oLBucq6KGFkuJIXJmSD9gEBUroZJAi6hOnGKYfhBCivitmyZh
-	 fVCiMNTbdBJXgJPLyQKt09ow1ycjBdUG4JGBbRjgiq3EAWWj1IY8Wds74Abt6x22/Z
-	 0DKgJ8qNj/7BK7RyLAuhNkeARzW52ltWp28hXbxJwOVNLtFP4bgI3UhUVz9EEZOgpf
-	 NMox4+BP8i8B7fhqPFQJV61QSDUDh8TdoWhFemBkEexlvGcEyWNuPqqvxVCbxUXtqD
-	 o46Cff3AHRDEI9Z4hnOVHgWBzF9d8brFEzl/Eorq0iqPT5P13RWjnXx3i0N2SlsFUz
-	 i7nlZe9Bl0sCA==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Tue, 25 Mar 2025 17:19:27 +0300 (MSK)
-Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 25 Mar 2025 17:19:26 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: "David S. Miller" <davem@davemloft.net>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Jakub Kicinski
-	<kuba@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net 4/4] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
-Date: Tue, 25 Mar 2025 17:19:12 +0300
-Message-ID: <20250325141912.499929-1-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742912433; c=relaxed/simple;
+	bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bxPUcEnHmBNaia61zhdwLZIrvVblH/ez/S5d4x7BCE4lidXUxJlkENTUKjixZnaCb6jmIqyJKKrjVuBWXPJkl+XSSMK8eiSKZUnr3YXVNASJqUh/rfPJCdmoncjqXBBFgFANqc23HkosJ85utRc96Y8oYG7lk519vbzEmk/O2xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=vsRan22Y; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47688ae873fso57620801cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1742912430; x=1743517230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
+        b=vsRan22Y4qwsj7yKN39U0ifO+/D//+MnwCOwtjNMHJqFDDYu+RMDhq+O40Axj6/Um1
+         rQIPN68gNjNB3/ge5b/8vkr++gSgSFwsHUqP0zuNFsXl8lWCh5zoLwDRteM4rMphdK8j
+         cc5J1VaKQK4JMKyJGYMhrrMZDIhKG0b6n+fmBpMOvS6sb/p7QytQQz47aWZESqvv0YTl
+         0x6jeMJSkFayACKpPoKzesUQBO8fNJAkwbvhZaklupQaHAi8AcRgURw8vEDgyFN5Cx/O
+         3ZeBweLhvHEf1pzWbPbymKvhYBAzNnWccownXDGeQFWWElvqnE7ruqcs2tW0gsBfKq1o
+         KV1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742912430; x=1743517230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
+        b=Af1Qkh5Sx8Q6rNQS1GursBQthWP5V+eNceqPE2bURMYX9f47Q/3S+58p8GLW1nOG3c
+         9FIXnfgHB4B4smn812gzTseqZVBhAEPvM9cf+3WTZVJC0Nrq2hmj8xPL65EqWihfEbKu
+         N8KBzbTs9TKIZYL1mwh8pGg463f5Bb1pYMk2YVCblBkZFkNWeYg5iwNG8G1z9qnIHi13
+         lvFBujH9Vlh3+zjoy5OGWF3Hknj582gMZduX6/XP2yYVIExiQCpI1ZVGA6CdOLhPSbSw
+         7G7uqEJmOgn/422tk8Di5Wq/rOj8yN3wLHZ6ejrqUjPHI29UfkUQ3jRa5fGP5ojLs7UU
+         2hkA==
+X-Gm-Message-State: AOJu0Yx9SCDN6oYZjZ1l61cG+2PB4BSEnw/wT/VSzSChgmQxIB5Br4TV
+	Ittc3+2LUKjY7VkYNwurGEKnZrDOylwKB4ynASfVYzUCxHO4UOUz+1HGXtb37TRHdwCBHm/1itv
+	VlPcix5Fseynk+C4TMbzV/atAkIcvGY8J+TQe9w==
+X-Gm-Gg: ASbGncsJ0kIcV4jDLd7IfxIjwwNxdPaqrmvb6fBq4AvrUe75JgKrMZ6qE+PcK7A5Cic
+	8a2G1tKMKhHlqcPgL7tm+pAgdGv87H2UsE/EDgsY4zQe+kykyYvH6zdNzbj1QpTLIyGL1pLeNyl
+	n9lyUK4KvKOqAhpMELYTMQcMAO
+X-Google-Smtp-Source: AGHT+IGc+rzcOSqRq1NAurG0wArv+f9TNDXi3NJHkDUdzPbqAqbmujaqTIOq09aOpi8XwtONse7qgR0mbQ4HEgDxOjc=
+X-Received: by 2002:ac8:529a:0:b0:477:29f5:53eb with SMTP id
+ d75a77b69052e-47729f55467mr169156461cf.6.1742912430244; Tue, 25 Mar 2025
+ 07:20:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192091 [Mar 25 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/25 08:37:00 #27838357
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+References: <20250320015551.2157511-1-changyuanl@google.com>
+In-Reply-To: <20250320015551.2157511-1-changyuanl@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 25 Mar 2025 10:19:53 -0400
+X-Gm-Features: AQ5f1JpBD7J0LGV4vivBPILeYhry8D0ETPzHZusd7bV5-E3dLFdBAyFaK8Fs_Bw
+Message-ID: <CA+CK2bDtBk=49hbz+C=fDswz_Nbtj8kVjsY-pTsmBt+O8YPLmg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/16] kexec: introduce Kexec HandOver (KHO)
+To: Changyuan Lyu <changyuanl@google.com>
+Cc: linux-kernel@vger.kernel.org, graf@amazon.com, akpm@linux-foundation.org, 
+	luto@kernel.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
+	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
+	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
+	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
+	hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org, 
+	robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
+	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-It's pointless to call WARN_ON() in case of an allocation failure in
-device_rename(), since it only leads to useless splats caused by deliberate
-fault injections, so avoid it.
+> To use the code, please boot the kernel with the "kho=on" command line
+> parameter.
+> KHO will automatically create scratch regions. If you want to set the
+> scratch size explicitly you can use "kho_scratch=" command line parameter.
+> For instance, "kho_scratch=16M,512M,256M" will reserve a 16 MiB low
+> memory scratch area, a 512 MiB global scratch region, and 256 MiB
+> per NUMA node scratch regions on boot.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+kho_scratch= is confusing. It should be renamed to what this memory
+actually represents, which is memory that cannot be preserved by KHO.
 
-Fixes: 8b41d1887db7 ("[NET]: Fix running without sysfs")
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I suggest renaming all references to "scratch" and this parameter to:
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 2f7f5fd9ffec..14726cc8796b 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -12102,7 +12102,7 @@ int __dev_change_net_namespace(struct net_device *dev, struct net *net,
- 	dev_set_uevent_suppress(&dev->dev, 1);
- 	err = device_rename(&dev->dev, dev->name);
- 	dev_set_uevent_suppress(&dev->dev, 0);
--	WARN_ON(err);
-+	WARN_ON(err && err != -ENOMEM);
- 
- 	/* Send a netdev-add uevent to the new namespace */
- 	kobject_uevent(&dev->dev.kobj, KOBJ_ADD);
--- 
-2.39.5
+kho_nopersistent= or kho_nopreserve=
 
+This way, we can also add checks that early allocations done by the
+kernel in this memory do not get preserved. We can also add checks to
+ensure that scarce low DMA memory does not get preserved across
+reboots, and we avoid adding fragmentation to that region.
+
+Pasha
 
