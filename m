@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-575508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1870A7037D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:21:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5327FA7035E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019A3189E541
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4150E1685C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132A325A321;
-	Tue, 25 Mar 2025 14:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B760259C8D;
+	Tue, 25 Mar 2025 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsS+bDCT"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xob5GJY/"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB227257458
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75E25522B;
+	Tue, 25 Mar 2025 14:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912125; cv=none; b=NUlnFeLCTeOPduzirL8jX3FvG4m80qj/+uGXQyuaIQbC1vp8eIsaCc/5EXJPkg2gn6MQ1esJqWljPX8VztxbjwoWQBflEOWNfz4Yt/g1/LdWVflysrX54pY2QbeQj3xV8Da1qn64ESR+7Sh+HSUxOWq8ojdmzlp59jc5+vfUzxQ=
+	t=1742912123; cv=none; b=mlowtc5xo+C5jPLr/nMfD9l8IEeBf3vvLw2VKFew4EjSNlNhcUQNvqOjUcRrqkQHq1RclPZhzbmr/R3eqZF2XlPi4ICvVElWeB6lOD8YFQm3yH3pl+EWbC6ZNVyLMhRVb5LqARqSSQjD28nBCgCsNf4ZJtb4RVNgjCHL2/UvHHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912125; c=relaxed/simple;
-	bh=w5EreeKhUAgOFBnSwIf3AdHlAHNu2gpXo2JDwr7A0mw=;
+	s=arc-20240116; t=1742912123; c=relaxed/simple;
+	bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EdqlVCBmDLNzFxGRgnWev/nR0+/GzM466Kcgfitb8IetrZszEmyx8KZoArswtllIBNVJWHxBoVUpAfA5RhP8leyi3bXtefDQ4sVWpOz6aGe7qJAl+6v+1KMFkt0kwCjSjhWyo76VaSCQos6WcM3b1JniI4Cr2wiEVF2PRleDzSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsS+bDCT; arc=none smtp.client-ip=209.85.218.42
+	 To:Cc:Content-Type; b=KyJ9hBNxSWheQVYT+1XfZp8wTId9FmcIGsmKv7Sa0UUQiint/UEUqZCRrX+trk+QitGI8sOAnX8WIEkIU9qnCcoTgqERBup4OHu5Ntrnmww22dVGriVQglatewAKf4FuD8ppb6eio+aY/EYLQhyWhqF40LSjdVJC9FsP1bWfQb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xob5GJY/; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1176084366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:15:23 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so10230916a12.1;
+        Tue, 25 Mar 2025 07:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742912122; x=1743516922; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742912120; x=1743516920; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w5EreeKhUAgOFBnSwIf3AdHlAHNu2gpXo2JDwr7A0mw=;
-        b=RsS+bDCTRsw3oLhK1k++h3929OfVnwzde299fG6y/mvlEvJffJny3w/LhOYx+YDyeY
-         6PzTo+biuHbav01A1cV3Zdw/1W+yzT7+e0TQ8jY4CMNE2EHPCHXMTIp1f2DIrsa3K2bU
-         KoNNT7/KiV1h3w33lUsflyg6edKSVTncBekdjym34HcSciT6t7hfx7WOFfKyo/5AdLfK
-         5jHaNonj0GYEYrlUENBm2+ZAekTKIX5QjbcgqaQrXAUAbCL8blCufXq4+VRFtgciumGU
-         1n5DIS5DvuBur2GaWf/GmJ2WMZM3EWRxYMOfDJVnuTuZsEq8RQ1hTUyQwgcsB7w8E9gB
-         YmvQ==
+        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
+        b=Xob5GJY/JSC+XBU5GOgWFti7wzv5A7ApXFX6667Ph18jTYxXWzoxr7UrabL+A44sCk
+         cimdWsTDipyas+vgjg4qE27wCsP/tT+pEOvpwd6Jn6C3Wl0TILAmOoDQgyL+JDV4WrgI
+         JU9sWWKDOeC+KFIAK9/6pIex0YWIiVpBIfA+DezRWUV/PjCYOcTXtraISDk1DNBMP1H2
+         Ibg9C4IVte4hGOMRe6pVRcE6Gg732KRL2lRiGMM6Kyuwjcol8ntbR/8qpROiqpyS2PfQ
+         yxUkFGVZTk6oGs+KsSqIbF3Otd5RNHIiyEt6TvDboqbs8YNFRxer1PGAE5TTnZhDguWV
+         RxGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742912122; x=1743516922;
+        d=1e100.net; s=20230601; t=1742912120; x=1743516920;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w5EreeKhUAgOFBnSwIf3AdHlAHNu2gpXo2JDwr7A0mw=;
-        b=Ybr+3lYGXrOHxT2RNm3d+200a7azG3GRasxEsUDFaz0F9AjhRaRGKGeHugHmnZPK7r
-         LDhRdNj1fmjw6bExk2oe1RB28qCC9OvtkLbIlggMVLv3HldFWv9hsgRpndiokBJSH4FM
-         WFePn6ga1hpbhi/AYhDJB9zsFfAzRMxYTdg4xn/+BIYsCPymwdGbqSA7J0INLMh2lmR+
-         hlSU2AJ7tdHUFz2Ncw5Fo0LdouMSu1g3tlMn7I5RJO9wL9Fs6ho1W+F493cbyVoPcA1G
-         YyNac2i+ucuH/0w5kOleCnCGJEhqeOVEsD6Zz642ShqEPRydt5MfCP0pWc66f/xJfXfl
-         VJ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVw7y16D0snkMuxtoMUR3zFhwzb7a/ai6QRwTtPCpcyyi9AB7tq3cc7VduidH6+5amsW9YRXFaaGHgLO58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQFrSIXrzwRQ5NFyQKGApJ2jmGZ+YUx02ljH92BvHccDlrzvtV
-	gakiiQqZGe/4LJ0V6507wTT70KIJdBgvr8bVhMHO/QQM3eQNRbGsmZwsb/Vi+XMORinF9X7R0JN
-	Uukwc1wluGpgBX972d7EfWo3kVgPw+S7piZc=
-X-Gm-Gg: ASbGncvzuYfR7Jr9tP61xaGBDSmFsl0Wm7ePD5gssnm3BVIkfyllyAWHszDQtkHxbD8
-	3eTvIJGs8D/wI8ObcJXeSzNgwLMlmgWBzl1pgG4H1IxIccO8pWFnNC/JvpAx9d5iNhRHsfJotql
-	Mc4ms++SzQeyFdJ6OdCh4V+09T4sfr
-X-Google-Smtp-Source: AGHT+IHK0fJ2cGUy3PZ7GPK/m1tOr2sUxPAQ0Rh/AzS1MwkJsiVSy6WDJm6paNd+KuGtf2AomV4Ok/Ofy7InlJTm66o=
-X-Received: by 2002:a17:907:6ea7:b0:ac6:b816:454f with SMTP id
- a640c23a62f3a-ac6b816458bmr385675666b.54.1742912121823; Tue, 25 Mar 2025
- 07:15:21 -0700 (PDT)
+        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
+        b=Becc7DLGpkHiExhAY0PunoTA30iMt+B/0NMZ1zChBrJ3OjYR1UXLMQpL8ccYCckDF0
+         A/ZvEEUeQfFFm1dtLOpWrJmKEowqrvavzaeP0IqGev/CiKYh1XWdENyZBI+zjZYV2W43
+         JC9u884zvwfQXaleTH5FuVgoxf/2Cx7RcRe9mWZLULVRisXsoP4WFp/SgzEln14rXoZh
+         slZRq+PY7xLOpiLvoZiXYHh6L6RE6jxFu+r6v+TN7dTbVocz/d9BPA3qhuubkpUQqgf6
+         ItOxOknVDQAWtPk5aeOSpHTPDn6BPO7pxHBAjtANjdUtEINoMpgIKwjLWFqi5pasJR4q
+         R3fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+B5MgnpypyGa+aHXfuBeaWtN39pE+jsRm5axyPXgqwHJv/zuuT9CD8ADBvLRQy8/bYQAWuh7po675KcpI@vger.kernel.org, AJvYcCVfoTmh4b2918IAgMkylVGtaHatXE3bZeHf0QDNWPD1XEKk3KCaQsivkHbBQe+RHaQgBJmIH/YvVxv1D9cz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8czkqEnWQ5xhAgkistgjx2Q9FoWij2RpV4g5tHeLFitewt4U8
+	hp6oOs9LInykV7dEUQFEO4kSINNJ5xKy2QAXaNnVPaVEMfl25bbsmE8MEP6TwlY2TsdrsDjOrxp
+	8IR8y+4JWqoy57JhRFWlWDR42XTA=
+X-Gm-Gg: ASbGncsgpWRpZVAzRspIuIQcfLFFcGMT9d4EzKhuhXRUq5iC/5VztJXgfbASwjxX+Qf
+	d3z6G4TIEeQHNi82uRK4PBVmXbCTsAoTMX7nquBa2qYj+WytphQ4YUgnhg/nG2PGmttIeLrbQVn
+	H5OW2n/EJUgS+8Rbqp+Kv/rBfLRQEHobYJ3OC2
+X-Google-Smtp-Source: AGHT+IGCXq0i5sPbB6D+egYNTkN8t7fqQ46d/BSo5o0rsWhypxWST0TCfi0Il6K80MobV/2JX8on8SPeqOHSZWZg/k4=
+X-Received: by 2002:a05:6402:2712:b0:5e5:9c04:777 with SMTP id
+ 4fb4d7f45d1cf-5eb9972ae95mr19756146a12.6.1742912119870; Tue, 25 Mar 2025
+ 07:15:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-x86_x2apic-v3-4-b0cbaa6fa338@ixit.cz>
- <20250322175052.43611-1-mat.jonczyk@o2.pl> <Z998eR-9QNL1R-71@surfacebook.localdomain>
- <Z-JZnueg7EvMFJqK@gmail.com>
-In-Reply-To: <Z-JZnueg7EvMFJqK@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 25 Mar 2025 16:14:45 +0200
-X-Gm-Features: AQ5f1JouQfAX51lH_jtINaDcfKoo2ATRpdfeDsSCfxVJ29CHbGveW3iY0GsWSoo
-Message-ID: <CAHp75Ve++2rEGe7Ob=sRw7qBC-kf5v8_Ag9h99rrn5yd7Kx9cw@mail.gmail.com>
-Subject: Re: [PATCH] x86/Kconfig: fix lists in X86_EXTENDED_PLATFORM help text
-To: Ingo Molnar <mingo@kernel.org>
-Cc: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	David Heideberg <david@ixit.cz>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+ <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+ <20250325100936.GC29185@redhat.com> <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com>
+ <20250325132136.GB7904@redhat.com> <20250325-bretter-anfahren-39ee9eedf048@brauner>
+In-Reply-To: <20250325-bretter-anfahren-39ee9eedf048@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 25 Mar 2025 15:15:06 +0100
+X-Gm-Features: AQ5f1Jr8oXwwdmvGSBUITgwEGjTjEUXxS32Qqv2Kn_lvnq3BY7I5kPchOqLOEt8
+Message-ID: <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, kees@kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 9:22=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
-e:
-> * Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > Sat, Mar 22, 2025 at 06:50:52PM +0100, Mateusz Jo=C5=84czyk kirjoitti:
-> > > Support for STA2X11-based systems was removed in February in
-> > > commit dcbb01fbb7ae ("x86/pci: Remove old STA2x11 support")
-> > >
-> > > Intel MID for 32-bit platforms was removed from this list also in
-> >
-> > Was it? It's rather hidden and not recommended as far as I understand.
+On Tue, Mar 25, 2025 at 2:30=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Well, with the '32-bit' qualifier the statement is true, isn't it?
+> On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
+> > On 03/25, Mateusz Guzik wrote:
+> > >
+> > > On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redhat.c=
+om> wrote:
+> > > >
+> > > > On 03/24, Mateusz Guzik wrote:
+> > > > >
+> > > > > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@redha=
+t.com> wrote:
+> > > > > >
+> > > > > > So to me it would be better to have the trivial fix for stable,
+> > > > > > exactly because it is trivially backportable. Then cleanup/simp=
+lify
+> > > > > > this logic on top of it.
+> > > > >
+> > > > > So I got myself a crap testcase with a CLONE_FS'ed task which can
+> > > > > execve and sanity-checked that suid is indeed not honored as expe=
+cted.
+> > > >
+> > > > So you mean my patch can't fix the problem?
+> > >
+> > > No, I think the patch works.
+> > >
+> > > I am saying the current scheme is avoidably hard to reason about.
+> >
+> > Ah, OK, thanks. Then I still think it makes more sense to do the
+> > cleanups you propose on top of this fix.
+>
+> I agree. We should go with Oleg's fix that in the old scheme and use
+> that. And then @Mateusz your cleanup should please go on top!
 
-> ca5955dd5f08 removed a MID reference from the 32-bit list and added a
-> different one to the 64-bit list:
-
-Ah, right, we are talking only about the _list_ here and not about the
-support code. Now it's all clear, indeed.
+Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later this w=
+eek.
 
 --=20
-With Best Regards,
-Andy Shevchenko
+Mateusz Guzik <mjguzik gmail.com>
 
