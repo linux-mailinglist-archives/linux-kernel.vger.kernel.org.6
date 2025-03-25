@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-575199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CCDA6F25A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:26:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFB7A6F29C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A860E188DD93
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F0916B9C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F2F254B1B;
-	Tue, 25 Mar 2025 11:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1C8254B09;
+	Tue, 25 Mar 2025 11:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSmI4cfR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f0UULc8Q"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234701FC111;
-	Tue, 25 Mar 2025 11:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277512F3B;
+	Tue, 25 Mar 2025 11:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902003; cv=none; b=Cr2WgSFY7NNIuo01NutuIK3acOZ577f/hJBMZvdGgJyhD0OxpQDTxn6RmhaForSbl5NsZSHLHVsLfsW+cnIjSWKZ/9wtylPCzZAPdbLiESztKdsThO+qlkEGTRZnSmzIzAb+xhEZ+Gy+1FQhsezskopCXlGedA7r4FJ/flE+4Uk=
+	t=1742902033; cv=none; b=ZRY9g9MxUwoPmQdMmv/Esp5y0vBhp3ZGd7xarUcoXUKcIROEHlGkqbAuoNFv3DNDFb762F1epXnLDsD6BPs6QQ2NIylxhgWk0IFTnaGSXB30/HCmxW0ca2QmC32b7TV8LRgXXz06tVGp472aXW2FOh22lowjZUzveDvdtNEkg0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902003; c=relaxed/simple;
-	bh=17lGbFEAJ1ty/woWfnYd6oAcPxVl3pgPP0W1h/+Gop0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPjpr4Zv1WIw1ZC8V8Pc9KjJPZrRBpe2ZuCutPgRjnnnGWkd3xiaH9zIuWhESJo7jQqpO5/xcNO9qHgbxamwR1w6n32e0M9AIxZgKL+wljmpVToj6zdOjCr7xQDjTn9fjORXzzW9yHqQIoeT8LfEhJMA0ERrfo98lqiu3r3Ebjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSmI4cfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2739C4CEE4;
-	Tue, 25 Mar 2025 11:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742902002;
-	bh=17lGbFEAJ1ty/woWfnYd6oAcPxVl3pgPP0W1h/+Gop0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fSmI4cfRgxNxIdZ+3CF6vmFS1IeAWJ35hwV5+EXZgJUKUrLZEkoXGjFO+0FUHm/K+
-	 hBSCDP59FLFdfB1y/cVroWA8zvvlJ4Hwuk66y8TMIObAyJY1oxBaVFMTmwEiwHkNPO
-	 7tl5VXBHGLZwEJsLPedt9t7IjL0cM/SW1v3UEVksuo69MRP8vz50ZEY1YltbsAXmov
-	 lqWSn0eGM6AUJCC+JPdWfI/ae5odoY8Mu0ulx9jLi6jXY9zEJ13xUihr5kV3HY8KR2
-	 pv97MjE8CbLuj8Dq7ncnkT8SbPq9KBBf6BwtAX70VOxLOiNILxG59wN0uRsnV9KNnw
-	 rTVFmivXj+qCA==
-Date: Tue, 25 Mar 2025 12:26:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-	Greg Thelen <gthelen@google.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] x86/alternatives: remove false sharing in
- poke_int3_handler()
-Message-ID: <Z-KS7H6666PZ3eKv@gmail.com>
-References: <20250323072511.2353342-1-edumazet@google.com>
- <Z-B_R737uM31m6_K@gmail.com>
- <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
- <Z-EGvjhkg6llyX24@gmail.com>
- <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
- <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
- <20250324113304.GB14944@noisy.programming.kicks-ass.net>
- <Z-JsJruueRgLQ8st@gmail.com>
- <20250325103047.GH36322@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1742902033; c=relaxed/simple;
+	bh=LHRJNm4y9hcDnYFIsgbkIebsO0SzBKkTA6w6Z7ABlwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WYoJcH5Jx0Y+vWzpBlXYpfMMBe+6jiM1A+rR/93XiV1aBMC+Esgf5z4gp8/NewN4RpcyJcsiuVfZkb4DXkJEa+/HRFyKaVHqSlvBXxc3+bgIvu6/C+OMjCTuaF1oKfaHo9yoUGdXr/RgstXKQKX0l0Zv48FBKeR90QYpatZr79g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f0UULc8Q; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8315643152;
+	Tue, 25 Mar 2025 11:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742902029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lfrh2U3s5gJkhXevgALQGNGwSRMvmBuZkh+1nqK6iiw=;
+	b=f0UULc8QP2HFxL2IDc1MxICDn1HxX6bk+rIOjyQkUMX8Jftk/Cg8VIU6gyn7iz3houuF69
+	ZYqGoajDkXeshwoA46cMlw/AQD6DC4aHfs97vZSZiPKi2RlxnoTSbUDHscqs6D0dn9tqiq
+	VOsMsdojlkK0P8vxpZtWHWe2Z6oFn6ZBPbDm9VfVvW+tj5k1I7azoSt7pShbjVrolDC9q9
+	zZyDj5V3bNNHVh4UFW3gPDsLSBn5V8BFJ7Hm556Oh2Bw6j3pl94NH8hZZH+PejapK/mKIg
+	2R0hccHCWaeP2BeJ3Fg7sWueDGZoao27rAjws7KaRrYLt3TZuZrKE+pYWACsoQ==
+Date: Tue, 25 Mar 2025 12:27:06 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
+ Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net-next v4 2/8] net: ethtool: netlink: Allow
+ per-netdevice DUMP operations
+Message-ID: <20250325122706.5287774d@kmaincent-XPS-13-7390>
+In-Reply-To: <20250324104012.367366-3-maxime.chevallier@bootlin.com>
+References: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
+	<20250324104012.367366-3-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325103047.GH36322@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ egvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
+On Mon, 24 Mar 2025 11:40:04 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+> We have a number of netlink commands in the ethnl family that may have
+> multiple objects to dump even for a single net_device, including :
+>=20
+>  - PLCA, PSE-PD, phy: one message per PHY device
+>  - tsinfo: one message per timestamp source (netdev + phys)
+>  - rss: One per RSS context
+>=20
+> To get this behaviour, these netlink commands need to roll a custom
+> ->dumpit(). =20
+>=20
+> To prepare making per-netdev DUMP more generic in ethnl, introduce a
+> member in the ethnl ops to indicate if a given command may allow
+> pernetdev DUMPs (also referred to as filtered DUMPs).
 
-> On Tue, Mar 25, 2025 at 09:41:10AM +0100, Ingo Molnar wrote:
-> > 
-> > * Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > On Mon, Mar 24, 2025 at 08:53:31AM +0100, Eric Dumazet wrote:
-> > > 
-> > > > BTW the atomic_cond_read_acquire() part is never called even during my
-> > > > stress test.
-> > > 
-> > > Yes, IIRC this is due to text_poke_sync() serializing the state, as that
-> > > does a synchronous IPI broadcast, which by necessity requires all
-> > > previous INT3 handlers to complete.
-> > > 
-> > > You can only hit that case if the INT3 remains after step-3 (IOW you're
-> > > actively writing INT3 into the text). This is exceedingly rare.
-> > 
-> > Might make sense to add a comment for that.
-> 
-> Sure, find below.
-> 
-> > Also, any strong objections against doing this in the namespace:
-> > 
-> >   s/bp_/int3_
-> > 
-> > ?
-> > 
-> > Half of the code already calls it a variant of 'int3', half of it 'bp', 
-> > which I had to think for a couple of seconds goes for breakpoint, not 
-> > base pointer ... ;-)
-> 
-> It actually is breakpoint, as in INT3 raises #BP. For complete confusion
-> the things that are commonly known as debug breakpoints, those things in
-> DR7, they raise #DB or debug exceptions.
+...
 
-Yeah, it's a software breakpoint, swbp, that raises the #BP trap.
+> +
+>  /* generic ->start() handler for GET requests */
+>  static int ethnl_default_start(struct netlink_callback *cb)
+>  {
+> @@ -636,10 +659,10 @@ static int ethnl_default_start(struct netlink_callb=
+ack
+> *cb) }
+> =20
+>  	ret =3D ethnl_default_parse(req_info, &info->info, ops, false);
+> -	if (req_info->dev) {
+> -		/* We ignore device specification in dump requests but as the
+> -		 * same parser as for non-dump (doit) requests is used, it
+> -		 * would take reference to the device if it finds one
+> +	if (req_info->dev && !ops->allow_pernetdev_dump) {
+> +		/* We ignore device specification in unfiltered dump requests
+> +		 * but as the same parser as for non-dump (doit) requests is
+> +		 * used, it would take reference to the device if it finds
 
-'bp' is confusingly aliased (in my brain at least) with 'base pointer' 
-register naming and assembler syntax: as in bp, ebp, rbp.
+This means the dump will have a different behavior in case of filtered dump
+(allow_pernetdev_dump) or standard dump.
+The standard dump will drop the interface device so it will dump all interf=
+aces
+even if one is specified.
+The filtered dump will dump only the specified interface.=20
+Maybe it would be nice to have the same behavior for the dump for all the
+ethtool command.
+Even if this change modify the behavior of the dump for all the ethtool com=
+mands
+it won't be an issue as the filtered dump did not exist before, so I suppos=
+e it
+won't break anything. IMHO it is safer to do it now than later, if existing
+ethtool command adds support for filtered dump.
+We should find another way to know the parser is called from dump or doit.
 
-So I'd prefer if it was named consistently:
-
-  text_poke_int3_batch()
-  text_poke_int3_handler()
-  ...
-
-Not the current mishmash of:
-
-  text_poke_bp_batch()
-  poke_int3_handler()
-  ...
-
-Does this make more sense?
-
-> > Might as well standardize on int3_ and call it a day?
-> 
-> Yeah, perhaps. At some point you've got to know that INT3->#BP and
-> DR7->#DB and it all sorta makes sense, but *shrug* :-)
-
-Yeah, so I do know what #BP is, but what the heck disambiguates the two 
-meanings of _bp and why do we have the above jungle of an inconsistent 
-namespace? :-)
-
-Picking _int3 would neatly solve all of that.
-
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index bf82c6f7d690..01e94603e767 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -2749,6 +2749,13 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  
->  	/*
->  	 * Remove and wait for refs to be zero.
-> +	 *
-> +	 * Notably, if after step-3 above the INT3 got removed, then the
-> +	 * text_poke_sync() will have serialized against any running INT3
-> +	 * handlers and the below spin-wait will not happen.
-> +	 *
-> +	 * IOW. unless the replacement instruction is INT3, this case goes
-> +	 * unused.
->  	 */
->  	if (!atomic_dec_and_test(&bp_desc.refs))
->  		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
-
-Thanks! I stuck this into tip:x86/alternatives, with your SOB.
-
-	Ingo
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
