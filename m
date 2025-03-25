@@ -1,170 +1,186 @@
-Return-Path: <linux-kernel+bounces-575358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DD6A70131
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2964A7014D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09544178B5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46C817D771
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF2525D8F6;
-	Tue, 25 Mar 2025 12:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD36270ED2;
+	Tue, 25 Mar 2025 12:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="S9dATbHQ"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Bw8T2BpN"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B626FA6F;
-	Tue, 25 Mar 2025 12:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742906399; cv=none; b=o1KgXM8Ad8pYFXjbY9BFqYtJrhjBT/v2UBI51KKdJeObnxY57FAykGssxUXgecKeBBhlvqpEJcR87wW9KRbr4CD2vG30d9mpdVD2SFQ3mFdgyQ6ueiUP42BI++PNNUdwUg8AXGq7PzroY8XDi/+rcVfzhhMv2ZOX58mMPCdjCSk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742906399; c=relaxed/simple;
-	bh=8tP82OotsJmSeaPv/t9mJp2OiMqNRSJ6qjsDyEcX6/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KWFipGRFtOOtm8Vm6SZaGUPQzdHe3JAZPvahyk4rVkvF+CnLLEK4JKBczc7/3Qwt8f3QWdFtGLRoYJARSEXIJ6KLd6fTQ6AsQfaraHCylfnDd/ws0+fCjJk1NR/x0BrtmEMPP1w3i/J4kc2KL29+zkaqL3KH6tVMy75u5bKBJF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=S9dATbHQ; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E788AA05BE;
-	Tue, 25 Mar 2025 13:39:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=RB9GJiRFJg6/bN2vnJM4
-	vC1ljE25oPT92TiI7BbGuH4=; b=S9dATbHQKVhWMebPspBcq6wTeWmup9sX72Kh
-	N6n2EOKfMxJ8hfo0eTHPW1XJagCC0ai0nBmCHIVy4CcHtuy/IXnIgexI30R+GdNl
-	duApg87u5HRR6AeTK/YocuQ6l0qO/UdIfXUct1soL8X9PKv9cQq0h1NBt2X0kI5q
-	+lEN+F2l2JIQI486Y6hh0CZEyKqP0TkDztsZGjlE3Uso/PHsCX1aGKhdGaqF1Rjl
-	+yZcvJGLae6yNEZgZGvIv3HmOOj4JjKAWu/0xAH4uJW4swwIiqcoJFiSrmskdLTm
-	7Y8ihLBis0RuF6MM+NSrVlSq4oBw/2dK9YHX3tSsi05orp7W06buvBssdGEA9Ovd
-	fZ2XqrL02cu625TnlTkTjrZBBs2DMjBk09f03HHe3wJhNAcqCHG5HmRSwsqLkJ0d
-	szXn94T4iai0+JUcFgko07Kg+uYwgI8hpnU+wrH90xaphxeVtGYJzCpqbXd6zy/A
-	5z8DotmD6V5RMOrH2eXdQhM8tJTAkLeUyWinSo3HCsKf8NIzqB8pJz95XaMWGHH+
-	1PqX1GnooCT3EhMYUffDfPUnOWlwoeOhS5ygusL8nLXtNLTMmYRquF+i7C7zWzVM
-	kwqMGcHByQCN9+ea0sgxkir8QTN4PyVDIzYVihd/v0s3gW9o51tuF2S0SEKD2pDk
-	+07bpVg=
-Message-ID: <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
-Date: Tue, 25 Mar 2025 13:39:51 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB5B18BC3B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742906462; cv=fail; b=etwaxEkNHj/SnDaMGdCZLJuNBP7sjKraIixDQJLEkh5AOldqXhmunWRdEJwEJ9/dBiU5U+B4A/zujXNktLPu5aZwA0LBS8N87wNrCHjtsEri/nAPZ49mCnUz+PB4M/hWinNdvzXr4ICcKHMvi9BtilqwwGWxBIq3XOuzTc3FJvw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742906462; c=relaxed/simple;
+	bh=n5Yw79hGXjKuReVr+nIa+AIddl6fLQBtn/4dzwBfvVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=L3Nxa2TVs+9hZXkabwAqD7bkdurdWtLTJghwF6Rmdh6JJfFbmXfRTPS3HnmT1SG7mS8SY0M3PdF3m+vEPzAwjQsEzY5TiR9TqQfZ9nwQ1YpMNBDz5Zh4hbHO3XctLToCSPIgynqzYRaqN5YfJehM/FRRfbJs83SzGcTwONhKuC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Bw8T2BpN; arc=fail smtp.client-ip=40.107.220.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tdn1ZRWyO+eqepOCuaHC0P97ozFWXzWpZSM9S1v6Ka35o3P3EC61RBuSsbzFjURWYb6yKKL9rIHSWggDNsaWFoh8w9Loc4jwkWsMGIAffGRiSUIskSWQck+PUtTshjfprbsAG1HtN6KaluUxcjwi+rWLDPDrKLelYKNBcy8GksM2lzFFMkzKJMzQeu6+nIyFybUqTP/vgWL+/ijdsTSkSIYKQMCUET53xm0XRe/XKzH3kTLFRV5s+5JkNyoxWhO/bGVDA9SZkE/P18M4oVkm+UYlOZutUGhBD8fOSdIHNJlzNaobgT5MF09GW0v3lliyfdbaFyHM57NYRVGjKesvFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u5cWZ7VHSzObqLxN0pXY8NmhurIekCV+1r2zf/3Rq5Y=;
+ b=R2/YO6uMUk3zzJDL0jTfHjwbFqO1gyokxZalczmRzVoOwp03T6SypRx6t/o+nOGQHV+1nh5gRvDe8BmIYxs+DertHEMP7C+TY4MMVYmPz1xZNfJVuxIcSqoP6/mr/3aIL7H3Ay7cMbEojHgKjwaa33GIax9Q4xiGGp07ASCMGqUBoS8iTJRFfGG9ExQFv7vn1r10NRwXXRz3G5xxgegzPkIXrGV3s5i7jzXE8kKrmDAdBhUsGX/16XaWk+McdXFrRkzBm3g6eCbtl4VmoNxac+N8Zskpo1aYHKokgJ3+dgUTgYAWMMRqUrGODASJcfzgxxWaOG6WSIiqpU+JtYqcUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u5cWZ7VHSzObqLxN0pXY8NmhurIekCV+1r2zf/3Rq5Y=;
+ b=Bw8T2BpNQNV4vnB+/0wnmAlqesZJjixqYfWbGFHI9klo0TgtT24wx9XmraZx4WFf/+BL7RAYgb7Lj8j84fn384kFzH7maZRwPKgfaEhpsrz711dpjzBX3YpidgPZd/RNa4EZpL69puPhsHksb6Cf9gWYOct/JYmU++IG9r7pAtvgbsYKm2Wvo0ukPHbmWeGGqXPSZe+HYw6ZraPlDhXi1536w2sdSHHp8g1zlvwYuYXmp2Z7PcwC5Yo5qTSQ3g6rYLpsNevb54boBjLgUyl4yavqXUItqaUKCo9a03cNMeaPfmmwd1/14hVZc/+rC3P/u87o0Q3GG/o6lMEw9Vv+jg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by PH8PR12MB6842.namprd12.prod.outlook.com (2603:10b6:510:1c9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 12:40:58 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
+ 12:40:57 +0000
+Date: Tue, 25 Mar 2025 09:40:56 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, will@kernel.org,
+	kevin.tian@intel.com, baolu.lu@linux.intel.com,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	nathan@kernel.org, arnd@arndb.de
+Subject: Re: [PATCH v5 0/3] iommu: Clean up cookie and sw_msi in struct
+ iommu_domain
+Message-ID: <Z+KkWGwwUHMKxWxm@nvidia.com>
+References: <cover.1742871535.git.nicolinc@nvidia.com>
+ <Z+Itnw4ys6dmDsc+@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z+Itnw4ys6dmDsc+@nvidia.com>
+X-ClientProxiedBy: BLAPR03CA0046.namprd03.prod.outlook.com
+ (2603:10b6:208:32d::21) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
-To: Julian Calaby <julian.calaby@gmail.com>, Markus Elfring
-	<Markus.Elfring@web.de>
-CC: <dmaengine@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>, Chen-Yu Tsai <wens@csie.org>, "Christophe
- Jaillet" <christophe.jaillet@wanadoo.fr>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Vinod Koul
-	<vkoul@kernel.org>
-References: <20250324172026.370253-2-csokas.bence@prolan.hu>
- <92772f63-52c9-4979-9b60-37c8320ca009@web.de>
- <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
- <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de>
- <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
- <26e36378-d393-4fe1-938a-be8c3db94ede@web.de>
- <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D948526C7562
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|PH8PR12MB6842:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c14e247-5091-4cb2-3155-08dd6b9a4a8c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ihva4OHKFgnORc3JP7+7DA3mqSlrA2Vme9GMM5jt6avmpH+0mjiUwc2ow1bQ?=
+ =?us-ascii?Q?IfofsiLruoDddKYT3lxBoXu76clSzgBccvxd9YfRBGOHS93OBJDFu5orshrJ?=
+ =?us-ascii?Q?I5g3HMavQl8JzpC1SGLst/j7igwrHddh7D0kYypabfcKyCvhiWsgI83cH//c?=
+ =?us-ascii?Q?z+lvLU2vv1OlWE9nJDOBDtE3htypb2aaymR4k8f6zd9JyeehdXG2CHLbeeUZ?=
+ =?us-ascii?Q?h5Xt10UmlYpHFuJitZycJhENcok/ucYrFE3Q80LrNO89pjuxzDGFWQfeiA8A?=
+ =?us-ascii?Q?l8JjDE/QUkU+wlN5tPVPYnyuDNWRJHnF9ACNmz+6UkfS1A+LgdWDMgyMUDIx?=
+ =?us-ascii?Q?xSYEdLtH0GMljLjMlXuwApO9tyaRKe8Ljj8IKkD2Qzc4b+/AvmN6rCF0R+no?=
+ =?us-ascii?Q?kuw4H4MwyD7O8X7lQSJp6EKUNIzfa3msGQtdC0QcVqiUusohtuBsMscuqC1W?=
+ =?us-ascii?Q?HtWV2VqnZriuQmPomZDdwr0sH7z4VhXviktwhOPMLzXG0FGGYNorndfwaO28?=
+ =?us-ascii?Q?RPB9HK7i43r2X4lwFibJuUsRfXdKKV+8c2ZHJDXXjANdi6uOyp193gp2ygTB?=
+ =?us-ascii?Q?UYSFNZ6NMQE4kcZSPiTYZqE67i2nnG/qWd2UeajGC/AVKv/IzxBWyFRHrM7+?=
+ =?us-ascii?Q?2GgEoFCXV6j3M0yhAmFmZwdLIaiNoRVB1/Z7X+gkTtwb2FwoFX9tiOYvbj8Q?=
+ =?us-ascii?Q?SkBnBUqFKA3/EYpFNfco7k5aNHIlKAumAtp9rFE2V6jImT8PMmGWfTIMMV58?=
+ =?us-ascii?Q?pnNv+54V5pnepyRohhYDgSoeWwXzjFoEJqfmTqunWQsOo4+OhGV5+J+f2jmq?=
+ =?us-ascii?Q?fcPCKDI2GbhQxMmmF8HEYTTGkhcQlyMOxezhpRxn2XRU0Fl8i7oD7HSuWEKy?=
+ =?us-ascii?Q?rvTzORjQneJnu8qFDHzXLUFyupRKuR1f0yH3Cq7sRrQJLv/SueCx+L6ecXEj?=
+ =?us-ascii?Q?E3GO0uUOCuOA5Gnh63wp0hLqixf8ZDJqKao4Xbv26SsZ5zzLU7fvfX+F0cTm?=
+ =?us-ascii?Q?ULpbSixscvuS4iD79epkjjc2Ee9dPVYvh6hZE/C6gDyod82s798JsoI3gfHT?=
+ =?us-ascii?Q?B3tdhZgU8Y7tTaOkAaJ+vVcFm9/dJ0/CMHEaAQM7K1SBQaexZSKULNHkzoab?=
+ =?us-ascii?Q?VeqovJC8k24lHZojWd+Q6PzbyTp9aJX04G8PeC+PAUS2EhfTD268acC83FJ9?=
+ =?us-ascii?Q?wJVfnq1GcWoW6/HNUjM5WES+N2sUUZDIqZpp/MDK5QBZlApY/UNBGczlWKgM?=
+ =?us-ascii?Q?pL2jAZqzJT9oGmjjq1xqyOQJJ4YB4PiN9Q5pE8BGvTQdAoWERfCA6B/p7QUi?=
+ =?us-ascii?Q?Acor2VWt5xMAEG9ky5Rwf0P0mJDhRljDSfXDMs1u5Skw124S9ToywnZg01fq?=
+ =?us-ascii?Q?G8E3p3XOviGGdS9Wj6fJ0Hv+hOe6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2AWD/Zti4vTKHFUEkPZrdib2G/KDdlXggFt9fy+KPVPuWD+shUnUTXZZ7pwu?=
+ =?us-ascii?Q?RSc3WoG1ga4JL8S3z71NNy6xg9tZAc7/BbK8l6oxsbkivk7K6Mim2y47bBEw?=
+ =?us-ascii?Q?LEcB/P77bbWl0/ZAu+cf3IPJ7nrYSt/rufJU9h5AO2avD+aE/IJuXkWJE+pp?=
+ =?us-ascii?Q?xvuYGBbksstcUChFn2I+sEAWYJK/I7LBuk5Q0TxGU8P4FPjx/kfNew4hZXVW?=
+ =?us-ascii?Q?2oO3yiOKaUccLJyrJtOuuqg9etXgtveCkztZr1CosJ1E4eflpn3Y+jF6QNzH?=
+ =?us-ascii?Q?3Lze/ukLP3I5cd7kBU3HYFnT3S+BmE+CUhrgqDqAVICwwpBEUiRcII4SZMqC?=
+ =?us-ascii?Q?Bqz0rItkyEBQZi8LX15b4J9MIPGWHq0tYOhA0dCAzBamH8jqnVa50U0vjzXs?=
+ =?us-ascii?Q?GXA9n392zGsOJffjzysJk4aVMBrre8nQPkn+WwCwY08gbqw+AayBdlMbOaY0?=
+ =?us-ascii?Q?2n8Ry4vE1Akxi4RwFXXyP1J38XIRJ8Vf24zFh+0HK9K1zn1BX+Q+59SMeVDT?=
+ =?us-ascii?Q?PWb102Ere7R9jNS6LukvmKm5KNAOqtoOp93InpoRRxMMB2x3rNTvkMY31AMG?=
+ =?us-ascii?Q?CUfjvGRqCZk+x9oEFCyN5h1H44f9H5HBRJWLPvZ/tyusKs3K/zZCjQxUNVcX?=
+ =?us-ascii?Q?INGi4991Oy1rCngpfZ4ADZby9mLKIXZN5EEBo30N4V+FMYZZOyLddtbjFq8i?=
+ =?us-ascii?Q?1JmJaUuCtcKvzqud6rI/tDB4D2AeA8oRapi41389sHsYnaLS3hP99FRJrG5+?=
+ =?us-ascii?Q?6Rk1FAzK1EWHtysxL9AqFcKo4piCdmuN7ZkEbTjiCT4t3sYvbYOGwSgxk81J?=
+ =?us-ascii?Q?yh8r39r4Zda807IiSN7xRvZZMLTcDl2CaxetU0v9/OMINbD2JfXms1TM0wMC?=
+ =?us-ascii?Q?lFB9FnPp5tZVYfa3aAd0UmCxQJVETNCZLHyi//IKAL2qX3H+tYkYS23DWzAN?=
+ =?us-ascii?Q?JwK0I5eWOS9DIuSSFcgO8UF0gX9ZPIsKVd1/wvvQmZxsANtXKTqIzdzbaZuZ?=
+ =?us-ascii?Q?uScuqTHL4lqwh/1ESpBqZpvGJbvojjKKypnfgKNLFBCcGBo6Hm52HpRRNq+D?=
+ =?us-ascii?Q?4FG3DJr/1pOQNfyFSHlqfTa08OhYPS7ye97KOqdmuD5pimKm1dIqo7IKxtXC?=
+ =?us-ascii?Q?VO+p2YMcc3NEefKNAUoa9nv597i9DDkFHOKnJ1f+eTqA9FWMXNycatFphK0D?=
+ =?us-ascii?Q?K6x7a7fL6lvpHePAOLhico9SMLXlkn+2vaawPpZP7JX7ptqd2DSgpxC8wVKa?=
+ =?us-ascii?Q?zNoFhYpgRM9ol3I5nii/64rOLFWviQllHai2cw4WqD8UVAg4hkS9/8yI8etR?=
+ =?us-ascii?Q?aEuKV5j9fuYlYr6OIMTzYDs1pq1NzHhT5VIWfOtRbottON7pv5OcrlbJNWA1?=
+ =?us-ascii?Q?8R38MIpiFYJvl6MCbDv/MW8qGlv6QOjiwuJNFJXA+x0KWCaGrpeffcXvrFq4?=
+ =?us-ascii?Q?1PG3ZKx1EPZsHYidCRxGtLwXMcb0vto51ExHG6aO5UluYsFnbgHt39/NMMpe?=
+ =?us-ascii?Q?SLZvHJ1pWIkOY4MTCFqkF08wQwWZlLMM6xgRVcTdzQCg0gg4DO/KfvVbOSaY?=
+ =?us-ascii?Q?81hyyaPZzhF2Adfr/30=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c14e247-5091-4cb2-3155-08dd6b9a4a8c
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 12:40:57.7746
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1+jOGh8I6yX+K0eG0R3gBZN1GPy3/W7UYwh0mLSPI1vxaP6CtylxUrZVYnoheoxX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6842
 
-Hi Julian,
+On Mon, Mar 24, 2025 at 09:14:23PM -0700, Nicolin Chen wrote:
+> On Mon, Mar 24, 2025 at 09:05:14PM -0700, Nicolin Chen wrote:
+> > This is a clean-up series for the previous sw_msi Part-1 core series. It's
+> > on github:
+> > https://github.com/nicolinc/iommufd/commits/iommufd_msi_cleanup-v5
+> > 
+> > Changelog
+> > v5
+> >  * Add IMPORT line for IOMMUFD_INTERNAL and change IOMMUFD_DRIVER_CORE
+> >    to a "bool" module, fixing build module errors reported by Arnd:
+> >    https://lore.kernel.org/all/20250324210329.2809869-1-arnd@kernel.org/
+> >  * In iommu_dma_prepare_msi(), let all IDENTITY DOMAINs pass through,
+> >    fixing the regression with IDENTITY domains reported by Nathan:
+> >    https://lore.kernel.org/linux-iommu/20250324162558.GA198799@ax162/
+> 
+> > base-commit: da0c56520e880441d0503d0cf0d6853dcfb5f1a4
+> 
+> Hi Jason,
+> 
+> Assuming that you want to replace the commits in your for-next
+> tree with these patches, I rebased them on this commit:
+> da0c56520e88 iommu/arm-smmu-v3: Set MEV bit in nested STE for DoS mitigations
+> 
+> Again, sorry for the trouble.
 
-On 2025. 03. 25. 13:20, Julian Calaby wrote:
-> Hi Markus,
-> 
-> I really wanted to keep out of this, but...
-> 
-> On Tue, Mar 25, 2025 at 8:14 PM Markus Elfring <Markus.Elfring@web.de> wrote:
->>
->>>> Implementation details are probably worth for another look.
->>>
->>> What don't you like in the implementation? Let's discuss that then.
->>
->> I dare to point concerns out also for the development process.
-> 
-> You're "concerned" about patch granularity, but this is not the sort
-> of thing that some random person would raise, this is the sort of
-> thing a maintainer asks for when patches are doing too many things or
-> are unreviewable. This is neither. It is a very simple cleanup of a
-> probe function as it says in the patch subject.
+Can you post a v6 please? That is a bit easier
 
-Exactly. That's why I asked if it broke something on Markus' end, 
-because it is a really specific thing to nitpick about, especially in a 
-changeset this small. So far, he did not indicate the *reasons* why he 
-thinks this should be split further.
-
-> Futhermore, this already has an ack from the maintainer of this file.
-> This indicates that they're happy with it and no significant changes
-> are required. This is also version 6 of the patch, if the maintainer
-> was concerned about this, they'd have already provided some clear
-> guidance on this. If you check previous versions of this patch, no
-> such requests have been made.
-> 
-> Your only other "concern" had already been addressed as has already
-> been pointed out to you.
-> 
->>>> Please distinguish better between information from the “changelog”
->>>> and items in a message subject.
->>>
->>> What do you mean? The email body will be the commit message.
->> See also:
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14#n623
-> 
-> The email and patch structure are following the format outlined in the
-> document you link to _exactly_.
-> 
-> 
-> Once again your comments are just noise, and your insistence on
-> repeating them over and over and over and over and over again is
-> borderline harassment.
-> 
-> You have been told to stop this nonsense many many times, here's a
-> link to the most recent one:
-> 
-> https://lore.kernel.org/all/92d1a410788c54facedec033474046dda6a1a2cc.camel@sipsolutions.net/
-> 
-> Please stop sending these emails and go do something constructive with
-> your life.
-> 
-> * * * * *
-> 
-> Bence Csókás, (I hope I've got the order of your names correct)
-
-Either order works, Bence is the given name, and Csókás is the family 
-name (surname). Hungarian and Japanese order follows the scientific 
-"Surname, Given Name(s)" order, but commas broke many tools, including 
-Git < v2.46, and b4, so I switched to the germanic "Firstname Lastname" 
-format.
-
-> Please block or ignore Markus, at best he's a nuisance and at worst a troll.
-
-I'm still open to hear him out if, and only if, he can give *clear and 
-valid* reasoning on why he wants to achieve this. I'm a generally 
-understanding person. But if it's just hand-waving and linking to the 
-same page over and over again with no explanation on why he _thinks_ I 
-broke SubmittingPatches, then I will do exactly this.
-
-Lastly, to all other adressees, sorry for the spam. So let's end this 
-meta-discussion here and keep the rest of the conversation professional, 
-reasoning about the technicals.
-
-Bence
-
+Thanks,
+Jason
 
