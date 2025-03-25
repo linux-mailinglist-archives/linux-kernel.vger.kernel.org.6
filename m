@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-575559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F94EA7041B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:46:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61206A70423
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D746C7A5107
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A8A189087A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AFF25A359;
-	Tue, 25 Mar 2025 14:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6482125A63F;
+	Tue, 25 Mar 2025 14:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WELSnYRZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JaaoyTvB"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F642030A;
-	Tue, 25 Mar 2025 14:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86838258CF5;
+	Tue, 25 Mar 2025 14:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742913977; cv=none; b=cpHXaGGYSbMkUVe2Wm92oTQifiHx7AD2xbd4TsHJL0iR6t2zFXnQ81ifeweBnayuCcFKe9t9j221LuU4WXvw0BGRqRcyeDSkyVF/mV0awC/K1n3K71+oyZGvN00MhnbQwXgRt+Akv1mrBxHz07DQYR1qU9Q0ld/017ulzTIi1d4=
+	t=1742913990; cv=none; b=DPAwStwOniu6N+v9c9dvsII2oEkucBnPJcLBbBSRxUMlyn5j1uy61TUEBHB3CZdybQmQKtpB7l+ysS+own1SR6t8HJFLLddwGdOdzb4QJ2YSDW+wqnyE3+sfQhpHe2X77VC4D5zdnFv5UqYKo0Jnc+Zn5q3zD+gbnjXOvfHspQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742913977; c=relaxed/simple;
-	bh=wzCN6+YZqXyWVEA16BSIhXtpjsTUuJmBEovGj0SMI+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=artSLQA2pMLuySm6T9tw5Plt4mgU7IJSMWJiZrIuiX/+JCdBrayVe66UZFd2wHBtDmek9nhl1vALDneZ7o9f0+EQvsl8PPXxLyrlBhdRJ63qPsdUQwtCM8fzIx89N76AK0PPqDtMN2UxRXumHVaflNoIz2RA8F+ugAPNSbDE8v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WELSnYRZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DA95C4CEE4;
-	Tue, 25 Mar 2025 14:46:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742913977;
-	bh=wzCN6+YZqXyWVEA16BSIhXtpjsTUuJmBEovGj0SMI+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WELSnYRZeXnEsFvTMPRYAVf5j9FbHPVwByWnB+TQ24az7/mKlbden0JE61ezfx4Qz
-	 vGSp1xiA8xKoCl+uSrzfWnUdmE7PUfKM3oZCxtWdEOdUol4WdzsTwRQ3uDFL1vL2Yh
-	 XeBecTb9nAYO+B0SVj4RyFqLYvtNHk7KvALAhG68RYYZPWdbQ7AyB5ftAuzC+NFgsY
-	 9LhE9O8gChFG/II/8R5nMzO5GO2j8CyUP2kojp7IkMZIoH0plHeUSHReq0YRHCns4j
-	 eJnRBAk79BL9bk+sjgYSvq+XxI4kslGUXwXm8VzwXevxiHop4u2OTuMmWsOUXz9Rqy
-	 R7TjCuY3wwIdQ==
-Date: Tue, 25 Mar 2025 15:46:15 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, kees@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-Message-ID: <20250325-stilbruch-deeskalation-f212bb2499de@brauner>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <20250324160003.GA8878@redhat.com>
- <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
- <20250324182722.GA29185@redhat.com>
- <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
- <20250325100936.GC29185@redhat.com>
- <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com>
- <20250325132136.GB7904@redhat.com>
- <20250325-bretter-anfahren-39ee9eedf048@brauner>
- <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com>
+	s=arc-20240116; t=1742913990; c=relaxed/simple;
+	bh=Wmu1jzHMguKR/j6+GdBi+IvxyFpZLNBWJYNpcPE9oZ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=CBVctDP7M59IkNhEXZk/nPwSHBd117XodGb/e0a5LHhi9qTIPu6YrN0HlwErSp7AMI03xqzWi+p5z80qHDdos4+jvsDCHvAGLIPuj7odHHBOlpHvrZQ5IE6/oZAgTZIMGI///3HtdTPH1qaE/xWxqUBUqkAcl86a2/r8iiZCfvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JaaoyTvB; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9666742D46;
+	Tue, 25 Mar 2025 14:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742913981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hWoSyhuzGUD2BKO/up57XBRng0PtovCBvjlBXl3Nn3g=;
+	b=JaaoyTvB3kRgI6AtDrGYSPzTm1Ztlp0v8sV+BSQNNPpZQAJ37uEMl+aq46HAVLPaZJp/GP
+	amHzGxsfLaUbP2NQUuWFgxeFrk2FMZhWqUfCz1XuvtrbeZBXER7IjgNSvkbAVzuVGjYXta
+	odLAZPKSmYmctJMbSfcCEQGuo+Brfe9VT0AYrhpcVCVoztOSIRgdPWrn4tUwwSQOYAHr8C
+	9IgIeCjtz2NsvJoGjt5nEF8oBfIUBJvm8kigOSthauCf1fgB9fUErtwZZBKd/35RXYIl2K
+	0gHnGak3WlVjQ70ed27JuL+IT4RnChAt5an7f2AbzYUoYXFCdG2k7GUHH5kB9w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 25 Mar 2025 15:46:20 +0100
+Message-Id: <D8PFFWYR3ASD.YEZIXPNVZS4I@bootlin.com>
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
+ <Z9qviF1VeSYNvcPJ@smile.fi.intel.com>
+In-Reply-To: <Z9qviF1VeSYNvcPJ@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeftedvgfegteehjeejtdefgffhteevvddtvdejleeghfefuefgledtteduvdetkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Tue, Mar 25, 2025 at 03:15:06PM +0100, Mateusz Guzik wrote:
-> On Tue, Mar 25, 2025 at 2:30 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
-> > > On 03/25, Mateusz Guzik wrote:
-> > > >
-> > > > On Tue, Mar 25, 2025 at 11:10 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > > >
-> > > > > On 03/24, Mateusz Guzik wrote:
-> > > > > >
-> > > > > > On Mon, Mar 24, 2025 at 7:28 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > > > > >
-> > > > > > > So to me it would be better to have the trivial fix for stable,
-> > > > > > > exactly because it is trivially backportable. Then cleanup/simplify
-> > > > > > > this logic on top of it.
-> > > > > >
-> > > > > > So I got myself a crap testcase with a CLONE_FS'ed task which can
-> > > > > > execve and sanity-checked that suid is indeed not honored as expected.
-> > > > >
-> > > > > So you mean my patch can't fix the problem?
-> > > >
-> > > > No, I think the patch works.
-> > > >
-> > > > I am saying the current scheme is avoidably hard to reason about.
-> > >
-> > > Ah, OK, thanks. Then I still think it makes more sense to do the
-> > > cleanups you propose on top of this fix.
-> >
-> > I agree. We should go with Oleg's fix that in the old scheme and use
-> > that. And then @Mateusz your cleanup should please go on top!
-> 
-> Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later this week.
+On Wed Mar 19, 2025 at 12:50 PM CET, Andy Shevchenko wrote:
+> On Tue, Mar 18, 2025 at 05:26:24PM +0100, Mathieu Dubois-Briand wrote:
+> > Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
+> >=20
+> > Two sets of GPIOs are provided by the device:
+> > - Up to 8 GPIOs, shared with the PWM and rotary encoder functionalities=
+.
+> >   These GPIOs also provide interrupts on input changes.
+> > - Up to 6 GPOs, on unused keypad columns pins.
+>
+> ...
+>
+> > +		/*
+> > +		 * Port GPIOs with interrupt-controller property: add IRQ
+> > +		 * controller.
+> > +		 */
+> > +		gpio_config.regmap_irq_flags =3D IRQF_TRIGGER_LOW | IRQF_ONESHOT | I=
+RQF_SHARED;
+>
+> But why is this being overridden? The DT or another firmware description =
+has to
+> provide the correct settings, no?
+>
 
-Ok, I've taken the patch as I've got a first round of fixes to send
-already.
+Ok, thinking about it, yes, IRQF_TRIGGER_LOW shoud come from firmware
+description. But IRQF_ONESHOT and IRQF_SHARED should still come from
+here, no?
+
+
+I'm OK with all other points.
+
+Thanks for your review!
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
