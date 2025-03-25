@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-574797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776B9A6EA2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:07:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D209BA6EA5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B431887264
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7023AA3E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D52253F2A;
-	Tue, 25 Mar 2025 07:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BDJDBk/u"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA30253F0E;
-	Tue, 25 Mar 2025 07:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075CF253B5D;
+	Tue, 25 Mar 2025 07:20:11 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E750F253322
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742886252; cv=none; b=PAh8i7lCCHmq+wLyQkyL/dpHockAifgGk7EFx2YLqr5SmbkzqwMGLZw9PkUVwmeTl9be2BDvUoBdy/SaUSkSQvEeIDtEM3fgt7F1B6j99yngQVSMr8DzuPJBKTpRhFO9N1S1QOnxHV4lE0NbXdGH17oVpNiSb5riQ0LvJaR/y0s=
+	t=1742887210; cv=none; b=cblZAPm0I5vf5sFQhCZhZIRvGBgF53B94aapciCwIk1nH1TsdUEiM9x2ubdJPQIqK8RUH8AzTnlVGLRk8zPr74o1FocVC81aybnZYpl57NmgxEpFPaHqJ8EzVn4fhDmOxBftRAC8F/R0gV6XUB2VNd8xEACWUqP3rUcDKuWP8K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742886252; c=relaxed/simple;
-	bh=0BimZBJc1XVRW5ZmeAzMVSeyol5gKZu79sdS6JVdjEc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h2wmEC1qoofCTTbntfc9fGsI7JkKLDnTdu/I2PWAFFQxGCklAv8/l3HB6hC1Ep6myDceCRRi9RzItUoqiGJZHaFZ/3WweHd0KPHv/k49ql1+5hlvXiuULta8fSndSUrDzUWeiGb1ZXXcCf9Mxyq+0Yf+UCCtfIJgoo65MJ6W8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BDJDBk/u; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P0A5ga001404;
-	Tue, 25 Mar 2025 08:03:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	umpdSL1RKDrcoeiEHF4TRnfTgu3+K+Z+OfPFiuVf284=; b=BDJDBk/uC2fTS7+B
-	6msmrNmD72HJbQ3vzimICXB/O17aExo2nM8zjrrC0n10Z89v2UtzFP+ecrzBxQhs
-	e2/ybX9fkfVSBj+WcCJktUEHkTvz0njnHH5B3MVhdDY3zWT9vsFZ0Dg4QOoFQxUh
-	tSGvnm7nsrGEVYmMEBxUjZEt0wseqWu7SLGJof6EWFh5A7YZiT/RWg2Ip/S1hHD+
-	TwiAy86L2MLjPkeEHMi/gvNwyDFaAFHmP+hFoO4J0DDzurdlcfYraU8hnJQ9L1BT
-	JJp0LekoycfF11+0B1nqONIXnwPb0Va8Yt43Siym96HwrKHwWXHtXjoRINU8thWF
-	htGzXA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j7n88n3m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 08:03:49 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 469A540069;
-	Tue, 25 Mar 2025 08:02:29 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B57D482D10A;
-	Tue, 25 Mar 2025 08:01:16 +0100 (CET)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
- 2025 08:01:16 +0100
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
-        <cassel@kernel.org>, <quic_schintav@quicinc.com>
-CC: <fabrice.gasnier@foss.st.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 8/9 RESEND] arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
-Date: Tue, 25 Mar 2025 07:59:34 +0100
-Message-ID: <20250325065935.908886-9-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250325065935.908886-1-christian.bruel@foss.st.com>
-References: <20250325065935.908886-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1742887210; c=relaxed/simple;
+	bh=7++8MRvel0ZG165ECZzrMH/By98tMTFy8BYo3OxxrDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FoeRCctxxlbxcgjW1Gt8R1aB4Hf5BHqVJm1hGyXkPsE55PT1NxU2c4ezn8aCJYWz1uJQ2xD1XQMdR5TV+DUgggJwiJ3O5q0R6GczF+yBGTBPdxFaSZk5d4FDrNW3ouLb0yJIm0fSQyfYRaMZEMFCs0SSuDyRaxiLtxCxhBspFTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZMLW63xsFz9sSN;
+	Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id v6JKQQL_eFrh; Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZMLW635Zrz9sRy;
+	Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 519418B765;
+	Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id RHurKaChOlYD; Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1B9F58B763;
+	Tue, 25 Mar 2025 08:04:02 +0100 (CET)
+Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 52P73rZi009331
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 08:03:53 +0100
+Received: (from chleroy@localhost)
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 52P73odJ009328;
+	Tue, 25 Mar 2025 08:03:50 +0100
+X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Stuart Yoder <stuyoder@gmail.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 0/3] MAINTAINERS: updates for the fsl-mc bus entry
+Date: Tue, 25 Mar 2025 08:03:27 +0100
+Message-ID: <174288553817.2234438.3505434675141018123.b4-ty@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250320120319.3520315-1-ioana.ciornei@nxp.com>
+References: <20250320120319.3520315-1-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742886214; l=861; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=5ct58WUMCAhireJk5huWUvhQ9El2yA0OK7tPTYy9x7A=; b=F2JnbXHN3cz8KA26VpWyklKsskrhu/PjUTjpnQuGBhLOOzsPIA29F8wTqO9SMTufc2xs4Rk+V lBtj8F+abOTD2p1xRKgGg9i/g2W7MVVQaUYXg5qnJFtHn0aZl+bupc3
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_03,2025-03-21_01,2024-11-22_01
 
-Add pcie_ep node to support STM32 MP25 PCIe driver based on the
-DesignWare PCIe core configured as Endpoint mode
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Thu, 20 Mar 2025 14:03:16 +0200, Ioana Ciornei wrote:
+> This patch set updates the fsl-mc bus driver MAINTAINERS entry. Since
+> there are small separate changes, I put each of them into a separate
+> patch.
+> 
+> Changes in v2:
+> - 1/3: also removed Stuart from the MAINTAINERS file
+> https://lore.kernel.org/linuxppc-dev/CAEac7tYQE76z4pYminhvMJR6GZ66RPRv4PxM-U9VpGJjvn6APg@mail.gmail.com/
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index a8abb13ab663..fe73161ed0d4 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -909,6 +909,19 @@ stmmac_axi_config_1: stmmac-axi-config {
- 				};
- 			};
- 
-+			pcie_ep: pcie-ep@48400000 {
-+				compatible = "st,stm32mp25-pcie-ep";
-+				reg = <0x48400000 0x400000>,
-+				      <0x10000000 0x8000000>;
-+				reg-names = "dbi", "addr_space";
-+				clocks = <&rcc CK_BUS_PCIE>;
-+				resets = <&rcc PCIE_R>;
-+				phys = <&combophy PHY_TYPE_PCIE>;
-+				access-controllers = <&rifsc 68>;
-+				power-domains = <&CLUSTER_PD>;
-+				status = "disabled";
-+			};
-+
- 			pcie_rc: pcie@48400000 {
- 				compatible = "st,stm32mp25-pcie-rc";
- 				device_type = "pci";
+Applied, thanks!
+
+[1/3] MAINTAINERS: add myself as maintainer for the fsl-mc bus
+      commit: 29904d6c1be66882c7148a1439e0f671fc02e56c
+[2/3] MAINTAINERS: fix nonexistent dtbinding file name
+      commit: baa9934908ad1cb6f7093c8ba15d518a43419f9a
+[3/3] MAINTAINERS: add the linuppc-dev list to the fsl-mc bus entry
+      commit: 586739b1e8b14a38145a80e7684874d1a3268498
+
+Best regards,
 -- 
-2.34.1
-
+Christophe Leroy <christophe.leroy@csgroup.eu>
 
