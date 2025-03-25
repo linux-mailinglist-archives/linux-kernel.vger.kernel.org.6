@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-575708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49071A70611
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:08:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B55A70625
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 844A37A674B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDA63A7AD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C8725A348;
-	Tue, 25 Mar 2025 16:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="qj2LXlrp"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CBB25A64A;
-	Tue, 25 Mar 2025 16:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345ED207A0B;
+	Tue, 25 Mar 2025 16:09:28 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A2F18A6AB;
+	Tue, 25 Mar 2025 16:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918880; cv=none; b=bEapgfUI1BJmI3C4N3jMq6AxITgPkq0eMg6SoeJHuXJz0008JEWhq3ScI/Rx1AZx/h7Qs6Z7KAfJELte2vUQRQjHJW88FfE2rxf6hBiVLVfGIqBPnXNDvbDXn2li94SUS/LbdpQ/h5to7X9pTYy684Ckm/6XYnQsmjIho7UMXDw=
+	t=1742918967; cv=none; b=hrG4G5vrBXxjPTabtfRiwkqeq7wwSX6gzL2ur7C6Np2uRVY7x+Kd++A0TkS+1LPDqjlAHNsBzOkb4rQv85GSWKO9jhgmyX6ZHTOCzcc0SD1tsTtZwLBzEFtbv3KdLxtGPzo54ktABzFM641/w1rQ695n4Uw7sQ+K+XGU2skSOoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918880; c=relaxed/simple;
-	bh=6e1FS+eqBxQFG2Js5x/rV0J66TJrITnWPVuwHWmUG44=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=o7YQZRxIGUxOsn0PyE7J9gVlF1fXFw129yUG6ay+MWzM9FA7DtRYq97thi8UTRD8eLwsdQPY9LrGLs11yp7c4Y4G7xo9yebpNveirsEwu8TAmBrT3+4+1EpdvjOj5qtl0Wcx3bjMx6lbA76Hc4ixQxXbg0rJLhS+HpJHbcJNmlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=qj2LXlrp; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1742918967; c=relaxed/simple;
+	bh=xFh8brCOlEO/YIg9mIK4Tbx8LDqlnUBKgj4ebKT+jbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NEeqGaAmwyjFw5wicwglVPHoiE/vVHoYRznIRv+HnNKc6bequYpIveuqyzxRUWMCVyWGReRCFvfFaVMBIrh/0Eyl5SS6spqyDBxjZfnSJGc43CHyw880vJJagvX54DZLW2lGai/cLQXsYg/Isr/5uk/a47zP/n8CGdJuyFjC3MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: I2moV+cSS+yar+kZlfQr+w==
+X-CSE-MsgGUID: V6RyFrTbTxW8qGjD4TTjvA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Mar 2025 01:09:18 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.92])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1066C4013742;
+	Wed, 26 Mar 2025 01:09:14 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/13] dt-bindings: soc: Add Renesas RZ/T2H (R9A09G077) SoC
+Date: Tue, 25 Mar 2025 17:08:49 +0100
+Message-ID: <20250325160904.2688858-2-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1742918873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmBcPArKT86cQNqXZe9hljvX1PmEnOQmPn7lfAPyquI=;
-	b=qj2LXlrpWu6oLLUp/hzMPjEtqmvFrOFsofEV9ok4MX6JkcGJ8EHMODf9cjhaaIjVCtRTKz
-	O0zLQIaGKjoNrbMeRSkX5xARJ0AzI3R9vM7CHvaaWDPmrkIF5FiESuiBd0ZNcjsXbc+O7Y
-	+TpZNXMlDoFon5i1cZdhBEyGu9q6q4zWX5q+OJNFjCmauYGkwXQy+4zNxU9YwmQN4M+WIh
-	FvaoX+QQ+Lx1/MM9nPlu/c838/EjL+eIPkuQYTWG260aer3cn9Js/vkYFlBiaF/rdMckyj
-	LZ7D/i459c3p6ml5ptVKoodxJWJumiX7OdrIERh+bsJ1AhPCUZqtMM6LUPq9gg==
-Date: Tue, 25 Mar 2025 17:07:53 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
- patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell
- <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner
- <heiko@sntech.de>, jorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 6.1 000/198] 6.1.132-rc1 review
-In-Reply-To: <CA+G9fYss7RcH=ocag66EM4z26O-6o-gaq+Jo+GOUr2W773vQOw@mail.gmail.com>
-References: <20250325122156.633329074@linuxfoundation.org>
- <CA+G9fYss7RcH=ocag66EM4z26O-6o-gaq+Jo+GOUr2W773vQOw@mail.gmail.com>
-Message-ID: <8b1620dc4508571f56a0d360e3722174@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Naresh,
+Add RZ/T2H (R9A09G077), its variants, and the rt2h-evk evaluation board in
+documentation.
 
-On 2025-03-25 16:22, Naresh Kamboju wrote:
-> On Tue, 25 Mar 2025 at 17:55, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->> 
->> This is the start of the stable review cycle for the 6.1.132 release.
->> There are 198 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, 
->> please
->> let me know.
->> 
->> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
->> Anything received after that time might be too late.
->> 
->> The whole patch series can be found in one patch at:
->>         
->> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.132-rc1.gz
->> or in the git tree and branch at:
->>         
->> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->> linux-6.1.y
->> and the diffstat can be found below.
->> 
->> thanks,
->> 
->> greg k-h
-> 
-> Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
-> stable-rc 6.1.132-rc1
-> 
-> First seen on the v6.1.131-199-gc8f0cb669e59
->  Good: v6.1.131
->  Bad: 6.1.132-rc1
-> 
-> * arm64, build
->   - gcc-13-defconfig
-> 
-> Regression Analysis:
->  - New regression? yes
->  - Reproducibility? Yes
-> 
-> Build regression: arm64 dtb rockchip non-existent node or label 
-> "vcca_0v9"
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Build log
-> arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
-> (phandle_references):
->   /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
-> 
->   also defined at 
-> arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:665.8-675.3
-> 
-> ## Source
-> * Kernel version: 6.1.132-rc1
-> * Git tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> * Git sha: c8f0cb669e590c6c73c274b9fc56270ec33fa06b
-> * Git describe: v6.1.131-199-gc8f0cb669e59
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/
-> 
-> ## Build
-> * Build log:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/log
-> * Build history:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/history/
-> * Build details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/details/
-> * Build link:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoE2WrLPnhBvFm7ejgwd6QJxk8/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoE2WrLPnhBvFm7ejgwd6QJxk8/config
-> 
-> ## Steps to reproduce
->  - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
-> --kconfig defconfig
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+Changes v4->v5: none
+Changes v3->v4: none
+---
+ .../devicetree/bindings/soc/renesas/renesas.yaml       | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-This is caused by another patch from the original series failing
-to apply due to some bulk regulator renaming.  I'll send backported
-version of that patch soon, which should make everything fine.
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 225c0f07ae94..98563a31b5e1 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -554,6 +554,16 @@ properties:
+               - renesas,r9a09g057h44 # RZ/V2HP with Mali-G31 + Mali-C55 support
+           - const: renesas,r9a09g057
+ 
++      - description: RZ/T2H (R9A09G077)
++        items:
++          - enum:
++              - renesas,rzt2h-evk # RZ/T2H Evaluation Board
++          - enum:
++              - renesas,r9a09g077m04 # RZ/T2H with Single Cortex-A55 + Dual Cortex-R52 - no security
++              - renesas,r9a09g077m24 # RZ/T2H with Dual Cortex-A55 + Dual Cortex-R52 - no security
++              - renesas,r9a09g077m44 # RZ/T2H with Quad Cortex-A55 + Dual Cortex-R52 - no security
++          - const: renesas,r9a09g077
++
+ additionalProperties: true
+ 
+ ...
+-- 
+2.43.0
+
 
