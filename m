@@ -1,135 +1,274 @@
-Return-Path: <linux-kernel+bounces-574943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C4FA6EBD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:40:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CBEA6EBDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175B7188FD46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32B331896AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0207725290C;
-	Tue, 25 Mar 2025 08:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794EF253F2D;
+	Tue, 25 Mar 2025 08:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gx+AREvM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aZlDzCHT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0DB2343C2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A8919E992;
+	Tue, 25 Mar 2025 08:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742891767; cv=none; b=Y6GuAn7SItx8SeerBPlmvW/HXKWRfzy/q+KrMtl1L7jEotjOLI6Y5O/UStd4KMzTbOwtiugOJNMzKBfODSGc4lgIWOAk3RS4OEVSq6HkN8W5z3+b9akjNu+8WRzHkYl3jn6BXR+L7cRFPUIlfikMmrKQ8wOdzBJa5yQ7uV2Fmf8=
+	t=1742891982; cv=none; b=eQOItM37n4SY5scb3c7PvTABJA8apw/Nq/KMD5AtmMKTu191S1tE6tf63PpelfoSasBnuJyRsIUzthiQ7Ic3veimHrwhbhRX0/Nm9KwNq4R09OTUyt/daVNjSv822E3a1Q0Kn58ommTBrFQRcEvi68aE3yhT91JxSkngpb8Rj7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742891767; c=relaxed/simple;
-	bh=OCleXFn9NZkH1PChKdrM+O63KYl9A/+phnDxXBrrIoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSGrop8AYzgZBQm7rbG4eWp3AboceVG/q4F0SCo0Lgq9K2vQT4uG2PwYlrnBsLp4a9VkYxCCpbsWcV2q2+9g/7mr3khGIlBia1yzzU68gnosyYJlZv6ioad95nnpTOET3xHXqnZYWoBZoCHlHmaiqjT8lHTUmpIeoG0gK+OqcfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gx+AREvM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742891764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXwOjnHMzxUdXRa1xbPJFsVQQAIPiDayu2d6sm6acno=;
-	b=Gx+AREvMNMpPmCLNsovxbQ7+ulC12B+04YTwAGpVAwSa5xc2l9FfqSWs0DbEFSCeh2PsNI
-	GB316KxKSeO1hGIs1Mv5j6lkK3l85TZSNAyK/ld+FXA0zYZWmheknfuXqmf9smhwQfiJpE
-	krAf/WAlZzFibEA7SZC2YKkDHizML/w=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-PZBYLr9nNn2TGhyWiTYGxw-1; Tue, 25 Mar 2025 04:36:02 -0400
-X-MC-Unique: PZBYLr9nNn2TGhyWiTYGxw-1
-X-Mimecast-MFC-AGG-ID: PZBYLr9nNn2TGhyWiTYGxw_1742891761
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-851a991cf8bso536514539f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:36:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742891761; x=1743496561;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bXwOjnHMzxUdXRa1xbPJFsVQQAIPiDayu2d6sm6acno=;
-        b=fGQW6Y28H0bMD9cNG7CDfOVDCMhzViyOk12JWbUulTEmTLQcy+8ONviVwEnnm5qUQT
-         RIV5OvwcUmG+aXfWWkb1p3ifFMSY4O7qoIvgnZGTzKp6Yp184VtgUR79r02bE+c04G3D
-         ZjrC8Dt6MBetHmtMG768PQvxAaRjGgF5L7+6Z4uAbjA3H12q1HPItMaZuIJcz3i0fPrq
-         qYG4IHQhfkMw846WAvpDuWvJmAz/IBjEbu1OFXMF4qquMLzvpzmZUYez6eLIV76Fb8YQ
-         vIJdEhhZctpCBUO/14COfvnxUI8Y2fjtmN8QiCNGpIS6oTcKZ7oS6QtC0lMPRMIRrn2T
-         1DCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTQjs5LX9JoK5g+dI9ctHdl4XOsr92kDzMQauqf/vfGSTk8ZPTWbB+yeuGiw6wLdHK+5vXEry3V+gEvHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPHMitXd4ey4M2AfopEFAobvTjb8e/H9sO9dxJXjayHZVF8kWt
-	rgNIQT4JS/bXXaC7jAFQFxdwgfCQQT6FCaj3aAjQ2Esvt1sWvcj0f9Q+peh+MbaoD/SyYwI6ass
-	xhciiROxs6w5ZPN45qPFittj7dosMI/fuZ9poQm5LJADS+z70JHlo/x7h0PZBwQxZBxK0AFqNBq
-	aInwzENJGd0tq9HVtHBLcwnOMtwD4EEV349Dow
-X-Gm-Gg: ASbGncvmfGvc5p+TBtf/hWdV+tKDzJkyqQfvGoTi53x+8TdOZU3t+pzk322JfF6ejNu
-	WkOFBvdSqf+rWLOddD1Ms2OXitOAxdN07c/YM7ltEEbOwPNBQ8iF4uWb9pXC0ApC7LLks4mcDZA
-	==
-X-Received: by 2002:a05:6e02:12c9:b0:3d1:4a69:e58f with SMTP id e9e14a558f8ab-3d58e81374emr209274375ab.2.1742891761225;
-        Tue, 25 Mar 2025 01:36:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9E4/EucEBc/+iE2lWu+YyJiDtrud2DOWwH9Ttz3ALKtbFpsWVzZCuYuuSTYSC3OfYElupM2e2tE7hTWgAmd4=
-X-Received: by 2002:a05:6e02:12c9:b0:3d1:4a69:e58f with SMTP id
- e9e14a558f8ab-3d58e81374emr209274145ab.2.1742891760802; Tue, 25 Mar 2025
- 01:36:00 -0700 (PDT)
+	s=arc-20240116; t=1742891982; c=relaxed/simple;
+	bh=OmsYjY5yuhog3AUO6eeJw3B07AToPwLvInl+g+pvIZ0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=go+FiZ+NkLbdexH5PrQlZeexV4y+93J6XVFTnYs0tHTFf78KQDSrWchTw4iPWlwwR2Phh/ETSK/aT6mmIBgehaBB+xHTAKioz0jHcXlHncYMwqiF3lYUWzeqQPmrIa63Du4PCoVqOYoqScaA73k3Cu0Cpllh5njkXtnIxUzROHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aZlDzCHT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P5vvB1028794;
+	Tue, 25 Mar 2025 08:39:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LnyKN1FXX0n2F6kcn6I7q4
+	W3dNCz4sZ65CQJxKde9v0=; b=aZlDzCHTli9Pqebk2MhRflYq0e80Bjc3Qfy3w+
+	ur2k8tjqsVDYI69UwRU+tc6FPd+zrpmJkyWUyrW2AzKJ2z5B07CMdyQamx+AOk2w
+	I9QNYNc680Ymdw4Wlv1Nm3yWjsLavsHFyC9737LYi2rWYImPdXA5b2GvQp7iZKnA
+	fXFxG5CFOpnt17KkLiVudcC9erjnNMtss19+gtd+Tv75R/WcbxdvywQHjHWzQuVQ
+	sdYXAxSEhsEIW8/4hrYX//AFpXxNAymUBS4KuBOVF8/ca/M3iwQIYFpEGzbbl/Kz
+	YfidWffZGcPA9ER3EGYfcoSjwJQbXuS5CEV7OYa3WN+3ym3g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjexe2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 08:39:21 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P8dK9q008193
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 08:39:20 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Mar 2025 01:39:17 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH] ufs: qcom: Add quirks for Samsung UFS devices
+Date: Tue, 25 Mar 2025 14:08:57 +0530
+Message-ID: <20250325083857.23653-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-12-changyuanl@google.com> <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
- <Z+JT7kx+sfPqfWFA@MiWiFi-R3L-srv>
-In-Reply-To: <Z+JT7kx+sfPqfWFA@MiWiFi-R3L-srv>
-From: Dave Young <dyoung@redhat.com>
-Date: Tue, 25 Mar 2025 16:36:22 +0800
-X-Gm-Features: AQ5f1JqjFlzQ1M_D50CQArcQW8YwNNz0vfJYofXBEYquREvaq-g04uQRlGUrUgs
-Message-ID: <CALu+AoQj+mHECTvbuK8CpUTmOYgx6n2oMFm5kQXtSigL+5Ks2w@mail.gmail.com>
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
-To: Baoquan He <bhe@redhat.com>
-Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org, graf@amazon.com, 
-	akpm@linux-foundation.org, luto@kernel.org, anthony.yznaga@oracle.com, 
-	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
-	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
-	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org, 
-	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, saravanak@google.com, 
-	skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, will@kernel.org, 
-	devicetree@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e26bb9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=2mOWynu0rIHtPa3Sm6gA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: zHxHOdfM0N1b--pvNzZK9vovEic5AHDq
+X-Proofpoint-ORIG-GUID: zHxHOdfM0N1b--pvNzZK9vovEic5AHDq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_03,2025-03-25_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250059
 
-> >
-> > Have you tested kdump?  In my mind there are two issues,  one is with
-> > CMA enabled, it could cause kdump crashkernel memory reservation
-> > failures more often due to the fragmented low memory.  Secondly,  in
->
-> kho scracth memorys are reserved much later than crashkernel, we may not
-> need to worry about it.
-> ====================
-> start_kernel()
->   ......
->   -->setup_arch(&command_line);
->      -->arch_reserve_crashkernel();
->   ......
->   -->mm_core_init();
->      -->kho_memory_init();
->
-> > kdump kernel dump the crazy scratch memory in vmcore is not very
-> > meaningful.  Otherwise I suspect this is not tested under kdump.  If
-> > so please disable this option for kdump.
+Introduce quirks for Samsung UFS devices to override PA hibern8 time,
+PA TX HSG1 sync length, and TX_HS_EQUALIZER for the Qualcomm UFS Host
+controller. These adjustments are essential to maintain the proper
+functionality of Samsung UFS devices for Qualcomm UFS Host controller.
 
-Ok,  it is fine if this is the case, thanks Baoquan for clearing this worry.
+Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+---
+ drivers/ufs/host/ufs-qcom.c | 66 +++++++++++++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.h | 25 +++++++++++++-
+ 2 files changed, 90 insertions(+), 1 deletion(-)
 
-But the other concerns are still need to address, eg. KHO use cases
-are not good for kdump.
-There could be more to think about.
-eg. the issues talked in thread:
-https://lore.kernel.org/lkml/Z7dc9Cd8KX3b_brB@dwarf.suse.cz/T/
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 23b9f6efa047..18ac687bc4ba 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -31,6 +31,10 @@
+ 	((((c) >> 16) & MCQ_QCFGPTR_MASK) * MCQ_QCFGPTR_UNIT)
+ #define MCQ_QCFG_SIZE	0x40
+ 
++/* De-emphasis for gear-5 */
++#define DEEMPHASIS_3_5_dB	0x04
++#define NO_DEEMPHASIS		0x0
++
+ enum {
+ 	TSTBUS_UAWM,
+ 	TSTBUS_UARM,
+@@ -778,6 +782,24 @@ static int ufs_qcom_icc_update_bw(struct ufs_qcom_host *host)
+ 	return ufs_qcom_icc_set_bw(host, bw_table.mem_bw, bw_table.cfg_bw);
+ }
+ 
++static void ufs_qcom_set_tx_hs_equalizer(struct ufs_hba *hba,
++				u32 gear, u32 tx_lanes)
++{
++	u32 equalizer_val;
++	int ret, i;
++
++	/* Determine the equalizer value based on the gear */
++	equalizer_val = (gear == 5) ? DEEMPHASIS_3_5_dB : NO_DEEMPHASIS;
++
++	for (i = 0; i < tx_lanes; i++) {
++		ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(TX_HS_EQUALIZER, i),
++					equalizer_val);
++		if (ret)
++			dev_err(hba->dev, "%s: failed equalizer lane %d\n",
++					__func__, i);
++	}
++}
++
+ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
+ 				enum ufs_notify_change_status status,
+ 				struct ufs_pa_layer_attr *dev_max_params,
+@@ -829,6 +851,10 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
+ 						dev_req_params->gear_tx,
+ 						PA_INITIAL_ADAPT);
+ 		}
++
++		if (hba->dev_quirks & UFS_DEVICE_QUIRK_PA_TX_DEEMPHASIS_TUNING)
++			ufs_qcom_set_tx_hs_equalizer(hba,
++				dev_req_params->gear_tx, dev_req_params->lane_tx);
+ 		break;
+ 	case POST_CHANGE:
+ 		if (ufs_qcom_cfg_timers(hba, dev_req_params->gear_rx,
+@@ -878,6 +904,35 @@ static int ufs_qcom_quirk_host_pa_saveconfigtime(struct ufs_hba *hba)
+ 			    (pa_vs_config_reg1 | (1 << 12)));
+ }
+ 
++static void ufs_qcom_override_pa_h8time(struct ufs_hba *hba)
++{
++	u32 pa_h8time = 0;
++	int ret;
++
++	ret = ufshcd_dme_get(hba, UIC_ARG_MIB(PA_HIBERN8TIME),
++				&pa_h8time);
++	if (ret) {
++		dev_err(hba->dev, "Failed to get PA_HIBERN8TIME: %d\n", ret);
++		return;
++	}
++
++	 /* Increment by 1 to increase hibernation time by 100 µs */
++	ret = ufshcd_dme_set(hba, UIC_ARG_MIB(PA_HIBERN8TIME),
++				pa_h8time + 1);
++	if (ret)
++		dev_err(hba->dev, "Failed updating PA_HIBERN8TIME: %d\n", ret);
++}
++
++static void ufs_qcom_override_pa_tx_hsg1_sync_len(struct ufs_hba *hba)
++{
++	int err;
++
++	err = ufshcd_dme_peer_set(hba, UIC_ARG_MIB(PA_TX_HSG1_SYNC_LENGTH),
++					PA_TX_HSG1_SYNC_LENGTH_VAL);
++	if (err)
++		dev_err(hba->dev, "Failed (%d) set PA_TX_HSG1_SYNC_LENGTH\n", err);
++}
++
+ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
+ {
+ 	int err = 0;
+@@ -885,6 +940,12 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
+ 	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME)
+ 		err = ufs_qcom_quirk_host_pa_saveconfigtime(hba);
+ 
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_PA_HIBER8TIME)
++		ufs_qcom_override_pa_h8time(hba);
++
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_PA_TX_HSG1_SYNC_LENGTH)
++		ufs_qcom_override_pa_tx_hsg1_sync_len(hba);
++
+ 	return err;
+ }
+ 
+@@ -899,6 +960,11 @@ static struct ufs_dev_quirk ufs_qcom_dev_fixups[] = {
+ 	{ .wmanufacturerid = UFS_VENDOR_WDC,
+ 	  .model = UFS_ANY_MODEL,
+ 	  .quirk = UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE },
++	{ .wmanufacturerid = UFS_VENDOR_SAMSUNG,
++	  .model = UFS_ANY_MODEL,
++	  .quirk = UFS_DEVICE_QUIRK_PA_HIBER8TIME |
++		   UFS_DEVICE_QUIRK_PA_TX_HSG1_SYNC_LENGTH |
++		   UFS_DEVICE_QUIRK_PA_TX_DEEMPHASIS_TUNING },
+ 	{}
+ };
+ 
+diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+index 919f53682beb..43274de24706 100644
+--- a/drivers/ufs/host/ufs-qcom.h
++++ b/drivers/ufs/host/ufs-qcom.h
+@@ -116,8 +116,11 @@ enum {
+ 				 TMRLUT_HW_CGC_EN | OCSC_HW_CGC_EN)
+ 
+ /* QUniPro Vendor specific attributes */
++#define PA_TX_HSG1_SYNC_LENGTH	0x1552
+ #define PA_VS_CONFIG_REG1	0x9000
+ #define DME_VS_CORE_CLK_CTRL	0xD002
++#define TX_HS_EQUALIZER		0x0037
++
+ /* bit and mask definitions for DME_VS_CORE_CLK_CTRL attribute */
+ #define CLK_1US_CYCLES_MASK_V4				GENMASK(27, 16)
+ #define CLK_1US_CYCLES_MASK				GENMASK(7, 0)
+@@ -125,7 +128,6 @@ enum {
+ #define PA_VS_CORE_CLK_40NS_CYCLES			0x9007
+ #define PA_VS_CORE_CLK_40NS_CYCLES_MASK			GENMASK(6, 0)
+ 
+-
+ /* QCOM UFS host controller core clk frequencies */
+ #define UNIPRO_CORE_CLK_FREQ_37_5_MHZ          38
+ #define UNIPRO_CORE_CLK_FREQ_75_MHZ            75
+@@ -135,6 +137,27 @@ enum {
+ #define UNIPRO_CORE_CLK_FREQ_201_5_MHZ         202
+ #define UNIPRO_CORE_CLK_FREQ_403_MHZ           403
+ 
++/* TX_HSG1_SYNC_LENGTH attr value */
++#define PA_TX_HSG1_SYNC_LENGTH_VAL	0x4A
++
++/*
++ * Some ufs devices may need more time to be in hibern8 before exiting.
++ * Enable this quirk to give it an additional 100us.
++ */
++#define UFS_DEVICE_QUIRK_PA_HIBER8TIME          (1 << 15)
++
++/*
++ * Some ufs device vendors need a different TSync length.
++ * Enable this quirk to give an additional TX_HS_SYNC_LENGTH.
++ */
++#define UFS_DEVICE_QUIRK_PA_TX_HSG1_SYNC_LENGTH (1 << 16)
++
++/*
++ * Some ufs device vendors need a different Deemphasis setting.
++ * Enable this quirk to tune TX Deemphasis parameters.
++ */
++#define UFS_DEVICE_QUIRK_PA_TX_DEEMPHASIS_TUNING (1 << 17)
++
+ static inline void
+ ufs_qcom_get_controller_revision(struct ufs_hba *hba,
+ 				 u8 *major, u16 *minor, u16 *step)
+-- 
+2.17.1
 
 
