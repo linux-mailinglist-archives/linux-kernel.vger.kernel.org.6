@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-575126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DC2A6EDCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D6CA6EDD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA21316A9F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4AE168423
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC080254867;
-	Tue, 25 Mar 2025 10:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA481F12F9;
+	Tue, 25 Mar 2025 10:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="yHgiuPRB"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JM0jx9RR"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7462F79F5;
-	Tue, 25 Mar 2025 10:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0027F254869
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898822; cv=none; b=X0bUexvSOYU7lhX9SroUDw/p/2idblxNt9UbeUZhoovAdVWdJjPnFVAyd6PPdNlCjw5w4Os7B+InhUy3nJVhPMvnKtx6338qF5lU49bZWjN+YYbNfmW10qnGhIDEcWFryu7J+HY+zeAMueDoZ+ydTtRyS5K6xfB9haV634nGJzQ=
+	t=1742899006; cv=none; b=nUkRU710sNGDgOkSexJKaqrXinLyoAbY87JRx3scnm+AjOBmsU87nAcpkYmZYFj5v9fiRtEGmVeX2p5liiV/WWwXEeJz7sCUXzXK8drTBUSy4ibGoBKNaWKX5YZQ4uZ5oJj9eFFRvAz3NFnnmQ0eAIXpXnZojvnCoJKeAKI9nBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898822; c=relaxed/simple;
-	bh=8MlHlktm9PBdFMf9Nxkh6Nsoqf+HfDwTdyg7XPwfpns=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FughnH9H8BDmejFbUrK/GVFUDCMG48Ad6WscBNObku0ue0O1psVgEiJ0vrR4UWPVpdVTcEr7KE1jRPuXKVsw0NxS2oxqUlDjkN3CkskdgWnOgPpgxmV8qbpuWdTwcKMgEpGqZmT52aCZl+Qq2R2dWJNT8iUbvQwcsRz0pfwUTe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=yHgiuPRB; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=8MlHlktm9PBdFMf9Nxkh6Nsoqf+HfDwTdyg7XPwfpns=;
-	t=1742898820; x=1744108420; b=yHgiuPRBF4NkVH1CRZjCHffo7ADupUiEN/PfEiUNR6189Bm
-	4M8KR/9mzrRuHJBiYUnAkh/34aEvl0AFKeghkSeawXcBq+8hKMhlYiJSaELPUCcr4mOszWtwkiYtW
-	t4QaZASE05tg0VmpL2AwDeWOMlF7NPJZ1mo+baz0qrSZA+A5gcVqduSYnHI6QyXIuwGjSNcRITaWe
-	fFDZQhUnyCpH2Zr3ilnklqTS9Y41vLKlx0KLz1okKoa/W4TXB+ZzZ2o8rukTiSwmECnJggluKDqoe
-	KJf/FxkYfwQzqbeX/BxiA+LgJwdgmmlmfOG+vVg3XvWxbrUPBJPCOlSDlam9epmQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tx1b3-000000052CR-1hQL;
-	Tue, 25 Mar 2025 11:33:25 +0100
-Message-ID: <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
-From: Johannes Berg <johannes@sipsolutions.net>
-To: david@ixit.cz, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"	
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mailing List	
- <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Bianconi
-	 <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
- =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller	 <jerome.pouiller@silabs.com>, Bjorn
- Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Andy Gross <agross@kernel.org>, Mailing List	
- <devicetree-spec@vger.kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>
-Date: Tue, 25 Mar 2025 11:33:24 +0100
-In-Reply-To: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
-References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742899006; c=relaxed/simple;
+	bh=rw8y9VnPnejJL6hybk/2JjnjQWKkV5LPZp+ps37jAk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFaRCM71TVE4MW0UC1IVRZ/n4qjPxxtvalmeasM0DndmEOkf56qDo5l9QkRWm2avdrN8SPxervpE58MNhn6fn2p+sokfV5W4PBNb26yQ4gx2fmOtvOnca0MZq8uaF84zcQ6BMIFUzw085FR7T3zjxWtZDRor1sk1qG+LPsd/730=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JM0jx9RR; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=G7nYKqTlrwdciC2jlP0mlhTruy9qnVkXuAUEoJVLEPw=; b=JM0jx9RRsbWAMbDY+0P4VKr5+m
+	qyIhmhu40UDT6hTolRqFS/45dxTdSeynMLoZ8izG8GXqOCQOcFKzyKwpAczVaVfADa7QV0cQ6QET9
+	I8Tx4piQeOkVhy/7oyaIoX7KGSZAsc5IRCUn1bCwwAJT8rwxYgQvIHBqZAe9zWqPW6GmICq3ToO+Q
+	hLGru0+ngK8ZHHbqFiIaDDU43oZ/qboY9htiX8dSpEVST1Ognm1uT644pCxIUcOVR0MeHOnO9cCRg
+	7m3c0wZNqVjCnCTo6O226ZXw3o0QGa0vKHjVZeG5vsv36luGS8WdhD4mBmJk4vWKxodpzjnI4Kv12
+	XDOSikCA==;
+Received: from [189.7.87.178] (helo=[192.168.0.224])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tx1di-00670B-Rp; Tue, 25 Mar 2025 11:36:11 +0100
+Message-ID: <a6b35845-6a4e-4488-8ece-04a4c1e920d5@igalia.com>
+Date: Tue, 25 Mar 2025 07:36:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
+To: Charles Han <hanchunchao@inspur.com>, mripard@kernel.org,
+ dave.stevenson@raspberrypi.com, kernel-list@raspberrypi.com,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250325081232.4217-1-hanchunchao@inspur.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20250325081232.4217-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-03-24 at 18:41 +0100, David Heidelberg via B4 Relay wrote:
-> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
-> a "Network Class Binding". This covers MAC address and maximal frame
-> size properties. "local-mac-address" and "mac-address" with a fixed
-> "address-size" of 48 bits are already in the ethernet-controller.yaml
-> schema so move those over.
->=20
-> Keep "address-size" fixed to 48 bits as it's unclear if network protocols
-> using 64-bit mac addresses like ZigBee, 6LoWPAN and others are relevant f=
-or
-> this binding. This allows mac address array size validation for ethernet
-> and wireless lan devices.
->=20
-> "max-frame-size" in the Devicetree Specification is written to cover the
-> whole layer 2 ethernet frame but actual use for this property is the
-> payload size. Keep the description from ethernet-controller.yaml which
-> specifies the property as MTU.
->=20
+Hi Charles,
 
-I have no idea what tree this should go through, and you CC'ed enough
-people that I can't figure it out either ... I'll assume not wifi but DT
-for now?
+I already applied this patch earlier this month as I mentioned in this
+e-mail [1]. Here is the commit [2].
 
-johannes
+[1] 
+https://lore.kernel.org/dri-devel/f5f920ec-be44-48d3-ae4d-bd385c3a4a5b@igalia.com/
+[2] 
+https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ce468a7b63f1e4e2b09f951ca0a7c8d402fed746
+
+Best Regards,
+- Maíra
+
+On 25/03/25 05:12, Charles Han wrote:
+> Fix below inconsistent indenting smatch warning.
+> smatch warnings:
+> drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
+> 
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>   drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+> index c5e84d3494d2..056d344c5411 100644
+> --- a/drivers/gpu/drm/vc4/vc4_plane.c
+> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
+> @@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
+>   			/* HPPF plane 1 */
+>   			vc4_dlist_write(vc4_state, kernel);
+>   			/* VPPF plane 1 */
+> -				vc4_dlist_write(vc4_state, kernel);
+> +			vc4_dlist_write(vc4_state, kernel);
+>   		}
+>   	}
+>   
+
 
