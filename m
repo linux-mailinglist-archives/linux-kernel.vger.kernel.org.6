@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-575787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BBAA7072D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA1FA7073A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AD4189B2B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E000D3B36F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224AE25DD1B;
-	Tue, 25 Mar 2025 16:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E06925DCE0;
+	Tue, 25 Mar 2025 16:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YeeD7cF3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxraOzyl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451B19F13B;
-	Tue, 25 Mar 2025 16:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A619F13B;
+	Tue, 25 Mar 2025 16:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742920841; cv=none; b=c8z+nT3MHzljx34PWdlq6gS/BD20DeJXPMyOb2/PSk/X+VmDgTSaw19rQZUThhqEGjM9y6IaA3UiDK6daXhoGSNJl2IZqgnwpb936UDzkhpgQlh704gQK2V2WhSDBsNOYNvuJfz4HBdnYZDoyBr53C5anCUF0EYwWLhIVGc9r6U=
+	t=1742920798; cv=none; b=LoT5BuxBQtSKTDm7i5uyi/qm5CAJBCyuriBoydcdtIPBfBjmPrBMDVGrkBucH9+FudKktIyERu/3IZyglCuENZQLKRBril7dWDl+jEtBNl5Ya3JAQ97BsU/uya61PH0j5cyGeWd5+HE5e+0ztWa1c3JSNJgB8i3eFsBTiWSWnlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742920841; c=relaxed/simple;
-	bh=YiWxemzCPcXInFipmbbXjiiIgfgNIEo4XpOPG15maUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDKgbx9rR0+dLRYd/AvTy7rCHS+niLETGzoX9FI7h3ovzGWzQ/NozDg92XWb2N3KqpjE30R5fxSvvSXLZv5GLcDd5GY+zXW/fiMpmG18sGidOKkEo6zFvz3gwDGyddonGLVh/b9iJKmRq8FoKSV6VwBVwBJHA6h8SKQkhqqe1Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YeeD7cF3; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742920840; x=1774456840;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YiWxemzCPcXInFipmbbXjiiIgfgNIEo4XpOPG15maUw=;
-  b=YeeD7cF37TvuTRVwgG7PRRo6kXvr7Qyj9tLp0PBPMmnHbjbMogn+EUpR
-   DtSeozVjIfXOAv9kcotD1sbDXeX8L3nkrwuq701gAd89e6gQHAscX5oWM
-   eqt62l12ATmLcDLV3+AJpr25kF2sywOpObouJu4SWwuFR8axwJtiCkeTG
-   3svGCx4suiMYosjiPHFM03W1KH48HlQ68gWbVD8UjPN5Nz9XDUNC137B9
-   dILN+L93iRIST5bHi+OnsAxbkf1cnP83KmN5jMk6He2ttyRbG2eL/kN6K
-   ZwAQPNgxAWmp+0xICMXSSH6FFb70tcjIXKRDMyOnDXSlyiBEy/UYqApyK
-   Q==;
-X-CSE-ConnectionGUID: jWdd0O1SROih+hy86e51yQ==
-X-CSE-MsgGUID: tM9ehbTqQbyOddy7KyZ6aw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61571901"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="61571901"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:40:39 -0700
-X-CSE-ConnectionGUID: aQj/cUsCSYO8/doZAHqAZg==
-X-CSE-MsgGUID: STQWoa1xQLWDZBx8Y3Ektg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="129618481"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:40:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tx7KJ-00000005nye-09u0;
-	Tue, 25 Mar 2025 18:40:31 +0200
-Date: Tue, 25 Mar 2025 18:40:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 02/11] mfd: Add max7360 support
-Message-ID: <Z-Lcfm6eXMm1QzEl@smile.fi.intel.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-2-fb20baf97da0@bootlin.com>
- <Z9qmDkwSpZHxwuQj@smile.fi.intel.com>
- <D8PHKDVTYTQ5.1HT80KX538PRQ@bootlin.com>
+	s=arc-20240116; t=1742920798; c=relaxed/simple;
+	bh=CcCpmQ2C/F3isCH+LAunPzZPAfUEnTS/eOJ5mm5dvFM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YTzFAj1UU6hyJZ4QsixhsXq/LkzoqJQdZ7suXuk3vLS1F1vrHMixsQF7qOcTsuf0+RxXSeHqiEkJXOxjPhN/5b5jidG3rP0W40FL6cAor0JzxDYjXcZNH3NTIAi1pbjyDNJ9sxqyj2hRqmIm1i9MLoEXQOm73khpJfaRvWLswDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxraOzyl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D7FC4CEE4;
+	Tue, 25 Mar 2025 16:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742920798;
+	bh=CcCpmQ2C/F3isCH+LAunPzZPAfUEnTS/eOJ5mm5dvFM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fxraOzylm1CY40Xy/mCXija6raz9hEyNcNGcg2QMH4tIxUBqmJmizWmylTXkoFI2l
+	 jJdjezHNKQ2sS4ThVC5NuVJDryDHGESpZUBfVmVMUW+3CBjvlaFvNZiir2DnVBGSWd
+	 1da8yCeJzBE/0/1HzUcI2IhYVuK3oYHjGqI1Be3P0AY3tvfcI8R3k95X0wKlAuCBMF
+	 00LN1eYfmhtBtbbDIMHAcd8fqhV/aSGSchiPF0CJjACl4ycErXGf2lB8Y00hUMEzWu
+	 inVUIhNgutQhDS1/+FNqzQGFaVmt/H0Yf6BHpwVNiGJ5QYCQ780HYpnHKlA/PH/j53
+	 aRe6wz1r3UVyA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFEE380CFE7;
+	Tue, 25 Mar 2025 16:40:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8PHKDVTYTQ5.1HT80KX538PRQ@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/4] virtio_net: Fixes and improvements
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174292083452.643641.3571008462591384727.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Mar 2025 16:40:34 +0000
+References: <20250321-virtio-v2-0-33afb8f4640b@daynix.com>
+In-Reply-To: <20250321-virtio-v2-0-33afb8f4640b@daynix.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, andrew@daynix.com,
+ jdamato@fastly.com, lulie@linux.alibaba.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com,
+ leiyang@redhat.com
 
-On Tue, Mar 25, 2025 at 05:26:12PM +0100, Mathieu Dubois-Briand wrote:
-> On Wed Mar 19, 2025 at 12:10 PM CET, Andy Shevchenko wrote:
-> > On Tue, Mar 18, 2025 at 05:26:18PM +0100, mathieu.dubois-briand@bootlin.com wrote:
-> > > From: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> > > +	ret = max7360_mask_irqs(regmap);
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret, "Could not mask interrupts\n");
-> >
-> > Hmm... As far as I can read this masks GPIO interrups. Does it do anything
-> > else? If it's covered by the GPIO/pin control drivers, one want probably to
-> > see that to be done there in the respective callback (init_hw_irq or alike,
-> > I don't remember the name by heart).
-> 
-> Hum, I'm not sure I can do that.
-> 
-> So the "inti" interrupt line is shared across the GPIO and the rotary
-> encoder functionalities.
-> 
-> On reset, GPIO interrupts are not masked. This means, if we do the
-> masking in the GPIO driver and the GPIO driver is not loaded but the
-> rotary encoder driver is, the rotary encoder driver might get a lot of
-> spurious interrupts.
-> 
-> So I believe it makes sense to mask the interrupts here, setting the
-> chip in a sane configuration, whatever child drivers are present.
-> 
-> Any thought about that?
+Hello:
 
-Okay, this makes sense. I forgot if you have any comment in the code
-(probably not if I asked the question), but in any case the above can
-be added on top of the function explaining this.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Fri, 21 Mar 2025 15:48:31 +0900 you wrote:
+> Jason Wang recently proposed an improvement to struct
+> virtio_net_rss_config:
+> https://lore.kernel.org/r/CACGkMEud0Ki8p=z299Q7b4qEDONpYDzbVqhHxCNVk_vo-KdP9A@mail.gmail.com
+> 
+> This patch series implements it and also fixes a few minor bugs I found
+> when writing patches.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/4] virtio_net: Split struct virtio_net_rss_config
+    https://git.kernel.org/netdev/net-next/c/976c2696b71d
+  - [net-next,v2,2/4] virtio_net: Fix endian with virtio_net_ctrl_rss
+    https://git.kernel.org/netdev/net-next/c/97841341e302
+  - [net-next,v2,3/4] virtio_net: Use new RSS config structs
+    https://git.kernel.org/netdev/net-next/c/ed3100e90d0d
+  - [net-next,v2,4/4] virtio_net: Allocate rss_hdr with devres
+    https://git.kernel.org/netdev/net-next/c/4944be2f5ad8
+
+You are awesome, thank you!
 -- 
-With Best Regards,
-Andy Shevchenko
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
