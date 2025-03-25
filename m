@@ -1,126 +1,125 @@
-Return-Path: <linux-kernel+bounces-575681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AD3A705C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:58:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AD9A705C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45FEE170E0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4863A6838
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01BB25A33F;
-	Tue, 25 Mar 2025 15:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32CD253B41;
+	Tue, 25 Mar 2025 15:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WOiqOI5i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrlJkonk"
+Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2A3255E32;
-	Tue, 25 Mar 2025 15:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B784918A6AB;
+	Tue, 25 Mar 2025 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918234; cv=none; b=B5to76oGedb/hvEcyvWqCmrq2/oztTvyrPVGZhqnyg3fc+LhFRivkJv/0R0PQFjD5x9esjzh8r21/YKqZK9Gg+y6cTGtbqiMg5JDFXjM/g/HwKZhKY8hZm3GmbMzdD2boq8atIW52e2lvTnBnPtdIWUiH4lnUVPZDdWJ43AOJ6E=
+	t=1742918340; cv=none; b=pkkUIAmB/xiWFT/1IC/8k9N5N+T1kfW+C0lH9ncvILHqBGImXhRrNMkfSZm/XFqGH8/U69G36xHUjoYfsrsjMzBz3+MnyqWKRfz+vHl02eFckcZdsD5EdRDdx2UcF7rFx7cANBocxFjBlFPgVMyuDxVm57/Ji2WGu0yU8EDDqyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918234; c=relaxed/simple;
-	bh=Ieg0O1UliTfBkQFmqf9idM/b2XHLPdbmep+cn3VQ98A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N57ct10OC9a2e1ihCp8KR+AMaTThrvQ01TJUuQnSmfJXCPZjsn1yBQFh8L+m6MBrgszSyfIQqn7BWSk+7ohZPVmgQyD3DQ3IHp1YsZBajQV6Eb6dQQtM1MRrU4Vdgi9HIow52DjBADp6aRTguxW+X9ZZQTeV0i0vbhVAVPWAAvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WOiqOI5i; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742918233; x=1774454233;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ieg0O1UliTfBkQFmqf9idM/b2XHLPdbmep+cn3VQ98A=;
-  b=WOiqOI5izcmpBptBGAIGXL3RCf5nlO0+R0wuAz0/96ELxSvXl77NZqjD
-   sGbQ3nJh5Vsv+hcjJCAu2m6K5OMic+b191Kq0MjGylcSlR1Zz/tRj2WIl
-   8PaHQgYx5ZFT4Zg3F2K33OzGZ7bjuo03vLjqdnDqBn6OT3klGfcdZSy/t
-   fjDa8GUO1l0sH8+HFiGJgncqtbVxjE+ESkULKyYY6HvIfAQ0/+lLBK0jr
-   u62VPpXSDqsfDLy33JRemupJKP77PF76VDL8I8HaoD/76xnKNIwGAw18i
-   wXCvEjQ3emyIF3mjiKLlVm5ZRKrf9FnOU6BkQqeMKtfJRL/9cGZ0sd989
-   A==;
-X-CSE-ConnectionGUID: m0etwx+dRae7dibPLYUrsg==
-X-CSE-MsgGUID: zodyqjKzTPiNmAsHPKu0lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44296262"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="44296262"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:57:11 -0700
-X-CSE-ConnectionGUID: io6D8B0XRuCIqbvgsaotbw==
-X-CSE-MsgGUID: d5KwaRjiSOW1Fd4Ralo1Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="129534324"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:57:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tx6eC-00000005nIJ-45YA;
-	Tue, 25 Mar 2025 17:57:00 +0200
-Date: Tue, 25 Mar 2025 17:57:00 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z-LSTM48_u3FJLNZ@smile.fi.intel.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
- <Z9qviF1VeSYNvcPJ@smile.fi.intel.com>
- <D8PFFWYR3ASD.YEZIXPNVZS4I@bootlin.com>
+	s=arc-20240116; t=1742918340; c=relaxed/simple;
+	bh=mtwsqA8PakWZMH413YQKjvGljPxyyNqwwyQFCNzvbbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiZaURXFRK0UVPkDwQthTin/IAyqC3KIaFiwzBk92ygKvXT5FQK+drW/yTI3f0GsHKvUbXzGdTjSuXErVq2oEPIEIvFu+dP79P4m3kTXrM9FXXw8rYiotizkh1GRBwqnoK/Y+QLsCh59X8yYpMtEFMWraNUfh1W8JnsA4K8U/0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrlJkonk; arc=none smtp.client-ip=209.85.167.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-549967c72bcso6710609e87.3;
+        Tue, 25 Mar 2025 08:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742918337; x=1743523137; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxXlB3Q2YL2Ilad6LW0JN/V9aTo4Xt5BBRqQjvL+Sk4=;
+        b=QrlJkonkl/DwPcnC8t2hLA7IUZQTtP9zaDUYDKctoNnXl4d+idNxbPtzfoaPGeE0ta
+         T+cz+yFFi2uDiQhWDUWXXDJeHKvcI+QaRoeIVWHrddxqJuY+rLtwiHnkQ5EUm8NAzdL7
+         mf1gXXVqyblcctUpg3/KQB/kCXpOvLhXBUwqYEnJCmXSutztnEjT+Uf6Vrd8YX1/zOww
+         J/DH2eGxXfI3tf4OOBH/xtuTSo741fvxvK1ywEtcMDo13x0tmKHcigHyeMKRgjZAcTJV
+         KDGZO1euHRs7zCXdgwOeTiYwwrDDqt7fvB3KkG4uokDSa56CdBliZXOHnG1OzjfG6vAv
+         1ePg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742918337; x=1743523137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WxXlB3Q2YL2Ilad6LW0JN/V9aTo4Xt5BBRqQjvL+Sk4=;
+        b=kswIFEPWk31bPhLbPd3bsrGEvrUu7kQYkIp76GAkREF6VHSWdnd8DtwuErbGXTOFdY
+         IQep1f7bvcyRCASJsyaFjGWb/LbxBdmAh86kwXCEzf+orwBNKdfu7f9e+rQDZQvFYyKF
+         L7LTjTk++8xrjw7dO21z2NJtEezVhVWmZb1d+9v+C9yXSNjrEk99zT12v/EAi+T8NzZh
+         on336NAlX7rG4Nvmm1xVWMwaCixamIcwNbx5JiBCHhZd9MXL9YiLukcMIPLqvxhtE2zr
+         ZXFfrxxkFZ3t+Hrl1InHetdSqRNFAxrLidKLfyHjEEqMjh/pc7TBRtFtzryGLT+g93yV
+         dLmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcbwPjNWPmFH8/Mhr9dwi4lAF0znMZ4FTeG99bKPZIEtA2DRDmnMFcwEcpiTaMnLJJdiPJQooAn91t@vger.kernel.org, AJvYcCXSHAd3QiJtQ6wYj7kQofG2ba1wUXNcRx3AwT/mTXUAir641qD/b/JZWXXn7pZaaodvVowPUP6wBFHdYQjm@vger.kernel.org
+X-Gm-Message-State: AOJu0YytQxTqaIaoazk/5AsgddLFfEQw+hYeRwF73IP+cwx461EZQ+hK
+	+1nEXJqgdiVUR18EHmuIIAdOVxeqGjaffF+MvPTX9pyPhEb5H4u5
+X-Gm-Gg: ASbGncvxTqnwPHBQcymoAWtP85jDfRQ3C/DIoiwieyvwvmCqpWplqHAuv7jtWT3fv5e
+	A5iZKSfrquJyzWFEEo3RYFRDWoOSq/kxihXCw3J3QU126dZopsizfwDMo4AJ6RVHZvD+nX3zNl6
+	NpNjt2NocXxqU8/s0eRc/GpA7ozu+U8S0cu10XSAkU4+QTvIwLn8Zs26cgrgjM5Bxw0w0bXMfAs
+	CQuSps3dBpDMEkidiLu2Uw72QchtugSyH1eCGAePiMggUyF8qW6QTV2c/M6HlH5n6Z4ZxFChm26
+	uzoBBkag2AxWHSWI5nAZQoE/A9MqdeyXGDuh8Sn6ibo5jajK10i8UEgMLA==
+X-Google-Smtp-Source: AGHT+IHrbmRJ4XKU9ftZ0EjXOQDmgfR01iKjUAzH+4vTrN7X920Ls+acQM0brH8Yhs+E5/llV1y8wA==
+X-Received: by 2002:a05:6512:3e23:b0:545:22ec:8b6c with SMTP id 2adb3069b0e04-54ad64b311cmr6540631e87.35.1742918336460;
+        Tue, 25 Mar 2025 08:58:56 -0700 (PDT)
+Received: from pilotmaintrash.lan ([178.34.180.83])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad646cedfsm1544573e87.2.2025.03.25.08.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 08:58:56 -0700 (PDT)
+From: Alexander Baransky <sanyapilot496@gmail.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: Alexander Baransky <sanyapilot496@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Add Visionox G2647FB105 panel support
+Date: Tue, 25 Mar 2025 18:57:47 +0300
+Message-ID: <20250325155756.703907-1-sanyapilot496@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8PFFWYR3ASD.YEZIXPNVZS4I@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 03:46:20PM +0100, Mathieu Dubois-Briand wrote:
-> On Wed Mar 19, 2025 at 12:50 PM CET, Andy Shevchenko wrote:
-> > On Tue, Mar 18, 2025 at 05:26:24PM +0100, Mathieu Dubois-Briand wrote:
+This patch series adds support for the Visionox G2647FB105 panel, used in:
+- Xiaomi Mi Note 10 / CC9 Pro (sm7150-xiaomi-tucana)
+- Xiaomi Mi Note 10 Lite (sm7150-xiaomi-toco)
 
-...
+Testing has been done by me on sm7150-xiaomi-tucana. According to the
+downstream DTS, this driver should be fully compatible with the
+sm7150-xiaomi-toco (unfortunately not tested) without requiring any
+modifications.
 
-> > > +		/*
-> > > +		 * Port GPIOs with interrupt-controller property: add IRQ
-> > > +		 * controller.
-> > > +		 */
-> > > +		gpio_config.regmap_irq_flags = IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED;
-> >
-> > But why is this being overridden? The DT or another firmware description has to
-> > provide the correct settings, no?
-> 
-> Ok, thinking about it, yes, IRQF_TRIGGER_LOW shoud come from firmware
-> description. But IRQF_ONESHOT and IRQF_SHARED should still come from
-> here, no?
+Signed-off-by: Alexander Baransky <sanyapilot496@gmail.com>
 
-This is my view as well.
+Alexander Baransky (2):
+  dt-bindings: display: panel: Add Visionox G2647FB105
+  drm/panel: Add Visionox G2647FB105 panel driver
+
+ .../display/panel/visionox,g2647fb105.yaml    |  79 +++++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-visionox-g2647fb105.c | 277 ++++++++++++++++++
+ 4 files changed, 366 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/visionox,g2647fb105.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-visionox-g2647fb105.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
