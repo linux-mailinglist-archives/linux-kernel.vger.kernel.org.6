@@ -1,113 +1,218 @@
-Return-Path: <linux-kernel+bounces-574954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21030A6EBF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:50:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B46A6EBF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25963B2D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812D41895CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3F61A239D;
-	Tue, 25 Mar 2025 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B841D5159;
+	Tue, 25 Mar 2025 08:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVOnmoX9"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="IrKPm8r3"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C609D481B6;
-	Tue, 25 Mar 2025 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEA419EEBF;
+	Tue, 25 Mar 2025 08:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742892558; cv=none; b=DG8GqvzVgBGvEXnjfuBuNe7Jq52zY9RbBq8vT2KgRzFgc6W9WS/ux3iu7PnbOuCY2UdzO3z5D4s1T5ho9zs8QPpnnzb3cp27EIPoFv7N+wbjaaLD2LjeLKTOiAYC5594ZWquOXQgpTWXD7EG1JIy83vpAlpGspVDMbQiL2vNksI=
+	t=1742892779; cv=none; b=myNuI1MuUijmpj0P2boomtDn1bjL3GOzF8bJ9dBNi1nIAI//0GpQeopsoZZxztV0+ftsQRcAKy8vFdhgVNHLtv3oy0jON8N0V0uzDZg/4WZpCPx6GHSf7ji1zwX7a/nVBsnb2dbhqviI8zBk9oibvcaDsNVp13W9GuJKtvTT9VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742892558; c=relaxed/simple;
-	bh=UTMqa3/iThHUj62i5Lna3n7hgfqWAVpg9kIVXMcn2OA=;
+	s=arc-20240116; t=1742892779; c=relaxed/simple;
+	bh=k2keouQN8/qCGOrcjK3pzj7qXnScNycXHz527cVZTm0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T8nEc5oxxP3gfarTeoq14507Njul2d9iEZoWApuaTJ6+y9xQtRhKMB82gnfZYWT7NEKuXUn1COCH2PJo4nsyS0FGyWLKTngsYz8sy/NMAALyURHpMBGt1Kp0UJix1EHyox0FEYA036Q9W+0dilBKblUQDN7i7wwKnAbPxCW+IBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVOnmoX9; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so12336459a91.3;
-        Tue, 25 Mar 2025 01:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742892556; x=1743497356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UTMqa3/iThHUj62i5Lna3n7hgfqWAVpg9kIVXMcn2OA=;
-        b=YVOnmoX9jive5YIjppaYTAfgrUjifJ8LR77P+mfFb0w+hb9RVSiq+JUFDzUtcMYoBd
-         6dIME2sMyKcZtDOyVN0WHKhviOBVDYul5ecN/opT+E6Y4mDiAJBQdOnSbxHcYmwANbPf
-         Uoi3TLbU5irxj999kZE3g4pvZ8o3wzHCbjFBlDrGfYD8aqGRFpd//GJZnOuw0LhBlsar
-         kUJKzeyUTYAfLzVkkKm0VDEtuHvYqT0LudMWB1DPd47LcQmGPjiWGL44YiNg9kzZnyWF
-         IwcNIkU6jdST8AX8XU7471+oS5v9Sead1KgSLV0EssdognzjWDD9xFjvgORpwanOm+EP
-         3kog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742892556; x=1743497356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UTMqa3/iThHUj62i5Lna3n7hgfqWAVpg9kIVXMcn2OA=;
-        b=nwGHQza2oC9xzd1rhK9RtZfPTCudin4YpoOGD4KSk57rMZFcUAOEW7wFasvRAACqeO
-         LeIhiKIkg4/YEIfosqQ5YGXcpnaNJR6bYfyR7YEbtTbk9Jwgbr3LtKh2EdnVZGdCoDAo
-         QPjThUItCtSV+DhAPmlbsCLZ3OCsUA3kv2otl+LbZbGFTlzxzJKwXEIAwxrkS3yUxnWi
-         sU7TN83UcIZg7SkcjDUDFctqaEnBmq220KLe56d34hOk/ni56/1vhA+L0Y0vVXbsqpho
-         vRZOyTVtXnCMXu2phYBzf9AE1vhLMuNSssZDGFDHpcWCnyD7DuRNh8l90axbIqb0dxyb
-         JKMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA24goVu1NDM9B5NfW2Sw8Pipv7drM+um6aDfOK0uygRi8LOxWkJtHPOHRhbrKLdHQmc7eC1OW+ooVpSc7@vger.kernel.org, AJvYcCWycoHalPfYmKAS+v/v7MoA65TTxkOwiE1PhwfgE9KrwYZHvGeGvCKuyvnvrmfroT4B2rl9pSjOby9t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwVklbgF7g8+X/Zz7y79bwHMqJoPyp5NNk5/eoK0bjCSap1+QR
-	o/d+STc7EsW8Eyeh5My0Hj8/xPhOofFtPBDHxSLpwqhiQc9I1b9Zax9iWpn4I7s1febZte7Ef2n
-	0+DNHUBewTyp3WBKfxmQoSpI84aQ=
-X-Gm-Gg: ASbGncveLiipdQj7rSg75ar5HlfZhSqH6dwKPQExN+uPVNZkNYWJwxJmDTjLLQdTycg
-	w8GNVklZe1ACxDgVD+A4/9sjfYdAgPZ+whY0zUdhrRlWAWefhWFTg5VHrZ9+1hJj27XkzuP/y6S
-	jUC7og2zHo5cNGUi15D9x8hgk=
-X-Google-Smtp-Source: AGHT+IGdUevWbt9B6OCFjrfKlwOyeQ+1e0MLr3UjHCkhv56/tA48akFvVsynr6iH2spJ/xGrmJk6TrqDw1VcLtJz89Y=
-X-Received: by 2002:a17:90b:3d8b:b0:2ee:ee77:2263 with SMTP id
- 98e67ed59e1d1-3030fe855d1mr26348075a91.7.1742892555925; Tue, 25 Mar 2025
- 01:49:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=ppomZTsvh6zcgiAg6jXbSbSXtGVF4RltONoIE9jYjS893nJe7JixJiq6SqZ/2Is6zR9UqHfsBNhnBxOReK6BywZm6YW3Wyu1efmqbGkZsyFvHiynMxXzjNcx/4AhY2zi2Ln2E37g9WL5WNdVpNptlzxJeWsoz+KeOpdHxPQM1R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=IrKPm8r3; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 9DA5C2E0873A;
+	Tue, 25 Mar 2025 10:52:46 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742892768;
+	bh=0bCygpRrm3Yx2CpXOpIVeKdCxu9w0sgpWFU8/m26N64=;
+	h=Received:From:Subject:To;
+	b=IrKPm8r3iYxs6eTKcun0UWit2MwK68V3VxRtnsba82RyT8n1ILQjFvE9LvGyD3EJK
+	 upZtb33yD6wUnRmfdOPmDi/42J3zwa9hX0SYG04Prmj5Chiry3CUKePqwco2sowQAh
+	 O9uUX2b7TGAiHsb+3buMJ3EyvOsWT7qpkb7EIF+U=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.175) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f175.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f175.google.com with SMTP id
+ 38308e7fff4ca-30c0517142bso55791311fa.1;
+        Tue, 25 Mar 2025 01:52:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXNI051P5M5XnGNWImW8WDOCbHSDow/Vfu87kzqNaXYgoK88xDr2CdJE4p3Fkh5HiEzIvHwpj8Z2QGIGnYK@vger.kernel.org,
+ AJvYcCXeU2vo8HQProEgDO1m9wBLrql/jgx5MMaW5yyTyPPnVoNJk07IHgZZyUHtqoKIOW6wYqVi5MJ2ghRyew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvBNqnLRnA9629JjWE2p+aXBsSuzWOW1X1wuLUFsG/AAbss3CH
+	vkq08/akLF+Sc6kufc0Gb9wTqx9TUC7tqQSvNzvTBc8L2CExhmKOjF6xY/MkrdsZK44eAFefdpf
+	li37rhteGM7Mtdpb7s/1KNYtNgAk=
+X-Google-Smtp-Source: 
+ AGHT+IHRbr3Zgt3JTjcuCrzPWSyhQ7NbTyJY8uA2enw0MS8S7/YmeFAcMflWPRoZmdcCtqxkS3KQISgV+Jkx3u5FBKQ=
+X-Received: by 2002:a05:651c:2209:b0:30b:f775:baf5 with SMTP id
+ 38308e7fff4ca-30d7e0dd9bbmr59083871fa.0.1742892765627; Tue, 25 Mar 2025
+ 01:52:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324234013.140440-1-marex@denx.de>
-In-Reply-To: <20250324234013.140440-1-marex@denx.de>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 25 Mar 2025 10:50:42 +0200
-X-Gm-Features: AQ5f1Jp83_swMO_7jm3Y2fbbueh5o_M1drf9oc9W2FWr-Vtdud0qx3Z5t9ySw6k
-Message-ID: <CAEnQRZB068dzjLmeoFdPtcX_Wc_Or0idd_J0OKi-UqgD=Lmcaw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: imx: document i.MX 95 Verdin
- Evaluation Kit (EVK)
-To: Marek Vasut <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
-	Frieder Schrempf <frieder.schrempf@kontron.de>, Hiago De Franco <hiago.franco@toradex.com>, 
-	Joao Goncalves <joao.goncalves@toradex.com>, 
-	Joao Goncalves <jpaulo.silvagoncalves@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Max Merchel <Max.Merchel@ew.tq-group.com>, Michael Walle <mwalle@kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Tim Harvey <tharvey@gateworks.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20250324210151.6042-10-lkml@antheas.dev>
+ <202503251316.lPXAIXIV-lkp@intel.com>
+In-Reply-To: <202503251316.lPXAIXIV-lkp@intel.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Tue, 25 Mar 2025 09:52:32 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFnu+eQv+qe3XyfcNEjwjFoH23K0ixssEp7m=5Xnh4nhQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqBK-YkWbgSprjvPh-VyZ0pO6dOIRXsCrbsZaOFk6X7TVe8A4ojrJp9DLE
+Message-ID: 
+ <CAGwozwFnu+eQv+qe3XyfcNEjwjFoH23K0ixssEp7m=5Xnh4nhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 09/11] HID: asus: add basic RGB support
+To: kernel test robot <lkp@intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+ "Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <174289276713.8467.18012719937652387542@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Tue, Mar 25, 2025 at 1:40=E2=80=AFAM Marek Vasut <marex@denx.de> wrote:
->
-> Document support for i.MX 95 Verdin Evaluation Kit (EVK), which
-> used to be the Titan EVK.
->
-> Note that the SoM used in this EVK is a derivative SoM from Verdin
-> line of SoMs, an actual i.MX95 Verdin SoM is under development.
->
-> [1] https://www.toradex.com/computer-on-modules/verdin-arm-family/nxp-imx=
-95-evaluation-kit
->
-> Signed-off-by: Marek Vasut <marex@denx.de>
+My email is not doing too well it seems. It is not just yours Luke.
+Hopefully my shared host does not bite me for abusing the IP
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+On Tue, 25 Mar 2025 at 07:34, kernel test robot <lkp@intel.com> wrote:
+>
+> Hi Antheas,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on 38fec10eb60d687e30c8c6b5420d86e8149f7557]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-refactor-init-sequence-per-spec/20250325-051852
+> base:   38fec10eb60d687e30c8c6b5420d86e8149f7557
+> patch link:    https://lore.kernel.org/r/20250324210151.6042-10-lkml%40antheas.dev
+> patch subject: [PATCH v4 09/11] HID: asus: add basic RGB support
+> config: riscv-randconfig-002-20250325 (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/config)
+> compiler: riscv64-linux-gcc (GCC) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503251316.lPXAIXIV-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    riscv64-linux-ld: drivers/hid/hid-asus.o: in function `asus_kbd_register_leds':
+> >> drivers/hid/hid-asus.c:676:(.text+0x23f8): undefined reference to `devm_led_classdev_multicolor_register_ext'
+>
+
+Since I have been getting this error by test robot often, what is the
+canonical way to check that KConfig is correct before sending patches?
+
+I will try to fix the KConfig and send it later today
+
+
+Antheas
+
+>
+> vim +676 drivers/hid/hid-asus.c
+>
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  645
+> af22a610bc3850 Carlo Caione        2017-04-06  646  static int asus_kbd_register_leds(struct hid_device *hdev)
+> af22a610bc3850 Carlo Caione        2017-04-06  647  {
+> af22a610bc3850 Carlo Caione        2017-04-06  648      struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> af22a610bc3850 Carlo Caione        2017-04-06  649      unsigned char kbd_func;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  650      struct asus_kbd_leds *leds;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  651      bool no_led;
+> af22a610bc3850 Carlo Caione        2017-04-06  652      int ret;
+> af22a610bc3850 Carlo Caione        2017-04-06  653
+> 2c82a7b20f7b7a Luke D. Jones       2024-04-16  654      ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> 2c82a7b20f7b7a Luke D. Jones       2024-04-16  655      if (ret < 0)
+> 2c82a7b20f7b7a Luke D. Jones       2024-04-16  656              return ret;
+> 2c82a7b20f7b7a Luke D. Jones       2024-04-16  657
+> 3ebfeb18b44e01 Antheas Kapenekakis 2025-03-24  658      /* Get keyboard functions */
+> 3ebfeb18b44e01 Antheas Kapenekakis 2025-03-24  659      ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> b92b80246e0626 Luke D Jones        2020-10-27  660      if (ret < 0)
+> b92b80246e0626 Luke D Jones        2020-10-27  661              return ret;
+> 53078a736fbc60 Luke D. Jones       2025-01-11  662
+> 53078a736fbc60 Luke D. Jones       2025-01-11  663      if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> 53078a736fbc60 Luke D. Jones       2025-01-11  664              ret = asus_kbd_disable_oobe(hdev);
+> 53078a736fbc60 Luke D. Jones       2025-01-11  665              if (ret < 0)
+> 53078a736fbc60 Luke D. Jones       2025-01-11  666                      return ret;
+> 53078a736fbc60 Luke D. Jones       2025-01-11  667      }
+> af22a610bc3850 Carlo Caione        2017-04-06  668
+> af22a610bc3850 Carlo Caione        2017-04-06  669      /* Check for backlight support */
+> af22a610bc3850 Carlo Caione        2017-04-06  670      if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> af22a610bc3850 Carlo Caione        2017-04-06  671              return -ENODEV;
+> af22a610bc3850 Carlo Caione        2017-04-06  672
+> af22a610bc3850 Carlo Caione        2017-04-06  673      drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+> af22a610bc3850 Carlo Caione        2017-04-06  674                                            sizeof(struct asus_kbd_leds),
+> af22a610bc3850 Carlo Caione        2017-04-06  675                                            GFP_KERNEL);
+> af22a610bc3850 Carlo Caione        2017-04-06 @676      if (!drvdata->kbd_backlight)
+> af22a610bc3850 Carlo Caione        2017-04-06  677              return -ENOMEM;
+> af22a610bc3850 Carlo Caione        2017-04-06  678
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  679      leds = drvdata->kbd_backlight;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  680      leds->removed = false;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  681      leds->brightness = 3;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  682      leds->hdev = hdev;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  683      leds->listener.brightness_set = asus_kbd_listener_set;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  684
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  685      leds->rgb_colors[0] = 0;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  686      leds->rgb_colors[1] = 0;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  687      leds->rgb_colors[2] = 0;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  688      leds->rgb_init = true;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  689      leds->rgb_set = false;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  690      leds->mc_led.led_cdev.name = devm_kasprintf(&hdev->dev, GFP_KERNEL,
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  691                                      "asus-%s:rgb:peripheral",
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  692                                      strlen(hdev->uniq) ?
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  693                                      hdev->uniq : dev_name(&hdev->dev));
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  694      leds->mc_led.led_cdev.flags = LED_BRIGHT_HW_CHANGED;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  695      leds->mc_led.led_cdev.max_brightness = 3,
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  696      leds->mc_led.led_cdev.brightness_set = asus_kbd_brightness_set,
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  697      leds->mc_led.led_cdev.brightness_get = asus_kbd_brightness_get,
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  698      leds->mc_led.subled_info = leds->subled_info,
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  699      leds->mc_led.num_colors = ARRAY_SIZE(leds->subled_info),
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  700      leds->subled_info[0].color_index = LED_COLOR_ID_RED;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  701      leds->subled_info[1].color_index = LED_COLOR_ID_GREEN;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  702      leds->subled_info[2].color_index = LED_COLOR_ID_BLUE;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  703
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  704      INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_work);
+> 315c537068a13f Pietro Borrello     2023-02-12  705      spin_lock_init(&drvdata->kbd_backlight->lock);
+> af22a610bc3850 Carlo Caione        2017-04-06  706
+> d37db2009c913c Antheas Kapenekakis 2025-03-24  707      ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  708      no_led = !!ret;
+> d37db2009c913c Antheas Kapenekakis 2025-03-24  709
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  710      if (drvdata->quirks & QUIRK_ROG_NKEY_RGB) {
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  711              ret = devm_led_classdev_multicolor_register(
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  712                      &hdev->dev, &leds->mc_led);
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  713              if (!ret)
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  714                      leds->rgb_registered = true;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  715              no_led &= !!ret;
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  716      }
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  717
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  718      if (no_led) {
+> af22a610bc3850 Carlo Caione        2017-04-06  719              /* No need to have this still around */
+> af22a610bc3850 Carlo Caione        2017-04-06  720              devm_kfree(&hdev->dev, drvdata->kbd_backlight);
+> af22a610bc3850 Carlo Caione        2017-04-06  721      }
+> af22a610bc3850 Carlo Caione        2017-04-06  722
+> 312a522531f6e5 Antheas Kapenekakis 2025-03-24  723      return no_led ? -ENODEV : 0;
+> af22a610bc3850 Carlo Caione        2017-04-06  724  }
+> af22a610bc3850 Carlo Caione        2017-04-06  725
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
