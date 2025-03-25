@@ -1,211 +1,305 @@
-Return-Path: <linux-kernel+bounces-576128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8551BA70B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:17:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AF3A70B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065AA189EF92
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B997A35E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E826659A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEB1266B5A;
+	Tue, 25 Mar 2025 20:13:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24726659F;
 	Tue, 25 Mar 2025 20:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="A5VaOq3G"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2101.outbound.protection.outlook.com [40.107.22.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6381266587;
-	Tue, 25 Mar 2025 20:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933596; cv=fail; b=QHyDsY32qOrv8VMuS4zrVh+hy//daSWs9/b08bfcjSCOA82nIQmEMZJMx1rkNyIJI7ayYP5+T0z340a5EITr9JXPB7gVmcKZdVS6PfFCprbhkB3QR7fsDf+8A3I076GXAAzRF/eiBUfWeU3qR0eaERzx0Iwm1EE13T0VF02cUmg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933596; c=relaxed/simple;
-	bh=f5wGo9xXrKdjRRa6wWxj2rxXT0hsEU4mBHNt+OnXGS4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UfIHW2sIVCm5vTQ73qaZyb9t05t+g4nfEHo3HfbN2OS8d3SKZhoITK4UrOTIRj/4Ud7tg5R5PbDVvf1Vh835IHkDwF76a8Do2EHFjnHG40Z2NxDCVhiO6j05+8RMVniLGVDoiyvNWkxSDO3XIzjIaDT9OCxceb/07UcxSBSbNiI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axentia.se; spf=pass smtp.mailfrom=axentia.se; dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b=A5VaOq3G; arc=fail smtp.client-ip=40.107.22.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axentia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axentia.se
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mMrNqTa6aUg7apiO9UXd+PJcPOKG1mMt5Q+MWef6FHj7owuhY9KPYU127YMLdeS9625I7O2PNNzC6GoBijndlgA/+wd8aoaEcGWpKNrd9EnzWw65cXmWnVscWi83+b/IcFlR+IoNfDWrk1SvDHOlUV8sMIXqnQ97WL56RbYydl7enPJ1iFxApXR8W3KYm8rP7iRwXbVaGmHga/i4h1V04iwu8UA0ag51dOUAUzM94M6z2rdiTRZeIJNqT733U5dXO8mBC7EZkoYZ3tW20K+6ojNzijNA30QEJc+p3x8xTvo/DkS007+WfDLv4G4HSPYwdfju6Jq3d/0zJS1WOV0TSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f5wGo9xXrKdjRRa6wWxj2rxXT0hsEU4mBHNt+OnXGS4=;
- b=WRe6GjtLGFLfJYBBjJ31lovkHNa0qYs89PNeNOY62N3rOcWdme8NMDdW1iSSse0NaqYI0mksTLdJkyVecmjpe91q6cR0Tu3Fk+UIVEkpbRC0ZrEWUuk+hblfVppQDRoXG5g/HFdN0xUzQcGk4bZ/O5IYjRis2cL0Za90HreTniIELJfbHg03bqHIqummDhwqR0TCyrKoIGsLbHqFkrHypFK96myC2XYKLULitbQ6icSV7lbrmxXskkbcChoQgNX3PZWAVgvfJdiXeS9Oc+zoZYEDgkpHfjVnNRDAdpEVnY0kqNHxLg7AB2zBLNjqzw6RKpS94G4q2nkIQdf+wRzZCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f5wGo9xXrKdjRRa6wWxj2rxXT0hsEU4mBHNt+OnXGS4=;
- b=A5VaOq3GiDGBb8xzMFu9P2VnneF9F1eHo5yxIVw07Giq4Psl6khXDtB2gLqxJ74pRxUWS37GSLnoDsyjiZ6B3kCkp6+PilEJsZ9Po0SC9B1+Ek29tsLVj7avrC6AT6C3Foxk29hvFpq93j9DV0gU2XHPNvoKJarcL9MSgP9fzAk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axentia.se;
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com (2603:10a6:10:3e3::8)
- by PRAPR02MB7956.eurprd02.prod.outlook.com (2603:10a6:102:295::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 20:13:08 +0000
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827]) by DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827%3]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 20:13:08 +0000
-Message-ID: <14b7f2cb-6f40-f8b8-b3de-fe99080e6e40@axentia.se>
-Date: Tue, 25 Mar 2025 21:13:05 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v5 5/6] ASoC: codecs: wcd938x: add mux control support for
- hp audio mux
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: broonie@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
- ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
- Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250325114058.12083-1-srinivas.kandagatla@linaro.org>
- <20250325114058.12083-6-srinivas.kandagatla@linaro.org>
- <vmhrs62ygu2xozcabc6tgy37ta5qskeyks5j3ldponzfijicl4@nudcmxonq7qj>
- <4654f21b-bf61-4b41-b073-407fab4bff6a@linaro.org>
-From: Peter Rosin <peda@axentia.se>
-Content-Language: en-US
-In-Reply-To: <4654f21b-bf61-4b41-b073-407fab4bff6a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: GVYP280CA0019.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:fa::22) To DU0PR02MB8500.eurprd02.prod.outlook.com
- (2603:10a6:10:3e3::8)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742933600; cv=none; b=Gh8nSIjkjEl5L4MDaBTJQ8UWjIMdqI+JOIrCQa4DOw9v4YBWvsbZ1mw6rhzgonW8BuRkWDhv4+EFOVcckfDytyDkfprlvJwtaRkGSAGX6zVE/1SF+MTsxeh4WE0FRndAP40AtEycV4xyKnZC/FLKALoJ1R4p3DPMGHDCqPTHQbA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742933600; c=relaxed/simple;
+	bh=xpI2DheeO89h9vm7XRDf0UpjkPypB4nxnBrkG726sVA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nGb2oUlzbSuPXsEcZZsDpgjDeF06Yt0Fi9MSyZNWKQMfzDDqjfcWlzrwgNcupaFMYnoBVvKkJs2aErtsuryjdRGXGFO0LauG7QIei8fLu/TVRLENDZIS2YMjcqiy9NKJNS245SjpCBVnsckt2/n8WQL3KQo8qQ+6mYdy7Xr/RQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E5561692;
+	Tue, 25 Mar 2025 13:13:22 -0700 (PDT)
+Received: from [10.57.85.102] (unknown [10.57.85.102])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D1243F694;
+	Tue, 25 Mar 2025 13:13:14 -0700 (PDT)
+Message-ID: <f62b63b1-e7fa-42e2-b5f6-8cf1bd81426d@arm.com>
+Date: Tue, 25 Mar 2025 20:13:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR02MB8500:EE_|PRAPR02MB7956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 690cb5de-08dc-4086-4193-08dd6bd9755e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VHhFeVEwWGZ4Skh6cTJZMVVWYnpXNGZUeFhXeDdWSXFJUys1UkN2VkkzKzZG?=
- =?utf-8?B?K0JvTzRsdW9JSjN6WXI3K3dPQm56RzFWL1ZPUmJyMFZoZnVGTjBlVnptdUN5?=
- =?utf-8?B?V1RlUThTRXVyQ3ZkQU9QNlVxQkY1WW02eCtXdm8yVGljcnJ3UW1QQzJLbnk4?=
- =?utf-8?B?aFJHNUp0dXpwaDRmK3N0QnZUWnBKdE5GQzJUSSs3VGNhbUVhVHUvdi9DZW9T?=
- =?utf-8?B?K3NYbFNYeE5QM25vRU1MTTFuVDliQStLaW5LS0tDY2tqcHJWNDBFV0RRdk1q?=
- =?utf-8?B?dFdVRVRBOWdrZjZZb1AyWWVZZFVNNUxOblgvMVNZbWc5cjRCbVNzazA0cEhi?=
- =?utf-8?B?anBzb2NvbUw2YlNNUm1wemdCaWtLL1c0MDllQUdlRjhIZkd5MVBqVjlkTWRi?=
- =?utf-8?B?Uno2bG54OThBWkZ6SDVZd2ZtWmJHR3JkVjBERnVMbEVwUlFQY0c4YU44NCtj?=
- =?utf-8?B?MGMxMEpQd2RPeUNVdC9ZRzBUSnRvMytLemV5NEJsSWtqOUFmcXFuNnlxRW40?=
- =?utf-8?B?Vk1SWGwyRW5XclcyOERYRE9xN3JtY2JFNjZZMFBadzU0WFlMSFptenpoNFlj?=
- =?utf-8?B?ZjJPblNnQW9rZUlaSlV5UDlUK2JubG5rRlJQMmZ4K0JJL0o5eGYrWG8rKzU5?=
- =?utf-8?B?VFBFRHlHTHhDSFA1bmdXMmkvMmVQbXNWaC9EdCthQTVKOERPcERoQXZ6QjFi?=
- =?utf-8?B?NFRHaVlBdlJKUWoyNFVibTFMQzRiTkZETWNHZy9HV2VCVjRGU2xpQmcvNENI?=
- =?utf-8?B?R1ltUFB1Kzhoa050ZDVkWEZkNzR0bjFOanpBK3E3VGdVeFdpelE5NVE1VWI1?=
- =?utf-8?B?ekNhK1FsdzVCMFlmSjNCaXRwSHVVc1FaRlJJQzYzNFQ2OVFiSGFJUElLZkty?=
- =?utf-8?B?ay9vV3BudHk2OGNRY3hjVHVicDExWVVxbGhxR0dSSUY5VlNFSytybmtBYTdS?=
- =?utf-8?B?YWRaUHhKMzRlN2VleDJoM2toTkRFdTRvZ1dnbjdRdUYzUHl3RHI0WWUzTGwr?=
- =?utf-8?B?R0FTR1lXNHBocytTTitYcWlrVnFnME5ZWDZ3MmxsVkJrYzFQZmtuTWUrRHNs?=
- =?utf-8?B?RlkzRnJXWHBzN3ZBQW1lcTNOTXoydms3MGdrd2RtNzRoNVJ5dElhd2ZNMmNo?=
- =?utf-8?B?RmFJdHVyZUZFVW56T1lKeFo5RkFISXc0dUlCbEFEam81QVVhOUI4bmhyYURL?=
- =?utf-8?B?Mm92OHd6SDNlMHVSOHFxSk5meWlacDJMbTdMNTI0OTlMM09tN0lhUmpXOU0v?=
- =?utf-8?B?OXBaeVpTTmVFM3JBdmZyNU1vSjdkSzA0aFFiMEQwQ3FvRU9ySFV0QkFGQlY2?=
- =?utf-8?B?b1dGb3dneHlVazlCalMyQVdzUldzaG53TUJrc3ExdnFpbytPeDlvNk13djI3?=
- =?utf-8?B?UmpkT0VtSFJVRy9kcjR3aDJqdk9GQ1ltdUU2bG4vYTBaZ0M0am9lNG9Ia2hr?=
- =?utf-8?B?bXdONlJYVXQyajFlSlNrMkgweWJsZzMwR0JvLzdXMm1wR1V3elhDMmwzeHRM?=
- =?utf-8?B?Sm1KQWpwSS9kVDhmTEVEbFBrWkZJTFdlaWhkVjEvcWx3VUxveW51OWNpeWNw?=
- =?utf-8?B?TGZLUEM1dnJJRU9ZV3FvQUZLUEpoa00xOEw3ckswYTNJQXYzTTBzMG1vMVA2?=
- =?utf-8?B?VllHNzExOWJKM2JYTjkxZEVBVGFQU1NhMDBseURYdVVvbHMwQ3VEcmhMM3ky?=
- =?utf-8?B?aWJXcXdqZzJGemw0TFZuWUkvUWJaUk16OTFFUkNBcnpQMEhDZHBmUmY3b0Fi?=
- =?utf-8?B?bURHRFdPR0FZODlyVDVQNlM0Nzg1N2pGdFFOeWZCdHdOaUVSa2ZpRHBGd010?=
- =?utf-8?B?bDgyNEVVM0UzdU1iQ2tvVlBiS2hxNWdCclFnUkFWTkMzMWM4NFlkems4bVlG?=
- =?utf-8?Q?R10AxeMV9ArWI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB8500.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkVuaEZJbk91VVExdHoyQWRHS1ptVlR1dHBkTVBLYXdUNHFEQklKckRPMXFM?=
- =?utf-8?B?ejAycW1yKzVQSmRhZnRZS3FvRmRCVWcwQWxMTTQ4dStCUWt5V0FjMUo5WUI4?=
- =?utf-8?B?NVcwUWU1M0VqeDUvUUd5NGdkblltVzVGV20xL1RiNzZNOHBwRWlhS2tVakw0?=
- =?utf-8?B?THJlWVBlQXJkQkVnbHFQU1lmcVBLUlZ1cFFjN0tsUmpDRmZpSUsySHR2NWpa?=
- =?utf-8?B?dFlOMW1aVFgvelhOWFUrdnlyU3p2a3grM21WME43OFlBTFBBcHBrcGJ3cHB0?=
- =?utf-8?B?KzJSZUdwTTBMczJtNWllMEJpUkYrQTh4cUE1b2xvSm0zSlJkVEJBczVEb01I?=
- =?utf-8?B?TXhoSG1VK3o5WWFjL0RRZDZvK3BnQ2FGc3R5aHBLRlM2NWFKVWV5MEJ3ZXM5?=
- =?utf-8?B?by80dHB4c1I3cVk1TGhMUjdWd2E2MGIxTjNCbVpzd3Nma1ZYR3l5V1QwQXp0?=
- =?utf-8?B?U25OSm4xOUowWlVGNFFsaFg3L0ZLbm05dStnY0pjL2twUGE0cU5VQlY1VUpI?=
- =?utf-8?B?SW1vVG9uVkl0R1NpR05pZk1HalRYQWd4aW42WVArNzc5QmIxcjRmREFuOGpO?=
- =?utf-8?B?TXRQbDR4R0t6VjNlSWtzeEFsZjBuQnZkOXo0QzZNNnlqeGt0Ly9BRjNyc1FB?=
- =?utf-8?B?RG03ZEtmV1VZYzlLRGEyWjQzdzRlOGhJbjIwaHVCaUpiWHQxaVFJKzFOYXNu?=
- =?utf-8?B?MCtMVDJWQVlCN0FCaHVxZ3Vtc00vaTFmQzdBRUJVcEtMazJWZVJ1VFo1VHFT?=
- =?utf-8?B?VEhKdWIwQ3F4bm53Um5hem5uZGVQT2FhQ0lsNS9nUzlqU25QcEZTcUt4ZlVn?=
- =?utf-8?B?RW5wNHZiTk8rbGVzSnp0Q2cwMHdhUkJvbklQaHV3dG92WFNCNzVGSnBqNS9s?=
- =?utf-8?B?Y0dHNkZCUkRsZ2RaMkVhaFg2MGdjR3hscjZKRGN4MllrWWJldnIwNXF3dldE?=
- =?utf-8?B?ZXF6aldHaHFoSk8yc3BUaGRzYVl0Q1BQUVViVTZZVDlRa2tpSkZyMjNQOG5s?=
- =?utf-8?B?ZytiZXRyZ3BSeXpxWWlESHNuRzhOS0pNbHhiRmdxdmRBUzBoK2NFcGNTTmhZ?=
- =?utf-8?B?Sk5QUW95RzRENGRSVEJOUnQ0SkY3c1lZdzZVekZaU0VhRXdGbUZYWjljMFpr?=
- =?utf-8?B?R0lNaUFkR1hRR0ZIUVRkdytjdStsZ1gxLzU4eXpycGNPQ0ZVd2NwNHdPdW1M?=
- =?utf-8?B?SlNFYUt6c09neXRrcFlyWEFUbEh5dCt4TUpERGx3TlVhb1pnTVh1S092VHZ3?=
- =?utf-8?B?Kzk3djVNR2NUZ3laR1FVcDBnLzR0ZmtjRWVzajI4T2wweEN1QVVSWFcyNWFp?=
- =?utf-8?B?bGYzc01TbHJiVDlLV0VIcTlMVktNZUxvbzFUeGE4RTJBM2lLckd3TFpDK3R4?=
- =?utf-8?B?eEdyb1Nxd2dMTURZbFRRMERmZXlSenFPWXdRZjQvQWRQaVJIU1NnbzZNZlhn?=
- =?utf-8?B?dUJNeWNibUNqb3RkQzhjaWRRN1Q5Z0w5RmZkMVBodC9Hd3VUZHB5YXlMc0dM?=
- =?utf-8?B?dCtJS1FVaUZzOUlZTEN2V29CN3pQTytnNEd3Vzlybm0xVno2NXJuTnhLYTFs?=
- =?utf-8?B?TVVpYUhLRE9tKzVBVnRNTlgxRlJzNmVMc2tRQzhMZzh3OU16YUJLcFhYaUNz?=
- =?utf-8?B?SWpSM0tkT3ZEekNwU1RHdFVsSkp3MWF3WkNOZGlPNG4rZjlUZjF4V0phcHBt?=
- =?utf-8?B?dGp0bzJoQy92MGROdWdFTVVRazlVSXBYMUVnajh1N2t0VzFlSmxQc3pwa0Vk?=
- =?utf-8?B?YUJ1L0t1a2hvVi8xL1A2M0ZxRHN1SmhMcUw5TWFnK3hjREhJR3FWMVQ4K0VL?=
- =?utf-8?B?KzZnamtBZWJVcUM4NS9DS3VFNW5kVHhzZzlwbHJORTNwV2s1d0praTdwQ2pz?=
- =?utf-8?B?Nlc0OWZTSU1Ia1hsV21yeUNJYW5RdjNRMkc0amtSNURJV3dOR1dPbW4yY0N0?=
- =?utf-8?B?SGdYeGdqbTZxQ0tjb0V0RktxdzZmYXpaa3JVd1I3alpTOHhoMDFGbDJhTnVR?=
- =?utf-8?B?d05XN2RpcFVFNmFqRm85dHdEVnYwaVNZRGdQVjFRZDg2RUN3UnltYitqd1ha?=
- =?utf-8?B?SHI4NjQ2Q1ByamtQV1VJalNvRStEeDQvV2wvKzJQUisyUmhneFphZWhoZWVv?=
- =?utf-8?Q?yJ0g5xot+dHFZCc4jXh8+ZVi7?=
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 690cb5de-08dc-4086-4193-08dd6bd9755e
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR02MB8500.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 20:13:07.9030
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: glTFYIz6SmfXQcJEILAF9I8+McWZcLodPWXyrXGQnR773zFU4UNGbV+BC/IaFbHf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR02MB7956
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to synth_event_trace2()
+From: Douglas Raillard <douglas.raillard@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ Alice Ryhl <aliceryhl@google.com>
+References: <20250318180814.226644-1-douglas.raillard@arm.com>
+ <20250318180814.226644-3-douglas.raillard@arm.com>
+ <20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
+ <3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
+ <20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
+ <9f030639-2ce2-4400-90e4-6c7dfbabf42c@arm.com>
+ <20250325122542.02973078@gandalf.local.home>
+ <28029bd8-e875-4281-9c2c-d9463a7cce53@arm.com>
+Content-Language: en-US
+In-Reply-To: <28029bd8-e875-4281-9c2c-d9463a7cce53@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi!
+On 25-03-2025 18:16, Douglas Raillard wrote:
+> On 25-03-2025 16:25, Steven Rostedt wrote:
+>> On Tue, 25 Mar 2025 16:05:00 +0000
+>> Douglas Raillard <douglas.raillard@arm.com> wrote:
+>>
+>>> Yes, the dynamic API was exactly what I needed unfortunately. I'm porting the kernel module we have to Rust (using our own bindings as
+>>> we cannot mandate CONFIG_RUST=y). While I have some support for C code generation based on the Rust source, it is significantly more
+>>> convenient to simply use a dynamic API. In the current state of my code, defining an event is as simple as:
+>>>
+>>>     let f = new_event! {
+>>>         lisa__myevent2,
+>>>         fields: {
+>>>             field1: u8,
+>>>             field3: &CStr,
+>>>             field2: u64,
+>>>         }
+>>>     }?;
+>>>     // Emit the event
+>>>     f(1, c"hello", 2);
+>>>     f(3, c"world", 4);
+>>>
+>>> So it's as non-confusing can be: the event name is stated plainly and the field names and types are mentioned once, with no repetition.
+>>> The result can simply be called to emit the event, and when dropped, the event is unregistered.
+>>
+>> Interesting.
+>>
+>>>
+>>>
+>>> On top of that in ways unrelated to Rust:
+>>> 1. We have some really high traffic event (PELT-related) that include some data that is not always needed (e.g. taskgroup name).
+>>>      We currently regularly hit memory size limitation on our test device (pixel 6), and using trace-cmd record instead of
+>>>      trace-cmd start is not always a good idea as this will have an effect on scheduling, disturbing the very thing we are trying
+>>>      to observe. Having the dynamic API means we could simply omit the fields in the event that we don't care about in a specific
+>>>      experiment via dynamic configuration.
+>>>
+>>> 2. Some events may or may not be supported on the system based on some runtime condition. Currently, there is no great way for
+>>>      the module to feed back that info. No matter what, the event exists, even if the machinery that is supposed to emit it is
+>>>      disabled for whatever reason. If some user starts tracing the event "everything will work" and there will be no event in the
+>>>      trace. That may make the user think a condition did not trigger, whereas in fact the whole machinery was simply not operating.
+>>>      Being able to register or not the event dynamically solves that cleanly, as enabling the event will simply fail as it won't
+>>>      have been registered in the first place.
+>>>
+>>> 3. We will likely at some point relay events coming from some non-CPU part of the system into the ftrace buffer. If and when that
+>>>      happens, it would be ideal if that producer can simply declare the events it supports, and our module dynamically create the
+>>>      matching synthetic events. That would avoid any problem coming from mismatching source that would otherwise plague such setup.
+>>>
+>>> So considering things seem to work overall with not much tuning needed, it would be sad to have to revert to TRACE_EVENT() macro
+>>> and end up having to do more work for a worse result. If that's the route you choose though, it may be nice to amend the
+>>> documentation to clearly state this API is testing-only and not supported in normal use case, as it currently reads:
+>>>
+>>>     The trace event subsystem provides an in-kernel API allowing modules
+>>>     or other kernel code to generate user-defined 'synthetic' events at
+>>>     will, which can be used to either augment the existing trace stream
+>>>     and/or signal that a particular important state has occurred.
+>>
+>> Note, there is also a CUSTOM_TRACE_EVENT() macro that can attach to any
+>> tracepoint (including those that have a TRACE_EVENT() already attached to
+>> them) and create a new trace event that shows up into tracefs.
+> 
+> I think I came across that at some point indeed. We probably could make use
+> of it for some of the events we emit, but not all. Also this was introduced
+> in 2022, but I need to support v5.15 kernels (2021), so maybe one day but not today :(
+> 
+> The event that does not fit this use case is emitted from a workqueue worker that
+> fires at regular interval to poll for some data. So there is no particular tracepoint
+> to attach to, we just emit an event from our own code. In the future, we will
+> probably end up having more of that sort.
+> 
+>> I still do not think "synthetic events" should be used for this purpose.
+>> They are complex enough with the user interface we shouldn't have them
+>> created in the kernel. That documentation should be rewritten to not make
+>> it sound like the kernel or modules can create them.
+>>
+>> That said, it doesn't mean you can't use dynamic events for this purpose.
+>> Now what exactly is that "new_event!" doing?
+> 
+> That new_event!() macro takes the name and the list of fields and creates two related
+> things:
+> 1. An EventDesc value that contains the a Vec of the field names and their type.
+>     Upon creation, this registers the synthetic event and unregisters it when dropped.
+> 
+> 2. An associated closure that takes one parameter per field, builds an array out of them,
+>     and using the captured EventDesc emits the events.
+> 
+> Since the closure captures the EventDesc, the EventDesc cannot be dropped while some code
+> is able to call the closure, and since the EventDesc is responsible for the lifecycle of
+> the kernel synthetic event, there is no risk of "use after unregister".
+> 
+> The value returned by the macro is the closure, so it can just be called like a normal
+> function, but dropping it will also drop the captured EventDesc and unregister the event.
+> 
+> The field types have to implement a FieldTy trait, which exposes both the type name
+> as expected by the synthetic events API and conversion of a value to u64 for preparing
+> the array passed to synth_event_trace_array():
+> 
+>    pub trait FieldTy {
+>        const NAME: &'static str;
+>        fn to_u64(self) -> u64;
+>    }
+> 
+> Once the whole thing is shipping, I plan on adding a way to pass a runtime list of fields
+> to actually enable to new_event!(), so that the event size can be dynamically reduced to
+> what is needed and save precious MB of RAM in the buffer, e.g.:
+> 
+>    // Coming from some runtime user config, via module parameter or sysfs
+>    let enabled_fields = vec!["field", "field2"];
+> 
+>    let f = crate::runtime::traceevent::new_event! {
+>        lisa__myevent2,
+>        fields: {
+>            field1: u8,
+>            field3: &CStr,
+>            field2: u64,
+>        },
+>      enabled_fields,
+>    }?;
+> 
+>> I guess, what's different to that than a kprobe event? A kprobe event is a
+>> dynamic trace event in the kernel. Could you do the same with that? Or is
+>> this adding a nop in the code like a real event would?
+> 
+> Considering we not only need to emit events from existing tracepoints but also just from
+> our own code (workqueue worker gathering data not obtained via tracepoints), I don't think
+> kprobe-based solution is best unless I missed some usage of it.
+> 
+>>
+>> I'm not against rust dynamic events, but I do not think synthetic events
+>> are the answer. It will just cause more confusion.
+> 
+> Is there some way of creating an event that would not hardcode the detail at compile-time
+> like the TRACE_EVENT() macro does ? In ways that are not designed to specifically feed a
+> well-known upstream data source into ftrace like tracepoints or kprobes. Our kernel module
+> is essentially sitting at the same layer as TRACE_CUSTOM_EVENT() or kprobe events, where
+> it takes some data source (some of it being from our own module) and feeds it into ftrace.
+> 
+> Maybe what I'm looking for is the dynevent_cmd API ? From the kernel doc:
+> 
+>    Both the synthetic event and k/ret/probe event APIs are built on top of a
+>    lower-level “dynevent_cmd” event command API, which is also available for more
+>    specialized applications, or as the basis of other higher-level trace event
+>    APIs.
 
-2025-03-25 at 19:04, Srinivas Kandagatla wrote:
-> I wish we could be taken care in mux-core or even in the deselect api
+Answering to myself, this is a no-go, as this is indeed the basis of other high-level trace event
+APIs, but not ones created from modules since almost none of that API is exported.
 
-It is not easily done. A mux is a shared resource. How can the mux core
-know if it is consumer A or consumer B that deselects the mux if both
-ignore failures when calling select? Mux select is backed by a semaphore
-and there is no guarantee that a consumer selects/deselects from the
-same thread or anything like that. The onus is on the consumer to get
-this right and only deselect when select is successful.
+> 
+> I'd rather avoid shipping an out-of-tree reimplementation of synthetic events if possible,
+> but if that API is public and usable from a module I could live with that as long as it allows
+> creating "well behaved" events (available in tracefs, enable/disable working,
+> instances working etc) and is stable enough that the same code can reasonably be expected to work
+> from v5.15 to now with minor tweaks only.
+> 
+>> I also added Alice to the Cc, as she has created trace events for Rust.
+> 
+> Interesting, I could not find anything in the upstream bindings. All there seems to be is
+> a crude tracepoint binding that only allows emitting a tracepoint already defined in C.
+> If that's of any interest, I also have code to attach probes to tracepoints dynamically from Rust [1]
+> 
+> My plan B for emitting events is to use the infrastructure I have to include C-based function in the
+> Rust codebase to sneakily use the TRACE_EVENT() macro like any non-confusing module [2].
 
-I believe the documentation is clear on this topic: "do not call
-mux_control_deselect() if mux_control_select() fails".
+Actually plan B can't fly, there is too much similar but different repetition in the TRACE_EVENT() macro
+(TP_ARGS() and TP_PROTO()) and the C syntax is not helping either (trailing comma forbidden).
+This will have to be plan C with a proc macro defining a custom syntax and generating the string literal
+at compile time, or defining it in C sources and dealing with copy/pasted Rust bindings.
 
-One thing can be done from the mux core, and that is to provide a new
-API where consumers get a mux that is exclusive so that the consumer
-can call select/deselect without involving a lock in the core. There
-need not even be a requirement to call deselect between selects in that
-case. Such an API is what many consumers want, I think, but it is of
-course not really compatible with the existing API, which is totally
-focused on the need to share a mux among multiple consumers.
+> [1] The tracepoint probe bindings I have looks like that:
+> 
+>    // Create a probe that increments a captured atomic counter.
+>    //
+>    // The new_probe!() macro creates:
+>    // 1. The closure
+>    // 2. A probe function that uses the first void* arg to pass the closure pointer
+>    //    and then calls it
+>    // 3. A Probe value that ties together both 1. and 2.. This is the value returned
+>    //    by the macro.
+>    let x = AtomicUsize::new(0);
+>    let probe = new_probe!(
+>      // That dropper is responsible for dropping all the probes attached to it,
+>      // so that we pay only once for tracepoint_synchronize_unregister() rather
+>      // than for each probe.
+>        &dropper,
+>          // Essentially a closure, with slightly odd syntax for boring reasons.
+>        (preempt: bool, prev: *const c_void, next:* const c_void, prev_state: c_ulong) {
+>            let x = x.fetch_add(1, Ordering::SeqCst);
+>            crate::runtime::printk::pr_info!("SCHED_SWITCH {x}");
+>        }
+>    );
+> 
+>    // Lookup the tracepoint dynamically. It's unsafe as the lifetime of a
+>    // struct tracepoint is unknown if defined in a module, 'static otherwise.
+>    // Also unsafe since the tp signature is not checked, as the lookup is 100% dynamic.
+>    // I could probably make use of typeof(trace_foobar) function to typecheck that against the
+>    // C API if the lookup was not dynamic, at the cost of failing to load the module rather than
+>    // being able to dynamically deal with the failure if the tp does not exist.
+>    let tp = unsafe {
+>        Tracepoint::<(bool, *const c_void, * const c_void, c_ulong)>::lookup("sched_switch").expect("tp not found")
+>    };
+> 
+>    // Attach the probe to the tracepoint. If the signature does not match, it won't typecheck.
+>    let registered = tp.register_probe(&probe);
+> 
+>    // When dropped, the RegisteredProbe value detaches the probe from the
+>    // tracepoint. The probe will only be actually deallocated when its
+>    // associated dropper is dropped, after which the dropper calls
+>    // tracepoint_synchronize_unregister().
+>    drop(registered);
+> 
+> 
+> [2] FFI infrastructure to include C code inside the Rust code for bindings writing.
+> This is a function defined and usable inside the Rust code that has a body written in C:
+> 
+>    [cfunc]
+>    fn myfunction(param: u64) -> bool {
+>        r#"
+>          // Any C code allowed, we are just before the function
+>          // definition
+>        #include <linux/foo.h>
+>        ";
+>        r#"
+>          // Any C code allowed, we are inside a function here.
+>        return call_foo_function(param);
+>        ";
+>    }
+> 
+> The r#" "# syntax is just Rust multiline string literals. The optional first literal gets dumped before the function,
+> the mandatory second one inside, and an optional 3rd one after. The #[cfunc] proc macro takes care of generating the C
+> prototype matching the Rust one and to wire everything in a way that CFI is happy with. Since the C code is generated
+> at compile time as a string, any const operation is allowed on it, so I could work my way to a snippet of C that
+> uses TRACE_EVENT() in the first string literal and calls the trace_* function in the function body.
+> 
+> The C code ends up in a section of the Rust object file that is extracted with objdump in the Makefile and fed back to
+> Kbuild. That's very convenient to use and avoids splitting away one-liners like that, does not break randomly
+> like cbindgen on some Rust code I don't control coming from 3rd party crates, and since the module is built at runtime
+> by the user, it also has the big advantage of not requiring to build cbindgen in the "tepid" path.
+> 
+>> -- Steve
+> 
+> 
+> Douglas
 
-And, of course, someone has to do it.
-
-Cheers,
-Peter
 
