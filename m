@@ -1,332 +1,321 @@
-Return-Path: <linux-kernel+bounces-576051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B99A70A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:28:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AEEA70A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80B41175489
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:25:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E2507A372B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BD1F17E8;
-	Tue, 25 Mar 2025 19:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27B91F4173;
+	Tue, 25 Mar 2025 19:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="P/nBj/gm"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lJ8Cdhvs"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2060.outbound.protection.outlook.com [40.107.104.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22AE1EB1B3;
-	Tue, 25 Mar 2025 19:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742930601; cv=none; b=QiQCjCYNzq0usYpgVeNFJfvqFUik03E9cjBcbIi+PZYGxdrJumnh9ySVSmyJaQoUFIdnpOcayiglLZ5XGoLqzjYhymi986ngh05iEhWnn5L2Pscroj75jG0pGDkzWNQ5RPZk9SqckbabH+hsX2ng8jQ3/ioeFIGwCxISaj63LKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742930601; c=relaxed/simple;
-	bh=c1H604qLBSLunzYgcAaVP2lIVauhD26jv/xeri4ExA8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qa3XPCyUCQHvehcSWzQRNupsR2/2cmcAgYFrNczeRPGI03CW8Xa7K1b4qFJlOIjECrktUStCVDcyYqh390cYUg7TMRBQYCLCVq4gGQoTMNA2+Jfcu5dgQBh3Jg76wc01QlEVo9TxRbuuMcIWsap4luenajr9PCfzmlnJkvw39/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=P/nBj/gm; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id B7A32C00282F;
-	Tue, 25 Mar 2025 12:23:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com B7A32C00282F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1742930598;
-	bh=c1H604qLBSLunzYgcAaVP2lIVauhD26jv/xeri4ExA8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P/nBj/gmkMSTdcEKOFMZZYilTklv7bLjj9A/dHkn5T3whatHaBTWflISBETApNazj
-	 dEQo/Wopeu8jYcs31yltAQdN2QF9vqbwBf3rWUFrvTdPaXLr3Npmxk6PJOCsq0n3J8
-	 /0nedV1WpemBCLHDamSW/y6ouDGYpMOxN66tPFGw=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 36CE01800053F;
-	Tue, 25 Mar 2025 12:22:48 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: stable@vger.kernel.org
-Cc: Felix Huettner <felix.huettner@mail.schwarz>,
-	Luca Czesla <luca.czesla@mail.schwarz>,
-	Eric Dumazet <edumazet@google.com>,
-	Simon Horman <simon.horman@corigine.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Carlos Soto <carlos.soto@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Yan Zhai <yan@cloudflare.com>,
-	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Joe Stringer <joestringer@nicira.com>,
-	Justin Pettit <jpettit@nicira.com>,
-	Andy Zhou <azhou@nicira.com>,
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-	linux-kernel@vger.kernel.org (open list),
-	dev@openvswitch.org (open list:OPENVSWITCH),
-	bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools))
-Subject: [PATCH stable 5.15 v2 1/2] net: openvswitch: fix race on port output
-Date: Tue, 25 Mar 2025 12:22:45 -0700
-Message-Id: <20250325192246.1849981-2-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250325192246.1849981-1-florian.fainelli@broadcom.com>
-References: <20250325192246.1849981-1-florian.fainelli@broadcom.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AF81F4160;
+	Tue, 25 Mar 2025 19:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742930578; cv=fail; b=FfqTfsxQTF6Y7Wm7jWIw/0ae3hj5p6SsWlnmEUJqPrU/wPV2FSvFqxlzKsn6AlxhRWL0SVIN0uBDPJv8GyLD+xvYJoI9CPv4T1f7zc2E0HtaY8GusShfiwGYLnOue7lUZhZlqkAihPH6YcfZrCaYHJp8Uw++yR7ma8PKxVT4Q+I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742930578; c=relaxed/simple;
+	bh=X/3oPkGBdGN2vAsBcfji7SFKvVVqYcJKKFptSqHH8EI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IpOlbx+yuj6ohI+Kop76DLBx//2R+NhlpkryM8FIsSOxfuImf/eSRHrduvHOB4V9v+56ITIuCnuObJrGdi+FtYH1Wdbzl6jSo1cr86T+SewtHhthuFyo8fnsItEE4LvM06Ljd20sA5Oyy1UdiCJLvWtwWr2hQyiHB8tLejN0ytw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lJ8Cdhvs; arc=fail smtp.client-ip=40.107.104.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MM3JuobpJLk1PfR3uU8dXQhBJMbnZYi+ph7wdykKz1W1P/6pEdrSGVyCcwDtIDaBohHT1J0KJaFDfQdEMLN7RMU6W/NKH6Vs1FCAdWqBL98cLk8uisGaHY7Nmpi1bOyVgZ+INyp0a2jzzaz/Wh2Wbh9Frv0llyqsAPzR/FRRprAylpJlDFSQO4oEVvK+uIiY8s6/EKHhE1PxjX2mLag62CX1xyFfozXw+NCGFfMn0ouUrsb/7G7lRGQeX5O1YihSrRhxxeVInm6e4NOpeUaGRZhq+dfNOygm1MvXQ3maDfI4Uy49knrCzKQhhAV8asYDsbmKvM1LPnOoPLGG0CuJOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GqzpiXdE2Lko2EcIAlLoWa+qbGQoQGjdYD1W2pt4Gis=;
+ b=Ax/ZBB3bC3hHVGMVgJER3BvP9AN+SS6rYElcGe4CG2hou1LX5kaCEMm+ztQdWaSS3g4aU0pblqG3yOIMz0in6wTfjPW11GSiwy9coGj2A2U2Qxxfpp4kDLKdTLGtA1f8nweA44xI6daoOkt10uEHakesQD0bZdRvNCVkQ1wn9u7NU0sOGTbzzEBHiWd8njGvgjONepAXbOGfn4a01ZWBeiQ1NFQGEZBypGW1MED2nJf8iF3kp4DfZRlcIWgrmCg4sHsxwVWErvvyojTvkJwjgxePrqiUTvgz9FrdBT/jjAH2NqtbYjU9u2exba8FGnE3GvM9STUe4kDiU0aZsR0vDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GqzpiXdE2Lko2EcIAlLoWa+qbGQoQGjdYD1W2pt4Gis=;
+ b=lJ8CdhvsB4FcNb7XFHO6IcN+4Bl+vo2V5OYJ5n7zwnZa9/MwFRUArmwIWwXjleNwIIr637GLu/I2v5Mj2OTch7t/5IRrN/Nqf/U7cgPinGIqnnCcutmnUlSFv9UK49qCKgyd5CeoadqImV8HxWSBauKL8umpcsbu8Pl6srWDrldq40zXyyBtHTKXuDYIw2Ov1/ZQ0OvT4hFRe5pL21O8lITaCoY/HcL+iQ6TB+Ne2dFH2n6KIHsw/TqNZm7NPBf+FxgHzdNsC0R2YuZ7IJC3SBV59voIX1jQ9I1lqfk66vgRpf9fr3G5m9TOhwwY8JM56fxZbpiO3RkqxstKA1FpaA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8466.eurprd04.prod.outlook.com (2603:10a6:20b:349::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 19:22:53 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
+ 19:22:53 +0000
+Date: Tue, 25 Mar 2025 15:22:45 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v12 05/13] PCI: dwc: Add dw_pcie_parent_bus_offset()
+Message-ID: <Z+MChacLT8iehI5p@lizhi-Precision-Tower-5810>
+References: <j3qw4zmopulpn3iqq5wsjt6dbs4z3micoeoxkw3354txkx22ml@67ip5sfo6wwd>
+ <20250324182827.GA1257218@bhelgaas>
+ <5hkzuqptaor4v5fc7ljxb36zdipeg67lsjfkcah5fkxfyyjt6e@oknqdtbwjitj>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5hkzuqptaor4v5fc7ljxb36zdipeg67lsjfkcah5fkxfyyjt6e@oknqdtbwjitj>
+X-ClientProxiedBy: PH8PR07CA0044.namprd07.prod.outlook.com
+ (2603:10b6:510:2cf::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8466:EE_
+X-MS-Office365-Filtering-Correlation-Id: eee305d4-f8c5-4748-3a50-08dd6bd270aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YUJ4REhQWVl4MTc1KzA1STQ1ZTRqZzVwNVNBem9PZWFNUVIwNFg5aXZXZmFx?=
+ =?utf-8?B?UEt4Q25ETWNYQUZCVUpORkFZQ3lyb1h6MUhsenFqeGRJd1NKSWwwdWNFODhw?=
+ =?utf-8?B?WHhheEFUOUhMUkJIa3dSLzRDMU5TclRpNldMWjJaNGRHQ1l5MGUwZE5Cdlc0?=
+ =?utf-8?B?TUhtNzJHNmxtaXdadWw2MFJEMG5jcXVnSlEwYWhpY2J2UmlqU1FkQ0RPV3VB?=
+ =?utf-8?B?S0c2bXJBTGVJMFdVMXZOTCtZUlJaZUhSbjZkb3V0b2dzMzNQeVRZWUlyK0I4?=
+ =?utf-8?B?OHlKbHJZbUQyU0w1bE9ZdFBacXQ0b0k3eWNKT1BoSmVlTytvREc2bzBtdFFB?=
+ =?utf-8?B?OVBWSHQ3d3JMcWcxV1JTQWEzTDhPN0VpZVQxWW1PVmNUWDI4RU1seGhidG9B?=
+ =?utf-8?B?NnIwQmM2RGNXYnVxUGI5VFFET0pJS1RkNi9mK2E3a2NRdG5WQVhUcGtDNkxj?=
+ =?utf-8?B?eXd4Q25NRWh5Y2hyQS80VHYveFAxakc0V0M2OVpVd0xEVW1kMEZKa1VGaEQ5?=
+ =?utf-8?B?MVJVbnY0NXhGRXU1WVppejAyOXlXNHdheUJqeDlZL1pCazY4ZytSUTRnV0Zm?=
+ =?utf-8?B?dm5aOW5vUGFqaHF0Vm5ocUVld2VxdU4yWVJ0aUdFQlJ2TEFYeTJFaHd4WU4r?=
+ =?utf-8?B?YjRvY1V3dVcxMjNOeEJIb0hJUU5NVjlzWUNIMG0zMjFtckVFTE5rYzkzOHQr?=
+ =?utf-8?B?S2JQR0JSckhyRytXK3JjdS9XRmh6RGcrR0pKSmxzNCtCbFZ6VG1zNWFaVTEv?=
+ =?utf-8?B?bUpFNk1wMlN1bmduVGQvTmpIKzl0T29Ecm1EZDFTTUxBc0RmZXZrUE9OT2N2?=
+ =?utf-8?B?NDdRSWZrTlpDQVB6VDRQeHpnUTVNTC9KYWlZc1ZSU0s5NXpwQno3ZEI5c0JD?=
+ =?utf-8?B?WkNCZVJlMWJKRWUrM3lrTnR1MTMrdmd0V1Z1Z25HZlJ5S2E5RWlJMCtKVyth?=
+ =?utf-8?B?RHE1S0dCdkVRWnN6N21KMWJQRWh2QU1jUERGZDhaakFJd1F1VCtzMklYSmpQ?=
+ =?utf-8?B?Mzg1bDVkVWJOVU1Cbi9IM3hJbGY5L3hkS2VCcE03ckNRODI3aE1helh5R1dn?=
+ =?utf-8?B?bUhWZWZzTGIzVTVCVkxkTWEvRlNTbGJBbEhqcFd3SElESi9xUEZzQktzbmxj?=
+ =?utf-8?B?RGFqbGxBYkxGUTJqMTVsWENoeFk0N3BpbjhuRzdCOXRUT0hGRXh0cHk0ZzRr?=
+ =?utf-8?B?RVZMZkxxTmlHWnB5KzRFdHlUOXk1UTY5N1o1TGgyVWJsRkJzMmlvNkxqVVF1?=
+ =?utf-8?B?YVFCdzQxMWlPTFNnSnFmMXI2N0g5SGJGK0pwaGQ2QkxtWWk5cnNIcEs2WC9w?=
+ =?utf-8?B?ekFmZE4vUnoreWxydU51ZkRlOHZNV215MUk5V1VRSE80WlVRYUJNcEdYbmhh?=
+ =?utf-8?B?K0dCWHJYc283MmgvOWtSMDBGZDFaNlZKbTJVSVFJdmhaZXV0ZDczSWVvSGhm?=
+ =?utf-8?B?RnU4NWZqMkQvUmxtYVhGNDJwSWVxZWtkVFloTnRRWUtINWVHOVhESlZlYnI2?=
+ =?utf-8?B?OFduU1RNSDJxdTE5NnlXd01QZFRqWW5taEUzWDZmZXBoOGVqbE9INk84WXVO?=
+ =?utf-8?B?SE1pdXY0WkpBQ0tid1NWWTVwWnFKVWg0RHRTOE5ZQmJ4d2ZxR3Faai83MFZy?=
+ =?utf-8?B?NW9oOWhxcTFXM3ZIUC9lMmR1RVo1dy91eitmM2ZpSEZEcVExNFVNei8vY3oy?=
+ =?utf-8?B?NndHQWl6UW1NU1N0elJyd2tFeVlGOWRkTi83UjZoTVIrTHBNemthb2wzM0NI?=
+ =?utf-8?B?MytDeTc2TjUrVHgyMkgvQ3hWcXlwSXpoTGc1R0FabkpmNEpNY0c5MHV0d2RB?=
+ =?utf-8?B?Nk82ZGEzNlUvYkFFVUtjM2FYRG1Ua3Z2aHFUTGd6ZzAxNXB6RGIwK3VjeUEr?=
+ =?utf-8?B?ZEhodTREOHR6QWJPKzZlWWFqbE0xL0Q5YVRzc2I1enA3YTA1RUYyR2tvbTFj?=
+ =?utf-8?Q?t74CDYyw0q0b4XVY8oGd0/M09dGHwrOu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SUdReUFGS3g4NWNQcm1iL2NLd08rYS9LMWd6RUNWcUd1K2l0YUNyRlV1RElC?=
+ =?utf-8?B?cURCNjBRbzhUTFRDeU1XUEk0QUl2QzJzRTJ2TGF5TnBYRFEyMVV0VlZLbklv?=
+ =?utf-8?B?Q1VXSmc3bEtieTZ0MnhhblVkbUpRbVlIQmQ0SEI5ejcvTytoQ1ZpM3FmV0FZ?=
+ =?utf-8?B?bU1iejN0SWJlVXJNdHZrNWJTQnQ3eTFqTWpWY0NLTmdmTEVkZUF2SUYrb3lX?=
+ =?utf-8?B?c1lvaTdGczd0RE9YcVF4RWZRZ20wRFFjZnJHbXJ0anJHYU16MzNzVUV6cVlW?=
+ =?utf-8?B?K3lLR2tFMVpHZ1NZVHZCNTNxaG1pK1ZjZkRMbDBCNDYvY1J2UlkyUGRYcGRr?=
+ =?utf-8?B?blZmaGtZQStaM2pKRG9sc0ZFK0hxakxMSEpSd2pzNXMrRVVDUW1xdVp2UDRz?=
+ =?utf-8?B?TldSNytoN2gxbTFLL0tTRGYyMzV4RzNnOEs4bitSeVlHSk5qYnBWa0NBUHVG?=
+ =?utf-8?B?MVlaWG1TNFdxR0JoQnhOZ2dQTCsyRHQ2VXUvdzhJbU5TcFkza0F4K1VKbUpa?=
+ =?utf-8?B?WVl4aVl4SjIvYy85QUpOeTh6dXN2UlpHbEN0MjJNdzMyZFhnOGZFeHE1TldP?=
+ =?utf-8?B?c0Uzb1dJK1JCWm0vSy9uSGdCVFR0eW1PeFZlWjEwQ3V0dEg3Q2JSa2ZIeHNV?=
+ =?utf-8?B?ck5aajlLQWhMWGU5OGFLb0lOQlAxVDMvc2VoM29mNzA2NUkxL1FRNytEQlpO?=
+ =?utf-8?B?dnZoL1I3cFdQTTlsMVljMkJzM3NvUzJONE55aWpjSm9PNXR1a3I3TXdiRVgz?=
+ =?utf-8?B?ZDZhcWhPYnFQN2xsSUNWVTQ5SEZmRjQ1T2Voc3ZseHlFYWs0NFVVcm03U0Rv?=
+ =?utf-8?B?ZXkzYkEzTG12L0ZLUHN5azY5NFh6UzAxWjdIZTVrNThyQlcrYnlub0grbkZw?=
+ =?utf-8?B?MmNZYStDNGdHN05Fb2MzQ2hhSFlUQlpQL2NUNWdZWE5xYlNUVlhtWEpubUh6?=
+ =?utf-8?B?Wnh5dEhOcnE1cVp3RTB6WmhIRTVTc1g0RjgxODVJWCtKRllNQmxsaUxQMWFw?=
+ =?utf-8?B?MTdSMWkxRzBTTTFUeFpTV3htdXZNTHMyY3E5ZldXSXVWOXAwYjRyVDVzY2tl?=
+ =?utf-8?B?czFNNGREWjQ0TXF1WEZ4Sk5KSUgzK2FmZk4rQjJIQ3JiRVQvREhkM0dIL09l?=
+ =?utf-8?B?S2htQ0xRYk9yOHdMMThrWWp1TzRjVllNcWpNb3UwTkdzb1hTZkU3SWs2cmIy?=
+ =?utf-8?B?MUdGSTdUY1A4bXdFT1dTWFo1VVBuWDhBKzM1VXk1RkpQVmUyaDBqUUk2b2I3?=
+ =?utf-8?B?NStIWDQ0YndoZTRtNTR5QzRBQk13a1JRcWNSTnorRU1MdWR5V2V0Rk1zUk54?=
+ =?utf-8?B?VndzTzIzaVZSTWVLWVk1ckhqOEpPbVF0MUV4SnR1UlFoQk1tcjhOenY3cDRv?=
+ =?utf-8?B?RWJCd1RaN0VrRWxDVm5kMC8xWjJrZ2hPSVVYQUQ2V0dxSkp2NnQzQVV0a2tM?=
+ =?utf-8?B?MHNDL1hHZGg4eU85ZmJXeUdPcng1eWJ0OXp0UlF6SFA1Y1YweUxPcUtVRnBq?=
+ =?utf-8?B?cUUzVENlVStPOTVUQ3Z3STdYWjRibEp6cXVjMlh6KzBZV1VMLy9uRkNSZjR6?=
+ =?utf-8?B?NDl1djYyOEZDMVNXM2k0cFpBY2JoZ2lUaW9JRGVLNDVjT1Z0YU1WdUE5bmF4?=
+ =?utf-8?B?QVljanlPN0RkczNTVmplcDRqUThuemZZelFFTHEvdUJBMk1aVEJhaEM2SlRO?=
+ =?utf-8?B?NkNDZTdCSFp5dy8xL1RuOUh5UDNWSW1OZWVkQ2xTTEg5cTlwSExYRlZpOEJO?=
+ =?utf-8?B?a2FnTkl0VXdjV21zWEJIRklnaExZdnl0dnRkemlWbThFSVNNWFdkdjBiMGd2?=
+ =?utf-8?B?V1hxY0lteEt0UGRrekpUZ1hWbURIQXQwUmJ6dFJUQjBpQnMyQ1RlakRNMFJh?=
+ =?utf-8?B?akNQOW1sUXdNYUF3N1Jwb2hoZ0UrV2Z4SHFnTGxsWUJqSzF3YzlJMS9DRDJj?=
+ =?utf-8?B?MUFFYUhoTGFkcDQyL0dlOVVOOGc1VlVSdW1uV2Jsa2FFVS9ZR2hpdXNIaTU0?=
+ =?utf-8?B?ckJ4ZzR1WHRtb3hMQ1BvTUl5T0ozb0xqY2lkYXpmR0ltNnRieE10MDRiNk9u?=
+ =?utf-8?B?UU1QTVFLWEtMNjBJTVJvVm9HeHlXSzZyK1Z1aHYzRWhVUGVMWlRXZGdpaGxZ?=
+ =?utf-8?Q?qYJg=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eee305d4-f8c5-4748-3a50-08dd6bd270aa
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 19:22:53.5852
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7NGLA0wL2vzGrJ0I4LBZrsGEugHtUQkOudGLh8qwS0FABwWrzRSETAYhto84LCW2ZU03asvaS+i80gyAizpEhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8466
 
-From: Felix Huettner <felix.huettner@mail.schwarz>
+On Tue, Mar 25, 2025 at 11:59:14PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Mar 24, 2025 at 01:28:27PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Mar 24, 2025 at 10:48:23PM +0530, Manivannan Sadhasivam wrote:
+> > > On Sat, Mar 15, 2025 at 03:15:40PM -0500, Bjorn Helgaas wrote:
+> > > > From: Frank Li <Frank.Li@nxp.com>
+> > > >
+> > > > Return the offset from CPU physical address to the parent bus address of
+> > > > the specified element of the devicetree 'reg' property.
+> >
+> > > > +resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
+> > > > +					  const char *reg_name,
+> > > > +					  resource_size_t cpu_phy_addr)
+> > > > +{
+> > >
+> > > s/cpu_phy_addr/cpu_phys_addr/g
+> >
+> > Fixed, thanks!
+> >
+> > > > +	struct device *dev = pci->dev;
+> > > > +	struct device_node *np = dev->of_node;
+> > > > +	int index;
+> > > > +	u64 reg_addr;
+> > > > +
+> > > > +	/* Look up reg_name address on parent bus */
+> > >
+> > > 'parent bus' is not accurate as the below code checks for the 'reg_name' in
+> > > current PCI controller node.
+> >
+> > We want the address of "reg_name" on the node's primary side.  We've
+> > been calling that the "parent bus address", I guess because it's the
+> > address on the "parent bus" of the node.
+> >
+>
+> Yeah, 'parent bus address' sounds bogus to me. 'ranges' property is described
+> as:
+>
+> 	ranges = <child_addr parent_addr child_size>
+>
+> Here, child_addr refers to the PCIe host controller's view of the address space
+> and parent_addr refers to the CPU's view of the address space.
+>
+> So the register address described in the PCIe controller node is not a 'parent
+> bus address'.
 
-[ Upstream commit 066b86787fa3d97b7aefb5ac0a99a22dad2d15f8 ]
 
-assume the following setup on a single machine:
-1. An openvswitch instance with one bridge and default flows
-2. two network namespaces "server" and "client"
-3. two ovs interfaces "server" and "client" on the bridge
-4. for each ovs interface a veth pair with a matching name and 32 rx and
-   tx queues
-5. move the ends of the veth pairs to the respective network namespaces
-6. assign ip addresses to each of the veth ends in the namespaces (needs
-   to be the same subnet)
-7. start some http server on the server network namespace
-8. test if a client in the client namespace can reach the http server
+All should be parent bus address. See Rob's comments
 
-when following the actions below the host has a chance of getting a cpu
-stuck in a infinite loop:
-1. send a large amount of parallel requests to the http server (around
-   3000 curls should work)
-2. in parallel delete the network namespace (do not delete interfaces or
-   stop the server, just kill the namespace)
+https://lore.kernel.org/imx/20240927221831.GA135061-robh@kernel.org/
 
-there is a low chance that this will cause the below kernel cpu stuck
-message. If this does not happen just retry.
-Below there is also the output of bpftrace for the functions mentioned
-in the output.
 
-The series of events happening here is:
-1. the network namespace is deleted calling
-   `unregister_netdevice_many_notify` somewhere in the process
-2. this sets first `NETREG_UNREGISTERING` on both ends of the veth and
-   then runs `synchronize_net`
-3. it then calls `call_netdevice_notifiers` with `NETDEV_UNREGISTER`
-4. this is then handled by `dp_device_event` which calls
-   `ovs_netdev_detach_dev` (if a vport is found, which is the case for
-   the veth interface attached to ovs)
-5. this removes the rx_handlers of the device but does not prevent
-   packages to be sent to the device
-6. `dp_device_event` then queues the vport deletion to work in
-   background as a ovs_lock is needed that we do not hold in the
-   unregistration path
-7. `unregister_netdevice_many_notify` continues to call
-   `netdev_unregister_kobject` which sets `real_num_tx_queues` to 0
-8. port deletion continues (but details are not relevant for this issue)
-9. at some future point the background task deletes the vport
+bus{
+	ranges = <child_addr parent_addr child_size>
+	pcie {
 
-If after 7. but before 9. a packet is send to the ovs vport (which is
-not deleted at this point in time) which forwards it to the
-`dev_queue_xmit` flow even though the device is unregistering.
-In `skb_tx_hash` (which is called in the `dev_queue_xmit`) path there is
-a while loop (if the packet has a rx_queue recorded) that is infinite if
-`dev->real_num_tx_queues` is zero.
+		All address here, will be translated by bus's ranges, which
+use 1:1 map if out of ranges by default.
 
-To prevent this from happening we update `do_output` to handle devices
-without carrier the same as if the device is not found (which would
-be the code path after 9. is done).
+		from pcie node (children node of bus) view, the 'child_addr'
+		is parent node (bus)'s output address.
 
-Additionally we now produce a warning in `skb_tx_hash` if we will hit
-the infinite loop.
+	}
+}
 
-bpftrace (first word is function name):
 
-__dev_queue_xmit server: real_num_tx_queues: 1, cpu: 2, pid: 28024, tid: 28024, skb_addr: 0xffff9edb6f207000, reg_state: 1
-netdev_core_pick_tx server: addr: 0xffff9f0a46d4a000 real_num_tx_queues: 1, cpu: 2, pid: 28024, tid: 28024, skb_addr: 0xffff9edb6f207000, reg_state: 1
-dp_device_event server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, event 2, reg_state: 1
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-dp_device_event server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, event 6, reg_state: 2
-ovs_netdev_detach_dev server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, reg_state: 2
-netdev_rx_handler_unregister server: real_num_tx_queues: 1, cpu: 9, pid: 21024, tid: 21024, reg_state: 2
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-netdev_rx_handler_unregister ret server: real_num_tx_queues: 1, cpu: 9, pid: 21024, tid: 21024, reg_state: 2
-dp_device_event server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, event 27, reg_state: 2
-dp_device_event server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, event 22, reg_state: 2
-dp_device_event server: real_num_tx_queues: 1 cpu 9, pid: 21024, tid: 21024, event 18, reg_state: 2
-netdev_unregister_kobject: real_num_tx_queues: 1, cpu: 9, pid: 21024, tid: 21024
-synchronize_rcu_expedited: cpu 9, pid: 21024, tid: 21024
-ovs_vport_send server: real_num_tx_queues: 0, cpu: 2, pid: 28024, tid: 28024, skb_addr: 0xffff9edb6f207000, reg_state: 2
-__dev_queue_xmit server: real_num_tx_queues: 0, cpu: 2, pid: 28024, tid: 28024, skb_addr: 0xffff9edb6f207000, reg_state: 2
-netdev_core_pick_tx server: addr: 0xffff9f0a46d4a000 real_num_tx_queues: 0, cpu: 2, pid: 28024, tid: 28024, skb_addr: 0xffff9edb6f207000, reg_state: 2
-broken device server: real_num_tx_queues: 0, cpu: 2, pid: 28024, tid: 28024
-ovs_dp_detach_port server: real_num_tx_queues: 0 cpu 9, pid: 9124, tid: 9124, reg_state: 2
-synchronize_rcu_expedited: cpu 9, pid: 33604, tid: 33604
+bus may not only one layer to CPU.
 
-stuck message:
+bus1 {
+	ranges = <...>
 
-watchdog: BUG: soft lockup - CPU#5 stuck for 26s! [curl:1929279]
-Modules linked in: veth pktgen bridge stp llc ip_set_hash_net nft_counter xt_set nft_compat nf_tables ip_set_hash_ip ip_set nfnetlink_cttimeout nfnetlink openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 tls binfmt_misc nls_iso8859_1 input_leds joydev serio_raw dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua sch_fq_codel drm efi_pstore virtio_rng ip_tables x_tables autofs4 btrfs blake2b_generic zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel virtio_net ahci net_failover crypto_simd cryptd psmouse libahci virtio_blk failover
-CPU: 5 PID: 1929279 Comm: curl Not tainted 5.15.0-67-generic #74-Ubuntu
-Hardware name: OpenStack Foundation OpenStack Nova, BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
-RIP: 0010:netdev_pick_tx+0xf1/0x320
-Code: 00 00 8d 48 ff 0f b7 c1 66 39 ca 0f 86 e9 01 00 00 45 0f b7 ff 41 39 c7 0f 87 5b 01 00 00 44 29 f8 41 39 c7 0f 87 4f 01 00 00 <eb> f2 0f 1f 44 00 00 49 8b 94 24 28 04 00 00 48 85 d2 0f 84 53 01
-RSP: 0018:ffffb78b40298820 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: ffff9c8773adc2e0 RCX: 000000000000083f
-RDX: 0000000000000000 RSI: ffff9c8773adc2e0 RDI: ffff9c870a25e000
-RBP: ffffb78b40298858 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff9c870a25e000
-R13: ffff9c870a25e000 R14: ffff9c87fe043480 R15: 0000000000000000
-FS:  00007f7b80008f00(0000) GS:ffff9c8e5f740000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7b80f6a0b0 CR3: 0000000329d66000 CR4: 0000000000350ee0
-Call Trace:
- <IRQ>
- netdev_core_pick_tx+0xa4/0xb0
- __dev_queue_xmit+0xf8/0x510
- ? __bpf_prog_exit+0x1e/0x30
- dev_queue_xmit+0x10/0x20
- ovs_vport_send+0xad/0x170 [openvswitch]
- do_output+0x59/0x180 [openvswitch]
- do_execute_actions+0xa80/0xaa0 [openvswitch]
- ? kfree+0x1/0x250
- ? kfree+0x1/0x250
- ? kprobe_perf_func+0x4f/0x2b0
- ? flow_lookup.constprop.0+0x5c/0x110 [openvswitch]
- ovs_execute_actions+0x4c/0x120 [openvswitch]
- ovs_dp_process_packet+0xa1/0x200 [openvswitch]
- ? ovs_ct_update_key.isra.0+0xa8/0x120 [openvswitch]
- ? ovs_ct_fill_key+0x1d/0x30 [openvswitch]
- ? ovs_flow_key_extract+0x2db/0x350 [openvswitch]
- ovs_vport_receive+0x77/0xd0 [openvswitch]
- ? __htab_map_lookup_elem+0x4e/0x60
- ? bpf_prog_680e8aff8547aec1_kfree+0x3b/0x714
- ? trace_call_bpf+0xc8/0x150
- ? kfree+0x1/0x250
- ? kfree+0x1/0x250
- ? kprobe_perf_func+0x4f/0x2b0
- ? kprobe_perf_func+0x4f/0x2b0
- ? __mod_memcg_lruvec_state+0x63/0xe0
- netdev_port_receive+0xc4/0x180 [openvswitch]
- ? netdev_port_receive+0x180/0x180 [openvswitch]
- netdev_frame_hook+0x1f/0x40 [openvswitch]
- __netif_receive_skb_core.constprop.0+0x23d/0xf00
- __netif_receive_skb_one_core+0x3f/0xa0
- __netif_receive_skb+0x15/0x60
- process_backlog+0x9e/0x170
- __napi_poll+0x33/0x180
- net_rx_action+0x126/0x280
- ? ttwu_do_activate+0x72/0xf0
- __do_softirq+0xd9/0x2e7
- ? rcu_report_exp_cpu_mult+0x1b0/0x1b0
- do_softirq+0x7d/0xb0
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x54/0x60
- ip_finish_output2+0x191/0x460
- __ip_finish_output+0xb7/0x180
- ip_finish_output+0x2e/0xc0
- ip_output+0x78/0x100
- ? __ip_finish_output+0x180/0x180
- ip_local_out+0x5e/0x70
- __ip_queue_xmit+0x184/0x440
- ? tcp_syn_options+0x1f9/0x300
- ip_queue_xmit+0x15/0x20
- __tcp_transmit_skb+0x910/0x9c0
- ? __mod_memcg_state+0x44/0xa0
- tcp_connect+0x437/0x4e0
- ? ktime_get_with_offset+0x60/0xf0
- tcp_v4_connect+0x436/0x530
- __inet_stream_connect+0xd4/0x3a0
- ? kprobe_perf_func+0x4f/0x2b0
- ? aa_sk_perm+0x43/0x1c0
- inet_stream_connect+0x3b/0x60
- __sys_connect_file+0x63/0x70
- __sys_connect+0xa6/0xd0
- ? setfl+0x108/0x170
- ? do_fcntl+0xe8/0x5a0
- __x64_sys_connect+0x18/0x20
- do_syscall_64+0x5c/0xc0
- ? __x64_sys_fcntl+0xa9/0xd0
- ? exit_to_user_mode_prepare+0x37/0xb0
- ? syscall_exit_to_user_mode+0x27/0x50
- ? do_syscall_64+0x69/0xc0
- ? __sys_setsockopt+0xea/0x1e0
- ? exit_to_user_mode_prepare+0x37/0xb0
- ? syscall_exit_to_user_mode+0x27/0x50
- ? __x64_sys_setsockopt+0x1f/0x30
- ? do_syscall_64+0x69/0xc0
- ? irqentry_exit+0x1d/0x30
- ? exc_page_fault+0x89/0x170
- entry_SYSCALL_64_after_hwframe+0x61/0xcb
-RIP: 0033:0x7f7b8101c6a7
-Code: 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 2a 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 18 89 54 24 0c 48 89 34 24 89
-RSP: 002b:00007ffffd6b2198 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7b8101c6a7
-RDX: 0000000000000010 RSI: 00007ffffd6b2360 RDI: 0000000000000005
-RBP: 0000561f1370d560 R08: 00002795ad21d1ac R09: 0030312e302e302e
-R10: 00007ffffd73f080 R11: 0000000000000246 R12: 0000561f1370c410
-R13: 0000000000000000 R14: 0000000000000005 R15: 0000000000000000
- </TASK>
+	bus2 {
+		ranges = <...>
 
-Fixes: 7f8a436eaa2c ("openvswitch: Add conntrack action")
-Co-developed-by: Luca Czesla <luca.czesla@mail.schwarz>
-Signed-off-by: Luca Czesla <luca.czesla@mail.schwarz>
-Signed-off-by: Felix Huettner <felix.huettner@mail.schwarz>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
-Link: https://lore.kernel.org/r/ZC0pBXBAgh7c76CA@kernel-bug-kernel-bug
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Carlos Soto <carlos.soto@broadcom.com>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- net/core/dev.c            | 1 +
- net/openvswitch/actions.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+		bus3 {
+			ranges = <...>
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 81f9fd0c5830..2f7bd1fe5851 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -3231,6 +3231,7 @@ static u16 skb_tx_hash(const struct net_device *dev,
- 	}
- 
- 	if (skb_rx_queue_recorded(skb)) {
-+		BUILD_BUG_ON_INVALID(qcount == 0);
- 		hash = skb_get_rx_queue(skb);
- 		if (hash >= qoffset)
- 			hash -= qoffset;
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index 85af0e9e0ac6..9b07e2172c94 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -913,7 +913,7 @@ static void do_output(struct datapath *dp, struct sk_buff *skb, int out_port,
- {
- 	struct vport *vport = ovs_vport_rcu(dp, out_port);
- 
--	if (likely(vport)) {
-+	if (likely(vport && netif_carrier_ok(vport->dev))) {
- 		u16 mru = OVS_CB(skb)->mru;
- 		u32 cutlen = OVS_CB(skb)->cutlen;
- 
--- 
-2.34.1
+			All address here is parent's node (bus3)'s bus address
+			So, 'parent bus address' means the parent node's
+			output bus address.
+		};
+	};
+};
 
+Frank
+
+>
+> > I'm not sure what the best term is for this.  Do you have a
+> > suggestion?
+> >
+>
+> We are just extracting the offset between translated (cpu_phy_addr) and
+> untranslated (reg_addr) addresses of a specific register. Maybe the function
+> should just return the 'untranslated address' and the caller should compute the
+> offset to make it simple?
+>
+> > If "parent bus address" is the wrong term, maybe we need to rename
+> > dw_pcie_parent_bus_offset() itself?
+> >
+>
+> Yes!
+>
+> > Currently we pass in cpu_phys_addr, but this function doesn't need it
+> > except for the debug code added later.  I would really rather have
+> > something like this in the callers:
+> >
+> >   pci->parent_bus_offset = pp->cfg0_base -
+> >       dw_pcie_parent_bus_addr(pci, "config");
+> >
+>
+> I agree. This should become, dw_pcie_get_untranslated_addr().
+>
+> > because then the offset is computed sort of at the same level where
+> > it's used, and a grep for "cfg0_base" would find both the set and the
+> > use and they would be easy to match up.
+> >
+> > > > +	index = of_property_match_string(np, "reg-names", reg_name);
+> > > > +
+> > > > +	if (index < 0) {
+> > > > +		dev_err(dev, "No %s in devicetree \"reg\" property\n", reg_name);
+> > >
+> > > Both of these callers are checking for the existence of the
+> > > 'reg_name' property before calling this API. So this check seems to
+> > > be redundant (for now).
+> >
+> > True, but I don't see a way to enforce the caller checks.  I don't
+> > like the idea of calling of_property_read_reg(np, index, ...) where we
+> > have to look the caller to verify that "index" is valid.
+> >
+>
+> Ok.
+>
+> - Mani
+>
+> --
+> மணிவண்ணன் சதாசிவம்
 
