@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-575192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C8FA6F1A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:18:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DA2A6F1A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF1188D958
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC6D3B7FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B071F0E5A;
-	Tue, 25 Mar 2025 11:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0498253F1C;
+	Tue, 25 Mar 2025 11:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NBgiS/uH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NpEMeVyE"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5C2E337C;
-	Tue, 25 Mar 2025 11:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D09D2E337C;
+	Tue, 25 Mar 2025 11:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742901496; cv=none; b=JfKOEliJ27jGtc+HayQNxw7Yv5EVDnC0YXSVwyfhN8XHTA2AS/+DxdRvtqFVqrZpmXtt2RUXrGxrygAghRBxBQmVvh3KwcHL1LzNHn4CGx6wBHPvFLyOi++LuY1n1/XJMQkXb+TPbSKB50rFeyGWmUPSLUsyPAKLeXkGdK6ymNk=
+	t=1742901507; cv=none; b=EPwNCEDtkjU6L+UjFXYxg56uNAePj5F0gPhcDAdZO+40Lg5l1v207EdGOwYM0v8h5cK1FVhzU5YQSp+Bi8ueatUlwYqSauyGocfzWFMB99sbjf4kaLE52DuM9tk06CFKc1uYKCwZffJ0M5UqXCPGdAgtFC4zUNgWqctgzRePKGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742901496; c=relaxed/simple;
-	bh=YKEx+3kZIuqatXHZs92dkeyJl2HsuW8fMwoN685s2eM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=W/Wd0gT5lJv42ebPoitQAQqk/7QlAFRrWmmihdWgOkDKZu47dhZQb7QoEyf+8D7EXHH4Hl6j2/1LGAtB+jg8hHg0Q7SWk0WKzsMMhWDLSaIx4zRoA+Ip1Pqq4TbH/8aac/Fnucm00I1E0f3uGulD2k3S6x6vAjdBQ64y/4+EJVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NBgiS/uH; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742901495; x=1774437495;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=YKEx+3kZIuqatXHZs92dkeyJl2HsuW8fMwoN685s2eM=;
-  b=NBgiS/uHfWGA1UQXzMRjaVTxN3Cgs7+DWwX8i6OeFKGmpBvsjgIQSp/H
-   O5VCLiQRXmFWv47aG8OVryUxwWFal9EFUp7OG2Ij+FY7Q/UzuJBB/mr0D
-   XTV6EhErUxOENFATrwoihtzXZnWVcbSAQpcL8pRosgPdPaeT/QN/XVdf4
-   E3lyZLDcOBrlsNEoNVImZHp4GMLRkL1LJyrKe8TWLmEnUAXxn0QrxUGsI
-   dkZDxQrnUdOtMon8N3xxgGeZge0uiEU/SJ88KpwsxjykCF73UriMxtUiU
-   48FUIwZeHWv2OlrgKzwmZNQpQEfyLyovWWKXdf+jnFq4wRedi+4gZegz1
-   w==;
-X-CSE-ConnectionGUID: mfGZA3zaTHeEGYztOec0pg==
-X-CSE-MsgGUID: xdSb7O34TDisk3Z6Bfyg2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="61533507"
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="61533507"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 04:18:14 -0700
-X-CSE-ConnectionGUID: ETlaG+zjShyFflCXccd3gQ==
-X-CSE-MsgGUID: GG82ann7Qt2dq55Y88P8Ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="129175108"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 04:18:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 25 Mar 2025 13:18:08 +0200 (EET)
-To: Denis Arefev <arefev@swemel.ru>
-cc: Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH] asus-laptop: Fix an uninitialized variable
-In-Reply-To: <20250325095739.20310-1-arefev@swemel.ru>
-Message-ID: <88f06d15-0f98-2f24-7e68-eefb6434f108@linux.intel.com>
-References: <20250325095739.20310-1-arefev@swemel.ru>
+	s=arc-20240116; t=1742901507; c=relaxed/simple;
+	bh=/A4Re9ZnXk9dFMPy8kLJyTDBCliwhE9DawViBWNrdTY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CBYmcnb348p2MMVTE85NpIOqjxNlKAFDX2iJGbK6DL+IG7tFO1TZArMqQ1vN5OVr9zcBEim22/LHVX+u4fxG1Weq8A88G85X/6eMYVRInZV03QzBqri4pY5kIS8Y7Bs6RTEeWYrO7Y59m0BUOIE0bFNAUHmjZ5wBjEDM5Sf8iGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NpEMeVyE; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=j3jqpzi7fbao5nhxypqetcbjbi.protonmail; t=1742901501; x=1743160701;
+	bh=PRIAuT+urW+Uxb9HvRuGGsdWcowDVCzwb9vcglusjuc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=NpEMeVyE9u+h5Gj12RsbKxkQT+GjekJu1zM6uwwaQxjNnelrHRtav897efjjRl2YV
+	 IuMRX1CgLBIKtopQ317TtoiRTgrlPKT2S/1VIS1u5So6kpyWVWFaaSc/lgzuMiFtV1
+	 UO764HId23CR+0WVRoZVjKlY4ydXzv9XxCbkEs3i5PmCCzrbk8zzSpdLy457LPYd8J
+	 gbLQxKoYPpEI69NA7Pdz6rsWftpNs8osKjAcscSL6/loYj1S2X4UNuznYO2MxeSsBr
+	 90nT8KHJGILTjcrbfKk5+36vezA7wF4fSldi/Zr/rw1I8y9BN3TOE5XBkoZ/moUhsj
+	 XzihJiduIIb3A==
+Date: Tue, 25 Mar 2025 11:18:17 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 3/5] rust: list: use consistent type parameter names
+Message-ID: <D8PB0LN62GOX.3P4K4V96OLVQ9@proton.me>
+In-Reply-To: <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
+References: <20250324-list-no-offset-v1-0-afd2b7fc442a@gmail.com> <20250324-list-no-offset-v1-3-afd2b7fc442a@gmail.com> <67e1d1b3.050a0220.4c4ff.6e89@mx.google.com> <CAJ-ks9moCO83cGkKuONR-2JMN61x18T2UVO98jhspDR=uyaVqw@mail.gmail.com> <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com> <Z-Iq6Okk1j3ImH1u@Mac.home> <CAJ-ks9n66_vVg3ww58VqfXV6+phng8Bhq9C=NNn854gXK0KAHg@mail.gmail.com> <D8PA5CKNMCGA.UODS331S36EG@proton.me> <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 8a508fb47a377576bf6cba327da34cc8bd8a0f3d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Mar 2025, Denis Arefev wrote:
+On Tue Mar 25, 2025 at 11:42 AM CET, Tamir Duberstein wrote:
+> On Tue, Mar 25, 2025 at 6:37=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>> On Tue Mar 25, 2025 at 10:52 AM CET, Tamir Duberstein wrote:
+>> > On Tue, Mar 25, 2025 at 12:02=E2=80=AFAM Boqun Feng <boqun.feng@gmail.=
+com> wrote:
+>> >> On Mon, Mar 24, 2025 at 05:56:57PM -0400, Tamir Duberstein wrote:
+>> >> > On Mon, Mar 24, 2025 at 5:51=E2=80=AFPM Tamir Duberstein <tamird@gm=
+ail.com> wrote:
+>> >> > > On Mon, Mar 24, 2025 at 5:42=E2=80=AFPM Boqun Feng <boqun.feng@gm=
+ail.com> wrote:
+>> >> > > > On Mon, Mar 24, 2025 at 05:33:45PM -0400, Tamir Duberstein wrot=
+e:
+>> >> > > > >              #[inline]
+>> >> > > > > @@ -81,16 +81,16 @@ pub unsafe trait HasSelfPtr<T: ?Sized, co=
+nst ID: u64 =3D 0>
+>> >> > > > >  /// Implements the [`HasListLinks`] and [`HasSelfPtr`] trait=
+s for the given type.
+>> >> > > > >  #[macro_export]
+>> >> > > > >  macro_rules! impl_has_list_links_self_ptr {
+>> >> > > > > -    ($(impl$({$($implarg:tt)*})?
+>> >> > > > > +    ($(impl$({$($generics:tt)*})?
+>> >> > > >
+>> >> > > > While you're at it, can you also change this to be
+>> >> > > >
+>> >> > > >         ($(impl$(<$($generics:tt)*>)?
+>> >> > > >
+>> >> > > > ?
+>> >> > > >
+>> >> > > > I don't know why we chose <> for impl_has_list_links, but {} fo=
+r
+>> >> > > > impl_has_list_links_self_ptr ;-)
+>> >> > >
+>> >> > > This doesn't work in all cases:
+>> >> > >
+>> >> > > error: local ambiguity when calling macro `impl_has_work`: multip=
+le
+>> >> > > parsing options: built-in NTs tt ('generics') or 1 other option.
+>> >> > >    --> ../rust/kernel/workqueue.rs:522:11
+>> >> > >     |
+>> >> > > 522 |     impl<T> HasWork<Self> for ClosureWork<T> { self.work }
+>> >> > >
+>> >> > > The reason that `impl_has_list_links` uses <> and all others use =
+{} is
+>> >> > > that `impl_has_list_links` is the only one that captures the gene=
+ric
+>> >> > > parameter as an `ident`, the rest use `tt`. So we could change
+>> >>
+>> >> Why impl_has_list_links uses generics at `ident` but rest use `tt`? I=
+'m
+>> >> a bit curious.
+>> >
+>> > I think it's because `ident` cannot deal with lifetimes or const
+>> > generics - or at least I was not able to make it work with them.
+>>
+>> If you use `ident`, you can use the normal `<>` as the delimiters of
+>> generics. For `tt`, you have to use `{}` (or `()`/`[]`).
+>
+> Yes I know. But with `ident` you cannot capture lifetimes or const generi=
+cs.
 
-> The value returned by the acpi_evaluate_integer() function is not
-> checked, but the result is not always successful, so an uninitialized
-> 'val' variable may be used in calculations.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: b23910c2194e ("asus-laptop: Pegatron Lucid accelerometer")
-> Cc: stable@vger.kernel.org 
-> Signed-off-by: Denis Arefev <arefev@swemel.ru>
-> ---
->  drivers/platform/x86/asus-laptop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
-> index d460dd194f19..b74b7d0eb6c2 100644
-> --- a/drivers/platform/x86/asus-laptop.c
-> +++ b/drivers/platform/x86/asus-laptop.c
-> @@ -427,7 +427,7 @@ static int asus_pega_lucid_set(struct asus_laptop *asus, int unit, bool enable)
->  static int pega_acc_axis(struct asus_laptop *asus, int curr, char *method)
->  {
->  	int i, delta;
-> -	unsigned long long val;
-> +	unsigned long long val = PEGA_ACC_CLAMP;
->  	for (i = 0; i < PEGA_ACC_RETRIES; i++) {
->  		acpi_evaluate_integer(asus->handle, method, NULL, &val);
+Why is that required for this macro? I think we could use `tt`.
 
-Shouldn't you handle the error from acpi_evaluate_integer() properly 
-instead?
-
--- 
- i.
+---
+Cheers,
+Benno
 
 
