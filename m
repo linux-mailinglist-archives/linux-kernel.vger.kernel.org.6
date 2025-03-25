@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-574908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36108A6EB71
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C2A6EB75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D281892403
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEE7166AD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B4C19F42F;
-	Tue, 25 Mar 2025 08:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5152F1A23A8;
+	Tue, 25 Mar 2025 08:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxOv19OM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EXITNn9B"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2271531E8;
-	Tue, 25 Mar 2025 08:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215C9149E13
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890927; cv=none; b=HMyEqp8G2wpz6h7tw34PTURUfuNqEmyB8yKgXdrFth470fTtJFzpWR3CWZBJNwxSxarfG8KaBO3dXVLeSJPjze94teHfscaW5c0Z3PJvQVGGYa8e0GoUcvWoQ7jF+abeuErv3SXLg8eY5AfpOiVXkzjJk8to2z1Bm8PhBawM9wg=
+	t=1742891079; cv=none; b=QLPE9c/AqKwT1QSQgadusI+DfWjymX3BhOV2v4+rpBC2FPaqvp7uq+DFrS+YQQNlcM98DEZKIuzIYRcmiIfNp0cPDpTwktVkUcU5XXH3hvfkNF+uJnriBdZzo3L9FsP/sxWe/8Mwgh2JimbmShYFzKiba+zVEf/p377RDjTB/Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890927; c=relaxed/simple;
-	bh=9cAY2McCQXS48N57VtIiW94xQLdP98mhy8C3wDAuzFM=;
+	s=arc-20240116; t=1742891079; c=relaxed/simple;
+	bh=FmU8seJWlLLdkKs55Qcsnj5sXgB6LeuT70pLzIMMEOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KY04RAsZLNg6nwUNikU6icXQ8b9WdKkcHsrOrC/JxokZaTNMZDu5QIIXReQ/CNn9JToDcut9lwSc3N1i/zhCGpXhhga5odS3otfl0zYO4SWF3IMBEmMqt5xhINhrm2BQ5KhUViAw5UPxrlciM7KZcYX9I6xmSOvIRxi+MDDjcOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxOv19OM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 394EEC4CEE4;
-	Tue, 25 Mar 2025 08:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890925;
-	bh=9cAY2McCQXS48N57VtIiW94xQLdP98mhy8C3wDAuzFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pxOv19OMcYl+EhDQ6JmMwr+BB8QSESmhtQo3KzTnvYw1Ru28mw0dDmiR6HN/TF4yx
-	 XFo3AmJHVehi8pF9oP6/82cUtgvo0jO4ihb2N/E/WvaJwJROzXLpinttjjqjg522Jq
-	 wBGJUr5MlVBR6JbbvN/E61TBhnILM5fDVUtPPW9drfyjytnu6ya79SOVbtoSkX9wOw
-	 JZv2+9GsQPYvdbcbKuhGyxPChJCsacoRgz4iOO4Lf7FujbaLdeqvdohNCTA/VQ7bLk
-	 6LIxLKWqEWlRhSraoODwPNLUsJ7+b3L5CO2jqKJWB4l89kQXxH8FNGT0ASCOWf3his
-	 FwreK2GWIHRBw==
-Date: Tue, 25 Mar 2025 09:22:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Luo Jie <quic_luoj@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kkumarcs@quicinc.com, 
-	quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, 
-	quic_leiwei@quicinc.com
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
- IPQ5424 SoC
-Message-ID: <20250325-victorious-flamingo-of-destiny-c778a3@krzk-bin>
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
- <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
- <55eada15-222e-4b97-a519-95b5e3aa7c23@oss.qualcomm.com>
- <ba6cbf94-3e78-4c77-8c4f-908d3d90a1b1@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nn6Y5MOP7jrknJ6adpuCpm9uDHZ0S0xE8Is/+yi+AZSWxwXeaJMHe3XSYKH1LOi4UOWsS0U1ebc/H+3Rl1cv6SVnfr0RFa55Yu1Y5OYbRxjWs+xNj34FOvAs8qerhB1pNbyGX45A1stYumZ9OiDCSQeEsZkITtnDoliUrM18V+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EXITNn9B; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Mar 2025 09:24:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742891066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XgwNxLEz0X/ci8884eXVKynUzh11eY2mVZg19zT2ddo=;
+	b=EXITNn9BmJE7U2IfWJCGLchdNu8Vk4XnKw6sBz4OerhidYPGM4SuCRglSkP1GOQSAo+xS9
+	fezgkas5FKRlTHQxPTaCrCmSpiTWoO9XFaan2jKsb6GQ3pU83pVNJqT7NpIzgWGNzwW/5Y
+	uQWyZG+7bXhSA0MDQat+hfldN2cb084=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 4/8] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+Message-ID: <p7dar3qvajkaq6y4mxahxh2g5vkxzavjjchkwvh32hhkptona2@mzgo4vf4ni7e>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-4-14d7a281342d@linux.dev>
+ <d14b8c18-55b9-472c-897d-3a481892b080@xs4all.nl>
+ <4w7s6g32rol2ptkchczhyhgvytyeq6baqvz4h7ikurzg2tygnr@a3q7cgeagzk4>
+ <0fd2cbfa-8804-456f-891d-ecd06e828bc6@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ba6cbf94-3e78-4c77-8c4f-908d3d90a1b1@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0fd2cbfa-8804-456f-891d-ecd06e828bc6@xs4all.nl>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 25, 2025 at 12:59:49AM +0100, Konrad Dybcio wrote:
-> On 3/25/25 12:57 AM, Konrad Dybcio wrote:
-> > On 3/21/25 1:49 PM, Luo Jie wrote:
-> >> The CMN PLL block in the IPQ5424 SoC takes 48 MHZ as the reference
-> >> input clock. The output clocks are the same as IPQ9574 SoC, except
-> >> for the clock rate of output clocks to PPE and NSS.
-> >>
-> >> Also, add macros for clock rates that are applicable specifically
-> >> only for IPQ5424.
-> >>
-> >> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> >> ---
-> >>  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml        |  1 +
-> >>  include/dt-bindings/clock/qcom,ipq-cmn-pll.h                   | 10 +++++++++-
-> >>  2 files changed, 10 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> >> index f869b3739be8..bbaf896ae908 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> >> @@ -25,6 +25,7 @@ properties:
-> >>    compatible:
-> >>      enum:
-> >>        - qcom,ipq9574-cmn-pll
-> >> +      - qcom,ipq5424-cmn-pll
-> >>  
-> >>    reg:
-> >>      maxItems: 1
-> >> diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> >> index 936e92b3b62c..e30d57001c38 100644
-> >> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> >> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> >> @@ -1,6 +1,6 @@
-> >>  /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> >>  /*
-> >> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>   */
-> >>  
-> >>  #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
-> >> @@ -19,4 +19,12 @@
-> >>  #define ETH1_50MHZ_CLK			7
-> >>  #define ETH2_50MHZ_CLK			8
-> >>  #define ETH_25MHZ_CLK			9
-> >> +
-> >> +/*
-> >> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
-> >> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
-> >> + */
-> >> +#define NSS_300MHZ_CLK			4
-> >> +#define PPE_375MHZ_CLK			5
+Hi Hans, Hi Sakari,
+
+On Fri, Mar 14, 2025 at 11:36:12AM +0100, Hans Verkuil wrote:
+> On 14/03/2025 11:28, Richard Leitner wrote:
+> > Hi Hans,
 > > 
-> > Not a huge fan of this, such differences are only relevant to the driver
-> > part in my view - bindings only let a consumer reference a specific piece
-> > of hardware
+> > thanks for your quick feedback!
+> > 
+> > On Fri, Mar 14, 2025 at 10:41:04AM +0100, Hans Verkuil wrote:
+> >> On 14/03/2025 09:49, Richard Leitner wrote:
+> >>> Add the new strobe_duration control to v4l uAPI documentation.
+> >>>
+> >>> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> >>> ---
+> >>>  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+> >>>  1 file changed, 5 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> >>> index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> >>> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> >>> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> >>> @@ -186,3 +186,8 @@ Flash Control IDs
+> >>>      charged before strobing. LED flashes often require a cooldown period
+> >>>      after strobe during which another strobe will not be possible. This
+> >>>      is a read-only control.
+> >>> +
+> >>> +``V4L2_CID_FLASH_DURATION (integer)``
+> >>> +    Duration the flash should be on when the flash LED is in flash mode
+> >>> +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (µs)
+> >>> +    if possible.
+> >>>
+> >>
+> >> If this control is present, does that mean that the flash duration always have
+> >> to be set manually? Or can there be an 'Auto' mode as well? And if so, how is
+> >> that set?
+> > 
+> > To be honest I haven't thought about automatic flash duration. Is this
+> > something which is required?
 > 
-> Oh I the bindings are stepping into the frequency department already,
-> hmm.. Then I suppose it's fine if the dt-bindings maintainers don't have any
-> concerns
+> No idea, it was just something I was wondering about. Sakari probably knows a lot
+> more about this.
 
+Sakari, should I add something like an auto/manual flash duration
+control to this series?
 
-Nooooo, it was said these are output clocks, not rates. If these are
-rates, then NAK.
+Personally I think as long as we have no user of such an "auto" control
+it's not really necessary. Or are there any drivers doing "auto"
+flash/strobe duration already?
 
-Best regards,
-Krzysztof
+Thanks!
 
+regards;rl
+
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > 
+> > At least for the ov9282 sensor (which I've implemented this control for
+> > in this series) there is no "auto" mode AFAIK.
+> > 
+> > If it's required: What would be the best solution?
+> > Extending V4L2_CID_FLASH_LED_MODE with a new menu option? E.g.
+> > V4L2_FLASH_LED_MODE_FLASH_{MANUAL,AUTO}?
+> > 
+> >>
+> >> Regards,
+> >>
+> >> 	Hans
+> > 
+> > Thanks!
+> > Richard
+> 
 
