@@ -1,206 +1,167 @@
-Return-Path: <linux-kernel+bounces-574683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B82A6E875
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:00:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF3BA6E873
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2B01895CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF0F17197E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EEC18CC08;
-	Tue, 25 Mar 2025 03:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792EE18DB0E;
+	Tue, 25 Mar 2025 03:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BrjDdUFQ"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45A610B;
-	Tue, 25 Mar 2025 03:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkxmB9m5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62D929408;
+	Tue, 25 Mar 2025 03:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742871626; cv=none; b=lYH+9RbT+4T6uA4QUV5lydjbminUGzKHs0lUvLksQSgwRj+EC+P5hDiwqlzXpqD/GVMweQRCqNzVnloENA02X4dIs5K95zIwj9DqpAIWIZHI/8DLZcla/RcmZ4sxat9ZSGOVFrvlijYIumqIBI7SwT6VTrm4lw2vam+cGVTL5qE=
+	t=1742871612; cv=none; b=a34ov0Thwede/CuxNqyzH89JT3ksfsIlWPleCne2F2HtvxuYGlqfZtSfF5Pn8YIaO+idnuocl1s7ngA/e7kU2KGPfXhvPYXlz89Mp7LbZ1ej6JHGKcm/7VEattD+nCaNOGIqpfU1tK/ORjRELEF1WvvAvvCvBEKP4/liYCAaWMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742871626; c=relaxed/simple;
-	bh=uUulRKjZ00n5Mt31D5KLgP81ALiFmubB5Y5oq+az+ww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlF9KfqWFQyznQdI3mu6Mqg++k39i1KS3KErSrk/C3pFoUfYIV2TaFlzQeRuH7Bg51MTljj7PqS+UbcV7XAYJM6dG8DxLtIuAMlCoOR5CohTZ1smEi0+pcr2KjN9GqGSGNycNGSqZNH1WnAC7VlxlkWqInUzDuK6HFLXD1AynCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BrjDdUFQ; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=0eer3EgLHRT+qs+bXoeJVJZ6rL+V0jGlXoHAUa4zRQI=;
-	b=BrjDdUFQ9dI6XU/JQ+YSri9SwXf+r3gw2/TeqZfJFZlcTAzqpsHTDSuz2koAAH
-	MvUF8vLjk8c3SPV4vXFWBTjXGuIi3+HRbSldOJNgcSr4TbwTwqCZR1iNezDKCp9K
-	B5jjS1r4rWZp0TnmSa0TFgU++obmj0mOIBqaRsYA63Wsc=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD33w4cHOJnKK3sBg--.25762S2;
-	Tue, 25 Mar 2025 10:59:41 +0800 (CST)
-Message-ID: <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com>
-Date: Tue, 25 Mar 2025 10:59:40 +0800
+	s=arc-20240116; t=1742871612; c=relaxed/simple;
+	bh=kdPMBibLH/yez18tp3tlaahIu5VsHTU259fGn/4jyQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oJVlngQVp9TtJUkFsA79Om4H203Qgd9g0jN2ieQG9Pjjzo0PHcIov0xvovBYhpRhEsC9QBY/iswT01xVl38ThSCL53v5vEGjqfkiMAY0GqPtJVrXdAYhD0Ms7iQBMxCMHwPWfjvr4zbBgUPQHL1qtDJrwJ+EyrHS4wHr5/VbPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkxmB9m5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EADC4CEDD;
+	Tue, 25 Mar 2025 03:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742871612;
+	bh=kdPMBibLH/yez18tp3tlaahIu5VsHTU259fGn/4jyQo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DkxmB9m513BCDmqfq6M8Mm5MX+1h0K8ISn8PTtOoIPerDR7um/wMv77YtmWfmz2nZ
+	 fjdYCty2HfSs7IQhWAE2XeRbRDhIfywHUOhIqQI25Gm8k3agUI41LnWtZ+k/+LtAm3
+	 OKhs4vvF938iEX8bNDOFs0TcFc9RxDiEmSKBuX+wz9zMbvM0dCbp0Gb4j3Q/qV9X5o
+	 qfZKM/HH5IA3HwuBa3Y+r6cYuIqGiYxFYnbpdR4Gd4/Q6w7tLIBZlCW30g0EL3ZgES
+	 +vLaPw0vMR8sjRiCc8CdjtdIOVMG5CDsrySX0WMgS6/XmHU2tTll/R8gnH+0Sxgops
+	 UqTnqvH8kX6Dw==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5eb5ecf3217so9032138a12.3;
+        Mon, 24 Mar 2025 20:00:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUy9sZMEQ55VYyBZLxDQv/KqTS7Xpsit4B5cwOUJE2HxpTO/f+9u9PX8xc/KGgCekaMl/Eq/1IoC5Hs5UqL@vger.kernel.org, AJvYcCVwT6Mdp758LfbQjmJlTkg4M3JE8D1i7u16qWoXCZjm9NUU8/NhG8zhy2dbcv9/gbbY4vvvM86HWaQC@vger.kernel.org, AJvYcCXSALVGQOZvw4MiHI2vTqN9sufvDnYMmiqer7BMYV4zFuHOAKSk36GxACzoEv+DPoKLl+XcfqdYE4wcux4=@vger.kernel.org, AJvYcCXldsxGbKjjJ8FOPNg0uDm7vD06am/c5AzWDKm09PMDuEruiqkrPZLi3qFRG57fdEKvXhzYmgnHtD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV91zKGomy1X/ttxjO9C3Ct85fyf2oL4j2DaFDLYZdy0NY6QVw
+	tdA8lUEbVUXHW9Ubk6pomJwOGK8K9yPuagIQbHyXZT3/idAE0mu8yiPmrbJQ9uKIoVxAMwRo9uI
+	IA3lCy+AtBhz2YzH2SOAfbq+PAg==
+X-Google-Smtp-Source: AGHT+IE3QSDPASR1s+nvT5rVlKy95tLrHztKiVeza2RPpLc3nhGJkSRj8CDw6TvAGMN64kzNpUhRLGwyYJxd3/EHS/k=
+X-Received: by 2002:a17:907:2d92:b0:ac2:7cf9:71a0 with SMTP id
+ a640c23a62f3a-ac3f251fba6mr1525711466b.48.1742871610756; Mon, 24 Mar 2025
+ 20:00:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
- finding the capabilities
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
- thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250323164852.430546-1-18255117159@163.com>
- <20250323164852.430546-4-18255117159@163.com>
- <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com>
- <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com>
- <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD33w4cHOJnKK3sBg--.25762S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCF4UKF1xAF15Xw1Dtw4Utwb_yoWrXFW7pF
-	W5KF1ayr18Jr47Wrn2va1YqF1Syr9IyFy5Aas5Ga47Zrn0g3ZIgFWqkFW3CFyfCFs7J3WU
-	X3yDtrZ3Crn8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uq0PhUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDw4bo2fiFsHsUwAAsU
+References: <20250323071424.48779-1-clamor95@gmail.com> <20250323071424.48779-3-clamor95@gmail.com>
+ <20250324165257.GA458528-robh@kernel.org> <CAPVz0n3=-QL1_NGP31WX_4LQBt5-T47BbU_yn6td1zk9C2T=iA@mail.gmail.com>
+In-Reply-To: <CAPVz0n3=-QL1_NGP31WX_4LQBt5-T47BbU_yn6td1zk9C2T=iA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Mar 2025 21:59:58 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLCW+zE2LfsVybuxn_xu1JwtLSXSbMNj-YYfVgtYhZcaQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpysCtkCUgcjLane3iayaPg4HSVsmHDOlKr6Lj27dEl2msQmnjpD8eCuPc
+Message-ID: <CAL_JsqLCW+zE2LfsVybuxn_xu1JwtLSXSbMNj-YYfVgtYhZcaQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: mfd: Document Infineon/Cypress
+ CG7153AM MCU
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 24, 2025 at 12:06=E2=80=AFPM Svyatoslav Ryhel <clamor95@gmail.c=
+om> wrote:
+>
+> =D0=BF=D0=BD, 24 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 18:52 Ro=
+b Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Sun, Mar 23, 2025 at 09:14:22AM +0200, Svyatoslav Ryhel wrote:
+> > > Add binding for Cypress CG7153AM embedded controller. Pegatron implem=
+ented
+> > > a custom configuration of this MCU in their Chagall tablets, utilizin=
+g it
+> > > for battery monitoring.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../bindings/mfd/cypress,cg7153am.yaml        | 55 +++++++++++++++++=
+++
+> > >  1 file changed, 55 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/cypress,cg7=
+153am.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/mfd/cypress,cg7153am.y=
+aml b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+> > > new file mode 100644
+> > > index 000000000000..f8469b5e3816
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+> > > @@ -0,0 +1,55 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/mfd/cypress,cg7153am.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Infineon/Cypress Semicon CG7153AM Microcontroller
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +description:
+> > > +  The CG7153AM, an 8-bit programmable microcontroller from Infineon/=
+Cypress
+> > > +  Semiconductor, communicates over I2C and is implemented in devices=
+ like the
+> > > +  Pegatron Chagall tablet for fuel gauge and battery control functio=
+ns.
+> > > +
+> > > +$ref: /schemas/power/supply/power-supply.yaml
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - pegatron,chagall-ec # Pegatron Chagall tablet device
+> > > +          - const: cypress,cg7153am
+> > > +      - items:
+> > > +          const: cypress,cg7153am
+> >
+> > Is this just some general purpose uC which could be used for anything
+> > and the interface exposed is Pegatron's invention. If so, then I'd drop
+> > the cypress,cg7153am compatible. What use would it be to software?
+> >
+>
+> Yeah, Cypress made an MPU, Pegatron used it as a base to make a fuel gaug=
+e.
+>
+> You propose smth like this?
+>
+>       - items:
+>           - enum:
+>               - pegatron,chagall-ec # Pegatron Chagall tablet device
+>           - const: cypress,cg7153am
+>
+> Without oneOf and second item or remove cypress,cg7153am entirely and
+> submit as pegatron,chagall-ec.yaml? Just to be clear.
+>
+> I am fine with removing oneOf and items: const: cypress,cg7153am, but
+> I would like to preserve cypress,cg7153am as second compatible since
+> this is an actual MCU model.
 
+I would just drop the cypress compatible entirely. It needs to be
+useful to a client (OS) in some way. If you said something like the
+firmware downloading is defined by Cypress or some other feature, then
+it would make sense. Otherwise, how this interface is implemented is
+irrelevant. I can't think of any other embedded controller where we
+have a compatible for the underlying MCU.
 
-On 2025/3/24 23:02, Ilpo Järvinen wrote:
->>>>    +static u32 cdns_pcie_read_cfg(void *priv, int where, int size)
->>>> +{
->>>> +	struct cdns_pcie *pcie = priv;
->>>> +	u32 val;
->>>> +
->>>> +	if (size == 4)
->>>> +		val = readl(pcie->reg_base + where);
->>>
->>> Should this use cdns_pcie_readl() ?
->>
->> pci_host_bridge_find_*capability required to read two or four bytes.
->>
->> reg = read_cfg(priv, cap_ptr, 2);
->> or
->> header = read_cfg(priv, pos, 4);
->>
->> Here I mainly want to write it the same way as size == 2 and size == 1.
->> Or size == 4 should I write it as cdns_pcie_readl() ?
-> 
-> As is, it seems two functions are added for the same thing for the case
-> with size == 4 with different names which feels duplication. One could add
-> cdns_pcie_readw() and cdns_pcie_readb() too but perhaps cdns_pcie_readl()
-> should just call this new function instead?
-
-Hi Ilpo,
-
-Redefine a function with reference to DWC?
-
-u32 dw_pcie_read_dbi(struct dw_pcie *pci, u32 reg, size_t size)
-   dw_pcie_read(pci->dbi_base + reg, size, &val);
-     dw_pcie_read
-
-int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-{
-	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-		*val = 0;
-		return PCIBIOS_BAD_REGISTER_NUMBER;
-	}
-
-	if (size == 4) {
-		*val = readl(addr);
-	} else if (size == 2) {
-		*val = readw(addr);
-	} else if (size == 1) {
-		*val = readb(addr);
-	} else {
-		*val = 0;
-		return PCIBIOS_BAD_REGISTER_NUMBER;
-	}
-
-	return PCIBIOS_SUCCESSFUL;
-}
-EXPORT_SYMBOL_GPL(dw_pcie_read);
-
-> 
->>>> +	else if (size == 2)
->>>> +		val = readw(pcie->reg_base + where);
->>>> +	else if (size == 1)
->>>> +		val = readb(pcie->reg_base + where);
->>>> +
->>>> +	return val;
->>>> +}
->>>> +
->>>> +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
->>>> +{
->>>> +	return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
->>>> +}
->>>> +
->>>> +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
->>>> +{
->>>> +	return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg,
->>>> cap);
->>>> +}
->>>
->>> I'm really wondering why the read config function is provided directly as
->>> an argument. Shouldn't struct pci_host_bridge have some ops that can read
->>> config so wouldn't it make much more sense to pass it and use the func
->>> from there? There seems to ops in pci_host_bridge that has read(), does
->>> that work? If not, why?
->>>
->>
->> No effect.
-> 
-> I'm not sure what you meant?
-> 
->> Because we need to get the offset of the capability before PCIe
->> enumerates the device.
-> 
-> Is this to say it is needed before the struct pci_host_bridge is created?
-> 
->> I originally added a separate find capability related
->> function for CDNS in the following patch. It's also copied directly from DWC.
->> Mani felt there was too much duplicate code and also suggested passing a
->> callback function that could manipulate the registers of the root port of DWC
->> or CDNS.
-> 
-> I very much like the direction this patchset is moving (moving shared
-> part of controllers code to core), I just feel this doesn't go far enough
-> when it's passing function pointer to the read function.
-> 
-> I admit I've never written a controller driver so perhaps there's
-> something detail I lack knowledge of but I'd want to understand why
-> struct pci_ops (which exists both in pci_host_bridge and pci_bus) cannot
-> be used?
-> 
-
-
-I don't know if the following code can make it clear to you.
-
-static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
-	.host_init	= qcom_pcie_host_init,
-                   pcie->cfg->ops->post_init(pcie);
-                     qcom_pcie_post_init_2_3_3
-                       dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-};
-
-int dw_pcie_host_init(struct dw_pcie_rp *pp)
-   bridge = devm_pci_alloc_host_bridge(dev, 0);
-   if (pp->ops->host_init)
-     pp->ops = &qcom_pcie_dw_ops;  // qcom here needs to find capability
-
-   pci_host_probe(bridge); // pcie enumerate flow
-     pci_scan_root_bus_bridge(bridge);
-       pci_register_host_bridge(bridge);
-         bus->ops = bridge->ops;   // Only pci bus ops can be used
-
-
-Best regards,
-Hans
-
+Rob
 
