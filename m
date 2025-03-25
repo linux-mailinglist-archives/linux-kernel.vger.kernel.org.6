@@ -1,131 +1,78 @@
-Return-Path: <linux-kernel+bounces-576261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47723A70CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:28:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBCDA70CD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257247A62AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9858E189B73C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3BD26A091;
-	Tue, 25 Mar 2025 22:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1126A084;
+	Tue, 25 Mar 2025 22:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ys7MDF98"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2197A269D04;
-	Tue, 25 Mar 2025 22:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBtRqyW4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891D813633F;
+	Tue, 25 Mar 2025 22:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742941667; cv=none; b=qIup1Qhy2+9Rzyy2okgpboEiMNYlaC3+uIsn5SeClO2I123bX5jk/BGgz/hJEm2s7gjX2K0CN6J4FWDJIOe6U/i2q1EQ3yhqPnmIp7vduN3reMfj0a+aUBfpaxPhi9vC7IChlpSYsnl/T9JvaN1QNxqU/Kd9d+yv1olwMn9X6o0=
+	t=1742941636; cv=none; b=nr8eijJZ/OLR0e+g+ABBTdFe/103sHdASdtp3rJAL2KmgZxHHC+PiveanD7l32g/c0Ve4SRbEf9XDWLUKQ9VQm/ZHAeVy/Mo/RLxA81YkRHcUUYB6k+TZXi7Z65/MAWzyP2Wy4lAHrZ8Jy5JHncv66sxUg7B4PlrPb9i7ktu0P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742941667; c=relaxed/simple;
-	bh=I6Bh2Pj6j0LoG+gyB+9U4Am8CJTmsjj3+N2uNJx+TkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6gznCpay4J1C0P44S+BOYY2BU2EKpR54ZzSPcSZbJsZnuwQMa0AGoZmIODpJByV6xkHBculQ41HAvughlzuqYhKc9ysTq/O+GgEkBd8csnFrIHpnN6WLTJIuia8SpG6wbAoi9jbzDmphHD8gzMlEgH9UWus5gFIHaalCYGQVoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ys7MDF98; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.173] (unknown [131.107.8.109])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3AD04204E596;
-	Tue, 25 Mar 2025 15:27:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AD04204E596
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742941665;
-	bh=yu+zl6twDuJmGCQvb+BJhKb1ZJUDVREmR4BMuDWngzo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ys7MDF98d7F6l7lO9UCnXF/KFQKz7cXYNKkmxX7+w/ntWkDq23pjCzvFEabp0ldlI
-	 yZr6ADwe2o1JSR5oVDNsw3uMxSyxVLVT+h+iKf2UIUheJgaUP+FqcD3CVAFghPZ4WW
-	 GBj5l4/HREsMBvqHdkzChu8fcboRIvH/w57jXdeU=
-Message-ID: <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
-Date: Tue, 25 Mar 2025 15:27:44 -0700
+	s=arc-20240116; t=1742941636; c=relaxed/simple;
+	bh=X6ABw96X6bt9yVBOdRc0n9HFdKPFnmTXoqlyi/sJYs4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=feKBmVL5RfnEWQzM03vXbZKuHqD6OTWvimfLb1qQAMnfSBvS4cbFJUjw88Hm/bp6aAAZAUrzvcXZ0xjev6ubKIzcyE5AIgDS9f6QDP04DfxRSnx2XNRzSgLZ2X0gFqk4hUBuRyvygCAjwveEhRuFO4R53WWdRQunmgT+NeFrfhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBtRqyW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D2D4C4CEE4;
+	Tue, 25 Mar 2025 22:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742941636;
+	bh=X6ABw96X6bt9yVBOdRc0n9HFdKPFnmTXoqlyi/sJYs4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=kBtRqyW4JKru+IFTFSL67BY6WzA9fFkvOqr1qjWC92A0SfUWh1r0p1WBMCkPU4hPF
+	 9qBL/vmelOlyR++GWNysJjVBxDP/APsHE+AMBihshp0FqjmT4qBJzTW3mW7fHazjh9
+	 obX0oCfmVQgkHiX8SuM1nQpWfiCs63PkQxw95OxG+Z0IOYASGBwvlP46WfvKHJgtf6
+	 WTq8t4EPwszYBXFOWPxiRUwou+veD4up5y/F4S9thL41th03jS4dzcsaMxTJlqXRRu
+	 xRcnsP60yc0nktIMXmf7cqZvy7nws7yQhfT9K62I31S0M0H3MFX0I0I9NdnwPiiCpJ
+	 ej2TOWH/Vtskw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB168380DBFC;
+	Tue, 25 Mar 2025 22:27:53 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI updates for v6.15-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0h2BgjPbZXe7yeXo-Y9MnvX+bXT5QLEq6KKLJc5N6QR2Q@mail.gmail.com>
+References: <CAJZ5v0h2BgjPbZXe7yeXo-Y9MnvX+bXT5QLEq6KKLJc5N6QR2Q@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0h2BgjPbZXe7yeXo-Y9MnvX+bXT5QLEq6KKLJc5N6QR2Q@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.15-rc1
+X-PR-Tracked-Commit-Id: 8b30d2a3962ae07e67aee90d6698a6a68e771c6c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 21e0ff5b10ec1b61fda435d42db4ba80d0cdfded
+Message-Id: <174294167244.756596.6230189804241957724.pr-tracker-bot@kernel.org>
+Date: Tue, 25 Mar 2025 22:27:52 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
- execute
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-7-chenste@linux.microsoft.com>
- <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
- <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
- <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 3/24/2025 4:00 AM, Baoquan He wrote:
-> On 03/21/25 at 09:23am, steven chen wrote:
->> On 3/19/2025 7:06 PM, Baoquan He wrote:
->>> On 03/17/25 at 06:04pm, steven chen wrote:
->>> ...snip...
->>>> ---
->>>>    kernel/kexec_file.c                | 10 ++++++
->>>>    security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
->>>>    2 files changed, 40 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
->>>> index 606132253c79..ab449b43aaee 100644
->>>> --- a/kernel/kexec_file.c
->>>> +++ b/kernel/kexec_file.c
->>>> @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
->>>>    }
->>>>    #endif
->>>> +static void kimage_file_post_load(struct kimage *image)
->>>> +{
->>>> +#ifdef CONFIG_IMA_KEXEC
->>>> +	ima_kexec_post_load(image);
->>>> +#endif
->>>> +}
->>>> +
->>>>    /*
->>>>     * In file mode list of segments is prepared by kernel. Copy relevant
->>>>     * data from user space, do error checking, prepare segment list
->>>> @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
->>>>    	kimage_terminate(image);
->>>> +	if (!(flags & KEXEC_FILE_ON_CRASH))
->>>> +		kimage_file_post_load(image);
->>> machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
->>> we should use it to do things post load, but not introducing another
->>> kimage_file_post_load().
->> Hi Baoquan,
->>
->> Could you give me more detail about this?
-> I mean machine_kexec_post_load() is the place where post load operations
-> are done, including kexec_load and kexec_file_load. There's no need to
-> specifically introduce a kimage_file_post_load() to do post load
-> operaton for kexec_file_load.
+The pull request you sent on Mon, 24 Mar 2025 17:29:56 +0100:
 
-Hi Baoquan,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.15-rc1
 
-Updating the machine_kexec_post_load() API to carry flags would indeed 
-require changes to multiple files. This approach involves the condition 
-check if (!(flags & KEXEC_FILE_ON_CRASH)) and ensuring that the flags 
-are properly passed and handled across the relevant file
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/21e0ff5b10ec1b61fda435d42db4ba80d0cdfded
 
-if just adding a API kimage_file_post_load() here, it is much easy and 
-clean, right?
+Thank you!
 
-How do you think?
-
-Thanks,
-
-Steven
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
