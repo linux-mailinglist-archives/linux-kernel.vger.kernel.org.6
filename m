@@ -1,175 +1,185 @@
-Return-Path: <linux-kernel+bounces-575171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D062A6EED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:08:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C800A6EF2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9851117059A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420E73B84AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0B62566F5;
-	Tue, 25 Mar 2025 11:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7EA2561B7;
+	Tue, 25 Mar 2025 11:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QmByxQk8"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jr9nuvAP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7381255E51;
-	Tue, 25 Mar 2025 11:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C62255254;
+	Tue, 25 Mar 2025 11:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900836; cv=none; b=Fucq6nK/vPcWBsFvkkLtUqzlH4e5SMQuNYDXqQlWByXbYdO4XsDEHIq9OeuXqNLC/PiIVnSqDCGE6AqnAViVXXDwEL4k4YJZ/rM70pyYbSIgxGUQ5Pr5jUxp1vq/gb+KdaqLsrMYkmaV7Y9e52BcHoW0dhwOY/2gg2xK30ZeFlQ=
+	t=1742900862; cv=none; b=uzL5LGjVrjzNsi6Uzc/NnOo5xy2pB8aeb7gQ1KMFIhCZp4O5MS9MyQCHAFbKGAJV8PEhJ2g8MtpSsmlXimulHAqOonpqgZXBJVO3t9sTtEWcrpbQCiodZ5Dp9kz8ILTE5hILBNRaCdI2ssPBlo+K5TUjGnKGDsA9gjzxPosTtoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900836; c=relaxed/simple;
-	bh=tQdqC3X/w6Ew7CJsG7Mg8Rjon894mVM5eCrZJ+b+ETk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TYcSOa08R3CJQpGDipafCFCdHNdZVY3eEGuvfL2dc+af6r8ITGvSuB+CwOzaLYP/79YrsGonuMn+FDJwEV7557VvYkqV6judtKQ0duclniy+X9aKJumU/YVkwqZFuuKQhLmgUeoySlmcJ7WRvdt4ii/jYOYei84oxgEt0I4TvhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QmByxQk8; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742900833;
-	bh=tQdqC3X/w6Ew7CJsG7Mg8Rjon894mVM5eCrZJ+b+ETk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QmByxQk8kS9IT0dTWY5RsURyRDWudypZFoLsYt8y4lxb09ejm44kEWdATNUdb27x7
-	 rGaZCQje0IBK2monEAqbMgpmVpFkZW3Ip6VUnE2aQUiLud/KHH9TPv2fP4s4WHOQfQ
-	 cRDng2Spse7Xm0uwigQPOuIfxtLvrg8curOxeY+ETMZEJb5ahA9jH4kuBrugSeAEMR
-	 N94MoFIlyfzGmmbOhu0BXIql/+6SBuoGbzu+W0see4aIuQOWOJKL7PIUQ4DmKaq6k+
-	 qliaRRU340r0Dolvh+/1m8uTLLXUJQZG/096I8+q4V7JwYx0jWp5KWTRe5FMdeQeEU
-	 PczIurXzbt+7w==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8F25C17E0FD1;
-	Tue, 25 Mar 2025 12:07:12 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: chaotian.jing@mediatek.com
-Cc: ulf.hansson@linaro.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com,
-	axe.yang@mediatek.com
-Subject: [PATCH 4/4] mmc: mtk-sd: Aggregate R/W for top_base iospace case where possible
-Date: Tue, 25 Mar 2025 12:07:01 +0100
-Message-ID: <20250325110701.52623-5-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250325110701.52623-1-angelogioacchino.delregno@collabora.com>
-References: <20250325110701.52623-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1742900862; c=relaxed/simple;
+	bh=0JXS3Wv9lV08J8QoyEVdAowz45WGnVAbvunuzVZnbMg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lQ7x4Gds/BJZHQe/NoZ740BwNTO1Xci8J0jlcs2BLX+CJE851elIEQliuMsa/qnALr0agTxH6uESiSVeEfj7OyPxGHnYDhLMSyYxPSuMa7kc4iskD6190KI5SZsP+k67XhIzUSES07+74hsGHawiRpMRvGzMjOtYg3Pqb77v3/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jr9nuvAP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0JXS3Wv9lV08J8QoyEVdAowz45WGnVAbvunuzVZnbMg=; b=jr9nuvAP202f+4Xx4mIF0M60dz
+	BTf7lENXJf/2Nk23r8mOhrHORnWkWFIla/Hj/3pTcUQCrb06Xu0eXQ3HRZCAIyKuRDSNiS55J4gU6
+	oskXcvomamm9Huiq0DDiBKJkKb529a5QjluQZyIKLJwZga/aYjGE4f0ZELw0k1gGNvEA39CaAQrWa
+	AkJnO3abrkvzLZgezN9y5amqarDHaayFCQDh2vkr3s9GFiap9leAUSTw4WNzcEajon8mhGvmMlIeT
+	Fip0HgysA8odnaRBl4E7vyB9VOzWcBsBzahA1Snvd62uaW2dZEeVCjvt/8vsAmmbRAHeMZp+9Y/tK
+	SgF/+zdg==;
+Received: from [15.248.2.27] (helo=u09cd745991455d.ant.amazon.com)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tx287-00000005PAq-43b8;
+	Tue, 25 Mar 2025 11:07:36 +0000
+Message-ID: <4eda127551d240b9e19c1eced16ad6f6ed5c2f80.camel@infradead.org>
+Subject: Re: pvclock time drifting backward
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>, Ming Lin <minggr@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 25 Mar 2025 11:07:34 +0000
+In-Reply-To: <Z-HiqG_uk0-f6Ry1@google.com>
+References: <facda6e2-3655-4f2c-9013-ebb18d0e6972@gmail.com>
+	 <Z-HiqG_uk0-f6Ry1@google.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-OonEOyOQ/JgWT9ySZ/i1"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-In case the controller uses the top_base iospace, most register
-read/writes can be changed from multiple RWs to a single read
-and a single write.
 
-Where possible, and where it makes sense, aggregate the multiple
-reads and writes to just one.
+--=-OonEOyOQ/JgWT9ySZ/i1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/mmc/host/mtk-sd.c | 52 +++++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 24 deletions(-)
+On Mon, 2025-03-24 at 15:54 -0700, Sean Christopherson wrote:
+>=20
+> David can confirm, but I'm pretty sure the drift you are observing is add=
+ressed
+> by David's series to fix a plethora of kvmclock warts.
+>=20
+> https://lore.kernel.org/all/20240522001817.619072-1-dwmw2@infradead.org
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index e9e84b9a65f0..ceeae1aeac94 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1975,18 +1975,19 @@ static void msdc_init_hw(struct msdc_host *host)
- 
- 	if (host->dev_comp->data_tune) {
- 		if (host->top_base) {
--			sdr_set_bits(host->top_base + EMMC_TOP_CONTROL,
--				     PAD_DAT_RD_RXDLY_SEL);
--			sdr_clr_bits(host->top_base + EMMC_TOP_CONTROL,
--				     DATA_K_VALUE_SEL);
--			sdr_set_bits(host->top_base + EMMC_TOP_CMD,
--				     PAD_CMD_RD_RXDLY_SEL);
-+			u32 top_ctl_val = readl(host->top_base + EMMC_TOP_CONTROL);
-+			u32 top_cmd_val = readl(host->top_base + EMMC_TOP_CMD);
-+
-+			top_cmd_val |= PAD_CMD_RD_RXDLY_SEL;
-+			top_ctl_val |= PAD_DAT_RD_RXDLY_SEL;
-+			top_ctl_val &= ~DATA_K_VALUE_SEL;
- 			if (host->tuning_step > PAD_DELAY_HALF) {
--				sdr_set_bits(host->top_base + EMMC_TOP_CONTROL,
--					     PAD_DAT_RD_RXDLY2_SEL);
--				sdr_set_bits(host->top_base + EMMC_TOP_CMD,
--					     PAD_CMD_RD_RXDLY2_SEL);
-+				top_cmd_val |= PAD_CMD_RD_RXDLY2_SEL;
-+				top_ctl_val |= PAD_DAT_RD_RXDLY2_SEL;
- 			}
-+
-+			writel(top_ctl_val, host->top_base + EMMC_TOP_CONTROL);
-+			writel(top_cmd_val, host->top_base + EMMC_TOP_CMD);
- 		} else {
- 			sdr_set_bits(host->base + tune_reg,
- 				     MSDC_PAD_TUNE_RD_SEL |
-@@ -2196,15 +2197,17 @@ static inline void msdc_set_cmd_delay(struct msdc_host *host, u32 value)
- 	u32 tune_reg = host->dev_comp->pad_tune_reg;
- 
- 	if (host->top_base) {
-+		u32 regval = readl(host->top_base + EMMC_TOP_CMD);
-+
-+		regval &= ~(PAD_CMD_RXDLY | PAD_CMD_RXDLY2);
-+
- 		if (value < PAD_DELAY_HALF) {
--			sdr_set_field(host->top_base + EMMC_TOP_CMD, PAD_CMD_RXDLY, value);
--			sdr_set_field(host->top_base + EMMC_TOP_CMD, PAD_CMD_RXDLY2, 0);
-+			regval |= FIELD_PREP(PAD_CMD_RXDLY, value);
- 		} else {
--			sdr_set_field(host->top_base + EMMC_TOP_CMD, PAD_CMD_RXDLY,
--				      PAD_DELAY_HALF - 1);
--			sdr_set_field(host->top_base + EMMC_TOP_CMD, PAD_CMD_RXDLY2,
--				      value - PAD_DELAY_HALF);
-+			regval |= FIELD_PREP(PAD_CMD_RXDLY, PAD_DELAY_HALF - 1);
-+			regval |= FIELD_PREP(PAD_CMD_RXDLY2, value - PAD_DELAY_HALF);
- 		}
-+		writel(regval, host->top_base + EMMC_TOP_CMD);
- 	} else {
- 		if (value < PAD_DELAY_HALF) {
- 			sdr_set_field(host->base + tune_reg, MSDC_PAD_TUNE_CMDRDLY, value);
-@@ -2224,17 +2227,18 @@ static inline void msdc_set_data_delay(struct msdc_host *host, u32 value)
- 	u32 tune_reg = host->dev_comp->pad_tune_reg;
- 
- 	if (host->top_base) {
-+		u32 regval = readl(host->top_base + EMMC_TOP_CONTROL);
-+
-+		regval &= ~(PAD_DAT_RD_RXDLY | PAD_DAT_RD_RXDLY2);
-+
- 		if (value < PAD_DELAY_HALF) {
--			sdr_set_field(host->top_base + EMMC_TOP_CONTROL,
--				      PAD_DAT_RD_RXDLY, value);
--			sdr_set_field(host->top_base + EMMC_TOP_CONTROL,
--				      PAD_DAT_RD_RXDLY2, 0);
-+			regval |= FIELD_PREP(PAD_DAT_RD_RXDLY, value);
-+			regval |= FIELD_PREP(PAD_DAT_RD_RXDLY2, value);
- 		} else {
--			sdr_set_field(host->top_base + EMMC_TOP_CONTROL,
--				      PAD_DAT_RD_RXDLY, PAD_DELAY_HALF - 1);
--			sdr_set_field(host->top_base + EMMC_TOP_CONTROL,
--				      PAD_DAT_RD_RXDLY2, value - PAD_DELAY_HALF);
-+			regval |= FIELD_PREP(PAD_DAT_RD_RXDLY, PAD_DELAY_HALF - 1);
-+			regval |= FIELD_PREP(PAD_DAT_RD_RXDLY2, value - PAD_DELAY_HALF);
- 		}
-+		writel(regval, host->top_base + EMMC_TOP_CONTROL);
- 	} else {
- 		if (value < PAD_DELAY_HALF) {
- 			sdr_set_field(host->base + tune_reg, MSDC_PAD_TUNE_DATRRDLY, value);
--- 
-2.48.1
+Yes, that looks like exactly the problem my series is addressing. We
+shouldn't update the pvclock so often. And if/when we do, we shouldn't
+clamp it to some *other* clock which progresses at a different rate to
+the pvclock, because that causes steps in the pvclock.
 
+
+
+--=-OonEOyOQ/JgWT9ySZ/i1
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMyNTExMDcz
+NFowLwYJKoZIhvcNAQkEMSIEIF3ankoXF/Z7XudOTD7YqtF47G4PL5zsJBTN8+9qoS6FMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAc46TZ8OClpL7
+VLW2T6+gg3xJsP9yJYSXic5e85oAtpnceCFcGbWSDhw5zgjD6E290RqmTfrU8wVtb1Yb4iXRmmLm
+xhRUZ5kR9tpCryRxP2cSYHqpZGcMmwIRfUsX4FyUNlGSEExXbmtZpQN3PLpEpEjyrfHnYfTIhyT4
+zwY7OzC1GbRNX3LLQMRUj2RXXXHnFEyJnzEGbB7yi5ll1/BusaybTZ7ezdhD8aL1XF3EzpR8kckT
+b1CVK5OuNTQTYs9XbwkXNo8skyaW6hhD6uvKBytlep6jjKKsGu9YBKGx2Vlz6xNVypbtBImZ9pfn
+MY9pcaalgtULyjgq+bY3KzwYLM4k1k3fJN9pYxHuA9NG3A6xZuNCc7EPMgkQX38CiI7YKan9dUjK
+BlK6C7W8S7faM0xywgZX7ZDqJFHaWh9MUkD/iYLsEL8THNq95gS/ZvbrmCbeeQaVy8ggCfDaULbG
+TMg3ozSsojuka1gasfIfSJ9YBuQIHfEomBn5R8LYhqwwFDoOLQ9X8iZKVyn50gqtjiDKQNpiohNX
+kDoZQzkR0ZV0lxqFuTiIVt9j3PWYbPkBcqnQRwqaMgtjUoHUNru89AuOhHoERW/x+ov9MrvA7+ZN
+Jl5FtMhXSU40hfFkIHVWREoe0rj+zeec9CFCInaB6sw5c67LSa7x5dmU7VYHveUAAAAAAAA=
+
+
+--=-OonEOyOQ/JgWT9ySZ/i1--
 
