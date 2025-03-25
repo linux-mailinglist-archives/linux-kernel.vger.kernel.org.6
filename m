@@ -1,153 +1,169 @@
-Return-Path: <linux-kernel+bounces-575413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7286FA7020C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:36:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D3A7025D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7919E17E1BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B6319A6280
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B4A25BAA9;
-	Tue, 25 Mar 2025 13:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E870D25C6E0;
+	Tue, 25 Mar 2025 13:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gqDo4yAn"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnFvzxnf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2280025B691
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484E819E7F8;
+	Tue, 25 Mar 2025 13:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908994; cv=none; b=lTPnE0ZC7/59RCVkiD3TI62Z74Nl/zQsVrCx/pmMoyAWuEIubgoXTN1yCh5tOPcEvY3RqY/MEf9/vo1C5sDYabkCXLdiKGjSq6DdoWrcX2ywaCaGaBRhXBXQt6mO7bK/VWfI1ltZXr1YuNCYjcis8MjFFVdtOMGwS5P5FN35kQY=
+	t=1742909065; cv=none; b=FxlCQ7GArnjR8sDs/YoE25fuG0L/kRsIPAyvCxBpV1bKWDuqa6bbVAqKqvr0vj+rAC58VMcMQpUZvEbbHSeq7t0W13xtz2KKuYiNtQVhlXLeROqE6dxSdejWpS+1On0mvjauOLFF8wisk+O38E3avVsXTGo9Q6oLw1Z2UrsM4X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908994; c=relaxed/simple;
-	bh=bKVYE/T6NcIGu3cZrPKAkLor3MGJL9W7Ab8jFOEairg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cAxpFBhQ40gVXKbPlIfl4gB7ZdVDkLufHi860fb0WUFG2V51ZCsDqsglT/tFkmHVmrus7JO8KrxNPJgr751/6idKctRM/RJlKzX8p2xyidl+g9W1Jd1th4mY+q68+p+4TTGY9sMPtRWtkBJlU4H7S3ihtpQbfhb+a3c38/Wcj30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gqDo4yAn; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2f391864so3319014f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742908991; x=1743513791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rnnj8guc/r23I6QAcBNhKNDl+BvAD7PlamUPifu4Lvg=;
-        b=gqDo4yAnpYNJhZGDkKCCeVSb/1GreZGo116rv2M80/9M9juxfj5wIYECHgQ8ZqzKVO
-         o+IgoNOCyh3suqUNhGuce8NF0Xlk5HZGJJH9AuPkxoCRnx42+zmTwPspCYXWqUcVvfv4
-         ClsJk27FCW/u0BdNrLoW2IqXrXMm2f+5nwnn+kNdTPnRsulhdIrG/ShX4Gzul06uQS9l
-         +fJod2SmMXnZGurMET5o0/ozbFul7yIFjGOnI+JF0e3TWtvti36xZ9wCNsJSVQ5lMeMT
-         HlwDsTFuc+vLVM99T7o8741KZCv8erlCYzeVJxShf9A4boNgUHZkIG7QlJsrghucGTBr
-         7NTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742908991; x=1743513791;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnnj8guc/r23I6QAcBNhKNDl+BvAD7PlamUPifu4Lvg=;
-        b=M2wdLIsVYnTbrqAOq02ac8b9XOua2D7pGdOZCszI+oGVxwG1dfy4MqRd4W9TGfHxnX
-         Ay7Xlr8JGbJ2TNNV7iWjb0ZIyItsG7r65HjY7OIw8MVXVhxacsKiWohRuOOArtodBK5/
-         Rpc22fZJnAZSddQzdq5pSjDP3/3/IG3cfFnm4o3yn5lZedFkXM0+HbDGtNdDEOag6VA+
-         yIcB1K11HlOnYlzm6E7Cb4WxiY5d6eV4FzFL+rtVm8LDbdtBmQSiCKVlQRY9fFtvojko
-         MN0q5ce9ZH0+gYXAQL3B9j6kpRiux1A9UFtNl5Leir5W52Jl+dsMis1iQ4VbODnhV+X6
-         Im6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6RrebFqSSuwb+Dc3hqS84bmSIlxeMM81RWdnwI0AuL90T5kPMZiEDepsgwf8bR3gfFBc9EATTlQ1cnO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2btqGpE+xAluG7vTyhlnOfQ2oiCgCM9K/hAIPNfwFOcZ/Cnl8
-	XezZVgbMPnJ8Vk2H6G2/DulRQ8ogRt9FnWs27RsIQDrLxf0QEBuh04Yq3Cd0/l0=
-X-Gm-Gg: ASbGncs2/TBD+GTtpwqs/v9/y/YxpJBwUKW5nISUovnLQAmCzlA17Mie0IOHeDZ4bg7
-	EFHoM7d1wh+YSxCO/Vfhc2yz8pwo+VELvC5JuXB62Uja7u1uzQN+UEY1tMV1x/+U5jpXHjtK7Nt
-	UcCJa0A59LtdzhmclQddh6NKna/wC7V17kprSo6MJZs2QyisReFxQHFNqtVEedGeoSsJjQOZJOO
-	QKrvkJLH/pszX5K5Kuj964ZG2wMOkdfQ6zi9O+ED6o86PScxDF4ZRiXmk2emtYnD3hNHubpvyHb
-	MYIhYFQNWhxp4kbtPmD0DyWXmlMe5A09993CEhORHt5Xz/d1m7xNA/d4YJlhVzyLyZfdxPzgvy4
-	=
-X-Google-Smtp-Source: AGHT+IGqEw79oUCCpFPjvaE0rhu3IpGoUoLYUQBasFQeCPtItEofwSci1Gugid+vwciyZDzyVaQTrw==
-X-Received: by 2002:a5d:5885:0:b0:391:29f:4f87 with SMTP id ffacd0b85a97d-3997f93c495mr13385193f8f.49.1742908991354;
-        Tue, 25 Mar 2025 06:23:11 -0700 (PDT)
-Received: from [192.168.1.38] (i5E863BED.versanet.de. [94.134.59.237])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9957aasm13931016f8f.10.2025.03.25.06.23.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 06:23:10 -0700 (PDT)
-Message-ID: <48bb62eb-8aa9-465c-9e77-c0b375df0c9f@linaro.org>
-Date: Tue, 25 Mar 2025 14:23:09 +0100
+	s=arc-20240116; t=1742909065; c=relaxed/simple;
+	bh=wozwOKQiaMagwbpwK6NFNx/fOsvnFGH61CvbZNCe3Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tzlZHlOU2Aw4k8qmUvRsvgCy1qUnUyv4FO803R/Horw6xtcDJJQ7a8RAm+dH4v4i8H34JZodpUMnZLdCrlLLVpYVIEW9mvj2amjGhJvAMlog5n5aUjRfUinQtZ8Z1yMnL3wJ2dp2i03rIDSD0WffRLbiyanCFnLPZte0rBLMY08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnFvzxnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87FCEC4CEE4;
+	Tue, 25 Mar 2025 13:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742909064;
+	bh=wozwOKQiaMagwbpwK6NFNx/fOsvnFGH61CvbZNCe3Gg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RnFvzxnfSxNj3kF9oZmvyMhC+P8+Gb2kSHobDmo6DHmG/FPs8kGz3DrKMfesNMEn+
+	 JiX6c5Cmhlqf+1fNHrDLMcngAqk7qkN+VfLZ75dbGbt44A0/uQkibzR/C9ZFkV7m39
+	 Utbzgkf1fldCv1DftWRqK70jqDUDMYBVLyfmQbspaD5wJEKUN2WaTGrJUTACpsjtxI
+	 NNs2rIAhGz6X2FuC9Q9MRmo7VIwV2EYXwPAfEMZAcLweB/NDSX8L5vwka451h8FV4e
+	 6oy5XZp8k2RsrVkAifyLRHfNXLaJYpvrkuG7yyU7D8QVv7/xst2SVEaLCCdsfXdNrD
+	 kBNf3rQg2iTzA==
+Date: Tue, 25 Mar 2025 06:24:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>, Cosmin
+ Ratiu <cratiu@nvidia.com>, linux-kernel@vger.kernel.org, Liang Li
+ <liali@redhat.com>
+Subject: Re: [PATCH net] bonding: use permanent address for MAC swapping if
+ device address is same
+Message-ID: <20250325062416.4d60681b@kernel.org>
+In-Reply-To: <20250319080947.2001-1-liuhangbin@gmail.com>
+References: <20250319080947.2001-1-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
- syna,pdt-fallback-desc
-To: Krzysztof Kozlowski <krzk@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
- <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
- <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
- <3c5e12fc-eb91-46e8-a558-9896f0bdcab4@ixit.cz>
- <b3a5ec89-0125-4b01-8cca-69b9985b6089@kernel.org>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <b3a5ec89-0125-4b01-8cca-69b9985b6089@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 19 Mar 2025 08:09:47 +0000 Hangbin Liu wrote:
+> Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
+> fail_over_mac policy"). The fail_over_mac follow mode requires the former=
+ly
+> active slave to swap MAC addresses with the newly active slave during
+> failover. However, the slave's MAC address can be same under certain
+> conditions:
+>=20
+> 1) ip link set eth0 master bond0
+>    bond0 adopts eth0's MAC address (MAC0).
+>=20
+> 1) ip link set eth1 master bond0
 
+nit: 2)
 
-On 3/25/25 08:36, Krzysztof Kozlowski wrote:
-> On 24/03/2025 19:00, David Heidelberg wrote:
->> On 10/03/2025 10:45, Krzysztof Kozlowski wrote:
->>> On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
->>>> From: Caleb Connolly <caleb.connolly@linaro.org>
->>>>
->>>> This new property allows devices to specify some register values which
->>>> are missing on units with third party replacement displays. These
->>>> displays use unofficial touch ICs which only implement a subset of the
->>>> RMI4 specification.
->>>
->>> These are different ICs, so they have their own compatibles. Why this
->>> cannot be deduced from the compatible?
->>
->> Yes, but these identify as the originals.
-> 
-> 
-> It does not matter how they identify. You have the compatible for them.
-> If you cannot add compatible for them, how can you add dedicated
-> property for them?
+>    eth1 is added as a backup with its own MAC (MAC1).
+>=20
+> 3) ip link set eth0 nomaster
+>    eth0 is released and restores its MAC (MAC0).
+>    eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
 
-Hi Krzysztof,
+I don't know much about bonding, but this seems like a problem already
+to me. Assuming both eth0 and eth1 are on the same segment we now have
+two interfaces with the same MAC on the network. Shouldn't we override
+the address of eth0 to a random one when it leaves?
 
-There are an unknown number of knock-off RMI4 chips which are sold in 
-cheap replacement display panels from multiple vendors. We suspect 
-there's more than one implementation.
+> 4) ip link set eth0 master bond0
+>    eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
+>    breaking the follow policy.
+>=20
+> To resolve this issue, we need to swap the new active slave=E2=80=99s per=
+manent
+> MAC address with the old one. The new active slave then uses the old
+> dev_addr, ensuring that it matches the bond address. After the fix:
+>=20
+> 5) ip link set bond0 type bond active_slave eth0
+>    dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
+>    Swap new active eth0's permanent MAC (MAC0) to eth1.
+>    MAC addresses remain unchanged.
+>=20
+> 6) ip link set bond0 type bond active_slave eth1
+>    dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
+>    Swap new active eth1's permanent MAC (MAC1) to eth0.
+>    The MAC addresses are now correctly differentiated.
+>=20
+> Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
+> Reported-by: Liang Li <liali@redhat.com>
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+>  drivers/net/bonding/bond_main.c | 9 +++++++--
+>  include/net/bonding.h           | 8 ++++++++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
+ain.c
+> index e45bba240cbc..9cc2348d4ee9 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *=
+bond,
+>  			old_active =3D bond_get_old_active(bond, new_active);
+> =20
+>  		if (old_active) {
+> -			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
+> -					  new_active->dev->addr_len);
+> +			if (bond_hw_addr_equal(old_active->dev->dev_addr, new_active->dev->de=
+v_addr,
+> +					       new_active->dev->addr_len))
+> +				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
+> +						  new_active->dev->addr_len);
+> +			else
+> +				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
+> +						  new_active->dev->addr_len);
+>  			bond_hw_addr_copy(ss.__data,
+>  					  old_active->dev->dev_addr,
+>  					  old_active->dev->addr_len);
+> diff --git a/include/net/bonding.h b/include/net/bonding.h
+> index 8bb5f016969f..de965c24dde0 100644
+> --- a/include/net/bonding.h
+> +++ b/include/net/bonding.h
+> @@ -463,6 +463,14 @@ static inline void bond_hw_addr_copy(u8 *dst, const =
+u8 *src, unsigned int len)
+>  	memcpy(dst, src, len);
+>  }
+> =20
+> +static inline bool bond_hw_addr_equal(const u8 *dst, const u8 *src, unsi=
+gned int len)
+> +{
+> +	if (len =3D=3D ETH_ALEN)
+> +		return ether_addr_equal(dst, src);
+> +	else
+> +		return (memcmp(dst, src, len) =3D=3D 0);
 
-A new compatible string wouldn't help us, since we use the same DTB on 
-fully original hardware as on hardware with replacement parts.
+looks like this is on ctrl path, just always use memcmp directly ?
+not sure if this helper actually.. helps.
 
-The proposed new property describes configuration registers which are 
-present on original RMI4 chips but missing on the third party ones, the 
-contents of the registers is static.
-
-The third party chips were designed to work with a specific downstream 
-driver which doesn't implement the self-describing features of RMI4 and 
-just hardcoded the functionality they expect.
-
-Kind regards,
-> 
-> Best regards,
-> Krzysztof
-
--- 
-Caleb (they/them)
-
+> +}
+> +
+>  #define BOND_PRI_RESELECT_ALWAYS	0
+>  #define BOND_PRI_RESELECT_BETTER	1
+>  #define BOND_PRI_RESELECT_FAILURE	2
+--=20
+pw-bot: cr
 
