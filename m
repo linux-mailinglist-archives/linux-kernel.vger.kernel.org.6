@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-574949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A289A6EBE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:43:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE59A6EBE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1EC162DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280233A93D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB62C253B64;
-	Tue, 25 Mar 2025 08:43:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A07D530;
-	Tue, 25 Mar 2025 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA9F253F02;
+	Tue, 25 Mar 2025 08:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBuWqGS6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78447D530;
+	Tue, 25 Mar 2025 08:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742892208; cv=none; b=mzwFMYrNoE9vh+se4Kwr3U6UN9pL45aQougrnosL6DZdhqzOrpv1WpBDZo1SlHe9vVUpBuMf+DdX//NrxENqdg0iL+19cL1DaGvTBqnyhXgEcpShXsUFHQOGnjZzuXaYYew7Ai+AboiUD3KSix3FZLa+Qp42w1qGk0DuMzgGdo8=
+	t=1742892226; cv=none; b=RARNX8Wk2ZTkPFVAh29vLoLtdcIT0Fpw/LYN6s8dkFYsOJO2jxGLuuqIAXxigWDmNgA5YNdcTNxf0sCwKp3vg1BOl1HtNBF18ntNX47RFRb6NBAvb1X8OPVa6BxkDvtENUc95uvsFDZqU4X8qr3UawGoEXkE+gYgYSx8GFCAgxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742892208; c=relaxed/simple;
-	bh=pcjmIUDV1y803v4VNtj2L6DD6Te2Hsbn9Vt/OMzK3Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2EmJuvRXChIN1DVy/Xc7kZ9FFZWSRPyu5IfLXXph9Ir9F7NLr+og5eRMN5tE7JHjP1izbc/s3irZJ7LXeJg/0w0X1fDMgnJ9CbRSY0p61UvPFNPan+HDGrqtatwyQYSPfq/JLw6EsdJySGuTLANkZnR43Htu7cO3/5asUldbjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E52FB14BF;
-	Tue, 25 Mar 2025 01:43:30 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CBD73F58B;
-	Tue, 25 Mar 2025 01:43:24 -0700 (PDT)
-Date: Tue, 25 Mar 2025 08:43:20 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: mingo@kernel.org, peterz@infradead.org, acme@kernel.org,
-	namhyung@kernel.org, Mark.Rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@linaro.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] events/core: fix acoount failure for event's
- child_total_enable_time at task exit
-Message-ID: <20250325084320.GC604566@e132581.arm.com>
-References: <20250306123350.1650114-1-yeoreum.yun@arm.com>
- <20250324194758.GB604566@e132581.arm.com>
- <Z+Jdl99Y2EpDHciK@e129823.arm.com>
+	s=arc-20240116; t=1742892226; c=relaxed/simple;
+	bh=87zwA4C9SFzpaeniES/1S8GNdBde+cswnUuu9rcZGnE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vEuxqk3QH9okO2TB6HJ/Q0QosjD6tPajE1hDW6GNm/nj442b6jlONOiajkOb7Fr+trj5niyxuY+McEtjuR4+rqwWWeK/wkMFCZ4yZtwygSzUcWSoiI2eN8OV0GPqr90dofZZhROOh61B0naFXzV5PrmHX46f26NmxuFelaDY+5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBuWqGS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F431C4CEE4;
+	Tue, 25 Mar 2025 08:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742892225;
+	bh=87zwA4C9SFzpaeniES/1S8GNdBde+cswnUuu9rcZGnE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bBuWqGS6LZVddJfmv8eT3vWQhKqLZmRtvhrN22/SHTgNXNMBRLVzjGuMNAoY4+4Fn
+	 x646HJnNMcJ4zTYRj62fW2nRwZuMjQLIMD3FhTom0VaA6Xr/t7L0Ii78bMqWyU/86f
+	 TxO5BNb3FYbRkVoTiHSIhtcBxlcG0UZshGfsGsDVH1nc4t4xpzZDF3B3wBuN1wdoqn
+	 4ZvndLUEopBJkEEqAbetyPG4kd2O81Kk7tyW+v5nmckvYVYRA1yclxfD24GuTDuAoV
+	 UgJ0KxHYb0tu9XuYNzH8At8sIeT43OikUm+4A7IpgEjlUJ+VEn9fH+15yXMi/7Oeco
+	 bpHTdiiL1AjsQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iwlwifi: mld: fix building with CONFIG_PM_SLEEP disabled
+Date: Tue, 25 Mar 2025 09:43:30 +0100
+Message-Id: <20250325084340.378724-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z+Jdl99Y2EpDHciK@e129823.arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 07:39:03AM +0000, Yeoreum Yun wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-[...]
+The newly added driver causes multiple build problems when CONFIG_PM_SLEEP is
+disabled:
 
-> > > After this patch, this problem is gone like:
-> > >
-> > > sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
-> > > ...
-> > > armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
-> > > armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
-> > >
-> > >  Performance counter stats for 'stress-ng --pthread=2 -t 10s':
-> > >
-> > >     15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
-> > >     22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
-> > >
-> > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > Suggsted-by: Peter Zijlstra <peterz@infradead.org>
-> >
-> > /Suggsted-by/Suggested-by/
-> 
-> Thanks ;) I'll respin.
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:1982:12: error: 'iwl_mld_resume' defined but not used [-Werror=unused-function]
+ 1982 | static int iwl_mld_resume(struct ieee80211_hw *hw)
+      |            ^~~~~~~~~~~~~~
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:1960:1: error: 'iwl_mld_suspend' defined but not used [-Werror=unused-function]
+ 1960 | iwl_mld_suspend(struct ieee80211_hw *hw, struct cfg80211_wowlan *wowlan)
+      | ^~~~~~~~~~~~~~~
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:1946:13: error: 'iwl_mld_set_wakeup' defined but not used [-Werror=unused-function]
+ 1946 | static void iwl_mld_set_wakeup(struct ieee80211_hw *hw, bool enabled)
+      |             ^~~~~~~~~~~~~~~~~~
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c: In function 'iwl_mld_mac80211_start':
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:504:20: error: 'ret' is used uninitialized [-Werror=uninitialized]
+  504 |         if (!in_d3 || ret) {
+      |                    ^~
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:478:13: note: 'ret' was declared here
+  478 |         int ret;
+      |             ^~~
 
-Given this patch is a fix, it is good to add a fix tag.
+Hide the unused functions and make sure the 'ret' variable is not used
+before the initialization.
 
-> > > ---
-> > >  kernel/events/core.c | 18 +++++++++---------
-> > >  1 file changed, 9 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 6364319e2f88..058533a50493 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
-> > >  #define DETACH_GROUP	0x01UL
-> > >  #define DETACH_CHILD	0x02UL
-> > >  #define DETACH_DEAD	0x04UL
-> > > +#define DETACH_EXIT	0x08UL
-> > >
-> > >  /*
-> > >   * Cross CPU call to remove a performance event
-> > > @@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
-> > >  			   void *info)
-> > >  {
-> > >  	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
-> > > +	enum perf_event_state state = PERF_EVENT_STATE_OFF;
-> > >  	unsigned long flags = (unsigned long)info;
-> > >
-> > >  	ctx_time_update(cpuctx, ctx);
-> > > @@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
-> > >  	 * Ensure event_sched_out() switches to OFF, at the very least
-> > >  	 * this avoids raising perf_pending_task() at this time.
-> > >  	 */
-> > > -	if (flags & DETACH_DEAD)
-> > > +	if (flags & DETACH_EXIT)
-> > > +		state = PERF_EVENT_STATE_EXIT;
-> > > +	if (flags & DETACH_DEAD) {
-> > >  		event->pending_disable = 1;
-> > > +		state = PERF_EVENT_STATE_DEAD;
-> > > +	}
-> > >  	event_sched_out(event, ctx);
-> > > +	perf_event_set_state(event, min(event->state, state));
-> >
-> > Nitpick: can we move perf_event_set_state() before event_sched_out()?
-> >
-> > So the function handles the state machine ahead, then proceed for
-> > other operations.
-> 
-> No It couldn't. IIUC, event_sched_out() disable pmu with ACTIVE state
-> event only.
-> If state is changed first from active state, it wouldn't be sched out by
-> event_sched_out.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/wireless/intel/iwlwifi/mld/mac80211.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Indeed !  Please ignore my comment.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
+index 6851064b82da..0b5bc5abb82d 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
+@@ -501,7 +501,7 @@ int iwl_mld_mac80211_start(struct ieee80211_hw *hw)
+ 		iwl_mld_restart_cleanup(mld);
+ 	}
+ 
+-	if (!in_d3 || ret) {
++	if (!in_d3) {
+ 		ret = iwl_mld_start_fw(mld);
+ 		if (ret)
+ 			goto error;
+@@ -537,7 +537,8 @@ void iwl_mld_mac80211_stop(struct ieee80211_hw *hw, bool suspend)
+ 	/* if the suspend flow fails the fw is in error. Stop it here, and it
+ 	 * will be started upon wakeup
+ 	 */
+-	if (!suspend || iwl_mld_no_wowlan_suspend(mld))
++	if (!suspend ||
++	    (IS_ENABLED(CONFIG_PM_SLEEP) && iwl_mld_no_wowlan_suspend(mld)))
+ 		iwl_mld_stop_fw(mld);
+ 
+ 	/* HW is stopped, no more coming RX. OTOH, the worker can't run as the
+@@ -1943,6 +1944,7 @@ static void iwl_mld_sta_rc_update(struct ieee80211_hw *hw,
+ 	}
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
+ static void iwl_mld_set_wakeup(struct ieee80211_hw *hw, bool enabled)
+ {
+ 	struct iwl_mld *mld = IWL_MAC80211_GET_MLD(hw);
+@@ -1994,6 +1996,7 @@ static int iwl_mld_resume(struct ieee80211_hw *hw)
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int iwl_mld_alloc_ptk_pn(struct iwl_mld *mld,
+ 				struct iwl_mld_sta *mld_sta,
+-- 
+2.39.5
 
-> > >  	if (flags & DETACH_GROUP)
-> > >  		perf_group_detach(event);
-> > >  	if (flags & DETACH_CHILD)
-> > >  		perf_child_detach(event);
-> > >  	list_del_event(event, ctx);
-> > > -	if (flags & DETACH_DEAD)
-> > > -		event->state = PERF_EVENT_STATE_DEAD;
-> > >
-> > >  	if (!pmu_ctx->nr_events) {
-> > >  		pmu_ctx->rotate_necessary = 0;
-> > > @@ -13424,12 +13429,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
-> > >  		mutex_lock(&parent_event->child_mutex);
-> > >  	}
-> > >
-> > > -	perf_remove_from_context(event, detach_flags);
-> > > -
-> > > -	raw_spin_lock_irq(&ctx->lock);
-> > > -	if (event->state > PERF_EVENT_STATE_EXIT)
-> > > -		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
-> > > -	raw_spin_unlock_irq(&ctx->lock);
-> > > +	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
-
-It is good to add a description in commit log for why remove the
-code chunk for updating state in the function perf_event_exit_event().
-
-As we discussed, it uses a central place __perf_remove_from_context()
-to maintain the state when event exits,  this can avoid race
-condition.  To support this, the 'DETACH_EXIT' flag is passed to
-__perf_remove_from_context() instead.
-
-Thanks,
-Leo
-
-> > >
-> > >  	/*
-> > >  	 * Child events can be freed.
-> > > --
-> > > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> > >
 
