@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-575646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAAEA7052F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D17A70535
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EC81889DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA95188531F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D8E1A2389;
-	Tue, 25 Mar 2025 15:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G9zldzq9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0181EA7DB;
+	Tue, 25 Mar 2025 15:36:41 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B884B1922C6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC84D8635E;
+	Tue, 25 Mar 2025 15:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742916932; cv=none; b=Mg04f64y33szliD9esfWKWVa2/UwNn4iAqTZL3xDvL/6mdW5ABbQ1o3KUVoLQcaeLNNdi1Tr6+zMF6GzdV8dLnYnylBYRIrxRnKwbpMsx1mww0soeYUV6nEbFe5UhiJ1SHgwcKEYmnMCHXwlvjUXdyzQtCs9/dXzcWIbw651nys=
+	t=1742917001; cv=none; b=DchVrM9l6tOft0aRexf7a/HkI77KiWFSannPhrbB/22mcRTSVWh0fKuiy9kIDqKtVZSXebcUpx6nJ8OM82x9fWHXlCxMya5Y8EWD9vBOUZhiGWs+mWmRh/k5RmQueOsHTq57+Cu7zdQ9xMIzFJdZnTQDmTz2csS8Kcn9HiOAs08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742916932; c=relaxed/simple;
-	bh=rASjszrGh02cnJN1mczTWnhvEciBmo929b7n0IRMsFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YGIUiYXh1b47ZfdT40UGirSRj6iFkFIrqazUY1zC9fOSlINhUTYTzThePHoPAc+Uy3WC+PVlXJ9f/gUIA0lw/iPdLFBlQ6IOLANwA5w15vR/wVxK173FJCIU40Q+I71mjbweks2OHvB9CkSvTVB2HpZawNkL/a8/8DFuXIw5d3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G9zldzq9; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742916931; x=1774452931;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=rASjszrGh02cnJN1mczTWnhvEciBmo929b7n0IRMsFg=;
-  b=G9zldzq92VBPwYtcZhci0LNIGJecRXSk/rq7iJudGY9n2AQC1PWEb4zE
-   ew1F4bxjyxeXYV8JMx9P8h/RzZpz5taozBnlM7Mj11QItbpj2HHY4nduL
-   pyit7NEbyIQlekN7Zrll5giMhU178Vmq0A0ygj4ACEKUL4eob3AnAXWh9
-   OrcWxCWn0Msm3qSas2A4wWnWXKwiKMnTIOOL/HFcnQQFVNzEXjeuVs5kN
-   D2gzDgK7MOMmo9JChyFh7891mKzWXH1wPpGqCCStUOMAKwpGxqR8ZgTZz
-   v3aT5OXxJIOA/zgUHj9IFfKpsNUbblFv1WL3XaKhKjE4X2RCLv6FY8jDV
-   g==;
-X-CSE-ConnectionGUID: YnvG+/M0TgWJ62ItJCIJIw==
-X-CSE-MsgGUID: 1Pjvta6lQDOBBPCCqHm0Xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="66627279"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="66627279"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:35:30 -0700
-X-CSE-ConnectionGUID: iE7FiNQARtiLkwZVmKFd3Q==
-X-CSE-MsgGUID: HjiNYWRERsuLBG9hOp50ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="124595850"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 25 Mar 2025 08:35:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BAFA62D8; Tue, 25 Mar 2025 17:35:27 +0200 (EET)
-Date: Tue, 25 Mar 2025 17:35:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] auxdisplay for 6.15-1
-Message-ID: <Z-LNP8zSHOHSLVhZ@black.fi.intel.com>
+	s=arc-20240116; t=1742917001; c=relaxed/simple;
+	bh=lQGhDpTA02pg2SXSqztof85HVwIN4KdjwfWy9lQVkTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ncUqwnBPKxQjvM+k378FPvDCnP8zBZheu6ZBrWaqI7Dh6gevnBmvbi2BLfuu4lDrSi6QsP5vEs9OJ/2UwgJ31LH8AseEM3PaAqoJw2phZaA3LeK9qD/IuIAsUJy3pfPabCamA7mrM8qat9TQfDEHPUk9p82xlKkNL+uDcdHNtdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-523edc385caso2301108e0c.3;
+        Tue, 25 Mar 2025 08:36:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742916998; x=1743521798;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rg9s2GhxzbMU0JYpYKXzsavBxYRuo5kJ2cdSM+OjLA0=;
+        b=WR3MtpB7tyQWT0DiK0WR8FgGqmeW3iU0+6xATHg83RkIAZyUO4QptRTJ9/u3GNAofO
+         INhYYT/3P8TQUpn/vryXOrNgUTwrFQznjeH8y7gOkK1fJj20I96O93gVA3qfkaigYcUH
+         c22DD8D3EZEvLqhkQKcUo2916nk7wzwqxTFwukpfj5Wxo6+7OERMGc39QE1sLbBWPNts
+         qFg3cFahrGMpD8sUSvZo/ffWELsVKKx1TSiEvseV0FACsceRp2SQvBuL34S6Is6Usi5r
+         IJBaIIM/SUJ3Dn5GLX3KdbsR7GePh9g5aLDaQqfkrSnwoP7DodV2nADpNy2PAfNb0qer
+         QSlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXD+SZMC2ZmAAwOj/IcAJIFg14GFTBSBOTuD5105ot4NTwkQ3kh8Q5D6ShLn7D2+6bORT98yVSxtRo1Bu/nG2WK20i@vger.kernel.org, AJvYcCUnTF42ZmJI9ZSwGD9wmDq3f8E+ijKxVmpiAdj6yRR2WOOdFnqWWmDD06RGbo0OKHzjklLyAv7brkI=@vger.kernel.org, AJvYcCV9zfqBc2VAX+Lj0T6UG24i3tGU0VjgNcAbwLiwS0Vt3QXyeIJmR2Www2aMFBaX5f5lf/Pfxcr0fXebx3rabX/C@vger.kernel.org, AJvYcCVfRewQc8VwD8OChtnlORSrYB6Ye1vR7UOS4cdyMlIpvF+FeA/PyjKPRCNvJn8jC1NtdkGC@vger.kernel.org, AJvYcCXEHvCp5akvBmBqf9JS1G5mHjLomgAMlJLlna5xTi12+o+NT7dd9oDQhDd99z+8NlAV1+a0IJeCkjZ7cMfz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtFa+U1mVUXj1z2aeFYzpCtUUKmO+qtwq3ZJYRCtah9o/t1EWa
+	s6CExzQt8qPJRMnpq7ZDIRaCcZ4Afk1/3aQIdrF5hvRu0oGMUhM+ilbbocfj5nI=
+X-Gm-Gg: ASbGncs+8q1uPeXl6tpKPvUAYj79sMCxIbVUeizfHlGQPIa88/R1qHnw4b5B1DaJV4y
+	9g3QYyzbqaAhvEpDZAG7pel5nsBEKI70eccUyQnn3dO2A3wp9U2LzhM1hDtckwPew9u424TmofB
+	m1yYA57w2icD6hg4iMOTllComn4q99LqlS2x6lobduXHzt4tXcHjon9qjkGRPydlpfpKJzj38WH
+	N3uG4CByF0+loSJvojGO7dBOC6Ww27SgAFYbq3zo4uYkv6SvIB8hkpTeuWDqrDzoT+R8oknZIN2
+	8s02hYioTfjzkAfpx2GofD7F6kb4EF/F/iYIyC5xFgxdhzKMjacBpoWuRkM2CyhJljS04Bjv9Ap
+	eXVx9PYwPNl1f9sPs4A==
+X-Google-Smtp-Source: AGHT+IFBNoQDtRZGqjnnu3M3m2DBMWZp4QMOg2nQtXviEZdBxZFbnw3mVIQmVQTtI+CJ7vju/lUJDw==
+X-Received: by 2002:a05:6122:4312:b0:518:865e:d177 with SMTP id 71dfb90a1353d-525a8560bc1mr12001534e0c.9.1742916998084;
+        Tue, 25 Mar 2025 08:36:38 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86f9f3a3f6esm2078313241.11.2025.03.25.08.36.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 08:36:37 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d69774081so2483414241.0;
+        Tue, 25 Mar 2025 08:36:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1bnQctZBes+NBe5tPxOM2lFpWn803hpO7YTvTfza93Kr7xOXn1+8uY7UUxnzStpYiySUeyWt4OspLhJdFJ1OefSbP@vger.kernel.org, AJvYcCWA/TdUOkW34smvSDRSjL4Ju+Py+VDFy27OeApRSoKH+5Oizqn0axTDHI5qcSZevAmIHmk/yBTX+zV+FYTx@vger.kernel.org, AJvYcCWC86aiWICremCZBZzzZcvQC0uWR7PKx4KyK/XZuEq1kyLNgDn7kuBCN2Mm8mut3Jb6lmLK@vger.kernel.org, AJvYcCXJkMQp4Qi+wAVcMGhlqkOEOatJAb7NXIhkWqpocdy7AibPojLNTV74CwVrheKuS623e+VTRn+wrbqMSHID3WIE@vger.kernel.org, AJvYcCXoIx7MVLNavdI6D1MF2Me53j7n/PUIhequvaOcXSILl99nj1Dfj2goOhVDO2OOBQ5Yux6rvsfDWs8=@vger.kernel.org
+X-Received: by 2002:a05:6102:c92:b0:4c1:9439:f70 with SMTP id
+ ada2fe7eead31-4c50d4b8f63mr12298813137.6.1742916997318; Tue, 25 Mar 2025
+ 08:36:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250219153938.24966-1-boqun.feng@gmail.com> <20250219153938.24966-11-boqun.feng@gmail.com>
+ <CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com>
+ <5bf94fdb-7556-4b34-ba21-389dfa1df4f7@paulmck-laptop> <CAMuHMdVVQWZCUFT2uF+QSQz-GzOz2PvugkeatA6bDQeNHU9PSA@mail.gmail.com>
+ <b4ac95ce-7cfd-4d31-aa7d-54ef04f4ae24@paulmck-laptop>
+In-Reply-To: <b4ac95ce-7cfd-4d31-aa7d-54ef04f4ae24@paulmck-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Mar 2025 16:36:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXsuKMLrg5qmS3oTAWfv3Ph34Hq5jeid974+RoTAR2Rkw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrYtc3XhYgX4YuVml3CpXoCyQpmzApZic48oP74LpqYdOUZOpuYsHWB5oU
+Message-ID: <CAMuHMdXsuKMLrg5qmS3oTAWfv3Ph34Hq5jeid974+RoTAR2Rkw@mail.gmail.com>
+Subject: Re: [PATCH rcu 10/11] srcu: Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing
+To: paulmck@kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>, rcu@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Thomas Huth <thuth@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Yury Norov <yury.norov@gmail.com>, Valentin Schneider <vschneid@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Hi Paul,
 
-I would say it's an average size PR for this small subsystem. Patches were in
-the Linux Next for a while (more than a couple of weeks) without reported issues.
-It also includes a merge of an immutable tag from GPIO that is used in one of
-the cleanups here. Please, pull for v6.15-rc1.
+On Tue, 25 Mar 2025 at 16:08, Paul E. McKenney <paulmck@kernel.org> wrote:
+> commit 2245ef8605a80726548253d885b4cadd97f69f3b
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Tue Mar 25 07:31:45 2025 -0700
+>
+>     srcu: Make FORCE_NEED_SRCU_NMI_SAFE depend on RCU_EXPERT
+>
+>     The FORCE_NEED_SRCU_NMI_SAFE is useful only for those wishing to test
+>     the SRCU code paths that accommodate architectures that do not have
+>     NMI-safe per-CPU operations, that is, those architectures that do not
+>     select the ARCH_HAS_NMI_SAFE_THIS_CPU_OPS Kconfig option.  As such, this
+>     is a specialized Kconfig option that is not intended for casual users.
+>
+>     This commit therefore hides it behind the RCU_EXPERT Kconfig option.
+>     Given that this new FORCE_NEED_SRCU_NMI_SAFE Kconfig option has no effect
+>     unless the ARCH_HAS_NMI_SAFE_THIS_CPU_OPS Kconfig option is also selected,
+>     it also depends on this Kconfig option.
+>
+>     [ paulmck: Apply Geert Uytterhoeven feedback. ]
+>
+>     Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>     Closes: https://lore.kernel.org/all/CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com/
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>
+> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> index b3f985d41717a..ceaf6594f634c 100644
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -68,6 +68,8 @@ config TREE_SRCU
+>  config FORCE_NEED_SRCU_NMI_SAFE
+>         bool "Force selection of NEED_SRCU_NMI_SAFE"
+>         depends on !TINY_SRCU
+> +       depends on RCU_EXPERT
+> +       depends on ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
+>         select NEED_SRCU_NMI_SAFE
+>         default n
+>         help
 
-Thanks,
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-With Best Regards,
-Andy Shevchenko
+Gr{oetje,eeting}s,
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git tags/auxdisplay-v6.15-1
-
-for you to fetch changes up to 67200d70e45982f5120c43b3724f1b6e4a8a01e4:
-
-  Merge patch series "auxdisplay: charlcd: Refactor memory allocation" (2025-03-10 18:03:02 +0200)
-
-----------------------------------------------------------------
-auxdisplay for v6.15-1
-
-* Refactor a couple of APIs to reduce amount of calls to memory allocator
-* Miscellaneous small fixes and improvements
-
-The following is an automated git shortlog grouped by driver:
-
-charlcd:
- -  Partially revert "Move hwidth and bwidth to struct hd44780_common"
-
-gpiolib:
- -  add gpiod_multi_set_value_cansleep()
-
-hd44780:
- -  Rename hd to hdc in hd44780_common_alloc()
- -  Call charlcd_alloc() from hd44780_common_alloc()
- -  Make use of hd44780_common_free()
- -  Introduce hd44780_common_free()
- -  Fix an API misuse in hd44780.c
-
-lcd2s:
- -  Allocate memory for custom data in charlcd_alloc()
-
-MAX6959 should select BITREVERSE:
- - MAX6959 should select BITREVERSE
-
-panel:
- -  Make use of hd44780_common_free()
- -  Fix an API misuse in panel.c
-
-seg-led-gpio:
- -  use gpiod_multi_set_value_cansleep
-
-----------------------------------------------------------------
-Andy Shevchenko (10):
-      Merge tag 'gpio-set-array-helper-v6.15-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into auxdisplay
-      auxdisplay: panel: Fix an API misuse in panel.c
-      auxdisplay: charlcd: Partially revert "Move hwidth and bwidth to struct hd44780_common"
-      auxdisplay: lcd2s: Allocate memory for custom data in charlcd_alloc()
-      auxdisplay: hd44780: Introduce hd44780_common_free()
-      auxdisplay: hd44780: Make use of hd44780_common_free()
-      auxdisplay: panel: Make use of hd44780_common_free()
-      auxdisplay: hd44780: Call charlcd_alloc() from hd44780_common_alloc()
-      auxdisplay: hd44780: Rename hd to hdc in hd44780_common_alloc()
-      Merge patch series "auxdisplay: charlcd: Refactor memory allocation"
-
-David Lechner (2):
-      gpiolib: add gpiod_multi_set_value_cansleep()
-      auxdisplay: seg-led-gpio: use gpiod_multi_set_value_cansleep
-
-Geert Uytterhoeven (1):
-      auxdisplay: MAX6959 should select BITREVERSE
-
-Haoxiang Li (1):
-      auxdisplay: hd44780: Fix an API misuse in hd44780.c
-
- drivers/auxdisplay/Kconfig          |  1 +
- drivers/auxdisplay/charlcd.c        |  5 +++--
- drivers/auxdisplay/charlcd.h        |  5 +++--
- drivers/auxdisplay/hd44780.c        | 19 ++++++-------------
- drivers/auxdisplay/hd44780_common.c | 24 ++++++++++++++++--------
- drivers/auxdisplay/hd44780_common.h |  4 +++-
- drivers/auxdisplay/lcd2s.c          | 12 ++++--------
- drivers/auxdisplay/panel.c          | 17 +++++------------
- drivers/auxdisplay/seg-led-gpio.c   |  3 +--
- include/linux/gpio/consumer.h       | 11 +++++++++++
- 10 files changed, 53 insertions(+), 48 deletions(-)
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
