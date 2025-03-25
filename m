@@ -1,159 +1,100 @@
-Return-Path: <linux-kernel+bounces-575438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE85A70297
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:48:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328A3A702B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B60189D971
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696AC845E2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871A01474A9;
-	Tue, 25 Mar 2025 13:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342642580C3;
+	Tue, 25 Mar 2025 13:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MT2bSinC"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Y2mCk6Bs"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28084A95E;
-	Tue, 25 Mar 2025 13:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443EA2566FB;
+	Tue, 25 Mar 2025 13:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909659; cv=none; b=NWFnytgJroRvi7rjuce+N6Hz16rCs/DjIV1dyugUulDXsPjnNRK8/jcJyKhWmRsBA8WQASUWRw+2+I9LIXQzylP0s/TkD+9m9nGi6DwUJQZfzvW+xtrcFjkZmMRg+P+mXKLMpk/5EuOeo3lhTLoABzpMJVDWV8joLS7s9IUWEZk=
+	t=1742909669; cv=none; b=jJgM3Gyjk+8cOR+VAf8TSVJqkuW58trC4o8/YS+3d4/jvi/GPW5CtcUFjWH1rMUMG6z9/prwf6ze5RUty+00IV1QaL5vppTFKDWEGsqCqvHoQAYwrTfVriue/ORVtoL5d/ut6EJIOnUXOcrC8rt/Uda/yxGnHFqxjUYb0Z037iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909659; c=relaxed/simple;
-	bh=jt/sPjWjug3egJdVdkpI3A7zPt9YVkGXm+6HGHagLDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lr8ABW3daFuO1qqK3peQ8aRwSNnMsuDI/4Rm5PyuZHsm3eh0n5hcC6XoytIQvG+NwAG3fkzD/2uyJnkvRsNVikjH0mrKuMtJ9QiLdZCapiB9obUp/uL8vOPIeJ8SJfmUcC80j/l9ueEPqkKdqdqvUYqndFIXs1rAGtYRroDfv7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MT2bSinC; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7921F4326B;
-	Tue, 25 Mar 2025 13:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742909654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6cp05A3ncq1r6TSS05Wy5wCIMMlphKX62znrx7IOhkM=;
-	b=MT2bSinCIIJxoo+uZCXE8NobKCTATTnWXSLD+MEYn1Cbf0q4yFnCAHXwi7ksKtomi1kgg4
-	O53gziaEH8muXl8V/mn5SPTQGdDkfmaMSRo3TtqiLLSN8293XcL/Pxxs4bUTrjTf2tQYd2
-	MQ51TNmeNIjidkLjLWUbWNJG/219tsbchKjtxidLuHMOZV2FItfl8OvXmBsn/k7Yd2ol+Q
-	Z3u58uwdkRWt64sXtcPrXNOTFr0oVKegRhq2yRQnnRxTszSKn1CON//EGSI4xq0vgtXund
-	ZyndzuyJ25ixCMaNHcdqMAPW+1Ht4zbieVJUeCeNfX7RUgTTu3vFr95AEDZw5A==
-Date: Tue, 25 Mar 2025 14:34:11 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
- Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
- Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net-next v4 5/8] net: ethtool: netlink: Introduce
- per-phy DUMP helpers
-Message-ID: <20250325143411.241053ec@kmaincent-XPS-13-7390>
-In-Reply-To: <20250324104012.367366-6-maxime.chevallier@bootlin.com>
-References: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
-	<20250324104012.367366-6-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742909669; c=relaxed/simple;
+	bh=Y6ohaXZofpcbNJmvladlvZbrb57HSiO9YoS6iQ6shPs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GT05Dr6BWT+WDHbwQjr5fN33l1aoAqxHGPXWR5kVUAPrcXl8bdjQrVb8gPOneiv3ANgpYQj8wxVtPFN4sCYjASSucd5UUXpWDuL7AE3lCpB/plVt9CvpIMJayhJr9G92eR7tQwl1VxBb9hTTDT2hnDNJAsCwDqUx4igvLwsfDew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Y2mCk6Bs; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742909665; x=1743168865;
+	bh=fBZCEDHAcSL+1EbOgZxoUlg+Dt3iseMvxCTdjaU5e2k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Y2mCk6Bsht9m4LjOmW4sD+suqGIEUvFB756jiYzHmc5Bl8t+AGhghMMNSW+S63j+1
+	 3LYAheh7+xAhJCaq8VDAEPoMmAGGT60aiIlX5JE+vl8+2d83bicwl0KJEqFjQUPZ0a
+	 KYrl1NdezKacZcngfg/2ojIB7S3hkzo8dnuVOdZpEShTlHrBBlbClcReXQLzAWKxED
+	 48L/uQxWukjWmIyvW0h0cdlJR6YB+apubucGAyNik6vIM/WPvlRwq5QgdLQqUAOY6j
+	 DCHbZ4V+Zm+gWvZEbDT/+LGR8OXwksoSVSuzwm8ibZvKU9/FoWMo61VmxEgISLg5G6
+	 wrwOkurY1tfeA==
+Date: Tue, 25 Mar 2025 13:34:20 +0000
+To: Filipe Xavier <felipeaggger@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org, felipe_life@live.com, linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>
+Subject: Re: [PATCH v2] rust: add new macro for common bitmap operations
+Message-ID: <D8PDWRH06U1X.3JGHP1311BPPY@proton.me>
+In-Reply-To: <20250325-feat-add-bitmask-macro-v2-1-d3beabdad90f@gmail.com>
+References: <20250325-feat-add-bitmask-macro-v2-1-d3beabdad90f@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 1a89859a739abc0b62f06d31b08d5c5e735c24cf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
- egvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, 24 Mar 2025 11:40:07 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
-
-> As there are multiple ethnl commands that report messages based on
-> phy_device information, let's introduce a set of ethnl generic dump
-> helpers to allow DUMP support for each PHY on a given netdev.
->=20
-> This logic iterates over the phy_link_topology of each netdev (or a
-> single netdev for filtered DUMP), and call ethnl_default_dump_one() with
-> the req_info populated with ifindex + phyindex.
->=20
-> This allows re-using all the existing infra for phy-targetting commands
-> that already use ethnl generic helpers.
->=20
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> V4 : No changes
->=20
->  net/ethtool/netlink.c | 78 +++++++++++++++++++++++++++++++++++++++++++
->  net/ethtool/netlink.h |  6 ++++
->  2 files changed, 84 insertions(+)
->=20
-> diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-> index 0345bffa0678..171290eaf406 100644
-> --- a/net/ethtool/netlink.c
-> +++ b/net/ethtool/netlink.c
-> @@ -560,6 +560,84 @@ static int ethnl_default_dump_one(struct sk_buff *sk=
-b,
->  	return ret;
->  }
-> =20
-> +/* Specific context for phy-targeting command DUMP operatins. We keep in
-> context
-> + * the latest phy_index we dumped, in case of an interrupted DUMP.
-> + */
-> +struct ethnl_dump_ctx_perphy {
-> +	unsigned long phy_index;
-> +};
+On Tue Mar 25, 2025 at 2:10 PM CET, Filipe Xavier wrote:
+> +#[macro_export]
+> +macro_rules! impl_flags {
+> +    (
+> +        $(#[$outer_flags:meta])* $vis_flags:vis $flags:ident,
+> +        $(#[$outer_flag:meta])* $vis_flag:vis $flag:ident,
+> +        $ty:ty
+> +    ) =3D> {
+> +        $(#[$outer_flags])*
+> +        #[repr(transparent)]
+> +        #[derive(Copy, Clone, Default, PartialEq, Eq)]
+> +        $vis_flags struct $flags($ty);
 > +
-> +/**
-> + * ethnl_dump_start_perphy() - Initialise a dump for PHY cmds
-> + * @ctx: Generic ethnl dump context whose cmd_ctx will be initialized
-> + *
-> + * Initializes a dump context for ethnl commands that may return
-> + * one message per PHY on a single netdev.
-> + *
-> + * Returns: 0 for success, a negative value for errors.
+> +        $(#[$outer_flag])*
+> +        #[derive(Copy, Clone, PartialEq, Eq)]
+> +        $vis_flag struct $flag($ty);
+> +
+> +        impl From<$flag> for $flags {
 
-Minimal nitpick. In the kernel doc Return does not take a s.
+Please use absolute paths to refer to items, in this case
+`::core::convert::From` (note the leading `::`). More cases below.
 
-> +/**
-> + * ethnl_dump_one_dev_perphy() - Dump all PHY-related messages for one n=
-etdev
-> + * @skb: skb containing the DUMP result
-> + * @ctx: Dump context. Will be kept across the DUMP operation.
-> + * @info: Genl receive info
-> + *
-> + * Some commands are related to PHY devices attached to netdevs. As there
-> may be
-> + * multiple PHYs, this DUMP handler will populate the reply with one mes=
-sage
-> per
-> + * PHY on a single netdev.
-> + *
-> + * Returns: 0 for success or when nothing to do, a negative value otherw=
-ise.
+I filed an issue to add a new clippy lint to catch this:
 
-Same.
+    https://github.com/rust-lang/rust-clippy/issues/14472
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Cheers,
+Benno
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> +            #[inline]
+> +            fn from(value: $flag) -> Self {
+> +                Self(value.0)
+> +            }
+> +        }
+
 
