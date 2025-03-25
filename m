@@ -1,103 +1,163 @@
-Return-Path: <linux-kernel+bounces-575005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D7DA6EC78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:30:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED78FA6EC7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4D81892D9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AE43B0950
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2376019D093;
-	Tue, 25 Mar 2025 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B768B19CC27;
+	Tue, 25 Mar 2025 09:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQPBiIft"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXJjEiId"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF339479;
-	Tue, 25 Mar 2025 09:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC31A2389;
+	Tue, 25 Mar 2025 09:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742894996; cv=none; b=qX9EaiLdPZUI02rp8huM91UYrI3LcMGHFaZ7fyUfq5FtXHYu8kTOiUzfTNIR90QMwkGIxFrcoJGfUgFxX+X6w4NdcvM2huRWezBp/sEgL/yOoPsAXe5bMCIEyvy1Zra5DaSAb8KsbaonpleeGq1NINBNphL1jVh3NfOIiFaI21Q=
+	t=1742895023; cv=none; b=dgFoW3M5cnIH/v8sdUpUv8UFXjIDvH4JBwkSHfmUPWBnMbSKzSKw4+/biyow2eB3WhADPLwMpi5Zy8XjqO2+TRFfNs4dPq6xMwvwEpuyh92h6qQeh8gjJrcqgwMWlGQ7KETK4OpqPQcUBRWbRcuWzAvN43CGLJOXNoDN59AQ48U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742894996; c=relaxed/simple;
-	bh=1XjDA2TRQ9ihwHMJrSFe2XivT2loKmM8kBKqbZDguA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X44bywfvWD/xQdUiEQ+xAHJwmis0sY6L5bIZURr4mpnCw70nwqXbxFHn/Mvggre0lCsXo8qnZGRKcDDi0cPGVPGfEaUlRALKke4AJKiXC7XqZhx04GyqqsjgGqJvq7njdEqRzkdMB18W6VnkwSVzA7zKQ0twkGPhu8OOWelMlYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQPBiIft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B00C4CEE4;
-	Tue, 25 Mar 2025 09:29:53 +0000 (UTC)
+	s=arc-20240116; t=1742895023; c=relaxed/simple;
+	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5LSMLDcxjgy2nTpafHW9C1pnhuUFILuUQofVrfWY17GMwYJmvTBx7lLQPXUgv8To/X/1ZYjtw/0yVBS+KsY195HEkSpU1Lf6xiuwybAVFSKW7xbmiuYl03t6x7xp4RO7wGr3ujHsiR0Z22r22DSSwFtPsrlzqkkNqVQeu8EnCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXJjEiId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A2AC4CEE4;
+	Tue, 25 Mar 2025 09:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742894995;
-	bh=1XjDA2TRQ9ihwHMJrSFe2XivT2loKmM8kBKqbZDguA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pQPBiIftEH0lvxjFB8hXV0PxoDv28RSBSsmtwOPnUI+VjkqwEsM9dcrcyVHuGbme7
-	 7FdB3NhiIxTFbR9O0A9wgzP46Q1hYE4bxtjP+Xtuov1/RPQI/h20u9vNwaeYv+2DXW
-	 x0yc32lRrYPb/83/NAHzFqoERTWKruHNERopDWkWX1q77nGfIXRGD+fk2qsLf4eOqe
-	 QBTZGVA0pkqgXyMYumnAFCuZ8k2Q0bsRf/tf3b8DJlWNwj+hHaFqv+lrwyy1r0zJxW
-	 6ZUy6BBDcgvu4dKXbb8+NMchkD8WmpkXVhpa4/jwv1fnnSS4Vt7NZ/S11KRr4zvjGC
-	 DA9EEO8ZS16gw==
-Date: Tue, 25 Mar 2025 10:29:50 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Malaya Kumar Rout <malayarout91@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/x86/lam: fix memory leak and resource leak in
- lam.c
-Message-ID: <Z-J3jlYcocf_w4M_@gmail.com>
-References: <malayarout91@gmail.com>
- <20250324124810.883767-1-malayarout91@gmail.com>
- <20250324125108.GH14944@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1742895022;
+	bh=69sFJAE3YpNj/ZaxEAAUkXjPxt7C54lTaFbX1GYT9lw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VXJjEiIdO+zP4+eKoD5WJbXgbF3jorSV2bwVEYegmhktl+ojoGaKTjMj2ggARzGgG
+	 yFL528uP1NFd2I8Aze2YQx6hrGN9x8uXxZKG1WxCiBoXo1r4b89Bb8FU1pCoAYcubM
+	 dg7dFzUSieoHzutLQdGx+KyeI09/ySZi5JvIOolSynn1F711GzKUvhSbobCxkwykMJ
+	 BGO4V0wA8+K67WAH2Y08NtkiZ2Sc9TvTFc74jBJgaHS2KSKjw2R67/aTwEbS0lSm6Y
+	 LIiwyw1S7PRvYcX1DPwHc+ECPzU5bxz3q4f6zkw/ykEZTJBdXQXxpX9adLA36m/gEh
+	 bZMVcQEDJosJA==
+Message-ID: <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org>
+Date: Tue, 25 Mar 2025 10:30:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324125108.GH14944@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Andy Shevchenko
+ <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "brgl@bgdev.pl" <brgl@bgdev.pl>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+ <Z9lJETLh2y27934q@black.fi.intel.com>
+ <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org>
+ <20250324033038.GA9886@nxa18884-linux>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250324033038.GA9886@nxa18884-linux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Mon, Mar 24, 2025 at 06:17:50PM +0530, Malaya Kumar Rout wrote:
-> > Static Analyis for bench_htab_mem.c with cppcheck:error
-> > tools/testing/selftests/x86/lam.c:585:3:
-> > error: Resource leak: file_fd [resourceLeak]
-> > tools/testing/selftests/x86/lam.c:593:3:
-> > error: Resource leak: file_fd [resourceLeak]
-> > tools/testing/selftests/x86/lam.c:600:3:
-> > error: Memory leak: fi [memleak]
-> > tools/testing/selftests/x86/lam.c:1066:2:
-> > error: Resource leak: fd [resourceLeak]
-> > 
-> > fix the issue by closing the file descriptors and 
-> > releasing the allocated memory.
-> > 
+On 24/03/2025 05:21, Peng Fan wrote:
+> On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski wrote:
+>> On 18/03/2025 13:38, Peng Fan wrote:
+>>>> Also the commit message doesn't tell anything about the existing DTS
+>>>> files.
+>>>> Do we have this device described in any in the kernel? Do we have any
+>>>> googled examples? Why I'm asking because often the issue is the
+>>>> incorrect setting of the polarity, which needs to be carefully checked,
+>>>> esp. for the voltage regulators case.
+>>>
+>>>
+>>> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
+>>> with results from output of
+>>> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
+>>>
+>>> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
+>>> Others use GPIO_ACTIVE_HIGH.
+>>>
+>> These are old devices and not many people are actually providing tests,
+>> so you need to preserve existing ABI. IOW, if previously GPIO flags were
+>> ignored, meaning "1" is ACTIVE_HIGH, then you must preserve this behavior.
 > 
-> But but but, doesn't the program just exit on any of those 'errors'
-> anyway?
+> Per google,
+> Manual Reset function is for Hardware reset in the Active mode.
+
+Why are you mentioning the reset functions? Which properties are these?
+
+
+> If MR1B and MR2B is kept low during the VLDO3 is active state, the
+> system makes all internal presetting registers as default in the
+> active mode (automatic power on sequence). If this hardware reset
+> function is not required, connect MRB pin to high.
 > 
-> That is, iirc this is a single shot program.
+> So the reset is ACTIVE LOW if my understanding is correct.
+> 
+> To keep DTS unchanged, we need update polarity in gpiolib to
+> force GPIO_ACTIVE_LOW.
 
-While that's true, still proper cleanup of resources is a good practice 
-- and in more complicated tools it's useful to fix even these 
-semi-false-positives, to make sure other warnings don't get missed. 
+How are you going to achieve it if one DTS has LOW and other has HIGH?
 
-Having said that, the error/cleanup control flow here doesn't look 
-overly clean here to begin with, so I'd suggest fixing that (with goto 
-labels or such) - which would fix the file_fd 'leak' as a happy side 
-effect.
+> 
+> please see whether this is ok for you.
 
-Thanks,
+I don't understand how this is related to the issue I raised.
 
-	Ingo
+Best regards,
+Krzysztof
 
