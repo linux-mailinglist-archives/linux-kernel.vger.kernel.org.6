@@ -1,315 +1,166 @@
-Return-Path: <linux-kernel+bounces-575976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C32A7097B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:50:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0A3A7097E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCAC3A9532
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702003A9D87
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8612E1F1527;
-	Tue, 25 Mar 2025 18:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315EA1F30C4;
+	Tue, 25 Mar 2025 18:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jryr+F8N"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="VWxD6JGk"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4541ACEAF;
-	Tue, 25 Mar 2025 18:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C261319D086;
+	Tue, 25 Mar 2025 18:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928319; cv=none; b=Mpd2dQDFpVkIJAl5cVr3SKOsmtMTf8kL75RaeExnXZhdjXjbuUAEmFZA1LeG93LLwn1EcxOvTepNbXV0BRvAWrwJSV8lkA/XFJiK2hDPMwNCbGkZANcc7hd828w3xW04SHl4YeKtD0wSm9XNXAgZBXjx+uLkFLnB0IS3wEZIsjo=
+	t=1742928374; cv=none; b=eW/iPVaP7z0aWlRPQvwILHGsyFc2mQ+d3ATpexn0A23dkovByeGoqRaV+XGqbyT1V91ST7mXL8gx3AQeNNRymr5iKYwhnv4zS9rBSofch3NH90S10ZN87uCqdhJ72IjqWec36r596Qh595qMvEWRkyOzHEAEoicJXbmVMbj10xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928319; c=relaxed/simple;
-	bh=qEZFpIWuRP6Vtk/zsOA2rHTCTf0R9H6Scu1+vTSY+FI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTIOE3uBA+dG1NAveTPDZiaDmHp5YLIBFG+oOlHHosRHzUrynfVj3Gkepq+FzyqbF2OyLSR6sKkh6RiU8oLvdgyNY10fIuYXtU2/K34IUqBr/9mejNTHLxeQPERqZFX3nSB22ya+iYWpH31ZtfafNnI95GZE0aROcW4H8JfHP5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jryr+F8N; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e41e18137bso39589546d6.1;
-        Tue, 25 Mar 2025 11:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742928315; x=1743533115; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8aPKsDM7p9B6xrmjt8jZxRum7krTVtb3aktsBDZ1x6Q=;
-        b=jryr+F8Nkt3bpxw7d9IsQToPEcPgTp9oU8D0CS/RRkcR8W78WpPJcNhC/V7KyIOm2m
-         EXNtcM/QWxhBqSZSh0VJBgAOlSgIn/ejL9SeoiojcZK/ssqRhDsFxXQ2WINYG9syUsKa
-         QDyrdxjaVWY4F2bn9bixl52H+CsVl18LKtPTF9xvUDxvuPTSbvscOcP5o6JmugAJITyV
-         XqLRpwg96VG9Ha4dVuRCPXJtbqD6gkacy8L9kOxs1w7ITpC1p9wkJo974y5tih2FKEQS
-         2cytTB1G8Cl7y/afP/6mK6O8AOStWENPIsSxMM2nKKhAOCKThNBe0+gF8Dhr8nL2L2/D
-         PaxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742928315; x=1743533115;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8aPKsDM7p9B6xrmjt8jZxRum7krTVtb3aktsBDZ1x6Q=;
-        b=fVVE8sR+zh08/UMPL92qL8lQaLX/SXou8ZXy6IOXyuMGHC9oJcU3y2R6gs1c7sSGX0
-         ZHzII4Oj1BFlht0bMVErKFQik7xRT4HB/FIjBFKNmzruQNvuqCGUIF8Xincs9igCznLB
-         oDCL3mBPpxf+0S3Hxnw1QByGWI7Y7n/Vk1hot/yFlniackloV1DQkjmRsJV6yq2LwzBS
-         k693eBe0A1OPqO0MoPA3/bfXYG2GsBqMTsah0liROjo4KiO8QNKVD/oyy9yUr8tzUUhI
-         dC44ZZIG1AA8643AyDaRHBRxFa7axEYlSF4HIMgB8TJ7rn/XH3fJPSQWLvVwJHuDyDm9
-         mhaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjbF8t4PSg7ELxJJ3+4PzeVdVUk7rD/KzkUMS/j3+w0wbPY+Sstgulg/iF/ZA0r03mQzWAkcqA@vger.kernel.org, AJvYcCUl56LmfHVtqWeuHbQnJtz/0rhs2grdSi0lFykFl4EwlqVeGAWIhGVPEsXegFvpDYDiZVMshxX2jkJoWdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ58U7DfiZxaMfaUAL8am/fj1bwI5Kqm+eDTzJGOGFjrrqwGE4
-	ajPlnmo0L1DNxBh/WvaQA1UQZNgv0aZRAGbs5MZ62jmPpUQ3v+IC
-X-Gm-Gg: ASbGnct8d0CGwy8eVT9mH3rvKMu1R0UM2PAMAHyh0p31ekG1zM0Xh7k15bvO+CXl6gp
-	MOIO/FJTe/zgFG8N3qy9FKQEVzs1YlbrvlVh5yHgKKUPYofOor5V3eBJ66QBVXHPj10Lh7tsIw2
-	g8zAX48dCH+Cifp89p21X/qaNTkE9QkXHeBZyuV4dYo05yVzNaGoKrYSPIlhpeGYV9AmgnHy7G8
-	wu+i/cv9u0Y1ECFOp9kYNP7lDAi+O01UNYfDSgUA0wXXNWEGvnKD5urqaT95pi0RoyMFn+ChNoT
-	cvKgHjK9QqNWp9Af48oWAv8yEzJKtcCWV0+jVUCv1NnZGHeUvIjGcOi6qUcbRo3I9bEIAtKKHBL
-	WomTaHZCKlzhs15hA38yPfG8DSQDlgS/p7+g=
-X-Google-Smtp-Source: AGHT+IEGIus1ahdCyxVweaHDXayVNNh7SgLahfHaUgX6eTX8evXnJ2LakhywiNTIR2n89E8qS/+ekg==
-X-Received: by 2002:ad4:5aa5:0:b0:6ea:d604:9e59 with SMTP id 6a1803df08f44-6eb3f294df4mr318896326d6.9.1742928314522;
-        Tue, 25 Mar 2025 11:45:14 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efe0c0esm58929916d6.97.2025.03.25.11.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 11:45:14 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B79E6120007E;
-	Tue, 25 Mar 2025 14:45:13 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 25 Mar 2025 14:45:13 -0400
-X-ME-Sender: <xms:ufniZ4RWnQ_xJyIRxLoMCpuBMtn3gORmzYQDOWCGX7vMk-RZeyugpw>
-    <xme:ufniZ1yKXoMbTq5P4fptVDaT86ULWrheSjmv5taCOI-hnpdCT81Nk9mO0FlgALFmT
-    Gl1tQhTnJHmwenO1w>
-X-ME-Received: <xmr:ufniZ13pvyvZAum-RVa9zi_MTtSKs-b9aqjwgXEyxK20Z4M6i8pHhH7yzpY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieefgeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tddunecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnheptdegheelveffudejffegvdelgffhhfel
-    keeiieefgeevteejvdegveeuffeihefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhlohhnghesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlvghithgroh
-    esuggvsghirghnrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-    pdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrvghhse
-    hmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:ufniZ8BW_xilf_KGdl4Y9zTy4f-KJvH7UP1N57CYG_WfLsdjOBaZJg>
-    <xmx:ufniZxg07MFwuRkmYlhXDAM5RCnDJHsxy8-dzkrMbWdCKg0TkjN-Fw>
-    <xmx:ufniZ4paZh-vVaSFp-oukE8QyzST9iRwH3gmE1pzOtXSuisb3siGVw>
-    <xmx:ufniZ0gawul0Yg7QnW6F5wMP6LspDmoAJA4fI4SWIOpFiH_rREtdkQ>
-    <xmx:ufniZ4StUp4jAuJBMCkkGXE8WsHcGT_WERaUWaiL2RPWInrA2TCpZnWZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Mar 2025 14:45:13 -0400 (EDT)
-Date: Tue, 25 Mar 2025 11:45:10 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, aeh@meta.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
- expedited RCU synchronization
-Message-ID: <Z-L5ttC9qllTAEbO@boqun-archlinux>
-References: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
- <20250324121202.GG14944@noisy.programming.kicks-ass.net>
- <CANn89iKykrnUVUsqML7dqMuHx6OuGnKWg-xRUV4ch4vGJtUTeg@mail.gmail.com>
- <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
- <67e1b2c4.050a0220.353291.663c@mx.google.com>
- <67e1fd15.050a0220.bc49a.766e@mx.google.com>
- <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com>
- <Z-Il69LWz6sIand0@Mac.home>
- <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+	s=arc-20240116; t=1742928374; c=relaxed/simple;
+	bh=26cUWmyUJw9PvEkCjgx/ibwg0Ykhe7Oo8y/LNSYUn0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rvY3dcIs7lTRJULkdnlcwJ+74zaKO6EsG1+rhVh+5rPgEnNbmuIeltviOBfJZv6TDLptWY5zBFTC0VudjxMwHU0bQkxp6w13ZQd3A7gLKXimx08vEJCNDeiWUZINnBi2uLOebyF2CfnVGDXo3hOvtFAVHH658oh3mG1Hgnfg0wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=VWxD6JGk; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:cbc0:999f:73ad:33bd])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id BF0BB2E098A5;
+	Tue, 25 Mar 2025 20:46:05 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742928366;
+	bh=3yGfiKbUIqLMVOFnvObw+kXe8LmExFJR+Kd9PtGzFrw=; h=From:To:Subject;
+	b=VWxD6JGkJ+UFftcNfuhOgM8ozY1ZopchAxJfn4kgPUdDeLo0uZPIhC9BFNAZzMgN/
+	 nHXS8IZJg4q73qqmxgZ2mP0SKXiMf18n7BQOPwRp7zRVeXTnrpIZ03Al1t4sS8R4VZ
+	 mt//8h3SW46d/SLxwa8iA2hO2w/+0by8C5lqYoBQ=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:cbc0:999f:73ad:33bd) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v5 00/11] HID: asus: Add RGB Support to Asus Z13, Ally,
+ unify backlight asus-wmi, and Z13 QOL
+Date: Tue, 25 Mar 2025 19:45:49 +0100
+Message-ID: <20250325184601.10990-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+X-PPP-Message-ID: 
+ <174292836678.7644.4282738635052490441@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Tue, Mar 25, 2025 at 10:52:16AM -0400, Waiman Long wrote:
-> On 3/24/25 11:41 PM, Boqun Feng wrote:
-> > On Mon, Mar 24, 2025 at 09:56:25PM -0400, Waiman Long wrote:
-> > > On 3/24/25 8:47 PM, Boqun Feng wrote:
-> > > > On Mon, Mar 24, 2025 at 12:30:10PM -0700, Boqun Feng wrote:
-> > > > > On Mon, Mar 24, 2025 at 12:21:07PM -0700, Boqun Feng wrote:
-> > > > > > On Mon, Mar 24, 2025 at 01:23:50PM +0100, Eric Dumazet wrote:
-> > > > > > [...]
-> > > > > > > > > ---
-> > > > > > > > >    kernel/locking/lockdep.c | 6 ++++--
-> > > > > > > > >    1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > > > > > > > > index 4470680f02269..a79030ac36dd4 100644
-> > > > > > > > > --- a/kernel/locking/lockdep.c
-> > > > > > > > > +++ b/kernel/locking/lockdep.c
-> > > > > > > > > @@ -6595,8 +6595,10 @@ void lockdep_unregister_key(struct lock_class_key *key)
-> > > > > > > > >         if (need_callback)
-> > > > > > > > >                 call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
-> > > > > > > > > 
-> > > > > > > > > -     /* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
-> > > > > > > > > -     synchronize_rcu();
-> > > > > > I feel a bit confusing even for the old comment, normally I would expect
-> > > > > > the caller of lockdep_unregister_key() should guarantee the key has been
-> > > > > > unpublished, in other words, there is no way a lockdep_unregister_key()
-> > > > > > could race with a register_lock_class()/lockdep_init_map_type(). The
-> > > > > > synchronize_rcu() is not needed then.
-> > > > > > 
-> > > > > > Let's say someone breaks my assumption above, then when doing a
-> > > > > > register_lock_class() with a key about to be unregister, I cannot see
-> > > > > > anything stops the following:
-> > > > > > 
-> > > > > > 	CPU 0				CPU 1
-> > > > > > 	=====				=====
-> > > > > > 	register_lock_class():
-> > > > > > 	  ...
-> > > > > > 	  } else if (... && !is_dynamic_key(lock->key)) {
-> > > > > > 	  	// ->key is not unregistered yet, so this branch is not
-> > > > > > 		// taken.
-> > > > > > 	  	return NULL;
-> > > > > > 	  }
-> > > > > > 	  				lockdep_unregister_key(..);
-> > > > > > 					// key unregister, can be free
-> > > > > > 					// any time.
-> > > > > > 	  key = lock->key->subkeys + subclass; // BOOM! UAF.
-> > This is not a UAF :(
-> > 
-> > > > > > So either we don't need the synchronize_rcu() here or the
-> > > > > > synchronize_rcu() doesn't help at all. Am I missing something subtle
-> > > > > > here?
-> > > > > > 
-> > > > > Oh! Maybe I was missing register_lock_class() must be called with irq
-> > > > > disabled, which is also an RCU read-side critical section.
-> > > > > 
-> > > > Since register_lock_class() will be call with irq disabled, maybe hazard
-> > > > pointers [1] is better because most of the case we only have nr_cpus
-> > > > readers, so the potential hazard pointer slots are fixed.
-> > > > 
-> > > > So the below patch can reduce the time of the tc command from real ~1.7
-> > > > second (v6.14) to real ~0.05 second (v6.14 + patch) in my test env,
-> > > > which is not surprising given it's a dedicated hazard pointers for
-> > > > lock_class_key.
-> > > > 
-> > > > Thoughts?
-> > > My understanding is that it is not a race between register_lock_class() and
-> > > lockdep_unregister_key(). It is the fact that the structure that holds the
-> > > lock_class_key may be freed immediately after return from
-> > > lockdep_unregister_key(). So any processes that are in the process of
-> > > iterating the hash_list containing the hash_entry to be unregistered may hit
-> > You mean the lock_keys_hash table, right? I used register_lock_class()
-> > as an example, because it's one of the places that iterates
-> > lock_keys_hash. IIUC lock_keys_hash is only used in
-> > lockdep_{un,}register_key() and is_dynamic_key() (which are only called
-> > by lockdep_init_map_type() and register_lock_class()).
-> > 
-> > > a UAF problem. See commit 61cc4534b6550 ("locking/lockdep: Avoid potential
-> > > access of invalid memory in lock_class") for a discussion of this kind of
-> > > UAF problem.
-> > > 
-> > That commit seemed fixing a race between disabling lockdep and
-> > unregistering key, and most importantly, call zap_class() for the
-> > unregistered key even if lockdep is disabled (debug_locks = 0). It might
-> > be related, but I'm not sure that's the reason of putting
-> > synchronize_rcu() there. Say you want to synchronize between
-> > /proc/lockdep and lockdep_unregister_key(), and you have
-> > synchronize_rcu() in lockdep_unregister_key(), what's the RCU read-side
-> > critical section at /proc/lockdep?
-> I agree that the commit that I mentioned is not relevant to the current
-> case. You are right that is_dynamic_key() is the only function that is
-> problematic, the other two are protected by the lockdep_lock. So they are
-> safe. Anyway, I believe that the actual race happens in the iteration of the
-> hashed list in is_dynamic_key(). The key that you save in the
-> lockdep_key_hazptr in your proposed patch should never be the key (dead_key)
+This is a three part series which does the following:
+  - Clean init sequence, fix the keyboard of the Z13 (touchpad,fan button)
+  - Unifies backlight handling to happen under asus-wmi so that all Aura
+    devices have synced brightness controls and the backlight button works
+    properly when it is on a USB laptop keyboard instead of one w/ WMI.
+  - Adds RGB support to hid-asus, solid colors only, and for the ROG Ally
+    units and the Asus Z13 2025 first.
 
-The key stored in lockdep_key_hazptr is the one that the rest of the
-function will use after is_dynamic_key() return true. That is,
+For more context, see cover letter of V1.
 
-	CPU 0				CPU 1
-	=====				=====
-	WRITE_ONCE(*lockdep_key_hazptr, key);
-	smp_mb();
+---
+V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
+V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
+V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
+V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
 
-	is_dynamic_key():
-	  hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
-	    if (k == key) {
-	      found = true;
-	      break;
-	    }
-	  }
-	  				lockdep_unregister_key():
-					  hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
-					    if (k == key) {
-					      hlist_del_rcu(&k->hash_entry);
-				              found = true;
-				              break;
-					    }
-					  }
+Changes since V4:
+  - Fix KConfig (reported by kernel robot)
+  - Fix Ilpo's nits, if I missed anything lmk
 
-				        smp_mb();
+Changes since V3:
+  - Add initializer for 0x5d for old NKEY keyboards until it is verified
+    that it is not needed for their media keys to function.
+  - Cover init in asus-wmi with spinlock as per Hans
+  - If asus-wmi registers WMI handler with brightness, init the brightness
+    in USB Asus keyboards, per Hans.
+  - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
+  - Fix oops when unregistering asus-wmi by moving unregister outside of
+    the spin lock (but after the asus reference is set to null)
 
-					synchronize_lockdep_key_hazptr():
-					  for_each_possible_cpu(cpu) {
-					    <wait for the hazptr slot on
-					    that CPU to be not equal to
-					    the removed key>
-					  }
+Changes since V2:
+  - Check lazy init succeds in asus-wmi before setting register variable
+  - make explicit check in asus_hid_register_listener for listener existing
+    to avoid re-init
+  - rename asus_brt to asus_hid in most places and harmonize everything
+  - switch to a spinlock instead of a mutex to avoid kernel ooops
+  - fixup hid device quirks to avoid multiple RGB devices while still exposing
+    all input vendor devices. This includes moving rgb init to probe
+    instead of the input_configured callbacks.
+  - Remove fan key (during retest it appears to be 0xae that is already
+    supported by hid-asus)
+  - Never unregister asus::kbd_backlight while asus-wmi is active, as that
+  - removes fds from userspace and breaks backlight functionality. All
+  - current mainline drivers do not support backlight hotplugging, so most
+    userspace software (e.g., KDE, UPower) is built with that assumption.
+    For the Ally, since it disconnects its controller during sleep, this
+    caused the backlight slider to not work in KDE.
+
+Changes since V1:
+  - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+  - Fix ifdef else having an invalid signature (reported by kernel robot)
+  - Restore input arguments to init and keyboard function so they can
+    be re-used for RGB controls.
+  - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+    with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+    keyboard rename into it.
+  - Unregister brightness listener before removing work queue to avoid
+    a race condition causing corruption
+  - Remove spurious mutex unlock in asus_brt_event
+  - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+    relocking the mutex and causing a deadlock when unregistering leds
+  - Add extra check during unregistering to avoid calling unregister when
+    no led device is registered.
+  - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+    the driver to create 4 RGB handlers per device. I also suspect some
+    extra events sneak through (KDE had the @@@@@@).
+
+Antheas Kapenekakis (11):
+  HID: asus: refactor init sequence per spec
+  HID: asus: prevent binding to all HID devices on ROG
+  HID: asus: add Z13 folio to generic group for multitouch to work
+  platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+  HID: asus: listen to the asus-wmi brightness device instead of
+    creating one
+  platform/x86: asus-wmi: remove unused keyboard backlight quirk
+  platform/x86: asus-wmi: add keyboard brightness event handler
+  HID: asus: add support for the asus-wmi brightness handler
+  HID: asus: add basic RGB support
+  HID: asus: add RGB support to the ROG Ally units
+  HID: asus: initialize LED endpoint early for old NKEY keyboards
+
+ drivers/hid/Kconfig                        |   1 +
+ drivers/hid/hid-asus.c                     | 359 +++++++++++++++------
+ drivers/hid/hid-ids.h                      |   2 +-
+ drivers/platform/x86/asus-wmi.c            | 157 ++++++++-
+ include/linux/platform_data/x86/asus-wmi.h |  69 ++--
+ 5 files changed, 435 insertions(+), 153 deletions(-)
 
 
-, so that if is_dynamic_key() finds a key was in the hash, even though
-later on the key would be removed by lockdep_unregister_key(), the
-hazard pointers guarantee lockdep_unregister_key() would wait for the
-hazard pointer to release.
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+-- 
+2.49.0
 
-> that is passed to lockdep_unregister_key(). In is_dynamic_key():
-> 
->     hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
->                 if (k == key) {
->                         found = true;
->                         break;
->                 }
->         }
-> 
-> key != k (dead_key), but before accessing its content to get to hash_entry,
-
-It is the dead_key.
-
-> an interrupt/NMI can happen. In the mean time, the structure holding the key
-> is freed and its content can be overwritten with some garbage. When
-> interrupt/NMI returns, hash_entry can point to anything leading to crash or
-> an infinite loop.  Perhaps we can use some kind of synchronization mechanism
-
-No, hash_entry cannot be freed or overwritten because the user has
-protect the key with hazard pointers, only when the user reset the
-hazard pointer to NULL, lockdep_unregister_key() can then return and the
-key can be freed.
-
-> between is_dynamic_key() and lockdep_unregister_key() to prevent this kind
-> of racing. For example, we can have an atomic counter associated with each
-
-The hazard pointer I proposed provides the exact synchronization ;-)
-
-Regards,
-Boqun
-
-> head of the hashed table. is_dynamic_key() can increment the counter if it
-> is not zero to proceed and lockdep_unregister_key() have to make sure it can
-> safely decrement the counter to 0 before going ahead. Just a thought!
-> 
-> Cheers,
-> Longman
 
