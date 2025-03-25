@@ -1,184 +1,159 @@
-Return-Path: <linux-kernel+bounces-574783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC69A6E9EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:57:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3DFA6E9F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8671692E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0F8188C3BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5947234966;
-	Tue, 25 Mar 2025 06:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121621480B;
+	Tue, 25 Mar 2025 06:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7EJYNqJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CMn2VPv0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B851FDE2B;
-	Tue, 25 Mar 2025 06:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92ED2AE9A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742885861; cv=none; b=RkENguuryeEVTHsCsESkpWJ+ZKgaLX0gKFJjMal+NoxZ9yvOtgSjr8hiCkW1pUoiciND4ZPkVV2atS04Trf87iXFrz63MeTAEZCdr4y28qyUCFbd5YT36himIvVt3twgBUTP3x6ncUh5RNTDYgm8poWLv4mqdR6AcLXiuaedeB8=
+	t=1742885890; cv=none; b=geemjzuRlRvqx6IpkqHkAU7rN3Xbq4jYfblJJ6ifdppEOcbWddQChF9N37wH2CdQTtOJ6X2DWCp4QKYKay2eXVo3GSOjTpO36T5otcL0/HhWjR3v688MTT8hV++3GPau/RTa2ZG/PM7ClMmxYybuXk0cXifV7LX1Hw793U9IRz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742885861; c=relaxed/simple;
-	bh=mrWlhzsP7VDMDRI5lyXvbZor6lg91zVdS93Hng4hwgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZS8gu7A6cRsANDZdh0cC0+2pe0Mb1/Y//t0V5hhytytU1b1HeyeY27iISBVIcNzOq3pVrK9KBbbgPJ3/DNxEgohM0ux1RnF/3ki2Y85v75oCeFC5SOEUHr8qzTap96JSZgtQm3L+oCSMPtB38aoCIBMxKrDLNluYHc6UoB6aPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7EJYNqJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B104CC4CEE8;
-	Tue, 25 Mar 2025 06:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742885860;
-	bh=mrWlhzsP7VDMDRI5lyXvbZor6lg91zVdS93Hng4hwgU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L7EJYNqJKfdBFuhoZKL92j0J4Pdqtpzopv4La/f1KF3oauogtQ0ZxPD6liMHvoU24
-	 BKj7XLVaFdXaGetaIUzSrhWqOeNZBBMuKhvRp8dDO9gLVas6e4M+u/JWHEiq3SsFHC
-	 alqfJkiKJYAWSJjg75tZQ5Om93n6AmaFjir28kG19dTb4MGfx4rbmOe2KfHB2AARTL
-	 uqwCL9e/70pH3xjpMBq84o0R7mz7zzEocsEKQsMCKjD9LBQ/8bb1zWTEHIvPDJTnnO
-	 76mTPNCUQN80TMVswNUUeDImvldfTDybrRheMJBe2a63M4aT2iGlqN9j1rCw9v5Ffh
-	 G2VKv6YFONZ3A==
-Message-ID: <53eb9d35-2b7c-4742-af18-e7b0fb1cdcfe@kernel.org>
-Date: Tue, 25 Mar 2025 07:57:33 +0100
+	s=arc-20240116; t=1742885890; c=relaxed/simple;
+	bh=h0fHlaZMz5XtoUH8OETHCDfjpLG0nPB1YaUWxFkCW2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMAF99uoxmf8BLp33KF5ClyHJKgWBwhRHQ3jjZ7lXmj+VuC8ndtjmBamo06YFlyBlX5yEVkYekSBXZsh+m2iETC+FX9+MMkPCSti+YWDTbY6GZViL0Nz9vzp+JXZcAZiiex5uXT/Cqv7o2V0HKWnHOHT2kEUgabprJNrEJKBpPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CMn2VPv0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742885887;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=19WP4WFqsV7qujfoRGQmqqeN7h9hu1fjTeGwGJQZMdQ=;
+	b=CMn2VPv0kfXBG9p7mG4vt2kG6ulZJpUKA9B0nEXJuz6kuXNMH7E0C14TMrA4gQdAO5LkLk
+	9Pu4bm1u0piPs029Jl5j8//Dj4jnME+3gp0I+8RYOIjtw02eO8X8Pm/CoufXhjdR3BvG93
+	RE8UL/3ma/9q3hGN9dQ5+0KRgDODx2Q=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-83-qE_0gAprMS2WIAV1lbNLxA-1; Tue,
+ 25 Mar 2025 02:58:04 -0400
+X-MC-Unique: qE_0gAprMS2WIAV1lbNLxA-1
+X-Mimecast-MFC-AGG-ID: qE_0gAprMS2WIAV1lbNLxA_1742885880
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E98ED18DBA01;
+	Tue, 25 Mar 2025 06:57:58 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.60])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E607180B48C;
+	Tue, 25 Mar 2025 06:57:54 +0000 (UTC)
+Date: Tue, 25 Mar 2025 14:57:50 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
+	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, dwmw2@infradead.org,
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
+	corbet@lwn.net, krzk@kernel.org, rppt@kernel.org,
+	mark.rutland@arm.com, pbonzini@redhat.com,
+	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org,
+	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org,
+	saravanak@google.com, skinsburskii@linux.microsoft.com,
+	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, will@kernel.org,
+	devicetree@vger.kernel.org, kexec@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
+Message-ID: <Z+JT7kx+sfPqfWFA@MiWiFi-R3L-srv>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+ <20250320015551.2157511-12-changyuanl@google.com>
+ <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: pci: cadence: Add property "hpa" for
- PCIe controllers
-To: Manikandan Karunakaran Pillai <mpillai@cadence.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "kw@linux.com" <kw@linux.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Milind Parab <mparab@cadence.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20250324082335.2566055-1-mpillai@cadence.com>
- <CH2PPF4D26F8E1CE4E18E9CC5B8DAF724DCA2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
- <60af2ed4-91a9-434b-b1f6-a87218aba381@kernel.org>
- <DS0PR07MB10492F672DEACE769F97C609BA2A72@DS0PR07MB10492.namprd07.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <DS0PR07MB10492F672DEACE769F97C609BA2A72@DS0PR07MB10492.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 25/03/2025 04:16, Manikandan Karunakaran Pillai wrote:
+On 03/24/25 at 12:18pm, Dave Young wrote:
+> On Thu, 20 Mar 2025 at 23:05, Changyuan Lyu <changyuanl@google.com> wrote:
+> >
+> > From: Alexander Graf <graf@amazon.com>
+> >
+> > We have all generic code in place now to support Kexec with KHO. This
+> > patch adds a config option that depends on architecture support to
+> > enable KHO support.
+> >
+> > Signed-off-by: Alexander Graf <graf@amazon.com>
+> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Co-developed-by: Changyuan Lyu <changyuanl@google.com>
+> > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
+> > ---
+> >  kernel/Kconfig.kexec | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >
+> > diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> > index 4d111f871951..57db99e758a8 100644
+> > --- a/kernel/Kconfig.kexec
+> > +++ b/kernel/Kconfig.kexec
+> > @@ -95,6 +95,21 @@ config KEXEC_JUMP
+> >           Jump between original kernel and kexeced kernel and invoke
+> >           code in physical address mode via KEXEC
+> >
+> > +config KEXEC_HANDOVER
+> > +       bool "kexec handover"
+> > +       depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
+> > +       select MEMBLOCK_KHO_SCRATCH
+> > +       select KEXEC_FILE
+> > +       select DEBUG_FS
+> > +       select LIBFDT
+> > +       select CMA
+> > +       select XXHASH
+> > +       help
+> > +         Allow kexec to hand over state across kernels by generating and
+> > +         passing additional metadata to the target kernel. This is useful
+> > +         to keep data or state alive across the kexec. For this to work,
+> > +         both source and target kernels need to have this option enabled.
+> > +
 > 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Monday, March 24, 2025 9:29 PM
->> To: Manikandan Karunakaran Pillai <mpillai@cadence.com>;
->> lpieralisi@kernel.org; manivannan.sadhasivam@linaro.org;
->> bhelgaas@google.com; kw@linux.com; robh@kernel.org;
->> devicetree@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org
->> Subject: Re: [PATCH 1/6] dt-bindings: pci: cadence: Add property "hpa" for PCIe
->> controllers
->>
->> EXTERNAL MAIL
->>
->>
->> On 24/03/2025 10:08, Manikandan Karunakaran Pillai wrote:
->>> Document the newly added property "hpa" for Cadence PCIe controllers
->>> in Documentation/devicetree/bindings/pci/ for Root Port and Endpoint
->>> configurations
->>
->> Drop the path, pointless.
-> Ok
->>
->>>
->>
->> Please run scripts/checkpatch.pl on the patches and fix reported warnings.
->> After that, run also 'scripts/checkpatch.pl --strict' on the patches and
->> (probably) fix more warnings. Some warnings can be ignored, especially from -
->> -strict run, but the code here looks like it needs a fix. Feel free to get in touch if
->> the warning is not clear.
->>
-> 
-> The scripts/checkpatch.pl has been run  with and without --strict. With the --strict option
-> 4 checks are generated on 1 patch(patch 0002 of the series), which can be ignored. There are 
-> no code fixes required for these checks. The rest of the 'scripts/checkpatch.pl' 
-> is clean.
+> Have you tested kdump?  In my mind there are two issues,  one is with
+> CMA enabled, it could cause kdump crashkernel memory reservation
+> failures more often due to the fragmented low memory.  Secondly,  in
 
-No, it's not. The patch has obvious style violations.
+kho scracth memorys are reserved much later than crashkernel, we may not
+need to worry about it.
+====================
+start_kernel()
+  ......
+  -->setup_arch(&command_line);
+     -->arch_reserve_crashkernel();
+  ......
+  -->mm_core_init();
+     -->kho_memory_init();
 
+> kdump kernel dump the crazy scratch memory in vmcore is not very
+> meaningful.  Otherwise I suspect this is not tested under kdump.  If
+> so please disable this option for kdump.
 
-> 
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people and lists
->> to CC (and consider --no-git-fallback argument, so you will not CC people just
->> because they made one commit years ago). It might happen, that command
->> when run on an older kernel, gives you outdated entries. Therefore please be
->> sure you base your patches on recent Linux kernel.
-> 
-> Ok
-> 
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of people, so
->> fix your workflow. Tools might also fail if you work on some ancient tree (don't,
->> instead use mainline) or work on fork of kernel (don't, instead use mainline).
->> Just use b4 and everything should be fine, although remember about `b4 prep
->> --auto-to-cc` if you added new patches to the patchset.
->> </form letter>
->>
-> I used an earlier list generated. Will take care to generate the list on latest tree.
+Yeah, it's not meaningful to dump out scratch memorys into vmcore. We
+may need to dig them out from eflcorehdr. While it's an optimization,
+kho scratch is not big relative to the entire system memory. It can be
+done in later stage. My personal opinion.
 
-That's not the correct process. Why would you Cc maintainers from 10
-years ago?
-
-
-Best regards,
-Krzysztof
 
