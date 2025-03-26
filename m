@@ -1,188 +1,77 @@
-Return-Path: <linux-kernel+bounces-576705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD03A71352
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:06:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F674A71355
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85323B898F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D963B4465
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256281A5BAE;
-	Wed, 26 Mar 2025 09:06:50 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9201C3D6A;
-	Wed, 26 Mar 2025 09:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C71A5BB2;
+	Wed, 26 Mar 2025 09:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oq9hxf+7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D83A3D6A;
+	Wed, 26 Mar 2025 09:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742980009; cv=none; b=ddGr8ETQ1N+8OwRWe0qOCViQthONLAP/l1dOpgyIMOGUwCsHv0AQXh2SeX07uRUtwU2yrJtlChi0C4HbMvlMkurQszl6gWmDg7SjWT3shCAwI5ygXtBuIrDRlqtGowLUv7eiFHH/thPSs8JhEFb+9pB9Z1gyfvOCYgFKiAK8PAg=
+	t=1742980076; cv=none; b=CjJxa81yTX88Iesyx+2uSmtSSWtfAuke59ab3K5ywSCpfbfhtdfYqvM5+6gn7c6nVYePeuB1cJhPTaOm/yrM3TIzY0s9nVpSBnPbuumkVGLu65GFdKa5UDUXhJ8SttTWYNLEJBV1ieCSlj/cvAqWNMKX1eZ4XX7aXJBV6BIPQvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742980009; c=relaxed/simple;
-	bh=ZiJPbInomXuz/9oF7rNjIFif43TGI37yHFbWqkKInm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bR7Sac/wIR914ZvoTc/6ZBsPyxTF3Q5cJ3EwBTVuFYFjM12yNuI7TQsdsnLox0+nxoqLpKuqUX6/tjBORTKleUR9mY9ZjOcIxXj6ygnusYZO8lsy3UK00CLmzjJ+lE9vB+Yjrmwc72LLZNZ2Qmqxbdw0Lsvxu3wDvXeIaS5iRjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id DD97F72C8CC;
-	Wed, 26 Mar 2025 12:06:43 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id CDF3E7CCB3A; Wed, 26 Mar 2025 11:06:43 +0200 (IST)
-Date: Wed, 26 Mar 2025 11:06:43 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	strace-devel@lists.strace.io, linux-kselftest@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests/ptrace/get_syscall_info: fix for MIPS n32
-Message-ID: <20250326090643.GA30882@strace.io>
-References: <20250115233747.GA28541@strace.io>
+	s=arc-20240116; t=1742980076; c=relaxed/simple;
+	bh=L2t5HFJDwx1CY7bwvfOQjamBPEOLVGzjYbHFYv4C6Q0=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=BzelFgx7EzP06M4E9z2Y+coajz99xuZKOsu23lwgDKWa0e+YrV3FgDBedOpVvon427mgeelL9xo8lPYTmCuZ5L3ldU+L96ddQb0GBX0ewh21kqGJOvopjFKLq+MC+21yW+9SK43iyv+4RuoXKI7Oy20V6CMjg0FqDYhx1AY/zlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oq9hxf+7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88876C4CEE2;
+	Wed, 26 Mar 2025 09:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742980075;
+	bh=L2t5HFJDwx1CY7bwvfOQjamBPEOLVGzjYbHFYv4C6Q0=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=oq9hxf+7poeUYApJeYHubRoEgnedRmnqV0fQlahZbYb/2lBGuig2LNFrrlqlFDIZz
+	 xa9tPInKWCXWaSKrga2ZQ5BDztLvuvrwX4c88dYp3yfBb4oV1olTV97zgWMPRMMh++
+	 ct5fUpkhf4/agpNWeLt2GTrSMOhUaHJ2sUjnrgnhYdyWfKLUnVDAS5bUC8GsyWCn5V
+	 RhaKL6KcC/N/XAr6xu4a/ZD2POvsgikeWiPsc2mfvlQAE1a8i4InTNxSAF/vB7688y
+	 9eknAEdR7MGDroi/WDWr2kY9BM751PZW9PE8ADejFJCYyMa+mredV0r7blnsh9/4hd
+	 aeEpyS/H21XAA==
+Message-ID: <5125a08fb0a028a4152a64dd8f194434@kernel.org>
+Date: Wed, 26 Mar 2025 09:07:53 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+Subject: Re: [PATCH 0/2] drm: Make some resolution info unsigned
+In-Reply-To: <20250325212823.669459-1-lyude@redhat.com>
+References: <20250325212823.669459-1-lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Benno Lossin" <benno.lossin@proton.me>,
+ =?utf-8?b?QmrDtnJuIFJveSBCYXJvbg==?= <bjorn3_gh@protonmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Maxime Ripard" <mripard@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ =?utf-8?b?b3BlbiBsaXN0OlJVU1Q6S2V5d29yZDogYig/aTpydXN0KSBi?= <rust-for-linux@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250115233747.GA28541@strace.io>
 
-Could somebody pick up this patch, please?
+On Tue, 25 Mar 2025 17:27:03 -0400, Lyude Paul wrote:
+> During the review of some of my patches for KMS bindings in Rust, it was
+> pointed out we have some areas of DRM that are storing resolutions as
+> signed integers when it doesn't really make sense. Since there's no real
+> usecase for this and it's a bit more obvious when writing rust code then
+> it is in C, let's fix this.
+> 
+> [ ... ]
 
-Nothing has changed since v2, so I have nothing new to add.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-v2: https://lore.kernel.org/all/20250115233747.GA28541@strace.io/
-
-On Thu, Jan 16, 2025 at 01:37:47AM +0200, Dmitry V. Levin wrote:
-> MIPS n32 is one of two ILP32 architectures supported by the kernel
-> that have 64-bit syscall arguments (another one is x32).
-> 
-> When this test passed 32-bit arguments to syscall(), they were
-> sign-extended in libc, PTRACE_GET_SYSCALL_INFO reported these
-> sign-extended 64-bit values, and the test complained about the mismatch.
-> 
-> Fix this by passing arguments of the appropriate type to syscall(),
-> which is "unsigned long long" on MIPS n32, and __kernel_ulong_t on other
-> architectures.
-> 
-> As a side effect, this also extends the test on all 64-bit architectures
-> by choosing constants that don't fit into 32-bit integers.
-> 
-> Signed-off-by: Dmitry V. Levin <ldv@strace.io>
-> ---
-> 
-> v2: Fixed MIPS #ifdef.
-> 
->  .../selftests/ptrace/get_syscall_info.c       | 53 +++++++++++--------
->  1 file changed, 32 insertions(+), 21 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/ptrace/get_syscall_info.c b/tools/testing/selftests/ptrace/get_syscall_info.c
-> index 5bcd1c7b5be6..2970f72d66d3 100644
-> --- a/tools/testing/selftests/ptrace/get_syscall_info.c
-> +++ b/tools/testing/selftests/ptrace/get_syscall_info.c
-> @@ -11,8 +11,19 @@
->  #include <err.h>
->  #include <signal.h>
->  #include <asm/unistd.h>
-> +#include <linux/types.h>
->  #include "linux/ptrace.h"
->  
-> +#if defined(_MIPS_SIM) && _MIPS_SIM == _MIPS_SIM_NABI32
-> +/*
-> + * MIPS N32 is the only architecture where __kernel_ulong_t
-> + * does not match the bitness of syscall arguments.
-> + */
-> +typedef unsigned long long kernel_ulong_t;
-> +#else
-> +typedef __kernel_ulong_t kernel_ulong_t;
-> +#endif
-> +
->  static int
->  kill_tracee(pid_t pid)
->  {
-> @@ -42,37 +53,37 @@ sys_ptrace(int request, pid_t pid, unsigned long addr, unsigned long data)
->  
->  TEST(get_syscall_info)
->  {
-> -	static const unsigned long args[][7] = {
-> +	const kernel_ulong_t args[][7] = {
->  		/* a sequence of architecture-agnostic syscalls */
->  		{
->  			__NR_chdir,
-> -			(unsigned long) "",
-> -			0xbad1fed1,
-> -			0xbad2fed2,
-> -			0xbad3fed3,
-> -			0xbad4fed4,
-> -			0xbad5fed5
-> +			(uintptr_t) "",
-> +			(kernel_ulong_t) 0xdad1bef1bad1fed1ULL,
-> +			(kernel_ulong_t) 0xdad2bef2bad2fed2ULL,
-> +			(kernel_ulong_t) 0xdad3bef3bad3fed3ULL,
-> +			(kernel_ulong_t) 0xdad4bef4bad4fed4ULL,
-> +			(kernel_ulong_t) 0xdad5bef5bad5fed5ULL
->  		},
->  		{
->  			__NR_gettid,
-> -			0xcaf0bea0,
-> -			0xcaf1bea1,
-> -			0xcaf2bea2,
-> -			0xcaf3bea3,
-> -			0xcaf4bea4,
-> -			0xcaf5bea5
-> +			(kernel_ulong_t) 0xdad0bef0caf0bea0ULL,
-> +			(kernel_ulong_t) 0xdad1bef1caf1bea1ULL,
-> +			(kernel_ulong_t) 0xdad2bef2caf2bea2ULL,
-> +			(kernel_ulong_t) 0xdad3bef3caf3bea3ULL,
-> +			(kernel_ulong_t) 0xdad4bef4caf4bea4ULL,
-> +			(kernel_ulong_t) 0xdad5bef5caf5bea5ULL
->  		},
->  		{
->  			__NR_exit_group,
->  			0,
-> -			0xfac1c0d1,
-> -			0xfac2c0d2,
-> -			0xfac3c0d3,
-> -			0xfac4c0d4,
-> -			0xfac5c0d5
-> +			(kernel_ulong_t) 0xdad1bef1fac1c0d1ULL,
-> +			(kernel_ulong_t) 0xdad2bef2fac2c0d2ULL,
-> +			(kernel_ulong_t) 0xdad3bef3fac3c0d3ULL,
-> +			(kernel_ulong_t) 0xdad4bef4fac4c0d4ULL,
-> +			(kernel_ulong_t) 0xdad5bef5fac5c0d5ULL
->  		}
->  	};
-> -	const unsigned long *exp_args;
-> +	const kernel_ulong_t *exp_args;
->  
->  	pid_t pid = fork();
->  
-> @@ -154,7 +165,7 @@ TEST(get_syscall_info)
->  			}
->  			ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
->  						      pid, size,
-> -						      (unsigned long) &info))) {
-> +						      (uintptr_t) &info))) {
->  				LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO: %m");
->  			}
->  			ASSERT_EQ(expected_none_size, rc) {
-> @@ -177,7 +188,7 @@ TEST(get_syscall_info)
->  		case SIGTRAP | 0x80:
->  			ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
->  						      pid, size,
-> -						      (unsigned long) &info))) {
-> +						      (uintptr_t) &info))) {
->  				LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO: %m");
->  			}
->  			switch (ptrace_stop) {
-> -- 
-> ldv
-
--- 
-ldv
+Thanks!
+Maxime
 
