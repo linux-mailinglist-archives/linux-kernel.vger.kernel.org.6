@@ -1,192 +1,101 @@
-Return-Path: <linux-kernel+bounces-576853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE59A7153E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:01:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B57A71534
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B38C18951D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A167A579C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B6E1D514A;
-	Wed, 26 Mar 2025 10:59:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0080C1CEAA3;
+	Wed, 26 Mar 2025 11:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhqGxkjw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF551CEAA3
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59677BA50;
+	Wed, 26 Mar 2025 11:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986797; cv=none; b=nwh3goct2oKClbhNys1ObDs5xeLLDpzNqoKvhyuvPKr+WOfkjEYOMRJdEE43EzUWNLiUWlvCsgML9N/bPoElOahVzub27iqvu9r5fC9RTnbhY6mCjV8dgBsIy00KqqKBUH+YJave7IlJ7eLAcaBcm22mruedecZ2ZYhqzbRXA8Q=
+	t=1742986848; cv=none; b=VS5mXW1r3dQ3c6aoQI76KAnxHTBRBJ7KEZbOb9n7/WWf4T95K9iSypRie57CgSH23RGT/mwRKYsylJm/n27atjpgfKf7QUU4sYFVv+w/KZdmDqvaKHSHa9aKPumBAnnAOkCZ9MkZPWZQLs6W+e/Z9kqknP0Ubb6r4THrqWbX18g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986797; c=relaxed/simple;
-	bh=kkjqnVRPCV2DoxeCh4E7Xz9+T1Pv3W2b8jvWw3szNfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlAXCzzBvE7rxUD/nLYeGvKkmnXwPT2X4cS1mth2Nu/mNcDfrHRe06RjFRgXM/UBCq3wnN7o6JjalzPNo1eait0UCqMSwe2als0p57bLOPNzWkzS8eF6C9hnharkGH0IyR+UXPQOROZIuZzjCXtWOrUI6zyq796xoZEWBqgUGfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1txOU5-0003ci-0J; Wed, 26 Mar 2025 11:59:45 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1txOU3-001jWl-1t;
-	Wed, 26 Mar 2025 11:59:44 +0100
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1txOU3-0005SN-2v;
-	Wed, 26 Mar 2025 11:59:43 +0100
-Date: Wed, 26 Mar 2025 11:59:43 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de
-Subject: Re: [PATCH wireless-next v5 10/10] wifi: mwifiex: drop asynchronous
- init waiting code
-Message-ID: <Z-PeH1ChtvvYPE7_@pengutronix.de>
-References: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
- <20250324-mwifiex-cleanup-1-v5-10-1128a2be02af@pengutronix.de>
- <Z-MtVj4NpcLuZxJv@google.com>
+	s=arc-20240116; t=1742986848; c=relaxed/simple;
+	bh=w5ZDeSrpmvoiPAO5YbWZhVqSkFMVenT7cq89xSyl3iE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JQHUrWBus9BmeNDS4KgkXRm7y71Q4A3UDnqiU1nQh7PO/DC1ShYF4TbfgJ1GTqUdQNPlCBTK9iea7JPbdJdNcoAofV0xucPBpiFJ1WVWOkun2yuakFagLWoAbo73SHDJ0aSW9j+oSYtw++6KvnR757T/5P5Gh63Wby3KyOhnNt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhqGxkjw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4FCC4CEE2;
+	Wed, 26 Mar 2025 11:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742986847;
+	bh=w5ZDeSrpmvoiPAO5YbWZhVqSkFMVenT7cq89xSyl3iE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=dhqGxkjwiExuPEr0Bgdsh/uea3lnohLdHmo0TBARQaeud4YiM9KI8tOcvqgUlhVNl
+	 HYjrA+ZauGKfmLV5l2FN/D/vf/bux88e6pahHuNSu9vxGwXef0DNt0HOHJmR/SQDaj
+	 lrGnaRPzB+qSzQ9ymHB6RhxZzLGItYxPTZsQSgIxFN18z1reKMa+oxqG/VeM4dJlUJ
+	 CR6M02KNLO7TI/7pbmkwQm6Yae4t6TMTBpVeL6QolYAz6qSXJ07T3gOULd7dp2C29S
+	 QStAnDLLGYDX/uCgyzwjyo1VxaVA2z+AIegcESVC1w2YHFBMZ5kb4rxHAlyoIXuFAs
+	 I0P/4iuj3W5kg==
+Date: Wed, 26 Mar 2025 12:00:45 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+cc: Antheas Kapenekakis <lkml@antheas.dev>, 
+    platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v5 09/11] HID: asus: add basic RGB support
+In-Reply-To: <43c4dd17-de34-804f-7080-b287ac4a0cac@linux.intel.com>
+Message-ID: <26s13395-1ro2-37o8-01q5-6r4p09p69174@xreary.bet>
+References: <20250325184601.10990-1-lkml@antheas.dev> <20250325184601.10990-10-lkml@antheas.dev> <f04e6a59-cb72-9ca9-2c98-85702b6194fa@linux.intel.com> <CAGwozwF8PZczpqOFm3ONDdJTVCgcWOZ8mXrASbmiAXUhQvOhdg@mail.gmail.com>
+ <43c4dd17-de34-804f-7080-b287ac4a0cac@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-MtVj4NpcLuZxJv@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hi Brian,
+On Wed, 26 Mar 2025, Ilpo J=C3=A4rvinen wrote:
 
-On Tue, Mar 25, 2025 at 03:25:26PM -0700, Brian Norris wrote:
-> Hi Sascha,
-> 
-> On Mon, Mar 24, 2025 at 02:24:11PM +0100, Sascha Hauer wrote:
-> > Historically all commands sent to the mwifiex driver have been
-> > asynchronous. The different commands sent during driver initialization
-> > have been queued at once and only the final command has been waited
-> > for being ready before finally starting the driver.
-> > 
-> > This has been changed in 7bff9c974e1a ("mwifiex: send firmware
-> > initialization commands synchronously"). With this the initialization
-> > is finished once the last mwifiex_send_cmd_sync() (now
-> > mwifiex_send_cmd()) has returned. This makes all the code used to
-> > wait for the last initialization command to be finished unnecessary,
-> > so it's removed in this patch.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> There are a few things that confuse me in here. See below.
-> 
-> > ---
-> >  drivers/net/wireless/marvell/mwifiex/cmdevt.c  | 16 ----------------
-> >  drivers/net/wireless/marvell/mwifiex/init.c    | 18 +++++-------------
-> >  drivers/net/wireless/marvell/mwifiex/main.c    | 25 +++----------------------
-> >  drivers/net/wireless/marvell/mwifiex/main.h    |  6 ------
-> >  drivers/net/wireless/marvell/mwifiex/sta_cmd.c |  6 ------
-> >  drivers/net/wireless/marvell/mwifiex/util.c    | 18 ------------------
-> >  6 files changed, 8 insertions(+), 81 deletions(-)
-> > 
-> ...
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
-> > index 8b61e45cd6678..fc58ca1a60ca8 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/init.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/init.c
-> > @@ -487,7 +487,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
-> >  	int ret;
-> >  	struct mwifiex_private *priv;
-> >  	u8 i, first_sta = true;
-> > -	int is_cmd_pend_q_empty;
-> >  
-> >  	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
-> >  
-> > @@ -509,7 +508,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
-> >  	}
-> >  	if (adapter->mfg_mode) {
-> >  		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
-> > -		ret = -EINPROGRESS;
-> 
-> Why are you dropping this line? To be fair, I'm not sure I understand
-> all the manufacturing-mode support anyway, but I equally don't
-> understand why you're dropping this.
+> You don't need to "pause" for the merge window, in some subsystem=20
+> there's mandatory pause during merge window but I find that unnecessary.
+> I know people on pdx86 do review during merge window so no need to wait=
+=20
+> when working with patches related to pdx86. Just don't expect patches=20
+> get applied during the merge window or right after it (the latter tends t=
+o=20
+> be the most busiest time of cycle for me) :-).
+>=20
+> It's more about the frequency, how often to send a series which is=20
+> relatively large. Large number of versions end up just filling inboxes=20
+> (and patchwork's pending patches list) and we don't have time to read the=
+m=20
+> all through so I suggest waiting like 3 days at minimum between versions=
+=20
+> when the series is large or complex to give time to go through the series=
+=2E
+>=20
+> This is not a hard rule, so if there are e.g. many significant changes,=
+=20
+> feel free to "violate" it in that case.
 
-Short version: This change is correct. I started a lengthy explanation
-why I did this, but realized that it's better to split this patch
-further up to make it more clear. I'll create a new series from this
-patch.
+Exactly. I am unlikely to do much review during the merge window myself,=20
+but I'll pick up the patchset and followup once the merge window is over,=
+=20
+so feel free to keep discussing and polishing it with me on CC :)
 
-> 
-> >  	} else {
-> >  		for (i = 0; i < adapter->priv_num; i++) {
-> >  			ret = mwifiex_sta_init_cmd(adapter->priv[i],
-> > @@ -521,18 +519,12 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
-> >  		}
-> >  	}
-> >  
-> > -	spin_lock_bh(&adapter->cmd_pending_q_lock);
-> > -	is_cmd_pend_q_empty = list_empty(&adapter->cmd_pending_q);
-> 
-> I believe your reasoning around the synchronous command logic, but would
-> it help to include any sort of fail-safe here for the future? Something
-> like:
-> 
-> 	WARN_ON(!list_empty(&adapter->cmd_pending_q));
-> 
-> ? Or am I being overly cautious?
+Thanks,
 
-mwifiex_init_fw() might be called from some obscure firmware command
-time out path, so let's add it just to be sure. Better safe than sorry.
+--=20
+Jiri Kosina
+SUSE Labs
 
-> 
-> > -	spin_unlock_bh(&adapter->cmd_pending_q_lock);
-> > -	if (!is_cmd_pend_q_empty) {
-> > -		/* Send the first command in queue and return */
-> > -		if (mwifiex_main_process(adapter) != -1)
-> > -			ret = -EINPROGRESS;
-> 
-> You need to update the function comments now that you're dropping this.
-
-Will do.
-
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> > index f2e9f582ae818..199a8e52e5b16 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> > @@ -2418,11 +2418,5 @@ int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta, bool init)
-> >  	ret = mwifiex_send_cmd(priv, HostCmd_CMD_11N_CFG,
-> >  			       HostCmd_ACT_GEN_SET, 0, &tx_cfg, true);
-> >  
-> > -	if (init) {
-> 
-> The 'init' function parameter is no longer used. Can you drop it from
-> the function signature?
-
-Good point. I'll make an extra patch from this though to not further
-obfuscate this patch.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
