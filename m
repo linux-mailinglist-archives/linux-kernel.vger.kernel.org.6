@@ -1,330 +1,355 @@
-Return-Path: <linux-kernel+bounces-576776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219B4A71453
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:01:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2480A71459
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33DC118905F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4037A5F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F41ACECE;
-	Wed, 26 Mar 2025 10:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iNbRk1D3"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905941B0430;
+	Wed, 26 Mar 2025 10:01:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5B83D6A;
-	Wed, 26 Mar 2025 10:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983266; cv=fail; b=NeOXhcNEkryl0XXHFhaln8HpsY6MFmtaFJINUb6H2xSuHvvAaJsYO857KaFm/7b4nOBKV9adhir9ZuzxiL4LNRFIJCL62QhRXBWcYk9Ul95mGz0MMokebsIJ9rT5BAjo/nDnmdiyvZfjPUBFcVxFNyF+ejCLAX/w521vS6/8QTw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983266; c=relaxed/simple;
-	bh=Z7Bt0vBY2GksNMboPcx30Bv0Vf/hvJiRMqnJeqz54ZM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sjR22z0xQ2G+U9x8PZbF2wEfD5nTLR+MIJp93rQddWzu1YaBusfnZUhdSI/4i95B9tcijhKAeiOpwqFJEtT23M8xZTQ89iVuMGryteccoOeLu0cYYaP4CaYXr1w+MkGzG8RXdg46eI/0dkA2B+Mmb/NZzyn5Ca/VQW6JIL7r0/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iNbRk1D3; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vTFg6fIPVSQldHMePP3iprW+tqoXr/g0YI1LtRyP+E6N9kEKEOBWCEshAx0mmIb0bAQc5yyxB3VAtZGbRrRO353rpdwIoWq7AF3tzqTdDPPoRb48vP/X1Rd4KooPs2YuN62hCyV+dV1NY74kq1kulE9dkn3SbVumyZdl13wg01pM3HjTb75Pwxm7pcmad0VwNwZ1XaEsTi84LvJCyRufXz9kgHVZvsq62E318obQ+I+3QsyWllbr+E2afY2Om5X+ehT9F3m0ukGmbSoI5nLZyyJoDV7Gi8zI3UjOOT+6tq0DW74WkaOOjhlkl6r/vPcL7gURZuRPrUpUc3/ha+JxnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8xB8bqtYYSIiB4FJJGrPr6iTYrHCwSf2FVo6r4B0HII=;
- b=fEZE2vz7joIjjLsgJk0DHEKEdaknblkQcFrE6JbiyxF9TKmwQUQ+vS9ffMjvLV0MXngYs1dG6RyJyCKOSKcmvFWfo248v8k5n115/4xIXLMaiV+dcFJ87fbNmn2UMZFhfd9115S9BzP0Ki05yhsEOS3klQf6pGaOHpnrpiDF89M0zzgN3FzgtN/VBfJJlbZKAyVTFwHZtr8D6WqUDReWMnVNHj/X0Uk4F+vihNt9P9HWcsYX1T8W5npmrUQhbYPmFF+K1g9Ff0YL9Tk5kJrKroxOS5CZgnyyo73kTN0kXl/bbMABJyS01Jq2rzBrqB54l3rI1eBxz6WfbPSHP3d2RQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8xB8bqtYYSIiB4FJJGrPr6iTYrHCwSf2FVo6r4B0HII=;
- b=iNbRk1D3a1RsHX2Zvr8E19WyBHTkRKvUnnSpkU5nTYT4XhvIWrONkz+P2DMCh2i//kOQQFeJ9jbbb146qfa7RQ0NJfsJf8tTmEBKwxLD+Y0tgM7SuwU0EU4K3scS+UMzbSUUBlIfX4SCQrrFhsckN90bW/jYxRuwBx0vTwAE9gw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com (2603:10b6:510:1fd::14)
- by MW3PR12MB4426.namprd12.prod.outlook.com (2603:10b6:303:58::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 10:01:02 +0000
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421]) by PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421%6]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 10:01:02 +0000
-Message-ID: <bbbd1a89-873d-4b15-80a4-0690bb1ab314@amd.com>
-Date: Wed, 26 Mar 2025 15:30:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] spi: espi_amd: Add AMD eSPI controller driver
- support
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
-References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
- <20250313183440.261872-2-Raju.Rangoju@amd.com>
- <311453e6-c3a0-4976-92aa-e3961485b9ab@sirena.org.uk>
-Content-Language: en-US
-From: "Rangoju, Raju" <raju.rangoju@amd.com>
-In-Reply-To: <311453e6-c3a0-4976-92aa-e3961485b9ab@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0146.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::31) To PH7PR12MB6395.namprd12.prod.outlook.com
- (2603:10b6:510:1fd::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30392191461
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742983314; cv=none; b=sCpJEclVC+Ghpj+1+hyRDj8L5Rolg766AQq3gKCzRqdcRvXsNIXz27a/DAtW7tRPkzpjqJNm+nnYnp4rs8KGsK3YViVaAs2udxJGSV+nqtUl/LX4a0yf5t90H3NhMC1nd6+lkUIzxrnUV9fWTgnaPytCCuS8Kjjdxca4FtqtUXw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742983314; c=relaxed/simple;
+	bh=vmGfR78GgSmopo5iBksXNIf+knROMy3RNPpIVcy5r9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dk6yRuOvgGWdDRTLzlmUguRG6aTkobka1ZxONk11NvUhbq63HrynhuIFQbpn/uyjUWgtizljZY8G48JxxTTo70taplK+AURSV9KM3ey4xyvfNcjOZMiAA6nQuYgPAoSRXUCMD+4K7HKFJw3e30ocG2GILTEA8HnkSg3X86DfbR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1txNZZ-0005En-T3; Wed, 26 Mar 2025 11:01:21 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1txNZW-001j6C-2Z;
+	Wed, 26 Mar 2025 11:01:19 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1txNZX-0004dA-0G;
+	Wed, 26 Mar 2025 11:01:19 +0100
+Date: Wed, 26 Mar 2025 11:01:19 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kyle Swenson <kyle.swenson@est.tech>
+Cc: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v6 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <Z-PQbyKj1CBdqIQh@pengutronix.de>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+ <20250304-feature_poe_port_prio-v6-6-3dc0c5ebaf32@bootlin.com>
+ <Z9gYTRgH-b1fXJRQ@pengutronix.de>
+ <20250320173535.75e6419e@kmaincent-XPS-13-7390>
+ <20250324173907.3afa58d2@kmaincent-XPS-13-7390>
+ <Z-GXROTptwg3jh4J@p620>
+ <Z-JAWfL5U-hq79LZ@pengutronix.de>
+ <20250325162534.313bc066@kmaincent-XPS-13-7390>
+ <Z-MUzZ0v_ZjT1i1J@p620>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6395:EE_|MW3PR12MB4426:EE_
-X-MS-Office365-Filtering-Correlation-Id: d111a561-289c-4ce4-26bc-08dd6c4d1d8f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0ZDZ2JhK0IxMU0zVGl6UW1DRjFSZEY1ZDQwajJnWGdZK3lEbHdBT2xJT1VT?=
- =?utf-8?B?cG5sTml1d29LeWpnckl6NmNrRVZ3cmNRUUVaL1FwZUYzcWtkWnU3S3BBU3J5?=
- =?utf-8?B?eThpTzhER1pXQlV0d1pkUkxGREtnZzhzbHVkaTV0Tk4yT2NDZ3M1aXpHQ1Ro?=
- =?utf-8?B?SW5wZUpMcSt4NnBMYmd5cmdwZThCYUJWM2V3NStnNDFlVVRzTnBuUSsxbXRM?=
- =?utf-8?B?UzNTVVBJNVliaGF2NXZmcmJtWjBPVUxUVXFXbUFrMTZ4OEZ4N1NTYlpLMkZN?=
- =?utf-8?B?VTUyU25vOWEwRzE0U0tUV21iR3lsK2tYOHEwbXVxdVBTWGpFMEkwckR4K2Rk?=
- =?utf-8?B?SERGVzV0MU5zbUdCc0VrU2w0MFp2anJWQWZ6bEs0cWhTK251Q1A3NG1wSTFO?=
- =?utf-8?B?WXlNMDlsdWh3a3dNU2lNdEdYL1g4N1RtR3dGT1pKQWhEc25WMGg1RUZqZXJ1?=
- =?utf-8?B?bWxHWnpMMUFnSENQRW4zclA0UEJ3SW9adzJ3allURFlFWEd4MkliK0V0Q2Vq?=
- =?utf-8?B?NWJYYk8rOVBramZEd2JRcUVPTTNMNGZnKzJ4SW1EY2Vwd096RFFYRTE4N1lB?=
- =?utf-8?B?WFhZdEdLYUZQTFhZY1BSQVo4Z2N2L1g4aFNHdkpxbnBKRTRwcHNpUmtITXc4?=
- =?utf-8?B?TG1Cc1hKQmZ1ZExKVmE5K1dYL0VaSkdIZmd0ZGdqU1NuUUVrVWRISHI1Rys0?=
- =?utf-8?B?blo2S2FEd3lhWnVPMG5kY0ZjdVhvMXRzME5NZmhJY3gyd0J4V093TWFOdXA1?=
- =?utf-8?B?T09TSmMyNyt4azJPYlJVeUZzcjlvUHI2QnZxbGhRMC95OXVNZFE4RWN5UWtm?=
- =?utf-8?B?alBMZ1pzV1lMalFmRkpjZzBoTEg2T2dBcm1iWG5QT3Z5TUpFQVBzeDNNVWFy?=
- =?utf-8?B?RmhUenJ0QU9lQWNMN3BUNzVrTU9kaEdFYXN6VHVWTzZPU1JPU2JlSTRVYlVy?=
- =?utf-8?B?UzlrcE5iTmttbGhiMHg3aHd6d05EN2dWQXFyS2kyQ05sUUh3WFg2R1JmM21a?=
- =?utf-8?B?NElDQ3FuZmc3UUNGRFdaaWdqcklGNmh6SnVXZjRBa3NienQvc2tYYlRZYXRO?=
- =?utf-8?B?YXZ5K3preEVkZ3c0bnhoRndnQkhXbVZUVUIrR1RtWnY0QUpGdU5ETnZZb1dm?=
- =?utf-8?B?K2VzL0pJS2FzTHo4c2NFcHoxK3krTnZoQVBOMTN0WlU4ZVpHUy9VZVRaMy9Y?=
- =?utf-8?B?cG8xRnQ1TnBBNDgwUW1sTzBSQXpHT1BTYjBZVHVmMDVkVGNmbUZtR2lybUFq?=
- =?utf-8?B?VG1LRHF0dUk3cEF0WEVjZktJSjdJZXA1RjlTOFZDMS94SWNMTTc2ZGpYNlBW?=
- =?utf-8?B?TTRkbG90Z2xVMS9hd1pKWmloNDFqdno5NkxwR2tZeDFXY2VKK05NaWR2Vkxz?=
- =?utf-8?B?RnYzZ2Rtc2gwZ1N5eUxQdDY4aGdCY0p0U1RxVU1jbHI0ckVicmZJeThZektP?=
- =?utf-8?B?WVNNVnUzUldaa0x3ZFNRODVXRzE2bU41MDArNk95anRzL3NtTzgzOGdQRjg2?=
- =?utf-8?B?cGhEMnZGRjdSMWJlS0RGMlFlcEdYaW9Hd01yTWVSbS9JL1FsNzdjZVZacDls?=
- =?utf-8?B?OVBScU1tNHVZeXlZMkZuWU9zT011R1JNQnlQMWlsaXp5Snc3SEE4bDBlODdO?=
- =?utf-8?B?bGJEQnpUd2VobjQxVlVMSFRzNHBkYlVIUGdhcFU5QjRIdjVFUm9jQW0yejE1?=
- =?utf-8?B?YWVDaWJlazRzQ2tlYUxCbGxpMk5nM08wOGtFbW5XWFNyb2lNdUQrcnBFbUIz?=
- =?utf-8?B?SEpOdHhkTXZKNTlORUd1TFB0d3NVTGhBOU9qb3FJTEhiL21RVG5wVWxubGly?=
- =?utf-8?B?YUJwOHRTbjhBcVk2bjF3MlowR2RuTU5pREtkRFA0S2dvVHZhVmlUWFdnMHE0?=
- =?utf-8?Q?d9ARpNT6ML96W?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6395.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SGJIRjB2VTRlUGU4MzJ5ODdOODhGUmJKWlZqMWdycFkvYittVG9JeFFsUGFo?=
- =?utf-8?B?Ky9DZ0VXazh1Vk9XSDBheEh6ZjhNelhaUjZWSGFSSHV5eXRZdi93QkI1TGRr?=
- =?utf-8?B?NnczcnI5bUZvMlhZMXVxTmVwT1ZGSWlnUXNNbVcwV25UVXNqSlY3RG9yYjky?=
- =?utf-8?B?Nm9kMFFmU3dBTElCdVgyVjBIVmNKek1DU1JSamRTdXFkR0VKRDRWcGhqeGE0?=
- =?utf-8?B?cnovZVBrOGN6MVJxTEI2b0xiK25SczNzMHdacmlKeVZpcDkrZ2p6RmVENG5R?=
- =?utf-8?B?VFFwVUI2STh4SFQwaVpyYTJYN1FaYmNQWXBROFQ2V2JWSDAzUW81QkVRZ2Rv?=
- =?utf-8?B?dkVUcjhlSWptWTIySkRJMlg3eG1WWnlONm9CYnpNZkdVUFIwMUpVZzE4TXRr?=
- =?utf-8?B?TUxRcHRFN3BpTUZOT045dktwbVRmQTJMaUcraFFpSGwwSEdud3ZwY0Z3WkJx?=
- =?utf-8?B?ODFJOVFZS2lBWEdWNWo3eXk1M3VnUDJRT2dNOSthYkwwU2ZTN1FMaVpMTEtT?=
- =?utf-8?B?NW40YnRCU1hGVmN5SDhpWFB4TEdIc1pJRXh2WUdMQzBiQzZLTFYybWsyRHdm?=
- =?utf-8?B?aWFnRUtQK3lpcStiVTR4WDNHUXJKRkdaOXkwTkcvQk00VVcrbC9zd1lGb3BH?=
- =?utf-8?B?WTJqUCtkTnV1eVpTeHVRT3RRWllRMkg2RVFOZmo3Qmo3ZVF0eFhuYnpTR0NK?=
- =?utf-8?B?L3c2aGc5b2VYMGtFMFF0cGx2Z2tmZGYyVDU5R0U1ZE5ZdWQ3Skc5MWIyN3ZD?=
- =?utf-8?B?Y1RWdDFIbEJacWRGODNlUmNoVkNpa2k0TGtjR0h3WXoySmZoRmhOcGpNUnVS?=
- =?utf-8?B?eGZ1Z0VBNC9QSGpNQ0pmMTcwT0VnZm02K1hwenc1SFZ6c0dnelJMS3VlM2p0?=
- =?utf-8?B?cjZSZ2IrTC9mU0o1OC9WZFMvaWFYRWRNVW43Y241Z3ZSK3hYL1FhSnBSSHls?=
- =?utf-8?B?YlVrNWJ2ejZIU3k2QnNqYlpoQWxIL3EzMmNLUWZZMTAwdjNVajA4Vkp5TStw?=
- =?utf-8?B?andNbXBRS2lpcGltR0VwS0Jxb0VZMmU3MnUrajVVR0JxQzh2V2tndzBOTFZp?=
- =?utf-8?B?Yll1N3NiWVc1Z2FyeEpERDN0OXl5UUYwd2tOQVNxazRwcU9JWWQvZE83MUFX?=
- =?utf-8?B?dllQcGdmRjZYTEpuUHhIdGxqRTdKY081UVhSSllKMzhqZGd0dUgyU0tOdE9z?=
- =?utf-8?B?WGM3eWZwR1NpSnM2c3BSYUt1YmZpd2RvbHp5K1JkTW5iRDA2cHBRL1IzNjZi?=
- =?utf-8?B?ZmMzRmY1d290d0FTa3JobklrRTlULy9qc2xaTjRLcllXL1JqYmc5TnorTjht?=
- =?utf-8?B?RTVMTU5INzYwN1BEbXVsTVlVRHF2T2tFQTdLbDdlREdZTThvd0tEZTZ5YzBJ?=
- =?utf-8?B?OFdiTGVQWkY1TVBVS1N6dU5GejRvcFNOWUYxVE9kbkU2K0VWbG5GNkRBTVBS?=
- =?utf-8?B?L3VqekFpSVdkSW52VVFsUW5ldi9lYit2SDFOdTFJZlo3UjdVWksrcW9MTXVp?=
- =?utf-8?B?T1JEclQ5aU5RTTlXVU0rN3ovUEpkTXhsakdDZkluY21acTZtbVdrdEphVitQ?=
- =?utf-8?B?SHY1MHZCdTVHdkZuNGpRYmduZWFCUHNIU3k4TUg3WjRUZUFRTENETnZ1MUF4?=
- =?utf-8?B?SlJUNm03SDRKRjhFb3lHNW0rRFppckZLZ3Zkai94M1c0THlRQ3BUTXNCQ25Z?=
- =?utf-8?B?KzVXbE9adS9nQ1RTRUVFbDZmMGR1L0t1djRwUVFUTzdKcWp4QXRWUTE1TXJH?=
- =?utf-8?B?cWdzNEUxN2I2Q2RVRkVMVU9BVmdHSERrNUpJU3ptTzljMUpLNmJCOXVVMzlu?=
- =?utf-8?B?WHJUVGlrZVJUa2dEenFTc1RPRWNkSDBRVnpackZHbWxjQmNIaEFCU0VJZU00?=
- =?utf-8?B?YmRQdlNpL28ycms5TkR2VXIvb0hZTjlFdEkzOHFEUmJ6VXk5N3hUSEdOUEJG?=
- =?utf-8?B?d1hSZkRzWVp5dE8ra2dDNHdmN3huVTIvNVJ4dnlxWkNWVDRxZzJRSzNqbk5o?=
- =?utf-8?B?ZS8vaXNycVQ2MWIxdm9WTnBub2k0R1pwOFhTQXRxVUFFdE40ZjBuZUFyUllE?=
- =?utf-8?B?NGxINGVHVTN4WFVWc1oxZER4V3hFSG5yNlBxL3FEQmdzZVZZdkdXb09aQndx?=
- =?utf-8?Q?AXu2rMrhBgXrg/6NB6SuF2iOv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d111a561-289c-4ce4-26bc-08dd6c4d1d8f
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6395.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 10:01:02.5091
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5cMGP3jfGTb3QjAjdLz/9yqV29X8SWp5g0W4wWhEn5aMiIHOGIP262dEmNIjbW6gkW0+cxgsKpb6bLkWd8yaZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4426
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z-MUzZ0v_ZjT1i1J@p620>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi folks,
 
+On Tue, Mar 25, 2025 at 08:40:54PM +0000, Kyle Swenson wrote:
+> Hello Kory,
+> 
+> On Tue, Mar 25, 2025 at 04:25:34PM +0100, Kory Maincent wrote:
+> > On Tue, 25 Mar 2025 06:34:17 +0100
+> > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> > 
+> > > Hi,
+> > > 
+> > > On Mon, Mar 24, 2025 at 05:33:18PM +0000, Kyle Swenson wrote:
+> > > > Hello Kory,
+> > > > 
+> > > > On Mon, Mar 24, 2025 at 05:39:07PM +0100, Kory Maincent wrote:  
+> > > > > Hello Kyle, Oleksij,  
+> > > > ...  
+> > > > > 
+> > > > > Small question on PSE core behavior for PoE users.
+> > > > > 
+> > > > > If we want to enable a port but we can't due to over budget.
+> > > > > Should we :
+> > > > > - Report an error (or not) and save the enable action from userspace. On
+> > > > > that case, if enough budget is available later due to priority change or
+> > > > > port disconnected the PSE core will try automatically to re enable the
+> > > > > PoE port. The port will then be enabled without any action from the user.
+> > > > > - Report an error but do nothing. The user will need to rerun the enable
+> > > > >   command later to try to enable the port again.
+> > > > > 
+> > > > > How is it currently managed in PoE poprietary userspace tools?  
+> > > > 
+> > > > So in our implementation, we're using the first option you've presented.
+> > > > That is, we save the enable action from the user and if we can't power
+> > > > the device due to insufficient budget remaining, we'll indicate that status
+> > > > to the user.  If enough power budget becomes available later, we'll power up
+> > > > the device automatically.  
+> > > 
+> > > It seems to be similar to administrative UP state - "ip link set dev lan1 up".
+> > > I'm ok with this behavior.
+> > 
+> > Ack I will go for it then, thank you!
+> > 
+> > Other question to both of you:
+> > If we configure manually the current limit for a port. Then we plug a Powered
+> > Device and we detect (during the classification) a smaller current limit
+> > supported. Should we change the current limit to the one detected. On that case
+> > we should not let the user set a power limit greater than the one detected after
+> > the PD has been plugged.
+> 
+> I don't know that we want to prevent the user from setting a higher
+> current than a device's classification current because that would
+> prevent the PD and PSE negotiating a higher current via LLDP.
+> 
+> That said, I'm struggling to think of a use-case where the user would be
+> setting a current limit before a PD is connected, so maybe we can reset
+> the current limit when the PD is classified to the classification
+> result, but also allow it to be adjusted after a PD is powered for the
+> LLDP negotiation case.
+> 
+> In our implementation, don't really let the user specify something like,
+> "Only class 3 and lower devices on this port" because we've not seen
+> customers need this.  We have, however, implemented the LLDP negotiation
+> support after several requests from customers, but this only makes sense
+> when a PD is powered at it's initial classification result.  The PD can
+> then request more power (via LLDP) and then we adjust the current limit
+> assuming the system has budget available for the request.
+> 
+> > 
+> > What do you think? Could we let a user burn a PD?
+> 
+> This seems like a very rare case, and if the PD is designed such that
+> it's reliant on the PSE's current limiting ability then seems like it's
+> just an accident waiting to happen with any PSE.
+> 
+> Very rarely have we seen a device actually pull more current than it's
+> classification result allows (except for LLDP negotiation). What's more
+> likely is a dual-channel 802.3bt device is incorrectly classified as a
+> single-channel 802.3at device; the device pulls more current than
+> allocated and gets shut off promptly, but no magic smoke escaped.  
 
-On 3/17/2025 7:36 PM, Mark Brown wrote:
-> On Fri, Mar 14, 2025 at 12:04:31AM +0530, Raju Rangoju wrote:
-> 
->> @@ -159,6 +159,8 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
->>   obj-$(CONFIG_SPI_ZYNQ_QSPI)		+= spi-zynq-qspi.o
->>   obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
->>   obj-$(CONFIG_SPI_AMD)			+= spi-amd.o
->> +obj-$(CONFIG_SPI_AMD_ESPI)		+= espi-amd.o
->> +espi-amd-objs				:= espi-amd-core.o espi-amd-dev.o
->>   
-> 
-> Please keep these files sorted.
-Sure Mark, we will address this in V2.
+Here’s my understanding of the use cases described so far, and a proposal for
+how we could handle them in the kernel to avoid conflicts between different
+actors.
 
-> 
->> @@ -0,0 +1,883 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * AMD eSPI controller driver
-> 
-> Please make the entire comment block a C++ one to make things look more
-> consistent.
-Will address in V2.
+We have multiple components that may affect power delivery:
+- The kernel, which reacts to detection and classification
+- The admin, who might want to override or restrict power for policy or safety reasons
+- The LLDP daemon, which may request more power dynamically based on what the PD asks for
 
-> 
->> + *
->> + * Copyright (c) 2025, Advanced Micro Devices, Inc.
->> + * All Rights Reserved.
-> 
-> Are you sure?
->
-Yes, we've used the same copyright text in other AMD drivers/files.
+To avoid races and make things more predictable, I think it's best if each
+actor has its own dedicated input.
 
->> +static int amd_espi_check_error_status(struct amd_espi *amd_espi, u32 status)
->> +{
->> +	int ret = CB_SUCCESS;
->> +
->> +	if (!(status & ESPI_DNCMD_INT)) {
->> +		ret =  ESPI_DNCMD_INT;
->> +		dev_err(amd_espi->dev, "eSPI downstream command completion failure\n");
->> +	} else if (status & ESPI_BUS_ERR_INT) {
->> +		ret = ESPI_BUS_ERR_INT;
->> +		dev_err(amd_espi->dev, "%s\n", espi_error_codes[POS_BUS_TIMING]);
-> 
-> Can we really only have one error flagged at once?  The whole
-> espi_error_codes thing also seems like unneeded complexity and fagility,
-> this function is the only place they're used and there's nothing
-> ensuring that the defines for indexing into the array have anything to
-> do with the strings in there.
+## Use Cases
 
-The purpose of maintaining error codes is to inform the user space 
-application about the reason for the command failure. The user space 
-application can then use these error codes to determine the cause of the 
-command failure.
+### Use Case 1: Classification-based power (default behavior)  
+- Kernel detects PD and performs classification
+- Power is applied according to classification and hardware limits
+- No override used
 
-> 
->> +int amd_espi_set_iomode(struct amd_espi *amd_espi, u32 *slave_config, u32 *ctrlr_config,
->> +			u8 io_mode)
->> +{
->> +	struct espi_master *master = amd_espi->master;
-> 
-> There's a lot of outdated terminology like this in the driver - while
-> sometimes it's unavoidable due to the register map it's better to use
-> more modern terms like controller and device when it's just pure
-> software things.
+Steps:
+1. Detection runs
+2. Classification result obtained (e.g. Class 2 → 7W)
+3. Kernel computes:
 
-Will address in V2.
+   effective_limit = min(
+       classification_result,
+       controller_capability,
+       board_limit,
+       dynamic_budget
+   )
 
-> 
->> +	ret = amd_espi_get_config(amd_espi, ESPI_SLAVE_PERIPH_CFG, &slave_config);
->> +	if (ret != CB_SUCCESS)
->> +		return ret;
->> +
->> +	/* Check if PC is already enabled */
->> +	if (slave_config & ESPI_SLAVE_CHANNEL_ENABLE)
->> +		return CB_SUCCESS;
-> 
-> Is there any great reason to use these non-standard CB_ return codes?
-Sure, will address in V2.
+4. Power applied up to `effective_limit`
 
-> 
->> +static int amd_espi_suspend(struct device *dev)
->> +{
->> +	return 0;
->> +}
-> 
-> Remove empty functions, if they can safely be empty the functions will
-> be optional.
->
-Will address in V2.
+### Use Case 2: Admin-configured upper bound (non-override)  
+- Admin sets a policy limit that restricts all power delivery
+- Does not override classification, only bounds it
 
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	if (!res)
->> +		return -EOPNOTSUPP;
->> +
->> +	amd_espi->io_remap_addr = devm_ioremap_resource(dev, res);
-> 
-> dev_platform_get_and_ioremap_resource().
-Will address in V2.
+Steps:
+1. Admin sets `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT = 15000`
+2. Detection + classification run normally
+3. Kernel computes:
 
-> 
->> +	amd_espi_control_reg_init(amd_espi);
->> +	ret = amd_espi_init_slave(amd_espi);
->> +	if (ret != CB_SUCCESS)
->> +		goto espidev_free;
->> +
->> +	dev_info(dev, "AMD ESPI device initialization completed\n");
-> 
-> This is just noise, remove it.
+   effective_limit = min(
+       classification_result,
+       AVAIL_PWR_LIMIT,
+       controller_capability,
+       board_limit,
+       dynamic_budget
+   )
 
-Sure
+4. Classification is respected, but never exceeds admin limit
 
-> 
->> +
->> +	return 0;
->> +
->> +espidev_free:
->> +	amd_espi_device_remove(amd_espi);
->> +	return ret;
-> 
-> This will return your non-standard error codes to generic code.
-Will address in V2
+This value is always included in power computation — even if classification
+or LLDP overrides are active.
 
-> 
->> +static void amd_espi_remove(struct platform_device *pdev)
->> +{
->> +	struct amd_espi *amd_espi = platform_get_drvdata(pdev);
->> +
->> +	amd_espi_device_remove(amd_espi);
->> +}
-> 
-> There's no need for this wrapper function, there's exactly one place we
-> can call remove from.
-> 
-We have moved all device-related operations to a common file espi-amd-dev.c.
+### Use Case 3: Persistent classification override (admin)  
+- Admin sets a persistent limit that overrides classification
+- Power is always based on this override
 
-Therefore, the device remove callback is invoked from the driver remove 
-function during un-initialization.
+Steps:
+1. Admin sets `CLASS_OVERRIDE_PERSISTENT = 25000` (mW)
+2. Detection/classification may run, but classification result is ignored
+3. Kernel computes:
 
->> +static int amd_espi_open(struct inode *inode, struct file *filp)
->> +{
->> +	struct amd_espi *espi;
->> +	int status = -ENXIO;
->> +
->> +	guard(mutex)(&device_list_lock);
-> 
-> Whatever this userspace ABI is for it should be added in a separate
-> patch, most likely it shouldn't be here at all and standard interfaces
-> should be used.  Currently it doesn't seem to actually do anything.
+   effective_limit = min(
+       CLASS_OVERRIDE_PERSISTENT,
+       AVAIL_PWR_LIMIT,
+       controller_capability,
+       board_limit,
+       dynamic_budget
+   )
 
-Since we are not registering the driver with spi framework and going 
-with char dev file for user interface, all the dependent functions 
-required including open, close and ioctls for char dev are placed in 
-this file.
+4. Power applied accordingly
+5. Override persists until cleared
+
+### Use Case 4: Temporary classification override (LLDP)  
+- LLDP daemon overrides classification for current PD session only
+- Cleared automatically on PD disconnect
+
+Steps:
+1. PD connects, detection + classification runs (e.g. 7W)
+2. LLDP daemon receives PD request for 25000 mW
+3. LLDP daemon sets `CLASS_OVERRIDE_TEMPORARY = 25000`
+4. Kernel computes:
+
+   effective_limit = min(
+       CLASS_OVERRIDE_TEMPORARY,
+       AVAIL_PWR_LIMIT,
+       controller_capability,
+       board_limit,
+       dynamic_budget
+   )
+
+5. Power is increased for this session
+6. On PD disconnect, override is cleared automatically
+
+---
+
+### Use Case 5: Ignore detection and classification (force-on)  
+- Admin forces the port on, ignoring detection
+- Useful for passive/non-802.3 devices or bring-up
+
+Steps:
+1. Admin sets:
+   - `DETECTION_IGNORE = true`
+   - `CLASS_OVERRIDE_PERSISTENT = 5000`
+2. Kernel skips detection and classification
+3. Kernel computes:
+
+   effective_limit = min(
+       CLASS_OVERRIDE_PERSISTENT,
+       AVAIL_PWR_LIMIT,
+       controller_capability,
+       board_limit,
+       dynamic_budget
+   )
+
+4. Power is applied immediately
+
+## Proposed kernel UAPI
+
+### SET attributes (configuration input)
+
+| Attribute                                 | Type     | Lifetime              | Owner           | Description |
+|-------------------------------------------|----------|------------------------|------------------|-------------|
+| `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT` | u32 (mW) | Until cleared          | Admin            | Persistent classification override |
+| `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`  | u32 (mW) | Cleared on detection failure / PD replug | LLDP daemon / test tool | Temporary override of classification |
+| `ETHTOOL_A_PSE_DETECTION_IGNORE`          | bool     | Until cleared          | Admin            | Ignore detection phase |
+| `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT`       | u32 (mW) | Until changed          | Admin            | Static admin-defined max power cap (non-override) |
+
+### GET attributes (status and diagnostics)
+
+| Attribute                                  | Type     | Description |
+|--------------------------------------------|----------|-------------|
+| `ETHTOOL_A_PSE_EFFECTIVE_PWR_LIMIT`        | u32 (mW) | Final power limit applied by kernel |
+| `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT`  | u32 (mW) | Current persistent override (if set) |
+| `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`   | u32 (mW) | Current temporary override (if active) |
+| `ETHTOOL_A_PSE_DETECTION_IGNORE`           | bool     | Current detection ignore state |
+
+### Power Limit Priority
+
+Since we now have multiple sources that can influence how much power is
+delivered to a PD, we need to define a clear and deterministic priority
+order for all these values. This avoids confusion and ensures that the kernel
+behaves consistently, even when different actors (e.g. admin, LLDP daemon,
+hardware limits) are active at the same time.
+
+Below is the proposed priority list — values higher in the list take precedence
+over those below:
+
+| Priority | Source / Field                          | Description |
+|----------|------------------------------------------|-------------|
+| 1        | Hardware/board-specific limit         | Maximum allowed by controller or board design (e.g. via device tree or driver constraints) |
+| 2        | Dynamic power budget                  | Current system-level or PSE-level power availability (shared with other ports) |
+| 3        | `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT`       | Admin-configured upper bound — applies even when classification or override is used |
+| 4        | `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`  | Temporary override, e.g. set by LLDP daemon, cleared on PD disconnect or detection loss |
+| 5        | `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT` | Admin override that persists until cleared |
+| 6        | `ETHTOOL_A_PSE_CLASSIFICATION_RESULT`     | Result of PD classification, used when no override is present |
+
+The effective power limit used by the kernel will always be the minimum of the
+values above.
+
+This way, even if the LLDP daemon requests more power, or classification result
+is high, power delivery will still be constrained by admin policies, hardware
+limits, and current budget.
+
+Best regards,  
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
