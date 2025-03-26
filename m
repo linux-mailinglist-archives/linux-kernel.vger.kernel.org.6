@@ -1,184 +1,187 @@
-Return-Path: <linux-kernel+bounces-577538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82C8A71E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:30:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2745BA71E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED5907A693E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AEF9189A010
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A95254841;
-	Wed, 26 Mar 2025 18:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797BC253328;
+	Wed, 26 Mar 2025 18:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="URwSCX+i"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijv/CK89"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674C253B75
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 18:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD97D24EA8B;
+	Wed, 26 Mar 2025 18:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013785; cv=none; b=LpqIccs3qEDdNkVpCWRvBvb6UnkW+48eTa3U2mnEttC2QOvtwJWwJdbywedknoxTmOYo/lGIIbqEbwX/aDkHUpMo6cEMJHpjOKuHcOrrgVyzvLMCnBmKVC/PB5eJvRDWjYWnwBI67yYPH23EDzHX+zQRe/2y296pzLTtqgrh02c=
+	t=1743013826; cv=none; b=P9YLqPjvNfxKiGy+lAKzhH6LTtS1vCB5qRaq2u/emUOjgyWFJKRJyz8BEPkumybtibXTfS1kA83et/OKv8s4xQ5jZ2Z7hCUg9OhjJsHi/Tl04F5xHBr61vdL5z0YMtRvFdb2npBawLSxUk2y1WQsrzNAJE4/V8RHwcN3sgooQH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013785; c=relaxed/simple;
-	bh=PDZ8wopAz0p6dRYwWVh9TziS/j8jc0WTBI7vNoZgTPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PckseQrkfg8g0tG4KiHNYCQ5aM8MjiNHLuhAf9mBoQMpD4l8uVAq9wo6AXOYBgzN93RCBQmUVDqqiSdVqhkHDUzrPvDBntPKikkcyFiCj6UXxCA62Wpk4PdreDP39iaN/xv6yD8vHy167HU/QD981PLgOsPLux/nsO1+J+AdK5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=URwSCX+i; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso1634065e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:29:43 -0700 (PDT)
+	s=arc-20240116; t=1743013826; c=relaxed/simple;
+	bh=YYt6gJMffULnt4QDShgCB06vVikqmoye837uD5CHh8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bU1ebJIm3ooax0uQg6HiszNqc9BDLQouGa5NkJvjcs5lKUkPL+T2K3EYN4Mpy7n0qmlW8Lhxig0w8J4rg9uEZ2QzQoUrJkkUOnM+1dOWNi6zdiAHVLArI6PKmpkBJROmqr/q2fp2JIMyRH8tz+/6v4O6CqXrPMibh+DWHE1lvLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijv/CK89; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e6582542952so157938276.3;
+        Wed, 26 Mar 2025 11:30:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1743013782; x=1743618582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=doiI8VQYK1ufpJ8YlTdC9R6WZr99FG3ISjHW2FSinYk=;
-        b=URwSCX+ihvsJzf7tI0ZSdhBk3QU0qftUzhrloGCAXkfD9Dso5Fufmuo7VVTPqEWrHl
-         vIA9TjAltN0BZeEK+sKyJO/XAdQl19NA0Guc1Bi1qwqo9uUyxNaKCCtP1oYN1Ye9xh4S
-         1wZ85SpKeokFjGJ+P60UZtRqubpt/m1j705X2o9ldIRltHRALUpj8+terYfkkgCMTPdd
-         /D/99CgkWYa6jLTbSGv0BawRNvQJwU7F5N5sHEirVXcZir6te4ySwouZkt8LgJwCXrBu
-         O8OFtVy9ks6zqfarjCxaW0Z2ZaC4LkUpLInj7GOxFwKoZroUZxOczLV58vLzaN/s9H1j
-         KsGQ==
+        d=gmail.com; s=20230601; t=1743013824; x=1743618624; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fSo75ysSYfpqVeAiF/C0jwrxlqsNzz3MNPDa+DBosDk=;
+        b=ijv/CK89pNdhXWZFOejFIVVAjVN6JDGPow57kbwiG2K0cGHYB6F5yEpmUm+aVhKZ7v
+         1HVgsSiTXvhd8JXfs9UP8LGAgbMPlu6gc9nL3VWQUY91ho2EeZUHcPYWmIhORjrNklHb
+         bSipbvjYgeYfYi4hWG2qz10V5wF9qgGD/bcbdZ2A9KnZJBcW3dPmsweZrz5NY379sV7Z
+         Yb9vy3+T6UBwxVKkeOD+x7DHsTX4ZJvLLtuN06dagut8Tkjka/3aetFx8FgUCJSVyb2L
+         yshieuanjDzrgi6m2LK+vyhBbwCjmjuwIrcUxuZV/oMogu/YczsFCUJjTTWZJ8biJo9J
+         TBcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743013782; x=1743618582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=doiI8VQYK1ufpJ8YlTdC9R6WZr99FG3ISjHW2FSinYk=;
-        b=vdcSYhi0ut6nqlyxmZ8jWpbw3ZdiXt4sMNzGPNt+UAM4nC6MedeOAtuYOQPTdFwjQl
-         ckqIh1OevjvXB2oLR2biBWw++miU/BpBG59Zt8sX3dyYTdg1hQSjOWE1mV4t+wmdK1oQ
-         rgju3U1+vyuA7TbERxLJYDCTtYqmk33Me/mkMixIqG7mF0TU6bAOWJyuw2UzLTyLKqRw
-         pQZYosriZZW4QVc3FbWhI64MqEMFuo/QeBtpRvzft1sy/F1Kqqmqq8Tg7ufog26yfTxe
-         SwsShwO7CsOXV+Aak2GnaMGjRr0IOttuzGVbdbTk9EJhonEamQkOvFzOXdW2XtD/HaCr
-         7i2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWgYPiSUsi2tn8cAWp28EyR+0P9+EP6TbDhM08a2WPpLnxFEImKV1GMGLlXW1bhoEUpoXoyDa4Za0c3ORc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRtKRn9cWo7Sgx4yld6+3WNUGaU4ij4HhZGzkIbg+K1Q7AosAQ
-	jzsV2USaPKPx93H2UmvZh457vXHh8wqRTc2lDtfzYH6x1PCKxVLeQDjLmuZIcP8=
-X-Gm-Gg: ASbGncvCZF0mpSjXKTp0oFm09u5PF2Rh4AmKtAk/FO5OkPPLzKWNAEm22fjuHfuWV+M
-	ijpilf3cvQRTDeF83w3kQJL0NDWFpthUoN7YSCnSbVI1rRC4azvUVPKyY6fCh8LWa29DtybCBhN
-	7CMfmEREOGhbsBTL1jBcC1PTphT1z6tvx8WQfcZlxkfLRqdsjhTeElLnY3BLG5UjE/3dtVeC2bi
-	quiujCINczfGvvnUNKj5jfj7WqJ8F+8KDZekHbITNBtiWzherHTkj84mYIfGzNqQ4iBh1SZQA1X
-	Wg62RkVZBeyp8dehq6rFVsC23kxxS3qU4Ot8+ddTLSse7tVpZTbjRYCMxMQiHVLX62msaHmDNl3
-	Y/7MrMd3GV/HPKBUdh916+D8=
-X-Google-Smtp-Source: AGHT+IF2MZpiu92yHIU+59dZVRjDDyFa3Tjv0B+1mWBMDC3uJdGqLs5MgcCa4MS7uzSp96Ie82P+Ew==
-X-Received: by 2002:a05:600c:154d:b0:43d:49eb:9675 with SMTP id 5b1f17b1804b1-43d85065ac4mr3922725e9.22.1743013781770;
-        Wed, 26 Mar 2025 11:29:41 -0700 (PDT)
-Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dede2csm10331495e9.5.2025.03.26.11.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 11:29:41 -0700 (PDT)
-From: Your Name <naresh.solanki@9elements.com>
-X-Google-Original-From: Your Name <you@example.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Naresh Solanki <naresh.solanki@9elements.com>
-Subject: [PATCH v2] hwmon: (max6639) : Allow setting target RPM
-Date: Wed, 26 Mar 2025 23:59:37 +0530
-Message-ID: <20250326182937.513062-1-you@example.com>
-X-Mailer: git-send-email 2.42.0
+        d=1e100.net; s=20230601; t=1743013824; x=1743618624;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fSo75ysSYfpqVeAiF/C0jwrxlqsNzz3MNPDa+DBosDk=;
+        b=MdfwIv2t+ghho48aaaUO8MrJIBGRuOOQ/NLr9ST9R8gLAjAnVczXqtpLHpp93eYOdU
+         UK9E+dr1RQRreifcN90+TZZECCOt0R0K9AlLhUJZYNVq6eUFSmuKUXkE1g2WBLqtHOfv
+         Ar1rph4mshjKuorms1VK2ostGw17e3huGT6ltP8t8GFW90UcRyUuLxNg84UW6L13kE7x
+         aRXdHQpqRZ7+ymB1EzFzX/bhb3mxKO/sOTc+DpMrkV5tGCrUqW9flwYzaeYvoSZyigN/
+         +jBJvltbH4bYqbVAoKLnoiImAV5+usbiZmf0b6PWwc4HIjbL6T7uICDQtcX+gfxn4kjp
+         eHTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnF8s5SsFn2++9dHDqLrR1h9ie+mBjlm0JeTNDcUA1GdaGDK2EkmsccVUyzaCMMiCruXSOmQrn4ruZPjEolQPk1A==@vger.kernel.org, AJvYcCXRsaX1siePhKSJKE8gigYZP4QpqQxSSosOtM5MnNLvB2qBNG1gbEDDrs7ROKemn0x87S6IUYZb8p4sRcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9NKuFKYH/cDc1ddYxojjyXy1qDWiMf3E46W9JlVszsYv9F6nV
+	8lHYma7aJxhmuJiCsNxEDwt2Pa5MCRSa2kS1E8Lhd/wI0fQvJPYWOdl5IJCvRUsW1RZFP7XlXBY
+	mcX1bDzyVuUipfp7Buaoe5qZYPYs=
+X-Gm-Gg: ASbGncutUMh+zwR/WeHDeCL2PbVXNIqyUAWsymNHXTEqg8iNbGagWPCW5d38EunxUOK
+	f7KhmRQGziYUPBOXimDDT/GLr2jM1evoALUMZOnVEoiWDbW1n58LJjZVilLhnFUVEQalbwSYmkZ
+	CzszXC9xvTCZTXY67zjIfDCB3a
+X-Google-Smtp-Source: AGHT+IEzCosq3qsKQupSo2wD7I8cFb64KsFmE0stNqv7unOq7R9lALuGlVPhJ0bnf6cH3rAD1JLXly/IzfATFg43PPI=
+X-Received: by 2002:a05:6902:2509:b0:e5b:3de2:ce95 with SMTP id
+ 3f1490d57ef6-e694350955emr889046276.9.1743013822119; Wed, 26 Mar 2025
+ 11:30:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250324235245.613063-1-howardchu95@gmail.com> <Z-RFu_PLmKMq8YFU@google.com>
+In-Reply-To: <Z-RFu_PLmKMq8YFU@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 26 Mar 2025 11:30:11 -0700
+X-Gm-Features: AQ5f1Jqylku7SJA6ma0x5MrUSl63xzrXcR7ONHw0NZgO5gKcAmaqGEA-ylamBoM
+Message-ID: <CAH0uvoi-uxLNOoZ8P1g--jBZUnax_1vCu42SjFCNS7mdAH6Ozg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf trace: Fix possible insufficient allocation of
+ argument formats
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, mingo@redhat.com, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
+	adrian.hunter@intel.com, peterz@infradead.org, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Naresh Solanki <naresh.solanki@9elements.com>
+Hello Namhyung,
 
-Currently, during startup, the fan is set to its maximum RPM by default,
-which may not be suitable for all use cases.
-This patch introduces support for specifying a target RPM via the Device
-Tree property "target-rpm".
+LGTM. This is better. :)
 
-Changes:
-- Added `target_rpm` field to `max6639_data` structure to store the
-  target RPM for each fan channel.
-- Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
-  property from the Device Tree and set `target_rpm` accordingly.
-- Updated `max6639_init_client()` to use `target_rpm` to compute the
-  initial PWM duty cycle instead of defaulting to full speed (120/120).
+Thanks,
+Howard
 
-Behavior:
-- If `"target-rpm"` is specified, the fan speed is set accordingly.
-- If `"target-rpm"` is not specified, the previous behavior (full speed
-  at startup) is retained.
-
-This allows better control over fan speed during system initialization.
-
-Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-
----
-Changes in v2:
-- Pre-init target_rpm[] to 4000 RPM
-- Validate if target_rpm[] is within configured range.
----
- drivers/hwmon/max6639.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
-index 32b4d54b2076..a06346496e1d 100644
---- a/drivers/hwmon/max6639.c
-+++ b/drivers/hwmon/max6639.c
-@@ -80,6 +80,7 @@ struct max6639_data {
- 	/* Register values initialized only once */
- 	u8 ppr[MAX6639_NUM_CHANNELS];	/* Pulses per rotation 0..3 for 1..4 ppr */
- 	u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
-+	u32 target_rpm[MAX6639_NUM_CHANNELS];
- 
- 	/* Optional regulator for FAN supply */
- 	struct regulator *reg;
-@@ -563,6 +564,10 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
- 	if (!err)
- 		data->rpm_range[i] = rpm_range_to_reg(val);
- 
-+	err = of_property_read_u32(child, "target-rpm", &val);
-+	if (!err)
-+		data->target_rpm[i] = val;
-+
- 	return 0;
- }
- 
-@@ -573,6 +578,7 @@ static int max6639_init_client(struct i2c_client *client,
- 	const struct device_node *np = dev->of_node;
- 	struct device_node *child;
- 	int i, err;
-+	u8 target_duty;
- 
- 	/* Reset chip to default values, see below for GCONFIG setup */
- 	err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
-@@ -586,6 +592,8 @@ static int max6639_init_client(struct i2c_client *client,
- 	/* default: 4000 RPM */
- 	data->rpm_range[0] = 1;
- 	data->rpm_range[1] = 1;
-+	data->target_rpm[0] = 4000;
-+	data->target_rpm[1] = 4000;
- 
- 	for_each_child_of_node(np, child) {
- 		if (strcmp(child->name, "fan"))
-@@ -639,8 +647,12 @@ static int max6639_init_client(struct i2c_client *client,
- 		if (err)
- 			return err;
- 
--		/* PWM 120/120 (i.e. 100%) */
--		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
-+		/* Set PWM based on target RPM if specified */
-+		if (data->target_rpm[i] >  rpm_ranges[data->rpm_range[i]])
-+			data->target_rpm[i] = rpm_ranges[data->rpm_range[i]];
-+
-+		target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
-+		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), target_duty);
- 		if (err)
- 			return err;
- 	}
-
-base-commit: 2115cbeec8a3ccc69e3b7ecdf97b4472b0829cfc
--- 
-2.42.0
-
+On Wed, Mar 26, 2025 at 11:21=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Mon, Mar 24, 2025 at 04:52:45PM -0700, Howard Chu wrote:
+> > In my previous fix of runtime error(Link:
+> > https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-howard=
+chu95@gmail.com/),
+> > I made a mistake of decrementing one unconditionally, regardless of
+> > whether an extra 'syscall_nr' or 'nr' field was present in
+> > libtraceevent's tp_format. This may cause perf trace to allocate one
+> > fewer arg_fmt entry than needed for the accurate representation of sysc=
+all
+> > arguments.
+> >
+> > This patch corrects the mistake by checking the presence of'syscall_nr'=
+ or
+> > 'nr', and adjusting the length of arg_fmt[] accordingly.
+>
+> Thanks for the fix.  I've noticed this too but I feel like we can make
+> syscall__alloc_arg_fmts() a bit simpler.
+>
+> How about this?
+>
+> Thanks,
+> Namhyung
+>
+>
+> ---8<---
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 6ac51925ea4249c2..b9bdab52f5801c3a 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2022,9 +2022,6 @@ static int syscall__alloc_arg_fmts(struct syscall *=
+sc, int nr_args)
+>  {
+>         int idx;
+>
+> -       if (nr_args =3D=3D RAW_SYSCALL_ARGS_NUM && sc->fmt && sc->fmt->nr=
+_args !=3D 0)
+> -               nr_args =3D sc->fmt->nr_args;
+> -
+>         sc->arg_fmt =3D calloc(nr_args, sizeof(*sc->arg_fmt));
+>         if (sc->arg_fmt =3D=3D NULL)
+>                 return -1;
+> @@ -2034,7 +2031,6 @@ static int syscall__alloc_arg_fmts(struct syscall *=
+sc, int nr_args)
+>                         sc->arg_fmt[idx] =3D sc->fmt->arg[idx];
+>         }
+>
+> -       sc->nr_args =3D nr_args;
+>         return 0;
+>  }
+>
+> @@ -2176,14 +2172,9 @@ static int syscall__read_info(struct syscall *sc, =
+struct trace *trace)
+>                 return err;
+>         }
+>
+> -       /*
+> -        * The tracepoint format contains __syscall_nr field, so it's one=
+ more
+> -        * than the actual number of syscall arguments.
+> -        */
+> -       if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields -=
+ 1))
+> -               return -ENOMEM;
+> -
+>         sc->args =3D sc->tp_format->format.fields;
+> +       sc->nr_args =3D sc->tp_format->format.nr_fields;
+> +
+>         /*
+>          * We need to check and discard the first variable '__syscall_nr'
+>          * or 'nr' that mean the syscall number. It is needless here.
+> @@ -2194,6 +2185,9 @@ static int syscall__read_info(struct syscall *sc, s=
+truct trace *trace)
+>                 --sc->nr_args;
+>         }
+>
+> +       if (syscall__alloc_arg_fmts(sc, sc->nr_args))
+> +               return -ENOMEM;
+> +
+>         sc->is_exit =3D !strcmp(name, "exit_group") || !strcmp(name, "exi=
+t");
+>         sc->is_open =3D !strcmp(name, "open") || !strcmp(name, "openat");
+>
+> --
+> 2.49.0.395.g12beb8f557-goog
+>
 
