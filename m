@@ -1,244 +1,149 @@
-Return-Path: <linux-kernel+bounces-576358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727FDA70E3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:33:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4961EA70E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3913AC476
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8435F7A5590
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499FC199BC;
-	Wed, 26 Mar 2025 00:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0611DA53;
+	Wed, 26 Mar 2025 00:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmOL0bL9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T5bi/cya"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FB818035;
-	Wed, 26 Mar 2025 00:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A64B67A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742949188; cv=none; b=TjKSkRx0iqT7cfGbPxDOrmG/xRbEOFGLmR/M1HKFEsPu/Dm8X89N2/5olldmXvCaTIfDfuveiOBGAoTDvqvXn3MjG+iY0w4oEijAbIkKAWgL7X8KC5KR1eDKSQ1m6/iyxFWBadCPqmgOYlWaWgAySgBibK9E8e9jEmdVlRNvSb8=
+	t=1742949649; cv=none; b=FDbRJ6lClYdlyObApj8Rd6j2GAybO0N7JsGFUGubVWJsBiKAzs+UjzBC2d5cVa5ew++OOjs1mWYccWwZx/pJlMPACp6KjgV2/EGwwt/bkjbcApUwmTk8uSB269xbDVbkNC0KfylHaWs3aieHH7MHoNDz/fMp0E6yabxOuoCl2Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742949188; c=relaxed/simple;
-	bh=Pp6Sv1svN0R+5ALGT58L3atxeP++biFN0Qd6UhpdUwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fT8ZP8WglGiPE/wGx8TsvHiq4VPdwdbC4wcIH78fa+o7UB83kyCL+NJg8i0Uk/f+pr0tcnQNRqtNGse5uthviMI6PyP/ebIO2Vx8tYw4A756CufjLIsBZlh9tBIgjKC0Sd5ldK8M2sW3dyxqhq/1tZMPGtEfY+CM28Crzxj+inI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmOL0bL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C56C4CEE4;
-	Wed, 26 Mar 2025 00:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742949188;
-	bh=Pp6Sv1svN0R+5ALGT58L3atxeP++biFN0Qd6UhpdUwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nmOL0bL9dyQGD3ksmImeJ7yNFrkhfxtvZjm3qZdlfSLpW/wPnnYbeaCoaSTYaAEWB
-	 2bHokC+5jNqL2J8aFT4b/2AxHvP/qhRPX1B7WNeZxp2CVIkCyxoQ+lwYzsSRzRFYgr
-	 1sd7dsGMUdcNxLbD0/B5j928pXelikVH8gWVwZkfFhl2pxZmoLTKboV0yja3iIz6rn
-	 BpRcbo5TiN4Cc/ORDAeGiLIOvo7REHEaGx5LkkDQi0XCrOPHOCkFoiFhVW/XewfU/I
-	 AvffqEky0rIJMWTn6T9YLQeyoD6ITuxPfNRF5279Lz3SpO/WOPTv5XQzwavGywNs5n
-	 sPhMxAlAPtq2Q==
-Date: Tue, 25 Mar 2025 17:33:03 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] wcslen() prototype in string.h
-Message-ID: <20250326003303.GA2394@ax162>
-References: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
- <20250325-string-add-wcslen-for-llvm-opt-v1-2-b8f1e2c17888@kernel.org>
- <Z-LXHssrcpdtFqqn@smile.fi.intel.com>
- <20250325165847.GA2603000@ax162>
- <Z-LiWDbrEvVaTLZU@smile.fi.intel.com>
- <20250325214516.GA672870@ax162>
+	s=arc-20240116; t=1742949649; c=relaxed/simple;
+	bh=efOHKhADG0LVdVjQwpE9pSn3MTJSniuA8sQ5t9VJ8/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JJaDbz+dx/GRefftSkGuUBavsOiN3tS5+6IUmJrghli+Hfk7zfWqsCGaO0OhfXcd3/jAXeWQdPkgJeRkP38fbe770ruFulVRkDK39rLi8vAHfT07ipMgI5q7mT9QDbllXUBD6PHVHbebqZflqpfIJQC0v7e3H8cwn8ONCQqgZSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T5bi/cya; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742949647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2tX4edrltQifnxcWbzYvJ8/3NP9BgeSuosZ8Lt5jiAc=;
+	b=T5bi/cyaB9vO/YvYd4xXpseN9magUB47G5v1gUcGByvS7a785ihT3rE2hfxUVUFoFcHos9
+	MF5/3aVKwQTXl8vjUw9LP8GHEvtVKzgWNceGGdrJqVRPMUG1nSyH81hrNmNjGrN29XE1RY
+	ZRxs7pa8rewLgF1oZIgkQZrQwsYmGIA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-IkyezFRAM5ShJAbKWzNdzg-1; Tue,
+ 25 Mar 2025 20:40:43 -0400
+X-MC-Unique: IkyezFRAM5ShJAbKWzNdzg-1
+X-Mimecast-MFC-AGG-ID: IkyezFRAM5ShJAbKWzNdzg_1742949642
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7CE561800257;
+	Wed, 26 Mar 2025 00:40:41 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.13])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 890711801750;
+	Wed, 26 Mar 2025 00:40:28 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	Quentin Monnet <qmo@qmon.net>
+Subject: [PATCH] tools/build: Use SYSTEM_BPFTOOL for system bpftool
+Date: Wed, 26 Mar 2025 01:40:18 +0100
+Message-ID: <20250326004018.248357-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325214516.GA672870@ax162>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Mar 25, 2025 at 02:45:21PM -0700, Nathan Chancellor wrote:
-> Okay, sounds reasonable to me. This is what I ended up with for that
-> change, which will become patch one of the series.
-...
-> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware/efi/libstub/printk.c
-> index 3a67a2cea7bd..334f7e89845c 100644
-> --- a/drivers/firmware/efi/libstub/printk.c
-> +++ b/drivers/firmware/efi/libstub/printk.c
-> @@ -24,7 +24,7 @@ void efi_char16_puts(efi_char16_t *str)
->  }
->  
->  static
-> -u32 utf8_to_utf32(const u8 **s8)
-> +u32 efi_utf8_to_utf32(const u8 **s8)
->  {
->  	u32 c32;
->  	u8 c0, cx;
-> @@ -82,7 +82,7 @@ void efi_puts(const char *str)
->  	while (*s8) {
->  		if (*s8 == '\n')
->  			buf[pos++] = L'\r';
-> -		c32 = utf8_to_utf32(&s8);
-> +		c32 = efi_utf8_to_utf32(&s8);
->  		if (c32 < 0x10000) {
->  			/* Characters in plane 0 use a single word. */
->  			buf[pos++] = c32;
-> -- 
-> 2.49.0
-> 
-> Then the first patch (which becomes the second) becomes:
-> 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 0403a4ca4c11..45e01cf3434c 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -7,6 +7,7 @@
->  #include <linux/cleanup.h>	/* for DEFINE_FREE() */
->  #include <linux/compiler.h>	/* for inline */
->  #include <linux/types.h>	/* for size_t */
-> +#include <linux/nls.h>		/* for wchar_t */
+The feature test for system bpftool uses BPFTOOL as the variable to set
+its path, defaulting to just "bpftool" if not set by the user.
 
-Good thing I waited :) This include makes s390 unhappy:
+This conflicts with selftests and a few other utilities, which expect
+BPFTOOL to be set to the in-tree bpftool path by default. For example,
+bpftool selftests fail to build:
 
-https://lore.kernel.org/202503260611.MDurOUhF-lkp@intel.com/
+$ make -C tools/testing/selftests/bpf/
+make: Entering directory '/home/tglozar/dev/linux/tools/testing/selftests/bpf'
 
-It is possible that should be fixed by adding -Wno-pointer-sign to
-KBUILD_CFLAGS_DECOMPRESSOR so that arch/s390/boot matches the rest of
-the kernel but...
+make: *** No rule to make target 'bpftool', needed by '/home/tglozar/dev/linux/tools/testing/selftests/bpf/tools/include/vmlinux.h'.  Stop.
+make: Leaving directory '/home/tglozar/dev/linux/tools/testing/selftests/bpf'
 
-> diff --git a/lib/string.c b/lib/string.c
-> index eb4486ed40d2..1aa09925254b 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -21,6 +21,7 @@
->  #include <linux/errno.h>
->  #include <linux/limits.h>
->  #include <linux/linkage.h>
-> +#include <linux/nls.h>
->  #include <linux/stddef.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
+Fix the problem by renaming the variable used for system bpftool from
+BPFTOOL to SYSTEM_BPFTOOL, so that the new usage does not conflict with
+the existing one of BPFTOOL.
 
-I wonder if would be better to do something like the below patch in lieu
-of the EFI change above (since there is no chance for a collision) then
-change both of the includes for wchar_t in this diff to nls_types.h? I
-have no strong opinion but this seems like it would be cleaner for the
-sake of backports while not being a bad solution upstream?
-
-Subject: [PATCH] include: Move typedefs in nls.h to their own header
-
-In order to allow commonly included headers such as string.h to access
-typedefs such as wchar_t without running into issues with the rest of
-the NLS library, refactor the typedefs out into their own header that
-can be included in a much safer manner.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-kernel/5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com/
+Suggested-by: Quentin Monnet <qmo@qmon.net>
+Fixes: 8a635c3856dd ("tools/build: Add bpftool-skeletons feature test")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 ---
- include/linux/nls.h       | 19 +------------------
- include/linux/nls_types.h | 25 +++++++++++++++++++++++++
- 2 files changed, 26 insertions(+), 18 deletions(-)
- create mode 100644 include/linux/nls_types.h
+ tools/build/feature/Makefile   | 2 +-
+ tools/scripts/Makefile.include | 2 +-
+ tools/tracing/rtla/Makefile    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/nls.h b/include/linux/nls.h
-index e0bf8367b274..3d416d1f60b6 100644
---- a/include/linux/nls.h
-+++ b/include/linux/nls.h
-@@ -3,24 +3,7 @@
- #define _LINUX_NLS_H
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 4f9c1d950f5d..b8b5fb183dd4 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -419,7 +419,7 @@ $(OUTPUT)test-libpfm4.bin:
+ 	$(BUILD) -lpfm
  
- #include <linux/init.h>
--
--/* Unicode has changed over the years.  Unicode code points no longer
-- * fit into 16 bits; as of Unicode 5 valid code points range from 0
-- * to 0x10ffff (17 planes, where each plane holds 65536 code points).
-- *
-- * The original decision to represent Unicode characters as 16-bit
-- * wchar_t values is now outdated.  But plane 0 still includes the
-- * most commonly used characters, so we will retain it.  The newer
-- * 32-bit unicode_t type can be used when it is necessary to
-- * represent the full Unicode character set.
-- */
--
--/* Plane-0 Unicode character */
--typedef u16 wchar_t;
--#define MAX_WCHAR_T	0xffff
--
--/* Arbitrary Unicode character */
--typedef u32 unicode_t;
-+#include <linux/nls_types.h>
+ $(OUTPUT)test-bpftool-skeletons.bin:
+-	$(BPFTOOL) version | grep '^features:.*skeletons' \
++	$(SYSTEM_BPFTOOL) version | grep '^features:.*skeletons' \
+ 		> $(@:.bin=.make.output) 2>&1
+ ###############################
  
- struct nls_table {
- 	const char *charset;
-diff --git a/include/linux/nls_types.h b/include/linux/nls_types.h
-new file mode 100644
-index 000000000000..8caefdba19b1
---- /dev/null
-+++ b/include/linux/nls_types.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_NLS_TYPES_H
-+#define _LINUX_NLS_TYPES_H
-+
-+#include <linux/types.h>
-+
-+/* Unicode has changed over the years.  Unicode code points no longer
-+ * fit into 16 bits; as of Unicode 5 valid code points range from 0
-+ * to 0x10ffff (17 planes, where each plane holds 65536 code points).
-+ *
-+ * The original decision to represent Unicode characters as 16-bit
-+ * wchar_t values is now outdated.  But plane 0 still includes the
-+ * most commonly used characters, so we will retain it.  The newer
-+ * 32-bit unicode_t type can be used when it is necessary to
-+ * represent the full Unicode character set.
-+ */
-+
-+/* Plane-0 Unicode character */
-+typedef u16 wchar_t;
-+#define MAX_WCHAR_T	0xffff
-+
-+/* Arbitrary Unicode character */
-+typedef u32 unicode_t;
-+
-+#endif /* _LINUX_NLS_TYPES_H */
+diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
+index 6268534309aa..5158250988ce 100644
+--- a/tools/scripts/Makefile.include
++++ b/tools/scripts/Makefile.include
+@@ -92,7 +92,7 @@ LLVM_OBJCOPY	?= llvm-objcopy
+ LLVM_STRIP	?= llvm-strip
+ 
+ # Some tools require bpftool
+-BPFTOOL		?= bpftool
++SYSTEM_BPFTOOL	?= bpftool
+ 
+ ifeq ($(CC_NO_CLANG), 1)
+ EXTRA_WARNINGS += -Wstrict-aliasing=3
+diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
+index 4cc3017dccaa..746ccf2f5808 100644
+--- a/tools/tracing/rtla/Makefile
++++ b/tools/tracing/rtla/Makefile
+@@ -72,7 +72,7 @@ src/timerlat.bpf.o: src/timerlat.bpf.c
+ 	$(QUIET_CLANG)$(CLANG) -g -O2 -target bpf -c $(filter %.c,$^) -o $@
+ 
+ src/timerlat.skel.h: src/timerlat.bpf.o
+-	$(QUIET_GENSKEL)$(BPFTOOL) gen skeleton $< > $@
++	$(QUIET_GENSKEL)$(SYSTEM_BPFTOOL) gen skeleton $< > $@
+ else
+ src/timerlat.skel.h:
+ 	$(Q)echo '/* BPF skeleton is disabled */' > src/timerlat.skel.h
 -- 
-2.49.0
+2.48.1
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 45e01cf3434c..4a48f8eac301 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -7,7 +7,7 @@
- #include <linux/cleanup.h>	/* for DEFINE_FREE() */
- #include <linux/compiler.h>	/* for inline */
- #include <linux/types.h>	/* for size_t */
--#include <linux/nls.h>		/* for wchar_t */
-+#include <linux/nls_types.h>	/* for wchar_t */
- #include <linux/stddef.h>	/* for NULL */
- #include <linux/err.h>		/* for ERR_PTR() */
- #include <linux/errno.h>	/* for E2BIG */
-diff --git a/lib/string.c b/lib/string.c
-index 1aa09925254b..2c6f8c8f4159 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -21,7 +21,7 @@
- #include <linux/errno.h>
- #include <linux/limits.h>
- #include <linux/linkage.h>
--#include <linux/nls.h>
-+#include <linux/nls_types.h>
- #include <linux/stddef.h>
- #include <linux/string.h>
- #include <linux/types.h>
 
