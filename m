@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-577667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AD8A7200D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:37:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C76A72011
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FC63B2438
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADBB1684AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDF255E55;
-	Wed, 26 Mar 2025 20:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E957F25D55A;
+	Wed, 26 Mar 2025 20:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iefXod47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhKJK7Mh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7DA137930;
-	Wed, 26 Mar 2025 20:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51175137930;
+	Wed, 26 Mar 2025 20:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021434; cv=none; b=SUYMGKDIMHez2bO6NqZjNxsMcf51oI4Jl4AA6WW1NpW306GGlRo0MtNAmgKgQEpSuFWJtr7I6SXsfrgXwCFN4uV9kas7rmyFRqnObJFqy8wr5xFFic+Yb1Xr/tD156OlOk7pH8p6tCqy6zBtLfPl2bGvao6eilBs+dvEUvV4aH8=
+	t=1743021572; cv=none; b=YQ+d++gGJ5YGx6IkO/bE1iNPSw8S9AbXRuOH66KB8O3ReDiaRguXW7NivZYd3wPFJ7OYdFfP4imEnnEKsaBFQOXfA5vTVXRgpy3Sd1tSdv36Z/C0+OLPeiebqfednVXJQP0gV50hkUTsBmvmBuzJ8C7FK+h+5rMjKQC34BTGn6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021434; c=relaxed/simple;
-	bh=gIUYBjs4qNqH+FWbyydKPm0g0LeEniBPBOuD5tjT/jU=;
+	s=arc-20240116; t=1743021572; c=relaxed/simple;
+	bh=+xhFLxmEGTa5Cg2nJVUgqjUIL4XXdacwm62BcgyS+F0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiCHKwoMyT8oPimKy+BvweKWzvJtdMH+Pt5eRnrtBzMXxVr8EAWIAdIUEhcXn3psmyuuJD+/VDIjmK7RMD5rGZIRNTaiRBhSLdFOvbALyOXi9RnX+Od5iKNv9O8iUqOY9ECYOzS3BXVJ6Jb6ZtNjG+fL2SzWMOPv6fZdo9lE6rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iefXod47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5732DC4CEE2;
-	Wed, 26 Mar 2025 20:37:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GpPuLUMsGCOPnbpKqZ9HmJXA/CKs7IXF7t4wjgFYb7Lqsia1KNaq890uva1KDiLpOuM0OoqgjYnQAMNe3brcc9PQhdrmKRcw1aE5tHLhnyUgiYUjQN/y1qQb4NVcvevmlJLCFIkxy7rrcRPnCpFYQRfMRSlq4c8n9JMA7SS0q4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhKJK7Mh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3441EC4CEE2;
+	Wed, 26 Mar 2025 20:39:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743021433;
-	bh=gIUYBjs4qNqH+FWbyydKPm0g0LeEniBPBOuD5tjT/jU=;
+	s=k20201202; t=1743021570;
+	bh=+xhFLxmEGTa5Cg2nJVUgqjUIL4XXdacwm62BcgyS+F0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iefXod47v80rjYS9tmKEVnrdQcLbbHnNFkHyx2VIVSxFtce+oKh6VgmUIrq678PW0
-	 fAgLSea5kBsK+ldIfMsv2r0UkNp/yUDJG2qZQPpEYSsbep8VWNh6sGv74SshB6rR/N
-	 Z8mp3+a2Tj9ulAhRvVKLjGTvXcFmnKgrOhZPlQVcqYszGxkKhnPJs1kjwhvJXx175N
-	 xYuvMLbQOfv5ulWstchROj8Odr2Q1uY03hDwj+0O6TMhPlRrGT8lBpPpqa5p9JTeVH
-	 589do7rnBDDPMrC0maIvdzzhIC6lP3sPzS5KIwjfn3wmxbEqD1mNXq2a7slDQ39l+U
-	 qf1al/wdbyphw==
-Date: Wed, 26 Mar 2025 22:37:09 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Sumit Garg <sumit.garg@kernel.org>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
-Message-ID: <Z-RlbEN9BoKnTN2E@kernel.org>
-References: <20250320152433.144083-1-sgarzare@redhat.com>
- <20250320152433.144083-3-sgarzare@redhat.com>
- <Z-I86tWMcD6b_YeM@sumit-X1>
- <Z-Pu4FhcntnKii61@kernel.org>
- <Z+QQWe/upJuVpU8r@ziepe.ca>
- <Z-QV5y1JGBDpsPuH@kernel.org>
- <Z-QkGUenPAMid63l@kernel.org>
+	b=WhKJK7MhBwJvG2bla2kDcOZjyNSnttVqkKSjTxeRDrEJ8JaiS+hodKtNPcBS1A67a
+	 Zk2ggluCnQ7YOAHfmy/XReWMSGGsRy6WEnr/52IJc8ZgkkcR3DQtSXVh4NqjGY5oqT
+	 JgLUFb9dRX1wiYEwfaUlksjSggYm6f4bdCyK2NvhmiZmEQcG+lLW80wyqC7PUpBgZD
+	 zpXoYZ5+2fAUF4gnhw5XGmbk5UG6mLRWjO+BrG3Uuro9bAzJauLhSZ4bviRwF56ZG7
+	 guDtBMLj7fL8YkzMMkQxbIUUSKqEh7/Vv4ADM+Uju3a+oUYhe+zWdrWgdLN8BBiXEG
+	 wSwBP6W5KvSIA==
+Date: Wed, 26 Mar 2025 13:39:26 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jann Horn <jannh@google.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
+Message-ID: <20250326203926.GA10484@ax162>
+References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +57,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-QkGUenPAMid63l@kernel.org>
+In-Reply-To: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
 
-On Wed, Mar 26, 2025 at 05:58:33PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Mar 26, 2025 at 04:57:47PM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Mar 26, 2025 at 11:34:01AM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Mar 26, 2025 at 02:11:12PM +0200, Jarkko Sakkinen wrote:
-> > > 
-> > > > Generally speaking I don't see enough value in complicating
-> > > > callback interface. It's better to handle complications in
-> > > > the leaves (i.e. dictatorship of majority ;-) ).
-> > > 
-> > > That is very much not the way most driver subsystems view the
-> > > world. We want to pull logical things into the core code and remove
-> > > them from drivers to make the drivers simpler and more robust.
-> > > 
-> > > The amount of really dumb driver boiler plate that this series
-> > > obviously removes is exactly the sort of stuff we should be fixing by
-> > > improving the core code.
-> > > 
-> > > The callback interface was never really sanely designed, it was just
-> > > built around the idea of pulling the timout processing into the core
-> > > code for TIS hardware. It should be revised to properly match these
-> > > new HW types that don't have this kind of timeout mechanism.
-> > 
-> > Both TIS and CRB, which are TCG standards and they span to many
-> > different types of drivers and busses. I don't have the figures but
-> > probably they cover vast majority of the hardware.
-> > 
-> > We are talking about 39 lines of reduced complexity at the cost
-> > of complicating branching at the top level. I doubt that there
-> > is either any throughput or latency issues.
-> > 
-> > What is measurable benefit? The rationale is way way too abstract
-> > for me to cope, sorry.
+Hi Jann,
+
+On Tue, Mar 25, 2025 at 05:01:34PM +0100, Jann Horn wrote:
+> Also, since this read can be racy by design, we should technically do
+> READ_ONCE(), so add that.
 > 
-> E.g., here's how you can get rid of extra cruft in tpm_ftpm_tee w/o
-> any new callbacks.
+> Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer infrastructure")
+> Signed-off-by: Jann Horn <jannh@google.com>
+...
+> diff --git a/include/asm-generic/rwonce.h b/include/asm-generic/rwonce.h
+> index 8d0a6280e982..e9f2b84d2338 100644
+> --- a/include/asm-generic/rwonce.h
+> +++ b/include/asm-generic/rwonce.h
+> @@ -79,11 +79,14 @@ unsigned long __read_once_word_nocheck(const void *addr)
+>  	(typeof(x))__read_once_word_nocheck(&(x));			\
+>  })
+>  
+> -static __no_kasan_or_inline
+> +static __no_sanitize_or_inline
+>  unsigned long read_word_at_a_time(const void *addr)
+>  {
+> +	/* open-coded instrument_read(addr, 1) */
+>  	kasan_check_read(addr, 1);
+> -	return *(unsigned long *)addr;
+> +	kcsan_check_read(addr, 1);
+> +
+> +	return READ_ONCE(*(unsigned long *)addr);
 
-Measurable benefit: no need to allocate memory buffer.
+I bisected a boot hang that I see on arm64 with LTO enabled to this
+change as commit ece69af2ede1 ("rwonce: handle KCSAN like KASAN in
+read_word_at_a_time()") in -next. With LTO, READ_ONCE() gets upgraded to
+ldar / ldapr, which requires an aligned address to access, but
+read_word_at_a_time() can be called with an unaligned address. I
+confirmed this should be the root cause by removing the READ_ONCE()
+added above or removing the selects of DCACHE_WORD_ACCESS and
+HAVE_EFFICIENT_UNALIGNED_ACCESS in arch/arm64/Kconfig, which avoids
+the crash.
 
-Let's take that as a starting point ;-)
-
-On that basis I can consider this (i.e. something to measure).
-
-BR, Jarkko
+Cheers,
+Nathan
 
