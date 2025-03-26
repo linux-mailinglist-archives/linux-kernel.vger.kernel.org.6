@@ -1,219 +1,103 @@
-Return-Path: <linux-kernel+bounces-576697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A25EA71329
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:56:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A0FA71330
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB54F7A361C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9833ACA52
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2CF1A9B3E;
-	Wed, 26 Mar 2025 08:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q5/8sSSI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80931A4F21;
+	Wed, 26 Mar 2025 08:57:30 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBAA1A4F3C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61A31DFDE;
+	Wed, 26 Mar 2025 08:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742979376; cv=none; b=eYOxS9ZKf30/oVSNZ5mRRzLFhlSbjkPIIhnPhdC0PiqCXQ31sqNklqcsC3KC9IpJGcAmXCVVdnIFr/Hu1c+t1BqvlYnaL7QQYBJHfqsSVxZETfKwc/JsfBEsrrJbuk1gr1expC7/mT7SVdZ9GT1/TflUeFCeWATXnKpYRu/vR0g=
+	t=1742979450; cv=none; b=DF6gac6z5T426pgaZaGtWKs3cIWzUe0zXQBN1kxlOXJdDgMz/hCF9dUMBIOPPU/4f8H/JqULlvl9XAcWyZ4w24WeFh22ZAB6+/EBkww8OtmCDnrtJc/s85jKZVPm2EBwDc10B9dnvfrfVpzzRHP6EIlLepmZqKkfvNTHoUpoz7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742979376; c=relaxed/simple;
-	bh=F1foF754pT94sYW+RFuaojIiZBGsMyKzZaxtQLw5N2w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=chTS+o7i/zXRse0Cx/lanMyXTkDzXBQZW/RwXNzpF0toYi4S0SRMl7DLXImPnb3t/mXNIckm3zZKLyY2vz86MWIpcmLXQPyYkZdLq/incZqVaVidF9909D/cnxPsatK4I1SkaECzZVVdO8u2GaJdtD7RL4TQjokrdPlbKncJmIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q5/8sSSI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742979373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ctJ2iKS2diL395+WMoYK5u4EcCy52/qwtJ7bficlTlI=;
-	b=Q5/8sSSIlMHL12WoO0H+qVYFJOWdF7DvSKpwr4GmJ3dmtlSpUiTV2fRYd64sqF6ghxoGrm
-	AswaE4nAx9Lw9G25KKN8/fAW0vSmXavQwkmnyUHDsgnBseEnBqkLRv8ByFCXUvmW4L8tXK
-	ZeHHOQ40p271zF6X4h5hooOlTOtlEXI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-m2kLpkHyOHiigbkzEKturg-1; Wed, 26 Mar 2025 04:56:11 -0400
-X-MC-Unique: m2kLpkHyOHiigbkzEKturg-1
-X-Mimecast-MFC-AGG-ID: m2kLpkHyOHiigbkzEKturg_1742979370
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43cf44b66f7so45782675e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:56:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742979370; x=1743584170;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ctJ2iKS2diL395+WMoYK5u4EcCy52/qwtJ7bficlTlI=;
-        b=ETOryiFaFSaVnFEPO7+/sQo0uql8CWFEop6Uiv7z6FoZuiNsjFiAB2TsANVeaDcuOv
-         c0kW7JPb78mzqSnypnZ8Lt9Af60Tkg0vca4BZg0OEM+kw+zKJKuhuNliDxbJXo8HtiCy
-         T/5GTvdMZjX4tV3sPaxMfk3Ho2EZxXznOi8hsPBPIY7Sgou79mPqCUAx8D4RtYL5H0NW
-         HcgugtJEhdVh4ijYKvVNfmZ8QhgZJP+TYGPKOCtIrxp/0sxr3uCGeB8TgA+f+9llgiFE
-         LITILM2AkDx6vrT5XS/a0zOEHJrRlHVY0ct+/vR2Ctj64RgOC9yaYcEfreGVHASw0d8W
-         HnTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCErH8uah+qyQshELunTyk3wfFfhybclIZvPMMjeDogUJA8NEQSsxHQ14YlnYvlr0DLnYfVTZMdk1YQp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH9lxgS8ZHhQaiLpUDBy+yG/+nNqt0jj2ihiP7zYz6m+iu+HM5
-	XeoLB3qLbmFMNwHYcPVCl5IUXG06GiGK5kkUO1I5AB11rkFlwNlvUAc8cNYg2NDBxX4by8wn6VL
-	BNTrDqhJr6x7bmEqwPfnYvzlfe7VwZSrjdAtLgtupm8u7qpgFPp/iFpA/LwHYEQ==
-X-Gm-Gg: ASbGncsbBRxBz1XFMfasE36iLJj2fyuLX7TrlnNyzUB7UWDCFscTaBc2vQYddJDLUW0
-	5wxZUpNgdqNVd/x5aS93Fn1Sl7OgDbADSZkQ8SQhB5UQTFe0MOr5TVZiBmaKT/GzUaIJU36igPC
-	ME57P9wYMGPAynUjCf9vKd8rmIeVYx0IU95pRPMPRwvghYKVo6oywznn2KxweNrqK6Azpz4B4sS
-	BKlpwKjUGVK34KFsuxJNqWNtpnRk8/j8ANvfI4Cy2lgnpllN4rsSM/SOvxRApV+tC4W+cWeqPlc
-	TYjxzbUqylgC+Qqdjhes/BKf+xtWM+/OMr9lVF2qplM4zWfPHp9JwdnPVA1xTwz/i+InEWAX0mc
-	X
-X-Received: by 2002:a05:600c:5025:b0:43d:300f:fa51 with SMTP id 5b1f17b1804b1-43d509ea850mr177278495e9.9.1742979369959;
-        Wed, 26 Mar 2025 01:56:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmtDcswSiHFvojL/8/X8XbIAG8pFv35YFW9PLdaiNFn4jtJsKwcY6xoArge3H5jo1mJzUGFA==
-X-Received: by 2002:a05:600c:5025:b0:43d:300f:fa51 with SMTP id 5b1f17b1804b1-43d509ea850mr177277375e9.9.1742979369446;
-        Wed, 26 Mar 2025 01:56:09 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39ac67970a2sm5909443f8f.16.2025.03.26.01.56.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 01:56:08 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, virtualization@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
- xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
- linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <CAG48ez2bSh6=J8cXJhqYX=Y8pXcGsFgC05HsGcF0b1sJK2VH7A@mail.gmail.com>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
- <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
- <xhsmhh64qhssj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <eef09bdc-7546-462b-9ac0-661a44d2ceae@intel.com>
- <xhsmhfrk84k5k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <408ebd8b-4bfb-4c4f-b118-7fe853c6e897@intel.com>
- <xhsmhy0wtngkd.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez2bSh6=J8cXJhqYX=Y8pXcGsFgC05HsGcF0b1sJK2VH7A@mail.gmail.com>
-Date: Wed, 26 Mar 2025 09:56:06 +0100
-Message-ID: <xhsmhv7rwnpax.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1742979450; c=relaxed/simple;
+	bh=GbObKGvHtL1gdFqssOg+BAIGhnssLdBcbtorEnZyhqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LPZJfaFP0VsWzuqtnyjQkM9sic/K/1zKuRO1+oFzlGxJ+nbRCnIlk81TaTScJfuelmipKDhM02VcVDA8r/J4Z0SvtFmJb7HeFbxzAY2/zCCCGMIgqaloe3DXX2d+QQEEGvOoOj5I0kyivLJIrwcyJESb1MUgotoIZuQIt3PTK/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 016F520481;
+	Wed, 26 Mar 2025 08:57:20 +0000 (UTC)
+Message-ID: <c023271e-23fe-40f4-8e84-8f99f6156484@ghiti.fr>
+Date: Wed, 26 Mar 2025 09:57:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: riscv: Fix typo MIMPLID -> MIMPID
+Content-Language: en-US
+To: Nam Cao <namcao@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Evan Green <evan@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>,
+ Andrew Jones <ajones@ventanamicro.com>, linux-doc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240925142532.31808-1-namcao@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240925142532.31808-1-namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueefgeehheegtddvgeelgeejjeefudekgeetffeijefgveejudehfffftdelhffhnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemgegsiegumeehkegstdemtgdvtgemkeelgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeegsgeiugemheeksgdtmegtvdgtmeekleegkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemgegsiegumeehkegstdemtgdvtgemkeelgeekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehnrghmtggroheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhop
+ ehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheptghlvghgvghrsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegvvhgrnhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On 25/03/25 19:41, Jann Horn wrote:
-> On Tue, Mar 25, 2025 at 6:52=E2=80=AFPM Valentin Schneider <vschneid@redh=
-at.com> wrote:
->> On 20/02/25 09:38, Dave Hansen wrote:
->> > But, honestly, I'm still not sure this is worth all the trouble. If
->> > folks want to avoid IPIs for TLB flushes, there are hardware features
->> > that *DO* that. Just get new hardware instead of adding this complicat=
-ed
->> > pile of software that we have to maintain forever. In 10 years, we'll
->> > still have this software *and* 95% of our hardware has the hardware
->> > feature too.
->>
->> Sorry, you're going to have to deal with my ignorance a little bit longe=
-r...
->>
->> Were you thinking x86 hardware specifically, or something else?
->> AIUI things like arm64's TLBIVMALLE1IS can do what is required without a=
-ny
->> IPI:
->>
->> C5.5.78
->> """
->> The invalidation applies to all PEs in the same Inner Shareable shareabi=
-lity domain as the PE that
->> executes this System instruction.
->> """
->>
->> But for (at least) these architectures:
->>
->>   alpha
->>   x86
->>   loongarch
->>   mips
->>   (non-freescale 8xx) powerpc
->>   riscv
->>   xtensa
->>
->> flush_tlb_kernel_range() has a path with a hardcoded use of on_each_cpu(=
-),
->> so AFAICT for these the IPIs will be sent no matter the hardware.
->
-> On X86, both AMD and Intel have some fairly recently introduced CPU
-> features that can shoot down TLBs remotely.
->
-> The patch series
-> <https://lore.kernel.org/all/20250226030129.530345-1-riel@surriel.com/>
-> adds support for the AMD flavor; that series landed in the current
-> merge window (it's present in the mainline git repository now and should
-> be part of 6.15). I think support for the Intel flavor has not yet
-> been implemented, but the linked patch series mentions a plan to look
-> at the Intel flavor next.
+Hi Nam, Jon,
 
-Thanks for the info!
+On 25/09/2024 16:25, Nam Cao wrote:
+> The macro that is really defined is RISCV_HWPROBE_KEY_MIMPID, not
+> RISCV_HWPROBE_KEY_MIMPLID (difference is the 'L').
+>
+> Also, the riscv privileged specification names the register "mimpid", not
+> "mimplid".
+>
+> Correct these typos.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> ask me how I found out..
+>
+>   Documentation/arch/riscv/hwprobe.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 85b709257918..fb0affa61eb9 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -51,7 +51,7 @@ The following keys are defined:
+>   * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
+>     defined by the RISC-V privileged architecture specification.
+>   
+> -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
+> +* :c:macro:`RISCV_HWPROBE_KEY_MIMPID`: Contains the value of ``mimpid``, as
+>     defined by the RISC-V privileged architecture specification.
+>   
+>   * :c:macro:`RISCV_HWPROBE_KEY_BASE_BEHAVIOR`: A bitmask containing the base
+
+
+It looks like this patch was never merged even though it is relevant. 
+@Jon: is it ok to merge it as-is? If you want, I can merge it, let me 
+know how you want to proceed.
+
+Thanks,
+
+Alex
 
 
