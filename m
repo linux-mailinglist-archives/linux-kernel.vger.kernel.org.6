@@ -1,222 +1,235 @@
-Return-Path: <linux-kernel+bounces-576538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9431AA710AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:40:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8604CA710B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:44:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F821705DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:40:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4C11728CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C068191461;
-	Wed, 26 Mar 2025 06:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C891917F9;
+	Wed, 26 Mar 2025 06:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mgOApzMw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGexHaIg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB6014B965;
-	Wed, 26 Mar 2025 06:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F13823DE;
+	Wed, 26 Mar 2025 06:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742971209; cv=none; b=KLRa6YDPO3qxpKPtl4vkKOULyC48sqQ9K8ynB9lOV77It8V4Bq37hHgNbApS04UczruXUJ+qzST9nPrc18yQL1JX1GNsBdLRO7Nfd1qI7vfIYPcVyXcaUWki8tiuKnuwPPbkLErHFJ4DQs4UumbNpPHL+hHhKix5fXnMzxCRRlI=
+	t=1742971491; cv=none; b=pkuZUmLSglBQjuEtK0BR0NkpOCSz9AOaDlilSAwqswd9YBDw7V082I6+F436L4PuWuPt9FGI3R7Zcg+9p2qVvpdaCoz+BN9ChWw7JECGb4fGC48WzUDBNSHUqbtLnVu7YOGXMi8RJvlI8J0kCFqcczMrgr4ZcEoYxmHCIjjpGTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742971209; c=relaxed/simple;
-	bh=TwvngKVS+o2NCXhwJxUhbdTmLpzewE4JJIyPZO3Cjso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PK2CyowpbjAmDCkSNVUUjrU2xo6syq4bjiDT6lJ6UUm6kB6YG0xuaS+c0iaZ4ytvnOVCuQwvg9f+OW/wNE/AcyonuEnJJKDaLaz/80EeOzO7jACdFPwa9PacLOneH76XMTEU+qY0D+Xxm7hD5WqHdJRm4rmSHfFYEMFpnWaGZHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mgOApzMw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PKZq5w010596;
-	Wed, 26 Mar 2025 06:39:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=6mSsRy
-	RE1DO+WZw8HSCr9NydyzpH5oNXTD4bnMVKrOg=; b=mgOApzMwyEXW6IiOq4oIZv
-	2tfO8TQpslSUbSkrQE83AjsYK9/N84ddzDyEPVsY9TKgFmNPEQtizuJ9fiqpBvU8
-	tls7mkH6FdSEe2KhMf9/EZU73mlPoKfitLJSg+pd8xSDY7GiEO9G7SXtuZfoL/KZ
-	W4+otEQfJ48Q+OGc/Y3bJ4vaALbsZbBJLk0d1JbNK7haFPj/Nj8RGuHu84OHo8Uz
-	KTQweEJY0XoZtwFGtoWagH0JnHtF5/M52Il4iTA0Ri/w1VVHriZhcSpOpKAELzC0
-	DF+3GWXjP4JJFhNyKL+HD0yWnAeCu6xMAy52MjyG9vkQRcZ5RkJv12aEZGSsKXFg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3nqj0j2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 06:39:56 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52Q6dXqv016869;
-	Wed, 26 Mar 2025 06:39:55 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3nqj0j0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 06:39:55 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q280UD009693;
-	Wed, 26 Mar 2025 06:39:55 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rkpwjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 06:39:55 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52Q6drGD54788474
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 06:39:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7485120043;
-	Wed, 26 Mar 2025 06:39:53 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 17F4E2004B;
-	Wed, 26 Mar 2025 06:39:51 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.216.12])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Mar 2025 06:39:50 +0000 (GMT)
-Date: Wed, 26 Mar 2025 12:09:48 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huawei.com>
-Cc: Baokun Li <libaokun1@huawei.com>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>,
-        linux-kernel@vger.kernel.org, Yang Erkun <yangerkun@huawei.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-Message-ID: <Z-OhNOVEcQNkYc18@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
- <20250316014128.GA787758@mit.edu>
- <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250319023129.GF787758@mit.edu>
- <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
- <be35b86c-1e64-4593-8f68-fbd1f6b61eef@huawei.com>
+	s=arc-20240116; t=1742971491; c=relaxed/simple;
+	bh=N+Le9MFtc/k1LZ1LVkIPmZk2oGdIyqo4T5HKb+AHZPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qUT15Ve5bPs/JkfsZl+Xe1j0zLM4JT4Dof5SrRG7BubS+VRqM15ohoiDIv/lIgkp4OJqhOHMQjBIZmqECFn22dVpRABz61K04O8qWC0kB2NgzdKSOVudimx6xy8Eta/41KjjWKWfrHGMgFCqlx7LHxfXPcYcI4nC/Sy2gAxUW+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGexHaIg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 876BAC4CEED;
+	Wed, 26 Mar 2025 06:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742971490;
+	bh=N+Le9MFtc/k1LZ1LVkIPmZk2oGdIyqo4T5HKb+AHZPQ=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=mGexHaIgLbSTRVHs1aAeFQlPGcyoCZW7ra4H38PmdGzDelCOcdKx1PSXmCzV7zHg4
+	 t4BXlaPJZl4M++7SmdtJc6OS8JjvQRphtWZwBCWtmx/alHR1Io5/u7TZToVoyJOSou
+	 96VjLRob86BRO7cjMzROfgRLhBnxIvMMr+R4vtlIUeOGTcng2xdyftnauroj5ZowGD
+	 xzqLtB/oFZyge5ZZJr/oxGRcBJ2TtgorNnVd6M4vPVwtA8/remvhxw2JO6w5AmNBGW
+	 LWfgRtD9plTNy/EtRrTL21OA4Ltzhsl8gLg9J9a66/mPT8tJvI+frlHwy6w6//C7jk
+	 Cj6THAiU6V/PQ==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so66700351fa.2;
+        Tue, 25 Mar 2025 23:44:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrmuqXy0K9cajr0azmFL4+Pf6aBWNe3qYxGW0g2O/hfr5Lcj66UTi8OLbcqOmB7DfRjc364FcBdqT0@vger.kernel.org, AJvYcCVzTu2309+2Q4uD9wIfI0yq+XWdKBq62p4IY1yhlVgcrkjs4Un9AgSf6K+qZdYcbD250UTVuZaDIL+hAmrm@vger.kernel.org, AJvYcCX22mXorEkFKLJ0KozHNYfK+7KjiR4EBG+qA1xn9QhQlKOXnXQtUG8QdEHbLtbg6PPMdD3QsDhmvpMIDy2o2w==@vger.kernel.org, AJvYcCXYa84ydnApj4NIDQwClnlzVJFosKZsXWTnNOmUfwvoEU0a4sWVpF75yBx/u8AoGKfUlIbOOopmxiNh5S8cz+gpAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw67eBUdY2FzEQWUbBU42acRzwWpawS/ryPLQQDkLkF/ciZTNz
+	TqXDmz9tVm++JqWhZNtWsy7wowpNTCfQlT1Hyhh5q25YpcDoM2rLyc6HqKjshjkIcQeaM53LvlU
+	9ZZ8DqpW8UUdaVRffXvNXDqT7qpk=
+X-Google-Smtp-Source: AGHT+IGMF6j2X+Jr6WCvccPSUBNATvTU7YZt+i3mWvl9VVSwRgH7cCtIrbRrCInxLepNvpLKepp5tmas4mw+ODC5pdo=
+X-Received: by 2002:a05:651c:201c:b0:30b:f924:3554 with SMTP id
+ 38308e7fff4ca-30d7e236c49mr59160551fa.21.1742971488912; Tue, 25 Mar 2025
+ 23:44:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <be35b86c-1e64-4593-8f68-fbd1f6b61eef@huawei.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pL2PsoPGwFPItIgOMXu77_wlauuvkSQo
-X-Proofpoint-GUID: oAZgL8l5_N5-xwSMwAHYjNiYvMaakJgF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1011 mlxlogscore=977 bulkscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260037
+References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-3-robh@kernel.org>
+In-Reply-To: <20250317232426.952188-3-robh@kernel.org>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 26 Mar 2025 14:44:36 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq6AIDujd8iNXwgSFrroWq7EbdFM1zyiw-quoSbfHrKnBQnEEqsHIIoRaI
+Message-ID: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 12:01:45PM +0800, Zhang Yi wrote:
-> On 2025/3/26 10:16, Baokun Li wrote:
-> > On 2025/3/26 1:57, Ojaswin Mujoo wrote:
-> >> On Tue, Mar 18, 2025 at 10:31:29PM -0400, Theodore Ts'o wrote:
-> >>> On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
-> >>>>> So this is something we need to do if the journal is actived, and if
-> >>>>> it's active, then sbi->s_journal will be non-NULL, and so we can just
-> >>>>> check to see if inode == sbi->s_journal instead.  This will simplify
-> >>>> I believe you mean inode == sbi->s_journal->j_inode here right?
-> >>> Yes, that's what I meant; sorry for the not catching this before I
-> >>> sent my reply.
-> >>>
-> >>> Cheers,
-> >>>
-> >>>                     - Ted
-> >> Hi Ted, Baokun,
-> >>
-> >> I got some time to revisit this. Seems like checking against
-> >> s_journal->j_inode is not enough. This is because both
-> >> ext4_check_blockref() and check_block_validity() can be called even
-> >> before journal->j_inode is set:
-> >>
-> >> ext4_open_inode_journal
-> >>    ext4_get_journal_inode
-> >>       __ext4_iget
-> >>           ext4_ind_check_inode
-> >>               ext4_check_blockref  /* j_inode not set */
-> >>
-> >>    journal = jbd2_journal_init_inode
-> >>       bmap
-> >>           ext4_bmap
-> >>              iomap_bmap
-> >>                ext4_iomap_begin
-> >>                    ext4_map_blocks
-> >>                        check_block_validity
-> >>
-> >>    journal->j_inode = inode
-> >>
-> >>
-> >> Now, I think in this case the best solution might be to use the extra
-> >> field like we do in this patch but set  EXT4_SB(sb)->s_journal_ino
-> >> sufficiently early.
-> >>
-> >> Thoughts?
-> > 
-> > Because system zone setup happens after the journal are loaded, I think we
-> > can skip the check if the journal haven't been loaded yet, like this:
-> > 
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index d04d8a7f12e7..38dc72ff7e78 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -383,9 +383,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
-> >                                 unsigned int line,
-> >                                 struct ext4_map_blocks *map)
-> >  {
-> > +       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-> > +
-> >         if (ext4_has_feature_journal(inode->i_sb) &&
-> > -           (inode->i_ino ==
-> > - le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-> > +           (!journal || inode == journal->j_inode))
-> >                 return 0;
-> >         if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
-> >                 ext4_error_inode(inode, func, line, map->m_pblk,
-> > 
-> > If any part of the journal area overlaps with the system zone, we'll catch
-> > it when we add the journal area to the system zone later.
-> > 
-> > 
-> 
-> Since the creation of the system zone relies on the journal being
-> loaded, I think there is no risk in proceeding to call
-> ext4_inode_block_valid() to perform a basic block range check for
-> the journal inode, or even better.
-> 
-> Thanks,
-> Yi.
+Hi,
 
-Got it Yi, makes sense to me. So I believe you are suggesting something
-like:
+On Tue, Mar 18, 2025 at 7:29=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+> Simplify of_dma_set_restricted_buffer() by using of_property_present()
+> and of_for_each_phandle() iterator.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  drivers/of/device.c | 34 +++++++++++++---------------------
+>  1 file changed, 13 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/of/device.c b/drivers/of/device.c
+> index edf3be197265..bb4a47d58249 100644
+> --- a/drivers/of/device.c
+> +++ b/drivers/of/device.c
+> @@ -35,44 +35,36 @@ EXPORT_SYMBOL(of_match_device);
+>  static void
+>  of_dma_set_restricted_buffer(struct device *dev, struct device_node *np)
+>  {
+> -       struct device_node *node, *of_node =3D dev->of_node;
+> -       int count, i;
+> +       struct device_node *of_node =3D dev->of_node;
+> +       struct of_phandle_iterator it;
+> +       int rc, i =3D 0;
+>
+>         if (!IS_ENABLED(CONFIG_DMA_RESTRICTED_POOL))
+>                 return;
+>
+> -       count =3D of_property_count_elems_of_size(of_node, "memory-region=
+",
+> -                                               sizeof(u32));
+>         /*
+>          * If dev->of_node doesn't exist or doesn't contain memory-region=
+, try
+>          * the OF node having DMA configuration.
+>          */
+> -       if (count <=3D 0) {
+> +       if (!of_property_present(of_node, "memory-region"))
+>                 of_node =3D np;
+> -               count =3D of_property_count_elems_of_size(
+> -                       of_node, "memory-region", sizeof(u32));
+> -       }
+>
+> -       for (i =3D 0; i < count; i++) {
+> -               node =3D of_parse_phandle(of_node, "memory-region", i);
+> +       of_for_each_phandle(&it, rc, of_node, "memory-region", NULL, 0) {
+>                 /*
+>                  * There might be multiple memory regions, but only one
+>                  * restricted-dma-pool region is allowed.
+>                  */
+> -               if (of_device_is_compatible(node, "restricted-dma-pool") =
+&&
+> -                   of_device_is_available(node)) {
+> -                       of_node_put(node);
+> -                       break;
+> +               if (of_device_is_compatible(it.node, "restricted-dma-pool=
+") &&
+> +                   of_device_is_available(it.node)) {
+> +                       if (!of_reserved_mem_device_init_by_idx(dev, of_n=
+ode, i)) {
+> +                               of_node_put(it.node);
+> +                               return;
+> +                       }
+>                 }
+> -               of_node_put(node);
+> +               i++;
+>         }
+>
+> -       /*
+> -        * Attempt to initialize a restricted-dma-pool region if one was =
+found.
+> -        * Note that count can hold a negative error code.
+> -        */
+> -       if (i < count && of_reserved_mem_device_init_by_idx(dev, of_node,=
+ i))
+> -               dev_warn(dev, "failed to initialise \"restricted-dma-pool=
+\" memory node\n");
+> +       dev_warn(dev, "failed to initialise \"restricted-dma-pool\" memor=
+y node\n");
 
-@@ -384,9 +384,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
-                                unsigned int line,
-                                struct ext4_map_blocks *map)
- {
-+       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-+
-        if (ext4_has_feature_journal(inode->i_sb) &&
--           (inode->i_ino ==
--            le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+           (journal && journal->j_inode == inode))
-                return 0;
-        if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
-                ext4_error_inode(inode, func, line, map->m_pblk,
+This changes the behavior. Before this patch, it was:
 
-> 
+    if a restricted dma pool was found, but initializing it failed, print
+    a warning.
 
-So that even if it is a journal inode we can go ahead and perform some basic checks
-as the system zone rbtree will anyways be NULL at this point. From a cursory look,
-it seems that __ext4_iget(..., journal_inode) -> ext4_ext_check_inode() already relies
-on the fact that system zone is NULL, so we should be okay here as well.
+Whereas now it has become:
 
-If this looks good, I'll send a v2 with the suggested changes.
+     print a warning unless a restricted dma pool was found and successfull=
+y
+     initialized.
 
-Thanks,
-ojaswin
+This change causes the kernel to print out the warning for devices that
+don't even do DMA:
+
+simple-pm-bus soc: failed to initialise "restricted-dma-pool" memory node
+simple-pm-bus 10006000.syscon: failed to initialise
+"restricted-dma-pool" memory node
+mtk-tphy soc:t-phy@11c80000: failed to initialise
+"restricted-dma-pool" memory node
+mtk-tphy soc:t-phy@11ca0000: failed to initialise
+"restricted-dma-pool" memory node
+mediatek-mipi-tx 11cc0000.dsi-phy: failed to initialise
+"restricted-dma-pool" memory node
+mediatek-mipi-tx 11cc0000.dsi-phy: can't get nvmem_cell_get, ignore it
+clk-mt8186-apmixed 1000c000.syscon: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-topck 10000000.syscon: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-infra-ao 10001000.syscon: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-cam 1a000000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-cam 1a04f000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-cam 1a06f000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-img 15020000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-img 15820000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-imp_iic_wrap 11017000.clock-controller: failed to
+initialise "restricted-dma-pool" memory node
+clk-mt8186-ipe 1c000000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-mcu c53a000.syscon: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-mdp 1b000000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-mfg 13000000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-vdec 1602f000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-venc 17000000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+clk-mt8186-wpe 14020000.clock-controller: failed to initialise
+"restricted-dma-pool" memory node
+mt-pmic-pwrap 1000d000.pwrap: failed to initialise
+"restricted-dma-pool" memory node
+platform 1000d000.pwrap:pmic: failed to initialise
+"restricted-dma-pool" memory node
+mtk-svs 1100bc00.svs: failed to initialise "restricted-dma-pool" memory nod=
+e
+
+
+ChenYu
+>  }
+>
+>  /**
+> --
+> 2.47.2
+>
+>
 
