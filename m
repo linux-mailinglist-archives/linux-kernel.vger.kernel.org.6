@@ -1,108 +1,179 @@
-Return-Path: <linux-kernel+bounces-576579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8386EA71159
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:26:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42131A7115B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFD118982F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B6116565B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEED199EAF;
-	Wed, 26 Mar 2025 07:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BFC19C578;
+	Wed, 26 Mar 2025 07:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVDU0bVG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OP8ksSPc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Z/7SdtK+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="I5UYyivD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F0W7tIKP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6F22E3361
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C957C2E3361
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742973966; cv=none; b=tm2OHZ4Suqgale823YDAjsLyrF75ixBUMtKmC7gR6tVBwpUTtbgXiKOG5XcZd6PnlGyB/8NZ5cCFOQqYsC7QfCfJXaeBR7T1NFH/S3J8/w7YTBBgnIK01bLIOIDMMGNG0BS14S+Qed75cuxMmC0HvTTZx+pGqgfly5Y98ZoIaZ8=
+	t=1742974026; cv=none; b=r6HqfUtkqhg18QooT0Z5eqKPZKdlOqTgaPiRD9MNFqeM2tUvEQwp5A2P6NdgTa1B19feeo/zPURlW7v2xKb4xC1zYRDglsko9rsSLA1qkL0pr19eedzUzphXhjGSc0ssQHh3xduZS5n6pNX+E0q3zBUDPIE8HTkOuy1tDY5i8bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742973966; c=relaxed/simple;
-	bh=ryLlFCUoYPsFHPn4Zxdg4J6+/YBPzj04xjSOUwX3IWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccuIOo8g2RLE9mkRpij+MEicv92+JZxAhZssHaHlxPKoMb9zm2i/vIXs8qa6489I9dd9I7bIkshsaO+zoF9xtqTB6Aqc7peQOk5lluAc7X/ZIS8qoCIR65cZtQ15S0ojev1TLD4PtoJ+QpAvZJmViPGc0TQFc9lIESO7wH337c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVDU0bVG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621BEC4CEED;
-	Wed, 26 Mar 2025 07:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742973965;
-	bh=ryLlFCUoYPsFHPn4Zxdg4J6+/YBPzj04xjSOUwX3IWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dVDU0bVGiDj69BKRyUOCOM6Ged/c5aWMuZIua29QL1/tqlrf4LPN5tDuaRFFpcC6x
-	 8XSMzYdRoPOafj2KSCqGoV9QI/3G0B46DbKSO0nbzO8PkftZIY472daNBHj77OeERl
-	 VetsjgNQgJPmGqMjDmkQXdf3xk2HWDSwkBXhM9FBB0qCXK3DZ/N9z4R5qQelFQH96s
-	 8K4IgyCvmCr4R/i4+rAvCYhsohhxkD6CRy+IbmTYLWCZkVnwcsrTdnUxadH3plIyHm
-	 BX1yVdzKi2JxX2gxDXd1+94mn8xnqud2qR33FrmVyXJQt1y5yG/APlaJmsbx+y5lii
-	 dphrXzcBT7Pvg==
-Date: Wed, 26 Mar 2025 08:26:00 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] objtool: Fix NULL printf() '%s' argument
-Message-ID: <Z-OsCFQ_qUHjRVmV@gmail.com>
-References: <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
- <20250326151014.6a006c93@canb.auug.org.au>
+	s=arc-20240116; t=1742974026; c=relaxed/simple;
+	bh=1kz1EtJpGc7SEihOU8uWwIy6si6Se9ElCW89nQAJWfM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AMy1CyZfr9pRbP1tCDB1A4sNl2/Rm2imB9cvBnX9eQ3gs+qeLGACdaaHpp3uJV/8MU59A6tUH7ZtNjMZJ38oWizGUER1AgSb867hinkLngeOsZE8Dde73Ul1k7R5nNWWPNAz1nxDCMX3z0eREcOY6HX6G60WTb00NBcMnIXa0DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OP8ksSPc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Z/7SdtK+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=I5UYyivD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F0W7tIKP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CEC6821185;
+	Wed, 26 Mar 2025 07:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742974016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTB+eZH7dmSWObSm8wqs7dacimcYNTWpAIiwPmgIVW0=;
+	b=OP8ksSPcN+Jg63gLHgW7t4PCPu9tngAfhM8a27wUQ778KV2JjkDqC2+H3v24hYsPmcxWxH
+	rLp+Y9n6TL0AWgp1W9YoVg4SaTAXXDJkmtdYsq0Cw5EvcEwGHstiVB9EQIjGC37uvZGe5p
+	tjEAt35bdKSCb8l42A/vyFVgcBQ4jNU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742974016;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTB+eZH7dmSWObSm8wqs7dacimcYNTWpAIiwPmgIVW0=;
+	b=Z/7SdtK+q4ukmxmOhyQdmGInxbK3kOkKAa178RuWKxV+EbAVVrp1G2HWRVNMiFEPupZZPv
+	wPwp793DYWsyGSBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=I5UYyivD;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F0W7tIKP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742974015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTB+eZH7dmSWObSm8wqs7dacimcYNTWpAIiwPmgIVW0=;
+	b=I5UYyivDaTh+CfknXnztySHEDWA5umUEafOw7kid2n6eXzwfeRwBaBMnx3ZemJGf/nJIsJ
+	KjiICPFseOc9Nm4SiosGoclFgR8m1MMiUjBhR769Roys2w0s6nQPdeguDY0e1TQjtrDe8d
+	swe9uQqqBqo6GbN+XOyaKxBRSI7y7sw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742974015;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTB+eZH7dmSWObSm8wqs7dacimcYNTWpAIiwPmgIVW0=;
+	b=F0W7tIKPOV3eP2yksC8CDFNlT1ahgprbI0n/nH00HQ9U1crlxTZa7EE7YlWnuBvW98ReG0
+	IO+AWeomHl7GRxAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A171B1374A;
+	Wed, 26 Mar 2025 07:26:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a22yJT+s42dcPgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 26 Mar 2025 07:26:55 +0000
+Date: Wed, 26 Mar 2025 08:26:55 +0100
+Message-ID: <87cye4b6bk.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Sharwesh05 <sharweshraajan@gmail.com>
+Cc: tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 	modified:   sound/pci/hda/patch_realtek.c
+In-Reply-To: <20250325150510.31452-1-sharweshraajan@gmail.com>
+References: <20250325150510.31452-1-sharweshraajan@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326151014.6a006c93@canb.auug.org.au>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: CEC6821185
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Josh,
+On Tue, 25 Mar 2025 16:05:10 +0100,
+Sharwesh05 wrote:
 > 
-> On Tue, 25 Mar 2025 18:30:37 -0700 Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > It's probably not the best idea to pass a string pointer to printf()
-> > right after confirming said pointer is NULL.  Fix the typo and use
-> > argv[i] instead.
-> > 
-> > Fixes: c5995abe1547 ("objtool: Improve error handling")
-> > Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
-> >  tools/objtool/builtin-check.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-> > index 2bdff910430e..e364ab6345d3 100644
-> > --- a/tools/objtool/builtin-check.c
-> > +++ b/tools/objtool/builtin-check.c
-> > @@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
-> >  	for (int i = 0; i < argc; i++) {
-> >  		orig_argv[i] = strdup(argv[i]);
-> >  		if (!orig_argv[i]) {
-> > -			WARN_GLIBC("strdup(%s)", orig_argv[i]);
-> > +			WARN_GLIBC("strdup(%s)", argv[i]);
-> >  			exit(1);
-> >  		}
-> >  	};
-> > -- 
-> > 2.48.1
-> > 
+
+Thanks for the patch.
+
+But, please make the patch in a proper format, namely, have the
+appropriate Subject line starting with the prefix "ALSA: hda/realtek:"
+and containing the concise description about the patch.  Then put more
+information about the changes (why it's needed and what it fixes /
+changes) in the patch description, followed by a blank line, and most
+importantly, your Signed-off-by tag with your real name and address;
+it's a legal requirement.
+
+Please check Documentation/admin/submitting-patches.rst for details.
+
+About the code change:
+
+> ---
+>  sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> Thanks.  I have applied this to the merge of the tip tree (which
-> include the tip-fixes tree) in linux-next today.  It fixes the build
-> failure for me.  I will apply it to the merge of the tip-fixes tree
-> tomorrow unless it has already been applied by then.
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index a84857a3c2bf..8c2375476952 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -4739,6 +4739,21 @@ static void alc245_fixup_hp_mute_led_coefbit(struct hda_codec *codec,
+>  		snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
+>  	}
+>  }
+> +static void alc245_fixup_hp_mute_led_v1_coefbit(struct hda_codec *codec,
+> +					    const struct hda_fixup *fix,
+> +						int action)
 
-Thanks, I've re-spun tip/urgent, so the next -next iteration ought to 
-pick up the fix.
+Put a blank line before the function.
 
-	Ingo
+Could you correct the above and resubmit?
+
+
+thanks,
+
+Takashi
 
