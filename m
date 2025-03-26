@@ -1,151 +1,116 @@
-Return-Path: <linux-kernel+bounces-576648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE45A71262
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:15:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C84EA71270
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C111917239F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5EB3B0C52
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FC819DFB4;
-	Wed, 26 Mar 2025 08:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD3171C9;
+	Wed, 26 Mar 2025 08:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="YwJTa9wK"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jLbEm329"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688EE282EE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8341A3031
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742976929; cv=none; b=fjbEmvqcTV5LSutzWNy7J4YUC1DVk2WcDEsnJRxllvjSvzEZ1rQ8KaQNARkvtFgFZ34RfRizQLG1cGkZh3rqcrKNL6XcvNRnQN2sscJma+oLLGG5okUbrwjC/23FnBeUxGoaSuA8zg2CuQ/IQQa8GC048lQIDUfKnO3Yj/DOMl8=
+	t=1742976934; cv=none; b=p2Qi3KKF446sRqwcmCdWDLdYAZFH9byKaXXlFECP9cZlwOx1pLNKlls2Y3gGlXEUNrW5qwADCtt9g0Km3XghbybwdTBBRtosOjk3SBG6u2QuSVnIO4SrCVrROOGHAuxkdoOOLxY94YnLSJdSeGzzB+DFmVkBLXkT+6RtEpUqWAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742976929; c=relaxed/simple;
-	bh=59wg/mENGyNA1EgOTg7LDUTJPhVSFhKyoT9W6qQmLjQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LAKzjhr+LfI1DbpvZ5uNOzYQNnNk+iF0Yh+e0ZtXRVEy5QRxI9bKV3N5bYgOzta6t2RQHOhx0JEvveL3GAPe1GhbxU4ZfxmVKvKl8bejmqwQ5q6VabEkyhsRvQKCTloFxEVd5m1YxWRm4kLaMHUyr9y+oez0lFuwAGiZErSFVLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=YwJTa9wK; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1742976934; c=relaxed/simple;
+	bh=Vfft/mDTRsDLbVS2/jhoaxOyfbKEi1IQm43o7JQHGOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NhYznxezaR3wVeUFE47fxTSBWOm4eLk7GUShRN2PSTcKSAXAUgq6UIU+r7cdoPZO30e+Z7u4vm+nPQ5VyIDTmd2NET5YDaPkHlcIyPiKJtmKspSh5M7G8wuiBdmW2X7Jvg9/UocqpxbkaZJT+smuRdx6HzRYs0py5gj4pzmLuOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jLbEm329; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-224191d92e4so127880845ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=7xtjJXeFW/UxEZaJCI4G2LQ8dxt+s+2Os6jLAt+xnSY=;
-  b=YwJTa9wKCcQd/e42GrLYPBZVOJYX6XkoguE3yRkMp3EGAIqQJQD+J+DK
-   Z70fSjJgaftVoyCn0H+M2EHmx5+fVnjorGyK8LoryhPTjyo6os8uyXIa6
-   JDEo0lQweA0IlsZwptPisyKPUPaTYfrAv4xrdQW3nr7ajdPL4eClRBKzE
-   E=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
-   d="scan'208";a="112615683"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:15:24 +0100
-Date: Wed, 26 Mar 2025 09:15:23 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Samuel Abraham <abrahamadekunle50@gmail.com>
-cc: Erick Karanja <karanja99erick@gmail.com>, gregkh@linuxfoundation.org, 
-    outreachy@lists.linux.dev, philipp.g.hortmann@gmail.com, 
-    linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] staging: rtl8723bs: Rename variables
-In-Reply-To: <CADYq+fa2T5k73ckaTgW36wM1BMNRQvYB+oO2fGYFOjvLH76WVw@mail.gmail.com>
-Message-ID: <1dbf61e5-653d-2f1-25b3-ec4acff86f21@inria.fr>
-References: <20250326072842.10344-1-karanja99erick@gmail.com> <CADYq+fa2T5k73ckaTgW36wM1BMNRQvYB+oO2fGYFOjvLH76WVw@mail.gmail.com>
+        d=chromium.org; s=google; t=1742976932; x=1743581732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dSh6sM4CX/uhAGdApCocRs0NvZVWU4cH5JZibTSCcnc=;
+        b=jLbEm329dd5pssChtes6eyxQnE78M0L4bVdbZFOi5IXnLtYKcfpw5HdKUjZMMWLq+X
+         QMLTR/2dEtkXi9JryDi7VGN5+qJMMXzIhQZU5SqQZWKfKlF3SZMxVOKwPLQiO0zPfNZL
+         TunCg8DbcgmexKJIJ9e20skZ2EexdpdD+Z+BQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742976932; x=1743581732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dSh6sM4CX/uhAGdApCocRs0NvZVWU4cH5JZibTSCcnc=;
+        b=d89tvcTgo5OuFTorAvjrCc0LYeCc+1Ka714Cd5ZjtS25v87oPMYhra4qZZpXUp5QuT
+         d2rVmVfHBfKORrzaebEHS4VkfUj9yzRq12E1wKPyTSteqVtVCdq4qb8JrrG11YugK1Wb
+         7FKBokk8XfVn0rRlen1w5/uJf7xdlDCqdjj4spLhyqu4bhkuzTmjHprOb+K/g0cStHEz
+         JPoJm5N53oNOx3ZJfnLwhoLA+DuMjtGHe0b0Njy6dfAHiIbjBTRlFguinSN/VrAO1U4e
+         2x+/3hGkiWvqmKIEmMFqJD0lGpUx602bnQuOyfQGnk2lc5M0xPXLtAPX+/IJRdqtBvMC
+         EVag==
+X-Forwarded-Encrypted: i=1; AJvYcCUN7JjVuNw57ikpajNhZr55lHa6Cdc3SJWB1dZ5Skl8E4dyVDrqh+7viRMFZyWKUV5V2Iva2OhbF1l6rac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4jXn8IIbLaIRio8QU3cZfrhYF/wnhId/nV/e3Mm9hNIhST41n
+	9jr3e8VDTXETY2J/oLT7dpMmkF5YQz5dfJAM59NQ616yhPshI0OZ6LPTVqW0Ug==
+X-Gm-Gg: ASbGncuIflCZwz/3vfCcBPbjudppFx4X6QXI6e6CaU00lmNm53F50JD8vicJ1HWmF8M
+	n/H6psp9NeekRg5fYJiU0JlqWkStFBf5QNNyEFQWWyMHRCOccTqvi99TSnazxDjuO3WQloAvjOd
+	NbzIkzYM6cU4DDDfxZj9vsadNeXmR0L71n8137dZxJhZ2qJdNTeKzBwBAyR0JGo1V+vd16M90D4
+	bbdEAT67pxIG1TLsUwiJN7U6f9SX+AqUGh7fMEMOpMMKqBihx/kh/qCDz7kaCdA8+bdmM8mCOG3
+	vRjvOSaGsrKwaT8tZ5CzK6+fDQZLNGEOGzOJPUlxFlMeVXWu
+X-Google-Smtp-Source: AGHT+IGOv3alwV8l9bo+hxjOymPr4w7YqrWTqAkXtFg9QaujLrKdH8qg4kX+8sK6BddXg6ApRBa3rA==
+X-Received: by 2002:a05:6a20:12d5:b0:1f5:8dea:bb93 with SMTP id adf61e73a8af0-1fe42f3118bmr37362288637.7.1742976932485;
+        Wed, 26 Mar 2025 01:15:32 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:d343:29c5:4565:9d95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fab52csm11536233b3a.20.2025.03.26.01.15.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 01:15:32 -0700 (PDT)
+Date: Wed, 26 Mar 2025 17:15:28 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Richard Chang <richardycc@google.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Minchan Kim <minchan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Brian Geffon <bgeffon@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] zram: modernize writeback interface
+Message-ID: <iiav3vvvvu7lzcl3e2rzfh4kyz6kwymqurncjdsv62wvlge63k@ewgbdmzdnb2p>
+References: <20250325034210.3337080-1-senozhatsky@chromium.org>
+ <Z-MlsM2Gmxdvl_1D@google.com>
+ <CALC_0q8Mv_UWvFjo3HW_gRsG2N8P--R1OqDj7=2x_98XiRXy4w@mail.gmail.com>
+ <5l4pjqlgu4afndn3ysa7ynecjmvepkfjlh56ycm5jt5e4mioqm@dujakwaomhlk>
+ <CALC_0q9hRAX=46Zd+qh5Pq1myXx+=9gSTT5hu7t1s_Ko4xd_Og@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-628471745-1742976924=:3432"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALC_0q9hRAX=46Zd+qh5Pq1myXx+=9gSTT5hu7t1s_Ko4xd_Og@mail.gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On (25/03/26 15:07), Richard Chang wrote:
+> I am just counting how many pages we could writeback per syscall.
+> In a worst case, page_index_range with several two-adjacent indices:
+> Assume PAGE_SIZE is 4k and index range is around 10000,
+> 
+> page_index_range allows 272 pages per syscall:
+> page_index_range=10000-10001 page_index_range=10003-10004...
+> 
+> List_range allows 678 pages per syscall:
+> page_index_range=10000-10001,10003-10004...
 
---8323329-628471745-1742976924=:3432
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Page index can be u32, much longer than 10000.  With really high
+indices you'd probably waste more space on "N-N+1" alone than on
+page_index=N.  I'd say index-range should be used when there is
+a range to begin with.
 
+[..]
+> Another alternative thought, how about page_index supporting both
+> single instance and ranges?
+> The key is shorter and the parser is relatively simpler.
+> Eg: page_index=500 page_index=10000-10001
 
-
-On Wed, 26 Mar 2025, Samuel Abraham wrote:
-
-> On Wed, Mar 26, 2025 at 8:29 AM Erick Karanja <karanja99erick@gmail.com> wrote:
-> >
-> > Rename the variable `mediaStatus` to `media_status` and variable
-> > `lpsVal` to `lps_val` to adhere to Linux kernel coding
-> > standards by using snake_case instead of CamelCase.
-> >
-> > Fixes checkpatch.pl warning:
-> >         CHECK: Avoid CamelCase: <mediaStatus>
-> >         CHECK: Avoid CamelCase: <lpsVal>
-> >
-> > Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> > ---
->
-> Hello Erick, I think what Julia is explaining is that you should write
-> your changes in v2 here where I inserted
-> this message to you. Not to remove it entirely. Am I right Julia?
-
-Yes, that is correct.  It should be here.
-
-thanks,
-julia
-
->
-> Adekunle
->
-> >  drivers/staging/rtl8723bs/core/rtw_btcoex.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> > index d54095f50113..f4b19ef7b341 100644
-> > --- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> > +++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> > @@ -8,14 +8,14 @@
-> >  #include <rtw_btcoex.h>
-> >  #include <hal_btcoex.h>
-> >
-> > -void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
-> > +void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
-> >  {
-> > -       if ((mediaStatus == RT_MEDIA_CONNECT)
-> > +       if ((media_status == RT_MEDIA_CONNECT)
-> >                 && (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
-> >                 rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
-> >         }
-> >
-> > -       hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
-> > +       hal_btcoex_MediaStatusNotify(padapter, media_status);
-> >  }
-> >
-> >  void rtw_btcoex_HaltNotify(struct adapter *padapter)
-> > @@ -52,14 +52,14 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
-> >  void rtw_btcoex_LPS_Enter(struct adapter *padapter)
-> >  {
-> >         struct pwrctrl_priv *pwrpriv;
-> > -       u8 lpsVal;
-> > +       u8 lps_val;
-> >
-> >
-> >         pwrpriv = adapter_to_pwrctl(padapter);
-> >
-> >         pwrpriv->bpower_saving = true;
-> > -       lpsVal = hal_btcoex_LpsVal(padapter);
-> > -       rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
-> > +       lps_val = hal_btcoex_LpsVal(padapter);
-> > +       rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
-> >  }
-> >
-> >  void rtw_btcoex_LPS_Leave(struct adapter *padapter)
-> > --
-> > 2.43.0
-> >
-> >
->
->
---8323329-628471745-1742976924=:3432--
+I probably can look into it.
 
