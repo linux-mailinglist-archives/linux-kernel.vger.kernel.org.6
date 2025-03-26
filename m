@@ -1,144 +1,178 @@
-Return-Path: <linux-kernel+bounces-576850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39120A71524
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:54:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F39A7152D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEEB1890C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7650A3B8FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B1C8635;
-	Wed, 26 Mar 2025 10:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023E91DB13A;
+	Wed, 26 Mar 2025 10:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WVonhhUL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FUGEgc/7"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D981C84C9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A971C8606;
+	Wed, 26 Mar 2025 10:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986478; cv=none; b=nAcBz01OERW5ZCSd5sgbCsqTt+n5vi3ocWoDJ885AUAE5S7W5fqfGLplqCxzNqCFTggcjjwH6+HG+Lblmt4AiB6InE+X7DXZBWRIWVgiL0F2oxopo208hdT2XsGmyFbK5jL+9VQDlQMV9utAk03xgoE2Q+wjlJMEDY6+UyEFzzk=
+	t=1742986763; cv=none; b=gz4SnmCQbnBpM5jxEgWpcJoCkr7RmVpqrXIYjfMeCxlHuPCl7v0P0df5pa3Y8AhPjv0pTJzW9+W6sEd7REu8HnFGKUMPScwVkD8PAbGmiYd4g5KFIYI8in/jePa2A8FPWwNUXd+8waeBo9Z/MiMlyUe19opuzIvTwcxEJokv+Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986478; c=relaxed/simple;
-	bh=kqvc9gqaZFqz4zk2Z1WI6mBz6fpdOjwBd3T92JdtEOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JX14YKPVmq5TLhBwZJ5pemUjJ+PhfPUivTIBVoCxoVvMkUXAfqhQt8ywzR/ilt3jx2LPIqpYWoDXK+A8kfnlpKbQdLSGwXJY0VlR+J7mKexu9zvXEugg8GK/xnTbR6Kgyyn6O+Zq+74qqA/7FdEuBS7qIeKSMzXTdIw038sORtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WVonhhUL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nbnBL06pB45fzWAHqKwSaMaHJhZWmXAUhJuqN+ACJZI=; b=WVonhhULebs82is9MN1i1h5rEy
-	sOwlwgC1wimWJ6Udx5JFUb7htc15dJoA0ePi+33p6uqbf4aLT7YxGpfe6TpUfngCZ2VL9GmH0UL4s
-	BXnTn9Iw91yX8zkC8Pd4ZKhMMVglQEVBR46FsWAUr/afS/dfPV9ydOasLFqeipvIO4n6L0WNPXwB1
-	JWgsGZySqx7VKnlxLeptGJ72nynJam7V8a2XVHm72kA1VxKpTBh2KckEAW5DT5QqNGQSDnDPKmyTS
-	0niBJBgo7srUPhqR7mz+8z0+Ixz5CFeTiwyoi6b+xzHr0NT+v+fsuEBuUl6gVfuy7mcScE/AXQrCg
-	iMQbtlew==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txOP2-0000000HPuG-1AbF;
-	Wed, 26 Mar 2025 10:54:32 +0000
-Date: Wed, 26 Mar 2025 10:54:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: jens.wiklander@linaro.org, sumit.garg@kernel.org, vbabka@suse.cz,
-	akpm@linux-foundation.org, kernel@pengutronix.de,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tee: shm: fix slab page refcounting
-Message-ID: <Z-Pc6C1YUqLyej3Z@casper.infradead.org>
-References: <20250325200740.3645331-1-m.felsch@pengutronix.de>
+	s=arc-20240116; t=1742986763; c=relaxed/simple;
+	bh=xM0pKJ8sRe+w6GWU9I1Dy+FTjnKA3yceusf+jKEC0+A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=K/QrADEqdLeFh7nr9vymLCy7o0HfSkXMQzgMHwQ7fp/PxHX8jGRlgu4sG/GIlT4ixMwZ1r3O/Bs66XHVZMuJeWMukO+mpZyE5e2582yxJBwPz4sw5z3Tm+biyfyDl1tCR0LQOHA5Fof3eeU3c4LqNlrTTL0sVfY9hzPviDQgxms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FUGEgc/7; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 080264435E;
+	Wed, 26 Mar 2025 10:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742986758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0t5QSc/Inlh5P0gL04QSWLOfREn/t3CkeGZkKLYdjDE=;
+	b=FUGEgc/7iedXlqTTbqAcAA02XV8B6oh9Y7Bqm+fFLGpWd49hbrCIc0l/Bom4tRDfAdpfxN
+	C+mSXaVZjS8viJztlY0tp1Jmw0hvhW/1ceZPdb5wiGtYc1je6aAFI5TiHdO+P9FJKmRmfx
+	eWncdS7EimoRYsZHB++4IT3E0MlwDx4w9Fe5zz49duRxQWN0qvat+MtfFrTz2J8U2Xd7HU
+	Hc/jtwjqt9d5o94wNdn1lcwKBr/jAF9Kb1AcdXPCVatvLn8mKVBVsKR/p4LNlXi6/kl63Q
+	qxddGv2E69HVgUqlyM1jbWK1dNqK8asjSsiq1ina4MTDSp9PAqFA/y2O6mk2EA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325200740.3645331-1-m.felsch@pengutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Mar 2025 11:59:13 +0100
+Message-Id: <D8Q58KMGV4R4.ELW8TLEK5W5V@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH net-next 08/13] net: macb: introduce DMA descriptor
+ helpers (is 64bit? is PTP?)
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Samuel Holland" <samuel.holland@sifive.com>,
+ "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-mips@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Maxime Chevallier" <maxime.chevallier@bootlin.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
+ <20250321-macb-v1-8-537b7e37971d@bootlin.com>
+ <20250324095522.2ab1c38b@fedora.home>
+In-Reply-To: <20250324095522.2ab1c38b@fedora.home>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehfeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkhffuvefvofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeluefgiefgtdegfeehjeetteevveejkefgiedtkeefteejgfdvkeffgeejhfduieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnv
+ ghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Mar 25, 2025 at 09:07:39PM +0100, Marco Felsch wrote:
-> Skip manipulating the refcount in case of slab pages according commit
-> b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page").
+Hello Maxime,
 
-This almost certainly isn't right.  I know nothing about TEE, but that
-you are doing this indicates a problem.  The hack that we put into
-networking should not be blindly replicated.
+On Mon Mar 24, 2025 at 9:55 AM CET, Maxime Chevallier wrote:
+> On Fri, 21 Mar 2025 20:09:39 +0100
+> Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> wrote:
+>
+>> Introduce macb_dma_is_64b() and macb_dma_is_ptp() helper functions.
+>> Many codepaths are made simpler by dropping conditional compilation.
+>>=20
+>> This implies three changes:
+>>  - Always compile related structure definitions inside <macb.h>.
+>>  - Make the field hw_dma_cap in struct macb always present.
+>>  - MACB_EXT_DESC can be dropped as it is useless now.
+>>=20
+>> The common case is:
+>>=20
+>> 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>> 		struct macb_dma_desc_64 *desc_64;
+>> 		if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
+>> 			desc_64 =3D macb_64b_desc(bp, desc);
+>> 			// ...
+>> 		}
+>> 	#endif
+>>=20
+>> And replaced by:
+>>=20
+>> 	struct macb_dma_desc_64 *desc_64;
+>> 	if (macb_dma_is_64b(bp)) {
+>> 		desc_64 =3D macb_64b_desc(bp, desc);
+>> 		// ...
+>> 	}
+>
+> Just a thought, but this is adding some more branches in the hotpath on
+> 32 bits DMA setups. Did you measure any performance changes on
+> these platforms (if you have access to one :) )
+>
+> As the caps can't be changed dynamically, maybe these helpers could be
+> replaced more efficiently with some static_key ? This would benefit
+> both 32 and 64 bits systems as the following would be more efficient
+>
+> 	if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
+> 		//  ...
+> 	}
+>
+> Just a thought of course, maybe this patch doesn't really hurt perfs :)
 
-Why are you taking a reference on the pages to begin with?  Is it copy
-and pasted from somewhere else, or was there actual thought put into it?
+Good question! I asked myself the same thing before posting.
 
-If it's "prevent the caller from freeing the allocation", well, it never
-accomplished that with slab allocations.  So for callers that do kmalloc
-(eg setup_mm_hdr()  in drivers/firmware/efi/stmm/tee_stmm_efi.c), you
-have to rely on them not freeing the allocation while the TEE driver
-has it.
+We go from:
 
-And if that's your API contract, then there's no point in taking
-refcounts on other kinds of pages either; it's just unnecessary atomic
-instructions.  So the right patch might be something like this:
+	void bar(struct macb *bp) {
+	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+		if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
+			foo();
+		}
+	#endif
+	}
 
-+++ b/drivers/tee/tee_shm.c
-@@ -15,29 +15,11 @@
- #include <linux/highmem.h>
- #include "tee_private.h"
+To:
 
--static void shm_put_kernel_pages(struct page **pages, size_t page_count)
--{
--       size_t n;
--
--       for (n = 0; n < page_count; n++)
--               put_page(pages[n]);
--}
--
--static void shm_get_kernel_pages(struct page **pages, size_t page_count)
--{
--       size_t n;
--
--       for (n = 0; n < page_count; n++)
--               get_page(pages[n]);
--}
--
- static void release_registered_pages(struct tee_shm *shm)
- {
-        if (shm->pages) {
-                if (shm->flags & TEE_SHM_USER_MAPPED)
-                        unpin_user_pages(shm->pages, shm->num_pages);
--               else
--                       shm_put_kernel_pages(shm->pages, shm->num_pages);
+	static bool macb_dma_is_64b(struct macb *bp)
+	{
+		return IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) &&
+		       bp->hw_dma_cap & HW_DMA_CAP_64B;
+	}
 
-                kfree(shm->pages);
-        }
-@@ -321,13 +303,6 @@ register_shm_helper(struct tee_context *ctx, struct iov_iter *iter, u32 flags,
-                goto err_free_shm_pages;
-        }
+	void bar(struct macb *bp) {
+		if (macb_dma_is_64b(bp)) {
+			foo();
+		}
+	}
 
--       /*
--        * iov_iter_extract_kvec_pages does not get reference on the pages,
--        * get a reference on them.
--        */
--       if (iov_iter_is_kvec(iter))
--               shm_get_kernel_pages(shm->pages, num_pages);
--
-        shm->offset = off;
-        shm->size = len;
-        shm->num_pages = num_pages;
-@@ -341,10 +316,8 @@ register_shm_helper(struct tee_context *ctx, struct iov_iter *iter, u32 flags,
+In the first case, we use explicit preprocessor directives to remove
+code if CONFIG_ARCH_DMA_ADDR_T_64BIT isn't defined.
 
-        return shm;
- err_put_shm_pages:
--       if (!iov_iter_is_kvec(iter))
-+       if (iter_is_uvec(iter))
-                unpin_user_pages(shm->pages, shm->num_pages);
--       else
--               shm_put_kernel_pages(shm->pages, shm->num_pages);
- err_free_shm_pages:
-        kfree(shm->pages);
- err_free_shm:
+In the second case, our compiler optimises away the IS_ENABLED() call.
+ - If false, then the branch doesn't appear.
+ - If true, then only the capability check is inlined in bar().
+I checked the assembly on arm/arm64/MIPS.
+
+Conclusion: the hotpath doesn't change.
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
