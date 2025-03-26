@@ -1,309 +1,221 @@
-Return-Path: <linux-kernel+bounces-577367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A483A71C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:47:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5567DA71C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9121882EF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF2B18852B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4C51F4177;
-	Wed, 26 Mar 2025 16:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4524D1F63FE;
+	Wed, 26 Mar 2025 16:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPv+gsl8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V405WfrB"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494BD19D07A;
-	Wed, 26 Mar 2025 16:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E998527456;
+	Wed, 26 Mar 2025 16:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007654; cv=none; b=NytF4Xc7KogIk8RURSJtOrHZYbf77KPQe/uXHCd8BB7Z4y/nCU3hGi4/+srkynNkAxsGPqQPeWd+eqYLYitg8QtmdctNpV95MPuaUwHyLCHG+UDNSrziUi1RjnGQOhp34xGwN3RK6hhXixDw73xf51jpEZJ7kKP/5J6hczGDWx0=
+	t=1743007684; cv=none; b=ga6T/ZMRizVmOoMd5cZyjnFgJFyoUnXpnzcU+elbI9CkxXsl3AzR2xgCuKhYTNLASPtVpsSx4hrWBWEIkQJnr8pkineBR6OMtUaWgalJ8+7mheT1r4Bk0ZKpnDY8mkOabJbU66md7XJjIuBkYVuQaFWe6gWunFfx79ehMkDSuDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007654; c=relaxed/simple;
-	bh=sOSsIyhjI4wpB49/7pxJneBZ/1MLJNlnrsTjQgMFDIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mP+o8zNfUleBGb3hVirrbaarwG6NTHbw49QAgLaRfy7l/eoE99V45ruY3/97vxWqsu8OMewfzowbFT6RZ48eWMVvpho07JVdOvm+EZTzct9l7a73cMwmNO8wA6xm3zkXNmJRB5GmzCjDsIrWl3XtkUn4SY7UfKVUj1+MrFtpxM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPv+gsl8; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743007652; x=1774543652;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sOSsIyhjI4wpB49/7pxJneBZ/1MLJNlnrsTjQgMFDIw=;
-  b=IPv+gsl8XD0FrSz2FqhY6WS1ALSHTgQA0TmRUtN+HXTQbmS3u7/Bpc7u
-   /40L1x1QIILGGnTSuE+11RSdbOxVeaD2B1+OKyuUMd2AK09wFpRxhXO3+
-   s3suAa+r0ij5NvOntgfgkZ6ihSMAHweHdSHZj7tpsAvUlsNKXlpTGtBT7
-   mnJPOWBEMj56U8nI4C1LBtqTAtIK+bVm/HyZkLUKlOuf3brgiSivijSWE
-   KbKt0mzkdDrAU9xMgH9K+NqafBC4qYns2/h473AQkapPrPj/75Vo1kKe0
-   S4kNtM6oYVix3v8BvGgRzhxex6/IykxQMZX3TBx2Xe1Y4JKUhbqDh1HYW
-   A==;
-X-CSE-ConnectionGUID: qaswatc5QXWwyLpXEKzheQ==
-X-CSE-MsgGUID: fGKXzl0YQZ24AdAKCASQtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44409620"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="44409620"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:47:32 -0700
-X-CSE-ConnectionGUID: e+r/9cLJTd++TskeRqsVSA==
-X-CSE-MsgGUID: BJVhCgooS7qPH4LzQWC3MQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="129937683"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.239])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:47:29 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Robert Richter <rrichter@amd.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, ming.li@zohomail.com,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject:
- Re: [PATCH 2/4 v3] cxl/core: Add helpers to detect Low memory Holes on x86
-Date: Wed, 26 Mar 2025 17:47:26 +0100
-Message-ID: <8700175.W097sEU6C4@fdefranc-mobl3>
-In-Reply-To: <Z909uPbvRVlZ_J1Z@rric.localdomain>
-References:
- <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
- <20250314113708.759808-3-fabio.m.de.francesco@linux.intel.com>
- <Z909uPbvRVlZ_J1Z@rric.localdomain>
+	s=arc-20240116; t=1743007684; c=relaxed/simple;
+	bh=cfRyOPOXqc7PYO0DilFU5NQHs5+SBJtNvB5Xo7qxAek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5mjlx1lK+5RT8HrndpcGOpHUfz/HO3QIbOo4/7Sck5qxjO6L5vMLnkC5F70vfZRKcLyivdTxTRPk6iP+7qvP3VWZ60v10S4/i/c0VUSIjZWuzpne5rr7lT+4uykZWdvM5zt5mHwRdIQZ4YO1ZL4yfNSOh8t4ivJcmm2VBjkhKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V405WfrB; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so44366d6.0;
+        Wed, 26 Mar 2025 09:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743007682; x=1743612482; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+2YkF4SmIRgXjwjmynNl6QZEvBl38mMpqeEenEb2RQ=;
+        b=V405WfrBVGQ82wOuJMO5iNGcZQBFgohb16hU5EdTvlJrpHqiqBUEw7ESyDJxDn/LEY
+         UtLGCB7VMSmOcathXQBnVpEzXn5bbgcfMe27LActgIt0lO1dou7086wm3Qy18vSyjQSM
+         ooo+O9fVCkVIZCpnc31q2OoYfmfSNDPn/zle6JRzOCH21PT1jF5oU+R2IWgiIDn0YeCu
+         TWSqMWiYvO3Lzk7F51sMO+qqeR737TnAiAFAK0W1gogmwHm4Busw8JqbTkII2VX95mCC
+         T4N2db07LIeStJaI6ltHd8HZEH4GcvjseLikUUWWVkZWxx69AH7hWW1NOAZJ0ZI0B/lJ
+         sPaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743007682; x=1743612482;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+2YkF4SmIRgXjwjmynNl6QZEvBl38mMpqeEenEb2RQ=;
+        b=DaaVmiv8sI9eeqXrqlS9x/pNjKtPZQQOnindtKZVOZn4Nq8+UklWG2c3AV5cV5h3JQ
+         LEjh4i6V2/CHsb9KD/ag6x/2qlK4OgQIdnWTvb1fFgkAp6RGkXlho1tib+naXkzMDXM7
+         r/rVwknnQY3+ZEofymKTMDegvV5HbZP/Nv8C4Zma1aRfTsXu9qC0rHZB6xTVDhf6OwL4
+         NjAGX9Y6ESco6uiShZn/PT9e0XJL7QUtPEdL0aQKc12XaG8Jq7B9Hyuj6BAm4KNSWDvN
+         JE2Fd3FibUY9CvY9vC8gqRf9h7coxWuPgdMz5vdFhh0QH3OmKZO4xSyCgO2EbFolbr04
+         IsXA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6lMqYHxNiOExM6bF7EUWhTQ8o1Y/NDuUGEq2XRMQQO+pbj2PFzUNdQrD6ANwmTwC8ApnzVUAd@vger.kernel.org, AJvYcCXvtpBDNvtNge5+X8qX76bQ8GmU/NF4QLQN0y4TecIVIr7CyDsd0CsFc+rXd94yfhChQKN2wHyQbgnJXf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/YKiWCCyd5ocHZQexw5nyXDIaYkvVk+rKAHWF37Z6Bl4iB77S
+	1NkftthC9tj3oBDPUCJh9gEstAaaCkHDHErb3/HijnIQhTdINuo5
+X-Gm-Gg: ASbGnctshUcrLlho01sI3jvtcXm+dOAtO6NxQPfwHMVYYIfKtpo6VC2g6M56ZK5ScKg
+	tMfvZA+eriy412e5Oz9wHjFLP2Ng3BBDlWx7rDwOgmuXLbbhZWlAtvIlBHUDDDdoAb0VcSnwwnQ
+	ADjkEMCNZAIGMU6LpXkdH5UUKqpMsTuiG85zFidRkndR6LsDW49vIpe9kwi1PX40LVFv6/uYXzH
+	0QVuvNZbVcZ1d0dN/ciz6uqmrl4skoj9ETtXLEXuNfckRLEMljVNISPe/kKVLz1w837sCfaXopf
+	eTF+eMO4uvT1Y+m1LshEVxie6/nxxv1HeX9isfTSpzPLtWFIcRUl4PPxAOyGu9+BVigMxgJY/Pz
+	oCR28DXDmGokIIMByQqVSq09TQmygFxjIcuvccBsLzKZDvg==
+X-Google-Smtp-Source: AGHT+IF9JMMWF4dyntkOBljPWsW+RS38rBexSiSPg9zq1HnSHy6ApSi/nmVeIkXzSpLeOVjTyoOXIA==
+X-Received: by 2002:ad4:5686:0:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6ed23897c41mr1668126d6.21.1743007681506;
+        Wed, 26 Mar 2025 09:48:01 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc5a1dsm69271066d6.79.2025.03.26.09.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 09:48:01 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B63001200043;
+	Wed, 26 Mar 2025 12:48:00 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Wed, 26 Mar 2025 12:48:00 -0400
+X-ME-Sender: <xms:wC_kZ2k6MZlZrSFWkORFod8DS-1rAtSfX9OZtvnOsIe1Kcu7J8e_SQ>
+    <xme:wC_kZ91QMqPAnpdkrbWU0U5dXcND-lZqRbMbCDcETd274_55cEVhJ0syBQeOFwdZy
+    DUI0FqQTDNS6WC7nw>
+X-ME-Received: <xmr:wC_kZ0pUL9p7swKYYoUtD8F1LSbN8m_-Uf77NbDVyUBxWMkXBoduOggd>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeitdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
+    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
+    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeel
+    tdfhgfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
+    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
+    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhlohhnghesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlvghithgroh
+    esuggvsghirghnrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
+    pdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrvghhse
+    hmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:wC_kZ6nL_JDWzG5kEZSJvyUStm8nJbBmabdOTL2OdYwA6IOvpt_K0g>
+    <xmx:wC_kZ01RrGSthl4RhOylXVQOxENL_Ie24XIoiubiKFn-ZEDoSCIP6g>
+    <xmx:wC_kZxtoTOgpPJVlK5ndzVUolvp6b75a8bnKOiWfoGPIirze4RwaCg>
+    <xmx:wC_kZwUnkmNfRIBgl6j75mHPIm8qcdL7hVpilreZO8gBtLaDlmsOdA>
+    <xmx:wC_kZ_3nlQvp08yG6mHkg4Rgx4tA0T48z4wMJ8jTC_f6PgWfAnNxpMsk>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Mar 2025 12:48:00 -0400 (EDT)
+Date: Wed, 26 Mar 2025 09:47:59 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, aeh@meta.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
+ expedited RCU synchronization
+Message-ID: <Z-QvvzFORBDESCgP@Mac.home>
+References: <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com>
+ <Z-Il69LWz6sIand0@Mac.home>
+ <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+ <Z-L5ttC9qllTAEbO@boqun-archlinux>
+ <f1ae824f-f506-49f7-8864-1adc0f7cbee6@redhat.com>
+ <Z-MHHFTS3kcfWIlL@boqun-archlinux>
+ <1e4c0df6-cb4d-462c-9019-100044ea8016@redhat.com>
+ <Z-OPya5HoqbKmMGj@Mac.home>
+ <df237702-55c3-466b-b51e-f3fe46ae03ba@redhat.com>
+ <37bbf28f-911a-4fea-b531-b43cdee72915@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <37bbf28f-911a-4fea-b531-b43cdee72915@redhat.com>
 
-On Friday, March 21, 2025 11:21:44=E2=80=AFAM Central European Standard Tim=
-e Robert Richter wrote:
-> On 14.03.25 12:36:31, Fabio M. De Francesco wrote:
-> > In x86 with Low memory Hole, the BIOS may publishes CFMWS that describe
-> > SPA ranges which are subsets of the corresponding CXL Endpoint Decoders
-> > HPA's because the CFMWS never intersects LMH's while EP Decoders HPA's
-> > ranges are always guaranteed to align to the NIW * 256M rule.
-> >=20
-> > In order to construct Regions and attach Decoders, the driver needs to
-> > match Root Decoders and Regions with Endpoint Decoders, but it fails and
-> > the entire process returns errors because it doesn't expect to deal with
-> > SPA range lengths smaller than corresponding HPA's.
-> >=20
-> > Introduce functions that indirectly detect x86 LMH's by comparing SPA's
-> > with corresponding HPA's. They will be used in the process of Regions
-> > creation and Endpoint attachments to prevent driver failures in a few
-> > steps of the above-mentioned process.
-> >=20
-> > The helpers return true when HPA/SPA misalignments are detected under
-> > specific conditions: both the SPA and HPA ranges must start at
-> > LMH_CFMWS_RANGE_START (that in x86 with LMH's is 0x0), SPA range sizes
->=20
-> "... that for Intel with LMHs is 0x0", not true for AMD.
->=20
-> > be less than HPA's, SPA's range's size be less than 4G, HPA's size be
-> > aligned to the NIW * 256M rule.
-> >=20
-> > Also introduce a function to adjust the range end of the Regions to be
-> > created on x86 with LMH's.
-> >=20
-> > Cc: Alison Schofield <alison.schofield@intel.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/cxl/core/lmh.c | 56 ++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/cxl/core/lmh.h | 29 ++++++++++++++++++++++
->=20
-> The split of the code in patch #2 and #3 does not make sense. The
-> "interface" you introduce here is out of context which is patch #3.
-> And in patch #3 the functions are actually used, so you need to switch
-> back to this one. Other than that, the code is not enabled here at
-> all, it is even not built.
->=20
-I prefer to split the introduction of helpers and the use of them in
-separate patches.
->
-> >  2 files changed, 85 insertions(+)
-> >  create mode 100644 drivers/cxl/core/lmh.c
-> >  create mode 100644 drivers/cxl/core/lmh.h
-> >=20
-> > diff --git a/drivers/cxl/core/lmh.c b/drivers/cxl/core/lmh.c
-> > new file mode 100644
-> > index 000000000000..2e32f867eb94
-> > --- /dev/null
-> > +++ b/drivers/cxl/core/lmh.c
-> > @@ -0,0 +1,56 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/range.h>
-> > +#include "lmh.h"
-> > +
-> > +/* Start of CFMWS range that end before x86 Low Memory Holes */
-> > +#define LMH_CFMWS_RANGE_START 0x0ULL
->=20
-> This looks arbitrary. An endpoint decoder's zero base address could
-> have other reasons too, e.g. the need of address translation. So you
-> need a different check for the mem hole.
->=20
-> In my previous review comment I have requested a platform check for
-> this code to enable.
->=20
-> > +
-> > +/*
-> > + * Match CXL Root and Endpoint Decoders by comparing SPA and HPA range=
-s.
-> > + *
-> > + * On x86, CFMWS ranges never intersect memory holes while endpoint de=
-coders
-> > + * HPA range sizes are always guaranteed aligned to NIW * 256MB; there=
-fore,
-> > + * the given endpoint decoder HPA range size is always expected aligne=
-d and
-> > + * also larger than that of the matching root decoder. If there are LM=
-H's,
-> > + * the root decoder range end is always less than SZ_4G.
-> > + */
-> > +bool arch_match_spa(const struct cxl_root_decoder *cxlrd,
-> > +		    const struct cxl_endpoint_decoder *cxled)
-> > +{
-> > +	const struct range *r1, *r2;
-> > +	int niw;
-> > +
-> > +	r1 =3D &cxlrd->cxlsd.cxld.hpa_range;
-> > +	r2 =3D &cxled->cxld.hpa_range;
-> > +	niw =3D cxled->cxld.interleave_ways;
-> > +
-> > +	if (r1->start =3D=3D LMH_CFMWS_RANGE_START && r1->start =3D=3D r2->st=
-art &&
-> > +	    r1->end < (LMH_CFMWS_RANGE_START + SZ_4G) && r1->end < r2->end &&
->=20
-> How about removing LMH_CFMWS_RANGE_START at all? It is zero anyway and
-> would make this check much easier.
->
-I think that in the next version I'll check that the range start is a multi=
-ple=20
-of Number of Interleave Ways * 256M (it would include 0x0).
-> =20
-> Can this being modified to reuse this codes for "holes" other than
-> below 4G?
->=20
-This series enables CXL Regions creation and Endpoints attach for x86 LOW=20
-Memory Holes. I prefer not to enable regions on platforms with memory holes=
-=20
-beyond 4G until I'm sure it's needed. arch_match_spa() and arch_match_regio=
-n()
-can be easily modified if in future they need to be.
->
-> > +	    IS_ALIGNED(range_len(r2), niw * SZ_256M))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +/* Similar to arch_match_spa(), it matches regions and decoders */
-> > +bool arch_match_region(const struct cxl_region_params *p,
-> > +		       const struct cxl_decoder *cxld)
-> > +{
-> > +	const struct range *r =3D &cxld->hpa_range;
-> > +	const struct resource *res =3D p->res;
-> > +	int niw =3D cxld->interleave_ways;
-> > +
-> > +	if (res->start =3D=3D LMH_CFMWS_RANGE_START && res->start =3D=3D r->s=
-tart &&
-> > +	    res->end < (LMH_CFMWS_RANGE_START + SZ_4G) && res->end < r->end &&
->=20
-> Same here.
->=20
-> > +	    IS_ALIGNED(range_len(r), niw * SZ_256M))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
->=20
-> Right now the default check is:
->=20
->   (p->res->start =3D=3D r->start && p->res->end =3D=3D r->end)
->=20
-> Can't we just calculate a matching spa range for the decoder and
-> region and then check if both match? Both match functions would be
-> obsolete then.
->=20
-I prefer to keep the design untouched. Anyway, I'll check for other aligned=
-=20
-res->start, as said above.
->
-> > +
-> > +void arch_adjust_region_resource(struct resource *res,
-> > +				 struct cxl_root_decoder *cxlrd)
-> > +{
-> > +	res->end =3D cxlrd->res->end;
-> > +}
->=20
-> This should be squashed with arch_match_spa(): same style and
-> interface as for cxl_extended_linear_cache_resize(). Please generalize
-> the interface of cxl_extended_linear_cache_resize() first.
->=20
-Do you mean that arch_match_spa() should adjust res->end? I don't think
-it should.
->
-> > diff --git a/drivers/cxl/core/lmh.h b/drivers/cxl/core/lmh.h
-> > new file mode 100644
-> > index 000000000000..16746ceac1ed
-> > --- /dev/null
-> > +++ b/drivers/cxl/core/lmh.h
-> > @@ -0,0 +1,29 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +
-> > +#include "cxl.h"
-> > +
-> > +#ifdef CONFIG_CXL_ARCH_LOW_MEMORY_HOLE
-> > +bool arch_match_spa(const struct cxl_root_decoder *cxlrd,
-> > +		    const struct cxl_endpoint_decoder *cxled);
-> > +bool arch_match_region(const struct cxl_region_params *p,
-> > +		       const struct cxl_decoder *cxld);
-> > +void arch_adjust_region_resource(struct resource *res,
-> > +				 struct cxl_root_decoder *cxlrd);
-> > +#else
-> > +static bool arch_match_spa(struct cxl_root_decoder *cxlrd,
-> > +			   struct cxl_endpoint_decoder *cxled)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +static bool arch_match_region(struct cxl_region_params *p,
-> > +			      struct cxl_decoder *cxld)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +static void arch_adjust_region_resource(struct resource *res,
-> > +					struct cxl_root_decoder *cxlrd)
-> > +{
-> > +}
-> > +#endif /* CXL_ARCH_LOW_MEMORY_HOLE */
->=20
-> I don't think we will need all this helpers if there are platform
-> specific callbacks as suggested in a comment to v1.
->=20
-> -Robert
->=20
-As said in a reply to 0/4, I'm not yet aware of issues that would interfere
-with non Intel x86. Anyway, I'll think a bit more about using platform
-specific callbacks, even if currently I don't think they are necessary.=20
->=20
-Thanks,
+On Wed, Mar 26, 2025 at 12:40:59PM -0400, Waiman Long wrote:
+> On 3/26/25 11:39 AM, Waiman Long wrote:
+> > On 3/26/25 1:25 AM, Boqun Feng wrote:
+> > > > It looks like you are trying hard to find a use case for hazard pointer in
+> > > > the kernel 🙂
+> > > > 
+> > > Well, if it does the job, why not use it 😉 Also this shows how
+> > > flexible hazard pointers can be.
+> > > 
+> > > At least when using hazard pointers, the reader side of the hash list
+> > > iteration is still lockless. Plus, since the synchronization part
+> > > doesn't need to wait for the RCU readers in the whole system, it will be
+> > > faster (I tried with the protecting-the-whole-hash-list approach as
+> > > well, it's the same result on the tc command). This is why I choose to
+> > > look into hazard pointers. Another mechanism can achieve the similar
+> > > behavior is SRCU, but SRCU is slightly heavier compared to hazard
+> > > pointers in this case (of course SRCU has more functionalities).
+> > > 
+> > > We can provide a lockdep_unregister_key_nosync() without the
+> > > synchronize_rcu() in it and let users do the synchronization, but it's
+> > > going to be hard to enforce and review, especially when someone
+> > > refactors the code and move the free code to somewhere else.
+> > Providing a second API and ask callers to do the right thing is probably
+> > not a good idea and mistake is going to be made sooner or later.
+> > > > Anyway, that may work. The only problem that I see is the issue of nesting
+> > > > of an interrupt context on top of a task context. It is possible that the
+> > > > first use of a raw_spinlock may happen in an interrupt context. If the
+> > > > interrupt happens when the task has set the hazard pointer and iterating the
+> > > > hash list, the value of the hazard pointer may be overwritten. Alternatively
+> > > > we could have multiple slots for the hazard pointer, but that will make the
+> > > > code more complicated. Or we could disable interrupt before setting the
+> > > > hazard pointer.
+> > > Or we can use lockdep_recursion:
+> > > 
+> > > 	preempt_disable();
+> > > 	lockdep_recursion_inc();
+> > > 	barrier();
+> > > 
+> > > 	WRITE_ONCE(*hazptr, ...);
+> > > 
+> > > , it should prevent the re-entrant of lockdep in irq.
+> > That will probably work. Or we can disable irq. I am fine with both.
+> > > > The solution that I am thinking about is to have a simple unfair rwlock to
+> > > > protect just the hash list iteration. lockdep_unregister_key() and
+> > > > lockdep_register_key() take the write lock with interrupt disabled. While
+> > > > is_dynamic_key() takes the read lock. Nesting in this case isn't a problem
+> > > > and we don't need RCU to protect the iteration process and so the last
+> > > > synchronize_rcu() call isn't needed. The level of contention should be low
+> > > > enough that live lock isn't an issue.
+> > > > 
+> > > This could work, one thing though is that locks don't compose. Using a
+> > > hash write_lock in lockdep_unregister_key() will create a lockdep_lock()
+> > > -> "hash write_lock" dependency, and that means you cannot
+> > > lockdep_lock() while you're holding a hash read_lock, although it's
+> > > not the case today, but it certainly complicates the locking design
+> > > inside lockdep where there's no lockdep to help 😉
+> > 
+> > Thinking about it more, doing it in a lockless way is probably a good
+> > idea.
+> > 
+> If we are using hazard pointer for synchronization, should we also take off
+> "_rcu" from the list iteration/insertion/deletion macros to avoid the
+> confusion that RCU is being used?
+> 
 
-=46abio
+We can, but we probably want to introduce a new set of API with suffix
+"_lockless" or something because they will still need a lockless fashion
+similar to RCU list iteration/insertion/deletion.
 
+Regards,
+Boqun
 
-
+> Cheers,
+> Longman
+> 
 
