@@ -1,171 +1,120 @@
-Return-Path: <linux-kernel+bounces-577250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C44A71A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BDDA71A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2816F3B35A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF893A4517
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4051F3BB6;
-	Wed, 26 Mar 2025 15:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9395E1F3BB2;
+	Wed, 26 Mar 2025 15:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N7WtAonl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RriZcuFo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23411F4193
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ED414A4C6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003162; cv=none; b=qvrgLhumvsemWGoTq6/wofYPHjojawWAR5XJgFFcj1vm6eCK//r9TWRJo17KjhqDYO82X0NXiQGRcnhVwPRcGCu1Fym85kxNPcC35NXkDd97ukv6Djf55DzZiTOBNMgvP68mz8+XEzi/zap9K73thI+zDv5WSA69lzIIMpOuJ2A=
+	t=1743003152; cv=none; b=m9IKb2y5d0G4U/8yCxX5I0D1+mfwdMCfI4lVPVva9kBuCvdkLl3D2xp/oweyXbVjY0rsxViXzYt1oPzNG8WPKg8qV5ejkAmxePvqsMyslbw43DGVwU74gzPS2Gkf3ydzWNi9Z31jFhyTVK4LfgIL8S/Xj3haSemac9A4AEcL8E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003162; c=relaxed/simple;
-	bh=3FJc+P6b3zzJcpkV8eK+FP3TgtJw7jYvpWP0TF2ajgA=;
+	s=arc-20240116; t=1743003152; c=relaxed/simple;
+	bh=SPxu0Io7cx5liXuAr8Xi+OAnanZNKgiFPCAgw/m0XBw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTocDMDeLW30ynSsNzrfXnGIwaZpPcfRfvjp2PzZFv5Y6xaLtEX19/3CUsa/DjCrHOqNYuxGcdVbtAe73KaM08n8MXHFJSej/dXYVLbssO9+nJ3Zxo+THhcMNTDFYz6h+FhPtWAAu+jWvFv+3hj1Totom34OwnhsBgZzTvxALIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N7WtAonl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743003158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cy6PJe0sMeoJhLcbhlkwSjbydSqh6/me/pxc/YeYWRY=;
-	b=N7WtAonlr0t1Sl2SXdAVEzVAqyP2yHKw1ltaWCGcxqs5lrK7zIwCGXbwvdEVAsbZ+BOJee
-	fQOOobfVWllsWPExOy+hNvMaWxps/LMZhJN/ShoAt/X2FAFMgdrZzJDyzjah9SNiSWwnC3
-	UB8E7Mr3wbJygr3jbYvx4x9Ab2mAAAI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-s1LNed1rNYmQWzo7Xzy9iA-1; Wed, 26 Mar 2025 11:32:36 -0400
-X-MC-Unique: s1LNed1rNYmQWzo7Xzy9iA-1
-X-Mimecast-MFC-AGG-ID: s1LNed1rNYmQWzo7Xzy9iA_1743003153
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d01024089so51731075e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:32:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743003152; x=1743607952;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cy6PJe0sMeoJhLcbhlkwSjbydSqh6/me/pxc/YeYWRY=;
-        b=NE4f7pNgnlvOTqHAyqzepxy32f4vtO2rxA6x87bC58wnlXWDE4l1bIHkQ3ZRI0F+fH
-         rEAEFcAP4c08gljGq2fWL1YDaxejpFzlqYVGfAfa50ktZ/ND4+wRsr1bRIeqvNk1A0id
-         lnKZzi9i+67UjoYKCG1w5sE8tpZgrNqnHygXbKEsFpqkIssSRY6q8peFISFKwGZjZHUq
-         Yzuebe5mF+MX6GGchxrmsz+MJd/oXZLN9ixcw90hW5kN5n3MgVJCgjiDL3opT6YrrrZo
-         n7e3y6QZfVN0x+jr/MqYSXX7WVCfEZSXfa6+cmKDxAQMcwa1P0VPMkFNiYcPHWKLV1md
-         oYEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAIG2CqRhc4VWwG4JGEOY8UwogJMutxBnw48s70625bWumlcarlslkvG5snGWKY0UsXFZg3Ts6cP4vWfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMauwZnsMDnXcoxOi2Tjqf56mLqjHYmubO/7p3AmmT6AqItNdD
-	zkfoS1p1bNcZsKc5IVxAUCB2ohA974K3uyCcoPfGh5SCLKONM+RZJv+DRJVcdrhWQc5LSKIxoWd
-	hUQYgwXY2+Uo4Qhmm0Pdia1u2Pg1agq+6LPfWNYAeI+NAbohUqVZkGYIqCM3WUEuqz7ZObAy+
-X-Gm-Gg: ASbGnctCqlGYSqv/UDxdE/uyti4J8XRIJeh0GFeesn8wcljPC9TT7win9V10u5v70YU
-	hvppjKnsl+58rBuZoBphEggNgV6yU7O4p0dfGqbLV5CQPvWPUVcg42AhG46IwI86pLn4dnpP3Fl
-	izU+VJybkRPNJ4rNEiL2E92VfCO4j80nBNQLFoXifoFEVeEChza9Zv4XcGBEzsOzgd4bKaBQFPh
-	C+GOtAFjFxy10i5S4rjyb0QGJqtjmi01J+v+MQJVwXl6q7BRPTIRhBcTWfQ43DlZVD27foAkkZQ
-	JmsHpal7l2wFiMDYt6OjL5R8KP5BUcQI16OMsHtiKIyy/Mla/NKPRnJ6ZXb2jc9L
-X-Received: by 2002:a05:600c:3d93:b0:43d:300f:fa4a with SMTP id 5b1f17b1804b1-43d58db553amr142517305e9.12.1743003152356;
-        Wed, 26 Mar 2025 08:32:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRLuNTDcftGdYLrF6TRN76YPNKGjROf60zN8Q6h9HxP9LzdIxTJHT5qWOkTTFeksKVqeo81g==
-X-Received: by 2002:a05:600c:3d93:b0:43d:300f:fa4a with SMTP id 5b1f17b1804b1-43d58db553amr142517035e9.12.1743003151832;
-        Wed, 26 Mar 2025 08:32:31 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e834a5sm5891945e9.13.2025.03.26.08.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 08:32:30 -0700 (PDT)
-Date: Wed, 26 Mar 2025 16:32:26 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Luigi Leonardi <leonardi@redhat.com>
-Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Hyunwoo Kim <v4bel@theori.io>
-Subject: Re: [PATCH net-next v2] vsock/test: Add test for null ptr deref when
- transport changes
-Message-ID: <7ursz6zrffsljkvo25qvgaa5vroflpibtrgnz446ga36kzqtfc@l7v62brwdvod>
-References: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
- <85a034b7-a22d-438f-802e-ac193099dbe7@rbox.co>
- <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aE5HQ0n/qIV8G3W47BqMOo5qIks4xi6YXWe2l00dHCMs8u38sGLghp/3pMa6vCNGzo8YNImqmzUn3IXZY6NNG7LICw+brJLos6Q3owLWMdXYtTqQuggZ0L7TOS9UTzvlY9Jt0m4HgKoVyA8bVt2uwq+3Q00ERMuY2zSIlSQ1jqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RriZcuFo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2593DC4CEE2;
+	Wed, 26 Mar 2025 15:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743003151;
+	bh=SPxu0Io7cx5liXuAr8Xi+OAnanZNKgiFPCAgw/m0XBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RriZcuFozA+6QY0rYZQajMOGCFMyzsBT1xUrHVw7tHBRWOhu+WqmKx15XlXLodKOt
+	 i3++BC6wcOmNRYZ2kf1sbJ3UgWQl4d6Wvxi0CN9NIXCtollhGB7urmdNqyAdQkAr+Z
+	 359fT6wBxBUldjuwdHtyVWtNUELDSUmyEHhuInCL/dKWik1wR0ClMfwSubZIAzYp4p
+	 2x8eoIpPOlRON/2fVGfAQnU/8nRaGqOqzPEdVrGKolvD9fwUz1GHSP6YpM+MsRiPsf
+	 dpvJk33x8erFxRgGLD2II05q4E0htyzvJrjL6VLwtNcSuiNh09sdW4STOLed+8UIUB
+	 huKnne7Z68ytg==
+Date: Wed, 26 Mar 2025 16:32:29 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH 4/5] drm/panel: deprecate old-style panel allocation
+Message-ID: <20250326-deft-vegan-stoat-ff14ff@houat>
+References: <20250325-b4-panel-refcounting-v1-0-4e2bf5d19c5d@redhat.com>
+ <20250325-b4-panel-refcounting-v1-4-4e2bf5d19c5d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5ozty4m4m7wvakqd"
 Content-Disposition: inline
-In-Reply-To: <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
+In-Reply-To: <20250325-b4-panel-refcounting-v1-4-4e2bf5d19c5d@redhat.com>
 
-On Wed, Mar 26, 2025 at 04:14:20PM +0100, Luigi Leonardi wrote:
->Hi Michal,
->
->On Wed, Mar 19, 2025 at 01:27:35AM +0100, Michal Luczaj wrote:
->>On 3/14/25 10:27, Luigi Leonardi wrote:
->>>Add a new test to ensure that when the transport changes a null pointer
->>>dereference does not occur[1].
->>>
->>>Note that this test does not fail, but it may hang on the client side if
->>>it triggers a kernel oops.
->>>
->>>This works by creating a socket, trying to connect to a server, and then
->>>executing a second connect operation on the same socket but to a
->>>different CID (0). This triggers a transport change. If the connect
->>>operation is interrupted by a signal, this could cause a null-ptr-deref.
->>
->>Just to be clear: that's the splat, right?
->>
->>Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] PREEMPT SMP KASAN NOPTI
->>KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
->>CPU: 2 UID: 0 PID: 463 Comm: kworker/2:3 Not tainted
->>Workqueue: vsock-loopback vsock_loopback_work
->>RIP: 0010:vsock_stream_has_data+0x44/0x70
->>Call Trace:
->>virtio_transport_do_close+0x68/0x1a0
->>virtio_transport_recv_pkt+0x1045/0x2ae4
->>vsock_loopback_work+0x27d/0x3f0
->>process_one_work+0x846/0x1420
->>worker_thread+0x5b3/0xf80
->>kthread+0x35a/0x700
->>ret_from_fork+0x2d/0x70
->>ret_from_fork_asm+0x1a/0x30
->>
->
->Yep! I'll add it to the commit message in v3.
->>>...
->>>+static void test_stream_transport_change_client(const struct test_opts *opts)
->>>+{
->>>+	__sighandler_t old_handler;
->>>+	pid_t pid = getpid();
->>>+	pthread_t thread_id;
->>>+	time_t tout;
->>>+
->>>+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
->>>+	if (old_handler == SIG_ERR) {
->>>+		perror("signal");
->>>+		exit(EXIT_FAILURE);
->>>+	}
->>>+
->>>+	if (pthread_create(&thread_id, NULL, test_stream_transport_change_thread, &pid)) {
->>>+		perror("pthread_create");
->>
->>Does pthread_create() set errno on failure?
->It does not, very good catch!
->>
->>>+		exit(EXIT_FAILURE);
->>>+	}
->>>+
->>>+	tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->>
->>Isn't 10 seconds a bit excessive? I see the oops pretty much immediately.
->Yeah it's probably excessive. I used because it's the default timeout 
->value.
 
-Please define a new macro with less time, something like we did with
-ACCEPTQ_LEAK_RACE_TIMEOUT.
+--5ozty4m4m7wvakqd
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/5] drm/panel: deprecate old-style panel allocation
+MIME-Version: 1.0
 
-Thanks,
-Stefano
+On Tue, Mar 25, 2025 at 01:24:11PM -0400, Anusha Srivatsa wrote:
+> Start moving to the new refcounted allocations using
+> the new API devm_drm_panel_alloc(). Deprecate any other
+> allocation.
+>=20
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>  drivers/gpu/drm/drm_panel.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> index 11a0415bc61f59190ef5eb378d1583c493265e6a..5793011f4938a2d4fb9d84a70=
+0817bda317af305 100644
+> --- a/drivers/gpu/drm/drm_panel.c
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -74,8 +74,10 @@ EXPORT_SYMBOL(drm_panel_init);
+>   * drm_panel_add - add a panel to the global registry
+>   * @panel: panel to add
+>   *
+> - * Add a panel to the global registry so that it can be looked up by dis=
+play
+> - * drivers.
+> + * Add a panel to the global registry so that it can be looked
+> + * up by display drivers. The panel to be added must have been
+> + * allocated by devm_drm_panel_alloc(). Old-style allocation by
+> + * kzalloc(), devm_kzalloc() and similar is deprecated.
 
+It's not that it's deprecated, it's that it's unsafe. Since you already
+said that the allocation must be done through devm_drm_panel_alloc(),
+there's not much use to mention the old style stuff, I'd just drop the
+last sentence.
+
+Maxime
+
+--5ozty4m4m7wvakqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+QeDAAKCRDj7w1vZxhR
+xXTHAQCc+DC/5rdeBP/uekSpO7skP6d+j8o6RjjWhw/KxNkDSwEApCzCZMZTIZ5e
+yLjpLaIpTIXpA3IMrUaV2mCS5wP5Hw0=
+=mCCS
+-----END PGP SIGNATURE-----
+
+--5ozty4m4m7wvakqd--
 
