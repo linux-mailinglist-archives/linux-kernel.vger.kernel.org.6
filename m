@@ -1,203 +1,191 @@
-Return-Path: <linux-kernel+bounces-576522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67588A71064
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:08:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B52AA71068
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719731620BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:08:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B581884F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6279B191F91;
-	Wed, 26 Mar 2025 06:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8571C189919;
+	Wed, 26 Mar 2025 06:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nco888oV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CwYiwTXk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E484161310;
-	Wed, 26 Mar 2025 06:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5C819A2A3
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742969282; cv=none; b=domLtPSzT0iHWoIhcDXwCm3Tew+dJRTFFj+eAvcLDaC/T0jxBgCN8BhGEPIBQjBWzufcp3MG/MdnDc74KEiUlvD9d3WT/m8sHb3+0gcAGug9KxjqeKxEqr2ZpDcSZCqvJDRPG68xzRWndbgBMnXjerw6KMLCKCFz2E98Hr+cu94=
+	t=1742969293; cv=none; b=K1LoQNRf8BekLcz0OKfVNrTokrWq3u5mfTI3dMTyh9PPsQ6W8i0AR+PBklKXwAQ0qMr9y4p/F4sfuMJACgeOC2hVkRdLV3dlO1XNlTOa7Jsnpu/FxHnwmxt4ZUcrOtQMixbLPFHFqieowpW/D/eo+ojl6bQ9DPvN2D+7jx842l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742969282; c=relaxed/simple;
-	bh=17ilzGvreeHm226kkfQPsyEFUeLiEMTwZ00oVMu8jpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W48BeqGsZ1t2fUTAFQgCKXQAJ2D2lsLPkia/1cEjjgkwUj1AtGXhZAh1J3pzEbi7BmbP0oCB6bkBZLaLOo1eDGFGtfruvav4HfVS0f4ntMYrBHUkByzROm8nICeEV4vSMYiZWGRtrTJfYo59dvB0+s1193+xM5VWnkmkVcMOa2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nco888oV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A181C4CEE8;
-	Wed, 26 Mar 2025 06:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742969281;
-	bh=17ilzGvreeHm226kkfQPsyEFUeLiEMTwZ00oVMu8jpY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Nco888oVkpWvjjpmwWCThvxb1AtfGv+uxSw1N4XjTkec3DRuVqc8KPvc5gyVt3uyU
-	 IV7JpaJMp0N1G9bNlo7QCS6M3AKZni7g3eSBUqYTCiax5dYr0YNhkTLa/iLtyFs7Wv
-	 HtMjo1vjIyvsz1Ery/OFJdGpHbx7zWh4Jt/U+jmcfT2/psOB/aVWJLouBgMnlcLXxi
-	 iQ6JWvJv52TlmS30JjLarPhhTiwvQVU+efwiS9Qj/9tY8Xh5NXnQExI9PhYTcscXed
-	 SkD/3WaA4QEW7XPf0f3AnBRtjzDT5qFOrBTZk3J5UH2yTDn5Ts9Hsd2ScdykbJt4y0
-	 tZfx12/Kj/UNA==
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso29092765e9.3;
-        Tue, 25 Mar 2025 23:08:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9kzT6BA6N6h87+Q5LlLgA6p87ybvkMC/+e6djgPiK1RymMroREloorw/Bntec6btNgNgetZU17M232IILkfIymvwb@vger.kernel.org, AJvYcCUVbdDsIGoZW4wbdqY4ExqKrN3GTpoOcnacZnfw+W/I8chaKcML5lVDxfc3oGE8dDMoIYxX+HsgFQJR@vger.kernel.org, AJvYcCUWFLdwe7lwdhY4QVROCbCYd3X5Z75wXRkc7rXh8Bb3MOQ/iX5hTefzd/uDQlQ6heWvo5SUOXpw+VWsHlw=@vger.kernel.org, AJvYcCUWVjZ3XPlrA7jPuJO8ObPIUkTqtojM3OAsLCv2ThaZeZOa1bWTc73BR2xmka/oT7upCfxC+jsXFSr6zaE7eBTa@vger.kernel.org, AJvYcCUXji1jIuFBG6161oCJDbIuWuOxiDghQbqsLh62XdF9sHT+YbtdOoFZu+cG3tZhdnYCFbqShie1ZbHRKorn@vger.kernel.org, AJvYcCVSSdzgOS1NRSOcHWRW3oVXx0h0/oTMccv6aez6FZny6stDw6CTkFz16OVdZUpx7iH9sYfKcWMkV0Ax+JE=@vger.kernel.org, AJvYcCW8dLA624cklmFoAEYOpSyGC8lEOBINpemT7x+eOHFqcBFx5qmqTxSclGVFBbZXyGf3D6cWYlO1@vger.kernel.org, AJvYcCWKmmi1flBpuF3G+U6llD8mK4tVWwRfZArstzUSyuicvzdNx/JjMVVaJ8ZqbXd8rYRL2W39AqTX47KJ@vger.kernel.org, AJvYcCWSFXTNbfuLsPiAFx9hNmQ2Rg5+J9l6zBhAUzyqM62EWaWk/3MROgU9CLU+f1wcdGmfUskw@vger.kernel.org, AJvYcCWg5lo1ykuKBd9P8pLYG73yQb1q
- Njce0a/X3l4B+PcuIo7oZNsbWAvO38qA2S93fa4Bxpc=@vger.kernel.org, AJvYcCWlW/LFGElA26cSvMh5T2iUC4aAUqhgQ2QFusESKPKBIoSskwH7jjFtNn9AlU/HjDY29U9R7RCVPuU4hq4U@vger.kernel.org, AJvYcCWpjFEH9caShLPBc82kAI+KcbKOGDEvIR1UJ8N80RNns+V3DB54VBhnQC2CH3K/TuWHpgLgRxggi+yyD3TKPYAbig==@vger.kernel.org, AJvYcCWtl9TLsEYQyGtNQXjn0maTH/39t12gRR0DG7xVAuerstxRSuTXmZ7FmUZ5K/hJzy0QWx6YoMbaSmoRO38=@vger.kernel.org, AJvYcCXNYiqJuDYuZM0K38V1+gcnPcGpq6UDCwA6IKtUjBX8cI6qw6s5sDNduZy7vb9yLVFrjlZK1B2O5CDPPg==@vger.kernel.org, AJvYcCXR7x5G2gD1h/by+2WZSf7P5ZBqK431BkanWVf5fhQeAzIc9Y9w7R3OijTuglyPQCrUOszHGUjqsPfl6Lzn@vger.kernel.org, AJvYcCXYSHeE+0Gt8yLx89rxydHM8RwlmmB7Ygw17ELraN10jyl64fQFCh3sGcg9m1dsYd4+e/o/lz98rnrMFQ==@vger.kernel.org, AJvYcCXoo9sNwuUeUMHbqZtyAOo6Tw2gCN+1pRzUcCsAz7zyyPaEAF1/2sN/2RPsAIeBnbSfhMxzckn0o0f4EfWAXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrNvgQ4sY2SyaFmXOIzWsOqjvA8XC9s2ct7PrwYX2cHCUovBuT
-	k+97K0wcz6PnrXIJRcnet1ccY9x+uRY0ikHO2UpmBuzyAj8und5YCwGZXKddIlDKJxJ3kg/rHL+
-	dDJ2u5APrOBCm+5G8XtZIcjUdNy4=
-X-Google-Smtp-Source: AGHT+IEuIFNoPjN0AZZplDS08UZSXPKtCbe3v92zS/QV8r4A1uiHzUqZnFSHaB3urAWjtmc7YALAB9tDHWY70m3ocVw=
-X-Received: by 2002:a05:6000:1fa7:b0:390:e5c6:920 with SMTP id
- ffacd0b85a97d-3997f9008c2mr16208871f8f.3.1742969279888; Tue, 25 Mar 2025
- 23:07:59 -0700 (PDT)
+	s=arc-20240116; t=1742969293; c=relaxed/simple;
+	bh=DV8Dt4NQTcwtQhBu3ee6ir786TfXKELwP+K9zh18GmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MkZMZ/w6f8SZZfAai7azwzN8IG240NswaNTlaiKHyo1I0XffYIBbkfY9zxRxxTd4f8UF5jbJPsFkIoVigH+a88u84OUH0zuWTPq5Zr9gBFwOlWIiJPnOy5uWr+/icONFmflbpnin14xImS27wxuoLMMML+DHT/lNnQWe0l4JBPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CwYiwTXk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q64Kru013189
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:08:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bs6P/y7OnnXl9wA9mcNU5vvj6Yur2Xri8LkAGJTa6fQ=; b=CwYiwTXkeMQo8M39
+	2AWWOe8cSAhLOrKuostRhfIBPzVEn8sObh8qKBh8FepDOpWAK2LeyfvOlTHAV2PN
+	0Ydl7bsIOJUkW/xSS0muvx1EM8WpAWJlHy/brDdDSV24DH9cHVLjIL26pLerQwx7
+	r1b2EsEzyXahnp/lLb2Edt7jP317SIUld0NjS5OUdSphhBU/ZvAcvFgShidFLwGr
+	iVm6zuSBClBNAbF85e0tHyvhheg4gLawUrPHXmKSluev39VLy9xZNUbTrrMTgpQi
+	g28TdNq7AH6qyfv5uR/CmCzRGMISifCRJRfd+GaGTOSr+sx3JA+oOsFcd5CY+dh6
+	FFzjFA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m7nf0je1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:08:10 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so9933838a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:08:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742969290; x=1743574090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bs6P/y7OnnXl9wA9mcNU5vvj6Yur2Xri8LkAGJTa6fQ=;
+        b=dwL7YDYVTAiZ4jXDM/2zh+M2LtqQbiV0uS+0/X7+WSQp0dNVg2sfeoMF81k1RYhg3c
+         bw4JIuRdYfBF7gxUGDgk8I36IZokecwYU7s5D88k2MIu3mAysEC+5pVwjpJVUxkiBsZ7
+         J/zQWVZw+AA51Gl6AMHVz0lZpk97gEihIpRuhJdyMHjnSqlLJZU9gh9ntX4kHMvU/vvB
+         847GrxDd5RaanAEvubs/BlnxSqtPfUuShJJHrmJTjssmqR+5I+aT/YRB3d2IPI9TF/TG
+         60luXBwrJDakqXMPt3J3srlFt0MYX1Jht2/nVrffANU6ZkSznR6SI7oJvZjSkc9JB5RA
+         +tZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjDRUxbGbcd0IIOtsFN2HLSouaf9aSgXdSVUgDemRJ85sxxcfkOpIwjHPImU6V8Pw8LqG6qo2Jn1zNOSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv6+5hRQ7o7SNp5G6p2QGrrZKFazxmsy8B0shYjX30fl1MGw+4
+	+/4R0M4RopdLHcxdH6u4ATbaQitjel5RuV4Ewa4phz6CQxhlOXBqTZgGw2MvMl9NotOeeLEbNu0
+	NEBOtGVncfO3YnpgzcWYh5FZqBr6dN1300k93KGSqOLJGy46TDl5ShHL47wx5cYw=
+X-Gm-Gg: ASbGncuWHt+u5voMPTwW7V+tl5YgtEjtGIUdpstiqoQ9fKShtxrbHN0qBZdEw/Xdv87
+	G2RY76mP3jNtfG5XCzRW8s0F9Z4+IKQWWoZU58VwYCXhpB13DLylmBuS9VMds9aGASmTVmeT66h
+	CeZGnqRNUpZpPQ5tWUMpnTbFUlFEMOXvgkafLFMlu5qClfB9o5joL9YpctMSvhxXxwkuP7kSplB
+	EgadmCDah8NF8vo8/vf/CgLmL6dlTCis8I5kjz2EvIVqJolHCbJmXDRfMnk6r4BlSvGN+ISnbYg
+	sBvJxbtpPwsdlBLfxamEiHQ/FqIFJdJsbJ9mxnnh
+X-Received: by 2002:a05:6a21:33a5:b0:1f5:882e:60f with SMTP id adf61e73a8af0-1fe42f2da7cmr26905136637.17.1742969289499;
+        Tue, 25 Mar 2025 23:08:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSUcFYBXOOAqPpsEodlNU/8h9WWE4B5xscY9kxh7baPG6T5AYHq6bhQtT/uMIVHhhESqO7RA==
+X-Received: by 2002:a05:6a21:33a5:b0:1f5:882e:60f with SMTP id adf61e73a8af0-1fe42f2da7cmr26905106637.17.1742969289107;
+        Tue, 25 Mar 2025 23:08:09 -0700 (PDT)
+Received: from [10.218.35.239] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a4747bsm10102367a12.68.2025.03.25.23.08.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 23:08:08 -0700 (PDT)
+Message-ID: <45d1dbc5-bf6e-4fe8-bf2e-0d517190fc8f@oss.qualcomm.com>
+Date: Wed, 26 Mar 2025 11:38:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325121624.523258-1-guoren@kernel.org> <20250325122640.GK36322@noisy.programming.kicks-ass.net>
- <db3c9923-8800-4ed3-a352-4ee9ef79c0b7@app.fastmail.com>
-In-Reply-To: <db3c9923-8800-4ed3-a352-4ee9ef79c0b7@app.fastmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Wed, 26 Mar 2025 14:07:47 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTSHpZMyUk+8HL0=bevCd4XZYRAkrPM600qLPCKxG+bfrg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqPvj-l64SFz6C-IoAkuirA5RSoM_MAB1hbvMnwwKSuwLAnDrMsa14MaDw
-Message-ID: <CAJF2gTSHpZMyUk+8HL0=bevCd4XZYRAkrPM600qLPCKxG+bfrg@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
- kernel-self with ILP32 ABI
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Christian Brauner <brauner@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Eric Dumazet <edumazet@google.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, gaohan@iscas.ac.cn, shihua@iscas.ac.cn, 
-	jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, Drew Fustini <drew@pdp7.com>, 
-	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>, ctsai390@andestech.com, 
-	wefu@redhat.com, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Ingo Molnar <mingo@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Xiao W Wang <xiao.w.wang@intel.com>, 
-	qingfang.deng@siflower.com.cn, Leonardo Bras <leobras@redhat.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, "Conor.Dooley" <conor.dooley@microchip.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, yongxuan.wang@sifive.com, 
-	Xu Lu <luxu.kernel@bytedance.com>, David Hildenbrand <david@redhat.com>, 
-	Ruan Jinjie <ruanjinjie@huawei.com>, Yunhui Cui <cuiyunhui@bytedance.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, qiaozhe@iscas.ac.cn, 
-	Ard Biesheuvel <ardb@kernel.org>, Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Linux-Arch <linux-arch@vger.kernel.org>, maple-tree@lists.infradead.org, 
-	linux-trace-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>, 
-	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/5] Add snps,dis_u3_susphy_quirk for some QC targets
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
+ <ee0848ea-7a06-4f4e-9115-5e3c0ab8bf95@oss.qualcomm.com>
+ <7029a455-47be-475d-b429-98031d227653@oss.qualcomm.com>
+ <db0bbc62-ecf2-4f72-a0c9-462fbaadebc4@oss.qualcomm.com>
+ <5k45tcntn2bhxqt35quzfm2dsq6eug3hgqdcrta25oy47zuqja@4jclvspwob5x>
+Content-Language: en-US
+From: Prashanth K <prashanth.k@oss.qualcomm.com>
+In-Reply-To: <5k45tcntn2bhxqt35quzfm2dsq6eug3hgqdcrta25oy47zuqja@4jclvspwob5x>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 8QOzjDs8R3f1eG1IzAJ35BjADYErZd5i
+X-Proofpoint-GUID: 8QOzjDs8R3f1eG1IzAJ35BjADYErZd5i
+X-Authority-Analysis: v=2.4 cv=IMMCChvG c=1 sm=1 tr=0 ts=67e399ca cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=xMnwRdS-aKneeMBeM7YA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxscore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 mlxlogscore=999 adultscore=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260035
 
-On Tue, Mar 25, 2025 at 9:18=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Tue, Mar 25, 2025, at 13:26, Peter Zijlstra wrote:
-> > On Tue, Mar 25, 2025 at 08:15:41AM -0400, guoren@kernel.org wrote:
-> >> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >>
-> >> Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
-> >> but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
-> >
-> > Please, don't do this. This adds a significant maintenance burden on al=
-l
-> > of us.
->
-> It would be easier to this with CONFIG_64BIT disabled and continue
-> treating CONFIG_64BIT to be the same as BITS_PER_LONG=3D64, but I still
-> think it's fundamentally a bad idea to support this in mainline
-> kernels in any variation, other than supporting regular 32-bit
-> compat mode tasks on a regular 64-bit kernel.
->
-> >> The patchset targets RISC-V and is built on the RV64ILP32 ABI, which
-> >> was introduced into RISC-V's psABI in January 2025 [1]. This patchset
-> >> equips an rv64ilp32-abi kernel with all the functionalities of a
-> >> traditional lp64-abi kernel, yet restricts the address space to 2GiB.
-> >> Hence, the rv64ilp32-abi kernel simultaneously supports lp64-abi
-> >> userspace and ilp32-abi (compat) userspace, the same as the
-> >> traditional lp64-abi kernel.
->
-> You declare the syscall ABI to be the native 64-bit ABI, but this
-> is fundamentally not true because a many uapi structures are
-> defined in terms of 'long' or pointer values, in particular in
-> the ioctl call.
 
-I modified uapi with
-void __user *msg_name;
-->
-union {void __user *msg_name; u64 __msg_name;};
-to make native 64-bit ABI.
 
-I would look at compat stuff instead of using __riscv_xlen macro.
+On 26-03-25 03:40 am, Bjorn Andersson wrote:
+> On Tue, Mar 25, 2025 at 05:31:28PM +0100, Konrad Dybcio wrote:
+>> On 3/25/25 4:01 PM, Prashanth K wrote:
+>>>
+>>>
+>>> On 25-03-25 08:11 pm, Konrad Dybcio wrote:
+>>>> On 3/25/25 1:30 PM, Prashanth K wrote:
+>>>>> During device mode initialization on certain QC targets, before the
+>>>>> runstop bit is set, sometimes it's observed that the GEVNTADR{LO/HI}
+>>>>> register write fails. As a result, GEVTADDR registers are still 0x0.
+>>>>> Upon setting runstop bit, DWC3 controller attempts to write the new
+>>>>> events to address 0x0, causing an SMMU fault and system crash. More
+>>>>> info about the crash at [1].
+>>>>>
+>>>>> This was initially observed on SM8450 and later reported on few
+>>>>> other targets as well. As suggested by Qualcomm HW team, clearing
+>>>>> the GUSB3PIPECTL.SUSPHY bit resolves the issue by preventing register
+>>>>> write failures. Address this by setting the snps,dis_u3_susphy_quirk
+>>>>> to keep the GUSB3PIPECTL.SUSPHY bit cleared. This change was tested
+>>>>> on multiple targets (SM8350, SM8450 QCS615 etc.) for over an year
+>>>>> and hasn't exhibited any side effects.
+>>>>>
+>>>>> [1]: https://lore.kernel.org/all/fa94cbc9-e637-ba9b-8ec8-67c6955eca98@quicinc.com/
+>>>>>
+>>>>> Prashanth K (3):
+>>>>>   arm64: dts: qcom: sm8150: Add snps,dis_u3_susphy_quirk
+>>>>>   arm64: dts: qcom: sm8350: Add snps,dis_u3_susphy_quirk
+>>>>>   arm64: dts: qcom: sm8450: Add snps,dis_u3_susphy_quirk
+>>>>>
+>>>>> Pratham Pratap (2):
+>>>>>   arm64: dts: qcom: qcs615: Add snps,dis_u3_susphy_quirk
+>>>>>   arm64: dts: qcom: qdu1000: Add snps,dis_u3_susphy_quirk
+>>>>
+>>>> Are there more targets affected, from the list of the ones currently
+>>>> supported upstream?
+>>>>
+>>>> Konrad
+>>>
+>>> My initial plan was to add it for all the QC platforms, but wasn't
+>>> confident enough about it. Because we have seen the issue only on these
+>>> targets and hence tested only on these.
+>>
+>> Okay, let's proceed with these and in the meantime please query internally
+>> whether it could be applicable to others too
+>>
+> 
+> But if it applies to all qcom targets, wouldn't it make more sense to
+> add the property in the qcom glue driver?
 
-> This might work for an rv64ilp32 userspace that
-> uses the same headers and the same types, but you explicitly
-> say that the goal is to run native rv64 or compat rv32 tasks,
-> not rv64ilp32 (thanks!).
+Hi Bjorn, This issue was seen only on some targets 2 years back, so we
+only tested on those platforms. I think its better to add it to other QC
+targets only if we see that issue.
 
-It's not for rv64ilp32-abi userspace, no rv64ilp32-abi userspace
-introduced in the patch set.
-It's for native lp64-abi.
+> 
+> Regards,
+> Bjorn
+> 
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Konrad
 
-Let's discuss this in the first patch thread:
-uapi: Reuse lp64 ABI interface
+Thanks for the review Konrad
 
->
-> As far as I can tell, there is no way to rectify this design flaw
-> other than to drop support for 64-bit userspace and only support
-> regular rv32 userspace. I'm also skeptical that supporting rv64
-> userspace helps in practice other than for testing, since
-> generally most memory overhead is in userspace rather than the
-> kernel, and there is much more to gain from shrinking the larger
-> userspace by running rv32 compat mode binaries on a 64-bit kernel
-> than the other way round.
-
-The lp64-abi userspace rootfs works fine in this patch set, which
-proves the technique is valid. But the modification on uapi is raw,
-and I'm looking at compat stuff.
-
-Supporting lp64-abi userspace is essential because riscv lp64-abi and
-ilp32-abi userspace are hybrid deployments when the target is
-ilp32-abi userspace. The lp64-abi provides a good supplement to
-ilp32-abi which eases the development.
-
->
-> If you remove the CONFIG_64BIT changes that Peter mentioned and
-> the support for ilp64 userland from your series, you end up
-> with a kernel that is very similar to a native rv32 kernel
-> but executes as rv64ilp32 and runs rv32 userspace. I don't have
-> any objections to that approach, and the same thing has come
-> up on arm64 as a possible idea as well, but I don't know if
-> that actually brings any notable advantage over an rv32 kernel.
->
-> Are there CPUs that can run rv64 kernels and rv32 userspace
-> but not rv32 kernels, similar to what we have on Arm Cortex-A76
-> and Cortex-A510?
-
-Yes, there is, and it only supports rv32 userspace, not rv32 kernel.
-https://www.xrvm.com/product/xuantie/C908
-
-Here are the products:
-https://developer.canaan-creative.com/k230_canmv/en/dev/userguide/boards/ca=
-nmv_k230d.html
-http://riscv.org/ecosystem-news/2024/07/unpacking-the-canmv-k230-risc-v-boa=
-rd/
-
---=20
-Best Regards
- Guo Ren
+Regards,
+Prashanth K
 
