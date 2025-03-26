@@ -1,238 +1,139 @@
-Return-Path: <linux-kernel+bounces-576847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD1BA7151C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:52:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD59A7151F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF151891B82
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:52:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEAF3B6027
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5031C8614;
-	Wed, 26 Mar 2025 10:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23161CAA73;
+	Wed, 26 Mar 2025 10:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMZN1T7X"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTfFB6kl"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993694A29
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A7C4A29;
+	Wed, 26 Mar 2025 10:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986325; cv=none; b=HxLj112dzFXgjILhs/gEHUCPx2VIueRFoARVjItlx4v6smPFDWz6oJDPjVNaE9rFarsTKxKqDQNpRe5wc53G6jys4XGrfGBqL0epxs++bLfb6rOBuyYyeehUy5BSTNT9zJFkO951l6aG+pGgP4rDExMqtm64pFBZ0phllrSEhfM=
+	t=1742986373; cv=none; b=BRIFua751LnCAP7ejN4OI8X9J6CY3A2orcyXqeE7nvCnDpw/r2yghPtHkGd4n7Q5JOOt2f4Q7Ochd62Dg2WwpdbUybk7JmZZOdStxNwg9LCQOeniLYT+F10EJXX9k2UMCMXhMERKLBGnEPE+GuEr/RqkZR2Y0CNabdwpkghuDWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986325; c=relaxed/simple;
-	bh=vNWY2OwiWQ+4yd4kLSCCNfAs5OrWfCACnSfqQS8BOvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qlfbz2ffJ45ZWErmX+H4UJ0KbEwtvSLHjVFdhNfLM6WkiFmLn5B3GgEdvSHvyJZTnS10tUqsr8mg8M03zyN8ha3r0+TCWVfrs+toGc1q6DmXxkpiCxPDOZJRhLKb3oDXsuDqW9YPAxnd4TOL5dq00bogaPPSz56zrU2E7WufhSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMZN1T7X; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1742986373; c=relaxed/simple;
+	bh=Djiuh0TTQ+OQMWUiqRkRsKWbVm7hMusiXM1xRsAVliM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JLpLnKEKKiOBekp3bvgZjLhrC5nVUX16JXAo36oA+tsxSC0367eezPwgHpeM1qDVf51ZwdZmsY7nConTei4rrZEvPTgWXAqs3grk1ZoWVLL2CY9yGhe8P7gbtYBxDL8gc5+0T+i96l3b4Nay8rUsPCzThFzL3ihL/9JEDlNbWw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTfFB6kl; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfe99f2a7so4053575e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:52:03 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223f4c06e9fso14561685ad.1;
+        Wed, 26 Mar 2025 03:52:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742986322; x=1743591122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KUiJ39e9rjS2bB3JIWPFSpS7Z7JQ7PGJYyhz9hoeqh8=;
-        b=QMZN1T7X9xPrpZfxCbSAEbYjR9ZHsuvPk5nMBfD7ZPf305aav5HW7grnizN6xqSYAW
-         WdkgIajPTQ5DrBD86TYa0ch77ux0OBSpd9o8m8wPeygdnnHok12ddBK8zj2WXFpTVPKD
-         msvIjFHHS05PQQzWNcH7HsB+sDaOQ6uCXtr1cXiZDsbJq0wGuKY0bzbIvCZ8dz57JkGR
-         2K63YSU8/QtcGh1+01pAAUtjRLiF0meptlqxNYJG6qPnD123i9ootYfqlkYIaYbFJfPj
-         fv19hj19Sxxb4qARZf/vmP3zj8LNf1jG7ikQxnRvObxywIsPqseuu3/1Rb1aD63dCq1P
-         2WKA==
+        d=gmail.com; s=20230601; t=1742986371; x=1743591171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwRuOYtlCLzRZmhCJLfT7hvVNcHg1UTJcmJVtwUdAw0=;
+        b=CTfFB6kly2Pb3PAeWdu4wMQhxUmp/090nSRuGKz17qA4JJp4440pdc5LEslt4+veXt
+         Pb1KVKtvi6S+HCm9uoNmrctFdOEranZ04C7YhmwxkVtLQrIaNj/wBXEBTiFurqbWpJS+
+         GwrKTsmKfwWrRdAGPj7Ntc6y1ZnA+XJmJ6gwmb0IMRPLg/LPiTqgHgrXQloVR+P6u0X9
+         EO7PJA9lEIKflW+ptLUJZJJzUh/l35tHUyB9Sb26s7tCVnPbgzPSn6332ic5skdo8Uyl
+         8ipV50z+SP03ct390u1w0GlmSr85RMGw3qVCpXn4y2Ak5A6uL4YBfF1KbLXSwKAFV7AH
+         6J0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742986322; x=1743591122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUiJ39e9rjS2bB3JIWPFSpS7Z7JQ7PGJYyhz9hoeqh8=;
-        b=dqKxhfv2bgHQfLH4Hx0NhAhJxNsWyMbjZ4yt6CeWQBV0M0yVimA+7EPOhZyCFRzSlc
-         o0qoBTMO6OAZ4w9IoTSJh3cBhmBrb+KZDtNGqyX8LtWPR8yt0TvMm6tYU7aMeOnFfglA
-         qAh7ON+pnMGJs8knQaChoe/nybnpmODk4OIppavNX0cF77uIx3QbFKExQTXmWU2NWe28
-         xiQtpzIAbOMx437/6TxrRabJXTx1pSqkMe+ujXUfhLTedLW4ZxbG7N7Fi6YXvANQoZg2
-         EYS8SgzH24kQnHLuqFdM1tfESwe2xpSm1/2AywU5OS/03p/Nr6X3IWk+OrQ6QNgh9ABa
-         +zmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVESZOa2jf6ve4s1E2CutdLqW6pPT3AC+aatSMf+CUcAtgLGbxb49X8zI2WatfDG3vd3WPolKpH57XFR78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmGrkfSrqaFeu8IasRIxwwOOqJ0tsFf3qpCk5ouYzkGlv4k+C3
-	iVw8O1870FDNdb0CUHWvs0hmIs66wJZ9fSWh59LmD8IcMsAdAYQkjTq0ZK96jBRio+AUlaasQVg
-	pL8+plh56RnGuaZDMZXurLCN0WAU=
-X-Gm-Gg: ASbGncvyyb7IM+q0tgwpp3ZjXSRyheCkpmHWLzfPpDLLSIkir2fnlBo2NexkUW5NXf8
-	l1T2/4wnqAfwFh1RNv0rFSWMYVnHiMlm44Q6s7vOAaDNFhgGzdMv77Gn6jpc1ajghztFOj+etgK
-	I0BmnR53c5Za3qiJAjZu9O6eWjW68=
-X-Google-Smtp-Source: AGHT+IHvKYFrqGOaDXxYEwwFVrmnAAfI2Ac4I6FgReAxx3WGv0wMQQ4aPo7xkXF6L+B8JiFrf/klaBgj4vK++v/TIZI=
-X-Received: by 2002:a05:600c:4448:b0:439:a30f:2e49 with SMTP id
- 5b1f17b1804b1-43d6fcd0f23mr24454315e9.5.1742986321514; Wed, 26 Mar 2025
- 03:52:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742986371; x=1743591171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wwRuOYtlCLzRZmhCJLfT7hvVNcHg1UTJcmJVtwUdAw0=;
+        b=Eta6x3rccQ1C9CSW4BxSdxwjiQenKGkUA0pIFmRlxSKuOx/nsulQCIUZFXk2JlJIAk
+         S2YuYwZkTqfs4X8uOmMu1u6gPrLdi4VOjXHtyVx/+d9ZWawkeXxA79jCQ26k9uq91/y5
+         z5X7X7OHgpHPGJ4S+JnPxfqOWvzCRdZNAXY9/KS1B2nn2ltwVgZroxGoj95KMsO1o2+8
+         HSeUTfLB99oYoyreswRXHVqOiBnmQN9yytg4s+RDINZkFffmOMaXmdnz1BM+ikyaoO7z
+         lEHu3D22itKDyO5BCwDD/2zNU2mRzJwUQhEgoh6kCRqTibnoRopPXP4htVXZASHOTHsN
+         yZsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXzzeaB4S/frp3/koGSgIzrunAiMcCxWIsFetF21yWPTAPpf+04ruELoBT4IPjvhXzT88R1AED@vger.kernel.org, AJvYcCWa61y+iVRi/8utEGF4prvKftshkJdXWhqbPHYd0reQkVLG5s+JtouZIRkqQ3I9l0sPCNLcyfO5oRoy3vA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc0jce/jV0IEnvHBu1u/s9X/IXVmR3zqzD2tUhCR2fXdFsi/dD
+	/1k641Aufi9PckLt6hvHIvWTOn8OPmHn0Spf+GKndnqMLg+5vHL1
+X-Gm-Gg: ASbGncu8aPFvSb7oon/GYvc7B2TXfegmPrgg97qKUNwCjTdEPNzdC1ePkacA+r3vLhn
+	bizvdSh+53PcT8X0Q9SXRa1DlT4rIsj4+67aPi+RRkATYlJEK9GI7Z4olozWb+jrg9uxIu4hZ5f
+	UiCuhqy+oVcSL+K3Eu/PREEs5AdBUvRKX8mQAP8FqWyrIRBMoTjGDahRf4MrsIsrVpXaLcJN7Qt
+	ASqKKVYVvCaLwCh3ReE2PmC9F7Yjrt+cQDslBwwC2REjjnR+LbmmB3vW6myqzPva7y+aoNAOnoc
+	nKyy0hi7IQxWzWNPMjQ7agYK3BcC1jA+nfiaVkucjakYAdNpKvS3d5LKEIqhhsDmT6Yz+9592Ug
+	=
+X-Google-Smtp-Source: AGHT+IE4QXqhpL4pCNd808nbhmu+o/NuYs7Ewl82eJ04YX9HoXM/cdykFs9gadLeiRj9Zk9KT9O3lQ==
+X-Received: by 2002:a17:902:e946:b0:220:e91f:4408 with SMTP id d9443c01a7336-227efb817ebmr55076935ad.22.1742986371125;
+        Wed, 26 Mar 2025 03:52:51 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4599fsm107516005ad.67.2025.03.26.03.52.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 03:52:50 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH] net: ipv6: Fix NULL dereference in ipv6_route_check_nh
+Date: Wed, 26 Mar 2025 16:22:15 +0530
+Message-Id: <20250326105215.23853-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1742978761-16264-1-git-send-email-zhiguo.niu@unisoc.com> <e4fb11ea-a97b-4ba0-aa28-f6f93e5a6134@kernel.org>
-In-Reply-To: <e4fb11ea-a97b-4ba0-aa28-f6f93e5a6134@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Wed, 26 Mar 2025 18:51:49 +0800
-X-Gm-Features: AQ5f1JqKX6cSDt9h78JSWvel5VEJL_MOqY8616rTktHLRZ9xdX5kgNh_fTSxbb4
-Message-ID: <CAHJ8P3JWABsntymD3u5=0YR7=0it5x0PP49S4ftwBEjC1UreOA@mail.gmail.com>
-Subject: Re: [RFC PATCH] f2fs: remove some redundant flow about FI_ATOMIC_DIRTIED
-To: Chao Yu <chao@kernel.org>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, daehojeong@google.com, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Chao Yu <chao@kernel.org> =E4=BA=8E2025=E5=B9=B43=E6=9C=8826=E6=97=A5=E5=91=
-=A8=E4=B8=89 17:26=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 3/26/25 16:46, Zhiguo Niu wrote:
-> > Commit fccaa81de87e ("f2fs: prevent atomic file from being dirtied befo=
-re commit")
-> > adds the processing of FI_ATOMIC_DIRTIED in the following two positions=
-,
-> > [1]
-> > f2fs_commit_atomic_write
-> >  - __f2fs_commit_atomic_write
-> >   - sbi->committed_atomic_block +=3D fi->atomic_write_cnt;
-> >   - set_inode_flag(inode, FI_ATOMIC_COMMITTED);
-> >   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> >   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> >   -    f2fs_mark_inode_dirty_sync(inode, true);
-> >   - }
-> > [2]
-> > f2fs_abort_atomic_write
-> >   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> >   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> >   -    f2fs_mark_inode_dirty_sync(inode, true);
-> >   - }
-> >
-> > but [1] seems to be redundant:
-> > The atomic file flag FI_ATOMIC_FILE is still set here, so f2fs_mark_ino=
-de_dirty_sync
-> > still does not set the dirty state to vfs. If FI_ATOMIC_DIRTIED was ori=
-ginally set
-> > when atomic file is committing, then FI_ATOMIC_DIRTIED is just cleared =
-here, and
-> > then do the repeating action of setting FI_ATOMIC_DIRTIED?
-> > So is it enough to do this only in [2]?
->
-> Hi Zhiguo,
->
-> I checked the code again, finally, I got this, could you please take
-> a look?
->
-> Ping Daeho as well.
->
-> Subject: [PATCH] f2fs: fix to set atomic write status more clear
->
-> 1. After we start atomic write in a database file, before committing
-> all data, we'd better not set inode w/ vfs dirty status to avoid
-> redundant updates, instead, we only set inode w/ atomic dirty status.
->
-> 2. After we commit all data, before committing metadata, we need to
-> clear atomic dirty status, and set vfs dirty status to allow vfs flush
-> dirty inode.
->
-Hi Chao,
-these looks more clear.
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/inode.c   |  4 +++-
->  fs/f2fs/segment.c | 10 ++++++----
->  fs/f2fs/super.c   |  4 +++-
->  3 files changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 5c8634eaef7b..f5991e8751b9 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -34,7 +34,9 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bo=
-ol sync)
->         if (f2fs_inode_dirtied(inode, sync))
->                 return;
->
-> -       if (f2fs_is_atomic_file(inode))
-> +       /* only atomic file w/ FI_ATOMIC_COMMITTED can be set vfs dirty *=
-/
-> +       if (f2fs_is_atomic_file(inode) &&
-> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
->                 return;
->
->         mark_inode_dirty_sync(inode);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index dc360b4b0569..28659a71891a 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -376,10 +376,12 @@ static int __f2fs_commit_atomic_write(struct inode =
-*inode)
->         } else {
->                 sbi->committed_atomic_block +=3D fi->atomic_write_cnt;
->                 set_inode_flag(inode, FI_ATOMIC_COMMITTED);
-> -               if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> -                       clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> -                       f2fs_mark_inode_dirty_sync(inode, true);
-> -               }
-> +
-> +               f2fs_bug_on(sbi, !is_inode_flag_set(inode, FI_ATOMIC_DIRT=
-IED));
-but FI_ATOMIC_DIRTIED may  not be set when atomic file is committing?
-thanks!
-> +
-> +               /* clear atomic dirty status and set vfs dirty status */
-> +               clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> +               f2fs_mark_inode_dirty_sync(inode, true);
->         }
->
->         __complete_revoke_list(inode, &revoke_list, ret ? true : false);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 9a42a1323f42..a5cc9f6ee16a 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1532,7 +1532,9 @@ int f2fs_inode_dirtied(struct inode *inode, bool sy=
-nc)
->         }
->         spin_unlock(&sbi->inode_lock[DIRTY_META]);
->
-> -       if (!ret && f2fs_is_atomic_file(inode))
-> +       /* if atomic write is not committed, set inode w/ atomic dirty */
-> +       if (!ret && f2fs_is_atomic_file(inode) &&
-> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
->                 set_inode_flag(inode, FI_ATOMIC_DIRTIED);
->
->         return ret;
-> --
-> 2.48.1
->
->
-> >
-> > Cc: Daeho Jeong <daehojeong@google.com>
-> > Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied befo=
-re commit")
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > ---
-> >  fs/f2fs/segment.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 396ef71..d4ea3af 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -376,10 +376,6 @@ static int __f2fs_commit_atomic_write(struct inode=
- *inode)
-> >       } else {
-> >               sbi->committed_atomic_block +=3D fi->atomic_write_cnt;
-> >               set_inode_flag(inode, FI_ATOMIC_COMMITTED);
-> > -             if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> > -                     clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > -                     f2fs_mark_inode_dirty_sync(inode, true);
-> > -             }
-> >       }
-> >
-> >       __complete_revoke_list(inode, &revoke_list, ret ? true : false);
->
+Fix Smatch-detected error:
+net/ipv6/route.c:3427 ip6_route_check_nh() error:
+we previously assumed '_dev' could be null
+
+Ensure _dev and idev are checked for NULL before dereferencing in
+ip6_route_check_nh. Assign NULL explicitly when fib_nh_dev is NULL
+to prevent unintended dereferences.
+
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ net/ipv6/route.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index ef2d23a1e3d5..ad5b3098eba0 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -3424,9 +3424,20 @@ static int ip6_route_check_nh(struct net *net,
+ 		if (dev != res.nh->fib_nh_dev)
+ 			err = -EHOSTUNREACH;
+ 	} else {
+-		*_dev = dev = res.nh->fib_nh_dev;
+-		netdev_hold(dev, dev_tracker, GFP_ATOMIC);
+-		*idev = in6_dev_get(dev);
++		if (res.nh->fib_nh_dev) {  /* Ensure fib_nh_dev is valid */
++			dev = res.nh->fib_nh_dev;
++
++			if (_dev)  /* Only assign if _dev is not NULL */
++				*_dev = dev;
++
++			netdev_hold(dev, dev_tracker, GFP_ATOMIC);
++			*idev = in6_dev_get(dev);
++		} else {
++			if (_dev)
++				*_dev = NULL;  /* Explicitly set NULL */
++			if (idev)
++				*idev = NULL;  /* Explicitly set NULL */
++		}
+ 	}
+ 
+ 	return err;
+-- 
+2.34.1
+
 
