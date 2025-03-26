@@ -1,110 +1,175 @@
-Return-Path: <linux-kernel+bounces-577269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85387A71ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09274A71AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C0C169363
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2EF16ED44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0251F4174;
-	Wed, 26 Mar 2025 15:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E5D1F419E;
+	Wed, 26 Mar 2025 15:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dHRwYjUI"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U4/lSeD6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y68hG9kK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9231F891C;
-	Wed, 26 Mar 2025 15:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60911F4197
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003405; cv=none; b=ja4KcBl35AJV9SRm3PC3UQHIB5CPQqjZfoP0zQ+rsvGst9w70zJ/v8iaqePhC0zZbw2QL6u3GUMKmFIEr8xdOtXQaxEeJlkGd+jNNKKYAgVl2Zl3Sntg+L9vE6+968ywG0ievm7hGoU3fOh6plUX4W45SWN8gR2Grz/BRfI/55Y=
+	t=1743003428; cv=none; b=cGsJ6UwW5YkHVDJKQV/lnWciM9YhBKl/kQJ5ucTfvcRZYOzbELCkDFYfV1Qbh5oKa4FIFV9bGugL+WuxnQf9S/GfWfyAwJb801zH7QxUZkmKyuk6Ic6NnpDTzJXMi7hWjnlno2gE+Qn8Jr3Q7cd2CXlG/Ybw1qAHV4PPUjS/lcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003405; c=relaxed/simple;
-	bh=cp3KlP5kz8uShLGylSzqchQUQS7t4AEaR6YGK7e5dDw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bWdbxrEugj/QmEECjRjhJArkyXWdksVYRWic6nC5JkMyOyY01ihQHvo6b+TelxiO+RomQuob3dn8oHLBb0OyCoXsg1o3jLHLpX0U4iKyIAuxWWyvg1wboARwsMXujw/EuLJvcgcmAkJkuWi0b1bzxWONYhSpwc+9v/eJjRZ5ZX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dHRwYjUI; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1743003403; x=1774539403;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cp3KlP5kz8uShLGylSzqchQUQS7t4AEaR6YGK7e5dDw=;
-  b=dHRwYjUIxI4EQ8n9z1Oxj7oDFkEQndeCH6g04XRifCjB4FMabvGJ1cGt
-   Y9X0DeIpGwbj0MKMEpxcIgqDsVANvu0zVA6T0tpox6//k4K+CfJJDOmzX
-   sTWXAmMP3rn3WHBUp6LfMO4Uv/MIcReuNat2p8czPe8brsFYDu5s26vVC
-   HyZz4RtmJxBpVx0F3qkhKFwxGPoNAPj+zYA19JwaTwlG5DXsH1QRKJIrT
-   uWuRxDWBgHtfmh65KpU5grOchln+ZOU2ybss51060Y8+8urvIFZzibCC4
-   fPsm9mjxoQK1+67XtKwvucBqntT2dscuNOZYQxxYsngR7GByiOIWntcJ9
-   g==;
-X-CSE-ConnectionGUID: NRxSiTFnT3ucBnaYj7CaZg==
-X-CSE-MsgGUID: yVJD9QDcSWChedzT1e/Itg==
-X-IronPort-AV: E=Sophos;i="6.14,278,1736838000"; 
-   d="scan'208";a="44096117"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Mar 2025 08:36:33 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 26 Mar 2025 08:35:52 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 26 Mar 2025 08:35:52 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <lee@kernel.org>, <sre@kernel.org>,
-	<p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v4 11/11] ARM: dts: microchip: sama7d65: Add RTT timer to curiosity board
-Date: Wed, 26 Mar 2025 08:35:44 -0700
-Message-ID: <314561e3237b84d3764bd1dc9967f852ee452c30.1742936082.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1742936082.git.Ryan.Wanner@microchip.com>
-References: <cover.1742936082.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1743003428; c=relaxed/simple;
+	bh=ZH/Qib1KROeOJAvECS53oTCCdB2Xyz1o3yyLgdvDp9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K84ZGpRFEhz5PSbW1X5ITqYtcAqHf0bcaiGk3MECgkmwgYgf4kaTqMw2D9JiQkKq90nZp3LX4NAONiL4FZVBHaP1NufvlaWVK7dZP76xhGoa/dKgXpYU+OVZCMwSguYLku9iC6oHQ7XP7eahAx+LKv30/NS7bf0YNhxFr+tFe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U4/lSeD6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y68hG9kK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Mar 2025 16:37:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743003424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DboYwCcNZGXRf6439BqA6sDYH2xWbE0J5kLD+XvfReE=;
+	b=U4/lSeD6smV6aX6xEK55wCzPzYTc87kevaKD/XFlzbnkEohLUwT/U1S4k0OW2l7184qSNa
+	i0n8W8V4UmWE1A3stOCg9q0JeK8/mVISLE027w0dBcmXbIJa0x/IdR3M1ajzpqtOVEDFrm
+	PdhwnUFYOW5w8K663M1ZiwtGo8Q0qIfC7WtqLuZQQWK6JOebSsH+fZYufnPofR70KzkiMf
+	BAQ9cjAFn7vWDcWiWwZLHOGrYrMr/bAtH93uiFVHxSfn8E6bPkyG5L3AhXhhWQiJnC302k
+	3lVW5+sKMSBYHMglEuaLjID3Jcp0PQDp6d9D+ZH4z3V2Jncvbq2CiSVKCtouFg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743003424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DboYwCcNZGXRf6439BqA6sDYH2xWbE0J5kLD+XvfReE=;
+	b=y68hG9kKuGAA+uhJrcOy3pj1a9ywJANa4iyka0FgkB6XQnmh5L1o7DZetk6H/vQROwqi7G
+	qAMdWkEARtxc91Bw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v10 18/21] futex: Rework SET_SLOTS
+Message-ID: <20250326153703.n_PgVpun@linutronix.de>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <20250312151634.2183278-19-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250312151634.2183278-19-bigeasy@linutronix.de>
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 2025-03-12 16:16:31 [+0100], To linux-kernel@vger.kernel.org wrote:
 
-Add RTT timer with backup register for SAMA7D65_Curiosity board.
+I am folding and testing and
+=E2=80=A6
+> +static bool futex_pivot_pending(struct mm_struct *mm)
+> +{
+> +	struct futex_private_hash *fph;
+> +
+> +	guard(rcu)();
+> +
+> +	if (!mm->futex_phash_new)
+> +		return false;
+> +
+> +	fph =3D rcu_dereference(mm->futex_phash);
+> +	return !rcuref_read(&fph->users);
+> +}
+=E2=80=A6
+> +static int futex_hash_allocate(unsigned int hash_slots, bool custom)
+=E2=80=A6
+>  		/*
+> -		 * Will set mm->futex_phash_new on failure;
+> -		 * futex_get_private_hash() will try again.
+> +		 * Only let prctl() wait / retry; don't unduly delay clone().
+>  		 */
+> -		__futex_pivot_hash(mm, fph);
+> +again:
+> +		wait_var_event(mm, futex_pivot_pending(mm));
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+This wait condition should be !futex_pivot_pending(). Otherwise it
+blocks. We want to wait until the current futex_phash_new assignment is
+gone and the ::users counter is >0.
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-index 30fdc4f55a3b..3105fe1766c3 100644
---- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-@@ -141,6 +141,10 @@ pinctrl_uart6_default: uart6-default {
- 	};
- };
- 
-+&rtt {
-+	atmel,rtt-rtc-time-reg = <&gpbr 0x0>;
-+};
-+
- &sdmmc1 {
- 	bus-width = <4>;
- 	pinctrl-names = "default";
--- 
-2.43.0
+This brings me to the wake condition of which we have two:
+> @@ -207,6 +203,7 @@ static bool __futex_pivot_hash(struct mm_struct *mm,
+>  	}
+>  	rcu_assign_pointer(mm->futex_phash, new);
+>  	kvfree_rcu(fph, rcu);
+> +	wake_up_var(mm);
+>  	return true;
+>  }
+> =20
+> @@ -262,7 +259,8 @@ void futex_private_hash_put(struct futex_private_hash=
+ *fph)
+>  	 * Ignore the result; the DEAD state is picked up
+>  	 * when rcuref_get() starts failing via rcuref_is_dead().
+>  	 */
+> -	bool __maybe_unused ignore =3D rcuref_put(&fph->users);
+> +	if (rcuref_put(&fph->users))
+> +		wake_up_var(fph->mm);
+>  }
 
+The one in __futex_pivot_hash() makes sense because ::futex_phash_new is
+NULL and the users counter is set to one.
+The wake in futex_private_hash_put() doesn't make sense. At this point
+we have ::futex_phash_new set and rcuref_read() returns 0. So we
+schedule again after the wake.
+Therefore we could remove the wake from futex_private_hash_put().
+However, if there is no futex operation (unlikely) then we are stuck in
+wait_var_event() forever. Therefore I would suggest to:
+
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index 65523f3cfe32e..64c7be8df955c 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -210,7 +210,6 @@ static bool __futex_pivot_hash(struct mm_struct *mm,
+ 	}
+ 	rcu_assign_pointer(mm->futex_phash, new);
+ 	kvfree_rcu(fph, rcu);
+-	wake_up_var(mm);
+ 	return true;
+ }
+=20
+@@ -1522,10 +1521,10 @@ static bool futex_pivot_pending(struct mm_struct *m=
+m)
+ 	guard(rcu)();
+=20
+ 	if (!mm->futex_phash_new)
+-		return false;
++		return true;
+=20
+ 	fph =3D rcu_dereference(mm->futex_phash);
+-	return !rcuref_read(&fph->users);
++	return rcuref_is_dead(&fph->users);
+ }
+=20
+ static bool futex_hash_less(struct futex_private_hash *a,
+
+-> Attempt to replace if there no replacement pending (futex_phash_new =3D=
+=3D NULL).
+-> If there is replacement (futex_phash_new !=3D NULL) then wait until the
+   current private hash is DEAD. This happens once the last user is gone
+   and gives the wakeup.
+
+Sebastian
 
