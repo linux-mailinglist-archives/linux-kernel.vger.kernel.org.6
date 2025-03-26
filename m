@@ -1,149 +1,162 @@
-Return-Path: <linux-kernel+bounces-576537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5319A710A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:36:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991B3A710AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D8D174DE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF673AF68E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33376199FAF;
-	Wed, 26 Mar 2025 06:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67A4190678;
+	Wed, 26 Mar 2025 06:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqWCSEWg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N8/sRWYr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B49F15381A;
-	Wed, 26 Mar 2025 06:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BA714B965
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742970889; cv=none; b=rc9ipidDLJ1K1tCNBOxyi5M37nQpYbh/5+j+1GkaeCQWxePYK0PHuWwQ//gg2tjT8jWGVylJbhEy8VO+Kfaqi6H0EZLukBNvI9PtQWPYDPmYNHxAzij0dDfTnR0GGTtZQBn9FGUFUjY/eclfJEPZR49LUu1VWNB6CJV6ZoxavaE=
+	t=1742971231; cv=none; b=Y5aT8ASMqvMhB8Vygw4NS3f7fFIqoh2qnd9R0MBzxPIdVeMracJ4k6FifcS5glmFSFfGS2cH2yc32i5uuNgm0KupXSGn1dBYw3LBEyrpMfv74bLnne77q7vf2WEOHqnRtWdChc0gunu3XlNI3mpdXeXeYFZHg7l0+c4G5sDr7fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742970889; c=relaxed/simple;
-	bh=2MGPnAtzDlcfNFkgrjhcbs+PSZK/71xFqiqfm4ICurw=;
+	s=arc-20240116; t=1742971231; c=relaxed/simple;
+	bh=6q09F5c4pHQQSvnekcl2wDEjLn2OddB7yXpI33oM3j8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N1BwKyi41vq1bPoormQrP6RfW1WVndmK57FDr+17ZZ+F/MUx/p7rjhG3S8tCxsdTW+QOY8yMe9sUqX+ODXpLBlHsi4BVKiW1lcTtFMt1MKvdEzI+lB3LMkgDb++lOneohVJXnX82tGXPvClW90H2mIniMavmF/sE5YKdh6+usR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqWCSEWg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E46EC4CEFD;
-	Wed, 26 Mar 2025 06:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742970888;
-	bh=2MGPnAtzDlcfNFkgrjhcbs+PSZK/71xFqiqfm4ICurw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oqWCSEWgqSzuZihIGSGxBq/NFjOUhZjOlwZMMZY+/2ybNPO86h100+06K+NuCc9Mt
-	 WYnoiWB1I5d60B7CRE6XuosOocePqX6eDdBEP/8SE+DYlhSfcxkLZF9LrlQ68Y4veL
-	 H8xWmZsln8RTeTMzlPXP6pl8crUOBBsMQcncsHm3UJYg5K3kU3IXi4FH/Qc4qv2wOO
-	 yEJnquI42uVFFeIsvvRh3GMWQ+sFTb7U/WMNtlSVXjGbMeRckEm9GTcI5P7A0b/Ro3
-	 nMSrwoZKByN/PZoX2e4Jn/Y5mLcclU97Oe6eskkQTsOcmnMnijIJvWokjpBxxC2uqF
-	 n5hVyTRxxXDfw==
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3913d45a148so5217717f8f.3;
-        Tue, 25 Mar 2025 23:34:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0Z8fFKCF0vRhplQweEWYJYb4VDCWeUT4Bm1nCypoBk/n/uxsih6rHY58p6FeUcq+Wry1k9YuiK8p1@vger.kernel.org, AJvYcCU4GAChg4xxzAN3U6zdOKIqvtxfwHDLeuD2G5iqstMAIST5NKH7KjJxH5D7n8szeHjoA9LEIoZYfkCwTD+G@vger.kernel.org, AJvYcCUFkl+fLz2Ty4CUosoSsnoduEM8NcjlVOBB+wGeVVmhTCeluHI1NGAUhGT93dGFpJMBhk0kncI9ONob2JmU3K3D0g==@vger.kernel.org, AJvYcCULDFP2m8ArapfMbFHal25WKy2OQVT9dJFZNasejpHyPNDdlsIs1MfY6E262dno7+4xhui7b5SlOUfwGyyFk5b1@vger.kernel.org, AJvYcCUUsJfP0jLy3Jsw7aPbOSO8BKLtCSp+frnkq1Zls74YGFbVK6DtCKcjZNkFxTvGvDf5GObi5jPz/0EN@vger.kernel.org, AJvYcCUXr2P3qruuhJlosLngrSNHmvD70TBKJ6pnDElYTRlILCHOlPsQMooFdVGO2HAxQno3vDd8NzUmw3O/cuA=@vger.kernel.org, AJvYcCUZj9Pcy+b/+sBQHNmT0l0jL2Qw7x5GePbmuQH5lvxOggSGbmLq2ac+ILT5GNh/RW0fgUi5DkgxyoCUCA==@vger.kernel.org, AJvYcCUdyhsoB72OG79gi1NoOaqP78cOx+RMBeV0OLOvNFYEY5F3t33sbho+EKNBRc+LJ0xVKy6rEaX2P/XtYSk=@vger.kernel.org, AJvYcCUv+aZYOjNJCQBrjBYu2lhDf6McfFEOyLeTxcqAZLVC7XBo3afNbKcgvseKWbNSZMPihiT1+KKpw3zrWXI=@vger.kernel.org, AJvYcCV3puId
- FA0KYAx327zBT/qFJcQ2dbJ7yxWunHB4vyO8kYVhtxsM42JSRNPrHb6ncDmiu83N@vger.kernel.org, AJvYcCVKvsdgscn4uqo6A/K28+75ZkFcH53m5a3RN7f9ysrXqDH155/YZuaO1ixmgv1ZO6RUNbKT/B0Y@vger.kernel.org, AJvYcCVguDGFLvtm/rcALP/PZ5+JqxAGWr/Z5FFnnkGQXwQeBRYpwVLDdyTK7ntwruahdlxwkzY=@vger.kernel.org, AJvYcCWCMyj1EvsfYGiSabQwTiT7uvTmasRiKXCDGdJ2HG6KIxn8nCMbQpW791eGMWH3g4iCnnbtk/yOM+SOTDVpKiWugrAb@vger.kernel.org, AJvYcCWEqtQIvpooCRV44g/lVmuuKDjUO/tE0l1IZGYe8b77mdtTRqrYT6msUdpnF7Me4UTdHrHSIdyuJ8LXmw==@vger.kernel.org, AJvYcCWPx+zO84CE/K6pV+HY5Ri9Z0F2AqInOdTtFBqiosG9yGtbL1jRWZ/EHQi0aUtXXcjsYQDBDokXAPltC3V2fg==@vger.kernel.org, AJvYcCWn0O9iCTJ9d/OvkKxW/Eh1PkNijLdm9bnrMSApgfS+yDT9xod9Du3vVK80Z6CoznHnPh+0d77p1rvpLsyw@vger.kernel.org, AJvYcCXmzcG79gR7jXjdwHfzZVXx+XUq+ZcO5IQljshTRFINu9zIzWvy0NnPErfx8A5/+Uv4wq8V5bpZVytIugLs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsRDEZMjBSsppymsMoksIPjPv0rlVGrfIct04Ab/4Ug7QBY8St
-	bIVe21apUi5Bk6svytNeUK5qMJ0xgJJsi2cTcTkn0+HZojxoRXUcbw0No1yyLbGjddk7HqdRzne
-	kxb/9eVlCS6QwWzfVxO2b1dJrd08=
-X-Google-Smtp-Source: AGHT+IGIApydo9VgmdhIDcmOnmG1sSv1FEEmzeINRVbJ26tbvLOq+REJlE+tfl+WofDYebAF8b+RY6kbO+n3ISps8p8=
-X-Received: by 2002:a5d:47c6:0:b0:38d:d371:e04d with SMTP id
- ffacd0b85a97d-3997f937cd7mr16526330f8f.34.1742970886849; Tue, 25 Mar 2025
- 23:34:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=OOvfkORHwZ+riY2iMnVoRtMdNwtOUUVY0PFE6iI9Qxk9AZcHUhM56bvcx/yVXxpTCWnpNaSq/uSisTUtDcr3fafyV/RbpwGW80uG+hm6BlVqWVDQBS/SbBMrl92uRrxI+lwxTsOanG9yOMTjE38lLvASExt9K2KTe0T3vKolCZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N8/sRWYr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742971227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezHVFsZe1v4BDvN1xzAQ5TFbS1moNinE5s1cTaUBmso=;
+	b=N8/sRWYr6GVuxCoHLJYJIe2mI3wWQwFMO4fv2Sgpl+19R7ni8BkRRjYRvC9mE67Vl9wABl
+	3efV8602h6q8r2OK0n9UsFrNXM4rel/KaaMKemhtk45aXDTExrJnAB3FkqwETXq2xAPlUF
+	7o1HzTLnKKziJtePE2qkT1Nklkf31bk=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-oeUoUYbLPPSmYuAlgLskSw-1; Wed, 26 Mar 2025 02:40:26 -0400
+X-MC-Unique: oeUoUYbLPPSmYuAlgLskSw-1
+X-Mimecast-MFC-AGG-ID: oeUoUYbLPPSmYuAlgLskSw_1742971225
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so18402663a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:40:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742971224; x=1743576024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ezHVFsZe1v4BDvN1xzAQ5TFbS1moNinE5s1cTaUBmso=;
+        b=pyFTa6Ux9fr7FddO9WiFrPYGwPelVagvHu/Aw98/jSu/Ov7PBjA1UwEChgaHthGYHA
+         L9H4DGrUFadr2AfRZeXpPdKzcXsiOqVmJP4uCge6+Oc68muVo15+oHd2/s4upyORy8xz
+         GzXCos0T5diFRiuSY6V27I7okMDAS2FFMSdPS+yjXLX02fCRv4G0bhHm9NogqUYDFc4k
+         IzVX6UtiAcZrYuzNU3gyLfwPaLgLTedYGOBB0zbuXwZ5UarUuCBm7W+NPnYVXps7Kek2
+         XGn45v116MeYmE+Lya3BX9VpAIkYUrU+ZDXwU/wKLQP3FtA31E7MkKFiyIEjrEK4qZf8
+         kmoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU1AlYrXuZRU3+ET7fTwlcqz/CU5QuIhKTl1RY9/OqxqBRx68R6uKoldI5EVTv2V0o88ReHjF9lujBhk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK1Hzj9bC8ZCsPSGD/XegbDFA6BRboCdg1nxYA5qC5WePc0oBv
+	N6QeIuJLsc7aL4eLoiYLjw64E4T/mLzZh1+x2aTOhiywd87MKmEdfsUPUUsRlt+y0ti7PzsDUIR
+	CU74JmYNNQmKOjnz21U0PhnOT6V73CdLWOjEjlr70u3zb8SKQHACjrMNWCruDO3JvplCPzCODAP
+	DDvyFc/d6xCLg3tGnnQGOjM6n8+xcZ+yiU+olWOIvWstMb
+X-Gm-Gg: ASbGncvFVyRAy5tS77YPuFIS3lkOZYgI3L7IQS1evojNkDmKW62v14ohrJYQcYwS9Pf
+	T93NapuTK9msETnjjGIwDbcFkZAiekr615DvJwNtAjftDjkYStDwWkd+3NnG8jUXaXUR5URM=
+X-Received: by 2002:a17:90b:1d51:b0:2ff:62f3:5b31 with SMTP id 98e67ed59e1d1-3030ff06711mr31920768a91.29.1742971224331;
+        Tue, 25 Mar 2025 23:40:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFUGcW4JXSeMZI46/HJNxiBTQIzR50w5i1JUFe2fdLyrEXV1sMUCl3RQeMRWq9Y5cXb5aVu+LPH0QeOT9MfrA=
+X-Received: by 2002:a17:90b:1d51:b0:2ff:62f3:5b31 with SMTP id
+ 98e67ed59e1d1-3030ff06711mr31920735a91.29.1742971223830; Tue, 25 Mar 2025
+ 23:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325121624.523258-1-guoren@kernel.org> <20250325121624.523258-2-guoren@kernel.org>
- <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Wed, 26 Mar 2025 14:34:32 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRZyAAgrM1RMrTi7Zi+Vx_VBnM1=CWwZZtLy+uHZ=vZpw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpGXhmRPDvCQOc_Kwk_PFeqm824JtKAYEkQji0TkGjMeyznsoqjkxAkPig
-Message-ID: <CAJF2gTRZyAAgrM1RMrTi7Zi+Vx_VBnM1=CWwZZtLy+uHZ=vZpw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 01/43] rv64ilp32_abi: uapi: Reuse lp64 ABI interface
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, anup@brainfault.org, atishp@atishpatra.org, 
-	oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, will@kernel.org, 
-	mark.rutland@arm.com, brauner@kernel.org, akpm@linux-foundation.org, 
-	rostedt@goodmis.org, edumazet@google.com, unicorn_wang@outlook.com, 
-	inochiama@outlook.com, gaohan@iscas.ac.cn, shihua@iscas.ac.cn, 
-	jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
-	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
-	dsterba@suse.com, mingo@redhat.com, peterz@infradead.org, 
-	boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, 
-	leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com, 
-	samuel.holland@sifive.com, yongxuan.wang@sifive.com, 
-	luxu.kernel@bytedance.com, david@redhat.com, ruanjinjie@huawei.com, 
-	cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn, 
-	ardb@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250324054333.1954-1-jasowang@redhat.com> <CAPpAL=x4BWNh__YpzkzpErkseh04FT7WNLmg=xMXtfZ0S9BabQ@mail.gmail.com>
+In-Reply-To: <CAPpAL=x4BWNh__YpzkzpErkseh04FT7WNLmg=xMXtfZ0S9BabQ@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 26 Mar 2025 07:39:47 +0100
+X-Gm-Features: AQ5f1JqS06N3aPblaGlfScL2r-BwUXS_ZG-zwaqN3wVN6CTRzZJOuSitX0ZLN4Q
+Message-ID: <CAJaqyWdtKEYiY2tBB0F477LqxVs8fzaix96551WSMa=KdT3C5Q@mail.gmail.com>
+Subject: Re: [PATCH 00/19] virtio_ring in order support
+To: Lei Yang <leiyang@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 4:41=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Mar 24, 2025 at 3:44=E2=80=AFPM Lei Yang <leiyang@redhat.com> wrote=
+:
 >
-> On Tue, 25 Mar 2025 at 05:17, <guoren@kernel.org> wrote:
+> QE tested this series of patches with virtio-net regression tests,
+> everything works fine.
+>
+
+Hi Lei,
+
+Is it possible to test this series also with virtio-net-pci,...,in_order=3D=
+on?
+
+Thanks!
+
+> Tested-by: Lei Yang <leiyang@redhat.com>
+>
+> On Mon, Mar 24, 2025 at 1:45=E2=80=AFPM Jason Wang <jasowang@redhat.com> =
+wrote:
 > >
-> > The rv64ilp32 abi kernel accommodates the lp64 abi userspace and
-> > leverages the lp64 abi Linux interface. Hence, unify the
-> > BITS_PER_LONG =3D 32 memory layout to match BITS_PER_LONG =3D 64.
+> > Hello all:
+> >
+> > This sereis tries to implement the VIRTIO_F_IN_ORDER to
+> > virtio_ring. This is done by introducing virtqueue ops so we can
+> > implement separate helpers for different virtqueue layout/features
+> > then the in-order were implmeented on top.
+> >
+> > Tests shows 5% imporvemnt in RX PPS with KVM guest + testpmd on the
+> > host.
+> >
+> > Please review.
+> >
+> > Thanks
+> >
+> > Jason Wang (19):
+> >   virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
+> >   virtio_ring: switch to use vring_virtqueue in virtqueue_poll variants
+> >   virtio_ring: unify logic of virtqueue_poll() and more_used()
+> >   virtio_ring: switch to use vring_virtqueue for virtqueue resize
+> >     variants
+> >   virtio_ring: switch to use vring_virtqueue for virtqueue_kick_prepare
+> >     variants
+> >   virtio_ring: switch to use vring_virtqueue for virtqueue_add variants
+> >   virtio: switch to use vring_virtqueue for virtqueue_add variants
+> >   virtio_ring: switch to use vring_virtqueue for enable_cb_prepare
+> >     variants
+> >   virtio_ring: use vring_virtqueue for enable_cb_delayed variants
+> >   virtio_ring: switch to use vring_virtqueue for disable_cb variants
+> >   virtio_ring: switch to use vring_virtqueue for detach_unused_buf
+> >     variants
+> >   virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
+> >   virtio_ring: introduce virtqueue ops
+> >   virtio_ring: determine descriptor flags at one time
+> >   virtio_ring: factor out core logic of buffer detaching
+> >   virtio_ring: factor out core logic for updating last_used_idx
+> >   virtio_ring: move next_avail_idx to vring_virtqueue
+> >   virtio_ring: factor out split indirect detaching logic
+> >   virtio_ring: add in order support
+> >
+> >  drivers/virtio/virtio_ring.c | 856 ++++++++++++++++++++++++++---------
+> >  1 file changed, 653 insertions(+), 203 deletions(-)
+> >
+> > --
+> > 2.42.0
+> >
+> >
 >
-> No.
->
-> This isn't happening.
->
-> You can't do crazy things in the RISC-V code and then expect the rest
-> of the kernel to just go "ok, we'll do crazy things".
->
-> We're not doing crazy __riscv_xlen hackery with random structures
-> containing 64-bit values that the kernel then only looks at the low 32
-> bits. That's wrong on *so* many levels.
->
-> I'm willing to say "big-endian is dead", but I'm not willing to accept
-> this kind of crazy hackery.
->
-> Not today, not ever.
->
-> If you want to run a ilp32 kernel on 64-bit hardware (and support
-> 64-bit ABI just in a 32-bit virtual memory size), I would suggest you
->
->  (a) treat the kernel as natively 32-bit (obviously you can then tell
-> the compiler to use the rv64 instructions, which I presume you're
-> already doing - I didn't look)
-I used CONFIG_32BIT in v1 and v2, but I've abandoned them because,
-based on CONFIG_64BIT, I gain more functionality by inheriting the
-lp64-abi kernel. I want the full functionality of the CONFIG_64BIT
-Linux kernel, which can be equivalent, used interchangeably, and
-seamlessly.
 
->
->  (b) look at making the compat stuff do the conversion the "wrong way".
->
-> And btw, that (b) implies *not* just ignoring the high bits. If
-> user-space gives 64-bit pointer, you don't just treat it as a 32-bit
-> one by dropping the high bits. You add some logic to convert it to an
-> invalid pointer so that user space gets -EFAULT.
-Thanks for the advice. I'm looking at how to make the compat stuff.
-
---=20
-Best Regards
- Guo Ren
 
