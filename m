@@ -1,209 +1,166 @@
-Return-Path: <linux-kernel+bounces-577053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B576A717BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:48:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27EFA717C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DC3188D1AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 259107A54A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10601EEA59;
-	Wed, 26 Mar 2025 13:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DEE1F0E5D;
+	Wed, 26 Mar 2025 13:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PGNxvXV5"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AGfyAtId"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290031E5B96
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4961F0E58
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742996884; cv=none; b=c0ow9gIkKmsQV9OIIbJP2b8UPnLYML7NBo1Lpul5kozj+jE6NGGLXJmlgpGhc6thPYF9alVrHo9OBiIe4F2h6VaWBInL2sNlk/jD2QQq8QkfZZaNx6dFvBlA4aFzl2dzZLNfdEQdt39HTd3jJ8u5h9C6ct0mWRnhf3jr3EP2UCU=
+	t=1742996878; cv=none; b=tETERE4SSHSYzyK4Y1W0FOtlslN3K+0helGaIwHp0Lfpm7gk7/5/wEjmoRc2gD0+63n67pL47ck904JiL+F2nb4gPtrJt5szMdoXGEjPPjdKL2Vdr8unk+0F6j9tCajljqat/K07UpekQSnCLuh36HarnF4IGsYDawWmMaogTb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742996884; c=relaxed/simple;
-	bh=jh7jltZ0TL82geu3pwoRxx7NSA3ad7amVPFL5zvX4uU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qO9ebcoo/I7o1dcmQj20AoR/CviFnbjw3quHS55dsGQfW/EMjWwGeL4o2g11IxiP9qT33+Q90k7ZgtLBbAvR0qwZM6IJBEhGQPzWQuKS/EoNQyabUl++nGXePwgQMW03utCSgbjX/ya9T5lyQ7ub3NoB/wJnE6PMOuy6hUz5Vgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PGNxvXV5; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so332488a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742996880; x=1743601680; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x9sT5gYMVXxegd6ePB7XNS/u3ZsbMZydYpHA0nFGyi0=;
-        b=PGNxvXV5jXU+X1Mx/BHNbpEZaAt8G18eCR1b7Kc+zJ+o01Rxk8+//CVeIFl+epKDlD
-         efhZikQPmkuqOiDJ6aEuWYxw0PwtY9jwujmGhCJPjk50wkjJjj+BHOSkdWluVJ4/r4NA
-         934wUzicdjHV2o2ViBW5vq2PY8tyz1XYiNRcRBwKXwTa0rXNKK3jar+55q0FKaBUtaa4
-         JxMftMjkJHgPhDtRbj5ReD7Xs3kBmpn/P76wz89HKmKMGhvGd6twCIolFpLHIg4YPfcL
-         1X1t7VGqevOmviCmuFu13zUyeHbMAfd2eoYc+UVC/nsQ8yieFtd6hR6nVD4z25ulxnzO
-         KShw==
+	s=arc-20240116; t=1742996878; c=relaxed/simple;
+	bh=HM1XM3OSq4yEVZb5m5XmPCyWxGqw8sZDWhXSOtE8AWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CI0Hi7S2qAkXiLK1+JtL/dY8rSo1P4Eq8gys9ymfuK3bMDbUvPeNZ/6wIhSB9oQpNBD/za18242KN+9yjTGeh1vqEhNFqEtwVo6QjcYxFMHtI5BqhYiY8cm+3293LlOeyAZfmyc8LirW37b5PrA+7DCyMaYpdLSySRrgicjP+lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AGfyAtId; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73Sw5013348
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:47:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oAnsNYobYXGQyVT8GaIUO6lv6WY6ogscB1FdUtiA198=; b=AGfyAtIdcyTF6b44
+	fjEmGfNn4kKFyBMbqgA1Khyhcjr7fUj8R8/6dxgDuD+5RcZEcrHwtEJW5J61YmSE
+	PaUNe4URcczVGRQAwdomQ/nXXdV1uPu+PKvTXm88dj9f6rGrZ3hUHguZqC37ThNp
+	4aPim4Oq9nN3EQdlO9/Qaj4hFCE8JpEDfYpR+yLRe+Hep7772WkfeFtNc2t673+l
+	02+t91hPhUWLi9I8Dne7YcpqCzjzoQCz6IIxqeakDtx/wWd15kX+NbiMyAaxpPX7
+	sqplzw+F5gdIs5ywuegZUjzR++Nkv7zAlE8f6JJQ4vNHNMwwT2DUeXSfNdT8/7gT
+	YjG2IA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyr9jxey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:47:55 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8ff8c9dcfso11689106d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:47:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742996880; x=1743601680;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9sT5gYMVXxegd6ePB7XNS/u3ZsbMZydYpHA0nFGyi0=;
-        b=ZaCzlAegEMRAfGrcG6Czd5Z237uhCKWB7vmjEcZlPjQx4EU3WKkNLvH8nXsXPEhG2a
-         3cbJUz04pbELU9HGl0p0vTskntmL9m0oErOSmEAtmYY0h2V/7oFVfft6emXx1G94xIEr
-         lmhIuNYrjsDpAw7Z5LaDF1ribNsxjjRtXiZF1iXGNsnI9jVMVMwhA9YnBApoj0oaEy4+
-         Z9W+isWlP4rjubY7iofmqXpKiQJKiFzP4h+e9Ygl7JeF+phbT5PekWqT802Nf/PkD2yC
-         xANP50OTogPGGi7c7X+2PRSG1c5FLHKq7BDIs9vkT7fUWmaFRqYwrWpjLpGNVGahjtGz
-         Bu7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4859maY4H60ioZvEUGEwnqrDTmjwn8ngQKSgKHmYunvWDMAZTVvv7TXancv31HgDZeosconWK2w5Z/+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGZwbrE8AB+UrsROKEdB3faY2NOMfe2X97ouCjbB9+SuN1aHj+
-	EY17hewRuvEto+iEemDFc3yKfHop2+olg9BDvP0GPjcxSP8KzdA2AMioaZevPIUUDMccDEXkSd+
-	E+WNA6dRZA6EAyogGi6rpPDAOvENsctuS8KO5Gw==
-X-Gm-Gg: ASbGnctKOp4HgV12e1LXJ0Foie+1BwTIVYBCGuokbmhADxZDGSKs9vSP6qgwyUdq1sw
-	V9X1yWYh2DJHS60b2n68Iun4W1QtjrgcrEC1YqCeYQjdfC34LAnnj91UVcNHdeNa+1ttei7vfSW
-	kqJp8CNo/dgRvRUEwKbxfE3IRLfp/m+qkBTFSXXQ==
-X-Google-Smtp-Source: AGHT+IEGSuYC4bKSUuP+CAwNwXG++bb6dx5rZNBEpA4UsLdcOk6cHr5Psu1CDRSptNtuO+3Eu1NGzt7joB7V/dpX/1E=
-X-Received: by 2002:a05:6402:520c:b0:5ed:1841:18c5 with SMTP id
- 4fb4d7f45d1cf-5ed1841200amr5524723a12.30.1742996880315; Wed, 26 Mar 2025
- 06:48:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742996875; x=1743601675;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAnsNYobYXGQyVT8GaIUO6lv6WY6ogscB1FdUtiA198=;
+        b=XX7g5pjOODi+Co4A5N7Jodj61EnIOHo3Tddv4IpJEnQ5VCFAToxKAmxYmUhggI0AGt
+         8lo93S4hjavZrjAPJ3gs7ImHlfpKaRAPQ6MYkU2897KTHeUFnuifljqvtTfYrM5HZ721
+         NW1nwaBOjSBwl8L/3DLjizKwQyHgWFL/YGNI89EGsM/NZt+s84D37Fv/CUPEvk+Uhxym
+         Q5LTNMhVTkARdUQIWjbbTXPO4A3C8T/6z5AlUzB0KuFh/MIfMdmnHd2v8HIItMZGWd3B
+         PgVgaADFKfRDtLJ3kxxvpZv5rrDS0tsuE1/MkBBZW5fukbp4Sb95o5hbXNp/GvhhbEWP
+         xDuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgGsu+Z0X1pFphXFGvr95jZWuENbQglP8K8unWtfSl6J/lLT9cNoDr/B4i/0CFcOwaDUHSScGbO6x7R9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIaWtsUvJld0CSQcWzBrqzjXiHljAXFLaaPXXBurLJvx8HyI2V
+	eUZ8Gc2ogRLHW7PD17sRODYoGS8wXEBsJCTlqHT7wTnI4jN/WTHqgAAc9c9wu5KWSwMIkeMFzxt
+	o7Hv+R5MXbcJ9DvJ6iZL3FG1S7utdKLX4l2Ir1LfNHT2tDaZl+dzJsL/LB0qzVdI=
+X-Gm-Gg: ASbGncvLXAJ8svfkiG/38B+9RVrg1beklIvqH1ctBGxCBP2U/XvTPRiGNBpsWxO5bzq
+	69BVVzDihZ/y/geDDkmpiM9o84InOffFkBcD0DBABOkcABT47grRrp2+hizerIoUV3B2pc/1j9L
+	68wrtSdY5yAP2xx4VLUhLLBSTJRV3NVSWVNydfHvKGB0A/k20q865fTNrCL4srvnhBsyRf88EIU
+	kquSI3RzpH6xXOyIBYZ4bzZN1r4h6Oc4XyveGGOKQvavC0o4B5GJ4eIUa4a3xc6qtaMTBetBvkH
+	Ae6155H+fU6Tt2gQSx+OOIh4uWkSH3pvd8axFnD4i3VQLMGFDTkyuNIYSAtoPkdS0KgpJQ==
+X-Received: by 2002:a05:6214:e6d:b0:6e8:98ce:dd75 with SMTP id 6a1803df08f44-6eb3f31f775mr103660616d6.9.1742996874794;
+        Wed, 26 Mar 2025 06:47:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFd5B6zyRzYrno4RuXc9G89CRxgNBc2jAwg6fxiQ+Jm/et41PRpGY6sCmOIsIZwNP0HOEUxA==
+X-Received: by 2002:a05:6214:e6d:b0:6e8:98ce:dd75 with SMTP id 6a1803df08f44-6eb3f31f775mr103660306d6.9.1742996874282;
+        Wed, 26 Mar 2025 06:47:54 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e5128sm1034146766b.59.2025.03.26.06.47.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 06:47:53 -0700 (PDT)
+Message-ID: <8b7151d6-e2e0-4561-954d-4a74126b4265@oss.qualcomm.com>
+Date: Wed, 26 Mar 2025 14:47:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325200740.3645331-1-m.felsch@pengutronix.de>
- <Z-Pc6C1YUqLyej3Z@casper.infradead.org> <20250326110718.qzbwpmaf6xlcb4xf@pengutronix.de>
-In-Reply-To: <20250326110718.qzbwpmaf6xlcb4xf@pengutronix.de>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 26 Mar 2025 14:47:46 +0100
-X-Gm-Features: AQ5f1JrG9ZILdyykC_tS8t95UZ2cSs2k_HAmhl1CAgx9Sf_jLK7aZpBeM1uOp1g
-Message-ID: <CAHUa44FUK_73oKSaqGdiPqB3geZbTNDFsC1Mh=KN3YPWr9=7gQ@mail.gmail.com>
-Subject: Re: [PATCH v2] tee: shm: fix slab page refcounting
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Matthew Wilcox <willy@infradead.org>, sumit.garg@kernel.org, vbabka@suse.cz, 
-	akpm@linux-foundation.org, kernel@pengutronix.de, 
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/10] arm64: dts: qcom: sm8750: Add USB support to
+ SM8750 SoCs
+To: Melody Olvera <quic_molvera@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250324-sm8750_usb_master-v3-0-13e096dc88fd@quicinc.com>
+ <20250324-sm8750_usb_master-v3-7-13e096dc88fd@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250324-sm8750_usb_master-v3-7-13e096dc88fd@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: l1SNlxbEppC6Objr4kjJiq6pUrt5qyDi
+X-Authority-Analysis: v=2.4 cv=UblRSLSN c=1 sm=1 tr=0 ts=67e4058b cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=x9b32qiywL4GtknhJMwA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: l1SNlxbEppC6Objr4kjJiq6pUrt5qyDi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 mlxlogscore=801 bulkscore=0 malwarescore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260083
 
-On Wed, Mar 26, 2025 at 12:07=E2=80=AFPM Marco Felsch <m.felsch@pengutronix=
-.de> wrote:
->
-> On 25-03-26, Matthew Wilcox wrote:
-> > On Tue, Mar 25, 2025 at 09:07:39PM +0100, Marco Felsch wrote:
-> > > Skip manipulating the refcount in case of slab pages according commit
-> > > b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page"=
-).
-> >
-> > This almost certainly isn't right.  I know nothing about TEE, but that
-> > you are doing this indicates a problem.  The hack that we put into
-> > networking should not be blindly replicated.
-> >
-> > Why are you taking a reference on the pages to begin with?  Is it copy
-> > and pasted from somewhere else, or was there actual thought put into it=
-?
->
-> Not sure, this belongs to the TEE maintainers.
+On 3/24/25 9:18 PM, Melody Olvera wrote:
+> From: Wesley Cheng <quic_wcheng@quicinc.com>
+> 
+> Add the base USB devicetree definitions for SM8750 platforms.  The overall
+> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> (rev. v8) and M31 eUSB2 PHY.  The major difference for SM8750 is the
+> transition to using the M31 eUSB2 PHY compared to previous SoCs.
+> 
+> Enable USB support on SM8750 MTP and QRD variants. SM8750 has a QMP combo
+> PHY for the SSUSB path, and a M31 eUSB2 PHY for the HSUSB path.
+> 
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
 
-I don't know. We were getting the user pages first, so I assume we
-just did the same thing when we added support for kernel pages.
+[...]
 
->
-> > If it's "prevent the caller from freeing the allocation", well, it neve=
-r
-> > accomplished that with slab allocations.  So for callers that do kmallo=
-c
-> > (eg setup_mm_hdr()  in drivers/firmware/efi/stmm/tee_stmm_efi.c), you
-> > have to rely on them not freeing the allocation while the TEE driver
-> > has it.
-> >
-> > And if that's your API contract, then there's no point in taking
-> > refcounts on other kinds of pages either; it's just unnecessary atomic
-> > instructions.  So the right patch might be something like this:
-> >
-> > +++ b/drivers/tee/tee_shm.c
-> > @@ -15,29 +15,11 @@
-> >  #include <linux/highmem.h>
-> >  #include "tee_private.h"
->
-> I had the same diff but didn't went this way since we can't be sure that
-> iov's are always slab backed. As far as I understood IOVs. In
-> 'worst-case' scenario an iov can be backed by different page types too.
+> +		usb_1: usb@a6f8800 {
+> +			compatible = "qcom,sm8750-dwc3", "qcom,dwc3";
+> +			reg = <0x0 0x0a6f8800 0x0 0x400>;
+> +
+> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
+> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+> +				 <&tcsrcc TCSR_USB3_CLKREF_EN>;
 
-We're only using kvec's. Briefly, before commit 7bdee4157591 ("tee:
-Use iov_iter to better support shared buffer registration") we checked
-with is_vmalloc_addr() || is_kmap_addr(). I like Matthew's suggestion,
-it's nice to fix problems by deleting code. :-)
+I believe this belongs to the PHY, but the documentation doesn't make that
+very clear..
 
-Sumit, you know the callers better. What do you think?
+With that squared out whichever way is correct:
 
-Cheers,
-Jens
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
->
-> Regards,
->   Marco
->
-> > -static void shm_put_kernel_pages(struct page **pages, size_t page_coun=
-t)
-> > -{
-> > -       size_t n;
-> > -
-> > -       for (n =3D 0; n < page_count; n++)
-> > -               put_page(pages[n]);
-> > -}
-> > -
-> > -static void shm_get_kernel_pages(struct page **pages, size_t page_coun=
-t)
-> > -{
-> > -       size_t n;
-> > -
-> > -       for (n =3D 0; n < page_count; n++)
-> > -               get_page(pages[n]);
-> > -}
-> > -
-> >  static void release_registered_pages(struct tee_shm *shm)
-> >  {
-> >         if (shm->pages) {
-> >                 if (shm->flags & TEE_SHM_USER_MAPPED)
-> >                         unpin_user_pages(shm->pages, shm->num_pages);
-> > -               else
-> > -                       shm_put_kernel_pages(shm->pages, shm->num_pages=
-);
-> >
-> >                 kfree(shm->pages);
-> >         }
-> > @@ -321,13 +303,6 @@ register_shm_helper(struct tee_context *ctx, struc=
-t iov_iter *iter, u32 flags,
-> >                 goto err_free_shm_pages;
-> >         }
-> >
-> > -       /*
-> > -        * iov_iter_extract_kvec_pages does not get reference on the pa=
-ges,
-> > -        * get a reference on them.
-> > -        */
-> > -       if (iov_iter_is_kvec(iter))
-> > -               shm_get_kernel_pages(shm->pages, num_pages);
-> > -
-> >         shm->offset =3D off;
-> >         shm->size =3D len;
-> >         shm->num_pages =3D num_pages;
-> > @@ -341,10 +316,8 @@ register_shm_helper(struct tee_context *ctx, struc=
-t iov_iter *iter, u32 flags,
-> >
-> >         return shm;
-> >  err_put_shm_pages:
-> > -       if (!iov_iter_is_kvec(iter))
-> > +       if (iter_is_uvec(iter))
-> >                 unpin_user_pages(shm->pages, shm->num_pages);
-> > -       else
-> > -               shm_put_kernel_pages(shm->pages, shm->num_pages);
-> >  err_free_shm_pages:
-> >         kfree(shm->pages);
-> >  err_free_shm:
-> >
-> >
+Konrad
 
