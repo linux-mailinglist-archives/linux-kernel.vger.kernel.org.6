@@ -1,113 +1,220 @@
-Return-Path: <linux-kernel+bounces-577070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF39A71800
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:03:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A428A71802
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D34F1899809
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ACA176710
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FFA1E5B7D;
-	Wed, 26 Mar 2025 14:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101DA1E5B7D;
+	Wed, 26 Mar 2025 14:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DUuJGsRn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lnAUhGJC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+Bq1Igj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D4B1DBB03
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4B1B0435
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742997681; cv=none; b=gl6B9TvNC/l6id5rSRJlKustAkKsH6lDBM29NwV6WzAH/oBwRSm0rh6CYbHsqnJpCMy77+SxnHWKi/Pux7NhNeVMOnFRn7+nR1a6Pi/1KtQSWsD5NSo1cMIpRNM47zOo+BpTnZWX3hK5ifhWgl0tff/K3VyZ19i3FocVkuSsOK8=
+	t=1742997736; cv=none; b=Mlixqa8GYHydzrMQk7CB1+h1UCXgxjlbstzDYJdfI0BE/XHgBeP1/HvkbwNTHcKVYT1L3PzZtxq8vON903sQEwNzeezOGf7Xz59q0FVuoiSwwazzw+L0t+6NezMrqvWzqC1PdYSXNR0eT6lqAIKmhKJkilFlDA7DrAHdLUknFuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742997681; c=relaxed/simple;
-	bh=Igrxll/xy+jJfLMZQ+C3GykA3exQ7yATUS4lASMKXX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/3YduXUi8kcXTHmuVD6wsJtGm6yGx/0YUOyvoWeq9h1MNLSCuUzeznwsjatspQ44qbIZPk4UDHO5wormPmzDwV/CiJ+JW/xmYTBkbKWBxS5Rn74FPERR0GyfqPuGSwxds6p2mI7iuc4iRc+2D/6Ll4jao91zeLquT1tsBpPxmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DUuJGsRn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lnAUhGJC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Mar 2025 15:01:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742997676;
+	s=arc-20240116; t=1742997736; c=relaxed/simple;
+	bh=ExKHiY1vfFVJz9ncN9p+ELlmMZ6mdwDNgLovj/LRhmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fFE9PtjLVpHXTA+1R8dF/T+TLnVsA0dv1APt6vmxl6BFhHmeHL8SmIyY31EaIZ1bBt9IXczSvsilYi9sCe2JraT8iRMbgxR1QRPoaRRTQdLkW1U4mWRcLxodPa32Zm/63bU015IXv4YZavH71rmyXjWGIiufwTjmTLfAxOMcRg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+Bq1Igj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742997733;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dDpJi3HJJuF39B2sjxncAYZsGzMf2Cy9EDTvWaL5HU8=;
-	b=DUuJGsRnWTfDQpM45hgh2Wjr7OWaV5TrRj0qf0OAodEoE68uSkeXVyFkCrlMJf4dt2zr6b
-	EocSGwvRTqL94gcQs9ALfGe3vJXy9pnyJo/S/FbQzoG2/Wg00DSE5f7JzxFhzuH0yjD9TE
-	ewoLLnUGckjVS/opXeRTTXzoU9QwluIeZYioCQkT7idVSvW7BgiyYMDjRI0zwMHxaMaTRb
-	G8oUk5sOiJcI6EsrxR+ju9+38nJL8fJTL4xI0gLMCW2Il612H2EBqxgqRqeB6VAcI1oezc
-	Yx+5kiyc6wn+hV1Tgxi08Wm6sAnH3nl2x9UECFib9+Kcwu6PF1cvi8IlZryBcA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742997676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dDpJi3HJJuF39B2sjxncAYZsGzMf2Cy9EDTvWaL5HU8=;
-	b=lnAUhGJCeXUp/j+Asl0Xi4utCKPB46KlMiF3YuH4N78B8iVp1VWceNvTZ2iVqpAQKZ1+VL
-	zVrVN48O6/SXUvAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-	"Nysal Jan K.A." <nysal@linux.ibm.com>
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250326140115.F2qcoyMa@linutronix.de>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
- <587d45c3-2098-4914-9dfc-275b5d0b9bb7@linux.ibm.com>
- <20250326093153.Ib5b2p6M@linutronix.de>
- <7c660d7a-6c70-4307-895f-70d4aa274886@linux.ibm.com>
+	bh=G6A4QtKmG1cSlqlEKr2nCjS1PIqtKpWV2z+HY5iuQ8E=;
+	b=N+Bq1Igj2RcWVYONhz5wRWMUtvPZwr6AVxxICm+5JykXw6Pdil9ojIWzrD4VIU3krjYouD
+	Fsdie/MpOwIe6FWjYSIGnTpGrgfI6YK9alHdRtz92LQXd/YyvTca2l4YzbtSW4c51BOgQZ
+	oC/6VMSCge70ZYRgqKxmYon1epPUef4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-3LjeKo47P-6lk3kaIHLPug-1; Wed, 26 Mar 2025 10:02:12 -0400
+X-MC-Unique: 3LjeKo47P-6lk3kaIHLPug-1
+X-Mimecast-MFC-AGG-ID: 3LjeKo47P-6lk3kaIHLPug_1742997731
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3978ef9a284so2765774f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742997730; x=1743602530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G6A4QtKmG1cSlqlEKr2nCjS1PIqtKpWV2z+HY5iuQ8E=;
+        b=Y0RgkMT5SjH1YuuYj/fDWlSGk+9G0n/JP0HJpr7eQGBcLfDoTGma+Rp1cBd3BnlR/f
+         uogD9KXxZTHM8kSGaG7UwwsA71NweFgqtGqzdA4QsZAH+hGMZO7DjFVkvePhn4T9d46K
+         LKxhjXMoDDUGkmgoVQZVU4DL5vj+12vKF7QOm1t8zGpO1sYA8c2JKpOvZAdBoFx/H0a1
+         e1ge7u7zwtszGLiv70l2+XsOV4+ly2UGi8rbBitUX4qh/3PIvidOUyrCqICg858Uzr4t
+         9CMqpssXv3myw8iZLogE8w0uk2E9uK1zvdoJR/TQOIfhRH3DTBSEFj7zuFfmg3+KUenL
+         fzmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVq1Ekz1ZOMuDWAYOgAOCmUB46J1f/Q6j5U8axaGEcpEUzpl+vAbGOmkYgHodaot60Gls4a9hi02XIabAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwQGRUqq1yTTLWxZw5rlHdrVgxnTJQXybU8epJ6FAQAvDYufsD
+	IWb/vVZ4ohA7DNl8ud6PSteohwey9ZLju1KRb4QOPp1kTz8QIsMwew5opOR00eE8mmrovrWbQFT
+	MOFV2qtmx2rR4hZ9QLy5Gp75mYnk/RFn6aTW7H15BHJxvEBWVIjoDX3dh3t820+yKVlbAmGymsi
+	cBeYPfsoIu0TEjwI1EIpfPBXoPZhkbzsoTycYpzX0lMc43/TY=
+X-Gm-Gg: ASbGncvE0FrkqamJVqsm7lSk/0gzyB2En73PBqSbpqYmBydX5ANNLD06expGVjf4jTh
+	3Ny+osuX+z6LLBtOeaAeP90C2IpJ9F93AIvoRiUTcKdx4muzI5oeTdat5JMCqwF93+wH3/eI=
+X-Received: by 2002:a05:6000:184e:b0:39a:c6c1:3408 with SMTP id ffacd0b85a97d-39ac6c13529mr6773887f8f.37.1742997730214;
+        Wed, 26 Mar 2025 07:02:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVqs4eXb7WYajBzH07dwOO7LIznq7DcBXdw3fZ7amxqvEjWOZDPtljFddcq4377XdEC6+XOg2IYsIt0Cbo6MQ=
+X-Received: by 2002:a05:6000:184e:b0:39a:c6c1:3408 with SMTP id
+ ffacd0b85a97d-39ac6c13529mr6773793f8f.37.1742997729380; Wed, 26 Mar 2025
+ 07:02:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7c660d7a-6c70-4307-895f-70d4aa274886@linux.ibm.com>
+References: <20250324054333.1954-1-jasowang@redhat.com> <20250324060127.2358-5-jasowang@redhat.com>
+In-Reply-To: <20250324060127.2358-5-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 26 Mar 2025 15:01:30 +0100
+X-Gm-Features: AQ5f1JpZuY-R1mOa9Psg6wH6oBtdE7eDiRjlK41MnQiXsLSO1qS2bJZXvZEj_3Q
+Message-ID: <CAJaqyWfzRDa5vn0nJiaPdy2=Qoi40jgUQbbAspm25zM7OfUyHg@mail.gmail.com>
+Subject: Re: [PATCH 17/19] virtio_ring: move next_avail_idx to vring_virtqueue
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-03-26 18:24:37 [+0530], Shrikanth Hegde wrote:
-> > Anyway. To avoid the atomic part we would need to have a per-CPU counter
-> > instead of a global one and a more expensive slow path for the resize
-> > since you have to sum up all the per-CPU counters and so on. Not sure it
-> > is worth it.
-> > 
-> 
-> resize would happen when one does prctl right? or
-> it can happen automatically too?
+On Mon, Mar 24, 2025 at 7:01=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> This variable is used by packed virtqueue now, moving it to
+> vring_virtqueue to make it possible to be reused by split virtqueue
+> in-order implementation.
+>
 
-If prctl is used once then only then. Without prctl it will start with
-16 buckets once the first thread is created (so you have two threads in
-total).
-After that it will only increase the buckets if 4 * threads < buckets.
-See futex_hash_allocate_default(). 
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-> fph is going to be on thread leader's CPU and using atomics to do
-> fph->users would likely cause cacheline bouncing no?
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index bd4faf04862c..a1a8cd931052 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -138,9 +138,6 @@ struct vring_virtqueue_packed {
+>         /* Avail used flags. */
+>         u16 avail_used_flags;
+>
+> -       /* Index of the next avail descriptor. */
+> -       u16 next_avail_idx;
+> -
+>         /*
+>          * Last written value to driver->flags in
+>          * guest byte order.
+> @@ -214,6 +211,9 @@ struct vring_virtqueue {
+>          */
+>         u16 last_used_idx;
+>
+> +       /* Index of the next avail descriptor. */
+> +       u16 next_avail_idx;
+> +
+>         /* Hint for event idx: already triggered no need to disable. */
+>         bool event_triggered;
+>
+> @@ -448,6 +448,7 @@ static void virtqueue_init(struct vring_virtqueue *vq=
+, u32 num)
+>         else
+>                 vq->last_used_idx =3D 0;
+>
+> +       vq->next_avail_idx =3D 0;
+>         vq->event_triggered =3D false;
+>         vq->num_added =3D 0;
+>
+> @@ -1350,7 +1351,7 @@ static int virtqueue_add_indirect_packed(struct vri=
+ng_virtqueue *vq,
+>         u16 head, id;
+>         dma_addr_t addr;
+>
+> -       head =3D vq->packed.next_avail_idx;
+> +       head =3D vq->next_avail_idx;
+>         desc =3D alloc_indirect_packed(total_sg, gfp);
+>         if (!desc)
+>                 return -ENOMEM;
+> @@ -1431,7 +1432,7 @@ static int virtqueue_add_indirect_packed(struct vri=
+ng_virtqueue *vq,
+>                                 1 << VRING_PACKED_DESC_F_AVAIL |
+>                                 1 << VRING_PACKED_DESC_F_USED;
+>         }
+> -       vq->packed.next_avail_idx =3D n;
+> +       vq->next_avail_idx =3D n;
+>         vq->free_head =3D vq->packed.desc_extra[id].next;
+>
+>         /* Store token and indirect buffer state. */
+> @@ -1501,7 +1502,7 @@ static inline int virtqueue_add_packed(struct vring=
+_virtqueue *vq,
+>                 /* fall back on direct */
+>         }
+>
+> -       head =3D vq->packed.next_avail_idx;
+> +       head =3D vq->next_avail_idx;
+>         avail_used_flags =3D vq->packed.avail_used_flags;
+>
+>         WARN_ON_ONCE(total_sg > vq->packed.vring.num && !vq->indirect);
+> @@ -1569,7 +1570,7 @@ static inline int virtqueue_add_packed(struct vring=
+_virtqueue *vq,
+>         vq->vq.num_free -=3D descs_used;
+>
+>         /* Update free pointer */
+> -       vq->packed.next_avail_idx =3D i;
+> +       vq->next_avail_idx =3D i;
+>         vq->free_head =3D curr;
+>
+>         /* Store token. */
+> @@ -1633,8 +1634,8 @@ static bool virtqueue_kick_prepare_packed(struct vr=
+ing_virtqueue *vq)
+>          */
+>         virtio_mb(vq->weak_barriers);
+>
+> -       old =3D vq->packed.next_avail_idx - vq->num_added;
+> -       new =3D vq->packed.next_avail_idx;
+> +       old =3D vq->next_avail_idx - vq->num_added;
+> +       new =3D vq->next_avail_idx;
+>         vq->num_added =3D 0;
+>
+>         snapshot.u32 =3D *(u32 *)vq->packed.vring.device;
+> @@ -2083,7 +2084,6 @@ static int vring_alloc_state_extra_packed(struct vr=
+ing_virtqueue_packed *vring_p
+>  static void virtqueue_vring_init_packed(struct vring_virtqueue_packed *v=
+ring_packed,
+>                                         bool callback)
+>  {
+> -       vring_packed->next_avail_idx =3D 0;
+>         vring_packed->avail_wrap_counter =3D 1;
+>         vring_packed->event_flags_shadow =3D 0;
+>         vring_packed->avail_used_flags =3D 1 << VRING_PACKED_DESC_F_AVAIL=
+;
+> @@ -2977,7 +2977,7 @@ u32 vring_notification_data(struct virtqueue *_vq)
+>         u16 next;
+>
+>         if (vq->packed_ring)
+> -               next =3D (vq->packed.next_avail_idx &
+> +               next =3D (vq->next_avail_idx &
+>                                 ~(-(1 << VRING_PACKED_EVENT_F_WRAP_CTR)))=
+ |
+>                         vq->packed.avail_wrap_counter <<
+>                                 VRING_PACKED_EVENT_F_WRAP_CTR;
+> --
+> 2.42.0
+>
 
-Yes, this can happen. And since the user can even resize after using
-prctl we can't avoid the inc/ dec even if we switch to custom mode.
-
-> Not sure if this happens only due to this benchmark which doesn't actually block.
-> Maybe the real life use-case this doesn't matter.
-
-That is what I assume. You go into the kernel if the futex is occupied.
-If multiple threads do this at once then the cacheline bouncing is
-unfortunate.
-
-Sebastian
 
