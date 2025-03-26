@@ -1,216 +1,129 @@
-Return-Path: <linux-kernel+bounces-577534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A045A71E64
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:29:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDAA71E70
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904AD17936C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0FE3B8CEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9B9258CFA;
-	Wed, 26 Mar 2025 18:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE2D254877;
+	Wed, 26 Mar 2025 18:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WQBePKR6"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzWfP5i0"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EB825D524;
-	Wed, 26 Mar 2025 18:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65EC253340;
+	Wed, 26 Mar 2025 18:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013602; cv=none; b=B+lfBENgT2i0m0j9XCMJUrrFx3sp1z9up6o6nPZjRToas81YhbKhR9n3ObH5vWgPEuMHL0QkeEWwHz2vq89ZEccT6+FhFI7JgpD6gcrpeXnc9xYN9cGcX+ENg47XjF5z6JSnh0/d8BU59P+o6BzG9rcCOdBo9sIb/TzQsqLbeco=
+	t=1743013652; cv=none; b=nfLK41IWmNGrdozxmNr35X/suwZh+X+ja4CHaKW6w16EbPvT9LPjyYBIuOlHHMaMx/MLMnWupkA+L93lJJcNQqI2FNzZL/z9tJektzrlzGeViVYrX7u5wdCcU140y5VJwZH8NWZi31FEig5TJL9I9QsIHh2lJdC1lDGDaOhLZNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013602; c=relaxed/simple;
-	bh=2hOOkKfJ2O24FeBerSRc7TzBcA7RAdNIvqDCbUOqPBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bIMeYPny+SRWPFKI0XKfB8Q9o3AFAU43srAyHanFMTgfVnNj4Fg+2paIFXEhfZ3GS59BC9pZtNpidXgfGteCTJPMSuPLvemvG7il5/3zQ0feBXLBGbpW8p5FG5AAwaXLpXq53cEtgGoa1NvxkMqp/jJ+4BBIt2xDiIxEZxHsRWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WQBePKR6; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD6F844447;
-	Wed, 26 Mar 2025 18:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743013598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6fDJAgeivWwEjOlUOt+sxMAv2+TjUSgdeW6xREfgQ4=;
-	b=WQBePKR6H4Qi0pPpju+j0GA4z4uw2abs39R6ZvrmXUT7QQXG06s56xvKtQtO4KjWqdF7Df
-	dpT/YQ+1W6kwCwSyqW5+tjpfVHHzIO7tqSJA6+/0WUtzbpDlMCnHdEw8jMrzTPnlmIObSK
-	8vUfxrXsB+MtbES6OucJb75vs1SRo8cWbcHk/7m5OzXaD2pqSNWeIsg6oDca6m9kLRw2CD
-	PQZUTQsucwmimu2Yl3CYP0VIZrfNDvNJr398UMc4+x4Iu5MIlwJD2F6CQW3d2ZYKzF2Tv6
-	0mbek6lj9SZIX133MF4YJtQ33N8t8yElehLWVozJtTLRsqIvOfycZjMwUxP2Vw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 26 Mar 2025 19:26:25 +0100
-Subject: [PATCH RFC 10/10] clk: Fix the ABBA locking issue with runtime PM
- subcalls
+	s=arc-20240116; t=1743013652; c=relaxed/simple;
+	bh=WmQEkXsfznu8w+rBf6ZgS1QtNrnadeHs+aER+P43DfE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JpEdXNv7vWjUnIweyIEzSOwq65/h5neZXeRSCOdrsiPZpSXaITuHmNOC5QqUkOpPj4wDXGF8RCcIEURVkAfO47CudT0Al+gVOqLJ0rRE5lTp6Sy5InXLSHq/jNzJI3qkx2HaJ+XGvXG0j+L0gpzqPPBATSTWGLBUqrblYxaBrkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzWfP5i0; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab78e6edb99so15270466b.2;
+        Wed, 26 Mar 2025 11:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743013649; x=1743618449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wwZ/kZVKA3ly+94BX9Iupd7sb0MCbfiMrJTL+cNfKIk=;
+        b=TzWfP5i0bGxBcueEf8oRLjHNjbdR+XMkxXB0lJa6wjvCSpW46Fk6wdyq/7DUnf1m0K
+         B37yRJlWv7b87wuvnsClNMuk3qiLiwqTnVVSvUWYD9iH3i31y7Gk19KmRtAx7EZOcl8S
+         vR2ycLStbGLNdb2CR/Dv5zakpL65cXUkxxgKlLJlBTA+ktBcfJ6ksEiKbEV28bCtJ2rX
+         pLl39zF/eC6gJCXaPIQ0ZnNwDV0YV7LHvPv4zUw8yPNbP8DAqHGGmzmEZanHV119ZQOa
+         BfsBo7tmEtf40mT6qh8mUthgvas/MmpElgNtFfNBSUnvqDTIQ35Kr3aFOiPr+LkjvFku
+         /TFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743013649; x=1743618449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wwZ/kZVKA3ly+94BX9Iupd7sb0MCbfiMrJTL+cNfKIk=;
+        b=YudMKusVtUdxLNKkcIvOGJN1eFIUKeDJDviLqPMHYUHo57O5e7vuDGGS0ofHWKnjCe
+         ZbSWOH1eCFFPUgSgHxNaMQOEdjudz3FHGcPmqa+Fu2qeh1SUbIS8jelWlaQorB3HxH9p
+         9aXVCCfRKw9aBVGCF2EiYNox3ppgdBqS0QUAPdEnfUS7ob7PFmeu5QxKQ5unT2+6dhcs
+         4f1Qa8uG9mjQlbMnz7PRD/1iASN7tH5/pWi0Lp/pbkUeVz55XmL6c+WBVOOLszHbsnrp
+         jrbwGgxEgNzUH+WwFZjcngb6NWpyTXLycBOQDlVi1c/4Sk6o3UqDig3aE8Clp5mSRsL9
+         Sb6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDO1LXHRuMcHnwdg1wg3ZHBNENlUWhjVSNWh8uYtTNEKSwWnGE9B0GCl/QorZI1Ynf+XC+JLyqdht7J7UTILY=@vger.kernel.org, AJvYcCW99BqDojLkmFnpB7jUD8rC/Wt4K4qHQGY4yPQ1VLhGJMBvbcAyVpGvQ+DhFGvGzbClE/rbiANj@vger.kernel.org, AJvYcCWkO7nyvTnIetnJR35zG1p+oIm0FAFANAMK/2jZcpkg8gC6lBMrVHzAmtzEfFEz2qmTIO1ZmG0vsMQKujUl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHBngO7QoE2ypS8F+7a8feYpKE1i35qI31aNAegs8ncSVpC1ht
+	qDJT7lq4fvGu/4alP4gPrv2YjpS18mf0QNqAskVWCkJCorbN22cjvhoWAcFUjPlimZbnhw8hOPy
+	6AOpEHzrG0NP+jIoUN2a8+oUwK5I=
+X-Gm-Gg: ASbGncthx8P3IyLHU74jfe3cOjn7dhqYAz3TeM2mYI14cTejbUh1q0K3vcOCKi9tucc
+	rLDECk4Ji5kdeqxiyjyxgIRTD97YF9UKBokrOWkCfhDIJahESqrXu8PlcHTviRtqj73LTmR0nwl
+	yd5EArYoA7gZFVfiz+rCfStkiB7A==
+X-Google-Smtp-Source: AGHT+IHEdBI95BIvNnCvD45NxkwA9Jfkjd2N/HbrhhEJ2QD36+kiqZsHBQL6YYQBJvkZKUHnv2ISqLpkZVcqd7Q0+Sc=
+X-Received: by 2002:a17:907:94c5:b0:ac2:84db:5916 with SMTP id
+ a640c23a62f3a-ac6faf0a6a9mr43494566b.31.1743013648829; Wed, 26 Mar 2025
+ 11:27:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-cross-lock-dep-v1-10-3199e49e8652@bootlin.com>
-References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-In-Reply-To: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Marek Vasut <marex@denx.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Kevin Hilman <khilman@kernel.org>, Fabio Estevam <festevam@denx.de>, 
- Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- linux-imx@nxp.com, Ian Ray <ian.ray@gehealthcare.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Saravana Kannan <saravanak@google.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeivdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelgfehvdduieefieeikeffgffggfdttdeugeffieetheeuleelfeehffdtffetveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpeeknecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehmrghrvgigseguvghngidruggvpdhrtghpthhtoheplhhinhhugidqihhmgiesnhigphdrtghomhdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihgrnhdrrhgrhiesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdpr
- hgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkhhhilhhmrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+References: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
+ <20250326-string-add-wcslen-for-llvm-opt-v2-1-d864ab2cbfe4@kernel.org>
+In-Reply-To: <20250326-string-add-wcslen-for-llvm-opt-v2-1-d864ab2cbfe4@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 26 Mar 2025 20:26:51 +0200
+X-Gm-Features: AQ5f1JpKCzAXQfQrm4wlizX6k3LQpGAsnw7BZMrTEbEqg_iMhTRlQx6b_DF8dWw
+Message-ID: <CAHp75VfdNcQKCza0gYMg_hKAbZK_J3uSwZsoTS5-Bbt5_P5HPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] include: Move typedefs in nls.h to their own header
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The clock subsystem is calling runtime PM callbacks after having
-acquired its own lock, which is in general problematic, especially
-because when PM callbacks enter the power domain subsystem, we have the
-following scenario:
-mutex_lock(prepare_lock)
-mutex_lock(genpd_lock)
-But on the other side, devices may enable power domains, which
-themselves might require clocks, forcing the following path:
-mutex_lock(genpd_lock)
-mutex_lock(prepare_lock)
+On Wed, Mar 26, 2025 at 7:19=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> In order to allow commonly included headers such as string.h to access
+> typedefs such as wchar_t without running into issues with the rest of
+> the NLS library, refactor the typedefs out into their own header that
+> can be included in a much safer manner.
 
-The clk core has been modified in order to avoid the need for "late"
-runtime PM calls (ie. inside the clk prepare_lock), so what remains to
-be done is to simply remove these inner runtime calls.
+...
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/clk.c | 31 +++++--------------------------
- 1 file changed, 5 insertions(+), 26 deletions(-)
+While the below is the original text, we can reduce churn for the
+future by doing the following change while at it (no need to recend,
+maybe Kees can amend this while applying):
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 26af3a134fa7b9d7f4a77ff473df7e79fd465789..652551860201f2d4ed606c55079dc4fb655d9fa0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1961,10 +1961,9 @@ static unsigned long clk_recalc(struct clk_core *core,
- {
- 	unsigned long rate = parent_rate;
- 
--	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-+	if (core->ops->recalc_rate)
- 		rate = core->ops->recalc_rate(core->hw, parent_rate);
--		clk_pm_runtime_put(core);
--	}
-+
- 	return rate;
- }
- 
-@@ -2458,9 +2457,6 @@ static void clk_change_rate(struct clk_core *core)
- 		best_parent_rate = core->parent->rate;
- 	}
- 
--	if (clk_pm_runtime_get(core))
--		return;
--
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		clk_core_prepare(core);
- 		clk_core_enable_lock(core);
-@@ -2523,8 +2519,6 @@ static void clk_change_rate(struct clk_core *core)
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
- 		clk_change_rate(core->new_child);
--
--	clk_pm_runtime_put(core);
- }
- 
- static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-@@ -2562,7 +2556,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- {
- 	struct clk_core *top, *fail_clk;
- 	unsigned long rate;
--	int ret;
- 
- 	if (!core)
- 		return 0;
-@@ -2582,28 +2575,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!top)
- 		return -EINVAL;
- 
--	ret = clk_pm_runtime_get(core);
--	if (ret)
--		return ret;
--
- 	/* notify that we are about to change rates */
- 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
- 	if (fail_clk) {
- 		pr_debug("%s: failed to set %s rate\n", __func__,
- 				fail_clk->name);
- 		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
--		ret = -EBUSY;
--		goto err;
-+		return -EBUSY;
- 	}
- 
- 	/* change the rates */
- 	clk_change_rate(top);
- 
- 	core->req_rate = req_rate;
--err:
--	clk_pm_runtime_put(core);
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -2953,16 +2939,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		p_rate = parent->rate;
- 	}
- 
--	ret = clk_pm_runtime_get(core);
--	if (ret)
--		return ret;
--
- 	/* propagate PRE_RATE_CHANGE notifications */
- 	ret = __clk_speculate_rates(core, p_rate);
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto runtime_put;
-+		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -2975,9 +2957,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		__clk_recalc_accuracies(core);
- 	}
- 
--runtime_put:
--	clk_pm_runtime_put(core);
--
- 	return ret;
- }
- 
+> +/* Unicode has changed over the years.  Unicode code points no longer
 
--- 
-2.48.1
+/*
+ * This is an incorrect comment style. Should be
+ * like in this example.
+ */
 
+> + * fit into 16 bits; as of Unicode 5 valid code points range from 0
+> + * to 0x10ffff (17 planes, where each plane holds 65536 code points).
+> + *
+> + * The original decision to represent Unicode characters as 16-bit
+> + * wchar_t values is now outdated.  But plane 0 still includes the
+> + * most commonly used characters, so we will retain it.  The newer
+> + * 32-bit unicode_t type can be used when it is necessary to
+> + * represent the full Unicode character set.
+> + */
+
+In either case it's fine and not a big deal,
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
