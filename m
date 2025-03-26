@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-577657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF02A71FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:13:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241D8A71FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F5A178246
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8416A3B8F29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F88255E2E;
-	Wed, 26 Mar 2025 20:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4479257ADE;
+	Wed, 26 Mar 2025 20:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEA1SiU4"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXnO8NI/"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6F215196;
-	Wed, 26 Mar 2025 20:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518512561AA;
+	Wed, 26 Mar 2025 20:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743019984; cv=none; b=FM8EzhyIwfWzVsEtTG0Mc6l45K58GysRSUu5h3PLOaOviQjTZhbBoOXqGlbWuRaQ2J2Fq1Co3rjUTYUkKOD8ml5YjHoT1BRNRoow1iBAONAsO78i27nlwVataGkVQPNSg62mCf0Sa+elX8jbNw1+7MRjDSdrduzyVJmR1O3DWYM=
+	t=1743019987; cv=none; b=i8xmopwy/LiJe2mm3yazgZb6ftRcmue3XwCL9IESFhGnX8n/Be4mnKKb6KeCHJWbLblfr2y6ChclCgvi5jZ7uES1KB6JS5p1gAM/6veI2TNsgxKB8KNaa4m1FoBUqLLXc9xFqRuEyxRJiVhL6Xs4PIUn68KYqWM1xjpmNMXeHhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743019984; c=relaxed/simple;
-	bh=stYmGGDpjD4/tFiBC4B/cjq8Qdu/fF5PqqR/CNBxpus=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O/OAHhYx0VBnjCE1eKyixKCTnLD4VzBIvRtB2sPasWd63/TWlRAjjQxs9efjTdAzQYj9n2Z2WqZu/Le/X+VktEXfd6saMbx8+n6xnH6uvQf2iE7N+ozM4pj+7/TeSV4zzR4/jHTXlnbe3Q9ZNgh4Kkib2kpP56r8VexRoA3goos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEA1SiU4; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1743019987; c=relaxed/simple;
+	bh=QklNTkE+U9D+pTS8UKveElBjdJatRbS+Ai62Y7tPWXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DXsI2K/C1b0CSIjjNkwgn3oIgo3b6i0r/XpoCoY6GyllCY2+HDYdhUvpzgA4r7AleXOlLQEEIejKeLSGRn8ansxPXvXfdF1JyLxNLv9TQI/HU3kcBqeBN47JTZLl1HQU1EvXvW3EGavlAc3aBWXSl8Iqth2L+Rq9RZGN1kSimrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXnO8NI/; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bf8632052so2940471fa.0;
-        Wed, 26 Mar 2025 13:13:02 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30c2d427194so2949241fa.0;
+        Wed, 26 Mar 2025 13:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743019980; x=1743624780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvGhRgUQQTe7LDrfZkfw77IPStuXrPdo85w1zZBpkJw=;
-        b=aEA1SiU4auebeRCdPBJTqqj+d6z/6NJaK1Vv2GemllEKsDu/u6j+9B7gPwn7GUlcwu
-         GjfyaO8TJ2GgwBzxx+txyfKPq4OjElxI0K4mifttBGLNfIDJmRnM/SHAi22SlgLch2c6
-         xEoOIIVRpFdTj2cW6BOgNK/d1SycWYVMfNHd/mwbRCeP+Utim+2bxB2oOKjBRcNL+G6b
-         zbkZqh59MU+E0tBgQJQfZYeTYGzW1E3skG+ryynRxWJJ04ZoD5meRO1IPHNi6cURnEep
-         Z7pdW2zweXgHoN0+qD5clE0eqY4BbsfqY220zQ6YQDOFEr69VWiaEVC8vxKSd3YWf7wM
-         UX8g==
+        d=gmail.com; s=20230601; t=1743019983; x=1743624783; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pveoisS0dkHjk8AoQMkPJTBRAAfPuiNG6lIhjvhzlA8=;
+        b=YXnO8NI/yB9I1lVql5uMKKmdnMQswJd8E0/Ol2eBYecfepstmGu/Hs3ZZy+dAtncZh
+         CqJ5xfjz+SbJ8lG8TCCeTeo46yWMeKnGlL+C80KjY45h5voAgbAC7aPGqbkQJfsg7/Pg
+         oSKkOUuwkZyXdKddqF2zc+TplpObkJ06DyXMTR2dsk3vB3VIJt2L7LraxwF4ULWYSeKi
+         Eq7JcjW6uQEwF26S2EBSsg5ZlU9NHoFeCh0fLyO0/pi/QQ4AFPGioapYo05EZlIN6PY1
+         AJwQYFX/DKh0IpRlK8LTANTYHatl837PMQeNom36i4BZBWGCpcT1OJay16Fbw/FW6Rt6
+         FtDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743019980; x=1743624780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LvGhRgUQQTe7LDrfZkfw77IPStuXrPdo85w1zZBpkJw=;
-        b=arvHt8WlWDOX6ZAf4JOk3LzrTs0gs5JSe2MhfAG3dl3gI6nFFeuzIwaNYFB5ggaJaR
-         F50VgruYmp/eyso5CZHHha5iyJt+lJlIrZMZcvLFArVuAhwtfK0ipN0aGj+7M3Oo3fcr
-         tT01a9tSGJ2IZXkLW52/BdDyF7N1RWXAu47XnIBXeOxXiJgX2ffUpg/OzPshDq2mxvTG
-         ECFTSpAXkwrYS+jJlG8wXwdaPnFK+vR0PaAIviL+GfGKzyF0bHotHdFS3BWh8AqUsFNO
-         shdMxpAdzpdg/836gn6E8hDu3acVnO3gWmdyH3+5nt3UIXTmqtPzuwb5V+4eR0MMuK+d
-         wJug==
-X-Forwarded-Encrypted: i=1; AJvYcCWFzP5gTEZUUe/2mQ4pf73ptKckv6Fk2euOgPN8qvy7sTBSo7B2r5jN8DBs7Qdl1exGr1J278j1xPhH3T0=@vger.kernel.org, AJvYcCWahAA9m97pEfaUuPo1//KTJ7HcbtMs7ms9phYy7AwaRByWRPt9m0wKjUEkoobcYlp9OMAyoIzHwn4saT0b8X4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm9N0GBz5SABJA+DrJ4ENFoS5g4eipSNR6hP8ieeGXgsmHHbTQ
-	3gmbOSpwX0i1n/5H0Fbp00pQ56rSvK/hMrVVLtP0JscNskDQiThC
-X-Gm-Gg: ASbGncvnTWNjOIvtfwQScugnZ9m3YAg4qSlrwThZ7vwb/TiXSXt4BnY7+bjRnG/Jait
-	PZlfmrKEwhpeTcB4k+ffq4+Cj0/2/dBet2ebdGEZebjevzRi4X4KQHZTe/dCzJgAWOBGrKh5ldP
-	VTc6JCfBBWx9jiGW7UbWLIFU1mbVeIzY58HSllq9FwgNkW/kCtu99Q67tQy5tKp1nIrYjCHG4tS
-	njDbVjFTzTdVH8sC8Z0E/+XGpCWi/VuK+NHvqwpZK5VAxi6kcfko2Xb5vLL0n+7rI6/hEezQPMw
-	e4djvLNbgi9dDXgikc0XZ6FEC9PNkUSdU83dow4IUiRVYyk/TMt7dIiQntfvMRS89+OQow/rnJf
-	Gn3u06Cd2GG/dQKR19BnneA==
-X-Google-Smtp-Source: AGHT+IH+TqDP71XrNIXqtEqJEpXk/B2z8Fv+6HePdoMFwLb0bvleEmB5zHlEOlYypeoPyLwRZuNHKw==
-X-Received: by 2002:a05:6512:1393:b0:549:6bad:3977 with SMTP id 2adb3069b0e04-54b011dd205mr454607e87.31.1743019980249;
-        Wed, 26 Mar 2025 13:13:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743019983; x=1743624783;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pveoisS0dkHjk8AoQMkPJTBRAAfPuiNG6lIhjvhzlA8=;
+        b=P+c5dmuL9IoYYCMNI2pe6Jo70qWDoql3h4ECTonw+T5H/ENpfzIA9hBrRgVMGBYOxb
+         HJQwPCA5WsHRD4IEPh2v2/mLcf0+5mYjCVLqleoa8NPJKhH/GJvgEhAxoO+iHUeHiwx9
+         iz3C0jtXvvs/gFekIowwQWq1o08cBc3EnwzvDzhQFdwZcYA0N4Bks/xXONtJySxyVWmM
+         SA/9sEKtvunriF9/lgE55vMzSc4uICP0mT7Fe2zmGrYNRciVvw04lHQGkgLB9yNBNFY8
+         BlYTY6jNGhu3eX6XDs3WPw74bKNXmqk5SmY4+4fh/3me5MoK5n3ojms7w5J2r5O/4tXd
+         cPsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnLY70BiWk/If271heWYuCvg0I9zANCss1yFb+rfIT0LVWcMJpYvBEvpSWP0pCucqwV6ZTmF9khVNx6CH878Q=@vger.kernel.org, AJvYcCWP/3IUCMm0D3Zf+gTleY2tuT4UeZNOBVWIAdP4JEgbuuEjbo7ehbJ8/kdRO7/equ6A310k2phiUJjx5Qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm+iNJZz3wojOOze9+nJ/PtinVeYQz7CxmYDE6szNH8kB7Lod6
+	PH6Mn1iI+cqm3RJHPuk7cPS3acANbfBGuUg3Ax4GwBt5CauNnrpu
+X-Gm-Gg: ASbGncvETHY4NLGdCXeFpVsicIxY7BPLSciGsA2JKeSKn05P0VmInaL7xdwY7Hpodtm
+	5l482mVGvz/sLpnvjBTMg5WEXpLDjZTEAkWp5i9Im1gqloT6+vvArLcfv0WaVhnLiJvlha7lRVn
+	HR04Ms8yrA9+T8ldbizKKb0qe7BFgNrsA3i7LuGhBjrDKxUNNHUJXrmwvB5bnW/XcRZen2YErPJ
+	cD2VNDkym8XtFbUTJRGef+LvKKlsfbkRadLXHX64aotQvDPI0Cpdt2nkq88V2LDox0gTtFWl4XD
+	rK5eSJVUV+xvACMJRA9wapIUpSGaP2bqMmlHsRtBhLMj/MB/iu9oENmQMo0tpYSUMpN9biKmqWv
+	SNmOcxArq+Gz4DsPDbM98HA==
+X-Google-Smtp-Source: AGHT+IFayDpBMS79xivFqH7xf6jKCQW1raM5CGZsxw5i6zi+hzQ0h4CALk7kf9R32eciaIZyk6BJIA==
+X-Received: by 2002:a05:6512:3e08:b0:549:5b54:2c68 with SMTP id 2adb3069b0e04-54b011d6355mr391157e87.22.1743019983084;
+        Wed, 26 Mar 2025 13:13:03 -0700 (PDT)
 Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad646873asm1872136e87.46.2025.03.26.13.12.57
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad646873asm1872136e87.46.2025.03.26.13.13.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 13:12:58 -0700 (PDT)
+        Wed, 26 Mar 2025 13:13:01 -0700 (PDT)
 From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 To: a.hindborg@kernel.org,
 	ojeda@kernel.org
@@ -88,10 +90,12 @@ Cc: Danilo Krummrich <dakr@kernel.org>,
 	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
 	linux-kernel@vger.kernel.org (open list),
 	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH 0/3] Additional fixes for dma coherent allocator
-Date: Wed, 26 Mar 2025 22:11:41 +0200
-Message-ID: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
+Subject: [PATCH 1/3] rust: dma: be consistent in using the `coherent` nomenclature
+Date: Wed, 26 Mar 2025 22:11:42 +0200
+Message-ID: <20250326201230.3193329-2-abdiel.janulgue@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
+References: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,21 +104,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Additional fixups to improve the documentation and make the read/write
-macros return Result as suggested by Andreas Hindborg as well as support
-for reading and writing large blocks of data.
+In the kernel, `consistent` and `coherent` are used interchangeably for
+the region described in this api. Stick with `coherent` nomenclature
+to show that dma_alloc_coherent() is being used.
 
-Abdiel Janulgue (3):
-  rust: dma: be consistent in using the `coherent` nomenclature
-  rust: dma: convert the read/write macros to return Result
-  rust: dma: add as_slice/write functions for CoherentAllocation
+Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+---
+ rust/kernel/dma.rs | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
- rust/kernel/dma.rs       | 153 +++++++++++++++++++++++++++++++--------
- samples/rust/rust_dma.rs |  21 ++----
- 2 files changed, 131 insertions(+), 43 deletions(-)
-
-
-base-commit: e6ea10d5dbe082c54add289b44f08c9fcfe658af
+diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+index 8cdc76043ee7..d3f448868457 100644
+--- a/rust/kernel/dma.rs
++++ b/rust/kernel/dma.rs
+@@ -89,15 +89,15 @@ pub mod attrs {
+     /// Forces contiguous allocation of the buffer in physical memory.
+     pub const DMA_ATTR_FORCE_CONTIGUOUS: Attrs = Attrs(bindings::DMA_ATTR_FORCE_CONTIGUOUS);
+ 
+-    /// This is a hint to the DMA-mapping subsystem that it's probably not worth the time to try
++    /// Hints DMA-mapping subsystem that it's probably not worth the time to try
+     /// to allocate memory to in a way that gives better TLB efficiency.
+     pub const DMA_ATTR_ALLOC_SINGLE_PAGES: Attrs = Attrs(bindings::DMA_ATTR_ALLOC_SINGLE_PAGES);
+ 
+-    /// This tells the DMA-mapping subsystem to suppress allocation failure reports (similarly to
++    /// Tells the DMA-mapping subsystem to suppress allocation failure reports (similarly to
+     /// __GFP_NOWARN).
+     pub const DMA_ATTR_NO_WARN: Attrs = Attrs(bindings::DMA_ATTR_NO_WARN);
+ 
+-    /// Used to indicate that the buffer is fully accessible at an elevated privilege level (and
++    /// Indicates that the buffer is fully accessible at an elevated privilege level (and
+     /// ideally inaccessible or at least read-only at lesser-privileged levels).
+     pub const DMA_ATTR_PRIVILEGED: Attrs = Attrs(bindings::DMA_ATTR_PRIVILEGED);
+ }
+@@ -105,7 +105,7 @@ pub mod attrs {
+ /// An abstraction of the `dma_alloc_coherent` API.
+ ///
+ /// This is an abstraction around the `dma_alloc_coherent` API which is used to allocate and map
+-/// large consistent DMA regions.
++/// large coherent DMA regions.
+ ///
+ /// A [`CoherentAllocation`] instance contains a pointer to the allocated region (in the
+ /// processor's virtual address space) and the device address which can be given to the device
+@@ -115,7 +115,7 @@ pub mod attrs {
+ /// # Invariants
+ ///
+ /// For the lifetime of an instance of [`CoherentAllocation`], the `cpu_addr` is a valid pointer
+-/// to an allocated region of consistent memory and `dma_handle` is the DMA address base of
++/// to an allocated region of coherent memory and `dma_handle` is the DMA address base of
+ /// the region.
+ // TODO
+ //
+@@ -138,7 +138,7 @@ pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+ }
+ 
+ impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
+-    /// Allocates a region of `size_of::<T> * count` of consistent memory.
++    /// Allocates a region of `size_of::<T> * count` of coherent memory.
+     ///
+     /// # Examples
+     ///
 -- 
 2.43.0
 
