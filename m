@@ -1,177 +1,108 @@
-Return-Path: <linux-kernel+bounces-576440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C5BA70F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DD7A70F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CFF3B15C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4613B1E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647B1553A3;
-	Wed, 26 Mar 2025 03:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533FE154BFE;
+	Wed, 26 Mar 2025 03:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qP53ehZI"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eA9I/XUd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98572AD0B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4026813B797
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742958339; cv=none; b=I5vhbfAoullsWP2hRnbud+i9/DvJU690IuQcdDQ3hTTv3nlota9c+s2HgTkwwY1uRtM2mmiqb8aj7SznBV8gYMm4+I9/dmncfixeqNATbZPhAN+Tx3Zo0otvVdOTQbbF/Fo56v33hfQtFT99oKpaulmwXHtYxO2IxKsQOwrfA18=
+	t=1742958537; cv=none; b=AWjJYbgWg1tWk+pcN89LIgrSLlK5EpXGowUbh98g7CWYUxXCAow6I5Jpql/4bdp32nXK1AaVxHEC9Em6jDA2L82Qz0pc2cXinU+yJhoB12t63G8AxfO4KfBGmhZn0eCbgnnEMwzNNClxFjQjLFZiFWBw6EXf8jL09NgkYxx9Zfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742958339; c=relaxed/simple;
-	bh=qfGnk00UTOdb61IzlVzGgmA66I6VQrXLdaqCi2aoOCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 References; b=isSUPczZSRwE0bg71jg+SbI8DFKqejXqQpAfU86YzHByHqVjNYcqMjclK6Bl558GNitIGbwssDX+NugkAohLZeQopy+mRsGo719ED66FTpMSz1NR5nzkwOdYkfiYutcVR3xp5dUARi4ZXbUnjkenKuCBvum71aWgyc+/uxGzPkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qP53ehZI; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250326030528epoutp014af5e1c1eb454640f9105a1ed2bd6373~wO1136jLo0058400584epoutp01J
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:05:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250326030528epoutp014af5e1c1eb454640f9105a1ed2bd6373~wO1136jLo0058400584epoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742958328;
-	bh=APX04n6zsBcZDPnUWxv6THU0pMXZKE/D5YD7JYCCQVI=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=qP53ehZIxWlfTXPNDH38RehB1sDBAtmWBAo32hi1lrRfvlMNZsK/4Ey7GdTvV2qoy
-	 bvZlnrcg6LXbPwQYQS8rEau3DxdNJihvb9+C+3/MR9xth0VVqW45IRN6T4JyVlngUx
-	 SgyZ/Z6HuK2iIxpJum4zcaXPoFy+DFHIYKBgsj74=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250326030527epcas2p40aac1642b2d63ef7259a640dab131c27~wO11UlYdD2380523805epcas2p41;
-	Wed, 26 Mar 2025 03:05:27 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZMs9M3Rxjz3hhTF; Wed, 26 Mar
-	2025 03:05:27 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	44.4B.10159.7FE63E76; Wed, 26 Mar 2025 12:05:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5~wO10kw-tQ2478824788epcas2p3J;
-	Wed, 26 Mar 2025 03:05:27 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250326030527epsmtrp21470307e987050dbbd6f01da71e0cb4d~wO10j7IhP2137921379epsmtrp2N;
-	Wed, 26 Mar 2025 03:05:27 +0000 (GMT)
-X-AuditID: b6c32a46-9fefd700000027af-be-67e36ef7555e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	85.A9.07818.6FE63E76; Wed, 26 Mar 2025 12:05:26 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250326030526epsmtip1712fe9d09419ae4beb4a6df3daf60071~wO10Xpbnm1729317293epsmtip1C;
-	Wed, 26 Mar 2025 03:05:26 +0000 (GMT)
-Date: Wed, 26 Mar 2025 12:09:37 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Saravana Kannan <saravanak@google.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, youngmin.nam@samsung.com, hajun.sung@samsung.com,
-	d7271.choe@samsung.com, joonki.min@samsung.com
-Subject: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in GICv3
- ITS driver
-Message-ID: <Z+Nv8U/4P3taDpUq@perf>
+	s=arc-20240116; t=1742958537; c=relaxed/simple;
+	bh=JxMAH3fEf/dJeU9yku6nmMkKjIOiN2tGQV4Byl5vRnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oScBSf4VGNm8e2+Y96+mEmsjigQ9Msa3RuRC3JxhXzypYuD7RJOvv2n2DkTXwsX/PG1Ch8Ds71Z0/QbquUV2LXrPLEIvdd38Ov3QYQrzIwh2/6/M/vaGRL42WIJEAdvEi1sIODTkaoHsaL62jRwdQNR6G+J+biwhqRbuoY+JMXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eA9I/XUd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742958535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t+YQ41MzT7Qo/WV4Xr3JF55HUBxUNDHByiLu3RRvc7c=;
+	b=eA9I/XUdDA0z3iE4Pi+Tzu7lSXQMOFrshN1vDeaYfEj6uhm7E1BxAh8po5dLLb39Tw2a8C
+	IOhq7rI+twm6yI88CEM1iPeqK07iYk0TPyUoQv0Zm9Q0xexiOqdxg3axjGqrsp4jpskLBQ
+	AB+21NImiXrDyPnN2dARISQIPOJOUAo=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-L9KAD2hxMpewu3PHSXp-_A-1; Tue,
+ 25 Mar 2025 23:08:52 -0400
+X-MC-Unique: L9KAD2hxMpewu3PHSXp-_A-1
+X-Mimecast-MFC-AGG-ID: L9KAD2hxMpewu3PHSXp-_A_1742958531
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C54D619373D7;
+	Wed, 26 Mar 2025 03:08:50 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.18])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 887F419560AB;
+	Wed, 26 Mar 2025 03:08:45 +0000 (UTC)
+Date: Wed, 26 Mar 2025 11:08:38 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] selftests: ublk: kublk: fix an error log line
+Message-ID: <Z-NvtjsGBb_O5QvI@fedora>
+References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
+ <20250325-ublk_timeout-v1-2-262f0121a7bd@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmme73vMfpBjMPS1lc2zuR3aJp/yVm
-	i6u73zFb7NguYrHp8TVWi8u75rBZ7JxzktWi69BfNovNm6YyWxxfG27RceQbs8XiA5/YHXg8
-	tu3exuqxYFOpx6ZVnWwed67tYfN4d+4cu8fmJfUefVtWMXp83iQXwBGVbZORmpiSWqSQmpec
-	n5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdKqSQlliTilQKCCxuFhJ386m
-	KL+0JFUhI7+4xFYptSAlp8C8QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj1fx1LAXTeCrezDjI
-	2MC4lrOLkZNDQsBEYvrlX4xdjFwcQgI7GCUuzDzIApIQEvjEKLG0Qwoi8Y1R4s/J/+wwHcc3
-	3maHSOwFSqxczAThPGSUOHhlDhNIFYuAqsTxj5NYQWw2AV2JbSf+MYLYIgLuEjcn9bCANDAL
-	HGWS6J6xDCwhLBAmcfhpN1gDr4CyxKtzp9khbEGJkzOfgDVICLRySEw808sKcYeLxLd/K5gh
-	bGGJV8e3QN0nJfH53V42CLtYouH+LWaI5hZGiVPXX0A1GEvMetYOtplZIEOi4+xNoKEcQHFl
-	iSO3WCDCfBIdh/+yQ4R5JTrahCA61SR+TdnACGHLSOxeDHOCh0Tr1xYmSNjFSqxcd4l9AqPs
-	LCQvzEKyDMLWkViw+xPbLKANzALSEsv/cUCYmhLrd+kvYGRdxSiWWlCcm55abFRgBI/V5Pzc
-	TYzg5KrltoNxytsPeocYmTgYDzFKcDArifAeY32YLsSbklhZlVqUH19UmpNafIjRFBghE5ml
-	RJPzgek9ryTe0MTSwMTMzNDcyNTAXEmct3pHS7qQQHpiSWp2ampBahFMHxMHp1QDE+dzufZl
-	3hxXE3ftMjhntDBy+5rEykqG7uU5OfILc3uZfAu/1awSLN94hWlB+Y6rs58b5rwUfjQj6O+K
-	CpHWs8ENOV8SkstfzO9c8euzTfjcE9vftEjk/Zlu6yi49mT2vcdCapHv0416GkqyNx5/05nM
-	/j/JO3zBWd0LZXnyU6x3qEblGB7w+Xg5i3fyH8HWDzLxV3U8A/Q2rDVdYOF17wRTzqyje37f
-	atN56mf4NN1k7asrr2tN7vv9KPwiXakltdNn9Ttb49vhR49kHv9/68tmEduM5+m/5bcePeuz
-	PryJo9HEy8WMy7X+E4P/J7a2fM9jkdE7PEwm109atN/DYuNn/8Vv5k7KmRL6+svECCWW4oxE
-	Qy3mouJEAIcdqNE3BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsWy7bCSnO63vMfpBu2PLCyu7Z3IbtG0/xKz
-	xdXd75gtdmwXsdj0+BqrxeVdc9gsds45yWrRdegvm8XmTVOZLY6vDbfoOPKN2WLxgU/sDjwe
-	23ZvY/VYsKnUY9OqTjaPO9f2sHm8O3eO3WPzknqPvi2rGD0+b5IL4IjisklJzcksSy3St0vg
-	yjjRpllwjbPi4IdtbA2MbexdjJwcEgImEsc33gayuTiEBHYzSrTM3AmVkJG4vfIyK4QtLHG/
-	5QiYLSRwn1Hi6FImEJtFQFXi+MdJYHE2AV2JbSf+MYLYIgLuEjcn9bCADGUWOMkk0b/uNViD
-	sECYxIe9rWALeAWUJV6dOw1lC0qcnPmEBcRmFtCSuPHvJVA9B5AtLbH8H8cERr5ZSKpmIama
-	hVC1gJF5FaNkakFxbnpusmGBYV5quV5xYm5xaV66XnJ+7iZGcARoaexgfPetSf8QIxMH4yFG
-	CQ5mJRHeY6wP04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzrjSMSBcSSE8sSc1OTS1ILYLJMnFw
-	SjUwhf93uvWPO6J+7X9OUT5mtyYzDbsp87OUlKbIb+k7c7emsc6jcHnPdGOHyYV3G8rrvGp2
-	FqZsXmSn0l/jOV3D/d72JMfcwpOF0YeMHeLKV7f7To4TLF2wj6d1ivW17ay79R7NXfxqucAC
-	Aav8ZrsdO43ETlZPLFsT8vNe6LHdX4tWNK3/89zqxL1a6aend9qz9y/MneZ5817gtZvd0/3u
-	hjxwPh0tc/bA8YMTLq/RX6cQMP2x44O1M7NW/BfPOmD14uETK/NUDYfHv+9Zub1w0d16N51D
-	Qmujsf9d0Q96ov6/7xxOqDqtcUJDXKj9LYPklTud9rXx+7Lkwp0VnK93lTBL1XI+PuvAu6Tz
-	fLCREktxRqKhFnNRcSIAup/NAO8CAAA=
-X-CMS-MailID: 20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_25c35_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5
-References: <CGME20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5@epcas2p3.samsung.com>
-
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_25c35_
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250325-ublk_timeout-v1-2-262f0121a7bd@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi.
+On Tue, Mar 25, 2025 at 04:19:32PM -0600, Uday Shankar wrote:
+> When doing io_uring operations using liburing, errno is not used to
+> indicate errors, so the %m format specifier does not provide any
+> relevant information for failed io_uring commands. Fix a log line
+> emitted on get_params failure to translate the error code returned in
+> the cqe->res field instead.
+> 
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> ---
+>  tools/testing/selftests/ublk/kublk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+> index b17eee643b2dbfd59903b61718afcbc21da91d97..ded1b93e7913011499ae5dae7b40f0e425982ee4 100644
+> --- a/tools/testing/selftests/ublk/kublk.c
+> +++ b/tools/testing/selftests/ublk/kublk.c
+> @@ -215,7 +215,7 @@ static void ublk_ctrl_dump(struct ublk_dev *dev)
+>  
+>  	ret = ublk_ctrl_get_params(dev, &p);
+>  	if (ret < 0) {
+> -		ublk_err("failed to get params %m\n");
+> +		ublk_err("failed to get params %d %s\n", ret, strerror(-ret));
+>  		return;
 
-On our SoC, we are using S2IDLE instead of S2R as a system suspend mode.
-However, when I try to enable ARM GICv3 ITS driver (drivers/irqchip/irq-gic-v3-its.c),
-I noticed that there is no proper way to invoke suspend/resume callback,
-because it only uses syscore_ops, which is not called in an s2idle scenario.
-Please refer to the codes below.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-<drivers/irqchip/irq-gic-v3-its.c>
-5028 static struct syscore_ops its_syscore_ops = {
-5029         .suspend = its_save_disable,
-5030         .resume = its_restore_enable,
-5031 };
-...
-5803         register_syscore_ops(&its_syscore_ops);
+-- 
+Ming
 
-<kernel/power/suspend.c>
-444         if (state == PM_SUSPEND_TO_IDLE) {
-445                 s2idle_loop();
-446                 goto Platform_wake;
-447         }
-448
-449         error = pm_sleep_disable_secondary_cpus();
-450         if (error || suspend_test(TEST_CPUS)) {
-451                 log_suspend_abort_reason("Disabling non-boot cpus failed");
-452                 goto Enable_cpus;
-453         }
-454
-455         arch_suspend_disable_irqs();
-456         BUG_ON(!irqs_disabled());
-457
-458         system_state = SYSTEM_SUSPEND;
-459
-460         error = syscore_suspend();
-
-How should we handle this situation ?
-
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_25c35_
-Content-Type: text/plain; charset="utf-8"
-
-
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_25c35_--
 
