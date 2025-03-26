@@ -1,162 +1,222 @@
-Return-Path: <linux-kernel+bounces-576539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991B3A710AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:40:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9431AA710AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF673AF68E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F821705DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67A4190678;
-	Wed, 26 Mar 2025 06:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C068191461;
+	Wed, 26 Mar 2025 06:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N8/sRWYr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mgOApzMw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BA714B965
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB6014B965;
+	Wed, 26 Mar 2025 06:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742971231; cv=none; b=Y5aT8ASMqvMhB8Vygw4NS3f7fFIqoh2qnd9R0MBzxPIdVeMracJ4k6FifcS5glmFSFfGS2cH2yc32i5uuNgm0KupXSGn1dBYw3LBEyrpMfv74bLnne77q7vf2WEOHqnRtWdChc0gunu3XlNI3mpdXeXeYFZHg7l0+c4G5sDr7fg=
+	t=1742971209; cv=none; b=KLRa6YDPO3qxpKPtl4vkKOULyC48sqQ9K8ynB9lOV77It8V4Bq37hHgNbApS04UczruXUJ+qzST9nPrc18yQL1JX1GNsBdLRO7Nfd1qI7vfIYPcVyXcaUWki8tiuKnuwPPbkLErHFJ4DQs4UumbNpPHL+hHhKix5fXnMzxCRRlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742971231; c=relaxed/simple;
-	bh=6q09F5c4pHQQSvnekcl2wDEjLn2OddB7yXpI33oM3j8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OOvfkORHwZ+riY2iMnVoRtMdNwtOUUVY0PFE6iI9Qxk9AZcHUhM56bvcx/yVXxpTCWnpNaSq/uSisTUtDcr3fafyV/RbpwGW80uG+hm6BlVqWVDQBS/SbBMrl92uRrxI+lwxTsOanG9yOMTjE38lLvASExt9K2KTe0T3vKolCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N8/sRWYr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742971227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezHVFsZe1v4BDvN1xzAQ5TFbS1moNinE5s1cTaUBmso=;
-	b=N8/sRWYr6GVuxCoHLJYJIe2mI3wWQwFMO4fv2Sgpl+19R7ni8BkRRjYRvC9mE67Vl9wABl
-	3efV8602h6q8r2OK0n9UsFrNXM4rel/KaaMKemhtk45aXDTExrJnAB3FkqwETXq2xAPlUF
-	7o1HzTLnKKziJtePE2qkT1Nklkf31bk=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-255-oeUoUYbLPPSmYuAlgLskSw-1; Wed, 26 Mar 2025 02:40:26 -0400
-X-MC-Unique: oeUoUYbLPPSmYuAlgLskSw-1
-X-Mimecast-MFC-AGG-ID: oeUoUYbLPPSmYuAlgLskSw_1742971225
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so18402663a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:40:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742971224; x=1743576024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezHVFsZe1v4BDvN1xzAQ5TFbS1moNinE5s1cTaUBmso=;
-        b=pyFTa6Ux9fr7FddO9WiFrPYGwPelVagvHu/Aw98/jSu/Ov7PBjA1UwEChgaHthGYHA
-         L9H4DGrUFadr2AfRZeXpPdKzcXsiOqVmJP4uCge6+Oc68muVo15+oHd2/s4upyORy8xz
-         GzXCos0T5diFRiuSY6V27I7okMDAS2FFMSdPS+yjXLX02fCRv4G0bhHm9NogqUYDFc4k
-         IzVX6UtiAcZrYuzNU3gyLfwPaLgLTedYGOBB0zbuXwZ5UarUuCBm7W+NPnYVXps7Kek2
-         XGn45v116MeYmE+Lya3BX9VpAIkYUrU+ZDXwU/wKLQP3FtA31E7MkKFiyIEjrEK4qZf8
-         kmoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU1AlYrXuZRU3+ET7fTwlcqz/CU5QuIhKTl1RY9/OqxqBRx68R6uKoldI5EVTv2V0o88ReHjF9lujBhk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK1Hzj9bC8ZCsPSGD/XegbDFA6BRboCdg1nxYA5qC5WePc0oBv
-	N6QeIuJLsc7aL4eLoiYLjw64E4T/mLzZh1+x2aTOhiywd87MKmEdfsUPUUsRlt+y0ti7PzsDUIR
-	CU74JmYNNQmKOjnz21U0PhnOT6V73CdLWOjEjlr70u3zb8SKQHACjrMNWCruDO3JvplCPzCODAP
-	DDvyFc/d6xCLg3tGnnQGOjM6n8+xcZ+yiU+olWOIvWstMb
-X-Gm-Gg: ASbGncvFVyRAy5tS77YPuFIS3lkOZYgI3L7IQS1evojNkDmKW62v14ohrJYQcYwS9Pf
-	T93NapuTK9msETnjjGIwDbcFkZAiekr615DvJwNtAjftDjkYStDwWkd+3NnG8jUXaXUR5URM=
-X-Received: by 2002:a17:90b:1d51:b0:2ff:62f3:5b31 with SMTP id 98e67ed59e1d1-3030ff06711mr31920768a91.29.1742971224331;
-        Tue, 25 Mar 2025 23:40:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFUGcW4JXSeMZI46/HJNxiBTQIzR50w5i1JUFe2fdLyrEXV1sMUCl3RQeMRWq9Y5cXb5aVu+LPH0QeOT9MfrA=
-X-Received: by 2002:a17:90b:1d51:b0:2ff:62f3:5b31 with SMTP id
- 98e67ed59e1d1-3030ff06711mr31920735a91.29.1742971223830; Tue, 25 Mar 2025
- 23:40:23 -0700 (PDT)
+	s=arc-20240116; t=1742971209; c=relaxed/simple;
+	bh=TwvngKVS+o2NCXhwJxUhbdTmLpzewE4JJIyPZO3Cjso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PK2CyowpbjAmDCkSNVUUjrU2xo6syq4bjiDT6lJ6UUm6kB6YG0xuaS+c0iaZ4ytvnOVCuQwvg9f+OW/wNE/AcyonuEnJJKDaLaz/80EeOzO7jACdFPwa9PacLOneH76XMTEU+qY0D+Xxm7hD5WqHdJRm4rmSHfFYEMFpnWaGZHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mgOApzMw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PKZq5w010596;
+	Wed, 26 Mar 2025 06:39:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=6mSsRy
+	RE1DO+WZw8HSCr9NydyzpH5oNXTD4bnMVKrOg=; b=mgOApzMwyEXW6IiOq4oIZv
+	2tfO8TQpslSUbSkrQE83AjsYK9/N84ddzDyEPVsY9TKgFmNPEQtizuJ9fiqpBvU8
+	tls7mkH6FdSEe2KhMf9/EZU73mlPoKfitLJSg+pd8xSDY7GiEO9G7SXtuZfoL/KZ
+	W4+otEQfJ48Q+OGc/Y3bJ4vaALbsZbBJLk0d1JbNK7haFPj/Nj8RGuHu84OHo8Uz
+	KTQweEJY0XoZtwFGtoWagH0JnHtF5/M52Il4iTA0Ri/w1VVHriZhcSpOpKAELzC0
+	DF+3GWXjP4JJFhNyKL+HD0yWnAeCu6xMAy52MjyG9vkQRcZ5RkJv12aEZGSsKXFg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3nqj0j2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 06:39:56 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52Q6dXqv016869;
+	Wed, 26 Mar 2025 06:39:55 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3nqj0j0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 06:39:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q280UD009693;
+	Wed, 26 Mar 2025 06:39:55 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rkpwjw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 06:39:55 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52Q6drGD54788474
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 06:39:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7485120043;
+	Wed, 26 Mar 2025 06:39:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 17F4E2004B;
+	Wed, 26 Mar 2025 06:39:51 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.216.12])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 26 Mar 2025 06:39:50 +0000 (GMT)
+Date: Wed, 26 Mar 2025 12:09:48 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: Baokun Li <libaokun1@huawei.com>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, Yang Erkun <yangerkun@huawei.com>,
+        "Theodore Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
+Message-ID: <Z-OhNOVEcQNkYc18@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
+ <20250316014128.GA787758@mit.edu>
+ <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20250319023129.GF787758@mit.edu>
+ <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
+ <be35b86c-1e64-4593-8f68-fbd1f6b61eef@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324054333.1954-1-jasowang@redhat.com> <CAPpAL=x4BWNh__YpzkzpErkseh04FT7WNLmg=xMXtfZ0S9BabQ@mail.gmail.com>
-In-Reply-To: <CAPpAL=x4BWNh__YpzkzpErkseh04FT7WNLmg=xMXtfZ0S9BabQ@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 26 Mar 2025 07:39:47 +0100
-X-Gm-Features: AQ5f1JqS06N3aPblaGlfScL2r-BwUXS_ZG-zwaqN3wVN6CTRzZJOuSitX0ZLN4Q
-Message-ID: <CAJaqyWdtKEYiY2tBB0F477LqxVs8fzaix96551WSMa=KdT3C5Q@mail.gmail.com>
-Subject: Re: [PATCH 00/19] virtio_ring in order support
-To: Lei Yang <leiyang@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <be35b86c-1e64-4593-8f68-fbd1f6b61eef@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pL2PsoPGwFPItIgOMXu77_wlauuvkSQo
+X-Proofpoint-GUID: oAZgL8l5_N5-xwSMwAHYjNiYvMaakJgF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ spamscore=0 clxscore=1011 mlxlogscore=977 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260037
 
-On Mon, Mar 24, 2025 at 3:44=E2=80=AFPM Lei Yang <leiyang@redhat.com> wrote=
-:
->
-> QE tested this series of patches with virtio-net regression tests,
-> everything works fine.
->
+On Wed, Mar 26, 2025 at 12:01:45PM +0800, Zhang Yi wrote:
+> On 2025/3/26 10:16, Baokun Li wrote:
+> > On 2025/3/26 1:57, Ojaswin Mujoo wrote:
+> >> On Tue, Mar 18, 2025 at 10:31:29PM -0400, Theodore Ts'o wrote:
+> >>> On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
+> >>>>> So this is something we need to do if the journal is actived, and if
+> >>>>> it's active, then sbi->s_journal will be non-NULL, and so we can just
+> >>>>> check to see if inode == sbi->s_journal instead.  This will simplify
+> >>>> I believe you mean inode == sbi->s_journal->j_inode here right?
+> >>> Yes, that's what I meant; sorry for the not catching this before I
+> >>> sent my reply.
+> >>>
+> >>> Cheers,
+> >>>
+> >>>                     - Ted
+> >> Hi Ted, Baokun,
+> >>
+> >> I got some time to revisit this. Seems like checking against
+> >> s_journal->j_inode is not enough. This is because both
+> >> ext4_check_blockref() and check_block_validity() can be called even
+> >> before journal->j_inode is set:
+> >>
+> >> ext4_open_inode_journal
+> >>    ext4_get_journal_inode
+> >>       __ext4_iget
+> >>           ext4_ind_check_inode
+> >>               ext4_check_blockref  /* j_inode not set */
+> >>
+> >>    journal = jbd2_journal_init_inode
+> >>       bmap
+> >>           ext4_bmap
+> >>              iomap_bmap
+> >>                ext4_iomap_begin
+> >>                    ext4_map_blocks
+> >>                        check_block_validity
+> >>
+> >>    journal->j_inode = inode
+> >>
+> >>
+> >> Now, I think in this case the best solution might be to use the extra
+> >> field like we do in this patch but set  EXT4_SB(sb)->s_journal_ino
+> >> sufficiently early.
+> >>
+> >> Thoughts?
+> > 
+> > Because system zone setup happens after the journal are loaded, I think we
+> > can skip the check if the journal haven't been loaded yet, like this:
+> > 
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index d04d8a7f12e7..38dc72ff7e78 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -383,9 +383,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
+> >                                 unsigned int line,
+> >                                 struct ext4_map_blocks *map)
+> >  {
+> > +       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+> > +
+> >         if (ext4_has_feature_journal(inode->i_sb) &&
+> > -           (inode->i_ino ==
+> > - le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> > +           (!journal || inode == journal->j_inode))
+> >                 return 0;
+> >         if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+> >                 ext4_error_inode(inode, func, line, map->m_pblk,
+> > 
+> > If any part of the journal area overlaps with the system zone, we'll catch
+> > it when we add the journal area to the system zone later.
+> > 
+> > 
+> 
+> Since the creation of the system zone relies on the journal being
+> loaded, I think there is no risk in proceeding to call
+> ext4_inode_block_valid() to perform a basic block range check for
+> the journal inode, or even better.
+> 
+> Thanks,
+> Yi.
 
-Hi Lei,
+Got it Yi, makes sense to me. So I believe you are suggesting something
+like:
 
-Is it possible to test this series also with virtio-net-pci,...,in_order=3D=
-on?
+@@ -384,9 +384,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
+                                unsigned int line,
+                                struct ext4_map_blocks *map)
+ {
++       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
++
+        if (ext4_has_feature_journal(inode->i_sb) &&
+-           (inode->i_ino ==
+-            le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
++           (journal && journal->j_inode == inode))
+                return 0;
+        if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+                ext4_error_inode(inode, func, line, map->m_pblk,
 
-Thanks!
+> 
 
-> Tested-by: Lei Yang <leiyang@redhat.com>
->
-> On Mon, Mar 24, 2025 at 1:45=E2=80=AFPM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >
-> > Hello all:
-> >
-> > This sereis tries to implement the VIRTIO_F_IN_ORDER to
-> > virtio_ring. This is done by introducing virtqueue ops so we can
-> > implement separate helpers for different virtqueue layout/features
-> > then the in-order were implmeented on top.
-> >
-> > Tests shows 5% imporvemnt in RX PPS with KVM guest + testpmd on the
-> > host.
-> >
-> > Please review.
-> >
-> > Thanks
-> >
-> > Jason Wang (19):
-> >   virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
-> >   virtio_ring: switch to use vring_virtqueue in virtqueue_poll variants
-> >   virtio_ring: unify logic of virtqueue_poll() and more_used()
-> >   virtio_ring: switch to use vring_virtqueue for virtqueue resize
-> >     variants
-> >   virtio_ring: switch to use vring_virtqueue for virtqueue_kick_prepare
-> >     variants
-> >   virtio_ring: switch to use vring_virtqueue for virtqueue_add variants
-> >   virtio: switch to use vring_virtqueue for virtqueue_add variants
-> >   virtio_ring: switch to use vring_virtqueue for enable_cb_prepare
-> >     variants
-> >   virtio_ring: use vring_virtqueue for enable_cb_delayed variants
-> >   virtio_ring: switch to use vring_virtqueue for disable_cb variants
-> >   virtio_ring: switch to use vring_virtqueue for detach_unused_buf
-> >     variants
-> >   virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
-> >   virtio_ring: introduce virtqueue ops
-> >   virtio_ring: determine descriptor flags at one time
-> >   virtio_ring: factor out core logic of buffer detaching
-> >   virtio_ring: factor out core logic for updating last_used_idx
-> >   virtio_ring: move next_avail_idx to vring_virtqueue
-> >   virtio_ring: factor out split indirect detaching logic
-> >   virtio_ring: add in order support
-> >
-> >  drivers/virtio/virtio_ring.c | 856 ++++++++++++++++++++++++++---------
-> >  1 file changed, 653 insertions(+), 203 deletions(-)
-> >
-> > --
-> > 2.42.0
-> >
-> >
->
+So that even if it is a journal inode we can go ahead and perform some basic checks
+as the system zone rbtree will anyways be NULL at this point. From a cursory look,
+it seems that __ext4_iget(..., journal_inode) -> ext4_ext_check_inode() already relies
+on the fact that system zone is NULL, so we should be okay here as well.
 
+If this looks good, I'll send a v2 with the suggested changes.
+
+Thanks,
+ojaswin
 
