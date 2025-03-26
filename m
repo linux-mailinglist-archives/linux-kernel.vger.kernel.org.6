@@ -1,185 +1,162 @@
-Return-Path: <linux-kernel+bounces-577556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D389CA71EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:53:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C72A71EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1253BCAE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491D81897521
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E87253343;
-	Wed, 26 Mar 2025 18:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1AC253B68;
+	Wed, 26 Mar 2025 18:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snLlwT1B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMVgNDrU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898DA215058;
-	Wed, 26 Mar 2025 18:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC87253331;
+	Wed, 26 Mar 2025 18:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743015182; cv=none; b=WZFxFyMHwiw1ExweVc3H5qjGAWR2tDkFwYpp+eQM36RWtb5bGSbm0KZNn4kkjKCFMyFxZuC3YZhlbPfgmF5blK8aKtMMkI8cruGtb1UMdHSCy1aFf7PKnEPg5zIp/w2SpcnDVFiV+ooiKSeYbaNmHCFAG6UfPDw5EZgvHSsr85w=
+	t=1743015420; cv=none; b=WC7f6vHIQQv12xjPG1GTz84qe727SUv3HlkLz3cSXTZqOInexlI8Q1FVVW/oQJG9cJA6UKssgXg/7dwH+1pT/cnarwQKUJa2pjtPbfac68IF2QJqcvDUjYzRY8+8ozcr56WTN99W3hdhvg7e8BmiLrOz8tLVf6DE7h3KN3nocq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743015182; c=relaxed/simple;
-	bh=7tnbCUTKMpPo8aoqQiYW410Hhe5LPNkwVR28/52KUGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CR63jnP6nLxtdHeFRa7TEtEaikeVTIesVTzKY4GhAp/L4QsNnTZAjyRmIQAygariWrzHBGXMKELn30Lf4gZkWFtbRf1c4CL513oQiWY4p7nSrFzGUgpcX0yfa2F0Z+ACn/gpMBd8U+8VEKfG9FqH7CgSVqarrXYeNV9/Gzd6h4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snLlwT1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD20C4CEF0;
-	Wed, 26 Mar 2025 18:53:02 +0000 (UTC)
+	s=arc-20240116; t=1743015420; c=relaxed/simple;
+	bh=vhJ0Tb5U1AY57SCv1ZXjDfFqvaTeHvCrc/GjSTQFBCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLBNZW2XM8lEUiRCcbLCqj6b4U6dblTkpOa9n6+5Q29GWzZiUjCFJT9qR0EFJa9vpRobVg7wzweQRoIvi1j1P77UlHwm/Ga51xfV+hQgC42N9ZbEriMeDKO5QTyStN2KRJvhqMDkwBEj4nNJXR17bL2SAZBSSMtKDZAOU6JcdNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMVgNDrU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E59C9C4CEE2;
+	Wed, 26 Mar 2025 18:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743015182;
-	bh=7tnbCUTKMpPo8aoqQiYW410Hhe5LPNkwVR28/52KUGY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=snLlwT1ByOOZ8VDdLTGeiVAiEWrHtg3EvWVkctlzQIGFZzDT7XBzN2DIIFpHVRuA4
-	 QWSXjBNoMYxPNGrYI7EhmcSj0AeKKRNkXc7ncCYbP0fslp4P4+jMIkZIAktw92xzl9
-	 f/6pVTEXC4NSXGu4xof5rtvBej+C0GDqtW1wkGhV6Wi2YRwu2jpb0Lyghf8UlzytoG
-	 WwQ6DMNodUQHQk2VpoXa2/y89pLaPCLpwF+ISbR4hp6cRaabZWfTVWMtcr/ZSfSmh8
-	 jwKqvjyFp2FKpKOIs73vDRG4Rw8NplM2rXgHf/zkk7H07J9bPh8EYwSA5OcJVoLYAh
-	 Co5wZxznPQ7aQ==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso2301933a12.0;
-        Wed, 26 Mar 2025 11:53:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULByM3gBBPd93iQ9H5PkPbQbq7kXP4TicXA1aaKhpWmsdmWepvEb/nR3B7VV16xeV0U8PGJHJ71U9hqUh0@vger.kernel.org, AJvYcCV0d2Z38X05xlfAoQnlAoZYMTdejD+bwfDdVf4t6X70lo65Ix3nQfiLBMxWgNglM7M+DaMcWLb4EbLRlJGfbCueqA==@vger.kernel.org, AJvYcCVaZjgj5CxrS201Md3PY0KWIUM4WMPBMgXlS68gXmX22VfTcNNKcFVNXWo7DmkmVQtfSlaoYxgYhpC9Umww2g==@vger.kernel.org, AJvYcCXMybBh7e9IkBvVBDeMDF9I/TjndgEwHovuHdgD3YhIS/H8HejuG/wk5Ih3Kgjbq5p5QyA4ZSWNDsFO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwgTrQephHReQ0rUXSL3XoX0/ynn3bV+dKHD38pxVRGzvA7F8i
-	E8yfNBpgf+FpHTUnpv27E5mPywKuwkadqEsZ6DjrVrBP7R43zceG3JYesxfKEOckx44bmFER8AN
-	kNIKYWD8g6TfjOeM7Koee1qsmbQ==
-X-Google-Smtp-Source: AGHT+IEi/FLkb6+pDXS2OgDct0wDDLVjgAusO19cQUp3SH7xeV/KwpO2rct7/toV7PxXM7MD6oHfl5OWID6sUvuLyTI=
-X-Received: by 2002:a17:907:7295:b0:ac2:26a6:febf with SMTP id
- a640c23a62f3a-ac6e0d3384emr557164766b.20.1743015180452; Wed, 26 Mar 2025
- 11:53:00 -0700 (PDT)
+	s=k20201202; t=1743015420;
+	bh=vhJ0Tb5U1AY57SCv1ZXjDfFqvaTeHvCrc/GjSTQFBCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sMVgNDrUebCui4P5SprMxEmz62g3VXNMAoaweCwL7DHAJvR6Ehp+/war/Thm7TQPE
+	 FTUBeiKsSGAggsDOxRmRdiRX6OK+AP9hHQ9lwvRINE2nmEjRNUdmPYnzH6pL7EOSxc
+	 TBrxZA1qvlZJKrCWUJowc00Ddc+iI9fD03fVmxaAUkAaG9WcJ65fk9Qi6WUpb5YNSn
+	 fvZUlKlXVpEgI4qLHZvVTyWiAlGlyAzFhsRZiyCVHUhaWdJeGjVyOmpabXh3vo5Nro
+	 MJImFUUNd7mgys5vMha7eJ3fv5D0+sohFpvCCzW4n6y+gPuChwgOZR5Ukgelh40fby
+	 gqzn8g4dy0E/g==
+Date: Wed, 26 Mar 2025 18:56:54 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <a98eb789-4c49-4607-ad15-76e260888d64@sirena.org.uk>
+References: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-3-robh@kernel.org>
- <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-In-Reply-To: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 26 Mar 2025 13:52:49 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqmc05lmNw-rFmLFhT71JwYvVm4xio8OJGuHie4RorDqomqBJbJolJsSNo
-Message-ID: <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
-To: wens@kernel.org
-Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Aq86MDoKVXEMFFxc"
+Content-Disposition: inline
+In-Reply-To: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
+X-Cookie: To err is humor.
 
-On Wed, Mar 26, 2025 at 1:44=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org> wrot=
-e:
->
-> Hi,
->
-> On Tue, Mar 18, 2025 at 7:29=E2=80=AFAM Rob Herring (Arm) <robh@kernel.or=
-g> wrote:
-> >
-> > Simplify of_dma_set_restricted_buffer() by using of_property_present()
-> > and of_for_each_phandle() iterator.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >  drivers/of/device.c | 34 +++++++++++++---------------------
-> >  1 file changed, 13 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/of/device.c b/drivers/of/device.c
-> > index edf3be197265..bb4a47d58249 100644
-> > --- a/drivers/of/device.c
-> > +++ b/drivers/of/device.c
-> > @@ -35,44 +35,36 @@ EXPORT_SYMBOL(of_match_device);
-> >  static void
-> >  of_dma_set_restricted_buffer(struct device *dev, struct device_node *n=
-p)
-> >  {
-> > -       struct device_node *node, *of_node =3D dev->of_node;
-> > -       int count, i;
-> > +       struct device_node *of_node =3D dev->of_node;
-> > +       struct of_phandle_iterator it;
-> > +       int rc, i =3D 0;
-> >
-> >         if (!IS_ENABLED(CONFIG_DMA_RESTRICTED_POOL))
-> >                 return;
-> >
-> > -       count =3D of_property_count_elems_of_size(of_node, "memory-regi=
-on",
-> > -                                               sizeof(u32));
-> >         /*
-> >          * If dev->of_node doesn't exist or doesn't contain memory-regi=
-on, try
-> >          * the OF node having DMA configuration.
-> >          */
-> > -       if (count <=3D 0) {
-> > +       if (!of_property_present(of_node, "memory-region"))
-> >                 of_node =3D np;
-> > -               count =3D of_property_count_elems_of_size(
-> > -                       of_node, "memory-region", sizeof(u32));
-> > -       }
-> >
-> > -       for (i =3D 0; i < count; i++) {
-> > -               node =3D of_parse_phandle(of_node, "memory-region", i);
-> > +       of_for_each_phandle(&it, rc, of_node, "memory-region", NULL, 0)=
- {
-> >                 /*
-> >                  * There might be multiple memory regions, but only one
-> >                  * restricted-dma-pool region is allowed.
-> >                  */
-> > -               if (of_device_is_compatible(node, "restricted-dma-pool"=
-) &&
-> > -                   of_device_is_available(node)) {
-> > -                       of_node_put(node);
-> > -                       break;
-> > +               if (of_device_is_compatible(it.node, "restricted-dma-po=
-ol") &&
-> > +                   of_device_is_available(it.node)) {
-> > +                       if (!of_reserved_mem_device_init_by_idx(dev, of=
-_node, i)) {
-> > +                               of_node_put(it.node);
-> > +                               return;
-> > +                       }
-> >                 }
-> > -               of_node_put(node);
-> > +               i++;
-> >         }
-> >
-> > -       /*
-> > -        * Attempt to initialize a restricted-dma-pool region if one wa=
-s found.
-> > -        * Note that count can hold a negative error code.
-> > -        */
-> > -       if (i < count && of_reserved_mem_device_init_by_idx(dev, of_nod=
-e, i))
-> > -               dev_warn(dev, "failed to initialise \"restricted-dma-po=
-ol\" memory node\n");
-> > +       dev_warn(dev, "failed to initialise \"restricted-dma-pool\" mem=
-ory node\n");
->
-> This changes the behavior. Before this patch, it was:
->
->     if a restricted dma pool was found, but initializing it failed, print
->     a warning.
->
-> Whereas now it has become:
->
->      print a warning unless a restricted dma pool was found and successfu=
-lly
->      initialized.
->
-> This change causes the kernel to print out the warning for devices that
-> don't even do DMA:
 
-Thanks. I fixed it up to only warn if i is non-zero.
+--Aq86MDoKVXEMFFxc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Rob
+On Wed, Mar 26, 2025 at 03:39:33PM -0300, Daniel Almeida wrote:
+
+This is flagged as a resend but appears to be the first copy I've
+seen...
+
+> Add a bare minimum regulator abstraction to be used by Rust drivers.
+> This abstraction adds a small subset of the regulator API, which is
+> thought to be sufficient for the drivers we have now.
+
+> +//! Regulators are modeled with two types: [`Regulator`] and
+> +//! [`EnabledRegulator`].
+
+It would be helpful to see what the client code actually looks like
+here.
+
+> +    /// Enables the regulator.
+> +    pub fn enable(self) -> Result<EnabledRegulator> {
+> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+> +        let res = to_result(unsafe { bindings::regulator_enable(self.inner.as_ptr()) });
+> +        res.map(|()| EnabledRegulator { inner: self })
+> +    }
+
+I assume this map does soemthing to report errors?
+
+> +impl EnabledRegulator {
+
+> +    /// Disables the regulator.
+> +    pub fn disable(self) -> Result<Regulator> {
+> +        // Keep the count on `regulator_get()`.
+> +        let regulator = ManuallyDrop::new(self);
+> +
+> +        // SAFETY: Safe as per the type invariants of `Self`.
+> +        let res = to_result(unsafe { bindings::regulator_disable(regulator.as_ptr()) });
+> +
+> +        res.map(|()| Regulator {
+> +            inner: regulator.inner.inner,
+> +        })
+> +    }
+
+This looks like user code could manually call it which feels like asking
+for trouble?
+
+> +    /// Sets the voltage for the regulator.
+> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) -> Result {
+> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+> +        to_result(unsafe { bindings::regulator_set_voltage(self.as_ptr(), min_uv.0, max_uv.0) })
+> +    }
+
+set_voltage() is only implemented for enabled regulators.  It is
+reasonable for a driver to want to set the voltage for a regulator prior
+to enabling it in order to ensure that the device powers up cleanly,
+there may be different requirements for power on from on and idle so the
+constraints may not be enough to ensure that a device can power on
+cleanly.
+
+> +    /// Gets the current voltage of the regulator.
+> +    pub fn get_voltage(&self) -> Result<Microvolt> {
+> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+> +        let voltage = unsafe { bindings::regulator_get_voltage(self.as_ptr()) };
+> +        if voltage < 0 {
+> +            Err(Error::from_errno(voltage))
+> +        } else {
+> +            Ok(Microvolt(voltage))
+> +        }
+> +    }
+
+Same issue here.
+
+--Aq86MDoKVXEMFFxc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfkTfUACgkQJNaLcl1U
+h9AzjAf/cmwK4P3P9KAmsDyhcKj+AURoWPuwFnSzehEDZ5UHKFRMut9EvalKLxPt
+CwDomA6rvYUQukQPDGKCcD6u5MqMshnrM3d7VLbg8fAcyhPuVGuoLXjiu58QmiKn
+RzqeQ/px3sEuM9BX+sUEpcayLosTpZuTs3uE+j0Z05d11ciPAP+4kBlWPvWvYbmL
+TJeR9ZDzWnFZtY+9BL3omRfcnHPGrS8SqFVbC08DFAICwnDhP+WNbO+9PkzZBCiT
+WU4uEQGoU30HogiRNU6mKI4LMCrldTdYwRYovjURCfdXtGEMKIDUaEZfnB5ZyQ5v
+nscLCShaRINdAne2Dc44GkVUW0d/OQ==
+=eZ9O
+-----END PGP SIGNATURE-----
+
+--Aq86MDoKVXEMFFxc--
 
