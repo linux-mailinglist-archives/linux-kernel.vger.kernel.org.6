@@ -1,185 +1,224 @@
-Return-Path: <linux-kernel+bounces-577403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27C9A71C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D92A71CA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A718A1894004
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6315F1896284
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7846D1F8670;
-	Wed, 26 Mar 2025 16:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3508919D07A;
+	Wed, 26 Mar 2025 16:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yv/kwjYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="DPD/rkpe"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B161E4AE;
-	Wed, 26 Mar 2025 16:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF441DED5F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743008349; cv=none; b=jjynvkdQWvcfnIQFkTzzj6IkOoTcGNWDwhFju75mxmM6lK+mwZigx/n3N7leh2eLqWiE9BsJtgByX0StGgD5GfBPIPaeaSkBhkQ68tPN0zcOK4/JHcw6vvLi42xCxOL/rIEa5rdz9OUeSZsMK7jzxiU1WC9LVeXQqBCjtt2CoFQ=
+	t=1743008387; cv=none; b=Yu1lG3cWGyvaP/TMT3wHbOIx62U9rlOQcS4DhHCR48edReVoahtzTwndwBgbaJ0/585iuGTGuqxKGraM05tibgyroD09RUZQHApCvQ7XV/VWdrQr4arEd/P6roRfUwgEMXSxduRkGltD/4Q8WXQ8k/NWFMcUiBtlneXnT0eC4ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743008349; c=relaxed/simple;
-	bh=ipn5myIp1HsxBnoqD80mU7TAbi2ASqH1gBOodIKEWj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDwtN9RT2SDWVQRLaKmX7lRZUq6sYdyN2OzCvb7q2KKJ0dkP+sYxFOT5xw2Rhvjl8Bq0wgPc3+7mX21G9WW7yB4SI+mMNjRPbyGyJFdZTcnayE2XYNktXtt8I0gTbRxsu7TMGqMaQaBrR9xBbi8axyRp8bMsu4P1xqhu4WysGmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yv/kwjYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9417C4CEE8;
-	Wed, 26 Mar 2025 16:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743008349;
-	bh=ipn5myIp1HsxBnoqD80mU7TAbi2ASqH1gBOodIKEWj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yv/kwjYtPcCAkP6dI1VjlEdSg0blG+iFdk9Gw13ywPlVPR4vYHGXF9wngEyCZiQxq
-	 CmHacaDyBb+mDNgm5CBHWH7TKACS/e+1sicqNQEGKxRriVbvoqKFpYr9J9G9f3Ug6X
-	 Fkp2LCNLH1iPqPEu4qDBlwXKSvHBuPkpEtimtzdHjDHQsf4zKE957b76JciUBBCdpJ
-	 +ipcsBHJylEAMClSo2pcLyYZQNhC44WWJxPfLKJBITk+QvLbUOVwaYm/mKU/SYmZyM
-	 pD6VrdXIq9JoDcKN0hgl2lRevG4EI/xhCeQOfzILxFIMNUXPc+EWMK3QKUw3mzIIA2
-	 J7on3GjMPOOfg==
-Date: Wed, 26 Mar 2025 09:59:07 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Kees Cook <kees@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>,
-	"open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Daniel Perez-Zoghbi <dperezzo@quicinc.com>,
-	Gaurav Kashyap <gaurkash@qti.qualcomm.com>,
-	Udit Tiwari <utiwari@qti.qualcomm.com>,
-	Md Sadre Alam <mdalam@qti.qualcomm.com>,
-	Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-Subject: Re: Extending the kernel crypto uAPI to support decryption into
- secure buffers
-Message-ID: <20250326165907.GC1243@sol.localdomain>
-References: <CAMRc=MdO=vPrvvonJPJ=1Lp0vFTRBtsEBUS5aqWp4yMqUtgfzw@mail.gmail.com>
+	s=arc-20240116; t=1743008387; c=relaxed/simple;
+	bh=z8v4HgNksasV6Ym9ZoHWSxFb1Pm6JPjkpNDX7QGI6w0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7ZtMu1dRhqNxrPE9ElPzNnspZ9FLG4HGgB3xRbYM0FkDuxMc2SGan1fOSpIRZdrJDeAcNDgD0omrGz9bdAe4LOnvh6hR7GwFh5QB/ODRrU787jJkkeyZORjykmGBLKyCx/H5GnxgSrkIhoxLhOdDWvoyODDPtlhvfcdRODc+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=DPD/rkpe; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso1957149a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1743008385; x=1743613185; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k1ta+e4yZg+E/JBqDKl34KJtyjkMqGr/ZUFNKEBvHrc=;
+        b=DPD/rkpetSSW/NtLwL8QyYBd8SWFIvgKt8xEt0+rQ4HSIEPPE/2+e4usYpEwVdKij0
+         ap75QrGZ1b+j8fANYs9J46fZeeGFSbKsdwn2OVDTY+ibXDJyqBkE0JX85RzcQ3rYojGs
+         Tq5HLTh6IKlqLnodtYEOsdsMm9pbMOvmLudQW7pGgDYagvR2ec9TOIn9vSJQzmdz2y8T
+         Vo23yU33cqr/J0Ksv/WS5H6l3RYRL1dF8K4DAK0u43NRQUrxrOs/bkdz5JZnQpUZQUXD
+         qcSxrv4pVsK83uVZheeTfeSsS1NgwmRzUqPHsbFnq6sOW7bgA/yAEcP48YNDcGM/EsjN
+         u99A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743008385; x=1743613185;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k1ta+e4yZg+E/JBqDKl34KJtyjkMqGr/ZUFNKEBvHrc=;
+        b=Vu5/a9u73qR3BiUXzDl9TqWPlJC652inR3L9VGulIaLogLVokTPA7NZA1QFJLUW2qU
+         XlW+5M/f/SELzsn9oiGuTqSvfPcSyO4OitCBIpltHiJQuBUddHuxnRrKkaohiY5SnrLC
+         IgBFVtPawjOduK/TVi/Gw66Ft9oe1szJHuBd3veDaQwjb56XyA9+i76SUR372pCc3sS4
+         Z+Ip65WJ5UTnULvUq8083T27DqYLqNIVbqzjM5b9jonp5g4/MRMHnR9dMcDyt3axm6HF
+         /pve23UOdcrB8Gind4/eDR7UnC6XP9DsSJLdiidVhygJl7U2O0J4Sb3pjkkg21f2tYMk
+         +PfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSupsSFDtDbiEEY0QQ3A9cDqbDBkRIe6wUQBxN4lnjwI5vXPy/5g08ig/qbDtBXzIzsR6E+m75nmQ5bAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWLXXsYAw4eg0H2NE2y8EVb2UsgpLwyNoSg+O18CyilNTmYauA
+	zVz4ZU2kuDjL40UPT+VDfa5mXobFI52KaWPZOoLDDWjNnNTHe6ib4u06GXfRdXX7Y5zalGstcJn
+	185UA7E9Dckz80DnA8uH0aLOKld/wVbXK5gGxjQ==
+X-Gm-Gg: ASbGnct42ozfatHbMEpyf0OJc5ajgIysYToeLcnqZJsKJpIAcLs+L2Ijg1SdH8sFJZ8
+	a+vtPD3TUv4NrJ3yklQVBpujssjKV2+7nYfsQ9goKtWutTVyydmKZSWrsp+k/a27MVSbqKSAARW
+	e8dXcdC9L0WqK7j7qyfujd6Xt0TZw=
+X-Google-Smtp-Source: AGHT+IF/ZIUOzoCMXkmF9NPMBJoRs7scjT/WUjWYTeNlhns68B6x95FZ4W9S/inkhtFJoFewTokWWenkVY3WgzQlTmY=
+X-Received: by 2002:a17:90b:54c4:b0:2fa:562c:c1cf with SMTP id
+ 98e67ed59e1d1-303788c2685mr7077910a91.1.1743008385079; Wed, 26 Mar 2025
+ 09:59:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdO=vPrvvonJPJ=1Lp0vFTRBtsEBUS5aqWp4yMqUtgfzw@mail.gmail.com>
+References: <20250324185744.2421462-1-you@example.com> <b6668968-897f-4864-913c-d4d557f1d7cc@roeck-us.net>
+ <CABqG17h8cpnFkdD-nnqyr+UnwADU9XWK6TGBxj_FCH37Y3Q1Lw@mail.gmail.com> <be099cf4-338b-45c8-b0d3-24b2cefe386e@roeck-us.net>
+In-Reply-To: <be099cf4-338b-45c8-b0d3-24b2cefe386e@roeck-us.net>
+From: Naresh Solanki <naresh.solanki@9elements.com>
+Date: Wed, 26 Mar 2025 22:29:33 +0530
+X-Gm-Features: AQ5f1JqHhKNucZ4ApFXKvUPExSvoJwEGxZ88fxC3KKffOUHRX87iCId87ML5ll0
+Message-ID: <CABqG17gZV7ZBKOz0gTsrfsuHQENF3VM2T-=O27sWdc1PP9OmPA@mail.gmail.com>
+Subject: Re: [PATCH] hwmon: (max6639) : Allow setting target RPM
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 25, 2025 at 09:23:09PM +0100, Bartosz Golaszewski wrote:
-> Hi Herbert et al!
-> 
-> There are many out-of-tree implementations of DRM stacks (Widevine or
-> otherwise) by several vendors out there but so far there's none using
-> mainline kernel exclusively.
-> 
-> Now that Jens' work[1] on restricted DMA buffers is pretty far along
-> as is the QTEE implementation from Amirreza, most pieces seem to be
-> close to falling into place and I'd like to tackl
-> e the task of implementing Widevine for Qualcomm platforms on linux.
-> 
-> I know that talk is cheap but before I show any actual code, I'd like
-> to first discuss the potential extensions to the kernel crypto uAPI
-> that this work would require.
-> 
-> First: why would we need any changes to the crypto uAPI at all? After
-> all other existing implementations typically go around it and talk
-> directly to the TrustZone. That's right but IMO t
-> here's some benefit of factoring out the common low-level elements
-> behind a well-known abstraction layer. Especially since TA
-> implementations may differ. Also: in the case of the Qualcom
-> m trusted OS, the single-threaded implementation makes it preferable
-> to offload only a limited set of operations to the TA to not keep it
-> overly busy so a dedicated kernel driver can han
-> dle most of the crypto engine's functionality on the linux side.
-> 
-> And in general being able to decrypt into secure buffers may benefit
-> other use-cases too.
-> 
-> There are at least two points that need addressing in the crypto uAPI.
-> 
-> 1. Support for secure keys.
-> 
-> This can be approached in two ways:
-> 
-> - We may expect users to already have generated the secure keys from
-> user-space directly over the TEE interface, retrieve some kind of a
-> handle (secure key index, wrapped key, TBD) and p
-> ass it down to the crypto framework via setsockopt().
-> 
-> We'd probably need to add a new optname: ALG_SET_SECURE_KEY or
-> ALG_SELECT_SECURE_KEY or even ALG_SELECT_KEY in order to differentiate
-> from the raw keys passed alongside ALG_SET_KEY.
-> 
-> The underlying crypto driver would then have to be able to select the
-> key from the TZ. In this scenario the crypto core assumes the keys are
-> already programmed in the secure enclave and
-> it's just a matter of selecting the right one.
-> 
-> - We may also prefer to do everything via the crypto uAPI, including
-> generating secure keys. This has the benefit of adding a nice
-> abstraction layer for various trusted OS implementation
-> s which differ from one vendor to another.
-> 
-> To that end we'd need to introduce a new af_alg_type instance that
-> would allow us to manage secure keys via setsockopt() or
-> read()/write() in addition to the above.
-> 
-> An example user-space side would look like this:
-> 
-> struct sockaddr_alg sa = {
->    .salg_family = AF_ALG,
->    .salg_type = "securekey",
->    .salg_name = "qtee", /* Qualcomm TEE implementation */
-> };
-> 
-> sock = socket(...);
-> bind(...);
-> fd = accept(sock, ...);
-> header->cmsg_level = SOL_ALG;
-> header->cmsg_type = ALG_GENERATE_KEY;
-> sendmsg()
-> 
-> 2. Decrypting data into secure buffers.
-> 
-> Here we'd need two things:
-> 
-> - passing file descriptors associated with secure buffers to the crypto API
-> 
-> Other than using setsockopt() to select the secure key, selecting a
-> symmetric cypher wouldn't differ from raw implementations but the
-> message we're sending over sendmsg() would need to c
-> ontain another entry that would contain the file descriptor associated
-> with the secure buffer. To that end I imagine adding a new socket
-> option code: ALG_SET_MEM_FD.
-> 
-> - one-way decryption into the secure buffer
-> 
-> This would mean that the write() of encrypted data into the socket
-> would not be paired with a corresponding read() of the decrypted data
-> back into user-space. Instead, we'd need a mechan
-> ism of getting notified that the decryption completed (successfully or
-> with an error). That could be achieved by polling the socket for
-> POLLIN | POLLERR. A read() on such a descriptor wo
-> uld return -EOPNOTSUPP.
-> 
-> Please let me know your thoughts on this and whether any of the above
-> even makes sense. If it's not a terrible approach, I will start
-> working on a functional PoC. Please note, that I'm n
-> ot very well versed in linux crypto so I may very well be talking
-> nonsense. In that case any advice is welcome.
-> 
+Hi Guenter,
+
+On Wed, 26 Mar 2025 at 22:19, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 3/26/25 09:36, Naresh Solanki wrote:
+> > Hi Guenter,
+> >
+> > On Tue, 25 Mar 2025 at 05:00, Guenter Roeck <linux@roeck-us.net> wrote:
+> >>
+> >> On 3/24/25 11:57, Your Name wrote:
+> >>> From: Naresh Solanki <naresh.solanki@9elements.com>
+> >>>
+> >>> Currently, during startup, the fan is set to its maximum RPM by default,
+> >>> which may not be suitable for all use cases.
+> >>> This patch introduces support for specifying a target RPM via the Device
+> >>> Tree property "target-rpm".
+> >>>
+> >>> Changes:
+> >>> - Added `target_rpm` field to `max6639_data` structure to store the
+> >>>     target RPM for each fan channel.
+> >>> - Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
+> >>>     property from the Device Tree and set `target_rpm` accordingly.
+> >>> - Updated `max6639_init_client()` to use `target_rpm` to compute the
+> >>>     initial PWM duty cycle instead of defaulting to full speed (120/120).
+> >>>
+> >>> Behavior:
+> >>> - If `"target-rpm"` is specified, the fan speed is set accordingly.
+> >>> - If `"target-rpm"` is not specified, the previous behavior (full speed
+> >>>     at startup) is retained.
+> >>>
+> >>
+> >> Unless I am missing something, that is not really correct. See below.
+> >>
+> >>> This allows better control over fan speed during system initialization.
+> >>>
+> >>> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> >>> ---
+> >>>    drivers/hwmon/max6639.c | 15 ++++++++++++---
+> >>>    1 file changed, 12 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
+> >>> index 32b4d54b2076..ca8a8f58d133 100644
+> >>> --- a/drivers/hwmon/max6639.c
+> >>> +++ b/drivers/hwmon/max6639.c
+> >>> @@ -80,6 +80,7 @@ struct max6639_data {
+> >>>        /* Register values initialized only once */
+> >>>        u8 ppr[MAX6639_NUM_CHANNELS];   /* Pulses per rotation 0..3 for 1..4 ppr */
+> >>>        u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
+> >>> +     u32 target_rpm[MAX6639_NUM_CHANNELS];
+> >>>
+> >>>        /* Optional regulator for FAN supply */
+> >>>        struct regulator *reg;
+> >>> @@ -560,8 +561,14 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
+> >>>        }
+> >>>
+> >>
+> >> target_rpm[] is 0 here.
+> >>
+> >>>        err = of_property_read_u32(child, "max-rpm", &val);
+> >>> -     if (!err)
+> >>> +     if (!err) {
+> >>>                data->rpm_range[i] = rpm_range_to_reg(val);
+> >>> +             data->target_rpm[i] = val;
+> >>> +     }
+> >>
+> >> If there is no max-rpm property, or if there is no devicetree support,
+> >> target_rpm[i] is still 0.
+> >>
+> >>> +
+> >>> +     err = of_property_read_u32(child, "target-rpm", &val);
+> >>> +     if (!err)
+> >>> +             data->target_rpm[i] = val;
+> >>
+> >> If there is neither max-rpm nor target-rpm, target_rpm[i] is still 0.
+> >>
+> >>>
+> >>>        return 0;
+> >>>    }
+> >>> @@ -573,6 +580,7 @@ static int max6639_init_client(struct i2c_client *client,
+> >>>        const struct device_node *np = dev->of_node;
+> >>>        struct device_node *child;
+> >>>        int i, err;
+> >>> +     u8 target_duty;
+> >>>
+> >>>        /* Reset chip to default values, see below for GCONFIG setup */
+> >>>        err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
+> >>> @@ -639,8 +647,9 @@ static int max6639_init_client(struct i2c_client *client,
+> >>>                if (err)
+> >>>                        return err;
+> >>>
+> >>> -             /* PWM 120/120 (i.e. 100%) */
+> >>> -             err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
+> >>> +             /* Set PWM based on target RPM if specified */
+> >>> +             target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
+> >>
+> >> If there is no devicetree support, or if neither max-rpm nor target-rpm are
+> >> provided, target_duty will be 0, and the fans will stop.
+> >>
+> >> Maybe my interpretation is wrong, but I think both target_rpm[] and rpm_range[]
+> >> will need to be initialized. Also, it seems to me that there will need to be an
+> >> upper bound for target_rpm[]; without it, it is possible that target_duty > 120,
+> >> which would probably not be a good idea.
+> > Yes you're right. I missed it in my analysis.
+> >
+> > Here is the logic that would address:
+> >                  target_rpm = 120;
+> >                  /* Set PWM based on target RPM if specified */
+> >                  if (data->target_rpm[i] != 0 &&
+> >                      data->target_rpm[i]  <= rpm_ranges[data->rpm_range[i]]) {
+> >
+> >                          target_duty = 120 * data->target_rpm[i] /
+> > rpm_ranges[data->rpm_range[i]];
+> >                  }
+> >
+> > Please let me know your thoughts & suggestions.
+> >
+>
+> I would prefer if target_rpm[] and rpm_range[] were pre-initialized with default
+> values in the probe function. That would avoid runtime checks.
+rpm_range is pre-initialized to 4000 RPM [1]
+I can also init target_rpm[] to 4000 RPM as default along with above init.
+
+But still there might be a case wherein DT doesn't provide max-rpm but
+target-rpm is set to greater than 4000 RPM
+Thus there will be a need to check to cover this kind of scenario.
+
+Please let me know your thoughts & will implement that.
+
+[1]https://kernel.googlesource.com/pub/scm/linux/kernel/git/groeck/linux-staging/+/hwmon-next/drivers/hwmon/max6639.c#586
+
+Regards,
+Naresh
+>
 > Thanks,
-> Bartosz
-> 
-> [1] https://lore.kernel.org/all/20250305130634.1850178-1-jens.wiklander@linaro.org/
-> [2] https://lore.kernel.org/lkml/20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com/
-
-What would you get out of building this on top of AF_ALG, vs. building a new
-UAPI from scratch?  There seem to be an awful lot of differences between what
-this needs and what AF_ALG does.
-
-- Eric
+> Guenter
+>
 
