@@ -1,188 +1,183 @@
-Return-Path: <linux-kernel+bounces-577244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA49A71A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:33:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A294BA71A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF70B1885291
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F79F3B8A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC80C1F3BA5;
-	Wed, 26 Mar 2025 15:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B7D1F4177;
+	Wed, 26 Mar 2025 15:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpnWHTgi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kDkwiMaw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0AJ4PUxT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901EE1A8F60;
-	Wed, 26 Mar 2025 15:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE491EFF98;
+	Wed, 26 Mar 2025 15:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743002983; cv=none; b=EObJBKmd5NzM8RnTmrgV+ZcTEQ1VmNtzNBJEUzw8aj3CYZh4Zge89pfokJ1lxnaiGhBAddtoVp2nW0+HOfN3GfR4woMqRQjhfxn4TUYSwpzYSvrS+Cv9XBKMGpLwrwhaMA2oHbEDPggmeGwVRE+T8T5ifilpGr+3hkimhi7Se9s=
+	t=1743002990; cv=none; b=E7oR46vZmbJej1eri1ghX4U1kkiji6z4IrpLnEQrDPMWWGBgxmCYw0NW7MlwdaAui/VKaV2Pe+2sS8Gz0gkPBfQSO/5LqjOIYV1awZGqaOJenrMoPWfP/CZ8RcDNdDQI7gjVCutyrG5919lCDINMR+JoxKKJNp498tdcaRrASIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743002983; c=relaxed/simple;
-	bh=1rR+/faxkHLlYltbcuI3PbbS4s/fXFMou00xu/7HeXY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Zae7GFlcvFZ+zZoK6x80xO/ZEZqFII5ehynVM8SbJ0k3Nn7k6VFvBomGhKBoVDxMdfn2Pp6zWendT+EzRSZfPMvTZXJN85jzso6zCiV5C0RL9nLhYd6OSZ6Uo6bArpzeKITWhK0bNfcLWMjgIBtK6VN9+yiD92TaKCqJXfaA6DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpnWHTgi; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743002981; x=1774538981;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=1rR+/faxkHLlYltbcuI3PbbS4s/fXFMou00xu/7HeXY=;
-  b=mpnWHTgiDJBA/64CQhfDNg4MSTqk9xEr/6q004lzqoV6b6T+Oc5rbKRL
-   H5lUOtSxTRPjPfeiDqb7Ez0LXdfGuZajEp//ZgmuVCnrfmz/OnkwcL4Fl
-   G1Wj5MtOiuKFBMiLCX1i9Y2OQB5RGL1Ny1JwWEfJhEU3hfp6zUM+daAet
-   DHNM6h0HYaUImpRnALMdg2X5U4vKjPEWYfmVKbaUu/WjO7frBEAwvRDHn
-   9QgX4AoiVOR0B0hyDUDJiM0MIghrC+dCumza2E86bwnj3PpyPKWj9ImCW
-   i2zfx5JYRr4UGxONZ3QLkn01EVXrYzhAOecZj4Dd4b6ZSYdojBEEBRi0a
-   g==;
-X-CSE-ConnectionGUID: jByE/pSPSzaswhum6VvZvA==
-X-CSE-MsgGUID: 5Cyg2YVUTvSYJo8AxW4SXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48090994"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="48090994"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:29:41 -0700
-X-CSE-ConnectionGUID: YzU27J2ySvuWW45LWD51FQ==
-X-CSE-MsgGUID: zcEnZjfDTm2RZuW6qMnLTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="125742493"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:29:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 26 Mar 2025 17:29:31 +0200 (EET)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v6 6/6] drm/xe/pf: Set VF LMEM BAR size
-In-Reply-To: <20250320110854.3866284-7-michal.winiarski@intel.com>
-Message-ID: <bdfe5413-547a-67b0-b822-9852d3f94cc5@linux.intel.com>
-References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-7-michal.winiarski@intel.com>
+	s=arc-20240116; t=1743002990; c=relaxed/simple;
+	bh=MLbtTzBQx5OdjYKpjtxDUn5tdndb/5oZLxSoLHDizus=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZZ0S7H7EDRW/tNZn6oYEi4AKATI3FppDKXW97D7sO1H6AGUykZSHRu1yqZVyvE1KqGsBX52eBap/cyzrWBAIS4TV3NteAkzXLe7mO4A/zr3q5WhtHxhmbAcSXdmrto0WmBCufLI+EnzZYEjjJGWCC5nX4gyouLwtSQmH+D4912k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kDkwiMaw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0AJ4PUxT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743002986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J0vOEbKpHri4No3U/KbtJIopKffmnQhIcO+bSOOwA4o=;
+	b=kDkwiMawiepgnOm4Vg/HlKXvCau0DfkUpx+oIf1XFEmKWrPCtEr67QMFtZigsM/qliOqSl
+	yyvpS+fRYRfQBN/KE7snujbvotsmZjKEV6r0UHyho8T2N1TaG/evF9W/MI57H3SL+S7QqG
+	+11YoF4H8pgVW7yEa7iJG4/Mg3D1iHheYuN7/Y2BTUwm7skFZj2zMkWt2vSKj+6ozu/UM5
+	glwNOJqrG6spmeIibX8fGbdcefg816nsJRjDXGsqmGVi3BpTWWRmnujDUrFm2C2KigZqsu
+	Dsrnxm6MR7kk1kNXCVXorLmaULvt7SEF4LJWGTRnSz98WDWX2yNskNGYrCpu8A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743002986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J0vOEbKpHri4No3U/KbtJIopKffmnQhIcO+bSOOwA4o=;
+	b=0AJ4PUxT+Nfk/Y+4ySXxphPll7KEhFXTCylNQX9V5KR32FldtaEuByyHY2m8fYVUDtUMgB
+	oNoOE7e0hOnknNBQ==
+Date: Wed, 26 Mar 2025 16:29:42 +0100
+Subject: [PATCH] selftests: vDSO: vdso_standalone_test_x86: Replace source
+ file with symlink
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1374919276-1743002971=:942"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250326-vdso-selftests-fix-vdso_standalone_test_x86-v1-1-682ad396e15e@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAGUd5GcC/x2NUQqEMAxEryL53oBb0cpeRZZS26gBaaUpIoh3t
+ /r5Zh4zJwglJoFfdUKinYVjKPD9VOAWG2ZC9oVB1aqtG9Xh7iWi0Dplkiw48fFGRrIN3q4xkHk
+ ac/QdusZqPbbaudFDWdwSFf99G/7XdQN8ZJ/rfQAAAA==
+X-Change-ID: 20250326-vdso-selftests-fix-vdso_standalone_test_x86-c3a77b57ccbd
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743002982; l=3432;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=MLbtTzBQx5OdjYKpjtxDUn5tdndb/5oZLxSoLHDizus=;
+ b=K6heyjHjn4vhme5rCfYK1EbZyEbEBMJjhJqNRhuPIaogV3PJ5SK+xfasOXNm4Vdik5YnudZ1Y
+ Wfwk5K0gPoDCaK6kY37bitdp/DciB0cR1J+K/Zra7GHNVW1O4UfzyJF
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+With the switch over to nolibc the source file vdso_standalone_test_x86.c
+was intended to be replaced with a symlink to vdso_test_gettimeofday.c.
+This was the patch that was submitted to LKML, but during application the
+symlink was replaced by a textual copy of the linked-to file.
 
---8323328-1374919276-1743002971=:942
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Having two copies introduces the possibility of divergence and increases
+maintenance burden, switch back to a symlink.
 
-On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
+Link: https://lore.kernel.org/lkml/20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de/
+Fixes: 8770a9183fe1 ("selftests: vDSO: vdso_standalone_test_x86: Switch to nolibc")
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+If symlinks are problematic an #include shim would also work.
+These are not handled really well by the kselftests build system though,
+as #include dependencies are not tracked by it.
+---
+ .../selftests/vDSO/vdso_standalone_test_x86.c      | 59 +---------------------
+ 1 file changed, 1 insertion(+), 58 deletions(-)
 
-> LMEM is partitioned between multiple VFs and we expect that the more
-> VFs we have, the less LMEM is assigned to each VF.
-> This means that we can achieve full LMEM BAR access without the need to
-> attempt full VF LMEM BAR resize via pci_resize_resource().
->=20
-> Always set the largest possible BAR size that allows to fit the number
-> of enabled VFs.
->=20
-> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
-> ---
->  drivers/gpu/drm/xe/regs/xe_bars.h |  1 +
->  drivers/gpu/drm/xe/xe_pci_sriov.c | 22 ++++++++++++++++++++++
->  2 files changed, 23 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/xe/regs/xe_bars.h b/drivers/gpu/drm/xe/regs/=
-xe_bars.h
-> index ce05b6ae832f1..880140d6ccdca 100644
-> --- a/drivers/gpu/drm/xe/regs/xe_bars.h
-> +++ b/drivers/gpu/drm/xe/regs/xe_bars.h
-> @@ -7,5 +7,6 @@
-> =20
->  #define GTTMMADR_BAR=09=09=090 /* MMIO + GTT */
->  #define LMEM_BAR=09=09=092 /* VRAM */
-> +#define VF_LMEM_BAR=09=09=099 /* VF VRAM */
-> =20
->  #endif
-> diff --git a/drivers/gpu/drm/xe/xe_pci_sriov.c b/drivers/gpu/drm/xe/xe_pc=
-i_sriov.c
-> index aaceee748287e..57cdeb41ef1d9 100644
-> --- a/drivers/gpu/drm/xe/xe_pci_sriov.c
-> +++ b/drivers/gpu/drm/xe/xe_pci_sriov.c
-> @@ -3,6 +3,10 @@
->   * Copyright =C2=A9 2023-2024 Intel Corporation
->   */
-> =20
-> +#include <linux/bitops.h>
-> +#include <linux/pci.h>
-> +
-> +#include "regs/xe_bars.h"
->  #include "xe_assert.h"
->  #include "xe_device.h"
->  #include "xe_gt_sriov_pf_config.h"
-> @@ -62,6 +66,18 @@ static void pf_reset_vfs(struct xe_device *xe, unsigne=
-d int num_vfs)
->  =09=09=09xe_gt_sriov_pf_control_trigger_flr(gt, n);
->  }
-> =20
-> +static int resize_vf_vram_bar(struct xe_device *xe, int num_vfs)
-> +{
-> +=09struct pci_dev *pdev =3D to_pci_dev(xe->drm.dev);
-> +=09u32 sizes;
-> +
-> +=09sizes =3D pci_iov_vf_bar_get_sizes(pdev, VF_LMEM_BAR, num_vfs);
-> +=09if (!sizes)
-> +=09=09return 0;
-> +
-> +=09return pci_iov_vf_bar_set_size(pdev, VF_LMEM_BAR, __fls(sizes));
-> +}
-> +
->  static int pf_enable_vfs(struct xe_device *xe, int num_vfs)
->  {
->  =09struct pci_dev *pdev =3D to_pci_dev(xe->drm.dev);
-> @@ -88,6 +104,12 @@ static int pf_enable_vfs(struct xe_device *xe, int nu=
-m_vfs)
->  =09if (err < 0)
->  =09=09goto failed;
-> =20
-> +=09if (IS_DGFX(xe)) {
-> +=09=09err =3D resize_vf_vram_bar(xe, num_vfs);
-> +=09=09if (err)
-> +=09=09=09xe_sriov_info(xe, "Failed to set VF LMEM BAR size: %d\n", err);
+diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+deleted file mode 100644
+index 9ce795b806f0992b83cef78c7e16fac0e54750da..0000000000000000000000000000000000000000
+--- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
++++ /dev/null
+@@ -1,58 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * vdso_test_gettimeofday.c: Sample code to test parse_vdso.c and
+- *                           vDSO gettimeofday()
+- * Copyright (c) 2014 Andy Lutomirski
+- *
+- * Compile with:
+- * gcc -std=gnu99 vdso_test_gettimeofday.c parse_vdso_gettimeofday.c
+- *
+- * Tested on x86, 32-bit and 64-bit.  It may work on other architectures, too.
+- */
+-
+-#include <stdio.h>
+-#ifndef NOLIBC
+-#include <sys/auxv.h>
+-#include <sys/time.h>
+-#endif
+-
+-#include "../kselftest.h"
+-#include "parse_vdso.h"
+-#include "vdso_config.h"
+-#include "vdso_call.h"
+-
+-int main(int argc, char **argv)
+-{
+-	const char *version = versions[VDSO_VERSION];
+-	const char **name = (const char **)&names[VDSO_NAMES];
+-
+-	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
+-	if (!sysinfo_ehdr) {
+-		printf("AT_SYSINFO_EHDR is not present!\n");
+-		return KSFT_SKIP;
+-	}
+-
+-	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
+-
+-	/* Find gettimeofday. */
+-	typedef long (*gtod_t)(struct timeval *tv, struct timezone *tz);
+-	gtod_t gtod = (gtod_t)vdso_sym(version, name[0]);
+-
+-	if (!gtod) {
+-		printf("Could not find %s\n", name[0]);
+-		return KSFT_SKIP;
+-	}
+-
+-	struct timeval tv;
+-	long ret = VDSO_CALL(gtod, 2, &tv, 0);
+-
+-	if (ret == 0) {
+-		printf("The time is %lld.%06lld\n",
+-		       (long long)tv.tv_sec, (long long)tv.tv_usec);
+-	} else {
+-		printf("%s failed\n", name[0]);
+-		return KSFT_FAIL;
+-	}
+-
+-	return 0;
+-}
+diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+new file mode 120000
+index 0000000000000000000000000000000000000000..4d3d96f1e440c965474681a6f35375a60b3921be
+--- /dev/null
++++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+@@ -0,0 +1 @@
++vdso_test_gettimeofday.c
+\ No newline at end of file
 
-If you intended this error to not result in failure, please mention it=20
-in the changelog so that it's recorded somewhere for those who have to=20
-look up things from the git history one day :-).
+---
+base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+change-id: 20250326-vdso-selftests-fix-vdso_standalone_test_x86-c3a77b57ccbd
 
-> +=09}
-> +
->  =09err =3D pci_enable_sriov(pdev, num_vfs);
->  =09if (err < 0)
->  =09=09goto failed;
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Seems pretty straightforward after reading the support code on the PCI=20
-core side,
-
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-1374919276-1743002971=:942--
 
