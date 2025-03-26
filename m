@@ -1,145 +1,171 @@
-Return-Path: <linux-kernel+bounces-577215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA49A719F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:14:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AC1A71A0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A29175433
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFFB188B1DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057451F3BAE;
-	Wed, 26 Mar 2025 15:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0A91F3BB6;
+	Wed, 26 Mar 2025 15:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PncpYpop"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV6dsB9I"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE7B1C6FF5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5801F1905
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001796; cv=none; b=lqxrEYTVPXBw9IghEcBHd5VdV6rd3Ho1XcltQYL++aRCJ4KKe4aaCXOb3CzSsFrNbTy0/xq4YYEtbzNOMzs6QFg5+yoq5Yc3XQodwSQutuRUnF8okh+lvXHletrQY9/WtNnoRuRHIKEH7rYd0p8BycqlpZysPeneNHVWrHX63uw=
+	t=1743001821; cv=none; b=g6h9vNbMQB4h69mWcq8m9+I3Rm3v/mFUfC0CEfo6gagQ/mOjvKWUjvcGxBfbdcCH45VfdFE7uAjUz2wTwxbS0tJA/c/+7JdOwaEog8CmhalXZamr51MGr4rPg3L+wLnmzRLmzbCpHbmzbgQUlZeI38LCug1aDtbxtjpnrNJkFQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001796; c=relaxed/simple;
-	bh=LvPznTTQMeL5HHEqwAw5mQEy+wnALOSIcXn/tKHfL/k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tbK8xk9gzhWuvuSc+9tl3xovXUGmtp20INaM0zfExRjYKwj5jUAeHO40ObmS2skD4ZcNiYqHxq7nEJ/mWfz71+CCvmG7HLu2VabXxOilq8OIVch1MziYBZhMBF8SVUw4ZEJL5fyb977jIoOifwzofqJBZJ1bSp1KCST74zA2ge0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PncpYpop; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff7f9a0b9bso12148949a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:09:54 -0700 (PDT)
+	s=arc-20240116; t=1743001821; c=relaxed/simple;
+	bh=HcPfpNlloMHtiCkZks0Msr+BkKYikuD+2TRrqShCPOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QBwzy24GyloGFF0rpuJLXWmO49WxDMXfvs1W+hy7KZJuu3T4jBALSBkWr6m7J1Jl5ezOpJAo4sz0bR+vhkPlyKySRccznRNNnHq+FGBrTt8GBrHko0yA+VHWtiIuV8aS9urqz35W6wGxuPwM0cIgCZGJG2zxH9QMM/G3qGQMjes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV6dsB9I; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2a01bcd0143so8891843fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743001794; x=1743606594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FkOqbfERQdrw9bi6YeAMxlXl0dXPXrj8aIpOruTKiGo=;
-        b=PncpYpopJN6KMaAn5otdzkkkvbbKBHwBdmeiUgMDdjQSkPMT3QtY4WMpoUHEhjIjRq
-         PHjvi+G963jnXV7xnE0KLVKGDSvU3hTOffNDLoMB58ULFr0fGx6AP7TjosouaKhwq61y
-         27aCifCGEwzmMzYVPfTiwguPV2jD35atRzkO1k8v19POPXOOyoz8guEyOyfSdx6/d9U7
-         jQ9FGaurcqE0J6bXt4eTW7T7rIMhRqMC2tgHbyPgiyPPd0p/AjpJM3tboJDRZ6nADTcA
-         SP9MjvWuHyHJBmZ3FaIuKz4LhlHLCkk8McmSOrvOiIDj4zDVIoqzfymAMaDaNZ3eRuzG
-         OInw==
+        d=gmail.com; s=20230601; t=1743001819; x=1743606619; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=e7nsPJjvQpk51YxNNbivqm77VoNojg0kZvO2nM7R+ec=;
+        b=mV6dsB9IvsQYXUiSZTK3JTAgEA/cnThqblAp4i694VMkZOF406Y3p4HB+jllBtqdpz
+         +F08Tkd/uk4KkB7phsmeP/1hbzuqWFlgMp5DNguo/3+omyybgDx67D3UZHvKm70SzsGw
+         DJk06ZVPtqtTXserq7v3YwrD4bYx/DHYjhrURZqx0j2hPRmSGdyWQRYfljQ1atyMyoBF
+         8fUMg8RDBlvxKrU6VhGyTeQnCSbpSNDIAOkgrMaspgQ6m3ceWIkChNNnDhwtjojSkuU/
+         pdME6REJCwS8CJLz5M6Y4UPnx1IgZxp6Sxx77AbO556F0sZu5Wg9JK6amC1ZUWonpndO
+         MnfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743001794; x=1743606594;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FkOqbfERQdrw9bi6YeAMxlXl0dXPXrj8aIpOruTKiGo=;
-        b=QRKxOkHf7fTlFcLGwvAV0d5NbJEn/dlHQxj0b62NErCj80L8LhsZPWcQVgJust2bNC
-         Jy0+IKKpfMn8b7t2OcMKckXg/G1jiLlxwvxRr6MK8vbBJdjKnG6ybwVCuAzf02dz43wR
-         H9mxJWhhZ7hgMbpCa4BNXKIbuTBi2K8OphrB16rjOhKI4EdV6LdbFbTqzBNvcr8I9Hye
-         GQC/mUnSQ0LTrYHkhhn80SiTFb18K/muH1oDaqWb2/2Pnzg/XgLkW277lI/prY2KZbGW
-         DudqwMTaD7KssAfdboZPQzB0jAwA4sLKs7kGnKSAdyOcWwaCk9qEf4/YkDAyS7VZG0rn
-         ABaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRi+KA4w8Qs5YlibDr/L3pk9hnPTh16ZMrktx5FAiVgDHK+UgJP839sqZF3zlyTW/6hM86of3KEe4GK30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3r+lU/L3R3qr4VF5Am1FwbBIy4y4Pf2Tg/thB1y5lF5kOS946
-	vuT+IifYdFtFQXGqLMK1i7DcI9TTWoG6rtLsW9mtLZcGUeHvEj1yOg+zdKQWXUDr81+AGc+Jsx3
-	EVQ==
-X-Google-Smtp-Source: AGHT+IGaEwe4msZVS1TKiQxfZo1Kl1wf0fVTRtC8U+SRmC7/tJzqPC3DpOBHSnHN51MOxacJYlojeP9LBP0=
-X-Received: from pfbch5.prod.google.com ([2002:a05:6a00:2885:b0:730:96d1:c213])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9217:b0:1f5:6a1a:329b
- with SMTP id adf61e73a8af0-1fea2f635e9mr263486637.32.1743001794420; Wed, 26
- Mar 2025 08:09:54 -0700 (PDT)
-Date: Wed, 26 Mar 2025 08:09:53 -0700
-In-Reply-To: <c220d043-2314-85bb-e99d-dc2c609aa739@loongson.cn>
+        d=1e100.net; s=20230601; t=1743001819; x=1743606619;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e7nsPJjvQpk51YxNNbivqm77VoNojg0kZvO2nM7R+ec=;
+        b=fvTMJ2lWbBfXU27ikh79rEq32DFQmBakZ4lwad5rMvA2z0hVjhTOMbL/LI2w4Ylk59
+         S8FjocR/+zip3PSnL1+cfOi36t5+0ZCl5pVNCdLxa2ePpzyHa0HU+QUJDmHdN7sB4dkF
+         /TPulWnTtIt/owVkgFNPsYW1MHd8ZobM6SaxvqkasMqcHSjmEXVXjFtjr2+g3+B9w5sT
+         xUSVrZpQLJfbaRsRAxlk8ra/7hqFGvVdoY3JBjOR1qB/HY1+oTL3CUbKQGCxwpwcuEqJ
+         kAr9qefzegKK2r0c2wibDWpkplWqvuyxX+hXLEuTi/cPCjgx24zKM51nP98HIBmX4HM1
+         UY9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZb8K2Nm0v1bF/rwUCdE6inYroUK1w/tbb+D+/CppPp1ZYNSqjRz4srGN1i7QXrGu4BjE+ePTpbWXITuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2yWy0Nx06uPK8TriDgwPZ0xyg5rWQAWPp7q4rAOy/dhcOBz2h
+	mCL9cD1PGm6hWFJ0Gl/dpapDIfEW+Y/Ie3f4aM9bKLcKfJb+NCeo
+X-Gm-Gg: ASbGncuUaOR+BsiF5o0Hr61avA+uk3V9KnYUAYA4CDvLkw4j3QlMVl3u4aqhno43hNC
+	qQmOfUKWcmVHopzKBc8Y9kFDdoU2ke7ciSWb2eEl7QJ0zhLGawLH6sg8jzrDlLkRG6FbD2PP12v
+	tZ5nBguLTk3di480d5JHv4Zb4mwXhkx68C7ae8kb9ufuKuPK9Vh7/6yxati+/pcsbGSxkNYZNGz
+	4DsoDRn8qeB9AKv3cMHTP+zdhWGhPwod4OILldCHUTSYp9gChpbF0zQAQ5QJndtOfncvn2I/Jd6
+	At0DXNjoN3nADaHL6g90Q+XPb355wqz2ej486dcKJsQyqxFDW+EEK8g8xdAONr63K1FEoj58cNZ
+	IRrcU+lsFQUUYsdPaNtVbTWJFLbuZD0TU
+X-Google-Smtp-Source: AGHT+IFyDIdW9c8VswcEIUw+315NWGOfmsnBzfXw1kzh3hm2kzhOmp+hfEL+UhjmBT1+s1xpy3Vmew==
+X-Received: by 2002:a05:6870:6e87:b0:2c1:ade0:2699 with SMTP id 586e51a60fabf-2c77fe297a4mr12522555fac.0.1743001818859;
+        Wed, 26 Mar 2025 08:10:18 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77ebc9e02sm3059333fac.7.2025.03.26.08.10.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 08:10:18 -0700 (PDT)
+Message-ID: <ff14a8fc-a2f0-4bad-9687-86a88094151e@gmail.com>
+Date: Wed, 26 Mar 2025 10:10:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250311074737.3160546-1-maobibo@loongson.cn> <c220d043-2314-85bb-e99d-dc2c609aa739@loongson.cn>
-Message-ID: <Z-QYwWxhBH_nvmWH@google.com>
-Subject: Re: [RFC V2] LoongArch: KVM: Handle interrupt early before enabling irq
-From: Sean Christopherson <seanjc@google.com>
-To: bibo mao <maobibo@loongson.cn>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] panic: reduce CPU consumption when finished handling panic
+To: Thomas Gleixner <tglx@linutronix.de>, pmladek@suse.com,
+ Andrew Morton <akpm@linux-foundation.org>, jani.nikula@intel.com,
+ open list <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, takakura@valinux.co.jp,
+ john.ogness@linutronix.de
+References: <f2272f04-510e-4c92-be5e-fedcbb445eb0@gmail.com>
+ <87wmci1a0j.ffs@tglx>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <87wmci1a0j.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025, bibo mao wrote:
-> Hi Paolo, Sean
->=20
-> This idea comes from x86, do you have any guidance or suggestion about it=
-?
->=20
-> Also I notice that there is such irq_enable()/irq_disable() pair on x86, =
-I
-> do not know why it is so.
+Hello,
 
-Because on AMD (SVM), IRQ VM-Exits don't consume the IRQ, i.e. the exit is =
-purely
-a notification.  KVM still needs to enable IRQs to actually handle the pend=
-ing IRQ.
-And if the IRQ that triggered VM-Exit is for the host's tick, then it's des=
-irable
-to handle the tick IRQ before guest_timing_exit_irqoff() so that the timesl=
-ice is
-accounted to the guest, not the host (the tick IRQ arrived while the guest =
-was
-active).
+On 3/21/25 14:03, Thomas Gleixner wrote:
+> On Mon, Mar 17 2025 at 17:01, Carlos Bilbao wrote:
+>> After the kernel has finished handling a panic, it enters a busy-wait loop.
+>> But, this unnecessarily consumes CPU power and electricity. Plus, in VMs,
+>> this negatively impacts the throughput of other VM guests running on the
+>> same hypervisor.
+>>
+>> I propose introducing a function cpu_halt_end_panic() to halt the CPU
+>> during this state while still allowing interrupts to be processed. See my
+>> commit below.
+> That's not the way how change logs are written. You explain the problem
+> and then briefly how it is addressed.
+>
+> No proposal, no 'see below'. Such wording does not make any sense in a
+> git commit. See Documentation/process/
+>
+>> @@ -276,6 +276,21 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+>>          crash_smp_send_stop();
+> Your patch is malformed due to white space damage:
+>
+>   patch: **** malformed patch at line 31:          crash_smp_send_stop();
+>
+>> +static void cpu_halt_end_panic(void)
+>> +{
+>> +#ifdef CONFIG_X86
+>> +    native_safe_halt();
+>> +#elif defined(CONFIG_ARM)
+>> +    cpu_do_idle();
+>> +#else
+>> +    /*
+>> +     * Default to a simple busy-wait if no architecture-specific halt is
+>> +     * defined above
+>> +     */
+>> +    mdelay(PANIC_TIMER_STEP);
+>> +#endif
+> Architecture specific #ifdefs in core code are not the right way to
+> go. Split this into three patches:
+>
+> 1) Add a weak fallback function
+>
+> void __weak cpu_halt_after_panic(void)
+> {
+>         mdelay(PANIC_TIMER_STEP);
+> }
+>
+> 2) Add non weak implementation in arch/x86
+>
+>     native_safe_halt() is wrong vs. paravirtualization.
+>
+>     safe_halt() is what you want.
+>   
+> 3) Add non weak implementation for arch/arm
+>
+>    Not my playground, so no comment
 
-On Intel (VMX), KVM always runs in a mode where the VM-Exit acknowledge/con=
-sumes
-the IRQ, and so KVM _must_ manually call into the appropriate interrupt han=
-dler.
 
->     local_irq_enable();
->     ++vcpu->stat.exits;
->     local_irq_disable();
->     guest_timing_exit_irqoff();
->     local_irq_enable();
->=20
-> Regards
-> Bibo Mao
->=20
-> On 2025/3/11 =E4=B8=8B=E5=8D=883:47, Bibo Mao wrote:
-> > If interrupt arrive when vCPU is running, vCPU will exit because of
-> > interrupt exception. Currently interrupt exception is handled after
-> > local_irq_enable() is called, and it is handled by host kernel rather
-> > than KVM hypervisor. It will introduce extra another interrupt
-> > exception and then host will handle irq.
-> >=20
-> > If KVM hypervisor detect that it is interrupt exception, interrupt
-> > can be handle early in KVM hypervisor before local_irq_enable() is
-> > called.
+Sounds good, sending patch set now. Thanks for your time!
 
-The correctness of this depends on how LoongArch virtualization processes I=
-RQs.
-If the IRQ is consumed by the VM-Exit, then manually handling the IRQ early=
- is
-both optimal and necessary for correctness.  If the IRQ is NOT consumed by =
-the
-VM-Exit, then manually calling the interrupt handler from KVM will result i=
-n every
-IRQ effectively happening twice: once on the manual call, and against when =
-KVM
-enables IRQs and the "real" IRQ fires.
+
+>
+> Thanks,
+>
+>         tglx
+>
+>     
+
+
+Thanks,
+
+Carlos
+
 
