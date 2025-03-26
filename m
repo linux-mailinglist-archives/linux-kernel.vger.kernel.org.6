@@ -1,140 +1,170 @@
-Return-Path: <linux-kernel+bounces-576394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A867A70E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:50:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DDCA70E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051D23AECD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:50:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E99827A4EA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF8813AA5D;
-	Wed, 26 Mar 2025 01:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D0C7DA8C;
+	Wed, 26 Mar 2025 01:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="P3rn/UvG"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MG3/ndUy"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE1E56F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742953847; cv=pass; b=L56GgNmvz3C6Ha2ASs52mEPqYC7QrKQZ2zwHu3xd+YX4HKijlfXGt3tE4+/L5BKTgoVquXacTzq5Q0PJmVNCX9ez+ndGtUHoQJqlb/AdjzzVwzxRj8cz/cL7z+5TJKJyDi8PBqgtapL8fwZwtailXZCEiRpyBd66ENOHPjfvlME=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742953847; c=relaxed/simple;
-	bh=WiElSeMUOyEGNFlsbiNmliVgwdj8BFm+q52issSF4+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ovvmZANn/gwvWg1ap2ablMc+14m82NW/d5RWrfJA7Q8Jf3R2prGDi07ObRN3uqboxmKMPpXjkZiqj5YiWHYqHBeJpSR794Mf3mLAG7eBJFYf78t7Z5SOjQ1N9N33hgY1oeTSpkJ6wBH5+9rgHJa5sdfeyJCnAXXOcMNrTRVmPOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=P3rn/UvG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742953827; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=B1MLcSqipPQpu6A4nqcIb55jteYccNLAsMiJ5Tm0krkMD4eeUA9l1EpwhWzgV5eMBR6cRX6G37tBwlMxKzh33J59x8Butf7rmDwiZRVRljePoXRRXm1kfXu3cT2kF+CpGCBrdQ2n66556pb2rRIPlNeJk/leLgwiaBqCaxSuCPQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742953827; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=l+DegcWS6jElhGW6hWqdl4HD0X6U581FmZGc7lb2pgs=; 
-	b=MKIH0CDdScfMwytDkH8Yh9xtF4A1yNmeLFxj2WMam4fmmW1045zk/x8LyCcohfuWKoCjUCaGJ0Us0DE944sLGYVKgOSIbuG8OJg0qYs48aWV3I8fKVJ4eR3vfrik6yu6p+qWroUjYUWTl+FYteM1vblXkegd3dDGY8e8Ghs0xwg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742953827;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=l+DegcWS6jElhGW6hWqdl4HD0X6U581FmZGc7lb2pgs=;
-	b=P3rn/UvGTsfPa3I9srK14xXOlrjke8z2UTnKfGYoVrZD5jolnGrtKYh3r8NWWuhj
-	zZYF6Q3DdoT4OZdqvs8d/KODFHLWvOP8zbMMEf7sq2SYIV0MWtEDCkElAC/PWCaA1Nq
-	i1CfbTgYm+PiEgXV6REa+/UbUvQq11BgGEcCffmM=
-Received: by mx.zohomail.com with SMTPS id 1742953824533990.002553575539;
-	Tue, 25 Mar 2025 18:50:24 -0700 (PDT)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v1 2/2] drm/virtio: Fix missed dmabuf unpinning in error path of prepare_fb()
-Date: Wed, 26 Mar 2025 04:49:02 +0300
-Message-ID: <20250326014902.379339-2-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
-References: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0EE2904;
+	Wed, 26 Mar 2025 01:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742953769; cv=none; b=ODnXroUjXuuOIP0Tm+PzG2EKPa+yeon0DWogogtdU2gHqJ30EpNe8roBdoMNLPELjUmmF+AHRE4FtY5BV1wXnGZcGFCMOuPQldKyCgSgUTH7K18bSxi9e+10CeLBI7dhx3wUBkMQ3YnRnOxzSGj5bzp7mRUWLDliJO3jxvt6Rtw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742953769; c=relaxed/simple;
+	bh=BSfQB3vhohoeGSPH7IwYQ017sMULToSA3/gaTifVxQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghc1fBX8eeQeObzl8ziIzRzG21pDZrSIznoXulLl/ZRBS9p9RbsW0OHFaNHFxcPv7kENRxJJ+f1WBOT8parAq39K0AYHAEVkQHPfACW7SkOEBoV3F0Y7Xd5Iuw3Rhyw8xXzSzCQulIxQIYoNOFGxIZnG6Qa2irF+eToY4P3zFv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MG3/ndUy; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=xYq0PhsJ8psxpLRbnzh1yCpqivdOZMN2vnW/V/lGh6w=; b=MG3/ndUyyH2iN3kLDOcla02bMh
+	7FZomY4TDfjztMR4qwZgF7BAqwZR9aV1N4dHmeoWN9tGy4VcznqSSRxw9uCLany3INZzbK1OsId16
+	owOqlq4S+Ww4Sjryd6eVHifnaAIk9zw8UODoJ7/V+VtbK97okN6q4B0d8I+y0cHPVJO5LKijg+N/4
+	gKafujWN/L7A36pMoBwrDs9Sm2WhHSYM5fbejyRWqqIh7mSB9l7ATZdh2QQiO24L5zmY/L7eQVXM4
+	3QwxeDTlPRsW1QZJo9yfWT3FiqbMmVbSdVrm5bDkWt5d6KEugWQUDEg2fGkhBdIHKF1MVQEym9Ega
+	9TdhN31g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1txFtK-00AAN9-2P;
+	Wed, 26 Mar 2025 09:49:15 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Mar 2025 09:49:14 +0800
+Date: Wed, 26 Mar 2025 09:49:14 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [GIT PULL] Crypto Update for 6.15
+Message-ID: <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+References: <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
+ <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+ <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
+ <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
+ <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
+ <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
+ <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
+ <20250325152541.GA1661@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325152541.GA1661@sol.localdomain>
 
-Unpin imported dmabuf on fence allocation failure in prepare_fb().
+On Tue, Mar 25, 2025 at 08:25:41AM -0700, Eric Biggers wrote:
+> 
+> Herbert didn't mention that I have nacked this patch, which he is insisting on
+> pushing for some reason instead of my original version that is much better.
 
-Fixes: 4a696a2ee646 ("drm/virtio: Add prepare and cleanup routines for imported dmabuf obj")
-Cc: <stable@vger.kernel.org> # v6.14+
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- drivers/gpu/drm/virtio/virtgpu_plane.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+Let's see how your version is so much better:
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index a6f5a78f436a..dc1d91639931 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -342,6 +342,16 @@ static int virtio_gpu_prepare_imported_obj(struct drm_plane *plane,
- 	return ret;
- }
+https://lore.kernel.org/all/20250212154718.44255-6-ebiggers@kernel.org/
+
+-	/* Up to 1 + FS_VERITY_MAX_LEVELS pages may be mapped at once */
+-	BUILD_BUG_ON(1 + FS_VERITY_MAX_LEVELS > KM_MAX_IDX);
++	/*
++	 * Up to FS_VERITY_MAX_PENDING_DATA_BLOCKS + FS_VERITY_MAX_LEVELS pages
++	 * may be mapped at once.
++	 */
++	BUILD_BUG_ON(FS_VERITY_MAX_PENDING_DATA_BLOCKS +
++		     FS_VERITY_MAX_LEVELS > KM_MAX_IDX);
+
+This arbitrary limit is a direct result of your welded-on commitment
+to an API that supports virtually mapped addresses only.  Make no
+mistake, virtual addresses are simple and easy to use, but the kernel
+added more complicated constructs for real reasons.
+
+I've gone through your use-case in fsverity/dm-verity, and they
+never touch the data at all so the only reason for it to kmap the
+data at all is to feed it to the Crypto API, which is capable of
+doing its own kmap but you elected not to use that because you
+hate the interface.
+
+In fact it's a recurring theme, the zswap code jumps through multiple
+hoops to map the data they're working on so that they can feed it to
+the Crypto API as a virtually mapped pointer, even though they never
+touch the mapped data at all.  The same thing also happened in ubifs,
+which I managed to simplify by switching away from kmapped pointers:
+
+https://patchwork.kernel.org/project/linux-crypto/patch/99ae6a15afc1478bab201949dc3dbb2c7634b687.1742034499.git.herbert@gondor.apana.org.au/
+
+-		addr += UBIFS_BLOCK_SIZE;
+-		if (folio_test_highmem(folio) && (offset_in_page(addr) == 0)) {
+-			kunmap_local(addr - UBIFS_BLOCK_SIZE);
+-			addr = kmap_local_folio(folio, i * UBIFS_BLOCK_SIZE);
+-		}
++		offset += UBIFS_BLOCK_SIZE;
+
+All this complexity was added because the legacy compression
+interface only supported virtually mapped addresses.
+
+Sure the ahash/acomp interface was suboptimal for *only* supporting
+SG lists, which is what this pull request addresses by adding virtual
+address (and folio) support.
+
+> Let me reiterate why "request chaining" is a bad idea and is going to cause
+> problems.
+
+I'm more than willing to discuss with you the implementation details
+of how the chaining is done and improving it.  However, if you proceed
+to only issue blanket nacks without providing any constructive feedback,
+then the only thing I can do is ignore you.
+
+> In contrast, my patchset
+> https://lore.kernel.org/r/20250212154718.44255-1-ebiggers@kernel.org/ supports
+> multibuffer hashing in a much better way and has been ready for a year already.
+> It actually works; it has a smaller diffstat; it is faster; it has a much
+> simpler API; and it actually includes all needed pieces including x86 and arm64
+> support, dm-verity and fs-verity support, and full documentation and tests.
+
+Everybody wants to sratch their itch but my job as the maintainer is
+to ensure that the subsystem doesn't collapse into an unmaintainable
+hodgepodge of individual contributions.
+
+Yes I get that batching is useful for you, but your use-case is not
+unique at all.  The compression people are proposing pretty much the
+same thing
+
+https://patchwork.kernel.org/project/linux-crypto/patch/20250303084724.6490-15-kanchana.p.sridhar@intel.com/
+
+I don't want to be pressured by you into committing to an interface
+that works for you only.
  
-+static void virtio_gpu_cleanup_imported_obj(struct drm_gem_object *obj)
-+{
-+	struct dma_buf_attachment *attach = obj->import_attach;
-+	struct dma_resv *resv = attach->dmabuf->resv;
-+
-+	dma_resv_lock(resv, NULL);
-+	dma_buf_unpin(attach);
-+	dma_resv_unlock(resv);
-+}
-+
- static int virtio_gpu_plane_prepare_fb(struct drm_plane *plane,
- 				       struct drm_plane_state *new_state)
- {
-@@ -376,23 +386,16 @@ static int virtio_gpu_plane_prepare_fb(struct drm_plane *plane,
- 		vgplane_st->fence = virtio_gpu_fence_alloc(vgdev,
- 						     vgdev->fence_drv.context,
- 						     0);
--		if (!vgplane_st->fence)
-+		if (!vgplane_st->fence) {
-+			if (obj->import_attach)
-+				virtio_gpu_cleanup_imported_obj(obj);
- 			return -ENOMEM;
-+		}
- 	}
- 
- 	return 0;
- }
- 
--static void virtio_gpu_cleanup_imported_obj(struct drm_gem_object *obj)
--{
--	struct dma_buf_attachment *attach = obj->import_attach;
--	struct dma_resv *resv = attach->dmabuf->resv;
--
--	dma_resv_lock(resv, NULL);
--	dma_buf_unpin(attach);
--	dma_resv_unlock(resv);
--}
--
- static void virtio_gpu_plane_cleanup_fb(struct drm_plane *plane,
- 					struct drm_plane_state *state)
- {
+> Nacked-by: Eric Biggers <ebiggers@kernel.org>
+
+This pull request doesn't even contain the meat of the hash changes
+since I've been busy with the compression work.  So this is simply
+a pre-emptive strike to stop further work from rendering your patches
+obsolete.
+
+Cheers,
 -- 
-2.49.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
