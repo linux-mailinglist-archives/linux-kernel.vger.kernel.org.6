@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-576859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5483FA71546
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:05:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B274A7154C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2D87A5652
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123A718958B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8161CEAB2;
-	Wed, 26 Mar 2025 11:05:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E0F19CCF5;
-	Wed, 26 Mar 2025 11:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC0619CCF5;
+	Wed, 26 Mar 2025 11:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcW1iWfI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7F01ACED7;
+	Wed, 26 Mar 2025 11:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742987108; cv=none; b=Z3xKzetE7kbKZJQGThQklGFkri6fW9sqGZfNHtMzI9ghwx7Z0YHFEAMRM3zso0v8fDzRgLtHGTLWezU3zb2eKQc8ISGoBzXsRTvlcAJ8SdU7rGJyB9SL5btQgHgXnq0cNxvwzRJeTP2aAW/wzO70RRYQmoofHsshx5d2SCUlLcc=
+	t=1742987118; cv=none; b=S3tJono8FNw8vB72y7L6H0i6NrbAm3Uvn4M+TVLgzpn7qVBU5BtDs39kq9Imm6t5di3Aqlqgw0acq9bdMyL7oQHp+wRvrcsyo8GJbzIKd0w7VzV+Ewb8ZqM7C1DYsbZEtBoBkOf1zewmhc3bXsL2VpxBA8nY3ILXfvWX3beQAJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742987108; c=relaxed/simple;
-	bh=Q60MixkAwvDuXI55g+9gruousR6Y8HcEeGI/LVfDzkw=;
+	s=arc-20240116; t=1742987118; c=relaxed/simple;
+	bh=O/NrNDBWcq4yxiKi3t0WOltAx3N2JfHYhLCVbbxkKYg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdllNhI/Gn5fqEFX+16b7aWZIsEob34ieeys/moq2Vzd0N8DH7uW0nIpRvxHVa5L/OCjYju8pA7HE/d6oH3/OwJDoR8TGX87+fQaYbQQ6USB+EuJfDi6YXjYw+TSWWututhoVXyPgY59rJZR79dC58xcP9EuO/qM5b5QmJscl44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31C7F1596;
-	Wed, 26 Mar 2025 04:05:11 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 139003F63F;
-	Wed, 26 Mar 2025 04:05:03 -0700 (PDT)
-Date: Wed, 26 Mar 2025 11:05:00 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Keir Fraser <keirf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, stable@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] arm64: mops: Do not dereference src reg for a set
- operation
-Message-ID: <Z-PfXFHBcXhDe03b@J2N7QTR9R3>
-References: <20250326110059.3773318-1-keirf@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rh4X4Q9DetMIt+OVq8Iua+RQWwZgOaU4S+uoUKnua4ghzDaivrddQfrRgIjTgVEmi2BbrMOgVPsletAgaKoRh1sy0sPsZf7F4h2ZOL09cbbu7kPaGOp3VJRmAuti3jxdErHNkJAAEWc7+wvlJw6v5mKqDnlrcJFzJoc23KF9PzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcW1iWfI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 088B1C4CEEA;
+	Wed, 26 Mar 2025 11:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742987117;
+	bh=O/NrNDBWcq4yxiKi3t0WOltAx3N2JfHYhLCVbbxkKYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JcW1iWfI1VDs+i1O4khq+5GS9ZQuIJxUfUEogQVXFPXK+Ln+QQdAlomVajfrer7d1
+	 YdR2Y/ijPdDKzD+YwZBLZ0dhTZ4Y75qaldfJ7OgfwA3klcpHTQI1O4A/wdeGaFavDj
+	 yKl7YcGbb1m+Qjjy5nuJvXjOBFlPKYS30DfyMKCUAIJYSHttbh5/n9gX/aSLRxWm/t
+	 9LrqlUPDxEuSPmR/m3piiI0i4JaagNETMnAFStfW4g+RMLDZQIl0aHKm3E6UB/3vAD
+	 d3gCxY/a/eyfpY9FSAcWMHBkrESGiBqRnRyWRTS8l+0xGk3WtVYeGNhJqye6kT9bfI
+	 9J1b0kI7Tw98Q==
+Date: Wed, 26 Mar 2025 11:05:13 +0000
+From: Mark Brown <broonie@kernel.org>
+To: "Rangoju, Raju" <raju.rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
+Subject: Re: [PATCH 00/10] spi: Add driver to support AMD eSPI controller
+Message-ID: <6a67247e-0b20-42fc-ac0b-7d4a8cef410c@sirena.org.uk>
+References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
+ <e41947bb-7a2d-4b64-b680-d38dd9935a00@sirena.org.uk>
+ <55ad37f1-0fbe-4a83-a998-80f2fd94a883@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dF3WLSg8MViE8dc7"
+Content-Disposition: inline
+In-Reply-To: <55ad37f1-0fbe-4a83-a998-80f2fd94a883@amd.com>
+X-Cookie: To err is humor.
+
+
+--dF3WLSg8MViE8dc7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250326110059.3773318-1-keirf@google.com>
 
-On Wed, Mar 26, 2025 at 11:00:58AM +0000, Keir Fraser wrote:
-> The source register is not used for SET* and reading it can result in
-> a UBSAN out-of-bounds array access error, specifically when the MOPS
-> exception is taken from a SET* sequence with XZR (reg 31) as the
-> source. Architecturally this is the only case where a src/dst/size
-> field in the ESR can be reported as 31.
-> 
-> Prior to 2de451a329cf662b the code in do_el0_mops() was benign as the
-> use of pt_regs_read_reg() prevented the out-of-bounds access.
-> 
-> Fixes: 2de451a329cf662b ("KVM: arm64: Add handler for MOPS exceptions")
-> Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Keir Fraser <keirf@google.com>
+On Wed, Mar 26, 2025 at 03:25:21PM +0530, Rangoju, Raju wrote:
+> On 3/17/2025 7:44 PM, Mark Brown wrote:
 
-Thanks!
+> > I see nothing in this series that registers a SPI controller with the
+> > SPI core.  You need to use the standard frameworks the kernel offers to
+> > provide standard functionality.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+> The AMD SPI controller hardware has only the chip select line enabled, which
+> is connected to the EC slave in AMD EMB platforms. Currently, there is no
+> support from the slave device to register as an SPI slave device with the
+> SPI framework and provide SPI communication.
 
-Mark.
+> For this reason, the AMD eSPI driver is designed to handle device
+> initialization itself and provide a character device file as an interface
+> with user space for dynamic interaction and configurations.
 
-> ---
->  arch/arm64/include/asm/traps.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-> index d780d1bd2eac..82cf1f879c61 100644
-> --- a/arch/arm64/include/asm/traps.h
-> +++ b/arch/arm64/include/asm/traps.h
-> @@ -109,10 +109,9 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
->  	int dstreg = ESR_ELx_MOPS_ISS_DESTREG(esr);
->  	int srcreg = ESR_ELx_MOPS_ISS_SRCREG(esr);
->  	int sizereg = ESR_ELx_MOPS_ISS_SIZEREG(esr);
-> -	unsigned long dst, src, size;
-> +	unsigned long dst, size;
->  
->  	dst = regs->regs[dstreg];
-> -	src = regs->regs[srcreg];
->  	size = regs->regs[sizereg];
->  
->  	/*
-> @@ -129,6 +128,7 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
->  		}
->  	} else {
->  		/* CPY* instruction */
-> +		unsigned long src = regs->regs[srcreg];
->  		if (!(option_a ^ wrong_option)) {
->  			/* Format is from Option B */
->  			if (regs->pstate & PSR_N_BIT) {
-> -- 
-> 2.49.0.395.g12beb8f557-goog
-> 
+If you want to ignore the SPI subsystem and just write a driver for your
+embedded controller then you should put the driver in the subsystem or
+subsystems for that embedded controller (possibly MFD if it does a bunch
+of things), not SPI.  Even if there is no flexibility you may still want
+to have the controller side in the SPI subsystem in order to help with
+reuse with different controller/EC combinations but if you're going that
+way you need to use the SPI subsystem.
+
+--dF3WLSg8MViE8dc7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfj32gACgkQJNaLcl1U
+h9Bwwgf/YPwDtZ4zs6XsB93rG5ZVFOFOWco+SyXRlDY24VhG6NI8XQSUtvGAKmGn
+HfX736kC/LtjLXWSuDzeFPJtgsB2BsRlfFp61bAkcA4ZGvl5Ifct2Hr32wS9KpVY
+akUK+iDJhJ35i5wWnM5gt+BYMtSqSwknb45j9SgiA8A/i0sxOh5ph0gpe2P8iQ8y
+Zg476BXRcF/zCQKLzRjqLMBp5kAAVyFxAtoNRNNeOnzYlMst9Kcl3nQ/4AQoZvqA
+W9Ob7vXV1E14V7duwJ3EF4/5NYAbOCvrHTNw06YMIlPDf7cInbQxfwgM7G2NG9r8
+4TQ9MnhR2hyrqRXD6KOB+5d67DNf5g==
+=qoOI
+-----END PGP SIGNATURE-----
+
+--dF3WLSg8MViE8dc7--
 
