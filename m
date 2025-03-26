@@ -1,235 +1,175 @@
-Return-Path: <linux-kernel+bounces-577481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB9DA71DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:49:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1CEA71DBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:53:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43521895C03
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA173BCC4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4243323FC68;
-	Wed, 26 Mar 2025 17:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD0A23FC66;
+	Wed, 26 Mar 2025 17:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwZBU/wr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UnkWmqIB"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D2623FC40;
-	Wed, 26 Mar 2025 17:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A56D23FC48
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743011205; cv=none; b=sIZ3zQDGss3+l+KqykOAtQF0GH4FZNNmvSwo9o0zvxMZlfJtSknCIHFgeMqRyEbOd9iLxLuO59DXhifDDburwhe2vRk22x6S82yAq9Pis+0B3bhEZo+v+O9T1j8QoB7pMrLFu2qfN0qKucDFhIuPEnBwYD9PXzwsQp27y2L+EY0=
+	t=1743011280; cv=none; b=Vk6WbtAOnh3OPCR7vr+D7/QyuwVMQFHT897CS4EcbPGsd0lPXhpfNfMxwhAlPqbbBKxL3Tj11C/YDMBd5NZL6LlNoSs2w9z3hr9w1Uo3r7nWt7sNR+5jFUbqY56ffTo6uKpWW9SqF81NW9o2SCIoRgOYHUrKHgA6oyUJtkb60o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743011205; c=relaxed/simple;
-	bh=AvNG/hFb03iHU1hJlpsi28BI0GT1J2rVhqAbx4wAt14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWc5EoclvlOUU6RWWwXPSnxipFyGYwgCG6trOuASJTfMNw6DK2jgmTMAAEUIUy3cIct4HCt8OGzMErqfeUkSlCrdDA7PHV7YY7EYYEnzW/ijRhlLfAt5gWfQ8fJc7fbUjqpyTsi48ZlijfZ4/QuamGD9jUBZWrLHJm4WQlxpzA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwZBU/wr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619E8C4CEE2;
-	Wed, 26 Mar 2025 17:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743011204;
-	bh=AvNG/hFb03iHU1hJlpsi28BI0GT1J2rVhqAbx4wAt14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pwZBU/wrbL7pwOKX6uczn+NGSMx5r2yBaqpJczJjOvhbjR4Eioe5qxsFjonef8o21
-	 47K1BT1mtZkz8YDQ5fFIt8L+H9Ix5WWNzolBtzZbRYj6jMQralisv0f6e3kUHCQa9i
-	 rRfZfd1kt+vUYPsCAX5TPhCEisran3ayVI1h74u8bAqamtOWomzkpwhKv6fE0GJIUg
-	 UqcBOQY3dH/S2y6rj1gDaSiE6jFZZlLoxZ4auXInK7PF7T9goDzb5FkrWoPn0H3gdm
-	 NdXDV9mpbvyVPjUQiJuyQcIV9Bw1UT0kcCx6O2NUxC4qnAjNCk5QdAk/WAWBcT1lqp
-	 xLT+6/XFaprJA==
-Date: Wed, 26 Mar 2025 18:46:41 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <b5los4qt7atc75phmurtswymgyeh4tojpu4nctmq6tcd45an6n@rjm3n53z3imx>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
- <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
- <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
- <Z9vydaUguJiVaHtU@smile.fi.intel.com>
- <D8PF958QL5AK.2JIE4F1N1NI0F@bootlin.com>
- <Z-LSHoYA1enEOeHC@smile.fi.intel.com>
- <D8QA116WPNUE.11VKIHSG9N0OZ@bootlin.com>
- <Z-Qh8yBMaCMhv_Ny@smile.fi.intel.com>
+	s=arc-20240116; t=1743011280; c=relaxed/simple;
+	bh=s+xeRtzp7DeGxh5yCudBfeM51M/NejGIPTAer6VXEWQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UTgnrOqdLQOkBdQerczhFUe5EYa4JE4lx8taLfRgfvS0SzRYIpkbUz12b6n0XjcVnWo7HgqUrG3Q8ZqviblBi07t88Rgy5KIrdFmbAfxwCV09gh0nfFDFauLH5VLgi94re9V8tRsnwOdlmBa8jyiRaYUCCdjml1hTsN6ZeqRHrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UnkWmqIB; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F416E4443E;
+	Wed, 26 Mar 2025 17:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743011276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZBLEondICNX76+GWcBh7Pwovu0flUSeCsLISBKtY2ck=;
+	b=UnkWmqIBFhzqtIL2x2Wx/VrHCoJBrZYvibGBi3Ef6Rxb4sP/Swn9zmY7W1EIFnuIzlZunA
+	ygHiELr3Lh/r85odAzEep4YQCSnfVcp1srHJw0L7W9fzy5nEFrdNbslyETWZtbK9f1CdW8
+	ivpPbFFuBXCDgewdYNJXDr+9gkvnbVqYxzGPtZl0ubUVu8ZAVDIFAOWlHPlDaowhquegr3
+	fPCB9J/N3MkQIgdiUTnYNqkPf+GaG08BdzVKdeqyUyjOxRQIc+5H0jPFmi7ECoHmACtmwK
+	/0WaxDeP+0LKMO9UNhH+SBDb5g2T/B/sA8beKXzr7q7OhtJHQvM3ADSOi5Tofw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v9 0/5] drm/bridge: add devm_drm_bridge_alloc() with bridge
+ refcount
+Date: Wed, 26 Mar 2025 18:47:34 +0100
+Message-Id: <20250326-drm-bridge-refcount-v9-0-5e0661fe1f84@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5lu7dui2veijkixr"
-Content-Disposition: inline
-In-Reply-To: <Z-Qh8yBMaCMhv_Ny@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALY95GcC/33NTQrCMBAF4KtI1kaStGkTV95DXLT5sQM2kaQGp
+ fTuTrtSEGE2bx7zzUyyS+AyOe5mklyBDDFg0PsdMUMXro6CxUwEE5JVvKY2jbRPYLFJzpv4CBO
+ VympscXxD8PKODTw39XzBPECeYnptT0q7bv97paWMcilky70yja5PfYzTDcLBxJGsYlEfimC/F
+ YVKX1nbddrzqlHfyrIsb9s133L+AAAA
+X-Change-ID: 20250314-drm-bridge-refcount-58d9503503f6
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeiudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgieetkeekgfdtudevueffueffveekheeiudfhfedvhfeukeeuhffhtddtvdekfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedrjeehngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhgrrhgvgiesuggvnhigrdguvgdprhgtphhtthhopehimhigsehlihhst
+ hhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepjfhuihdrrfhusehgvghhvggrlhhthhgtrghrvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+This series improves the way DRM bridges are allocated and initialized and
+makes them reference-counted. The goal of reference counting is to avoid
+use-after-free by drivers which got a pointer to a bridge and keep it
+stored and used even after the bridge has been deallocated.
 
---5lu7dui2veijkixr
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-MIME-Version: 1.0
+The overall goal is supporting Linux devices with a DRM pipeline whose
+final components can be hot-plugged and hot-unplugged, including one or
+more bridges. For more details see the big picture [0].
 
-On Wed, Mar 26, 2025 at 05:49:07PM +0200, Andy Shevchenko wrote:
-> On Wed, Mar 26, 2025 at 03:44:28PM +0100, Mathieu Dubois-Briand wrote:
-> > On Tue Mar 25, 2025 at 4:56 PM CET, Andy Shevchenko wrote:
-> > > On Tue, Mar 25, 2025 at 03:37:29PM +0100, Mathieu Dubois-Briand wrote:
-> > > > On Thu Mar 20, 2025 at 11:48 AM CET, Andy Shevchenko wrote:
-> > > > > On Thu, Mar 20, 2025 at 08:50:00AM +0100, Uwe Kleine-K=F6nig wrot=
-e:
-> > > > > > On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
-> > > > > > > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-bria=
-nd@bootlin.com wrote:
->=20
-> ...
->=20
-> > > > > > > > +	chip =3D devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS=
-, 0);
-> > > > > > >=20
-> > > > > > > This is quite worrying. The devm_ to parent makes a lot of as=
-sumptions that may
-> > > > > > > not be realised. If you really need this, it has to have a ve=
-ry good comment
-> > > > > > > explaining why and object lifetimes.
-> > > > > >=20
-> > > > > > Pretty sure this is broken. This results for example in the dev=
-ice link
-> > > > > > being created on the parent. So if the pwm devices goes away a =
-consumer
-> > > > > > might not notice (at least in the usual way). I guess this was =
-done to
-> > > > > > ensure that #pwm-cells is parsed from the right dt node? If so,=
- that
-> > > > > > needs a different adaption. That will probably involve calling
-> > > > > > device_set_of_node_from_dev().
-> > > > >
-> > > > > It's an MFD based driver, and MFD core cares about propagating fw=
-node by
-> > > > > default. I believe it should just work if we drop that '->parent'=
- part.
-> > > >=20
-> > > > Are you sure about that?
-> > >
-> > > Yes and no. If your DT looks like (pseudo code as I don't know
-> > > DTS syntax by heart):
-> > >
-> > > 	device: {
-> > > 		parent-property =3D value;
-> > > 		child0:
-> > > 			...
-> > > 		child1:
-> > > 			...
-> > > 	}
-> > >
-> > > the parent-property value is automatically accessible via fwnode API,
-> > > but I don't know what will happen to the cases when each of the child=
-ren
-> > > has its own compatible string. This might be your case, but again,
-> > > I'm not an expert in DT.
-> > >
-> >=20
-> > On my side:
-> > - Some MFD child do have a child node in the device tree, with an
-> >   associated compatible value. No problem for these, they do get correct
-> >   of_node/fwnode values pointing on the child device tree node.
-> > - Some MFD child do not have any node in the device tree, and for these,
-> >   they have to use properties from the parent (MFD) device tree node.
-> >   And here we do have some problems.
-> >=20
-> > > > On my side it does not work if I just drop the '->parent', this is =
-why I
-> > > > ended whit this (bad) pattern.
-> > >
-> > > > Now it does work if I do call device_set_of_node_from_dev() manuall=
-y,
-> > >
-> > > AFAICT, this is wrong API to be called in the children. Are you talki=
-ng about
-> > > parent code?
-> > >
-> >=20
-> > I believe I cannot do it in the parent code, as I would need to do it
-> > after the call to devm_mfd_add_devices(), and so it might happen after
-> > the probe. I still tried to see how it behaved, and it looks like PWM
-> > core really did not expect to get an of_node assigned to the device
-> > after adding the PWM device.
-> >=20
-> > So either I can do something in MFD core or in sub devices probe(), or I
-> > need to come with a different way to do things.
-> >=20
-> > > > so it's definitely better. But I believe the MFD core is not propag=
-ating
-> > > > OF data, and I did not find where it would do that in the code. Yet=
- it
-> > > > does something like this for ACPI in mfd_acpi_add_device(). Or mayb=
-e we
-> > > > do something bad in our MFD driver?
-> > >
-> > > ...or MFD needs something to have... Dunno.
-> >=20
-> > I have something working with a very simple change in mfd-core.c, but
-> > I'm really not confident it won't break anything else. I wish I could
-> > get some insights from an MFD expert.
-> >=20
-> > @@ -210,6 +210,8 @@ static int mfd_add_device(struct device *parent, in=
-t id,
-> >                 if (!pdev->dev.of_node)
-> >                         pr_warn("%s: Failed to locate of_node [id: %d]\=
-n",
-> >                                 cell->name, platform_id);
-> > +       } else if (IS_ENABLED(CONFIG_OF) && parent->of_node) {
-> > +               device_set_of_node_from_dev(&pdev->dev, parent);
->=20
-> The use of this API is inappropriate here AFAICT. It drops the parent ref=
-count
-> and on the second call to it you will have a warning from refcount librar=
-y.
+DRM bridge drivers will have to be adapted to the new API -- the change is
+trivial for most cases. This series converts two of them to serve as an
+example. The remaining ones will be done as a follow-up after this first
+part is merged.
 
-device_set_of_node_from_dev() does:
+After that, refcounting will have to be added on the two sides: all
+functions returning a bridge pointer and all code obtaining such a
+pointer. A few examples have been sent in v7 (link below), they are OK, but
+I removed them since v8 because they must be merged only after converting
+all bridges.
 
-	of_node_put(pdev->dev->of_node);
-	pdev->dev->of_node =3D of_node_get(parent->of_node);
-	pdev->dev->of_node_reused =3D true;
+Here's the grand plan:
 
-Note that pdev isn't the platform device associated with the parent
-device but the just allocated one representing the subdevice so
-pdev->dev->of_node is NULL and the parent refcount isn't dropped.
+ A. add new alloc API and refcounting (this series, at least patches 1-3)
+ B. after (A), convert all bridge drivers to new API
+ C. after (A), add documentation and kunit tests
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+    (patches 3-4 in the v7 series)
+ E. after (B), convert accessors (including patches 5-9 in the v7 series
+    which convert drm_bridge_chain_get_first_bridge() and its users);
+    this is a large work and can be done in chunks
+ F. after (A), debugfs: show refcount, show removed bridges
+ 
+Layout of this:
 
-But I'm unsure if this is the right place to call it or if
-device_set_node() is indeed enough (also I wonder if
-device_set_of_node_from_dev() should care for fwnode). I'll keep that
-question for someone else.
+ 1. Add the new API and refcounting:
 
-Best regards
-Uwe
+    drm/bridge: add devm_drm_bridge_alloc()
+    drm/bridge: add support for refcounting
+    drm/bridge: deprecate old-style bridge allocation
 
---5lu7dui2veijkixr
-Content-Type: application/pgp-signature; name="signature.asc"
+ 2. convert a few bridge drivers (bridge providers) to the new API:
 
------BEGIN PGP SIGNATURE-----
+    drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+    drm/bridge: samsung-dsim: use dynamic lifetime management
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfkPXYACgkQj4D7WH0S
-/k4upQf6Axdao5zBz0Hz+STtYka9LKGhVF1UCfWMMwRHWmDbeIDAZCPDl/+rT/hu
-OSH3njTdWTwTU5hL3AIs7mJdtCh8xT+9OPFMuEVow3yAX0TMY4R5xl1V8wlH1tLH
-biRhSL2JC8OV3g52kT2HqPuE9m99ZmdXM6Ds8NsnKUILuXkElmMNkZ/rhwNljPob
-tuXUqo4fAUQvDYaoh6gMfPqlYH2s3DYyifQksS3GW84rxsij2ueSoZ/2mVBWU25H
-Hhjzxw/illE3NCs06OsCv06iYPyWIQFfgj25K/8ipW4SQPQ0KZ5sz8+PUGHd/flu
-1yV8XatGYEduOwHyDfteDk83GtkVyw==
-=XSI3
------END PGP SIGNATURE-----
+[0] https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
 
---5lu7dui2veijkixr--
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v9 (only patches 2 and 3 have changes):
+- Made drm_bridge_put() return void
+- Added debugfs improvements to the grand plan (item F)
+- Reworded comment in patch 3
+- Link to v8: https://lore.kernel.org/r/20250320-drm-bridge-refcount-v8-0-b3ddaa9f1368@bootlin.com
+
+Changes in v8:
+- Applied requested changes to patch 2
+- Add R-by to other patches
+- Removed v7 patches 3-9: they are OK but must wait until all bridge
+  drivers are converted to the new API
+- Added patch to deprecate old-style bridge allocation
+- Link to v7: https://lore.kernel.org/r/20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com
+
+---
+Luca Ceresoli (5):
+      drm/bridge: add devm_drm_bridge_alloc()
+      drm/bridge: add support for refcounting
+      drm/bridge: make devm_drm_bridge_alloc() mandatory for bridge allocation
+      drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+      drm/bridge: samsung-dsim: use dynamic lifetime management
+
+ drivers/gpu/drm/bridge/samsung-dsim.c |  7 ++-
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c |  7 ++-
+ drivers/gpu/drm/drm_bridge.c          | 86 +++++++++++++++++++++++++++++++++++
+ include/drm/drm_bridge.h              | 36 +++++++++++++++
+ 4 files changed, 128 insertions(+), 8 deletions(-)
+---
+base-commit: 8224bc33fdec82533a68486612e6fd78197b95b5
+change-id: 20250314-drm-bridge-refcount-58d9503503f6
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
