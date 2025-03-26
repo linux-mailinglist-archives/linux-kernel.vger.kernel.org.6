@@ -1,117 +1,162 @@
-Return-Path: <linux-kernel+bounces-576576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B34A7114D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:24:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C848EA71155
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB7097A3258
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4863AC7C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195AF19C55E;
-	Wed, 26 Mar 2025 07:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA781953AD;
+	Wed, 26 Mar 2025 07:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkGHI87+"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5enOoIX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFED170A37;
-	Wed, 26 Mar 2025 07:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2050198A1A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742973841; cv=none; b=MhE1TEBhbY3qP0kgGh3h1X3G0oDX8CGZ+jv8JAld2cmuYXNdcdEQCBxyMEof0TY12yAtkiki2EdVUWVN1x4GFjPmno2eMnCLKLZ591IGPxGn7ne6/OM8r4pQRIGPzVpuhpa3qUVE3WqRGEAaNRfmupG/irEis+1BD3TQSb8gmJc=
+	t=1742973868; cv=none; b=rfjNjiSXMV1kG2As2W1pmu45Un/pjDXEEZfk8kD56/9qMY8F1/A7zSM+jYZE5wHHmsTTXBHIXlII5QbHBmU+hEx7KSNrVjXI1XbMh0SUTa46EQPOT3EZIwoMCcGErR1lOW/KYjZbIalM8/TiN3ukONqFVtuxej6nhHsJAYBDTT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742973841; c=relaxed/simple;
-	bh=E0sFEAZTaMEvyyxH0pLgAheiSrDDDJD3pR0+GGVoNlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=WWE6qQS7PTq/LNDNStgXoMoRjpD+9axe6uG7fp4MbcWMAUgFdnjRt0Dz2j+wHmwtKCUXnDzTVm7m4DUOG93OJcMiRO1UC3jWviLTx33BJntFWws6D67sXZN0+JCzrpCYHrjae6iZ9Goxba0pHY6cFFPCKPjkNgB0703G4FWzsjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkGHI87+; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30c091b54aaso64741071fa.3;
-        Wed, 26 Mar 2025 00:23:59 -0700 (PDT)
+	s=arc-20240116; t=1742973868; c=relaxed/simple;
+	bh=54cd63a34vf2HcC+TZzb0ZdkVJCZUFfzB+6Lus/qZbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/gQ5KAd5nc5tzwMdyMKfTGkBBmv0wfjNcyMNnKsnSUS9NZo5USRn87LX2fvoV1QJdVuVBZu0K1754RYTXsEu1MMpNVmpLoPaUTzkjQVTx8P0pONGuBnhsrF3tu9k60JfVqDRopTX0XsZeeJlAlo0NSt3M9q4usqdAH2YMwARa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5enOoIX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4394036c0efso40904585e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:24:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742973838; x=1743578638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RC0v/dICMowzdUsWp0DyK5hDPdADpm8V6Q0kfq5W0lw=;
-        b=DkGHI87+BV9yfYaKWABGf8ZwT9Te5xEr1FOUcQAsUY3LGFOaMauU5MHKxUUL/QfQBo
-         D8+d5Ulb5jJkfLFTqnsnkCU/t4M7HyY/d+iIqiDhv4t9N/we+bx4+SyxW6nDl4fCiZUk
-         ZetPFm/2Af/8JiDRGoOYvtUMr75qPSpZ2UJr9VWi/TbUl3P9e04GZZURGd3kP6XhUc/f
-         yqyHoHizEC7yf+DM0/hODJ5in+DJzdl/Yy0mlTtgDldVsGb/WCnFGKFDkGmsYV8+KZA+
-         bVtLQNy2p0v6nv4/KywOwrOUc/XMu178C9yCFpklyrtsm7gFMdBl0JsCss5nnWnANJE/
-         TW1Q==
+        d=linaro.org; s=google; t=1742973865; x=1743578665; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3WjwjGLl32A3KiDt34QpamT6Oni1xHmFU/Px0IbQnoY=;
+        b=q5enOoIX3ClvgYIOx7oHhP6r8eJZs2dy7CqCLCuNXBhvXkua6ccO42b/rjvc3SoNFK
+         ELMUZk8jVHNpUZjkrXLTqBBstf6KX7COGkV8+pYhexBS/1R2X/WKb56OlRQd5Cd5p9hP
+         SNqehENewhuJh3wt8rwqQ2iTMSY3bmb1423enMaObtX/SviCD5szvmq5UgFsfIMv3lkc
+         ccFb7UPWLSXpTBz6DQS4i56RYXRQkO6BD8nTIUtZhtpTqZcwJB1ZijU/HSn6mVpP3kLQ
+         74+e5pPkdrK/nimqJMdNxggXzXYDMH4ZYpyI78qoqphP/hbwT1X1p2keEvi36bZ/rCbE
+         O+BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742973838; x=1743578638;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RC0v/dICMowzdUsWp0DyK5hDPdADpm8V6Q0kfq5W0lw=;
-        b=eUyomhDdcC5IRe0/YTRwyXtLy3rnjzisEEabIsRhGe4ZSlqIVs6mtrjYRXOchjPcs+
-         v/kKKD/VEIksDU4SlGCsZ1OD1QBF0gxXiS1dLQgj0GvgRmebZgKpFDwNudiimvnczzbm
-         R578jru2IG8MuCPKxb4bQHCF2cujWoJbgCW/wueq/nEAWmWkkJzus3ggeqeqg8LWiIcX
-         OwFt8Ms0uhgi7g+fIEsxGgD/bfRWb6ffuQd8LGAeHHMv7Tkg17I09q4oj3TsHvU4zPJE
-         vTIRK/r3HEpyz7FLWVqM+U9Ti4lequbrKq2YnWG5K26EFolKrYvuJXOH5Jvk+tAbQRZ7
-         FXdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsbDYvjAkrjmE9WBgy707AHpnHX7I7qLnJvmPLRctZfpzPL3xEOPfrpArz/d7zqcZpCmfBEGrYUFfA@vger.kernel.org, AJvYcCWyvnSQsqeM4XQqBuzAPYFIPLCeszUPotwivws0VFc3/K9mRIu0fXswT5S02xqNhe0UkzpQvWOav5QXwPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzofzMujiNgA5uEWrVnBbCXv+nqmIclb+1a1NtwJvf1ETVf8xwO
-	5Pj1pgxTczt/+BzXjuj9gYd7/S1PtKPyV0KvlbJelxbAkdWpYUd9+H0zRA==
-X-Gm-Gg: ASbGncvsYaN4kDmJYeOFcOCCY1UGRQr7oCaqgVBDfbfOUU2fro4IAixH0mbAet2MAsx
-	3rC1oRPZubWFHnCnD2eHm2oEgHIX8c735IECPqnteRotT7KOL+xyCvVkJ6Nf06SmWBr5dsjjwb9
-	Xh7Jj/BLkoTD+ECC1ZyocYEOge4+WcfSIMsV4ipzhW6IXWJJWNzmi36nBwgAr7lZax5Crd7CC7o
-	gvtRsnw5mvBgjmCl3LCSwMHXq6dDYX5Ti0L0ats/xZM9BJq41bWCHV+ewC3nxgB+qqOOv1qA2Fy
-	hkKvQ0YX5ZdXcq++xFXXowwcyye8fdauJhWI9gvoSq1VqxTzEHr+KKQVk8E=
-X-Google-Smtp-Source: AGHT+IHC7XnxMEcM0Lxz0dG87XGOaRYhqY/yx5CjcnqQXakLkIgJiBfBLJJkEyosp76O1mhbbWOTCQ==
-X-Received: by 2002:a05:6512:3f1e:b0:545:6a2:e58 with SMTP id 2adb3069b0e04-54ad64ef4ecmr7894381e87.32.1742973837595;
-        Wed, 26 Mar 2025 00:23:57 -0700 (PDT)
-Received: from foxbook (adqm95.neoplus.adsl.tpnet.pl. [79.185.146.95])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad646cedfsm1714368e87.2.2025.03.26.00.23.56
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 26 Mar 2025 00:23:57 -0700 (PDT)
-Date: Wed, 26 Mar 2025 08:23:53 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: dengjie03@kylinos.cn
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, stern@rowland.harvard.edu,
- usb-storage@lists.one-eyed-alien.net, xiehongyu1@kylinos.cn
-Subject: Re: [PATCH] usb-storage: apply IGNORE_UAS for Realtek on RTL9210
-Message-ID: <20250326082353.3a79aa8a@foxbook>
-In-Reply-To: <20250326022019.1593669-1-dengjie03@kylinos.cn>
+        d=1e100.net; s=20230601; t=1742973865; x=1743578665;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WjwjGLl32A3KiDt34QpamT6Oni1xHmFU/Px0IbQnoY=;
+        b=WFe6HJucldTCC4c520VatjtFajbtydJRYT/NOs5LJHk8qDPFUX3fo1dw1z63YhdQO1
+         kzEESkJjAtwIgFFTKNBCiv+elYouLKlv1NNRl/0PLHt0lRm8SxndCDVxH7H6eGSxO9v/
+         RLtXAjwbTzXWy8RVv56epeyLLoS62I3eJUD0TVL7s9gVHmKx1q4htF2ImW3gcfzdZtxm
+         x+KXdHCgA+zgSa1I5ZFZk+wRcc2o30DCd2BKKptB6/KV0rUWeIKrX8T8DYqkDUPyh/FZ
+         /fF9Abb8XdJpCnUqaS2L4fwq8urRCsaLhHJlmzwuLvyvD6GIXM8TxVu7knz9Yc4eJGRM
+         pMtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKe2E35SsyDNUsdX7S3xltFOhe/NVJCVjHR+t98EVg/0g4GASKJgdKml2fQ9OoAOOeFpfCfFHyH2bnyMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9KOMxpod/B0xYs1Sk9meiNTEP3lG7KPWGyQY/SBVNq+6WvrtF
+	X4K/2T7wEGZ7ZhuXHTdLQkxyFM/Q9XcdvkxZbNUgjfrqeXSTTMlnhwYzeKYISws=
+X-Gm-Gg: ASbGncsUk96yFqjsVPAtq8Rsnrxm/P1CCdQ8tFDLLhNgFCcJy2QiELGnXHWLwPxd0d0
+	B94UFJiWSeq6c7uE8qoh/kglVLWprvcGYk56vHeX3dSQIVIE9N2BrQQ0vTa+G22rYfX5Jj33Qha
+	muxrMSFx6W1/EumLESHW4y4R9rkNuIg3fGe5h0EnvalhHVO61glTAU92eaJyug2KwMfTbWh6/m3
+	DiNwAR01IZ6+UlZ5Gd1Yyvr1yIbHXmQAU3Ag1kTvkCny/CJO8WA17JLu57zMCw6+JA4jB1T7Rng
+	IfPpPJeo1rYEx8qfAOGx5A2Svhem+lNIRuIT6D6k5/010q7376vrjWM=
+X-Google-Smtp-Source: AGHT+IFV7fd+M/H9BFgJClv0I0A4YnOUCaUBe1bBC0ZrrT9wb1YxMcUrftw6F8ycCV7VPua/wYkfPw==
+X-Received: by 2002:a05:600c:4747:b0:43d:2313:7b4a with SMTP id 5b1f17b1804b1-43d509e43e3mr184235705e9.3.1742973864876;
+        Wed, 26 Mar 2025 00:24:24 -0700 (PDT)
+Received: from [192.168.0.251] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f33242sm225247215e9.5.2025.03.26.00.24.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 00:24:23 -0700 (PDT)
+Message-ID: <42905f72-100b-432a-becb-7e1f835e518e@linaro.org>
+Date: Wed, 26 Mar 2025 07:24:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
+ shutdown
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
+ <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
+ <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
+ <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+ <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> The UAS mode of Realtek USB_HDD is reported
-> to fail to work on several platforms with
-> the following error message,
 
-Possibly related?
-https://github.com/raspberrypi/linux/commit/9d3afd87557637a37135aa6e370dea846b839c2d
 
-An RTL9210 hardware bug with a simple driver workaround, solved
-by RPi but never submitted upstream. I guess you could try it.
+On 3/25/25 8:07 AM, Krzysztof Kozlowski wrote:
+> On 25/03/2025 09:01, André Draszik wrote:
+>> Hi Krzysztof,
+>>
+>> On Tue, 2025-03-25 at 08:57 +0100, Krzysztof Kozlowski wrote:
+>>> On 24/03/2025 16:34, André Draszik wrote:
+>>>> +static bool acpm_may_sleep(void)
+>>>> +{
+>>>> +	return system_state <= SYSTEM_RUNNING ||
+>>>> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
+>>>> +}
+>>>> +
+>>>>  /**
+>>>>   * acpm_dequeue_by_polling() - RX dequeue by polling.
+>>>>   * @achan:	ACPM channel info.
+>>>> @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+>>>>  			return 0;
+>>>>  
+>>>>  		/* Determined experimentally. */
+>>>> -		usleep_range(20, 30);
+>>>> +		if (!acpm_may_sleep())
+>>>> +			udelay(10);
+>>>> +		else
+>>>
+>>> ... and what do you do if IRQs get disabled exactly in this moment? This
+>>> is just racy. You cannot check for a condition and assume it will be
+>>> valid for whatever time you want it to be valid.
+>>>
+>>> What happens if system_state is changed to shutdown in this particular
+>>> moment? How did you prevent this from happening?
+>>
+>> Yes, and that's also what the I2C subsystem is doing, AFAICS, see
+>> i2c_in_atomic_xfer_mode() and its use. This is to make a very
+>> specific corner case work, similar to I2C which has to deal with
+>> the same issue during shutdown.
+> 
+> But they don't have a choice so they try to do the best to avoid
+> sleeping. And it is a subsystem, not a driver, which means their
+> patterns are sometimes special. Drivers should not replicate subsystem
+> workarounds.
+> 
+>>
+>> Would you have a better suggestion?
+> 
+> Yes, you have a choice, you can always use udelay. Driver code is
+> supposed to be always correct.
 
-> [  148.437916][ 22] xhci_hcd 0000:ba:02.0: xHCI host not responding to stop endpoint command.
-> [  148.462295][ 22] xhci_hcd 0000:ba:02.0: xHCI host controller not responding, assume dead
+Using udelay() is good enough for now. I see that downstream uses a
+usleep_range(50, 100) and I'm concerned that we're going to waste lots
+of cpu cyles once more and more clients get added.
 
-That's your host controller crashing, maybe a device bug confused it.
-It may be the reason why storage drivers never recover from the error.
+If there's no concurrency on the ACPM queue mutexes at late system
+shutdown, would it work to pass the don't sleep requirement from the
+client to ACPM and use udelay only then?
 
-Out of curiosity, which HC is doing this?
-
-> then after
-> re-connecting the device will be offlined
-> and not working at all.
-
-Nothing can possibly work after the above, until xhci_hcd is reloaded.
-
-Regards,
-Michal
+Cheers,
+ta
 
