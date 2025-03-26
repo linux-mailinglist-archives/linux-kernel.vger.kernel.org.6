@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-577595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5D9A71F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:39:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9E9A71F4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2092416CFD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101BC178482
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E612620C1;
-	Wed, 26 Mar 2025 19:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68D3255E40;
+	Wed, 26 Mar 2025 19:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o+IDUV+l"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jVnkqZES"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DE1255E22
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F9B2627E3
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017823; cv=none; b=Uy3JHkPdqUq/+R37OxMW4TV2JfULStvKxU5CCP3+/vAu1culW1KPmOBD79o+WJu4+zjwJNbi5Q9OwibJVkQH5t/hox2oYJAm9m5/bdDC8M/sS42aYAzpTSmfPfp2H0Vj4iUTwGoWSdCitHjHZRZl5vXqLFUUeSCkdsj9Jq5dBXs=
+	t=1743017827; cv=none; b=N9rt+jpqgyDdEakBO4n7WtZawF8mNyE4goayAxoWuAuchBT/U8XSstgxnGbTwPbaHjaBn01FdWXYPcLt+NkNCK+HvF3KG50ZJSip/3isvWQFmvsz8O/j/ZfvmQUIdmD+bNEexvztcd5XBtc3Ql2lxX/5JscYz2g1CAMwvx/JZKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743017823; c=relaxed/simple;
-	bh=mpkqTiXhsmrMOyk9yfUfCJO+bVXBugBwgWilo/r1Evk=;
+	s=arc-20240116; t=1743017827; c=relaxed/simple;
+	bh=p53mmTCgdcPvvdoDnMLPS5gz9OL2PI3yDhVWC4nQAU4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iaKONl1CwFlFepIhtQi9lqvcBUAXJoAY8A1vDe9YxfMx/yA/CfWsaQymclA9pN7w3WnvENAiM+FyO+bA9LHQDVcWveHq72yz9B2kqoybbFxye36AYy9StU5k3QAO/XwC2kdbPT19XMuDF8t1XnXHijhAe73zt9vWbUuIhcWZX4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o+IDUV+l; arc=none smtp.client-ip=91.218.175.182
+	 MIME-Version; b=H7YuyU0p1B+AtB/iS2F8M0IFSQTMl9cT+tWBejxdQfqYWyTXoH/21NyCBja5WQCMSgdRVGGNmKDgNmhD1d0idFZxV4fjeavaAuDnUxxdCvF7Op0S0UzEoh01URpI7a1LBxJhzFqZ+lDvX1JvJ9hwK1n+Xyk6oVgewjcrV7FTZnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jVnkqZES; arc=none smtp.client-ip=91.218.175.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743017820;
+	t=1743017822;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yirgN4Is7JOXz8zXxwuHrhDe68dVeA7KMSnZ7zH2SVM=;
-	b=o+IDUV+lHPSiww9h0xHOYgt/gJ8ON29CgcamVzN21E+m4vfYQmI/LLQTXRc4ZDKPWP8M+2
-	VNT3SdcAgmq7uB1EDZ/U0M+0Za4rPbdLQj8vJW1HK9kVOnjiahR8uA57TCl9PaMcx6/sE0
-	+Q+In3AvxTelVREKeOFim1IK9oZQN6o=
+	bh=TThJOcuWvmoxNh535GWTGqeFLWF7zWdthwH3YvfXf/M=;
+	b=jVnkqZESpYJWwdnN5LlhOLcDSZjn3X4dziq3+YnJTCdcfREfpS81fBLuW54I0eCRbkSam5
+	MH4lWPgm9csIXAujDoWgon1CqvybXO6DkFmNJrMKKRSQ/U/w7vHyE0AvYURSjftTTXNQ0b
+	4/VE0Dxwn7vtgTInrwQ9DkolpckrgFs=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -53,9 +53,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [RFC PATCH 07/24] KVM: SEV: Track ASID->vCPU on vCPU load
-Date: Wed, 26 Mar 2025 19:36:02 +0000
-Message-ID: <20250326193619.3714986-8-yosry.ahmed@linux.dev>
+Subject: [RFC PATCH 08/24] KVM: SEV: Drop pre_sev_run()
+Date: Wed, 26 Mar 2025 19:36:03 +0000
+Message-ID: <20250326193619.3714986-9-yosry.ahmed@linux.dev>
 In-Reply-To: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
 References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -67,102 +67,102 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Check for changes in the ASID to vCPU mapping on vCPU load instead of
-doing it on vCPU run. This should be sufficient and more efficient, and
-is needed to allow generalizing the tracking and making it more
-expensive.
+Now that the ASID to vCPU/VMCB tracking was moved out of pre_sev_run(),
+the only remaining pieces are:
+(a) Checking for valid VMSA.
+(b) Assigning svm->asid.
+(c) Flush the ASID if the VMCB is run on a different physical CPU.
+
+The check in (c) is already being done in pre_svm_run(), and so is
+redundant. (a) and (b) are small enough and probably do not warrant a
+separate helper (and (b) will be going way soon), so open-code the
+function into pre_svm_run() and remove it.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- arch/x86/kvm/svm/sev.c | 13 ++++---------
- arch/x86/kvm/svm/svm.c | 13 +++++++++++++
- arch/x86/kvm/svm/svm.h |  1 +
- 3 files changed, 18 insertions(+), 9 deletions(-)
+ arch/x86/kvm/svm/sev.c | 28 ----------------------------
+ arch/x86/kvm/svm/svm.c | 16 ++++++++++++++--
+ arch/x86/kvm/svm/svm.h |  1 -
+ 3 files changed, 14 insertions(+), 31 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index ddb4d5b211ed7..3ef0dfdbb34d2 100644
+index 3ef0dfdbb34d2..1742f51d4c194 100644
 --- a/arch/x86/kvm/svm/sev.c
 +++ b/arch/x86/kvm/svm/sev.c
-@@ -224,7 +224,7 @@ static int sev_asid_new(struct kvm_sev_info *sev)
- 	return ret;
+@@ -3451,34 +3451,6 @@ void sev_es_unmap_ghcb(struct vcpu_svm *svm)
+ 	svm->sev_es.ghcb = NULL;
  }
  
--static unsigned int sev_get_asid(struct kvm *kvm)
-+unsigned int sev_get_asid(struct kvm *kvm)
+-int pre_sev_run(struct vcpu_svm *svm, int cpu)
+-{
+-	struct kvm *kvm = svm->vcpu.kvm;
+-	unsigned int asid = sev_get_asid(kvm);
+-
+-	/*
+-	 * Reject KVM_RUN if userspace attempts to run the vCPU with an invalid
+-	 * VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after an SNP
+-	 * AP Destroy event.
+-	 */
+-	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa))
+-		return -EINVAL;
+-
+-	/* Assign the asid allocated with this SEV guest */
+-	svm->asid = asid;
+-
+-	/*
+-	 * Flush guest TLB if the VMCB was executed on a differet host CPU in
+-	 * previous VMRUNs.
+-	 */
+-	if (svm->vcpu.arch.last_vmentry_cpu == cpu)
+-		return 0;
+-
+-	vmcb_set_flush_asid(svm->vmcb);
+-	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+-	return 0;
+-}
+-
+ #define GHCB_SCRATCH_AREA_LIMIT		(16ULL * PAGE_SIZE)
+ static int setup_vmgexit_scratch(struct vcpu_svm *svm, bool sync, u64 len)
  {
- 	return to_kvm_sev_info(kvm)->asid;
- }
-@@ -3453,7 +3453,6 @@ void sev_es_unmap_ghcb(struct vcpu_svm *svm)
- 
- int pre_sev_run(struct vcpu_svm *svm, int cpu)
- {
--	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
- 	struct kvm *kvm = svm->vcpu.kvm;
- 	unsigned int asid = sev_get_asid(kvm);
- 
-@@ -3469,16 +3468,12 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
- 	svm->asid = asid;
- 
- 	/*
--	 * Flush guest TLB:
--	 *
--	 * 1) when different vCPU for the same ASID is to be run on the same host CPU.
--	 * 2) or this VMCB was executed on different host CPU in previous VMRUNs.
-+	 * Flush guest TLB if the VMCB was executed on a differet host CPU in
-+	 * previous VMRUNs.
- 	 */
--	if (sd->sev_vcpus[asid] == &svm->vcpu &&
--	    svm->vcpu.arch.last_vmentry_cpu == cpu)
-+	if (svm->vcpu.arch.last_vmentry_cpu == cpu)
- 		return 0;
- 
--	sd->sev_vcpus[asid] = &svm->vcpu;
- 	vmcb_set_flush_asid(svm->vmcb);
- 	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
- 	return 0;
 diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 1156ca97fd798..e6e380411fbec 100644
+index e6e380411fbec..ce67112732e8c 100644
 --- a/arch/x86/kvm/svm/svm.c
 +++ b/arch/x86/kvm/svm/svm.c
-@@ -1554,6 +1554,7 @@ static void svm_prepare_host_switch(struct kvm_vcpu *vcpu)
+@@ -3649,8 +3649,20 @@ static int pre_svm_run(struct kvm_vcpu *vcpu)
+ 		svm->current_vmcb->cpu = vcpu->cpu;
+         }
  
- static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
-+	unsigned int asid;
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
- 
-@@ -1568,6 +1569,18 @@ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	}
- 	if (kvm_vcpu_apicv_active(vcpu))
- 		avic_vcpu_load(vcpu, cpu);
-+
+-	if (sev_guest(vcpu->kvm))
+-		return pre_sev_run(svm, vcpu->cpu);
 +	if (sev_guest(vcpu->kvm)) {
++		/* Assign the asid allocated with this SEV guest */
++		svm->asid = sev_get_asid(vcpu->kvm);
++
 +		/*
-+		 * Flush the TLB when a different vCPU using the same ASID is
-+		 * run on the same CPU.
++		 * Reject KVM_RUN if userspace attempts to run the vCPU with an invalid
++		 * VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after an SNP
++		 * AP Destroy event.
 +		 */
-+		asid = sev_get_asid(vcpu->kvm);
-+		if (sd->sev_vcpus[asid] != vcpu) {
-+			sd->sev_vcpus[asid] = vcpu;
-+			kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
-+		}
++		if (sev_es_guest(vcpu->kvm) &&
++		    !VALID_PAGE(svm->vmcb->control.vmsa_pa))
++			return -EINVAL;
++		return 0;
 +	}
- }
  
- static void svm_vcpu_put(struct kvm_vcpu *vcpu)
+ 	/* FIXME: handle wraparound of asid_generation */
+ 	if (svm->current_vmcb->asid_generation != sd->asid_generation)
 diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 4ea6c61c3b048..ca38a233fa24c 100644
+index ca38a233fa24c..3ab2a424992c1 100644
 --- a/arch/x86/kvm/svm/svm.h
 +++ b/arch/x86/kvm/svm/svm.h
-@@ -768,6 +768,7 @@ void sev_es_vcpu_reset(struct vcpu_svm *svm);
- void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
- void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_area *hostsa);
- void sev_es_unmap_ghcb(struct vcpu_svm *svm);
-+unsigned int sev_get_asid(struct kvm *kvm);
+@@ -760,7 +760,6 @@ void avic_refresh_virtual_apic_mode(struct kvm_vcpu *vcpu);
  
- #ifdef CONFIG_KVM_AMD_SEV
- int sev_mem_enc_ioctl(struct kvm *kvm, void __user *argp);
+ /* sev.c */
+ 
+-int pre_sev_run(struct vcpu_svm *svm, int cpu);
+ void sev_init_vmcb(struct vcpu_svm *svm);
+ void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
+ int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port, int in);
 -- 
 2.49.0.395.g12beb8f557-goog
 
