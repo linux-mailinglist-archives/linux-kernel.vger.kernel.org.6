@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-576404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2860A70ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:15:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCBCA70ED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CA13BCA7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45F53189C937
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DAA13A88A;
-	Wed, 26 Mar 2025 02:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267D714831F;
+	Wed, 26 Mar 2025 02:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="lJ9CyPyN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="VnTfUOjy"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E080EEEA9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46F313AA31
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742955337; cv=pass; b=s3K9PQQfH94L2f7/9kRzGASMRX/SN8JddXtodJpUjOmsexiGPDyqSTABW2kyQJ2rYWDGabcmHAl/Bc7dPGVENZovKUsf/bA8kK9DdpxuBoa1AC8qFlkMQ1ye11/pw2mgB4enBnHWaYHO8scbYuerwvn/VHppVwWu2V/vzyGERW8=
+	t=1742955340; cv=pass; b=Qr4jXVtkwboVUuDQS76hxhu5hDEUdYYSYORIHZs4SRhj2wiC8qcslVDn0zwXE4XEYSvV/5EQMN3gRIfn45z/QvFLfnAWULInq1gcisP8jIOBc8aJJH5ddWMNsWNBG6geaZPmFMLFm7dCQIQSG7zSkjlhgEkz3G0JJEsT5wAJQv0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742955337; c=relaxed/simple;
-	bh=6OLpFh44Ge6q6Zgxrq4O78AVE8tSBQ82hrjMqRfqus8=;
+	s=arc-20240116; t=1742955340; c=relaxed/simple;
+	bh=m9GD4loYkS9eoifl1EJQIY3WbQjjRF/a0URtsymk1mU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QNDyLz0hFFmZ0sfVe8yUOEj2zPnFxXzrETh3IHDCyylV8fcSAArpPI6E0a4RzrHk6tN0qmzLJNlxIymJ3bCWNKNK/FF97kMGstlWyxVTRYiNajvEEsG98XgbMBaWmIAryn5gx4IiRE2NRaGYq5QBtDePOGLTh1fwiwyjYKxAh/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=lJ9CyPyN; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version:Content-Type; b=l+6PiX52sDxdQWu/3lEpDScVIgcbhiYsUZ8ulTrM2uHnZjvyf65XD6KudO/lh6qIOL+lBRawLGr8P5LhG/GRI/6mbrSYn6wUEbEr+JNbU8WaUvbYBy/nmBxUt0NH4FSB5amkjAlw8tX63yckUtjobil1yTcIW8uVHpjWTGUkZs0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=VnTfUOjy; arc=pass smtp.client-ip=136.143.184.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742955315; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1742955319; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=dMCydFgVGb0hKAHeEKcKHFrQJnPIUfBTKy9Q22muUIESOqe2dOCm2baB6POTJWnorsYUel8jNGwvFZ+XJ4PjwXM2SzE0cx7X5UKz3sIIljUfRxkxJuVrmcigCu+4Am4GrlXkzZDixtpLLNvF1++9/sRJ40bztLDOo9KGM03mla0=
+	b=buHt9+8wJ2ksc9/06QreSVQ1jLvLR69XLdNhzNlGH1n+VdbQzbuUWwwOvf0kZwVPmMEkhBkDBOJYSANDple11op8JHPd9zvpQw1hU1/6VLUQSSII7Y6yjwaGw//3PbGmafz0cU2iGFPBILRDFzSrV2pp5D35LIWt9hmkBeLAjnI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742955315; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vsMAwuSHWK3nfxRNgzm50oxQnEhwhSDIhkkuUteoLM0=; 
-	b=VxyJMSL/IWn+/Cv6TUY/LrqVkMvGgx09COt9HxWT2tel8D7E8mD+tW/6gQD6jN8ONPFS/JpXb0e04gzvcP+zi/KzQQ9NCmM+tX3la5uUevno6IYvwvIncOEAhcrRz8YU0ZlPypYQ4gib4BDRedb27cV5JfxOjafTlGAkNcxx5I8=
+	t=1742955319; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eDDJBa43wl24zfW0m/nKztfofIyTDy2Iq6m6CG3HtAk=; 
+	b=QSMSm9uIWhwqtw6WdRYV6gjbqeUEtU8pc+ID24SdLiYl/uYPRyXbrjnAHxS1cWssNF+gXlf7JtOEkLdJkNmUnN5OvQL7o2ksPoqHPM5JoAWmvax/QesyvxeeCgxp9OTrvUu2NwMstgUGo/BkBj/z9qZo62uYYkovgz4Ps6S1Uzk=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
 	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742955315;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742955319;
 	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=vsMAwuSHWK3nfxRNgzm50oxQnEhwhSDIhkkuUteoLM0=;
-	b=lJ9CyPyN1CrbjDjto8jfQDnxgPIb9UowWNms0DU7whnSCShQAZmGIhRGOVRQg0LW
-	rB+BOGEHBBWXUZtC3y8RbNvwgtMcHqQrJHaXWHCBtiWu17ciTIxdtkRl2iN++i/Ddcd
-	JxruTfe12YUfBAo3XyVMrJpwweGIJEuuRKI/3Ng4=
-Received: by mx.zohomail.com with SMTPS id 17429553144887.4970395832125405;
-	Tue, 25 Mar 2025 19:15:14 -0700 (PDT)
+	bh=eDDJBa43wl24zfW0m/nKztfofIyTDy2Iq6m6CG3HtAk=;
+	b=VnTfUOjyyEJaAd4e+E2GUEG9Q8ZbsX/4wbg87KRRuZ7DnBZeq14dWpyF+w0oOv6d
+	e0abxBxVT5cw7dyBjtIrJQHkJfv5QHxnnf8+rAZDN0kxOXGToZmgS3Q5OwirmEYqtc+
+	8tSKQzxRTEJdHxEzzByVlpSav5+PJKS+15KaZbLE=
+Received: by mx.zohomail.com with SMTPS id 1742955317701794.8257212544316;
+	Tue, 25 Mar 2025 19:15:17 -0700 (PDT)
 From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -65,9 +65,9 @@ Cc: kernel@collabora.com,
 	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
-Subject: [RFC PATCH v2 1/6] lib/scatterlist.c: Support constructing sgt from page xarray
-Date: Wed, 26 Mar 2025 02:14:21 +0000
-Message-ID: <20250326021433.772196-2-adrian.larumbe@collabora.com>
+Subject: [RFC PATCH v2 2/6] drm/shmem: Introduce the notion of sparse objects
+Date: Wed, 26 Mar 2025 02:14:22 +0000
+Message-ID: <20250326021433.772196-3-adrian.larumbe@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250326021433.772196-1-adrian.larumbe@collabora.com>
 References: <20250326021433.772196-1-adrian.larumbe@collabora.com>
@@ -80,319 +80,234 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-In preparation for a future commit that will introduce sparse allocation
-of pages in DRM shmem, a scatterlist function that knows how to deal
-with an xarray collection of memory pages had to be introduced.
+Sparse DRM objects will store their backing pages in an xarray, to avoid
+the overhead of preallocating a huge struct page pointer array when only
+a very small range of indices might be assigned.
 
-Because the new function is identical to the existing one that deals
-with a page array, the page_array abstraction is also introduced, which
-hides the way pages are retrieved from a collection.
+For now, only the definition of a sparse object as a union alternative
+to a 'dense' object is provided, with functions that exploit it being
+part of later commits.
 
 Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 ---
- include/linux/scatterlist.h |  17 ++++
- lib/scatterlist.c           | 175 +++++++++++++++++++++++++-----------
- 2 files changed, 142 insertions(+), 50 deletions(-)
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 68 +++++++++++++++++++++++++-
+ include/drm/drm_gem_shmem_helper.h     | 23 ++++++++-
+ 2 files changed, 88 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-index d836e7440ee8..cffb0cffcda0 100644
---- a/include/linux/scatterlist.h
-+++ b/include/linux/scatterlist.h
-@@ -447,6 +447,11 @@ int sg_alloc_table_from_pages_segment(struct sg_table *sgt, struct page **pages,
- 				      unsigned int n_pages, unsigned int offset,
- 				      unsigned long size,
- 				      unsigned int max_segment, gfp_t gfp_mask);
-+int sg_alloc_table_from_xarray_segment(struct sg_table *sgt, struct xarray *pages,
-+				       unsigned int idx, unsigned int n_pages,
-+				       unsigned int offset, unsigned long size,
-+				       unsigned int max_segment, gfp_t gfp_mask);
-+
- 
- /**
-  * sg_alloc_table_from_pages - Allocate and initialize an sg table from
-@@ -478,6 +483,18 @@ static inline int sg_alloc_table_from_pages(struct sg_table *sgt,
- 						 size, UINT_MAX, gfp_mask);
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index d99dee67353a..5f75eb1230f6 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -128,6 +128,31 @@ struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t
  }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_create);
  
-+static inline int sg_alloc_table_from_xarray(struct sg_table *sgt,
-+					     struct xarray *pages,
-+					     unsigned int idx,
-+					     unsigned int n_pages,
-+					     unsigned int offset,
-+					     unsigned long size, gfp_t gfp_mask)
-+{
-+	return sg_alloc_table_from_xarray_segment(sgt, pages, idx, n_pages, offset,
-+						  size, UINT_MAX, gfp_mask);
-+}
-+
-+
- #ifdef CONFIG_SGL_ALLOC
- struct scatterlist *sgl_alloc_order(unsigned long long length,
- 				    unsigned int order, bool chainable,
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 5bb6b8aff232..08b9ed51324e 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -423,43 +423,53 @@ static bool pages_are_mergeable(struct page *a, struct page *b)
- 	return true;
- }
- 
--/**
-- * sg_alloc_append_table_from_pages - Allocate and initialize an append sg
-- *                                    table from an array of pages
-- * @sgt_append:  The sg append table to use
-- * @pages:       Pointer to an array of page pointers
-- * @n_pages:     Number of pages in the pages array
-- * @offset:      Offset from start of the first page to the start of a buffer
-- * @size:        Number of valid bytes in the buffer (after offset)
-- * @max_segment: Maximum size of a scatterlist element in bytes
-- * @left_pages:  Left pages caller have to set after this call
-- * @gfp_mask:	 GFP allocation mask
-- *
-- * Description:
-- *    In the first call it allocate and initialize an sg table from a list of
-- *    pages, else reuse the scatterlist from sgt_append. Contiguous ranges of
-- *    the pages are squashed into a single scatterlist entry up to the maximum
-- *    size specified in @max_segment.  A user may provide an offset at a start
-- *    and a size of valid data in a buffer specified by the page array. The
-- *    returned sg table is released by sg_free_append_table
-- *
-- * Returns:
-- *   0 on success, negative error on failure
-- *
-- * Notes:
-- *   If this function returns non-0 (eg failure), the caller must call
-- *   sg_free_append_table() to cleanup any leftover allocations.
-- *
-- *   In the fist call, sgt_append must by initialized.
-- */
--int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
--		struct page **pages, unsigned int n_pages, unsigned int offset,
--		unsigned long size, unsigned int max_segment,
--		unsigned int left_pages, gfp_t gfp_mask)
-+struct page_array {
-+	union {
-+		struct page **array;
-+		struct xarray *xarray;
-+	};
-+
-+	struct page * (* const get_page)(struct page_array, unsigned int);
-+};
-+
-+static inline struct page *page_array_get_page(struct page_array a,
-+					       unsigned int index)
- {
--	unsigned int chunks, cur_page, seg_len, i, prv_len = 0;
-+	return a.array[index];
-+}
-+
-+static inline struct page *page_xarray_get_page(struct page_array a,
-+						unsigned int index)
-+{
-+	return xa_load(a.xarray, index);
-+}
-+
-+#define PAGE_ARRAY(pages)				\
-+	((struct page_array) {				\
-+		.array = pages,				\
-+		.get_page = page_array_get_page,	\
-+	})
-+
-+#define PAGE_XARRAY(pages)				\
-+	((struct page_array) {				\
-+		.xarray = pages,			\
-+		.get_page = page_xarray_get_page,	\
-+	})
-+
-+static inline int
-+sg_alloc_append_table_from_page_array(struct sg_append_table *sgt_append,
-+				      struct page_array pages,
-+				      unsigned int first_page,
-+				      unsigned int n_pages,
-+				      unsigned int offset, unsigned long size,
-+				      unsigned int max_segment,
-+				      unsigned int left_pages, gfp_t gfp_mask)
-+{
-+	unsigned int chunks, seg_len, i, prv_len = 0;
- 	unsigned int added_nents = 0;
- 	struct scatterlist *s = sgt_append->prv;
-+	unsigned int cur_pg_index = first_page;
-+	unsigned int last_pg_index = first_page + n_pages - 1;
- 	struct page *last_pg;
- 
- 	/*
-@@ -475,24 +485,26 @@ int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
- 
- 	if (sgt_append->prv) {
- 		unsigned long next_pfn;
-+		struct page *page;
- 
- 		if (WARN_ON(offset))
- 			return -EINVAL;
- 
- 		/* Merge contiguous pages into the last SG */
-+		page = pages.get_page(pages, cur_pg_index);
- 		prv_len = sgt_append->prv->length;
- 		next_pfn = (sg_phys(sgt_append->prv) + prv_len) / PAGE_SIZE;
--		if (page_to_pfn(pages[0]) == next_pfn) {
-+		if (page_to_pfn(page) == next_pfn) {
- 			last_pg = pfn_to_page(next_pfn - 1);
--			while (n_pages && pages_are_mergeable(pages[0], last_pg)) {
-+			while (cur_pg_index <= last_pg_index &&
-+			       pages_are_mergeable(page, last_pg)) {
- 				if (sgt_append->prv->length + PAGE_SIZE > max_segment)
- 					break;
- 				sgt_append->prv->length += PAGE_SIZE;
--				last_pg = pages[0];
--				pages++;
--				n_pages--;
-+				last_pg = page;
-+				cur_pg_index++;
- 			}
--			if (!n_pages)
-+			if (cur_pg_index > last_pg_index)
- 				goto out;
- 		}
- 	}
-@@ -500,26 +512,27 @@ int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
- 	/* compute number of contiguous chunks */
- 	chunks = 1;
- 	seg_len = 0;
--	for (i = 1; i < n_pages; i++) {
-+	for (i = cur_pg_index + 1; i <= last_pg_index; i++) {
- 		seg_len += PAGE_SIZE;
- 		if (seg_len >= max_segment ||
--		    !pages_are_mergeable(pages[i], pages[i - 1])) {
-+		    !pages_are_mergeable(pages.get_page(pages, i),
-+					 pages.get_page(pages, i - 1))) {
- 			chunks++;
- 			seg_len = 0;
- 		}
- 	}
- 
- 	/* merging chunks and putting them into the scatterlist */
--	cur_page = 0;
- 	for (i = 0; i < chunks; i++) {
- 		unsigned int j, chunk_size;
- 
- 		/* look for the end of the current chunk */
- 		seg_len = 0;
--		for (j = cur_page + 1; j < n_pages; j++) {
-+		for (j = cur_pg_index + 1; j <= last_pg_index; j++) {
- 			seg_len += PAGE_SIZE;
- 			if (seg_len >= max_segment ||
--			    !pages_are_mergeable(pages[j], pages[j - 1]))
-+			    !pages_are_mergeable(pages.get_page(pages, j),
-+						 pages.get_page(pages, j - 1)))
- 				break;
- 		}
- 
-@@ -535,13 +548,13 @@ int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
- 				sgt_append->prv->length = prv_len;
- 			return PTR_ERR(s);
- 		}
--		chunk_size = ((j - cur_page) << PAGE_SHIFT) - offset;
--		sg_set_page(s, pages[cur_page],
-+		chunk_size = ((j - cur_pg_index) << PAGE_SHIFT) - offset;
-+		sg_set_page(s, pages.get_page(pages, cur_pg_index),
- 			    min_t(unsigned long, size, chunk_size), offset);
- 		added_nents++;
- 		size -= chunk_size;
- 		offset = 0;
--		cur_page = j;
-+		cur_pg_index = j;
- 	}
- 	sgt_append->sgt.nents += added_nents;
- 	sgt_append->sgt.orig_nents = sgt_append->sgt.nents;
-@@ -551,6 +564,46 @@ int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
- 		sg_mark_end(s);
- 	return 0;
- }
-+
 +/**
-+ * sg_alloc_append_table_from_pages - Allocate and initialize an append sg
-+ *                                    table from an array of pages
-+ * @sgt_append:  The sg append table to use
-+ * @pages:       Pointer to an array of page pointers
-+ * @n_pages:     Number of pages in the pages array
-+ * @offset:      Offset from start of the first page to the start of a buffer
-+ * @size:        Number of valid bytes in the buffer (after offset)
-+ * @max_segment: Maximum size of a scatterlist element in bytes
-+ * @left_pages:  Left pages caller have to set after this call
-+ * @gfp_mask:	 GFP allocation mask
++ * drm_gem_shmem_create_sparse - Allocate a sparse object with the given size
++ * @dev: DRM device
++ * @size: Size of the sparse object to allocate
 + *
-+ * Description:
-+ *    In the first call it allocate and initialize an sg table from a list of
-+ *    pages, else reuse the scatterlist from sgt_append. Contiguous ranges of
-+ *    the pages are squashed into a single scatterlist entry up to the maximum
-+ *    size specified in @max_segment.  A user may provide an offset at a start
-+ *    and a size of valid data in a buffer specified by the page array. The
-+ *    returned sg table is released by sg_free_append_table
++ * This function creates a sparse shmem GEM object.
 + *
 + * Returns:
-+ *   0 on success, negative error on failure
-+ *
-+ * Notes:
-+ *   If this function returns non-0 (eg failure), the caller must call
-+ *   sg_free_append_table() to cleanup any leftover allocations.
-+ *
-+ *   In the fist call, sgt_append must by initialized.
++ * A struct drm_gem_shmem_object * on success or an ERR_PTR()-encoded negative
++ * error code on failure.
 + */
-+int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
-+		struct page **pages, unsigned int n_pages, unsigned int offset,
-+		unsigned long size, unsigned int max_segment,
-+		unsigned int left_pages, gfp_t gfp_mask)
++struct drm_gem_shmem_object *drm_gem_shmem_create_sparse(struct drm_device *dev, size_t size)
 +{
-+	struct page_array parray = PAGE_ARRAY(pages);
++	struct drm_gem_shmem_object *shmem =
++		__drm_gem_shmem_create(dev, size, false, NULL);
 +
-+	return sg_alloc_append_table_from_page_array(sgt_append, parray, 0, n_pages, offset,
-+						    size, max_segment, left_pages, gfp_mask);
-+}
- EXPORT_SYMBOL(sg_alloc_append_table_from_pages);
- 
- /**
-@@ -582,10 +635,11 @@ int sg_alloc_table_from_pages_segment(struct sg_table *sgt, struct page **pages,
- 				gfp_t gfp_mask)
- {
- 	struct sg_append_table append = {};
-+	struct page_array parray = PAGE_ARRAY(pages);
- 	int err;
- 
--	err = sg_alloc_append_table_from_pages(&append, pages, n_pages, offset,
--					       size, max_segment, 0, gfp_mask);
-+	err = sg_alloc_append_table_from_page_array(&append, parray, 0, n_pages, offset,
-+						    size, max_segment, 0, gfp_mask);
- 	if (err) {
- 		sg_free_append_table(&append);
- 		return err;
-@@ -596,6 +650,27 @@ int sg_alloc_table_from_pages_segment(struct sg_table *sgt, struct page **pages,
- }
- EXPORT_SYMBOL(sg_alloc_table_from_pages_segment);
- 
-+int sg_alloc_table_from_xarray_segment(struct sg_table *sgt, struct xarray *pages,
-+				       unsigned int idx, unsigned int n_pages,
-+				       unsigned int offset, unsigned long size,
-+				       unsigned int max_segment, gfp_t gfp_mask)
-+{
-+	struct sg_append_table append = {};
-+	struct page_array parray = PAGE_XARRAY(pages);
-+	int err;
-+
-+	err = sg_alloc_append_table_from_page_array(&append, parray, idx, n_pages, offset,
-+						    size, max_segment, 0, gfp_mask);
-+	if (err) {
-+		sg_free_append_table(&append);
-+		return err;
++	if (!IS_ERR(shmem)) {
++		shmem->sparse = true;
++		xa_init_flags(&shmem->xapages, XA_FLAGS_ALLOC);
 +	}
-+	memcpy(sgt, &append.sgt, sizeof(*sgt));
-+	WARN_ON(append.total_nents != sgt->orig_nents);
-+	return 0;
-+}
-+EXPORT_SYMBOL(sg_alloc_table_from_xarray_segment);
 +
- #ifdef CONFIG_SGL_ALLOC
- 
++	return shmem;
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_create_sparse);
++
  /**
+  * drm_gem_shmem_create_with_mnt - Allocate an object with the given size in a
+  * given mountpoint
+@@ -173,8 +198,8 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+ 			sg_free_table(shmem->sgt);
+ 			kfree(shmem->sgt);
+ 		}
+-		if (shmem->pages)
+-			drm_gem_shmem_put_pages(shmem);
++
++		drm_gem_shmem_put_pages(shmem);
+ 
+ 		drm_WARN_ON(obj->dev, shmem->pages_use_count);
+ 
+@@ -196,6 +221,12 @@ static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
+ 	if (shmem->pages_use_count++ > 0)
+ 		return 0;
+ 
++	/* We only allow increasing the user count in the case of
++	 * sparse shmem objects with some backed pages for now
++	 */
++	if (shmem->sparse && xa_empty(&shmem->xapages))
++		return -EINVAL;
++
+ 	pages = drm_gem_get_pages(obj);
+ 	if (IS_ERR(pages)) {
+ 		drm_dbg_kms(obj->dev, "Failed to get pages (%ld)\n",
+@@ -231,6 +262,14 @@ void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+ 
+ 	dma_resv_assert_held(shmem->base.resv);
+ 
++	if (!shmem->sparse) {
++		if (!shmem->pages)
++			return;
++	} else {
++		/* Not implemented yet */
++		return;
++	}
++
+ 	if (drm_WARN_ON_ONCE(obj->dev, !shmem->pages_use_count))
+ 		return;
+ 
+@@ -404,8 +443,15 @@ void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+ {
+ 	struct drm_gem_object *obj = &shmem->base;
+ 
++	if (shmem->sparse) {
++		drm_err(obj->dev, "UM unmapping of sparse shmem objects not implemented\n");
++		return;
++	}
++
+ 	if (drm_gem_is_imported(obj)) {
+ 		dma_buf_vunmap(obj->dma_buf, map);
++	} else if (obj->import_attach) {
++		dma_buf_vunmap(obj->import_attach->dmabuf, map);
+ 	} else {
+ 		dma_resv_assert_held(shmem->base.resv);
+ 
+@@ -541,6 +587,12 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+ 	struct page *page;
+ 	pgoff_t page_offset;
+ 
++	/* TODO: Implement UM mapping of sparse shmem objects */
++	if (drm_WARN_ON(obj->dev, shmem->sparse)) {
++		drm_err(obj->dev, "UM mapping of sparse shmem objects not implemented\n");
++		return VM_FAULT_SIGBUS;
++	}
++
+ 	/* We don't use vmf->pgoff since that has the fake offset */
+ 	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+ 
+@@ -566,8 +618,14 @@ static void drm_gem_shmem_vm_open(struct vm_area_struct *vma)
+ 	struct drm_gem_object *obj = vma->vm_private_data;
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+ 
++	/* TODO: Implement UM mapping of sparse shmem objects */
++	if (drm_WARN_ON(obj->dev, shmem->sparse))
++		return;
++
+ 	drm_WARN_ON(obj->dev, drm_gem_is_imported(obj));
+ 
++	drm_WARN_ON(obj->dev, obj->import_attach);
++
+ 	dma_resv_lock(shmem->base.resv, NULL);
+ 
+ 	/*
+@@ -690,6 +748,9 @@ struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_shmem_object *shmem)
+ {
+ 	struct drm_gem_object *obj = &shmem->base;
+ 
++	if (drm_WARN_ON(obj->dev, shmem->sparse))
++		return ERR_PTR(-EINVAL);
++
+ 	drm_WARN_ON(obj->dev, drm_gem_is_imported(obj));
+ 
+ 	return drm_prime_pages_to_sg(obj->dev, shmem->pages, obj->size >> PAGE_SHIFT);
+@@ -702,6 +763,9 @@ static struct sg_table *drm_gem_shmem_get_pages_sgt_locked(struct drm_gem_shmem_
+ 	int ret;
+ 	struct sg_table *sgt;
+ 
++	if (drm_WARN_ON(obj->dev, shmem->sparse))
++		return ERR_PTR(-EINVAL);
++
+ 	if (shmem->sgt)
+ 		return shmem->sgt;
+ 
+diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+index cef5a6b5a4d6..00e47512b30f 100644
+--- a/include/drm/drm_gem_shmem_helper.h
++++ b/include/drm/drm_gem_shmem_helper.h
+@@ -6,6 +6,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/mutex.h>
++#include <linux/xarray.h>
+ 
+ #include <drm/drm_file.h>
+ #include <drm/drm_gem.h>
+@@ -29,7 +30,10 @@ struct drm_gem_shmem_object {
+ 	/**
+ 	 * @pages: Page table
+ 	 */
+-	struct page **pages;
++	union {
++		struct page **pages;
++		struct xarray xapages;
++	};
+ 
+ 	/**
+ 	 * @pages_use_count:
+@@ -91,12 +95,18 @@ struct drm_gem_shmem_object {
+ 	 * @map_wc: map object write-combined (instead of using shmem defaults).
+ 	 */
+ 	bool map_wc : 1;
++
++	/**
++	 * @sparse: the object is only partially backed by pages
++	 */
++	bool sparse : 1;
+ };
+ 
+ #define to_drm_gem_shmem_obj(obj) \
+ 	container_of(obj, struct drm_gem_shmem_object, base)
+ 
+ struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t size);
++struct drm_gem_shmem_object *drm_gem_shmem_create_sparse(struct drm_device *dev, size_t size);
+ struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_device *dev,
+ 							   size_t size,
+ 							   struct vfsmount *gemfs);
+@@ -210,6 +220,10 @@ static inline struct sg_table *drm_gem_shmem_object_get_sg_table(struct drm_gem_
+ {
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+ 
++	/* Use the specific sparse shmem get_sg_table function instead */
++	if (WARN_ON(shmem->sparse))
++		return ERR_PTR(-EINVAL);
++
+ 	return drm_gem_shmem_get_sg_table(shmem);
+ }
+ 
+@@ -229,6 +243,10 @@ static inline int drm_gem_shmem_object_vmap(struct drm_gem_object *obj,
+ {
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+ 
++	/* TODO: Implement kernel mapping of sparse shmem objects */
++	if (WARN_ON(shmem->sparse))
++		return -EACCES;
++
+ 	return drm_gem_shmem_vmap(shmem, map);
+ }
+ 
+@@ -263,6 +281,9 @@ static inline int drm_gem_shmem_object_mmap(struct drm_gem_object *obj, struct v
+ {
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+ 
++	if (shmem->sparse)
++		return -EACCES;
++
+ 	return drm_gem_shmem_mmap(shmem, vma);
+ }
+ 
 -- 
 2.48.1
 
