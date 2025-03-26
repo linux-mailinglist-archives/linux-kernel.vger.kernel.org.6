@@ -1,142 +1,192 @@
-Return-Path: <linux-kernel+bounces-576981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B892FA716F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:53:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68893A716F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04E416F34D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0451890FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84EA1E1DE5;
-	Wed, 26 Mar 2025 12:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78601DE3B5;
+	Wed, 26 Mar 2025 12:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjPsBb5g"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rMQ0Sfzd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FA21E485
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0391E485
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993619; cv=none; b=iAW5F1BqzG6LJAFtO2Kuo3+N6D2Wp5OAGCJLZm3dpETmH/zT3QT74ttMbel92K2URMMxcyQO4OKo+uA75DAOtc6hPyU7wLWmX7L0C4k8FgIoGlWOreu1Hro8obAijZj1uyhESfz7SZ8mqAui0/23lZbZx7In7Enbips+tZ3oTgM=
+	t=1742993711; cv=none; b=hKKGFm+4H5hIVOs1RkMqZ2IBFIxFsiUdY7t6TwBitVrsJpuSz/nyU4de6nxVDqBiiDVU0MMR4aXoS2QSMjZIiX+8MQw4iOF2n5HommCt9arCL3HJ9xFT0pqrJIWmX1LWs0Vtot1DpXwCiFPKanbLfczaodBKQo7eT7SaQmQsPRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993619; c=relaxed/simple;
-	bh=qldN62PjCFlYuOW1Hw/7vBhDRt4i9kg3Fs4B3evpBbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ConH50izUGrCkB0ROag2vg1mqKZpLdtTh3dlxkZ/HSpgHYQL9uS/djgWnx5xvNA8olHjvUVEVZ0qQRmzhT35mw/CqQbB+Ay4ExnzQ7PYI52Y1jCU/4poGQw/qUkWVCuudx6mMOvRNrf5oypmtejBhQTZaxXY6JVUPiH5luUKBCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjPsBb5g; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso47916645e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742993616; x=1743598416; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=coBo9zTOkV+54/uJ8ZjRiGU/vI3P1bGg7BoPmlBVdVs=;
-        b=fjPsBb5gBWt1Qy9CquCF2p3rhlvCl/FpIn2C0u8qn9P9AtHWOi8TGnB3yydRpoF6l1
-         jCcCu+kEh4zOmyjqgMt3FSuyRBINvbvS9HvEJFlyevw34SYSRlCWC1zPiQCBMGm2QZwb
-         +zvv3T397r3nna+iDA1fw2e93FaZlzwcfTgC9WUaJswbsRC+BaCCsQkqzyxyjZkWJQNx
-         Gx781BJO2wenhqwX3MPnFEz8OtYl4P+5LGXrlsNoi9CS1sKOA2C8HjHF5alTpDkhK8uf
-         CCD0keU4q/JLY/xkHpc0jQF1HuNumJb4+jWNiRtWg7Mw5LaxeCv95Y373MmwPq1Tosy1
-         zXNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742993616; x=1743598416;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=coBo9zTOkV+54/uJ8ZjRiGU/vI3P1bGg7BoPmlBVdVs=;
-        b=gWDnYq6pgOP315ZQC1qyMzHns+1/4ulDPYGI2dcsdPkb54UT7PzBzRVFWqrABfGZqV
-         fb+iKqDQcCofcS8fpUL0nsw+xWmhTcXTv2r/hsBZxotXSk42xduO1gx1QYWh/psgj1jZ
-         M/MxegtGTNDylv4ym4J8QEiMp4ulERHJVin/uwzzKNFW7Hv1WlS0OuToQuOIyHy/WtEn
-         wHXAfBB3vKdWfvnxuEA3rZQuofM0mx3cJRxPx4p2xYhpAemDyGEI55/o2zqX82lEQQ4/
-         MVa8CCwAq3wNsZqserSQb41VOxK5EzDq3GuTgIVuqz/N7Xe5p2KZh4p2yiz1uz+o1T4r
-         piRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVplRWlE7xfQFRP7LsvgbdhVYXmV5lFkxNa1mSiS41mOMwhwteDAsW5R7mK3V9zn34iuuQdW+5Jwl3dus=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym2Kjb0tQ4HiCztWPKzSmSl+latYj18eboTHXEJWRctviDV3h5
-	AD+amQUax8dlhSy8JOP/zlQtO5jr+Gv9qRg9dUYRtQHaCRGwK9Wy
-X-Gm-Gg: ASbGncsK3WJVu5dQ9OBkqfCIZml1dWPft/zlx9pBC3vj69RQyQHkRQ1rLb6CjWKIwI+
-	IV0sxt+GZnN7Yx1BQP5a7hKRPnOiS1Su9IMgPhJrbFVCBYQCpVZofzWGNksgUSGjOhmx2mjtLb+
-	7z6b9a6WQua8ECRdTxCpGaird+7Pys4flqZG+GPQ7ZWJ2//NLFEuht5Xqh5DoD78cIxWI27LSPT
-	CHKmJ9D+WpzN+wmp+R2g9M3OOa1JptwM65nLkoPvHlohF5CXXr2Fisa9wNWuLXI4m5bqHZhCUXz
-	i4D3UygQWxFXiGbO7bu1ixCLi0fdf4qFQK0M3sI3+RueAYXw0qbddh59
-X-Google-Smtp-Source: AGHT+IFx/B2y4pVZ+fIGudSc0pHJcHiMF94Yu3KK2XDJYxFrBVKU4DKqM242i+DiiGBlB3U5k+xijg==
-X-Received: by 2002:a05:600c:198a:b0:43c:fd27:a216 with SMTP id 5b1f17b1804b1-43d52376b88mr200235635e9.23.1742993615726;
-        Wed, 26 Mar 2025 05:53:35 -0700 (PDT)
-Received: from debian.local ([2a0a:ef40:4d4:f101:e41a:977a:f788:910f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6651sm16793284f8f.75.2025.03.26.05.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 05:53:35 -0700 (PDT)
-Date: Wed, 26 Mar 2025 12:53:33 +0000
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lyude@redhat.com, sumit.semwal@linaro.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: prime: drm_prime_gem_destroy comment
-Message-ID: <Z-P4zQ1464SeZGmB@debian.local>
-References: <Z9GHj-edWJmyzpdY@debian.local>
- <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
- <Z9q-ggKKgTsvW-Rz@debian.local>
- <Z9rA0G2urlVHFOSx@cassiopeiae>
- <1f4a534f-8883-4793-b191-60c2773f6217@amd.com>
- <Z9rSTkXlub-JZAz0@cassiopeiae>
+	s=arc-20240116; t=1742993711; c=relaxed/simple;
+	bh=yHaJWfUDOgIcM4VyUEbvZmViTVzoPTaliN4XUQoPTl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WDULq1VcsuzNQC9BR51fhbse9dWD4fYtP0WRBwHFRopWqOGPUneD8Tv3GrJIqPsale0Z1pWP1oOdelJ4lINBVeU6vXfP5mKPGL28mn9AUwUqRk4LCiScKYs6wx0ecOMJTEXzstWmiBXpc2/6S2J/siFsuo1ZePOv2FHgKLSHrZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rMQ0Sfzd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q9ocmk032105;
+	Wed, 26 Mar 2025 12:54:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fJNU42
+	ThsQPoAClWgMGahyKWXC0siBkUSW80fzgGaoU=; b=rMQ0Sfzd0iCn2qshGj1pDj
+	mjzQyPVZ0ijLxMqaIe2xLvSRga2Bq4dyIorOgONvnzoN8sPUoVXKR4JwbQ7aQyk5
+	M0XQklT32ibauJV2ubEK0BvVSEmupxveMowK1xu66Vk+i2+4ixVFinafgKOnlAqz
+	jyKJ2M1IwejqfVzR2GLD9gkCRp+/CK0ATWnaWyvuuqIApWCLlMbBrNdbLmN6a6HE
+	4kgqlk+PqGChL06MqWg1ENhdUlI0hNG4OQOc3mHQxnsJP+ZKVykOTgbxPAqScV9c
+	xYPKACyjDYI27uqR0Dm9IzD/QFKRLPMngL0e7gigsa+g9rIEOXpZhsrXy12ZSJwA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0krp4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 12:54:43 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QAReGV012352;
+	Wed, 26 Mar 2025 12:54:42 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j91m8apa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 12:54:42 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QCseFq52494646
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 12:54:40 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CB6A2004B;
+	Wed, 26 Mar 2025 12:54:40 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DCDB720043;
+	Wed, 26 Mar 2025 12:54:37 +0000 (GMT)
+Received: from [9.124.217.36] (unknown [9.124.217.36])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 12:54:37 +0000 (GMT)
+Message-ID: <7c660d7a-6c70-4307-895f-70d4aa274886@linux.ibm.com>
+Date: Wed, 26 Mar 2025 18:24:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9rSTkXlub-JZAz0@cassiopeiae>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        "Nysal Jan K.A." <nysal@linux.ibm.com>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
+ <587d45c3-2098-4914-9dfc-275b5d0b9bb7@linux.ibm.com>
+ <20250326093153.Ib5b2p6M@linutronix.de>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250326093153.Ib5b2p6M@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6D4zOKx5v0RH6aft5mp3FQsG7IqnUT0A
+X-Proofpoint-GUID: 6D4zOKx5v0RH6aft5mp3FQsG7IqnUT0A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_04,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0
+ mlxlogscore=945 priorityscore=1501 adultscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260076
 
-Edit the comments on correct usage of drm_prime_gem_destroy to note
-that, if using TTM, drm_prime_gem_destroy must be called in the
-ttm_buffer_object.destroy hook, to avoid the dma_buf being freed leaving
-a dangling pointer which will be later dereferenced by
-ttm_bo_delayed_delete.
 
-Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-Suggested-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/drm_prime.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 32a8781cfd67..452d5c7cd292 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
-  * &drm_driver.gem_prime_import_sg_table internally.
-  *
-  * Drivers must arrange to call drm_prime_gem_destroy() from their
-- * &drm_gem_object_funcs.free hook when using this function.
-+ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-+ * hook when using this function, to avoid the dma_buf being freed while the
-+ * ttm_buffer_object can still dereference it.
-  */
- struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 					    struct dma_buf *dma_buf,
-@@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
-  * implementation in drm_gem_prime_fd_to_handle().
-  *
-  * Drivers must arrange to call drm_prime_gem_destroy() from their
-- * &drm_gem_object_funcs.free hook when using this function.
-+ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-+ * hook when using this function, to avoid the dma_buf being freed while the
-+ * ttm_buffer_object can still dereference it.
-  */
- struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
- 					    struct dma_buf *dma_buf)
--- 
-2.47.2
+On 3/26/25 15:01, Sebastian Andrzej Siewior wrote:
+> On 2025-03-26 00:34:23 [+0530], Shrikanth Hegde wrote:
+>> Hi Sebastian.
+> Hi Shrikanth,
+> 
 
+Hi.
+
+>> So, did some more bench-marking using the same perf futex hash.
+>> I see that perf creates N threads and binds each thread to a CPU and then
+>> calls futex_wait such that it never blocks. It always returns EWOULDBLOCK.
+>> only futex_hash is exercised.
+> 
+> It also does spin_lock() + unlock on the hash bucket. Without the
+> locking, you would have constant numbers.
+> 
+Thanks for explanations.
+
+Plus the way perf is doing, it would cause all the SMT threads to be up and 1 case
+probably get the benefit of SMT folding. So anything after 40 threads, numbers don't change with baseline.
+
+>> Numbers with different threads. (private futexes)
+>> threads	baseline		with series    (ratio)
+>> 1		3386265			3266560		0.96	
+>> 10		1972069			 821565		0.41
+>> 40		1580497			 277900		0.17
+>> 80		1555482			 150450		0.096
+>>
+>>
+>> With Shared Futex: (-s option)
+>> Threads	baseline		with series    (ratio)
+>> 80		590144			 585067		0.99
+> 
+> The shared numbers are equal since the code path there is unchanged.
+> 
+>> After looking into code, and after some hacking, could get the
+>> performance back with below change. this is likely functionally not correct.
+>> the reason for below change is,
+>>
+>> 1. perf report showed significant time in futex_private_hash_put.
+>>     so removed rcu usage for users. that brought some improvements.
+>>     from 150k to 300k. Is there a better way to do this users protection?
+> 
+> This is likely from the atomic dec operation itself. Then there is also
+> the preemption counter operation. The inc should be also visible but
+> might be inlined into the hash operation.
+> This is _just_ the atomic inc/ dec that doubled the "throughput" but you
+> don't have anything from the regular path.
+> Anyway. To avoid the atomic part we would need to have a per-CPU counter
+> instead of a global one and a more expensive slow path for the resize
+> since you have to sum up all the per-CPU counters and so on. Not sure it
+> is worth it.
+> 
+
+resize would happen when one does prctl right? or
+it can happen automatically too?
+
+fph is going to be on thread leader's CPU and using atomics to do
+fph->users would likely cause cacheline bouncing no?
+
+Not sure if this happens only due to this benchmark which doesn't actually block.
+Maybe the real life use-case this doesn't matter.
+
+>> 2. Since number of buckets would be less by default, this would cause hb
+>>     collision. This was seen by queued_spin_lock_slowpath. Increased the hash
+>>     bucket size what was before the series. That brought the numbers back to
+>>     1.5M. This could be achieved with prctl in perf/bench/futex-hash.c i guess.
+> 
+> Yes. The idea is to avoid a resize at runtime and setting to something
+> you know best. You can also use it now to disable the private hash and
+> stick with the global.
+
+yes. SET_SLOTS would take care of it.
+
+> 
+>> Note: Just increasing the hash bucket size without point 1, didn't matter much.
+> 
+> Sebastian
 
