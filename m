@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-577611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52361A71F6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:46:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F67A71F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06611765AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C31178DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E813253331;
-	Wed, 26 Mar 2025 19:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F06256C79;
+	Wed, 26 Mar 2025 19:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pBejHsMv"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJABBfyp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9802C217F36
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6812566D0;
+	Wed, 26 Mar 2025 19:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018230; cv=none; b=ejccinrPvqEwrluQqBnPoOkTEyFudZCADeFEyNqVKEDsshWt7pH10pUzNlKHvHmkMyXyvmSnjNwKT7kWINgRDj6qyTbUi8ciRwtp/OsjulIxiI1cb7lJVJRI3zr7NOsSzRPiMGvLCoVZe0BHZMbHTuKMHkvzzdx5Y/nP9zIJQFA=
+	t=1743018232; cv=none; b=jgXJa8rW+Ute9JK8H/jVWsM4UQIEoG+d/UQoZotZuN2/DYlbP6uy96JIcxkP9ovpBoZXlZiF7kLqeaSOFF1OHlJ8Ga4w+hq2HNDgBO9G5iTutO1IvHiY3lDbWStxOnFuokP3fVmTloM/9p8lAjHsDv/P4Wg16elc7M8vxssEWtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018230; c=relaxed/simple;
-	bh=lItvqMpdi0XTZjnRfwfXkLzIAb/GODCc1nwOMcOITZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r3u1t8OlKsRlEgMMQmxTONznADO7AdKUqZOC1MmkQj/8hJxDuBJZJsJk2+POJpsLILCMXJZww+o1V4+51f9XCmrVeqFoqnuAbs5DF2Nbz7LJYghd06sxilTnoGZo0d75sPFnG5iALQ0LLtxSnI17vfFlYm8G06ouw0ZouyMmMlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pBejHsMv; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743018226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tKO1BhmCWE+lwO4jftvRFSsIiScoXZA46QHUMAkMydM=;
-	b=pBejHsMvUadGCdrYvPyjfVXNPdnVW7/g+YCHZcV4ldSYb48WRncQlXt9WJk9DVx14c0Y6y
-	Abg0KM/sloByOBWeOfBPNJKggAlMQ5uC+nsLlelH3mLYrgf1xggQClCXhnCe/L238pw4Tb
-	kFsBdLSMvckqxlt69WH0mNc0+VsIJeU=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Rik van Riel <riel@surriel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [RFC PATCH 19/24] KVM: nSVM: Flush the TLB if L1 changes L2's ASID
-Date: Wed, 26 Mar 2025 19:43:31 +0000
-Message-ID: <20250326194331.3717289-1-yosry.ahmed@linux.dev>
-In-Reply-To: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
-References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1743018232; c=relaxed/simple;
+	bh=LilCrq6gFnjk7WcOa6HyB4QAzegZU8PDndDSyDEdMkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EP3oQT0GXmf9m3g796/R/OagzCCKWLeH6e413oR7pT4DVP6NJdm7fl5fG9dC7CzH2T1ZrbeH0AHTCjYxN7ArMlXIsuAFsF921nXeLf2cOh5mfEqsMLtSuPAP4asw0n8vJnzQXOJuC+mYW3/4kn7SWpcnxuIUJnYii1DatPRpe+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJABBfyp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E59BC4CEE2;
+	Wed, 26 Mar 2025 19:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743018231;
+	bh=LilCrq6gFnjk7WcOa6HyB4QAzegZU8PDndDSyDEdMkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hJABBfypFBAMyG2hDWr0QuqqiSXOCwiLkYieEvYnTtGP9iemVgb0BFv4h+Nll1Dfq
+	 C+m4gHe5zrRmML/RuUIBaryctXxD0VceBVPiKEAyKY/Ko+Ho9efasJxhxM/QCjthYg
+	 tyQjTMOEqjmdAbauw9PBBxpvYG+kuR/ZeoJttgc8EjPeLjlTuPEXBUtpRLZgZvjh2c
+	 ujWRK6X+UGpHUVhmoCQUqRHo9a8HSpzroNmHn19pXH679f72i2gIvlNSi3ew5PC8pJ
+	 fYl4IFKVxSiEBo8Kf8cnbFxkQfYg2EIYwxe0S1IY3e8JiMvWMlJBUUQR1GOeY56bkq
+	 lg3lKFgEwQnZQ==
+Date: Wed, 26 Mar 2025 21:43:47 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: "Hansen, Dave" <dave.hansen@intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
+	"Cai, Chong" <chongc@google.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"Annapurve, Vishal" <vannapurve@google.com>,
+	"dionnaglaze@google.com" <dionnaglaze@google.com>,
+	"bondarn@google.com" <bondarn@google.com>,
+	"Raynor, Scott" <scott.raynor@intel.com>,
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>
+Subject: Re: [PATCH 1/4] x86/sgx: Add total number of EPC pages
+Message-ID: <Z-RY8-bL2snpRKTB@kernel.org>
+References: <20250321123938.802763-1-elena.reshetova@intel.com>
+ <20250321123938.802763-2-elena.reshetova@intel.com>
+ <Z98yki-gH4ewlpbP@kernel.org>
+ <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 
-KVM tracks a single ASID for L2 guests. An L1 vCPU could change the ASID
-it has assigned L2 due to switching to a different L2 guest or simply to
-avoid flushing L2's existing ASID. Flush L2's TLB when this happens to
-avoid reusing TLB entries from the old ASID (from L1's perspective).
+On Mon, Mar 24, 2025 at 12:12:41PM +0000, Reshetova, Elena wrote:
+> > On Fri, Mar 21, 2025 at 02:34:40PM +0200, Elena Reshetova wrote:
+> > > In order to successfully execute ENCLS[EUPDATESVN], EPC must be empty.
+> > > SGX already has a variable sgx_nr_free_pages that tracks free
+> > > EPC pages. Add a new variable, sgx_nr_total_pages, that will keep
+> > > track of total number of EPC pages. It will be used in subsequent
+> > > patch to change the sgx_nr_free_pages into sgx_nr_used_pages and
+> > > allow an easy check for an empty EPC.
+> > 
+> > First off, remove "in subsequent patch".
+> 
+> Ok
+> 
+> > 
+> > What does "change sgx_nr_free_pages into sgx_nr_used_pages" mean?
+> 
+> As you can see from patch 2/4, I had to turn around the meaning of the
+> existing sgx_nr_free_pages atomic counter not to count the # of free pages
+> in EPC, but to count the # of used EPC pages (hence the change of name
+> to sgx_nr_used_pages). The reason for doing this is only apparent in patch
 
-Remove the comment in __nested_copy_vmcb_control_to_cache() about the
-cached ASID usage, as this changes makes it stale by adding another
-usage.
+Why you *absolutely* need to invert the meaning and cannot make
+this work by any means otherwise?
 
-This is heavily inspired by nVMX's handling of last_vpid.
+I doubt highly doubt this could not be done other way around.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- arch/x86/kvm/svm/nested.c | 5 ++++-
- arch/x86/kvm/svm/svm.h    | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index ffe01c2ae7db5..ca8db246ac050 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -368,7 +368,6 @@ void __nested_copy_vmcb_control_to_cache(struct kvm_vcpu *vcpu,
- 	to->pause_filter_count  = from->pause_filter_count;
- 	to->pause_filter_thresh = from->pause_filter_thresh;
- 
--	/* Copy asid here because nested_vmcb_check_controls will check it.  */
- 	to->asid           = from->asid;
- 	to->msrpm_base_pa &= ~0x0fffULL;
- 	to->iopm_base_pa  &= ~0x0fffULL;
-@@ -508,6 +507,10 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
- 		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
- 	}
- 
-+	if (svm->nested.ctl.asid != svm->nested.last_asid) {
-+		svm->nested.last_asid = svm->nested.ctl.asid;
-+		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-+	}
- 	/*
- 	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
- 	 * things to fix before this can be conditional:
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index e67e3a64e92f7..0c44133bc05ca 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -212,6 +212,8 @@ struct svm_nested_state {
- 	 * on its side.
- 	 */
- 	bool force_msr_bitmap_recalc;
-+
-+	u32 last_asid;
- };
- 
- struct vcpu_sev_es_state {
--- 
-2.49.0.395.g12beb8f557-goog
-
+BR, Jarkko 
 
