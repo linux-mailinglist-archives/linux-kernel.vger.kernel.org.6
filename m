@@ -1,335 +1,120 @@
-Return-Path: <linux-kernel+bounces-576507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E006FA7101E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:25:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4717A71025
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1974D7A226F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55AB43B21A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14296185B48;
-	Wed, 26 Mar 2025 05:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D837189905;
+	Wed, 26 Mar 2025 05:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK547f0z"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2so4mAk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1A71F16B;
-	Wed, 26 Mar 2025 05:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA27AD4B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742966735; cv=none; b=KMLpbvaByypr532Kuvl5ChHLPcZ7valxug2BywMZgBWcqOdkSJPsnGj9c5gOZN6M38WPF0qxuUEUTtXvkHgAk5wJ4xUosKpCOsqKRWSXZEcW2zWutjTcnQmPeECPAveD3aPDxu2Ra5pdMWbXwnVkgGA9iP0x2SckvB8TSIdFgDc=
+	t=1742967220; cv=none; b=LFiNPX30MP7oME2Yffry2fTspFs7Z/wMaznQ6vSBasANShVlA9v1deg9gGoRvEa0cMnzrrdaTEZ2AtviEsVVYfgGeniGiJJMaXiGE+0WVF+srIsqoxI7/xljtXsjniFOWf8QiOuC0NxX9Bzoew5fuJ9rEF5LMbyuWf+Y4WcRD0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742966735; c=relaxed/simple;
-	bh=6p22P6aJ3R7iByl6TF3R4bJSCYXNPxwoS4bL5Twd4io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2SVf2HeHXn/rp1J6kYhYvAjlNYmdWb0Gk+awDh5HBFmbgo0wfTLSkSsPo71Y6NR9uX2dlfrAmNrLn7l/m+eHh1Gu+ukaMWCAduu5WTQLE3CeUwXxCsy3TdVeXnBCUoPouaDqcX5zzg9UtizLBMiSK08z74FbLrwOhVrFm8mEJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IK547f0z; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e89a2501a0so61127656d6.1;
-        Tue, 25 Mar 2025 22:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742966732; x=1743571532; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VJBvguYGH4f+pr17a1nyN6pA9fJBnK+7uyQqZIkKBzY=;
-        b=IK547f0zUF6t+Aoxn6jQZFP1p4NKoeo8hzeLgCPQGgERL62UPtuD76j9Cp07KOheAy
-         CwON3/nWsrQhwLUe7qdwWHiuwmvWysioJz9Lvzfr4T2Ly7B+zjnwpbelpclopXTseiJL
-         rGozCyqCU2Oagtz5mFBjdnWsQWhymXqNf72nxhJMk6tvEaIPL0K3EnUdtIHc/rf1yc3t
-         bZqgdXKeS/gHN+QPIMJ9COSEuvVl93PlUfFqBONt3glwcj4HBD8wSnTDNJgnxSU0MJKQ
-         naIVUzEh0Q98Tb0Y7aLcPGLarr/pYfcvkqbrJIcstqLWl7/LXWgHX3CHVKbBLoWwBIIr
-         j2Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742966732; x=1743571532;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VJBvguYGH4f+pr17a1nyN6pA9fJBnK+7uyQqZIkKBzY=;
-        b=wAEz2cxFC0fdIo0FDyXcp9PyMEQS8vzsfoZoMkP2Z9rU4etDrjgpqjE1OTzT2uCtTi
-         JErAbja9NI+pACdddrICVUl/Llm+fkGO7Q8g3PNHMP05L30snrb61YZffsxDr6pXfumh
-         AakZT56TJCFUb9jkxwX0D0P5TDJPOc+yR6bJ4ghegrOan6ya6W2K2eaAm2/q6kSE2+UK
-         pmtDp6WXSzBEtnoCM7jw80KciZ/FVX/3Upp0q6J5i56pJ94+9TtkfHXIdviOtvqj1/0B
-         hIiMnNXlxqhfEjqTaizrbQl1VYRZWCjOYtOl0BYvpiCNNs3uapF/TMnt3ADtnD9tm/e7
-         XYgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBuwPmtfPyMYmatfrZFAxrpb4iYZcXSiYsmlZhMVOc/9ZA3aSFkJ5OS6njOW1LnK/oRHgp/JM9@vger.kernel.org, AJvYcCXC20HyndytiVoWUuXOZ1c0GfcdBa8Gx35lXq+I2NhVsvZsRbODoGbaMy7jKGTSN6SrBseV8i30hAhxbk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMa04Ee0amWn91ASsk6T3sYf1U6tECHdS1/VLc5EnuW3WZnumn
-	ZCoBhL7Q/8We4hsdgsujAbI0Xnbr8poWUNeSJiyFdXtZv/fuhiCZ
-X-Gm-Gg: ASbGncuzV7frNlEvbyNUXMQ5Z4/CU0g4L7zGiV+t4Oo/WizWBm9WW16yb+rKYpPqOvj
-	2pWWT5r60Qid2pZUltbC5fBoMUI10XTwmFNMQWIpb9nENEeBzGrUP1cd1D/fA9ckKdR9jdSnUsq
-	kL1x8MRX9+P8MtUP1fNBLWE8/AQQOQdIgzKBZmQTPiN9Lq+7mifKFGbaOyWCYVKdIWEp11IYURH
-	GYA/dDuTxux2lKtO1UQqC4CxIlOec5UkJhK58no60JjTvz8QIU16LL6L6kuXx4GcXbJoGOTNpBA
-	nhlyHXM9TGmNqXaAG9T61+e13ETxET1w91WEHFiPfmABXgqg1qnqbv0f2dp4n3gFvUZK7t9z295
-	Mb44dkrY9qbJGigEWeEDeZ5+9HuBYs3oESqQ=
-X-Google-Smtp-Source: AGHT+IEX8Mm48J9uw8izft2BGYqHE2+syPpYZEFkQKomLSfbTA+OSh6ZP6WdswSV3v1dw6ZyzndIfQ==
-X-Received: by 2002:ad4:5cad:0:b0:6e8:fb7e:d33b with SMTP id 6a1803df08f44-6eb3f33c469mr344993366d6.33.1742966731843;
-        Tue, 25 Mar 2025 22:25:31 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f5ccsm64051766d6.37.2025.03.25.22.25.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 22:25:31 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B05D91200066;
-	Wed, 26 Mar 2025 01:25:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 26 Mar 2025 01:25:30 -0400
-X-ME-Sender: <xms:yo_jZ-WuA8ihqbXKZy3KSNT-prpQ98xI87Q-fYd5__yiunjTpxqmtw>
-    <xme:yo_jZ6lRxZHWuCJPIMjRRuUUnCgNrmIE0IBoT7tUlf3wX5B6ZDtvV2jRQRffRHb5F
-    8aGrOFyx4UoI9YtIw>
-X-ME-Received: <xmr:yo_jZybzjSWirarXWH0cjQlzNadmHAXbXm8MbDvb00K4j7sYaa36hRHd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieegieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tddunecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnheptdegheelveffudejffegvdelgffhhfel
-    keeiieefgeevteejvdegveeuffeihefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhlohhnghesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlvghithgroh
-    esuggvsghirghnrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-    pdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrvghhse
-    hmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:yo_jZ1UX0OWgB3smckJ99ZF1cL1kuBudxleKN0pC4tyWzR4Tjb9O_w>
-    <xmx:yo_jZ4kRMEPMoGXrRW3qULozRI7LAO_5ZLjnAa-R3zZj-vazfjjPLQ>
-    <xmx:yo_jZ6cpa0TyXRoitjuUUOybmu0gWFLdJIxgoQBwHltnU9ww6-13zg>
-    <xmx:yo_jZ6FXnhPJBLmHEdK_yOgx8wJNcIPuHTZCcz5Ejv1SNZYjSVOXrA>
-    <xmx:yo_jZ2nCQgxhjPxbsD-a3k2wTpLziz0acNUclk8OyyxOvWbTDzrhlTQ8>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Mar 2025 01:25:30 -0400 (EDT)
-Date: Tue, 25 Mar 2025 22:25:29 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, aeh@meta.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
- expedited RCU synchronization
-Message-ID: <Z-OPya5HoqbKmMGj@Mac.home>
-References: <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
- <67e1b2c4.050a0220.353291.663c@mx.google.com>
- <67e1fd15.050a0220.bc49a.766e@mx.google.com>
- <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com>
- <Z-Il69LWz6sIand0@Mac.home>
- <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
- <Z-L5ttC9qllTAEbO@boqun-archlinux>
- <f1ae824f-f506-49f7-8864-1adc0f7cbee6@redhat.com>
- <Z-MHHFTS3kcfWIlL@boqun-archlinux>
- <1e4c0df6-cb4d-462c-9019-100044ea8016@redhat.com>
+	s=arc-20240116; t=1742967220; c=relaxed/simple;
+	bh=oKGOdDgxhAqNZ5oSM5iv/OnF2CxCH6tBHGl2VSB8qc8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EDJhCIpm9Gm9eNMfW1koYPlBVVENoP8c1u2PhcDwjCANRw7qyc2r6rgmo8siO0Yo0ILCPHg0NMBGgALkIP78sAkKejhc6CNw4NSVy4Q+TmIl5VbYeqIF0CQtVNO3K9iz9U4AugjETKd+2NZ/kMPZmU6fUtGkLl793UbNf84+7qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2so4mAk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EFC7C4CEE2;
+	Wed, 26 Mar 2025 05:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742967220;
+	bh=oKGOdDgxhAqNZ5oSM5iv/OnF2CxCH6tBHGl2VSB8qc8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=C2so4mAkFdfZgTI5w7njInHi+EKOorVmxjIdp7Hct9OFYaF1ypELS+A5Fzob4l8Kh
+	 kEOdyJ2TgGcDXjQDO3dr0Qhke8GJRE5TNaRkQARzcRgRqi+BDEQJRenX+tiVbBgRtg
+	 qDouualJKx+3zWupUGxx0BmUjlF+ZN5iYV/xv79ZXE0YS8x5X0RgDWYvgbHrXDjO9R
+	 L8uabB8y75rNU7h/XzekN2LBdOTbggT6sd9MsFzJYptQlSnHyUqi0v8J7kEq7BWt4k
+	 WxeRvdVPCVsdE6TwFES1C82dBjosHiOw9foFfbti4ZI3aYw9AVpQLLpNHqo69+xcTo
+	 gjQItjhgdXang==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BD5C28B30;
+	Wed, 26 Mar 2025 05:33:39 +0000 (UTC)
+From: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>
+Subject: [PATCH v2 0/5] drm/bridge: it6505: fix DP link traning and improve
+ compatibility
+Date: Wed, 26 Mar 2025 13:34:12 +0800
+Message-Id: <20250326-fix-link-training-v2-0-756c8306f500@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1e4c0df6-cb4d-462c-9019-100044ea8016@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANSR42cC/x2MQQqAIBAAvxJ7bkFFBftKdIjabCm20IhA+nvSc
+ WBmCmRKTBm6pkCimzMfUsG0DUzrKJGQ58pglHFKG40LP7izbHilkYUlovXaBmeD9c5B7c5EVfq
+ f/fC+Hwia3E9jAAAA
+X-Change-ID: 20250121-fix-link-training-461495494655
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Pet.Weng@ite.com.tw, Kenneth.Hung@ite.com.tw, treapking@chromium.org, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Hermes Wu <Hermes.wu@ite.com.tw>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742967277; l=1323;
+ i=Hermes.wu@ite.com.tw; s=20241230; h=from:subject:message-id;
+ bh=oKGOdDgxhAqNZ5oSM5iv/OnF2CxCH6tBHGl2VSB8qc8=;
+ b=82T34WmCkdjj6qSV8M4kPQjRl4ckK8npAAKkeembaXRcV/OIg3QCR0QAJk84CiH5zcAZGx/sb
+ J4byaM9Mb6DBdb5KWK618gl/kTW7KBxDq/QAvZeg0xYHlDbedTFttC7
+X-Developer-Key: i=Hermes.wu@ite.com.tw; a=ed25519;
+ pk=qho5Dawp2WWj9CGyjtJ6/Y10xH8odjRdS6SXDaDAerU=
+X-Endpoint-Received: by B4 Relay for Hermes.wu@ite.com.tw/20241230 with
+ auth_id=310
+X-Original-From: Hermes Wu <Hermes.wu@ite.com.tw>
+Reply-To: Hermes.wu@ite.com.tw
 
-On Tue, Mar 25, 2025 at 07:20:44PM -0400, Waiman Long wrote:
-> On 3/25/25 3:42 PM, Boqun Feng wrote:
-> > On Tue, Mar 25, 2025 at 03:23:30PM -0400, Waiman Long wrote:
-> > [...]
-> > > > > > That commit seemed fixing a race between disabling lockdep and
-> > > > > > unregistering key, and most importantly, call zap_class() for the
-> > > > > > unregistered key even if lockdep is disabled (debug_locks = 0). It might
-> > > > > > be related, but I'm not sure that's the reason of putting
-> > > > > > synchronize_rcu() there. Say you want to synchronize between
-> > > > > > /proc/lockdep and lockdep_unregister_key(), and you have
-> > > > > > synchronize_rcu() in lockdep_unregister_key(), what's the RCU read-side
-> > > > > > critical section at /proc/lockdep?
-> > > > > I agree that the commit that I mentioned is not relevant to the current
-> > > > > case. You are right that is_dynamic_key() is the only function that is
-> > > > > problematic, the other two are protected by the lockdep_lock. So they are
-> > > > > safe. Anyway, I believe that the actual race happens in the iteration of the
-> > > > > hashed list in is_dynamic_key(). The key that you save in the
-> > > > > lockdep_key_hazptr in your proposed patch should never be the key (dead_key)
-> > > > The key stored in lockdep_key_hazptr is the one that the rest of the
-> > > > function will use after is_dynamic_key() return true. That is,
-> > > > 
-> > > > 	CPU 0				CPU 1
-> > > > 	=====				=====
-> > > > 	WRITE_ONCE(*lockdep_key_hazptr, key);
-> > > > 	smp_mb();
-> > > > 
-> > > > 	is_dynamic_key():
-> > > > 	  hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
-> > > > 	    if (k == key) {
-> > > > 	      found = true;
-> > > > 	      break;
-> > > > 	    }
-> > > > 	  }
-> > > > 	  				lockdep_unregister_key():
-> > > > 					  hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
-> > > > 					    if (k == key) {
-> > > > 					      hlist_del_rcu(&k->hash_entry);
-> > > > 				              found = true;
-> > > > 				              break;
-> > > > 					    }
-> > > > 					  }
-> > > > 
-> > > > 				        smp_mb();
-> > > > 
-> > > > 					synchronize_lockdep_key_hazptr():
-> > > > 					  for_each_possible_cpu(cpu) {
-> > > > 					    <wait for the hazptr slot on
-> > > > 					    that CPU to be not equal to
-> > > > 					    the removed key>
-> > > > 					  }
-> > > > 
-> > > > 
-> > > > , so that if is_dynamic_key() finds a key was in the hash, even though
-> > > > later on the key would be removed by lockdep_unregister_key(), the
-> > > > hazard pointers guarantee lockdep_unregister_key() would wait for the
-> > > > hazard pointer to release.
-> > > > 
-> > > > > that is passed to lockdep_unregister_key(). In is_dynamic_key():
-> > > > > 
-> > > > >       hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
-> > > > >                   if (k == key) {
-> > > > >                           found = true;
-> > > > >                           break;
-> > > > >                   }
-> > > > >           }
-> > > > > 
-> > > > > key != k (dead_key), but before accessing its content to get to hash_entry,
-> > > > It is the dead_key.
-> > > > 
-> > > > > an interrupt/NMI can happen. In the mean time, the structure holding the key
-> > > > > is freed and its content can be overwritten with some garbage. When
-> > > > > interrupt/NMI returns, hash_entry can point to anything leading to crash or
-> > > > > an infinite loop.  Perhaps we can use some kind of synchronization mechanism
-> > > > No, hash_entry cannot be freed or overwritten because the user has
-> > > > protect the key with hazard pointers, only when the user reset the
-> > > > hazard pointer to NULL, lockdep_unregister_key() can then return and the
-> > > > key can be freed.
-> > > > 
-> > > > > between is_dynamic_key() and lockdep_unregister_key() to prevent this kind
-> > > > > of racing. For example, we can have an atomic counter associated with each
-> > > > The hazard pointer I proposed provides the exact synchronization ;-)
-> > > What I am saying is that register_lock_class() is trying to find a newkey
-> > > while lockdep_unregister_key() is trying to take out an oldkey (newkey !=
-> > > oldkey). If they happens in the same hash list, register_lock_class() will
-> > > put newkey into the hazard pointer, but synchronize_lockdep_key_hazptr()
-> > > call from lockdep_unregister_key() is checking for oldkey which is not the
-> > > one saved in the hazard pointer. So lockdep_unregister_key() will return and
-> > > the key will be freed and reused while is_dynamic_key() may just have a
-> > > reference to the oldkey and trying to access its content which is invalid. I
-> > > think this is a possible scenario.
-> > > 
-> > Oh, I see. And yes, the hazard pointers I proposed cannot prevent this
-> > race unfortunately. (Well, technically we can still use an extra slot to
-> > hold the key in the hash list iteration, but that would generates a lot
-> > of stores, so it won't be ideal). But...
-> > 
-> > [...]
-> > > > > head of the hashed table. is_dynamic_key() can increment the counter if it
-> > > > > is not zero to proceed and lockdep_unregister_key() have to make sure it can
-> > > > > safely decrement the counter to 0 before going ahead. Just a thought!
-> > > > > 
-> > Your idea inspires another solution with hazard pointers, we can
-> > put the pointer of the hash_head into the hazard pointer slot ;-)
-> > 
-> > in register_lock_class():
-> > 
-> > 		/* hazptr: protect the key */
-> > 		WRITE_ONCE(*key_hazptr, keyhashentry(lock->key));
-> > 
-> > 		/* Synchronizes with the smp_mb() in synchronize_lockdep_key_hazptr() */
-> > 		smp_mb();
-> > 
-> > 		if (!static_obj(lock->key) && !is_dynamic_key(lock->key)) {
-> > 			return NULL;
-> > 		}
-> > 
-> > in lockdep_unregister_key():
-> > 
-> > 	/* Wait until register_lock_class() has finished accessing k->hash_entry. */
-> > 	synchronize_lockdep_key_hazptr(keyhashentry(key));
-> > 
-> > 
-> > which is more space efficient than per hash list atomic or lock unless
-> > you have 1024 or more CPUs.
-> 
-> It looks like you are trying hard to find a use case for hazard pointer in
-> the kernel :-)
-> 
+IT6505 supports HW auto link training which will write DPCD and check
+training status automatically. Some DP device can not pass
+HW auto link training and must set link training step by step.
 
-Well, if it does the job, why not use it ;-) Also this shows how
-flexible hazard pointers can be.
+when HW auto link training fail, it may trigger video FIFO error,
+and link training process will reset to beginning, and never try
+step training method.
 
-At least when using hazard pointers, the reader side of the hash list
-iteration is still lockless. Plus, since the synchronization part
-doesn't need to wait for the RCU readers in the whole system, it will be
-faster (I tried with the protecting-the-whole-hash-list approach as
-well, it's the same result on the tc command). This is why I choose to
-look into hazard pointers. Another mechanism can achieve the similar
-behavior is SRCU, but SRCU is slightly heavier compared to hazard
-pointers in this case (of course SRCU has more functionalities).
+Modify training method improve compatibility to these DP devices.
 
-We can provide a lockdep_unregister_key_nosync() without the
-synchronize_rcu() in it and let users do the synchronization, but it's
-going to be hard to enforce and review, especially when someone
-refactors the code and move the free code to somewhere else.
+v1 -> v2:
+	1. Split [PATCH 1/3] into 3 commits
+	2. Drop non necessary variable auto_ttrain_retry
+	v1 link: https://lore.kernel.org/all/20250318-fix-link-training-v1-0-19266711142c@ite.com.tw/
 
-> Anyway, that may work. The only problem that I see is the issue of nesting
-> of an interrupt context on top of a task context. It is possible that the
-> first use of a raw_spinlock may happen in an interrupt context. If the
-> interrupt happens when the task has set the hazard pointer and iterating the
-> hash list, the value of the hazard pointer may be overwritten. Alternatively
-> we could have multiple slots for the hazard pointer, but that will make the
-> code more complicated. Or we could disable interrupt before setting the
-> hazard pointer.
+Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+---
+Hermes Wu (5):
+      drm/bridge: it6505: fix link training state HW register reset
+      drm/bridge: it6505: check INT_LINK_TRAIN_FAIL while link auto training
+      drm/bridge: it6505: modify DP link auto training
+      drm/bridge: it6505: modify DP link training work
+      drm/bridge: it6505: skip auto training when previous try fail
 
-Or we can use lockdep_recursion:
+ drivers/gpu/drm/bridge/ite-it6505.c | 112 +++++++++++++++++++++---------------
+ 1 file changed, 65 insertions(+), 47 deletions(-)
+---
+base-commit: 938fbb16aba8f7b88e0fdcf56f315a5bbad41aad
+change-id: 20250121-fix-link-training-461495494655
 
-	preempt_disable();
-	lockdep_recursion_inc();
-	barrier();
+Best regards,
+-- 
+Hermes Wu <Hermes.wu@ite.com.tw>
 
-	WRITE_ONCE(*hazptr, ...);
 
-, it should prevent the re-entrant of lockdep in irq.
-
-> 
-> The solution that I am thinking about is to have a simple unfair rwlock to
-> protect just the hash list iteration. lockdep_unregister_key() and
-> lockdep_register_key() take the write lock with interrupt disabled. While
-> is_dynamic_key() takes the read lock. Nesting in this case isn't a problem
-> and we don't need RCU to protect the iteration process and so the last
-> synchronize_rcu() call isn't needed. The level of contention should be low
-> enough that live lock isn't an issue.
-> 
-
-This could work, one thing though is that locks don't compose. Using a
-hash write_lock in lockdep_unregister_key() will create a lockdep_lock()
--> "hash write_lock" dependency, and that means you cannot
-lockdep_lock() while you're holding a hash read_lock, although it's
-not the case today, but it certainly complicates the locking design
-inside lockdep where there's no lockdep to help ;-)
-
-Regards,
-Boqun
-
-> Cheers,
-> Longman
-> 
-> 
 
