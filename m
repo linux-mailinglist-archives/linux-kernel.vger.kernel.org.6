@@ -1,136 +1,94 @@
-Return-Path: <linux-kernel+bounces-576993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43845A71716
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:06:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462FCA71715
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988373AD6AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:06:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149291894ADD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7C91E1E0E;
-	Wed, 26 Mar 2025 13:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36ED71DE4DD;
+	Wed, 26 Mar 2025 13:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EoN7RqyW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkisAdSx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4701A0BDB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993CD1A0BDB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742994398; cv=none; b=qnJtDRk6d9t+VmcNqucj9AyIiy6TOJS15tRp74YUwH2ExeXg/1eE6kFtxJlUCoZNxJtO7bgxdj3L7qLCTbhhOTNcC78Bl9KrGlexbNLkeZqynn8pZ9LZvmUyZrzFfORl+MEetQqmyOBEYxneGbSFMUCVqrdpnXZFvDXRIuztJQ8=
+	t=1742994390; cv=none; b=Zn1TyJ7+u8UH4CDRibpclsVfSmj5Pk/KmpHMU8t8DeDcKjckjmOV1YOAE6AnQJFCVhRp49AuML8R2GdjSkz8LNzZ/xeDA0odx1HVsxWLqAeIbCa5jSeFsG8/ox1bieP89YxGqP0nZzGmKzmHYlXaRxCQj0vV5GKNBEFy4Q9to5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742994398; c=relaxed/simple;
-	bh=w2xIYffHruj5ROfRcyn42enX7rm0EMCI6bekruskkww=;
+	s=arc-20240116; t=1742994390; c=relaxed/simple;
+	bh=Cqq5jFzCIxmCfFNfx8fwKPnSTQb3kUzy1eRUhjzrldE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzXF+MUqOE7IC6HVReL2AUgH0Pk/rs5jCOSnXaL5yPA5MhmomIPztmP18mZIxXghMCPrJfQL4fegNp/skxLLZkHOLXcPZnj8Ax8ie2wYOL58ZOqZ2NklHFrwdWUPPkQ1ESFV3W0h9SiaoWV5C93+lxvlVkNM0FjeD2UsVC0oNA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EoN7RqyW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742994395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AwslgY7sSyM8fbLk7/8aWJ9dZTx9PPsyFHnsBoNwz4g=;
-	b=EoN7RqyW77Qdvzpb5JZa00efp/tdMQf9Sjy2dek/eK+NFL7DFuQlZ+rP3Bfik/fsWrOFKA
-	PUc4fknKTTiCPR0Ko8cz1E8Q+LrFP0DwKBC3h1aiQGDJFIOKq0v6aSfn8My1Z+UrrNeE3k
-	dEJGVLc7yPXrnT9igu+P2rNivVm/BzU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-5lAJXz7fOrSamByAApf5uQ-1; Wed,
- 26 Mar 2025 09:06:34 -0400
-X-MC-Unique: 5lAJXz7fOrSamByAApf5uQ-1
-X-Mimecast-MFC-AGG-ID: 5lAJXz7fOrSamByAApf5uQ_1742994391
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8699518EBE8A;
-	Wed, 26 Mar 2025 13:06:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D4C491801756;
-	Wed, 26 Mar 2025 13:06:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Mar 2025 14:05:58 +0100 (CET)
-Date: Wed, 26 Mar 2025 14:05:50 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Dominique Martinet <asmadeus@codewreck.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <20250326130550.GE30181@redhat.com>
-References: <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
- <20250325130410.GA10828@redhat.com>
- <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
- <Z-LEsPFE4e7TTMiY@codewreck.org>
- <20250326121946.GC30181@redhat.com>
- <20250326124402.GD30181@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrhIJ7rk1U57DoGel4IePEE5/7Cw0CO8rOljnAlNHA3Z75sb28MqI9Rm6WJuZUdefY6jHhQuQm5GVabvw9gICJinzEC9HwmTzVujG1rOnTYtsYWGOgw+0lJ4QvirJ5xMQTNpDubAP3QCYajYijWq19CHDqVRUMkopS/OyBAFO0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkisAdSx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BF9C4CEE2;
+	Wed, 26 Mar 2025 13:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742994390;
+	bh=Cqq5jFzCIxmCfFNfx8fwKPnSTQb3kUzy1eRUhjzrldE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gkisAdSxKmv+/MjMr5ErVd6QF7g74npArnonU+YNAJfW4r/9788VEzgL/SKlE+Sw6
+	 IqTduXX573j6yK4HkYMY2IZzwQCWs6YPTe3uIl0gnuYoHtGkYUnmB//+4DzPwqzbaI
+	 r27weNycZUflsBXAsTK7q4x7fDNTyXQfl3Q5R8B7o1W082A6/PZP2Zj7bbZx1Nb35k
+	 P9Je9l1xHq9u9iLYlakBlh+vXjOgLekcHY8D9huepbSMJZPyweeLzk2iHEGcQL4UIQ
+	 XQQxkCIIrnUn5JEMMZqjKRsRpSlPBGaAOBBTn+kvwYN1ifC4eQ6sMg7H3nUNWCZ+ZG
+	 EkdlhIr6bUoGw==
+Date: Wed, 26 Mar 2025 13:06:25 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Brady Norander <bradynorander@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 2/3] ASoC: amd: use new ACP dev names for DAI links
+Message-ID: <4045f230-1fdb-4a2e-b2a7-2dfc088c1a03@sirena.org.uk>
+References: <20250325211545.2099169-1-bradynorander@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T2l1mc34r2ShMavw"
+Content-Disposition: inline
+In-Reply-To: <20250325211545.2099169-1-bradynorander@gmail.com>
+X-Cookie: To err is humor.
+
+
+--T2l1mc34r2ShMavw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250326124402.GD30181@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Damn, sorry for the noise please ignore ;)
+On Tue, Mar 25, 2025 at 05:15:45PM -0400, Brady Norander wrote:
+> The old names used automatic platform device ids, which means they could
+> change. Use the new device names which will never change.
 
-On 03/26, Oleg Nesterov wrote:
->
-> On 03/26, Oleg Nesterov wrote:
-> >
-> > Hmm... I don't understand why the 2nd vfs_poll(ts->wr) depends on the
-> > ret from vfs_poll(ts->rd), but I assume this is correct.
->
-> I meant, if pt != NULL and ts->rd != ts->wr we need both
-> vfs_poll(ts->rd) and vfs_poll(ts->wr) ?
+I've got this patch and another patch numbered 3 (but not properly
+threaded with it) but not a patch 1.  What's going on here with
+dependencies?
 
-I am stupid. After the lot of reading I can't distinguish "|" and "||".
+--T2l1mc34r2ShMavw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Oleg.
+-----BEGIN PGP SIGNATURE-----
 
-> and the reproducer writes to the pipe before it mounts 9p...
-> 
-> Prateek, this is just a shot in the dark but since you can reproduce,
-> can you check if the patch below makes any difference?
-> 
-> Oleg.
-> 
-> --- x/net/9p/trans_fd.c
-> +++ x/net/9p/trans_fd.c
-> @@ -234,8 +234,10 @@ p9_fd_poll(struct p9_client *client, str
->  	}
->  
->  	ret = vfs_poll(ts->rd, pt);
-> -	if (ts->rd != ts->wr)
-> +	if (ts->rd != ts->wr) {
-> +		if (pt != NULL) vfs_poll(ts->wr, pt);
->  		ret = (ret & ~EPOLLOUT) | (vfs_poll(ts->wr, pt) & ~EPOLLIN);
-> +	}
->  	return ret;
->  }
->  
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfj+9AACgkQJNaLcl1U
+h9BbKgf9FssF3nnIHWH5FPoiteEcuogQ4BsueuLhkuqvS2WEMv13QmYNjmvQX8V7
+46fhsyJnOnurd1bBx8R5G81IMH1OpVwX2fjubZ3vMAiIizCRFUjOFKgDreQ5gyQ6
+Vy4FzzPgRpvHTLO4z40w/QHn8GCS8nTPjWYD4x+cdWKuEjsTw1wLRsnLWP+DljR8
+qQ54VgeCXMT6csyjbS5fcDm5ejF49pZHjhP1Z7h4SRAKQfr/ShXr08jJDVnon27B
+cb2SOsljdkCrMRnkLw7yqGZqNlXQxjldrwc5Ms95+k/K7LpeIa8D/5sWRgEuGKJK
++9XfW3rHBnlx3hI94terbCtTg0SHsw==
+=NV3P
+-----END PGP SIGNATURE-----
 
+--T2l1mc34r2ShMavw--
 
