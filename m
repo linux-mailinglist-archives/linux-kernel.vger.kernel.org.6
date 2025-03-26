@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-576565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0DEA71123
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:11:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F12EA7112C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1AC1898010
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1969918980AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E40199E94;
-	Wed, 26 Mar 2025 07:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3200C199FB2;
+	Wed, 26 Mar 2025 07:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aFg/fdwE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nA+gFUAl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA7C1990D8;
-	Wed, 26 Mar 2025 07:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CA6C8FE;
+	Wed, 26 Mar 2025 07:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742973056; cv=none; b=Bf9Q5vJ5mUkvwkRuvjm10s5KLB8zbzm5eWtfbQMkS13cUZWq8sRwdO/vXWjtiO930tAKSHd1rRUfP7wb144ZEDPHeBicALVprvlAJO7Ga3PgnsxpKam/5m0Ek1S7okzWW1VM3ceQwonTsY2b+Wj38H5TqffBE2vZw7ADDFXG4CI=
+	t=1742973259; cv=none; b=nugkfL/F861B3qAbVP89FRxlCy+ZZSiEzIt/fz30s3rMOigHQxvgqwHNULoKnzILWrUTD4aKGc4VQNFs7rbvkCYQMnW0TwderI0FXyUJqD+j5WdszKzNSu8tJ/wWRvgCuy4gwfem4sfFdvvpOnAty+M/8h42iU6SKu5K7gT0cpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742973056; c=relaxed/simple;
-	bh=pg0PxGOC3C9ExTcKwQDmVm/v35Bf22iPakRzYRqZR3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cwTXocALEQvjboQxUBTgOvD4TP3bh/wc1+NgOzQkxmRLeEZFwGmBXbR/M59gCArAek6HPHxFy1lt6fHihAn41sXlcQvpI+fb0o92Ux8VFBrQwAD4yVowyVCNjJDkWOY0lv2byNU1O3Ob1w8LMlJtGziltr0k3aYVhHFMFX9A7/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aFg/fdwE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q737EG004065;
-	Wed, 26 Mar 2025 07:10:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ps4jDZtSQv+h55bH8VjAcS38Zn8hgipwCPWFAZ1jOkc=; b=aFg/fdwEiCJnNI46
-	BgDP9y9pY5BFODLo9zTjmL/FVgAvFjnHJkMgZoThPzZv71KEdzQ3yV+sEnWWO2CO
-	Ti4L+pxa4HUtkf3g/2/cd5WwfdtXFt7Maf+mna2ft45bLGtZ/ta/6Iz18E+AWD7a
-	M+2vCv+MHtwuTXE4n7Vc33SVywjorjRoUoHETFnKbxO701MTGI89xeonxbC6Cpx9
-	6KXSw9BXUEQNqecMlaT39zgTLCDcLjUB2SyCLtRKjS35le5ke/UWzFukfEYyEt0b
-	dDS3Y/CMbFEveY/nNKPCrR0F0rapWi20hboisexb/aNaAnR/Zi72tg5sRYwlJTNb
-	HSTSmQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcyc04s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 07:10:41 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q7Afmv025620
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 07:10:41 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Mar
- 2025 00:10:38 -0700
-Message-ID: <fc59e721-3e43-4b81-8c35-75b33e9e6fc9@quicinc.com>
-Date: Wed, 26 Mar 2025 12:40:34 +0530
+	s=arc-20240116; t=1742973259; c=relaxed/simple;
+	bh=YsbW34rxDPlu0jvkYv6otWfqXQB68yTeQlvep8QoTxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dbNO9tGG0UXq4EFtwWlpz3KXQEQL3AuFlgfWnPLH9Hxtgf/0kWJt4vBnEQFYBMqgs2x6iEdAlCYC9zUa+7FrxBueHKymzAIr25G44O8olUrUM7UPlMrdqSel5zd9qYHZzX25ihHtklFXTQgxLKSy7S8q/wavE2uhbOA6NTDqSDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nA+gFUAl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7B5C4CEEE;
+	Wed, 26 Mar 2025 07:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742973258;
+	bh=YsbW34rxDPlu0jvkYv6otWfqXQB68yTeQlvep8QoTxc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nA+gFUAlFSSnQsRW56o7/clnvtjYseNB5x6R2zngeP2JpCGsG8DzqbJUTkDQet6v3
+	 iIXhezCEOYXPFMlAwKF58AtYlZZzOH5IcbyS8O5PzvoICvzaLxxHqGW0JUio3KsPtU
+	 ZIeDLlLeCJ6FazXHl8kvGDJwrKnuEmhp3zm69u9PKQxeVJ3WpHgyxUSXBLhxs+sgmv
+	 XqUjbfX18PIRU3W16bzllhiN79QZSdCUjotHvwtQlt3sjsNnqmjOlVaADynDT+pizH
+	 y6Wmd8dd16hH4q1l55sOoNruwtmA0+1wZVsuv8HB+zHWrhIqnpOcgX2YxQuylig6uC
+	 dNFbTkS9/USSg==
+Message-ID: <79a2bdd7-af66-4876-9553-bb2223760880@kernel.org>
+Date: Wed, 26 Mar 2025 08:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,184 +49,394 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH v5] i3c: Fix read from unreadable memory at
- i3c_master_queue_ibi()
-To: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>,
-        Frank Li
-	<frank.li@nxp.com>
-CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>,
-        "bbrezillon@kernel.org"
-	<bbrezillon@kernel.org>,
-        "linux-i3c@lists.infradead.org"
-	<linux-i3c@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "rvmanjumce@gmail.com"
-	<rvmanjumce@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20250325102332.2435069-1-manjunatha.venkatesh@nxp.com>
- <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
- <8c624cf0-febc-4ab9-8141-2372bfe4d577@quicinc.com>
- <VI1PR04MB10049E90AC1CB4823F91D1D698FA62@VI1PR04MB10049.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH 10/34] mfd: sec: split into core and transport (i2c)
+ drivers
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+ <20250323-s2mpg10-v1-10-d08943702707@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <VI1PR04MB10049E90AC1CB4823F91D1D698FA62@VI1PR04MB10049.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e3a871 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=UqCG9HQmAAAA:8 a=COk6AnOGAAAA:8 a=8AirrxEcAAAA:8
- a=P-IC7800AAAA:8 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=pGLkceISAAAA:8 a=hwt3D7lepPnkcdXaZawA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=ST-jHhOKWsTCqRlWije3:22 a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
- a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-ORIG-GUID: dbc5crea0z5QoNzLft0YGSSzxQCZVH1P
-X-Proofpoint-GUID: dbc5crea0z5QoNzLft0YGSSzxQCZVH1P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
- adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260042
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250323-s2mpg10-v1-10-d08943702707@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 23/03/2025 23:39, André Draszik wrote:
+> -
+> -	sec_pmic->regmap_pmic = devm_regmap_init_i2c(i2c, regmap);
+> -	if (IS_ERR(sec_pmic->regmap_pmic)) {
+> -		ret = PTR_ERR(sec_pmic->regmap_pmic);
+> -		dev_err(&i2c->dev, "Failed to allocate register map: %d\n",
+> -			ret);
+> -		return ret;
+> +	if (probedata) {
+
+I don't get why this is conditional. New transport will also provide
+probedata or at least it should.
+
+> +		pdata->manual_poweroff = probedata->manual_poweroff;
+> +		pdata->disable_wrstbi = probedata->disable_wrstbi;
+>  	}
+>  
+>  	sec_irq_init(sec_pmic);
+> @@ -383,9 +195,9 @@ static int sec_pmic_probe(struct i2c_client *i2c)
+>  		num_sec_devs = ARRAY_SIZE(s2mpu05_devs);
+>  		break;
+>  	default:
+> -		dev_err(&i2c->dev, "Unsupported device type (%lu)\n",
+> +		dev_err(sec_pmic->dev, "Unsupported device type %lu\n",
+>  			sec_pmic->device_type);
+> -		return -ENODEV;
+> +		return -EINVAL;
+>  	}
+>  	ret = devm_mfd_add_devices(sec_pmic->dev, -1, sec_devs, num_sec_devs,
+>  				   NULL, 0, NULL);
+> @@ -397,10 +209,11 @@ static int sec_pmic_probe(struct i2c_client *i2c)
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(sec_pmic_probe);
+>  
+> -static void sec_pmic_shutdown(struct i2c_client *i2c)
+> +void sec_pmic_shutdown(struct device *dev)
+>  {
+> -	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+> +	struct sec_pmic_dev *sec_pmic = dev_get_drvdata(dev);
+>  	unsigned int reg, mask;
+>  
+>  	if (!sec_pmic->pdata->manual_poweroff)
+> @@ -424,11 +237,11 @@ static void sec_pmic_shutdown(struct i2c_client *i2c)
+>  
+>  	regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
+>  }
+> +EXPORT_SYMBOL_GPL(sec_pmic_shutdown);
+>  
+>  static int sec_pmic_suspend(struct device *dev)
+>  {
+> -	struct i2c_client *i2c = to_i2c_client(dev);
+> -	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+> +	struct sec_pmic_dev *sec_pmic = dev_get_drvdata(dev);
+>  
+>  	if (device_may_wakeup(dev))
+>  		enable_irq_wake(sec_pmic->irq);
+> @@ -448,8 +261,7 @@ static int sec_pmic_suspend(struct device *dev)
+>  
+>  static int sec_pmic_resume(struct device *dev)
+>  {
+> -	struct i2c_client *i2c = to_i2c_client(dev);
+> -	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+> +	struct sec_pmic_dev *sec_pmic = dev_get_drvdata(dev);
+>  
+>  	if (device_may_wakeup(dev))
+>  		disable_irq_wake(sec_pmic->irq);
+> @@ -458,20 +270,10 @@ static int sec_pmic_resume(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops,
+> -				sec_pmic_suspend, sec_pmic_resume);
+> -
+> -static struct i2c_driver sec_pmic_driver = {
+> -	.driver = {
+> -		   .name = "sec_pmic",
+> -		   .pm = pm_sleep_ptr(&sec_pmic_pm_ops),
+> -		   .of_match_table = sec_dt_match,
+> -	},
+> -	.probe = sec_pmic_probe,
+> -	.shutdown = sec_pmic_shutdown,
+> -};
+> -module_i2c_driver(sec_pmic_driver);
+> +DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_pmic_resume);
+> +EXPORT_SYMBOL_GPL(sec_pmic_pm_ops);
+>  
+> +MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
+>  MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+> -MODULE_DESCRIPTION("Core support for the S5M MFD");
+> +MODULE_DESCRIPTION("Core driver for the Samsung S5M");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/mfd/sec-core.h b/drivers/mfd/sec-core.h
+> index b3fded5f02a0ddc09a9508fd49a5d335f7ad0ee7..58e5b645f377cea5543a215c05957a2c49239a6f 100644
+> --- a/drivers/mfd/sec-core.h
+> +++ b/drivers/mfd/sec-core.h
+> @@ -10,6 +10,23 @@
+>  #ifndef __SEC_CORE_INT_H
+>  #define __SEC_CORE_INT_H
+>  
+> +struct i2c_client;
+> +
+> +extern const struct dev_pm_ops sec_pmic_pm_ops;
+> +
+> +struct sec_pmic_probe_data {
+> +	/* Whether or not manually set PWRHOLD to low during shutdown. */
+> +	bool manual_poweroff;
+> +	/* Disable the WRSTBI (buck voltage warm reset) when probing? */
+> +	bool disable_wrstbi;
+> +};
+> +
+> +int sec_pmic_probe(struct device *dev, unsigned long device_type,
+> +		   unsigned int irq, struct regmap *regmap,
+> +		   const struct sec_pmic_probe_data *probedata,
+> +		   struct i2c_client *client);
+> +void sec_pmic_shutdown(struct device *dev);
+> +
+>  int sec_irq_init(struct sec_pmic_dev *sec_pmic);
+>  
+>  #endif /* __SEC_CORE_INT_H */
+> diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..803a46e657a5a1a639014d442941c0cdc60556a5
+> --- /dev/null
+> +++ b/drivers/mfd/sec-i2c.c
+> @@ -0,0 +1,252 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2012 Samsung Electronics Co., Ltd
+> + *                http://www.samsung.com
+> + * Copyright 2025 Linaro Ltd.
+> + *
+> + * Samsung SxM I2C driver
+> + */
+> +
+> +#include <linux/dev_printk.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mfd/samsung/core.h>
+> +#include <linux/mfd/samsung/s2mpa01.h>
+> +#include <linux/mfd/samsung/s2mps11.h>
+> +#include <linux/mfd/samsung/s2mps13.h>
+> +#include <linux/mfd/samsung/s2mps14.h>
+> +#include <linux/mfd/samsung/s2mps15.h>
+> +#include <linux/mfd/samsung/s2mpu02.h>
+> +#include <linux/mfd/samsung/s5m8767.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/pm.h>
+> +#include <linux/regmap.h>
+> +#include "sec-core.h"
+> +
+> +static bool s2mpa01_volatile(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case S2MPA01_REG_INT1M:
+> +	case S2MPA01_REG_INT2M:
+> +	case S2MPA01_REG_INT3M:
+> +		return false;
+> +	default:
+> +		return true;
+> +	}
+> +}
+> +
+> +static bool s2mps11_volatile(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case S2MPS11_REG_INT1M:
+> +	case S2MPS11_REG_INT2M:
+> +	case S2MPS11_REG_INT3M:
+> +		return false;
+> +	default:
+> +		return true;
+> +	}
+> +}
+> +
+> +static bool s2mpu02_volatile(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case S2MPU02_REG_INT1M:
+> +	case S2MPU02_REG_INT2M:
+> +	case S2MPU02_REG_INT3M:
+> +		return false;
+> +	default:
+> +		return true;
+> +	}
+> +}
+> +
+> +static const struct regmap_config sec_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +};
+> +
+> +static const struct regmap_config s2mpa01_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPA01_REG_LDO_OVCB4,
+> +	.volatile_reg = s2mpa01_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s2mps11_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPS11_REG_L38CTRL,
+> +	.volatile_reg = s2mps11_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s2mps13_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPS13_REG_LDODSCH5,
+> +	.volatile_reg = s2mps11_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s2mps14_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPS14_REG_LDODSCH3,
+> +	.volatile_reg = s2mps11_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s2mps15_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPS15_REG_LDODSCH4,
+> +	.volatile_reg = s2mps11_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s2mpu02_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S2MPU02_REG_DVSDATA,
+> +	.volatile_reg = s2mpu02_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static const struct regmap_config s5m8767_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = S5M8767_REG_LDO28CTRL,
+> +	.volatile_reg = s2mps11_volatile,
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +/*
+> + * Only the common platform data elements for s5m8767 are parsed here from the
+> + * device tree. Other sub-modules of s5m8767 such as pmic, rtc , charger and
+> + * others have to parse their own platform data elements from device tree.
+> + */
+> +static void
+> +sec_pmic_i2c_parse_dt_pdata(struct device *dev,
+> +			    struct sec_pmic_probe_data *pd)
+> +{
+> +	pd->manual_poweroff =
+> +		of_property_read_bool(dev->of_node,
+> +				      "samsung,s2mps11-acokb-ground");
+> +	pd->disable_wrstbi =
+> +		of_property_read_bool(dev->of_node,
+> +				      "samsung,s2mps11-wrstbi-ground");
+> +}
+> +
+> +static int sec_pmic_i2c_probe(struct i2c_client *client)
+> +{
+> +	struct sec_pmic_probe_data probedata;
+> +	const struct regmap_config *regmap;
+> +	unsigned long device_type;
+> +	struct regmap *regmap_pmic;
+> +	int ret;
+> +
+> +	sec_pmic_i2c_parse_dt_pdata(&client->dev, &probedata);
+
+This wasn't tested and it makes no sense. You pass random stack values.
+And what is the point of:
+"pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);"
+in sec_pmic_probe()?
 
 
+...
 
-On 3/26/2025 12:28 PM, Manjunatha Venkatesh wrote:
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, sec_pmic_i2c_of_match);
+> +
+> +static struct i2c_driver sec_pmic_i2c_driver = {
+> +	.driver = {
+> +		.name = "sec-pmic-i2c",
+> +		.pm = pm_sleep_ptr(&sec_pmic_pm_ops),
+> +		.of_match_table = sec_pmic_i2c_of_match,
+> +	},
+> +	.probe = sec_pmic_i2c_probe,
+> +	.shutdown = sec_pmic_i2c_shutdown,
+> +};
+> +module_i2c_driver(sec_pmic_i2c_driver);
+> +
+> +MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
+
+This belongs to the patch adding actual features. Moving existing code
+or splitting it is not really reason to became the author of the code.
+The code was there.
+
+> +MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+> +MODULE_DESCRIPTION("I2C driver for the Samsung S5M");
+> +MODULE_LICENSE("GPL");
 > 
-> 
->> -----Original Message-----
->> From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> Sent: Wednesday, March 26, 2025 12:15 PM
->> To: Frank Li <frank.li@nxp.com>; Manjunatha Venkatesh
->> <manjunatha.venkatesh@nxp.com>
->> Cc: alexandre.belloni@bootlin.com; arnd@arndb.de;
->> gregkh@linuxfoundation.org; bbrezillon@kernel.org; linux-
->> i3c@lists.infradead.org; linux-kernel@vger.kernel.org;
->> rvmanjumce@gmail.com; stable@vger.kernel.org
->> Subject: [EXT] Re: [PATCH v5] i3c: Fix read from unreadable memory at
->> i3c_master_queue_ibi()
->>
->> Caution: This is an external email. Please take care when clicking links or
->> opening attachments. When in doubt, report the message using the 'Report
->> this email' button
->>
->>
->> On 3/25/2025 8:13 PM, Frank Li wrote:
->>> Subject should be
->>>
->>> i3c: Add NULL pointer check in i3c_master_queue_ibi()
->>>
->> yes, Aligned.
->>> On Tue, Mar 25, 2025 at 03:53:32PM +0530, Manjunatha Venkatesh wrote:
->>>> As part of I3C driver probing sequence for particular device
->>>> instance, While adding to queue it is trying to access ibi variable
->>>> of dev which is not yet initialized causing "Unable to handle kernel
->>>> read from unreadable memory" resulting in kernel panic.
->>>>
->>>> Below is the sequence where this issue happened.
->>>> 1. During boot up sequence IBI is received at host  from the slave device
->>>>      before requesting for IBI, Usually will request IBI by calling
->>>>      i3c_device_request_ibi() during probe of slave driver.
->>>> 2. Since master code trying to access IBI Variable for the particular
->>>>      device instance before actually it initialized by slave driver,
->>>>      due to this randomly accessing the address and causing kernel panic.
->>>> 3. i3c_device_request_ibi() function invoked by the slave driver where
->>>>      dev->ibi = ibi; assigned as part of function call
->>>>      i3c_dev_request_ibi_locked().
->>>> 4. But when IBI request sent by slave device, master code  trying to access
->>>>      this variable before its initialized due to this race condition
->>>>      situation kernel panic happened.
->>>
->>> How about commit message as:
->>>
->>> The I3C master driver may receive an IBI from a target device that has
->>> not been probed yet. In such cases, the master calls
->>> `i3c_master_queue_ibi()` to queue an IBI work task, leading to "Unable
->>> to handle kernel read from unreadable memory" and resulting in a kernel
->> panic.
->>>
->>> Typical IBI handling flow:
->>> 1. The I3C master scans target devices and probes their respective drivers.
->>> 2. The target device driver calls `i3c_device_request_ibi()` to enable IBI
->>>      and assigns `dev->ibi = ibi`.
->>> 3. The I3C master receives an IBI from the target device and calls
->>>      `i3c_master_queue_ibi()` to queue the target device driver's IBI handler
->>>      task.
->>>
->>> However, since target device events are asynchronous to the I3C probe
->>> sequence, step 3 may occur before step 2, causing `dev->ibi` to be
->>> `NULL`, leading to a kernel panic.
->>>
->>> Add a NULL pointer check in `i3c_master_queue_ibi()` to prevent
->>> accessing an uninitialized `dev->ibi`, ensuring stability.
->>>
->>>>
->>>> Fixes: 3a379bbcea0af ("i3c: Add core I3C infrastructure")
->>>> Cc: stable@vger.kernel.org
->>>> Link:
->>>> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flor
->>>> e.kernel.org%2Flkml%2FZ9gjGYudiYyl3bSe%40lizhi-Precision-Tower-
->> 5810%2
->>>>
->> F&data=05%7C02%7Cmanjunatha.venkatesh%40nxp.com%7Ceda8be8c7abc4
->> 3b4ab9
->>>>
->> 608dd6c31c8e7%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6387
->> 856832
->>>>
->> 77582903%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYi
->> OiIwLjAu
->>>>
->> MDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%
->> 7C%7C
->>>>
->> &sdata=oyc9Wv%2Fj8HMRFIiIGL9nIw0XvI6FsLK2SvsQJ55H7XI%3D&reserved=
->> 0
->>>> Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
->>>> ---
->>>> Changes since v4:
->>>>     - Fix added at generic places master.c which is applicable for all
->>>> platforms
->>>>
->>>>    drivers/i3c/master.c | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c index
->>>> d5dc4180afbc..c65006aa0684 100644
->>>> --- a/drivers/i3c/master.c
->>>> +++ b/drivers/i3c/master.c
->>>> @@ -2561,6 +2561,9 @@ static void
->> i3c_master_unregister_i3c_devs(struct i3c_master_controller *master)
->>>>     */
->>>>    void i3c_master_queue_ibi(struct i3c_dev_desc *dev, struct i3c_ibi_slot
->> *slot)
->>>>    {
->>>> +    if (!dev->ibi || !slot)
->>>> +            return;
->>>> +
->> 1. Shouldn't this be a Logical AND ? what if slot is non NULL but the IBI is
->> NULL ?
->>
-> [Manjunatha Venkatesh] : I think Logical OR operation is correct,
->   Since if any one of the variable is NULL need to return before accessing those variables.
-I agree, i was incorrect.
->> 2. This being void function, it doesn't say anything to caller if it's successful or
->> failed ? Should we make this non void function ?
->> if not, i am thinking it may run into multiple attempts, no log too.
-> [Manjunatha Venkatesh] : If required we can add error print log, Others please confirm your opinion on this.
->>>>       atomic_inc(&dev->ibi->pending_ibis);
->>>>       queue_work(dev->ibi->wq, &slot->work);
->>>>    }
->>>> --
->>>> 2.46.1
->>>>
->>>
-> 
 
+
+Best regards,
+Krzysztof
 
