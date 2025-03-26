@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-577631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D93A71FB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:55:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B104DA71FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEE83B9F93
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D0D1899BB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A02C63CB;
-	Wed, 26 Mar 2025 19:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA1224EF75;
+	Wed, 26 Mar 2025 19:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CYtCvibk"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="BN0sZyrp"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2085E18E34A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018760; cv=none; b=Dq7Qobt/0HihWRaJBUyvrEs47YtIhWDd4bK7SrszuqR0j0OxYZ7Vbvyn2wYEX+OH6IpNOmoGAG950ZQwk9gzjPvY0P9oqeqcnErGx3zFvOIsEb24Ty5QwEZn5VR3TB9JLU53Bnyu1cjDRHurEItcKZEvbF9bQ9h0We2ZsRUaBNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018760; c=relaxed/simple;
-	bh=8j/pMZObftENplg4deoaM1S6jWxUldrn0AWjkmEiUcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJZsY6GtikvLL1QR+47AI6BmnK7tH6loWsmCTPxYmaQFc/yhCdA8T1B5iYX95N8rpKFJggsv4e31pmxV5u6z2E91Jwf6tMDLOI3FikcHWUk9Rxdx2XK8EKUeMBKCkrGQdYp1pw6vk2NVq5KWcIUqqDMpa/4xCh2eZ/jt/9v8U1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CYtCvibk; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Mar 2025 19:52:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743018747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zzUfRFRmyA5Roo3UjviLOYKBv7xMeHy4PTNRPVwZ90I=;
-	b=CYtCvibkcPwHarZgZ5JQ81lUW0Ke/is/DxOPkUeE1GMRy7rkw2Q5eGydsPtSw1x1uIz/7B
-	cFfiV1yR3LKkExx+jhN4J4rcwc3R1nTXe0xAKMyoH6UhZ2wNO8pyTGie+uoZdMXHMMONGX
-	V7e9fm/G5SLrDPuEDgdm5JhcU2uRb+w=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	David Kaplan <David.Kaplan@amd.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Unify IBRS virtualization
-Message-ID: <Z-Ra9FYKP_xX4UBm@google.com>
-References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
- <Z9NMxr0Ri7VUlJzM@google.com>
- <Z-RaJVo1MKuI90G0@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9B22E337C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743018898; cv=pass; b=QkKQZ/5uL3yXpqPYp3IcteAi9Nq6PtPc4rRX0Rc19zBt7J3WLKDAPxg6FCuPHtHPMoX9jzRIHZ8sOo6g5RqKYjOdv3uJPjBnNHCAO/X5eqvC0T8E1lzgsjwse/Z08KxxCFxAv53FIxBggeEMreTJupWKXutkT2aikHfUi28XZc8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743018898; c=relaxed/simple;
+	bh=Dy0J6EBrPQWCBVq9Slx+LWeV6rTwnEG6MDzoQ5GyC0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UnZqaEo1Yp5rmAD2spT1MO+cFMJgXtIsmbZ1bG4FiYE+hdSZubuEherNhjKUk3qgg9AGKGcBAeomeEp6uIrxArzj9UTFzCIUSHDnmV/u5YS4OAzF9zzJu1Md/aW2oQSdtyhwy0jAp41cMLSBGHxIfFGnM3uRhzzEC3NCiijZcfI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=BN0sZyrp; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743018874; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=carkWtiol7Q6Etgnz18adBGw7YwbrRsciQm0GpsF7Ffgbfnbn85C4n6J4ZDvYkeqlLFqFXiDyeo9ZxFfYPoe+MmduF8YP81xznk+0ihqgGyULjrKN+EOZk4a9W90UUb09MhPZHx4C5IOvgyi9hN8LMsHy7n3z6aQ/uoN2698mPY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743018874; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iWHtsRfC6sDeLCSXa8Igd46o0WY5wleHKKN8wZjwzWo=; 
+	b=k2OPFthXhz+BwvZ6G5wpRr42R8nICmVLRAfcjcLv1SBln6h7uCof+UvJMAkonf4jBuCS2t8TtAYO4J5KF44GyQ3mnWwOHCHDCosoT1rKY96/sakdM/8fknwlC0+xsifAhYAl1qtze4xW+PZEdPEwZJ4Q3zglYASnvfXRSDSeXio=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743018874;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=iWHtsRfC6sDeLCSXa8Igd46o0WY5wleHKKN8wZjwzWo=;
+	b=BN0sZyrpUhLauOFR/PvagqgfCxqvjZZcXLFFrDlC557mlg+KM83XxoOhXC1wYFCv
+	i3Jebm9yeoCdXk58yd+sKFJHAaBh75YN75nvlnGkwWjxYI/8/VJtnyV1YMQ3v0Nmo0L
+	5LKuGG+5zDu2RD3UvzHc9MPZPIo57PGdG2JC5DBw=
+Received: by mx.zohomail.com with SMTPS id 17430188720701011.2938235750142;
+	Wed, 26 Mar 2025 12:54:32 -0700 (PDT)
+Message-ID: <e4f41400-b300-43ee-843f-8bc407aa9f76@collabora.com>
+Date: Wed, 26 Mar 2025 22:54:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-RaJVo1MKuI90G0@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 3/6] drm/shmem: Implement sparse allocation of
+ pages for shmem objects
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250326021433.772196-1-adrian.larumbe@collabora.com>
+ <20250326021433.772196-4-adrian.larumbe@collabora.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250326021433.772196-4-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Mar 26, 2025 at 12:48:53PM -0700, Sean Christopherson wrote:
-> On Thu, Mar 13, 2025, Yosry Ahmed wrote:
-> > On Fri, Feb 21, 2025 at 04:33:49PM +0000, Yosry Ahmed wrote:
-> > > To properly virtualize IBRS on Intel, an IBPB is executed on emulated
-> > > VM-exits to provide separate predictor modes for L1 and L2.
-> > > 
-> > > Similar handling is theoretically needed for AMD, unless IbrsSameMode is
-> > > enumerated by the CPU (which should be the case for most/all CPUs
-> > > anyway). For correctness and clarity, this series generalizes the
-> > > handling to apply for both Intel and AMD as needed.
-> > > 
-> > > I am not sure if this series would land through the kvm-x86 tree or the
-> > > tip/x86 tree.
-> > 
-> > Sean, any thoughts about this (or general feedback about this series)?
-> 
-> No feedback, I just you and Jim to get mitigation stuff right far more than I
-> trust myself :-)
-> 
-> I'm planning on grabbing this for 6.16.
+On 3/26/25 05:14, Adrián Larumbe wrote:
+> +static struct sg_table *
+> +drm_gem_shmem_sparse_get_sgt_range(struct drm_gem_shmem_object *shmem,
+> +				   unsigned int n_pages, pgoff_t page_offset,
+> +				   gfp_t gfp)
+> +{
+> +	struct drm_gem_object *obj = &shmem->base;
+> +	struct sg_table *sgt;
+> +	int ret;
+> +
+> +	if (drm_WARN_ON(obj->dev, !shmem->sparse))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* If the page range wasn't allocated, then bail out immediately */
+> +	if (xa_load(&shmem->xapages, page_offset) == NULL)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	sgt = kzalloc(sizeof(*sgt), GFP_NOWAIT);
 
-Awesome, thanks!
+You likely meant to use the gfp arg here.
+
+-- 
+Best regards,
+Dmitry
 
