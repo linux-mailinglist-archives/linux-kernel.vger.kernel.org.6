@@ -1,127 +1,364 @@
-Return-Path: <linux-kernel+bounces-576756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452D5A71409
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19E1A7140E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC23B479C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39413BABED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC411AF0AE;
-	Wed, 26 Mar 2025 09:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4241AE876;
+	Wed, 26 Mar 2025 09:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EslX+LhK"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dS0IZ9JA"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553E31A2398
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C261ACECE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982375; cv=none; b=hase3oNb5zoX8ss+dWA5m7nkDDhynT1RgfDj/LoyVWLadvBh/XWR1bEZp3/1KlbqZ8MdXreRNwSApr3Kk2bcDQcCzNB5MN7jShGEmRIzNGpC1012Ja84tJOYLaBrgpaWMd4s5KH9KIU+1YlL1/z1Dv+XOT+ahjLZV0T8KI77KPw=
+	t=1742982384; cv=none; b=iGRB5bxJF6e/rHNhL3aZ7pziYM9TzyfkD0J1Uv8jVratfo1WDbN8Vjnmd96x72tIdcbC+CLxTjwJzUtlPjyKgQCgMU03VLHodBVrpddZSSdjuqkfLbJnL1L1gLeEFgGB+WLOLEa/Aj3KlWSoPQXmgNEeQ5fI3KksC5X0k6Nk3V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982375; c=relaxed/simple;
-	bh=gJIYGQR+RiGM0XJWCm7NWAzwfhYCn3x9TxE2VX287jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XBoZG5WWhsuaO6WCtCbFzi3AexqnJp+lMEJw/JhlP63tWWK8f3AZHc6R+RC5JwXHnakDaNGy3si5v+E+6tprZ6Mwqjo+K9adNH5qtTQJqOF3hcBgK1Ws8yl7L6vHxUlzlJL4wmUWr3+jy3Hf/m9EFxjaYHX4Lx8y8rOtDZImLUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EslX+LhK; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1742982384; c=relaxed/simple;
+	bh=OLm2NDU+f3fxSPefoFTu44hZydq90XpR5rmarbi++1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dy2NBS0AIReTO7WuZlv17u9pt8l3HSCNQIpq7k7feE7ZuZJUzRJ4FzEH39Ayyl4EesT46/ofCC0XDYthV6ZOSerGM86TEk7ap2ObCBSH3strGjr5Y3ojPe4Ft+BbYhjFedazFcFN+zL6ODE1Xsnwb6tUrE9hJqqa7+QEFO+m/cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dS0IZ9JA; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so919132366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:46:12 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499614d3d2so7636214e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:46:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742982371; x=1743587171; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9/kXXpYh2KweuiB5zHwjY0q/TjqrU3OfimILMTsVvAo=;
-        b=EslX+LhKXdrPfZT36eafoi5lnJKtuJIdH0X+vutYf208eI3Um4drcmiL/leOFxKuQ/
-         iHL7RHrVkkP6ecOsOAdixpOJn3plizjTP9ohyiHn+vi1HM5ivMEvAysv2FQ1ScXwN3DX
-         7cCi+qk7ab5XAQhORW96if/0RQBjIw1cctobq22k+tHJtuipVFOkO3J5jszdeMgF27Gb
-         qfEDy79uih87UjqXP1DDo3OON4eFuUumqTd60iWzdBKoPoG/kut6F7XSn39M208dMsS5
-         fj5vmRMMk9BR5FleJ6cFPoH/YN8/ZoIE4L/JXG+oDEv1UhdPikKJdOzeulFav8a5GJlT
-         U+lA==
+        d=suse.com; s=google; t=1742982381; x=1743587181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Di4HbPtps/vZaIVsnnfkU3gBNA4h8hopxZA5u72GX94=;
+        b=dS0IZ9JA4tOyAmdNrYzliuLUPDpz/lr1/+8w02mF3SwZ3yOdcua7RQ98HAJ7IJPkUv
+         BI20xclbZEwCcwlv4h0kQnSRQDCpRJguSpjnRLitjqIa2aJ8yWqU6Dj6rnpU/Nrkacuu
+         mJKHbRX4zR38k8RQtrmV93Apv6KQa2Z7QVSkDP/nMfOxeZhnaCspSSdIIGmB4jlEox9c
+         fI7ZrQmIGbSxiFUp2LyrTClnOlahl9HK800FsqA03purr8g8qMbG7E1u4gErgHZ2hKVS
+         YXr/M4a3JYHI1pcYTX488bUUMF+DWO5Y565v2PkOalq8Y75RiG/aDm75DjltooIHcYQZ
+         lwrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742982371; x=1743587171;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/kXXpYh2KweuiB5zHwjY0q/TjqrU3OfimILMTsVvAo=;
-        b=ejp+57zJKthE4A+C6QphCVy+0yOkv+Bz+uNHomyUo9XGXzq1PpFm75r6RCwV0DN2Te
-         1f/deIzUOwDWsb5tbLhXeJx62FhZJUDNjQrlDBbLkk5KAS1Uip+06A0PeuEQa8l83T6d
-         0JrNdv+ISI1DQ1+UXZt4C5XXz4b5dohqLnLRXNwICoaAvNF9mi4LrxNdSR7Ys+P3ZN1l
-         9SYEQmBxjfVB+07SJpW187U2mpCkB8JfCE+7l84nB7CMOAlyU8Sa9TFGkGjl1wijdLrT
-         L58xUdVQEIWp2DwbBlLoOsG0C5zKb9zlvRCJvJWk9G58ZsVfde0soPC6cvSnpvB5SRwI
-         SRZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP/uSryLA7OAZvotkqioZUFGrx67qy/9AEJhsiSwx9KseISaNdwre8a7/7PCTnROvDw11K9aAtqad5x9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2bvIrNEmiA0gy8PAsgXxkJKdquC0tHR1R+I86J2fZVR7DTofF
-	Vzh10kTMZci5FxksmcZkTUUzCLXHacOJTVWjWlxZZ9Sc58rc0fjicPg9B2ZzeZU=
-X-Gm-Gg: ASbGncs1nUqIV0k77hNMAy7u2VhtdxTmRtAX2MOqXwDvuIVA8dVzPZJ/rfD3XlXw342
-	2H14Oyfn2z6Q+rDkauhqSWyz2XCVkojRGJ++7h4DEujdVODrZargCh0u55nncGa2n6Vm5fVlxdZ
-	CfaWPt7H8WHCHmoMO2CDuqkbCfG/nJKmpXx3W85IFQUVfIM13OsRlWe5sQh4JxcXudLDGEwcvPB
-	hvpCYX4V+YpwC1XDq8V9fJ5R5cXLi58zPFUGggCAgAoQ+oKMgdNqHtynxFb5xja77gWLkMhTrrj
-	I8pnusGCoHit4/9XFxwrGjlasR+q/9yg3hAs3cN6RdjNiEp0/dB2klArV6V4kJPc+vpa1ODphVR
-	hmjrmOLfJJFzG
-X-Google-Smtp-Source: AGHT+IHx/kCnyQhbohYhyZQ+ypuL87ESt4h+TC7om1KV6AWAGl0sRqBA5fm81htRzwYvpmm4nlJCag==
-X-Received: by 2002:a17:907:3dab:b0:ac3:3cfc:a59a with SMTP id a640c23a62f3a-ac3f26b18e4mr1876478266b.45.1742982371410;
-        Wed, 26 Mar 2025 02:46:11 -0700 (PDT)
-Received: from ?IPV6:2a02:3033:273:9b44:1f61:c513:306b:cf0e? ([2a02:3033:273:9b44:1f61:c513:306b:cf0e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbdca5dsm997614466b.137.2025.03.26.02.46.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 02:46:11 -0700 (PDT)
-Message-ID: <59f34bce-1069-446f-92ee-934cbad3d7ac@suse.com>
-Date: Wed, 26 Mar 2025 10:46:08 +0100
+        d=1e100.net; s=20230601; t=1742982381; x=1743587181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Di4HbPtps/vZaIVsnnfkU3gBNA4h8hopxZA5u72GX94=;
+        b=IKBQN6E2+tItRCCAEScjOm9XlvG+OKgjZxGhjjvBhr6OVNSjX679GXt5bmJXmPFp/P
+         g2vhKplmo+jD3rUiRc9RCjLQqEqECRBZdU/d//NGTdzwqq+tAvt+MUNotmpgd+N3IdgA
+         WQ3hPRjeo/HHeUitregR6zJWU0VnM346TvH7t1JinnivYsK8CRFg4kRXfsWU2C3NY0hg
+         AeyK5uw9hA/D3IyQXs8fa1ra/xD+W6zMpUS/0e4yYVkuJuxnuppcyiPM5nNLOeFjKbmZ
+         nKmQc/I9tjB27d0Fiag/YaVsieghJTTE/EuPI5AN9lLYR2eDBiYuzPTS8oqrUoW0hMJN
+         C7pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz7Jg5KMIekMNpeO1O2s2qhREMItikiSHjsaCPiYZoqjhk/1qOzgdK2ZMv5oPcarGm63ZysOO4fq6ePtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJjdW3wbh6yqvW0mb68WsoOKS5DvhFJDAFiWl/IpCPpmy1dIrm
+	9H89uzDOvUMXtRby7D0zSlCiJrle4po37bksecEWf8LRx3clSjdTs/NFu3/CWpbmOux5k2A/0/k
+	NBUs4311X7q1uA4FL28wVxY7lr6bBvvMJ4v0D1A==
+X-Gm-Gg: ASbGncun60VG+QxqRWYL3hNj1ucUWSnICOssIMEuBIQNyc8ejMz7BE0NY/y8xkd4H+0
+	MlLezhBej/p9718bRxx6a6zaFS48isggbemE4DZZLDdFVXySJFpC1S4L6Dmxl1rxF6qS+NLN0KJ
+	3jH9WUHNo8lQbnIkigrKoLxTVvN+tQyod7KIupBahMfw8n/hiwNWR7D5XX88U=
+X-Google-Smtp-Source: AGHT+IFFoqICBg3/2VlFm+oUDxj2X0WGExTZw7EWBYX1rt0NOmB23EDYayRfmPwBbL9bypFP4W+JtgajlnNNmmIMpKo=
+X-Received: by 2002:a05:6512:1105:b0:549:7145:5d28 with SMTP id
+ 2adb3069b0e04-54ad6492e6dmr5623522e87.25.1742982380428; Wed, 26 Mar 2025
+ 02:46:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: usb: usbnet: restore usb%d name exception for
- local mac addresses
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>,
- Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Ahmed Naseef <naseefkm@gmail.com>
-References: <20250326-usbnet_rename-v2-1-57eb21fcff26@atmark-techno.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250326-usbnet_rename-v2-1-57eb21fcff26@atmark-techno.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250315194002.13778-1-marco.crivellari@suse.com>
+ <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
+ <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
+ <alpine.DEB.2.21.2503211747150.35806@angie.orcam.me.uk> <CAAofZF5yaGMG0Kyax+ksfGngQ0T6AxvN5-60SnasQh7=OabaOg@mail.gmail.com>
+ <CAAhV-H7Tko290LSCJPuVFE2qds81N4C=8RPz4edC-xddFvZGjA@mail.gmail.com>
+In-Reply-To: <CAAhV-H7Tko290LSCJPuVFE2qds81N4C=8RPz4edC-xddFvZGjA@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 26 Mar 2025 10:46:08 +0100
+X-Gm-Features: AQ5f1JpgTQ1SqmyR3a5xmBD_8Mo146X-iNLNkrJ8C_qhiyfg-2DRPNGOh7-zOw8
+Message-ID: <CAAofZF52_yKcpd+GBE9ygggeNTOVQDP7AKau5xZE+N4fHGCgSQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I'm mostly thinking about future changes in this part of the code.
+But if it is ok what we have now, and future changes are not a
+problem, let's keep this version.
+
+Would this be ok with you @Maciej?
+
+If so, the region is now 40 bytes. This is what I did yesterday:
+
+@@ -110,6 +110,7 @@ LEAF(__r4k_wait)
+       .set    noreorder
+       /* Start of idle interrupt region. */
+       MFC0    t0, CP0_STATUS
++       nop
+       /* Enable interrupt. */
+       ori     t0, 0x1f
+       xori    t0, 0x1e
+@@ -128,7 +129,11 @@ LEAF(__r4k_wait)
+        */
+       wait
+       /* End of idle interrupt region. */
+-1:
++__r4k_wait_exit:
++       /* Check idle interrupt region size. */
++       .if ((__r4k_wait_exit - __r4k_wait) !=3D 40)
++       .error  "Idle interrupt region size mismatch: expected 40 bytes."
++       .endif
+       jr      ra
+        nop
+       .set    pop
+@@ -139,10 +144,10 @@ LEAF(__r4k_wait)
+       .set    push
+       .set    noat
+       MFC0    k0, CP0_EPC
+-       PTR_LA  k1, 1b
+-       /* 36 byte idle interrupt region. */
++       PTR_LA  k1, __r4k_wait_exit
++       /* 40 byte idle interrupt region. */
+       ori     k0, 0x1f
+-       PTR_ADDIU       k0, 5
++       PTR_ADDIU       k0, 9
+       bne     k0, k1, \handler
+       MTC0    k0, CP0_EPC
+       .set pop
+
+Under QEMU is working, but I'm not so sure the latest part is correct.
+
+Thanks!
 
 
 
-On 26.03.25 09:32, Dominique Martinet wrote:
-> commit 8a7d12d674ac ("net: usb: usbnet: fix name regression") assumed
-> that local addresses always came from the kernel, but some devices hand
-> out local mac addresses so we ended up with point-to-point devices with
-> a mac set by the driver, renaming to eth%d when they used to be named
-> usb%d.
-> 
-> Userspace should not rely on device name, but for the sake of stability
-> restore the local mac address check portion of the naming exception:
-> point to point devices which either have no mac set by the driver or
-> have a local mac handed out by the driver will keep the usb%d name.
-> 
-> (some USB LTE modems are known to hand out a stable mac from the locally
-> administered range; that mac appears to be random (different for
-> mulitple devices) and can be reset with device-specific commands, so
-> while such devices would benefit from getting a OUI reserved, we have
-> to deal with these and might as well preserve the existing behavior
-> to avoid breaking fragile openwrt configurations and such on upgrade.)
-> 
-> Link: https://lkml.kernel.org/r/20241203130457.904325-1-asmadeus@codewreck.org
-> Fixes: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
-> Cc: stable@vger.kernel.org
-> Tested-by: Ahmed Naseef <naseefkm@gmail.com>
-> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+On Wed, Mar 26, 2025 at 2:20=E2=80=AFAM Huacai Chen <chenhuacai@kernel.org>=
+ wrote:
+>
+> On Tue, Mar 25, 2025 at 10:09=E2=80=AFPM Marco Crivellari
+> <marco.crivellari@suse.com> wrote:
+> >
+> > Hi Maciej,
+> >
+> > Thanks a lot for all the information.
+> >
+> > >  Unlike `__r4k_wait' that code is not in a `.set noreorder' region an=
+d
+> > > the assembler will therefore resolve the hazard by inserting a NOP wh=
+ere
+> > > required by the architecture level requested (with `-march=3D...', et=
+c.).
+> > > Try compiling that function for a MIPS III configuration such as
+> > > decstation_r4k_defconfig or just by hand with `-march=3Dmips3' and se=
+e
+> > > what machine code is produced.
+> >
+> > I tried with the configuration you suggested, and indeed I can see a NO=
+P.
+> >
+> > >  Whatever manual you quote it refers to MIPS Release 2, which is only
+> > > dated 2003
+> >
+> > About the MIPS manual, anyhow, it is "MIPS32 M4 Processor Core" (year 2=
+008).
+> > Maybe I've also picked the wrong manual.
+> >
+> > I've also found the manual you mentioned online, thanks.
+> >
+> > >  Best is to avoid using a `.set noreorder' region in the first place.
+> > > But is it really needed here?  Does the rollback area have to be of a
+> > > hardcoded size rather than one calculated by the assembler based on
+> > > actual machine code produced?  It seems to me having it calculated wo=
+uld
+> > > reduce complexity here and let us use the EI instruction where availa=
+ble
+> > > as well.
+> >
+> > Well, considering the complexity and how the code looks fragile even wi=
+th
+> > a small change, yes, that's likely better to avoid noreorder.
+> In my opinion keeping "noreorder" is the simplest, which means just
+> add an "nop" after MFC0 in the current version.
+>
+> Huacai
+>
+> >
+> > I think I'm going to need some guidance here.
+> > Please, correct me where something is wrong.
+> >
+> > 1)
+> > When you say "let us use the EI instruction where available" are you
+> > referring to do
+> > something like below?
+> >
+> > #if defined(CONFIG_CPU_HAS_DIEI)
+> > ei
+> > #else
+> > MFC0    t0, CP0_STATUS
+> > ori     t0, 0x1f
+> > xori    t0, 0x1e
+> > MTC0    t0, CP0_STATUS
+> > #endif
+> >
+> > 2)
+> > Removing "noreorder" would let the compiler add "nops" where they are n=
+eeded.
+> > But that still means the 3 ssnop and ehb are still needed, right?
+> >
+> > My subsequent dumb question is: there is the guarantee that the
+> > compiler will not
+> > reorder / change something we did?
+> > This question also came after reading the manual you quoted (paragraph
+> > "Coprocessor Hazards"):
+> >
+> > "For example, after an mtc0 to the Status register which changes an
+> > interrupt mask bit,
+> > there will be two further instructions before the interrupt is
+> > actually enabled or disabled.
+> > [...]
+> > To cope with these situations usually requires the programmer to take e=
+xplicit
+> > action to prevent the assembler from scheduling inappropriate
+> > instructions after a
+> > dangerous mtc0. This is done by using the .set noreorder directive,
+> > discussed below"
+> >
+> > 3)
+> > Considering the size is determined by the compiler, the check about
+> > the idle interrupt
+> > size region should not be needed, correct?
+> >
+> > 4)
+> > ori and PTR_ADDIU should be removed of course from the rollback handler=
+ macro.
+> > Can I have some hints about the needed change?
+> > Using QEMU is always working, so I'm not sure if what I will change is
+> > also correct.
+> >
+> >
+> > Many thanks in advance, also for your time!
+> >
+> >
+> >
+> >
+> > On Fri, Mar 21, 2025 at 9:11=E2=80=AFPM Maciej W. Rozycki <macro@orcam.=
+me.uk> wrote:
+> > >
+> > > On Fri, 21 Mar 2025, Marco Crivellari wrote:
+> > >
+> > > > >  This instruction sequence still suffers from the coprocessor mov=
+e delay
+> > > > > hazard.  How many times do I need to request to get it fixed (cou=
+nting
+> > > > > three so far)?
+> > > >
+> > > > Can I have more details about this?
+> > > >
+> > > > I can see it is the same code present also in local_irq_enable()
+> > > > (arch_local_irq_enable()),
+> > >
+> > >  Unlike `__r4k_wait' that code is not in a `.set noreorder' region an=
+d
+> > > the assembler will therefore resolve the hazard by inserting a NOP wh=
+ere
+> > > required by the architecture level requested (with `-march=3D...', et=
+c.).
+> > > Try compiling that function for a MIPS III configuration such as
+> > > decstation_r4k_defconfig or just by hand with `-march=3Dmips3' and se=
+e
+> > > what machine code is produced.
+> > >
+> > > > and from the manual I've seen:
+> > > >
+> > > > "The Spacing column shown in Table 2.6 and Table 2.7 indicates the
+> > > > number of unrelated instructions (such as NOPs or SSNOPs) that,
+> > > > prior to the capabilities of Release 2, would need to be placed
+> > > > between the producer and consumer of the hazard in order to ensure
+> > > > that the effects of the first instruction are seen by the second in=
+struction."
+> > > >
+> > > > The "Spacing column" value is 3, indeed.
+> > > >
+> > > > "With the hazard elimination instructions available in Release 2, t=
+he
+> > > > preferred method to eliminate hazards is to place one of the
+> > > > instructions listed in Table 2.8 between the producer and consumer =
+of the
+> > > > hazard. Execution hazards can be removed by using the EHB [...]"
+> > >
+> > >  Whatever manual you quote it refers to MIPS Release 2, which is only
+> > > dated 2003 (following Release 1 from 2001), but `__r4k_wait' has to
+> > > continue handling older architecture revisions going back to MIPS III
+> > > ISA from 1991.  We also support MIPS I ISA from 1985 which has furthe=
+r
+> > > instruction scheduling requirements, but `__r4k_wait' is for newer
+> > > processors only, because older ones had no WAIT instruction, so we ca=
+n
+> > > ignore them (but note that the MIPS I load delay slot is regardless
+> > > observed in current code in the form of a NOP inserted after LONG_L).
+> > >
+> > > > What am I missing?
+> > >
+> > >  This is common MIPS knowledge really, encoded in the GNU toolchain a=
+nd
+> > > especially GAS since forever.  While I can't cite a canonical referen=
+ce,
+> > > the hazard is listed e.g. in Table 13.1 "Instructions with scheduling
+> > > implications" and Table 13.3 "R4xxx/R5000 Coprocessor 0 Hazards" from
+> > > "IDT MIPS Microprocessor Family Software Reference Manual," Version 2=
+.0,
+> > > from October 1996.  I do believe the document is available online.
+> > >
+> > >  I'm fairly sure the hazard is also listed there in Dominic Sweetman'=
+s
+> > > "See MIPS Run Linux," but I don't have my copy handy right now.
+> > >
+> > >  Best is to avoid using a `.set noreorder' region in the first place.
+> > > But is it really needed here?  Does the rollback area have to be of a
+> > > hardcoded size rather than one calculated by the assembler based on
+> > > actual machine code produced?  It seems to me having it calculated wo=
+uld
+> > > reduce complexity here and let us use the EI instruction where availa=
+ble
+> > > as well.
+> > >
+> > >  HTH,
+> > >
+> > >   Maciej
+> >
+> >
+> >
+> > --
+> >
+> > Marco Crivellari
+> >
+> > L3 Support Engineer, Technology & Product
+> >
+> >
+> >
+> >
+> > marco.crivellari@suse.com
+
+
+
+--
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+
+
+
+marco.crivellari@suse.com
 
