@@ -1,195 +1,152 @@
-Return-Path: <linux-kernel+bounces-577098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F60A71857
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:21:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C78EA71852
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D59B3AD2F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C4E1604F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855641F1303;
-	Wed, 26 Mar 2025 14:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s7dybfJi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56641F1911;
+	Wed, 26 Mar 2025 14:20:07 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216AD54652;
-	Wed, 26 Mar 2025 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D557E1B4132;
+	Wed, 26 Mar 2025 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998743; cv=none; b=OiYP4o53OQBAoV0KVkmjwyQJ/Geuv5JSESCjivpge15ovFQkCp8Yf78vN64HS7WY/WG/hNHTdqXVUj7JlEqtnD3udAP/NXvRAyHV+INVPwfZcpgCZW8rcw4AHDtuJpp0hGLaQSnT6QUy5Vk0/tYlqoexeCzL6hNKU8pJvHYGbzA=
+	t=1742998807; cv=none; b=acAUIXgO3tM9PGftSSv+RCTOnvaILcTZS45wjuLOjNOiQyUu+UMZmsGmxkPaUY6FrKqIH9y7XW16J9qqsIzdMwpI7TtgLBNt3XgtoaCLoE9UZKbQX96h3i4zx0/fmSukvaw7LJ7+WcARD6dFrFT2nP0fD/LeVIceyYhoRm2Wlaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998743; c=relaxed/simple;
-	bh=ma1YQtfpq5iTg9o3RgA0apKG26XLDszEhzGUXxMWjhU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lYm7SPa7AOy4PPcms9DxCcwz3QHqU+KtP8qH2YJbOd9T/RdAqQzWGtcFBjfpFC3KObCvhZTFoD3FdInFqnJdNtSmo0MAxxR8nIhhyECnJohaBtDJG5mM3vajJnna4Buyus9eX4MYc0lvYdtkiMpiazKD2GQnJzv8uQUFtlqekQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s7dybfJi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q95m2m032164;
-	Wed, 26 Mar 2025 14:18:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Orpqfl
-	YvLR6yQCOVp0PAhUv6AcpZGe51LgipDVS9Yg8=; b=s7dybfJi6v55ye1eZXq0Fh
-	fZBvGmumh8DG+xIN2ocriTqFOVrtF2rT8aSxfTs57BLPEGTv1xuHKKFNuQGhnepX
-	EcPmDVlkSYucqg9dfi1CL7bQR0+0ow9y+fMxjF5Ch3EwJwjf4XglwkYT3IurVvWl
-	2KDlm8hqINmv0PtdLgnUXTorQfIbqpvtskX6l1BMSpGhHkN5BdbaWU4Fb4oBrmCB
-	J+RbliiiW6ARSdEXvVz21VArUmMewP6HqJ1OevCzH1p4M5ynz1/RYT7BOAymps/W
-	vTswiKuGXmVuf03rzmGeO2f5GRWGQxfil7NVtWZr2zdIt+EiPCg5eJQOf5afqHzw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0m6jn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:18:44 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QE9tOc001099;
-	Wed, 26 Mar 2025 14:18:44 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0m6jk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:18:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QE0YxU030308;
-	Wed, 26 Mar 2025 14:18:43 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htgv9s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:18:43 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QEIgUg28639788
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 14:18:42 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CDF4858053;
-	Wed, 26 Mar 2025 14:18:42 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E88B358043;
-	Wed, 26 Mar 2025 14:18:41 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 14:18:41 +0000 (GMT)
-Message-ID: <a4bf93f0c64f4b329e022663afecf6edf0e22884.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Stange <nstange@suse.de>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley
- <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 26 Mar 2025 10:18:41 -0400
-In-Reply-To: <877c4cqi76.fsf@>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-4-nstange@suse.de>
-	 <e492df76d30b0b95f83b577499a25cdca2256407.camel@linux.ibm.com>
-	 <877c4cqi76.fsf@>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1742998807; c=relaxed/simple;
+	bh=PM9RdmhtSz0Ds1dbVBa+7sDzqP7P586CQYhhr5hryOc=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Nag65VBlDPe4qBeNTGCbZk2uUHCK+fdKpfcwgtW8CnCsPqcb2dVRU6/22XjIV1XOanii8v4oVVORsskyc0eJKMSSFhsEFgsVWBVU+ZuGsyyWPX/QUrtxmh/OquHo8AmPpqYeAhrkO+8CRCNhIlZogY/dKoNgm+bv9cW9IrL3dHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZN87j4QqFz8R040;
+	Wed, 26 Mar 2025 22:20:01 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 52QEJrrh028468;
+	Wed, 26 Mar 2025 22:19:53 +0800 (+08)
+	(envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Wed, 26 Mar 2025 22:19:55 +0800 (CST)
+Date: Wed, 26 Mar 2025 22:19:55 +0800 (CST)
+X-Zmail-TransId: 2afc67e40d0bfffffffffab-d87e9
+X-Mailer: Zmail v1.0
+Message-ID: <20250326221955611qu6Ix3Pt5WgKvhL6sTySX@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: zmLRHcCmztHMSy7QR3Fv_a6UW3CUEQLq
-X-Proofpoint-GUID: tteIZopCLiEUccVcuGbhUcvUT64YJpwm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260085
+Mime-Version: 1.0
+From: <ye.xingchen@zte.com.cn>
+To: <leon@kernel.org>
+Cc: <yishaih@nvidia.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBSRE1BOiBSZXBsYWNlIG1zZWNzX3RvX2ppZmZpZXMgd2l0aCBzZWNzX3RvX2ppZmZpZXMgZm9ywqB0aW1lb3V0?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 52QEJrrh028468
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67E40D11.004/4ZN87j4QqFz8R040
 
-On Wed, 2025-03-26 at 10:01 +0100, Nicolai Stange wrote:
-> Mimi Zohar <zohar@linux.ibm.com> writes:
->=20
-> > > diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity=
-/ima/ima_crypto.c
-> > > index 6f5696d999d0..a43080fb8edc 100644
-> > > --- a/security/integrity/ima/ima_crypto.c
-> > > +++ b/security/integrity/ima/ima_crypto.c
-> > > @@ -625,26 +625,43 @@ int ima_calc_field_array_hash(struct ima_field_=
-data *field_data,
-> > >  	u16 alg_id;
-> > >  	int rc, i;
-> > > =20
-> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
-> > >  	rc =3D ima_calc_field_array_hash_tfm(field_data, entry, ima_sha1_id=
-x);
-> > >  	if (rc)
-> > >  		return rc;
-> > > =20
-> > >  	entry->digests[ima_sha1_idx].alg_id =3D TPM_ALG_SHA1;
-> > > +#endif
-> > > =20
-> > >  	for (i =3D 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
-> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
-> > >  		if (i =3D=3D ima_sha1_idx)
-> > >  			continue;
-> > > +#endif
-> > > =20
-> > >  		if (i < NR_BANKS(ima_tpm_chip)) {
-> > >  			alg_id =3D ima_tpm_chip->allocated_banks[i].alg_id;
-> > >  			entry->digests[i].alg_id =3D alg_id;
-> > >  		}
-> > > =20
-> > > -		/* for unmapped TPM algorithms digest is still a padded SHA1 */
-> > > +		/*
-> > > +		 * For unmapped TPM algorithms, the digest is still a
-> > > +		 * padded SHA1 if backwards-compatibility fallback PCR
-> > > +		 * extension is enabled. Otherwise fill with
-> > > +		 * 0xfes. This is the value to invalidate unsupported
-> > > +		 * PCR banks with. Also, a non-all-zeroes value serves
-> > > +		 * as an indicator to kexec measurement restoration
-> > > +		 * that the entry is not a violation and all its
-> > > +		 * template digests need to get recomputed.
-> > > +		 */
-> > >  		if (!ima_algo_array[i].tfm) {
-> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
-> > >  			memcpy(entry->digests[i].digest,
-> > >  			       entry->digests[ima_sha1_idx].digest,
-> > >  			       TPM_DIGEST_SIZE);
->=20
->                                ^
-> That's been here before, just for the record for the below.
+From: Peng Jiang <jiang.peng9@zte.com.cn>
 
-And it is correct.
+In drivers/infiniband/hw/mlx4/mcg.c and drivers/infiniband/hw/mlx5/mr.c,
+`msecs_to_jiffies` is used to convert milliseconds to jiffies.
+For constant milliseconds, using `msecs_to_jiffies` introduces additional
+computational overhead. For example, it is unnecessary to check
+if m > jiffies_to_msecs(MAX_JIFFY_OFFSET) or (int)m < 0 for constants,
+while using `secs_to_jiffies` can avoid these extra calculations.
 
->=20
-> > > +#else
-> > > +			memset(entry->digests[i].digest, 0xfe, TPM_DIGEST_SIZE);
-> > > +#endif
-> >=20
-> > Using TPM_DIGEST_SIZE will result in a padded 0xfe value.
->=20
-> Yes, but as the sysfs files for unsupported algos are gone, this will be
-> used only for extending the PCR banks. tpm[12]_pcr_extend()
-> (necessarily) truncate the digests to the correct size before sending
-> them to the TPM.
->=20
-> But if you prefer I can absolutely replace TPM_DIGEST_SIZE by
-> hash_digest_size[ima_algo_array[i].algo].
+Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
+Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
+---
+ drivers/infiniband/hw/mlx4/mcg.c | 8 ++++----
+ drivers/infiniband/hw/mlx5/mr.c  | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Unlike violations, which are the full digest size, a padded sha1 is extende=
-d
-into the unsupported algos TPM banks.  I assume you'd want it to be the ful=
-l
-digest size like violations.
+diff --git a/drivers/infiniband/hw/mlx4/mcg.c b/drivers/infiniband/hw/mlx4/mcg.c
+index 33f525b744f2..e279e69b9a51 100644
+--- a/drivers/infiniband/hw/mlx4/mcg.c
++++ b/drivers/infiniband/hw/mlx4/mcg.c
+@@ -43,7 +43,7 @@
 
-Mimi
+ #define MAX_VFS		80
+ #define MAX_PEND_REQS_PER_FUNC 4
+-#define MAD_TIMEOUT_MS	2000
++#define MAD_TIMEOUT_SEC	2
 
+ #define mcg_warn(fmt, arg...)	pr_warn("MCG WARNING: " fmt, ##arg)
+ #define mcg_error(fmt, arg...)	pr_err(fmt, ##arg)
+@@ -270,7 +270,7 @@ static int send_join_to_wire(struct mcast_group *group, struct ib_sa_mad *sa_mad
+ 	if (!ret) {
+ 		/* calls mlx4_ib_mcg_timeout_handler */
+ 		queue_delayed_work(group->demux->mcg_wq, &group->timeout_work,
+-				msecs_to_jiffies(MAD_TIMEOUT_MS));
++				   secs_to_jiffies(MAD_TIMEOUT_SEC));
+ 	}
+
+ 	return ret;
+@@ -309,7 +309,7 @@ static int send_leave_to_wire(struct mcast_group *group, u8 join_state)
+ 	if (!ret) {
+ 		/* calls mlx4_ib_mcg_timeout_handler */
+ 		queue_delayed_work(group->demux->mcg_wq, &group->timeout_work,
+-				msecs_to_jiffies(MAD_TIMEOUT_MS));
++				   secs_to_jiffies(MAD_TIMEOUT_SEC));
+ 	}
+
+ 	return ret;
+@@ -1091,7 +1091,7 @@ static void _mlx4_ib_mcg_port_cleanup(struct mlx4_ib_demux_ctx *ctx, int destroy
+ 	for (i = 0; i < MAX_VFS; ++i)
+ 		clean_vf_mcast(ctx, i);
+
+-	end = jiffies + msecs_to_jiffies(MAD_TIMEOUT_MS + 3000);
++	end = jiffies + secs_to_jiffies(MAD_TIMEOUT_SEC + 3);
+ 	do {
+ 		count = 0;
+ 		mutex_lock(&ctx->mcg_table_lock);
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index b7c8c926c578..7943f183267a 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -525,7 +525,7 @@ static void queue_adjust_cache_locked(struct mlx5_cache_ent *ent)
+ 		ent->fill_to_high_water = false;
+ 		if (ent->pending)
+ 			queue_delayed_work(ent->dev->cache.wq, &ent->dwork,
+-					   msecs_to_jiffies(1000));
++					   secs_to_jiffies(1));
+ 		else
+ 			mod_delayed_work(ent->dev->cache.wq, &ent->dwork, 0);
+ 	}
+@@ -576,7 +576,7 @@ static void __cache_work_func(struct mlx5_cache_ent *ent)
+ 					"add keys command failed, err %d\n",
+ 					err);
+ 				queue_delayed_work(cache->wq, &ent->dwork,
+-						   msecs_to_jiffies(1000));
++						   secs_to_jiffies(1));
+ 			}
+ 		}
+ 	} else if (ent->mkeys_queue.ci > 2 * ent->limit) {
+@@ -2051,7 +2051,7 @@ static int mlx5_revoke_mr(struct mlx5_ib_mr *mr)
+ 			ent->in_use--;
+ 		if (ent->is_tmp && !ent->tmp_cleanup_scheduled) {
+ 			mod_delayed_work(ent->dev->cache.wq, &ent->dwork,
+-					 msecs_to_jiffies(30 * 1000));
++					 secs_to_jiffies(30));
+ 			ent->tmp_cleanup_scheduled = true;
+ 		}
+ 		spin_unlock_irq(&ent->mkeys_queue.lock);
+-- 
+2.25.1
 
