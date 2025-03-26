@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-576797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516B0A714A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:20:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5D5A714A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBBAF171517
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:18:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF5D1897906
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CB11B3925;
-	Wed, 26 Mar 2025 10:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996311B4241;
+	Wed, 26 Mar 2025 10:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R2w7KzYZ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UHHXxmQm"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72108C1F;
-	Wed, 26 Mar 2025 10:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC971B423E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984332; cv=none; b=os3KRe78ZpxAX3V/KcoYF3F8SR+7r5X5TCFTV7PYZRzSTf+stiWfPR3FtzWBhRTvvbflAKYXSbJJ/obvl4XSmmAEMG1GSReg4B2Kda7VZNGanmIlhjPIH6ZATuNC9wcNOwv1Yo+stO+oHxrK27Xk6Y86pJRmWI7LzQ+0DhXRCac=
+	t=1742984401; cv=none; b=G9JxsU3epEeSjvltES3K5dx8qcPnuo0708acftkz+5Vu0Tnt4w8XuUbzoV7dqfi3a0alo/UmUugF7c2SC6Ogw0/ZGb18A4SS8CfUkzR5JoBnlECOcB91lOvPo/T9RdazRUS1RcheIztF3UJ/TZC7XmIQt+WIU/+krJdIvt6thbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984332; c=relaxed/simple;
-	bh=q/nFNojlosborYJGt0qwUe6tullznsb4Pf2IVsxtddI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EuYHFb/dGH2dn4aiH9pczPlqHGxDEH/x/zuLT9k1A6Ckelh/FOgfQqStJWkVkBPxCgspTMKs093KDzyBi+QKJoXjbbnYwwBvsjOPc5Q3sVTmdW9fjxXh385CQiosh23T7mR6JLx/DALStOj+xGg+3/3MfLaqoHCA8JlFxfbF22I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R2w7KzYZ; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1742984401; c=relaxed/simple;
+	bh=n+TFJw5CGKB+/PTmbbM3BjqDwj4jnWtLU2D8rSom1rk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mZBtTNhQUJyXmh0tnR22sttEivgaYtemt4nqFmrzPcrXHHyldod+2u9djSDL8ZKSpvpiksYa5hVtIH1gAfMYlQ3hPpna3jYLV/i2vOV6G2M1vCB24bZQieQzdIXs/LwcdGqsJnc8Y2ikxc0BHBtv2H4CXZNvvgoJKdX+Kbnv2Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UHHXxmQm; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742984329;
-	bh=q/nFNojlosborYJGt0qwUe6tullznsb4Pf2IVsxtddI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R2w7KzYZhiCblvBuuvmzKgygHYi2uZCJ+vZIKkxh9za6J8dIz2FAZoiRvvM6OBmdI
-	 38FwuPBbPOrgaeJnsVXy81JlZ2l+ypPoTzCouhW+gZ4Ffm+7w2uPubNLS3utlWhZnj
-	 mIFuelbr0pR3PcR2LLEX7K+J0oNehKGrLvFaf+J0OeFWNp9zDy/aL6ObaWWZ1rovEK
-	 CoToye6Vmdx2cy4GJ8Sn2v+imUq8oJkI4rtiNF7r3qa5L0V6sDns8Xb6VFfM6uQbKw
-	 enm6x+qSmGOFhxNqz47IKsgb8Z6Di62ZiIfNKkPyV5gYE2Qrdp4ksrZFMuk18OagZh
-	 4L7kHRlPWWP+g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=mail; t=1742984397;
+	bh=n+TFJw5CGKB+/PTmbbM3BjqDwj4jnWtLU2D8rSom1rk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=UHHXxmQmlRiHMuf4nEl/jrg+sXj8cEX528SAyRxirzuq/JHRdEQZsJbTjASGyQbJ5
+	 w4XqBJPBGG5Oe1X950dQQvTiyUUuJJdwLh3snhgDYnh6lbPiynsAes+3MaGZ/FJBa5
+	 6dwS7SDBvMEwrYlYecIzd0jq5LRtHyq/X+R9iuSA3vsNwNetH6tCF4HEFiRO/8OH2i
+	 nlpsVtGIQawX3ud3QKr/5Blq+3ZOQIYPKahJEAXQwkK2oK31oF2P8LYpn+TAMX9MRW
+	 pk9mAkNtIpH+ILqAYucKM8u72pfGRr6EVefBlZuO/0QA6STJJawGQhfVTTupkSYA/Y
+	 xXjqoK4V4IlrA==
+Received: from localhost (unknown [84.232.140.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 88E8017E0E8F;
-	Wed, 26 Mar 2025 11:18:48 +0100 (CET)
-Message-ID: <fb154077-e650-480e-a4d7-0a141b563dfc@collabora.com>
-Date: Wed, 26 Mar 2025 11:18:47 +0100
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 814DD17E0A5D;
+	Wed, 26 Mar 2025 11:19:57 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v3 00/15] drm/connector: hdmi: Allow using the YUV420
+ output format
+Date: Wed, 26 Mar 2025 12:19:49 +0200
+Message-Id: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3,1/2] dt-bindings: memory-controllers: Add MediaTek DRAM
- controller interface
-To: Crystal Guo <crystal.guo@mediatek.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250326063041.7126-1-crystal.guo@mediatek.com>
- <20250326063041.7126-2-crystal.guo@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250326063041.7126-2-crystal.guo@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMXU42cC/3XMTQ6CMBCG4auQrq3pDFDAlfcwLkp/pAm0ptVGQ
+ ri7hcQNict3Mt+zkKiD1ZFcioUEnWy03uUoTwWRg3APTa3KTZBhBVAyOqjJUumdo/M7UQ1G1B1
+ XpuEtyZtn0MZ+du92zz3Y+PJh3vkE2/WflIAyinWFTSdYyxu4Sj+OovdBnKWfyKYl/Ak1KwGOA
+ mbB9KrvKpM/OB6FdV2/etWomfAAAAA=
+X-Change-ID: 20241130-hdmi-conn-yuv-e1fa596df768
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
 
-Il 26/03/25 07:30, Crystal Guo ha scritto:
-> A MediaTek DRAM controller interface to provide the current DDR
-> data rate.
-> 
-> Signed-off-by: Crystal Guo <crystal.guo@mediatek.com>
-> ---
->   .../memory-controllers/mediatek,dramc.yaml    | 44 +++++++++++++++++++
->   1 file changed, 44 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/memory-controllers/mediatek,dramc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,dramc.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,dramc.yaml
-> new file mode 100644
-> index 000000000000..8bdacfc36cb5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,dramc.yaml
+Provide the basic support to enable using YUV420 as an RGB fallback when
+computing the best output format and color depth.
 
-The filename should be "mediatek,mt8196-dramc.yaml"
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v3:
+- Collected R-B tags from Dmitry and Maxime
+- Updated debug messages in "drm/connector: hdmi: Add support for YUV420
+  format verification" to avoid referencing VIC (Maxime)
+- Reworked "drm/connector: hdmi: Use YUV420 output format as an RGB
+  fallback" and moved some parts to separate patches:
+  * drm/connector: hdmi: Add missing bpc debug info to hdmi_try_format_bpc()
+  * drm/connector: hdmi: Rename hdmi_compute_format() internal helper
+  * drm/connector: hdmi: Factor out bpc and format computation logic
+- Reworked "drm/tests: hdmi: Add macros to simplify EDID setup" by
+  renaming the new helpers and moving the conversion to separate
+  patches (Maxime):
+  * drm/tests: hdmi: Fixup CamelCase warning
+  * drm/tests: hdmi: Replace open coded EDID setup
+  * drm/tests: hdmi: Drop unused drm_kunit_helper_connector_hdmi_init_funcs()
+- Moved connector_hdmi_init_with_edid_funcs() changes from "drm/tests:
+  hdmi: Add limited range tests for YUV420 mode") to "drm/tests: hdmi:
+  Setup ycbcr_420_allowed before initializing connector"
+- Got rid of the floating-point operation in "drm/tests: hdmi: Add max
+  TMDS rate fallback tests for YUV420 mode" in order to fix the build
+  errors reported by some kernel test robots
+- Added new patch "drm/tests: hdmi: Add test for unsuccessful forced
+  fallback to YUV420"
+- Rebased series onto drm-misc-next from 2025-03-25
+- Link to v2: https://lore.kernel.org/r/20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com
 
+Changes in v2:
+- Provided the missing Fixes tag on first patch (Dmitry)
+- Added patch "drm/connector: hdmi: Improve debug message for supported
+  format"
+- Reworked "drm/connector: hdmi: Use YUV420 output format as an RGB
+  fallback" so that the fallback to YUV420 will be attempted only when
+  RGB cannot be supported for any of the available color depths (Maxime)
+- Added a patch to simplify EDID setup in KUnit cases
+- Added two patches extending KUnit coverage for YUV420 by providing
+  tests for limited range and max TMDS rate fallback
+- Rebased series onto drm-misc-next-2025-03-06
+- Link to v1: https://lore.kernel.org/r/20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com
 
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2025 MediaTek Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/memory-controllers/mediatek,dramc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek DRAM Controller (DRAMC)
-> +
-> +maintainers:
-> +  - Crystal Guo <crystal.guo@mediatek.com>
-> +
-> +description:
-> +  A MediaTek DRAM controller interface to provide the current data rate of DRAM.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - mediatek,mt8196-dramc
+---
+Cristian Ciocaltea (15):
+      drm/connector: hdmi: Evaluate limited range after computing format
+      drm/connector: hdmi: Add support for YUV420 format verification
+      drm/connector: hdmi: Improve debug message for supported format
+      drm/connector: hdmi: Add missing bpc debug info to hdmi_try_format_bpc()
+      drm/connector: hdmi: Rename hdmi_compute_format() internal helper
+      drm/connector: hdmi: Factor out bpc and format computation logic
+      drm/connector: hdmi: Use YUV420 output format as an RGB fallback
+      drm/tests: hdmi: Add macros to simplify EDID setup
+      drm/tests: hdmi: Fixup CamelCase warning
+      drm/tests: hdmi: Replace open coded EDID setup
+      drm/tests: hdmi: Drop unused drm_kunit_helper_connector_hdmi_init_funcs()
+      drm/tests: hdmi: Setup ycbcr_420_allowed before initializing connector
+      drm/tests: hdmi: Add limited range tests for YUV420 mode
+      drm/tests: hdmi: Add max TMDS rate fallback tests for YUV420 mode
+      drm/tests: hdmi: Add test for unsuccessful forced fallback to YUV420
 
-P.S.: bindings maintainers: this driver is expected to get more compatibles soon.
-
-Cheers,
-Angelo
-
-
-> +
-> +  reg:
-> +    items:
-> +      - description: anaphy registers
-> +      - description: ddrphy registers
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        memory-controller@10236000 {
-> +            compatible = "mediatek,mt8196-dramc";
-> +            reg = <0 0x10236000 0 0x2000>,
-> +                  <0 0x10238000 0 0x2000>;
-> +        };
-> +    };
-
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 114 +++--
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 557 ++++++++++++++-------
+ drivers/gpu/drm/tests/drm_kunit_edid.h             | 222 ++++++++
+ 3 files changed, 678 insertions(+), 215 deletions(-)
+---
+base-commit: 2f9d51740cc30e0d2c8a23a55b1e20cf2513c250
+change-id: 20241130-hdmi-conn-yuv-e1fa596df768
 
 
