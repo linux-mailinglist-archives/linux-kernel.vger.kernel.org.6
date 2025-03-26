@@ -1,175 +1,190 @@
-Return-Path: <linux-kernel+bounces-576496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63147A70FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:56:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEE1A70FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557B43B82B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A821C3B92ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0D117A2E1;
-	Wed, 26 Mar 2025 04:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4751117A2ED;
+	Wed, 26 Mar 2025 04:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ECsaqbgT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MLKJL8zM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912294A29;
-	Wed, 26 Mar 2025 04:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75F14A29;
+	Wed, 26 Mar 2025 04:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742964972; cv=none; b=eGmPx5b/B8ENf5S6MbZLUCEWZaL5WZXxIqX+kVXjCjKbgjLKByu73UAN4cFy4SbhK5ZD1f+Rs6eHYBSc3hdNH6xROq6FFvZUjjgtoAyQRw6LmaMdt6WOabs1rd9k8cEPNDt1KcCQyT81sdLkeTMKUv2GfiUaQdDFgCM8ujbCGH8=
+	t=1742965061; cv=none; b=sgm1nFI50MpShWhpzkGRQvBWLaBIRlGPMHJqytLJD2iUsC/P9zd+EgUgbKxXNi0rpJLQkYSJxERGDOCIdSGNzKEyIHtDkLlN6Feyz7zFQ0PVSedocHgOswJHdlNcbpEXm9VzemcmGR4n4cTMbok0DBuwQ4aDoTGWTwm4GnWeQTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742964972; c=relaxed/simple;
-	bh=yTKIOfryki/fGti6w2Shb9aoBfWhc04+/l+3kndOBtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G6p5Tk4jZRAQI5aEkJZQ0BH0P+hy4sPKd7PQUtP7A7m62KG8PNutk98z1TE/vSkBC4XA/Hh4jXo82V5LjT1ocnb+N1kVs7tf5QCFyvy8klB46ZPL30iXWRW6b1pkTe0SocqrJEsUBhxOEdmVaAw5mqOjjDca5QZ8ugLxDqbd9VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ECsaqbgT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q18dJA008529;
-	Wed, 26 Mar 2025 04:56:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ipBLkZWSXOLbfQtNCwRbaZjtD4DLXDasHWxjzOeqQQw=; b=ECsaqbgTUeNPSrd9
-	2MVNS5zS/viZVefHOtZl8IpmL8yYFCCnuy4sBewzrg6q0gQJMXZfPTlgf0944IWO
-	h5rdIykDegVoHoW7sA/Sgak0E2xLe5uFsPQB/IjS0tX/C+vIkH4jNqW2MBbaK7dy
-	iu8hxrHIqCxoUBrC74ZyUdFylSjqmckfb8CpjTuCoutB+zitoY6frmIOeus9pXXR
-	LR8LH9+B+ardMv7i5tC19o+kyvbBLlkoKVbrePIXLQkKVmZJfM9kdVR8RcfoIkBn
-	6EeXwJLcqN8drSeUIApvXpFywH9L7kCKgXZTwtJB0cCHj/iJkoZfPretLeuPd3Q/
-	6P5XmQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m7nf0e2q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 04:56:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q4u5m5019647
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 04:56:05 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
- 2025 21:56:02 -0700
-Message-ID: <dc7ae8d3-f5c0-4d5b-8a21-1439f518fe4a@quicinc.com>
-Date: Wed, 26 Mar 2025 10:25:59 +0530
+	s=arc-20240116; t=1742965061; c=relaxed/simple;
+	bh=93MlavBIl/4kdMRvF3+IZGoDg6KItSiY8xKTpxMFbOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h8+aeMUUZcWWWSIBNPXqZEL5wdAuc4BWwMucyE1/mFmieJh53eGiM9Yo6H09ptm2mt5LZMNrma6Ck4D2W7zpGGR0mVUcrEXi5S/AwizRtdgINbcCbE4hCWTJNqIWLe+Ml7fjVib27GJOQqE2bpY2lPPUmxEdzO8Milc39LGX38g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MLKJL8zM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742965057;
+	bh=W90NTUGk+OF4Zdgnn9pdtm3xyyNXg4FMmcM3Gdh2gLE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MLKJL8zMuMsnTvI0RZXnImKPNNS3fi49D/IOL2kDilASWv5gaL3LF8pnf+ReDUK/o
+	 71eneSEonwywrD/epEAR9w5BfhajiesxsvesPSQELbi6l2cxsvqP9FVKlYV99X3xem
+	 E5qu9C+SjgnSgfJl4EBMGd+/hGdk1ZYFZ1ocE+LJNEt1U4tT/6OasePiLNlPYXIirS
+	 GgQ9n8iP89QnkcgL5Y5gB/ByJrXBnRiGDpV/e3xMJBCPAo3Jxc2RdMWIqihY6CbMMX
+	 nnZy0PpD/ht/tT6cb5mNWqYtm6hSXA954uNU0Db71Rt4ZJDxKPvvbqYHhTWX6NQeXb
+	 2PwSXGaqpp89g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMvfm47LPz4x2g;
+	Wed, 26 Mar 2025 15:57:36 +1100 (AEDT)
+Date: Wed, 26 Mar 2025 15:57:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <shuah@kernel.org>, Brendan Higgins
+ <brendanhiggins@google.com>
+Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Sergio =?UTF-8?B?R29uesOhbGV6?= Collado <sergio.collado@gmail.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>, Thomas
+ Gleixner <tglx@linutronix.de>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas.weissschuh@linutronix.de>
+Subject: Re: linux-next: manual merge of the kspp tree with the kunit-next
+ and mm trees
+Message-ID: <20250326155735.55e4677c@canb.auug.org.au>
+In-Reply-To: <20250317213953.01ca90e9@canb.auug.org.au>
+References: <20250317213953.01ca90e9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] i2c: qcom-geni: Use generic definitions for bus
- frequencies
-To: Christopher Obbard <christopher.obbard@linaro.org>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-CC: Andi Shyti <andi.shyti@kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Viken
- Dadhaniya" <quic_vdadhani@quicinc.com>
-References: <20250322144736.472777-1-andriy.shevchenko@linux.intel.com>
- <CACr-zFCF_b0_3NSLFvtgfpAbsSwUOYv5fS==PPbn9zXPBS0NHw@mail.gmail.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <CACr-zFCF_b0_3NSLFvtgfpAbsSwUOYv5fS==PPbn9zXPBS0NHw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1HdTFIfhCuIvupX-dt2yeFJm908t3X7f
-X-Proofpoint-GUID: 1HdTFIfhCuIvupX-dt2yeFJm908t3X7f
-X-Authority-Analysis: v=2.4 cv=IMMCChvG c=1 sm=1 tr=0 ts=67e388e5 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=umFOggLF3V42L3TlGzYA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 mlxscore=0 clxscore=1011 phishscore=0
- priorityscore=1501 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260027
+Content-Type: multipart/signed; boundary="Sig_/uJsNFQgVtXLRjpWV2SBjjqn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Thanks Andy for the change !
+--Sig_/uJsNFQgVtXLRjpWV2SBjjqn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 3/22/2025 9:48 PM, Christopher Obbard wrote:
-> Hi Andy,
-> 
-> On Sat, 22 Mar 2025 at 14:59, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
->>
->> Since we have generic definitions for bus frequencies, let's use them.
->>
->> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
-Reviewed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> 
->> ---
->>   drivers/i2c/busses/i2c-qcom-geni.c | 19 +++++++++----------
->>   1 file changed, 9 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
->> index 515a784c951c..ccea575fb783 100644
->> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->> @@ -71,7 +71,6 @@ enum geni_i2c_err_code {
->>                                                                          << 5)
->>
->>   #define I2C_AUTO_SUSPEND_DELAY 250
->> -#define KHZ(freq)              (1000 * freq)
->>   #define PACKING_BYTES_PW       4
->>
->>   #define ABORT_TIMEOUT          HZ
->> @@ -148,18 +147,18 @@ struct geni_i2c_clk_fld {
->>    * source_clock = 19.2 MHz
->>    */
->>   static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
->> -       {KHZ(100), 7, 10, 12, 26},
->> -       {KHZ(400), 2,  5, 11, 22},
->> -       {KHZ(1000), 1, 2,  8, 18},
->> -       {},
->> +       { I2C_MAX_STANDARD_MODE_FREQ, 7, 10, 12, 26 },
->> +       { I2C_MAX_FAST_MODE_FREQ, 2,  5, 11, 22 },
->> +       { I2C_MAX_FAST_MODE_PLUS_FREQ, 1, 2,  8, 18 },
->> +       {}
->>   };
->>
->>   /* source_clock = 32 MHz */
->>   static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
->> -       {KHZ(100), 8, 14, 18, 40},
->> -       {KHZ(400), 4,  3, 11, 20},
->> -       {KHZ(1000), 2, 3,  6, 15},
->> -       {},
->> +       { I2C_MAX_STANDARD_MODE_FREQ, 8, 14, 18, 40 },
->> +       { I2C_MAX_FAST_MODE_FREQ, 4,  3, 11, 20 },
->> +       { I2C_MAX_FAST_MODE_PLUS_FREQ, 2, 3,  6, 15 },
->> +       {}
->>   };
->>
->>   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
->> @@ -812,7 +811,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
->>                                         &gi2c->clk_freq_out);
->>          if (ret) {
->>                  dev_info(dev, "Bus frequency not specified, default to 100kHz.\n");
->> -               gi2c->clk_freq_out = KHZ(100);
->> +               gi2c->clk_freq_out = I2C_MAX_STANDARD_MODE_FREQ;
->>          }
->>
->>          if (has_acpi_companion(dev))
->> --
->> 2.47.2
->>
->>
+Hi all,
 
+On Mon, 17 Mar 2025 21:39:53 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the kspp tree got a conflict in:
+>=20
+>   lib/Makefile
+>=20
+> between commits:
+>=20
+>   62f3802332ed ("vdso: add generic time data storage")
+>=20
+> from the mm-unstable branch of the mm tree,
+>=20
+>   c104c16073b7 ("Kunit to check the longest symbol length")
+>=20
+> from the kunit-next tree and commit:
+>=20
+>   db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory")
+>=20
+> from the kspp tree.
+>=20
+> I fixed it up (see below and added a merge fix patch) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 17 Mar 2025 21:35:42 +1100
+> Subject: [PATCH] fix up 2 for "lib: Move KUnit tests into tests/ subdirec=
+tory"
+>=20
+> interacting with commit
+>=20
+>   c104c16073b7 ("Kunit to check the longest symbol length")
+>=20
+> from the kunit-next tree.
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  lib/tests/Makefile                     | 2 ++
+>  lib/{ =3D> tests}/longest_symbol_kunit.c | 0
+>  2 files changed, 2 insertions(+)
+>  rename lib/{ =3D> tests}/longest_symbol_kunit.c (100%)
+>=20
+> diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+> index a434c7cb733a..f2c3c4f74608 100644
+> --- a/lib/tests/Makefile
+> +++ b/lib/tests/Makefile
+> @@ -20,6 +20,8 @@ CFLAGS_test_fprobe.o +=3D $(CC_FLAGS_FTRACE)
+>  obj-$(CONFIG_FPROBE_SANITY_TEST) +=3D test_fprobe.o
+>  obj-$(CONFIG_HASHTABLE_KUNIT_TEST) +=3D hashtable_test.o
+>  obj-$(CONFIG_HASH_KUNIT_TEST) +=3D test_hash.o
+> +CFLAGS_longest_symbol_kunit.o +=3D $(call cc-disable-warning, missing-pr=
+ototypes)
+> +obj-$(CONFIG_LONGEST_SYM_KUNIT_TEST) +=3D longest_symbol_kunit.o
+>  obj-$(CONFIG_TEST_IOV_ITER) +=3D kunit_iov_iter.o
+>  obj-$(CONFIG_IS_SIGNED_TYPE_KUNIT_TEST) +=3D is_signed_type_kunit.o
+>  obj-$(CONFIG_KPROBES_SANITY_TEST) +=3D test_kprobes.o
+> diff --git a/lib/longest_symbol_kunit.c b/lib/tests/longest_symbol_kunit.c
+> similarity index 100%
+> rename from lib/longest_symbol_kunit.c
+> rename to lib/tests/longest_symbol_kunit.c
+> --=20
+> 2.45.2
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc lib/Makefile
+> index 651811f5d677,89b8a4bce108..000000000000
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@@ -131,7 -119,7 +118,7 @@@ endi
+>   obj-$(CONFIG_DEBUG_INFO_REDUCED) +=3D debug_info.o
+>   CFLAGS_debug_info.o +=3D $(call cc-option, -femit-struct-debug-detailed=
+=3Dany)
+>  =20
+> - obj-y +=3D math/ crypto/ vdso/
+>  -obj-y +=3D math/ crypto/ tests/
+> ++obj-y +=3D math/ crypto/ vdso/ tests/
+>  =20
+>   obj-$(CONFIG_GENERIC_IOMAP) +=3D iomap.o
+>   obj-$(CONFIG_HAS_IOMEM) +=3D iomap_copy.o devres.o
+
+The "longest symbol length" part of this is now conflicts between
+Linus' tree and the kunit-next tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uJsNFQgVtXLRjpWV2SBjjqn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjiT8ACgkQAVBC80lX
+0Gx/gAf8D+Rf8Of+J4VMcqmmtg73AUyb0k5ZshFMwmEz3DPlLjAIELRvDu3uooYY
+yNYZEB1xnd/eXtqTjszlYhhpCG8GfguelO9PJshx5l2gEAhl1ap+5PSmLzMcZqkK
+yTLWS8aQ/hVU/VUonaJ7NHiwIVe3OqoFJRCkA67OkfVskU6DI/jTLZ/VMvNDD/VQ
+2t/oHFrTyorfV3ViIxZR/vLv4Al8TRR1VPLFxJGOZGG/Mce+DLfOHVpLYXiZWNFH
+Xz6g2nYnfzXmXNrsmVl5jby2w4l0Yd8k/EHoRecMnP5I4dLXpLKC1rA+dxH8/+kE
+DRH05eLUCLmo5a5C5ZRxk2baA62nGQ==
+=wjLF
+-----END PGP SIGNATURE-----
+
+--Sig_/uJsNFQgVtXLRjpWV2SBjjqn--
 
