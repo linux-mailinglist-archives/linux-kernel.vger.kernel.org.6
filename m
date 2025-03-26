@@ -1,95 +1,100 @@
-Return-Path: <linux-kernel+bounces-577649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85034A71FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A778A71FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648593BB7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39B61888122
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7118225484A;
-	Wed, 26 Mar 2025 20:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC541BD03F;
+	Wed, 26 Mar 2025 20:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="EsH2tnBR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTS0sTLn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAB21BD03F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743019769; cv=pass; b=kZMq3WH7xkHeHJPd9noECoTkZzyK0AINPN175+rzLQZkVzRXpdWei9uZ+tmpzFEV5zpvLGjf9kbWuLVdkEyM4gdbziIGfxQj8cFmmc47/AvusKccF5ApMkg1McFxzvRtKLE9qRlZ9RHla7f42RXt2yOud0rkl5ULk1D24yumQ0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743019769; c=relaxed/simple;
-	bh=f2UtcRRZub/HpkPVYMefrEyU7OxM4hgtJ27zHGLc6mg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1rQ6/C7yZVfMSB2J8BCHWRaJzjJSleLno1K2Toh7iAZH301liRitYpawc2TY0jmmAoaz/DcfLbXmWjxFDKf7HLijhPs+gUfBevFrGJxFmHl4/HXvA5FL+/8XTPfxUMZAA6GlSEdL0Pdg9PtGuaCr0RHmrI6On/QLWAMyEpi8UI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=EsH2tnBR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743019743; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d+c7ESZdkyR1GlQ6EZ4v8xLwEw/oKw0riRg66riBzhCfJSrAeGexqUzmzdfwFyCq7meKu7F2yQVysGolZvL7Unxzhpo0TkMRjfrfGn0+j8mwHiY6dCDTV4/9LH1TzQqdwGcsgoHiQ2wPp/Fy7KT7gTU79nc4pKQaRVfkPrBLX6Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743019743; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lJEcZ1DcNk21RCbuiJsB6ijhomxJfvHr1TaAlYoZBCc=; 
-	b=GkIPcwwh7HB/IGpBH2AnXkqZAd4hdXSX3bj/p9sRcqnTLoUqRvjppr5kmQrz21LxgY/pqfJ4TCiM4jCPBuZmjJDJCz+ON117sz7dWksI/MYToc92QMLbfl9MJdMxJVhLMRkRrqbVZ2PDmcI0dMBhS0Y5oCqG0AuL6X2RDdIn8xA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743019743;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=lJEcZ1DcNk21RCbuiJsB6ijhomxJfvHr1TaAlYoZBCc=;
-	b=EsH2tnBRrr7dJdta9C+6iQk5/8TN4hAk1rhugDnJmCZNu7aO1o4Sq397v7a8Wu9u
-	qu9mW3vOAy4mXE+LfgV636KHGGerkSq7tI2cZ81xUI3TdVgkFiFCMBiLoct9ynRoq/X
-	MbGrIE07MV+DWEpqWf2cgezHYDTN4KRdxov+11Cg=
-Received: by mx.zohomail.com with SMTPS id 1743019741127156.797910467649;
-	Wed, 26 Mar 2025 13:09:01 -0700 (PDT)
-Message-ID: <1c9daef3-cd64-4f2f-8021-6ab2f17ae572@collabora.com>
-Date: Wed, 26 Mar 2025 23:08:55 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E86D1F4736;
+	Wed, 26 Mar 2025 20:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743019749; cv=none; b=nWbkbS574CN/rBqWEEamyM94LSh3SXX1QZwugGvJAcy7tZ7MZT5/R0YubCN6w+oJj4vf8olFoyTiMF4pS1032dUnZTM+qo6STeyukvw6SPZXuSeXK5hlZ9vHp76Bv0O+hb49C8eNujhvzo8wMXFMWkqP5UxQaiKws1Kt6UNGcYg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743019749; c=relaxed/simple;
+	bh=bc3DKkJ/3ho9CogsZhj5BhBJLmQCTRULVqyGxLmmRs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6E0o5k/YB3NBx59ht2k4UDmLxDJXXNCcEp8Y5yu6EVUk9XzXnNhuyZbTnjcyUIncxVl8BO8+A8iyMSlP12v2qYRCKqOu+WTnfKdA5msMuM8zRtPJK5NI2jspxTFuObUiJeV2SJ5nYxmYpZAZnSWXv0ig2/oUbsAFhpix31cNUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTS0sTLn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AB1C4CEE2;
+	Wed, 26 Mar 2025 20:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743019749;
+	bh=bc3DKkJ/3ho9CogsZhj5BhBJLmQCTRULVqyGxLmmRs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KTS0sTLnOS5ScYgfJtL6Uo3VKHyQd16srCfN7E/U7T47f3vEt3CaoUCiFIrh3QwmK
+	 W5uTuGM4Ux6ctIrMc58SIxWEXAenmlPOXyTXzE+BpF5oFO9ljmOTPbAP6ZL//Rf/Ay
+	 D3WHpcaCImc2/mPrbpsYrwlHAp8WrcpKopYRyENBbSNPy7sRgknL1Bs3AAWFkk0kj6
+	 KX8hO2xFTTYdHjiYEhOrJp5jvCHaqlXchGFI7Bi5bx0xmd+kykeOF/Vj3g4nEnsKgL
+	 HO8LdlbLbPll3opT4GUKY/OzUancYV2x3dBV0tW4DAe6tNRUeb6auoNkZfiOdOoxma
+	 zdCSGbEtujSXQ==
+Date: Wed, 26 Mar 2025 22:09:06 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: "Hansen, Dave" <dave.hansen@intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
+	"Cai, Chong" <chongc@google.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"Annapurve, Vishal" <vannapurve@google.com>,
+	"dionnaglaze@google.com" <dionnaglaze@google.com>,
+	"bondarn@google.com" <bondarn@google.com>,
+	"Raynor, Scott" <scott.raynor@intel.com>,
+	"Zhang, Cathy" <cathy.zhang@intel.com>
+Subject: Re: [PATCH 3/4] x86/sgx: Define error codes for ENCLS[EUPDATESVN]
+Message-ID: <Z-Re4gqcCh0GSvKC@kernel.org>
+References: <20250321123938.802763-1-elena.reshetova@intel.com>
+ <20250321123938.802763-4-elena.reshetova@intel.com>
+ <Z98wDd_eMCFE40Z7@kernel.org>
+ <DM8PR11MB575028B19C9C23E6EF31357FE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 00/10] Add generic DRM-shmem memory shrinker (part 1)
-To: Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Qiang Yu <yuq825@gmail.com>,
- Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com
-References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
- <0e0686da-ae96-4a7a-81b2-b9ece1fa4837@suse.de>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0e0686da-ae96-4a7a-81b2-b9ece1fa4837@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR11MB575028B19C9C23E6EF31357FE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 
-On 3/25/25 17:17, Thomas Zimmermann wrote:
-> I've looked through this before, so
+On Mon, Mar 24, 2025 at 12:21:14PM +0000, Reshetova, Elena wrote:
 > 
-> Acked-by: Thomas Zimmermann <tzimmermann@suse.d>
 > 
-> for the series.
+> > On Fri, Mar 21, 2025 at 02:34:42PM +0200, Elena Reshetova wrote:
+> > > Add error codes for ENCLS[EUPDATESVN], then SGX CPUSVN update
+> > > process can know the execution state of EUPDATESVN.
+> > >
+> > 
+> > Enumerate the error codes. 
+> 
+> You mean in the commit message or? 
 
-Applied to misc-next, thanks!
+I'm not really sure how kernel uses them.
 
--- 
-Best regards,
-Dmitry
+> 
+> 
+> > Do we need all of the three added?
+> 
+> Yes, we do. They are all valid error codes that can be received as a result of
+> execution of EUPDATESVN. 
+> 
+> Best Regards,
+> Elena.
+
+BR, Jarkko
 
