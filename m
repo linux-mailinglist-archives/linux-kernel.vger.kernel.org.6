@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-576541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E856A710B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:45:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6339DA710B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1583B1C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:45:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3C41891AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707D518DB19;
-	Wed, 26 Mar 2025 06:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EE318C91F;
+	Wed, 26 Mar 2025 06:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CYnczo+S"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYNgQnO/"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5742E3370;
-	Wed, 26 Mar 2025 06:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9142E3370
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742971526; cv=none; b=ugTISm/jaQyt5yi4/7vqrYzNE+kOmJ8uYItQs/CZke39ZYse4vg8ebqmpx3bkSafbs7a27cEoxhiMHkmLLwxQIkT99ZRklakGu4TVWPl5ohI7kcDc/LonZoRpurm12nK8WvMG7UAIecHOYmsVgRIiyIZTRy4N5e/L9tMezZyTkQ=
+	t=1742971620; cv=none; b=tpB2PExwunidPQ1iik0ofgcq2OOO57aV5wRU+xE4rrjjRRJqB9dPLg1moHrMlZCkj6BozsQFRFWRapBCzNmmmqWjPQPmCQ+CEbK4odEcWbAP6brvspC77f/aI9460KtfDDzWLOCIdlm8lh1wLOH/RWE9bYTWXTjQHiBY4ZY57Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742971526; c=relaxed/simple;
-	bh=oiypN598uF6V6jJVYKswR75CGS8EvahQEBQfXkQIPG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bEGx5n57jIKl1jdVNSBQxolrdrE88uAuQubZJu5a4+opWA9F0vCoelswKj9FCyk2Uq/bJt3aUcSV+O62qFvxDbXJY7OSdmlTjECbEKzii1a40rU86eJU6z0cAnF93gJQqcDHCNWN8mkrhFVypPpqNRk4wDZYOlgRf4weuQHelfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CYnczo+S; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q64GBL026608;
-	Wed, 26 Mar 2025 06:45:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d//EkLK8NlNhrMxANYCpSXjTkPzJKf9XO3dDZrPjyb4=; b=CYnczo+StkThpktw
-	v/OqgyADRy3nZv1CHyRHSpAeWT5DN9ThhTw5OfNVcY9+k5KOtcC005gShLvx5hqG
-	aUAT9ys0k2q3FhZ0SgF11+j5UaWGkEQz9FcywnPXkQw9a0M+ByZ6nOoTASQ6hAeE
-	ji3Rmw5oCoDqYUunU6l0LUhfHeKKkuDD0ylC241psTlQ7iwJ4VDfT6wPF0eo7j9X
-	ly6cHIG+ftuTVHrBm8Q8xtuIxMut1Or6me6WB2EY3nkZ4AxO+b7UF84pYvpdE/tQ
-	H0acLYQKeywEFr7JL8eY+5sTzouXDfjyH54JyII+5v1vn+XM8aGYaqSUz26B1L8g
-	9dE1Gg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcybwy4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 06:45:07 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q6j6U1011352
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 06:45:06 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
- 2025 23:45:03 -0700
-Message-ID: <8c624cf0-febc-4ab9-8141-2372bfe4d577@quicinc.com>
-Date: Wed, 26 Mar 2025 12:15:00 +0530
+	s=arc-20240116; t=1742971620; c=relaxed/simple;
+	bh=rfs2BZ7t3BWRe4MgBwS40Fxv53iK1LxffPws9X1W4Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tZPVHTIVNb5j40XGtJhJa4jJbkWLCXkfgBwPAqjwUNq57rCR+n2gsRuzkaV6XoKAOiEibWlWjy9mq/1vKUP2dxUqqCycfD1OBGfs29JacEeBXJNmWpjQwtTstdPd7tolJRr23KEbSwC0QwnrIHUB3UNZm1tYhY6P1LVUNYFG6kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYNgQnO/; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf848528aso53864315e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742971617; x=1743576417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0ny5+61l3czR1CA2kOZOSeI2wheuddYkyZQLmEzW64=;
+        b=SYNgQnO/KqlndXXnAgvxAAWelOrWi272fNXIrfzSKRlKXoFicmDpmV3ep76TLIT/b3
+         8hc1vAtPr3YRaM3YFX4zradjtO112Pm1Lup2+sSL/6fFgT9Te2/cDvdPPYhcqFQjojbD
+         PO8t0qEh5NuluQUijeiQtogBvrI0oMFAyc88WQCxvfpO4CoNkhn8KCXSg+lRH5/Nbn0K
+         +aK9XY+gNbe0afSImuH/V2mEKfbA6MgWjvxAPGj713LAORvHchT6m/Pa+UE2ZlDY0S5k
+         eBEutAaO/eg0X4ZstykWDRS/bEXrtDYRpbEWNU+V3ITW+LdvMwkQalJii7Vn6+4UJRxb
+         Qh+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742971617; x=1743576417;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M0ny5+61l3czR1CA2kOZOSeI2wheuddYkyZQLmEzW64=;
+        b=kVHcUhwN+RJhA2fDJEY4BEyL819vmO9KAYFLqhY+5FZRSb5rf4Je32foHJUydlTDK/
+         YbqJDbsJr73qKDceRLtluvR9lUzf5hGOgk8NZnNuVVNXBWx3IoJ3g3+5IO9+6GmS8Hzl
+         26qP0iSnX9bWxkGXswCNxyweyFTPck7gtXV7FnxCMzeyMiHEWjZmzSHNJO6AlagKDFqg
+         Xd3xqU/roO3mA06zTw4Rhx/Ka8SYEKYoE8ufjpPu0zRLZE0Gox/CW4WHu2pr8Trv4YZB
+         TsWxQUgx4KxgeRZrO5jPGL1XD78Ba974MDaeLlJNinngnRB4e5LOy/jLxxnYR0TM9K1X
+         Vx8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYQOB+7FC27/52kFuJYevRPENIOrJ86iRhcTqJeiv1AtTaei1nqygl6EKszMkZ8kIFQngOc52Nnt1P09o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhqa6E5nlBgod0Sg4J6EX2r9rpIL4MLmyCdScLp9uv3NK7vpXM
+	ZZIBGRrwbI/kMXRNd8JMdekkEt4dXUvNGHqsmL4Ds/hzzoJiix6a
+X-Gm-Gg: ASbGncvGLJfbFjiMFBPXCj4OnNswPtHz7CBuE4hhE7x98ZjYOI9Ebbv5nFrWd+ujwBX
+	LcKO5IeqFJVPWoeF7RssZ1taCAgP0g7DB4yNyEzh8yvGet4lpMTyVBxcrDuA6sClmbZDfpZE7Ur
+	l7rL+GZi7apw8I4wkDPSgolMBvRR6+xtfIi+At28hM5LL+kiHseHYoIQMLHcja1AiL6tM0inBJw
+	eecyBhjzakKqmomVIYbFc3Sa7L2M6i1GtNtyQ5iHieKh94ZX9h4KYmjLm2bmFo4X2j85vRj/ehx
+	BKd6Ydh9znqnPnGaCexKpl8eVMN/KGTGtCSbZT00KQ==
+X-Google-Smtp-Source: AGHT+IE7D2Ij3U0QNaWzufulupKrE6f5+QxvsQxn39MmFMpvn5EuBP413aKBi5byWZMPxUhQOwtkCQ==
+X-Received: by 2002:a5d:64cc:0:b0:390:e62e:f31f with SMTP id ffacd0b85a97d-3997f8f277dmr16680318f8f.3.1742971616570;
+        Tue, 25 Mar 2025 23:46:56 -0700 (PDT)
+Received: from pc.. ([197.155.71.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3b83sm16139702f8f.33.2025.03.25.23.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 23:46:55 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: gregkh@linuxfoundation.org,
+	outreachy@lists.linux.dev
+Cc: karanja99erick@gmail.com,
+	philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8723bs: Rename variables v2
+Date: Wed, 26 Mar 2025 09:46:47 +0300
+Message-ID: <20250326064647.8380-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] i3c: Fix read from unreadable memory at
- i3c_master_queue_ibi()
-To: Frank Li <Frank.li@nxp.com>,
-        Manjunatha Venkatesh
-	<manjunatha.venkatesh@nxp.com>
-CC: <alexandre.belloni@bootlin.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <bbrezillon@kernel.org>,
-        <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <rvmanjumce@gmail.com>, <stable@vger.kernel.org>
-References: <20250325102332.2435069-1-manjunatha.venkatesh@nxp.com>
- <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e3a273 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=8AirrxEcAAAA:8 a=v-MiteamF9m1uwOrjlcA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-ORIG-GUID: L2jECwzCxSH8wi0t7I2AstVutKQazjYD
-X-Proofpoint-GUID: L2jECwzCxSH8wi0t7I2AstVutKQazjYD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0 phishscore=0
- adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260039
 
+Rename the variable `mediaStatus` to `media_status` and variable
+`lpsVal` to `lps_val` to adhere to Linux kernel coding
+standards by using snake_case instead of CamelCase.
 
+changes in v2:
+  reverted double blank line changes committed earier ensuring
+  my patch contains uniform changes.
 
-On 3/25/2025 8:13 PM, Frank Li wrote:
-> Subject should be
-> 
-> i3c: Add NULL pointer check in i3c_master_queue_ibi()
-> 
-yes, Aligned.
-> On Tue, Mar 25, 2025 at 03:53:32PM +0530, Manjunatha Venkatesh wrote:
->> As part of I3C driver probing sequence for particular device instance,
->> While adding to queue it is trying to access ibi variable of dev which is
->> not yet initialized causing "Unable to handle kernel read from unreadable
->> memory" resulting in kernel panic.
->>
->> Below is the sequence where this issue happened.
->> 1. During boot up sequence IBI is received at host  from the slave device
->>     before requesting for IBI, Usually will request IBI by calling
->>     i3c_device_request_ibi() during probe of slave driver.
->> 2. Since master code trying to access IBI Variable for the particular
->>     device instance before actually it initialized by slave driver,
->>     due to this randomly accessing the address and causing kernel panic.
->> 3. i3c_device_request_ibi() function invoked by the slave driver where
->>     dev->ibi = ibi; assigned as part of function call
->>     i3c_dev_request_ibi_locked().
->> 4. But when IBI request sent by slave device, master code  trying to access
->>     this variable before its initialized due to this race condition
->>     situation kernel panic happened.
-> 
-> How about commit message as:
-> 
-> The I3C master driver may receive an IBI from a target device that has not
-> been probed yet. In such cases, the master calls `i3c_master_queue_ibi()`
-> to queue an IBI work task, leading to "Unable to handle kernel read from
-> unreadable memory" and resulting in a kernel panic.
-> 
-> Typical IBI handling flow:
-> 1. The I3C master scans target devices and probes their respective drivers.
-> 2. The target device driver calls `i3c_device_request_ibi()` to enable IBI
->     and assigns `dev->ibi = ibi`.
-> 3. The I3C master receives an IBI from the target device and calls
->     `i3c_master_queue_ibi()` to queue the target device driver’s IBI handler
->     task.
-> 
-> However, since target device events are asynchronous to the I3C probe
-> sequence, step 3 may occur before step 2, causing `dev->ibi` to be `NULL`,
-> leading to a kernel panic.
-> 
-> Add a NULL pointer check in `i3c_master_queue_ibi()` to prevent accessing
-> an uninitialized `dev->ibi`, ensuring stability.
-> 
->>
->> Fixes: 3a379bbcea0af ("i3c: Add core I3C infrastructure")
->> Cc: stable@vger.kernel.org
->> Link: https://lore.kernel.org/lkml/Z9gjGYudiYyl3bSe@lizhi-Precision-Tower-5810/
->> Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
->> ---
->> Changes since v4:
->>    - Fix added at generic places master.c which is applicable for all platforms
->>
->>   drivers/i3c/master.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
->> index d5dc4180afbc..c65006aa0684 100644
->> --- a/drivers/i3c/master.c
->> +++ b/drivers/i3c/master.c
->> @@ -2561,6 +2561,9 @@ static void i3c_master_unregister_i3c_devs(struct i3c_master_controller *master)
->>    */
->>   void i3c_master_queue_ibi(struct i3c_dev_desc *dev, struct i3c_ibi_slot *slot)
->>   {
->> +	if (!dev->ibi || !slot)
->> +		return;
->> +
-1. Shouldn't this be a Logical AND ? what if slot is non NULL but the 
-IBI is NULL ?
+Fixes checkpatch.pl warning:
+	CHECK: Avoid CamelCase: <mediaStatus>
+	CHECK: Avoid CamelCase: <lpsVal>
 
-2. This being void function, it doesn't say anything to caller if it's 
-successful or failed ? Should we make this non void function ?
-if not, i am thinking it may run into multiple attempts, no log too.
->>   	atomic_inc(&dev->ibi->pending_ibis);
->>   	queue_work(dev->ibi->wq, &slot->work);
->>   }
->> --
->> 2.46.1
->>
-> 
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_btcoex.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+index d54095f50113..f4b19ef7b341 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
++++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+@@ -8,14 +8,14 @@
+ #include <rtw_btcoex.h>
+ #include <hal_btcoex.h>
+ 
+-void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
++void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
+ {
+-	if ((mediaStatus == RT_MEDIA_CONNECT)
++	if ((media_status == RT_MEDIA_CONNECT)
+ 		&& (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
+ 		rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
+ 	}
+ 
+-	hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
++	hal_btcoex_MediaStatusNotify(padapter, media_status);
+ }
+ 
+ void rtw_btcoex_HaltNotify(struct adapter *padapter)
+@@ -52,14 +52,14 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
+ void rtw_btcoex_LPS_Enter(struct adapter *padapter)
+ {
+ 	struct pwrctrl_priv *pwrpriv;
+-	u8 lpsVal;
++	u8 lps_val;
+ 
+ 
+ 	pwrpriv = adapter_to_pwrctl(padapter);
+ 
+ 	pwrpriv->bpower_saving = true;
+-	lpsVal = hal_btcoex_LpsVal(padapter);
+-	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
++	lps_val = hal_btcoex_LpsVal(padapter);
++	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
+ }
+ 
+ void rtw_btcoex_LPS_Leave(struct adapter *padapter)
+-- 
+2.43.0
 
 
