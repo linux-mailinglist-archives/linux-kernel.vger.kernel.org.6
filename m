@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-577472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C46A71D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:42:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B541A71D83
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5BD7A222F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B1E18875E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E88A23F29C;
-	Wed, 26 Mar 2025 17:42:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72323E331;
+	Wed, 26 Mar 2025 17:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fexh2oru"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6942B23E336
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF623E25D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010923; cv=none; b=H591VNFlgvbGI8m3MTLof6hu1fIJkWx74z7VzZ2Y0cImdYRRTqOIuG2kA7sbzpMK9dL1Zr2WELaaW3aaKv2RfzqZd2Zsz/SzbBLXRAfWnmkHr+BwYi7eF6AmP66Z6mwMWJE13+CaWH44khOEGnxZcLSwhect4jj7p7CF3uB2Vmc=
+	t=1743010910; cv=none; b=S812GRo2tr+5TtesVKAoO+ipxq4Hb9jA9UAudtmPoUGllP6iZ8dPT+BnFfQnmEf091LTvjbrwIbFuKbcgReZyfUVPGYTepawygTLsnWrpJ8JqeX2JYcDeNKdpb+DFe3HYkzYSPaNcCTXeU/gtYBDyLrcdX8oY64YRqbtCiiBPRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010923; c=relaxed/simple;
-	bh=Z+kmXHGClhFpLj7Nta6mCo6WFt55JgT1HnxwLsMrksk=;
+	s=arc-20240116; t=1743010910; c=relaxed/simple;
+	bh=VbMAnTpopdjLkmZXesRjVC8mZ8m6kPoSqNU934M0L50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F61rIieG89rlyVPEEQ2k5xm5g/sUOuiLgGSTH5WziE+LbBKI90XkImoEUYx+1H3zYtLymfBVEWP2btP79pPaEdNji10Nx5dpJjAlUa7ul2rBPk2gsjf0O41/C7nZrBBTEZwAwPKNlmEtg7j18hzIaHJnkZAEghzG9d54qs00O6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1txUky-0001hP-Qx; Wed, 26 Mar 2025 18:41:36 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1txUky-001nIV-1O;
-	Wed, 26 Mar 2025 18:41:36 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D680D3E7735;
-	Wed, 26 Mar 2025 17:41:35 +0000 (UTC)
-Date: Wed, 26 Mar 2025 18:41:35 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-Message-ID: <20250326-inventive-lavender-carp-1efca5-mkl@pengutronix.de>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-5-a0282524688@gmail.com>
- <20250227-spicy-grebe-of-dignity-68c847-mkl@pengutronix.de>
- <CAOoeyxWSsy0Q0Y7iJE8-DZM5Yvcdto8mncFkM8X4BvVMEgfUiQ@mail.gmail.com>
- <20250317-cuttlefish-of-simple-champagne-ee666c-mkl@pengutronix.de>
- <CAOoeyxXSC3rjeB0g5BtHKvKy-Y9Dszd5X9WuHeBeH1bk39d_Eg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+xWRN8K7Rw3dHQ928xWm8xvAUbUUK5OZtQ+wAj6LAiSf7eZt6QxSiYRo+E7FupEXWIZd/FO99YppTyfvRdWlkboKboevF2V62yCrCYlOPkPkIgjyDvN3FioTZUYQ7d4NWuvxH1VEWDn1dSpnQtG7abF1ADqyTSMBCT6d5KQ/Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fexh2oru; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QFMHkg028951
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=AtUnXSz/pPSjd1StFFw///pe
+	5D57Ql36lWJoHWVv3Fg=; b=Fexh2oruYqA7AuiHnh2DEl9WXCEYdshYebDWjZlc
+	JGNFGWH5RHBhLhbjlQw/2B9zVe90qF3/7SCwNH67i4/Pr0glrp8WrUils6l08CMq
+	5RouYJWoF6vaRSWO2odAH2W7iPx0PxJEv4sOPcl/psulIyAU6+o1Jp1yjapiPr1L
+	KwkhCvR+ykjSReuDroCi5U5OmaemfZgZScRN01peHqUTVvGS5iBelFE5gOkQRzc9
+	khDybEE2Ju7HQykeZVdshjfPwV3XkJjcemmh11uDcgQ2me7XnO7OeO2QgM7svRT0
+	uCxlWmmwFe2GER1K0LgQBdPGeilrUGE0/eYqiMO5dUq5bA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ktencntr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:47 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0a3ff7e81so20906185a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:41:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743010907; x=1743615707;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AtUnXSz/pPSjd1StFFw///pe5D57Ql36lWJoHWVv3Fg=;
+        b=LnDTdHvD66G9nwHvYZPYHOr3YC6Fv6YDtSKSRtR5Ou+xhcyC6WhRyZuCkJfEoouxi6
+         fCU+yzAt1gqGbylx8kJCFSjygnoOioGccvA74AX4gQb4qpSvGGbnxhUS9hjKrCqBLJSK
+         fxBEzjplbqaRilJ4BcWiRPFqEfj0g/HXa7OMd0WrfzAwfwgleg+Lu8TBMMed3rITxyjV
+         OI0G/CGadUslc0rhGoHFuPINBRFLS7IV0Cv4K/gdiGkbZN7k9my6zaFgleQKKsY7mzk2
+         IXGvLsao/zlGrTdmWSzBsAENxHg0Kue70BiCvqtDmzIsDp4i5ETkwiGvJoD0iT8a2GpQ
+         RC2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVu7X0hcrDU+uvTeW7SkNfxtnYodI/3/Mk8qHU7AbfsDu+Lc/VrQnvnCcYx05maPu3WUjexv1JVml3Spx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6+HpBl3k6EhL4vV/A7ZyMavyeuaxJbnrd4Wa53Zq0xjsXmQkJ
+	jXJOoflz5FgGLWqD1gpcUXIFPBkzgeR3CVbwy0rCPyFxhricd6sylRwI1GxqBJR43Wyl6gL6+bB
+	M8s40+XmU4cbofyzXY9fnoXlim3tERxunLD3uoFq+i26fbnr7LCQ9rypyQ4H5FZw=
+X-Gm-Gg: ASbGncvrXPpuPFS/kxXso4rXH1Lhwv2vxpvDqbUcHd5Wbz+YXcGyLXc9OPmsY0xqEKQ
+	THrokTFHjqVCI893rgSaoE3ccxt2ORfCt4fxJs8KOofCbzchP9dOPIZP9NDy8ZimM1dXk11yIFk
+	t66E+/+31+Zxt+7gpLp9RuZE6IaQZPYmLicPwfblmu9K5jhoeWUi3zMhAH063fVF/nqDVPrxBf2
+	Ncka27G/unyLPptU2ziAlSBo55hcqM2J6ArEHwCscWx6ijeuhp+fkn6AZamGnV+nI827vqJa1Lo
+	j4t1ulad4C3+PMNckUtro1OC6Qp+12deUKn1ZYwE2EcG8TSj6hMc1f4nJGZrN1COipsAg8yC3mo
+	LNc0=
+X-Received: by 2002:a05:620a:17a9:b0:7c3:c111:8c3d with SMTP id af79cd13be357-7c5eda91760mr82460585a.49.1743010906949;
+        Wed, 26 Mar 2025 10:41:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuqcfnhkzb0FRV+B6Fzo8Va+R5lmfJZjN21TrvUtVriwmR9+t0F3bAporcIBSfQDBEa+GQUw==
+X-Received: by 2002:a05:620a:17a9:b0:7c3:c111:8c3d with SMTP id af79cd13be357-7c5eda91760mr82455185a.49.1743010906411;
+        Wed, 26 Mar 2025 10:41:46 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7e0ebbsm22090901fa.34.2025.03.26.10.41.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 10:41:45 -0700 (PDT)
+Date: Wed, 26 Mar 2025 19:41:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V10 5/7] interconnect: qcom: sa8775p: Add dynamic icc
+ node id support
+Message-ID: <bpjjnvw4mkjieidi7ooukt7f3bgxig5ezyuhp4tjmufr77eoel@bwj75fjd3mxs>
+References: <20250324183203.30127-1-quic_rlaggysh@quicinc.com>
+ <20250324183203.30127-6-quic_rlaggysh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r56ki5hqfoc5hcq4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOoeyxXSC3rjeB0g5BtHKvKy-Y9Dszd5X9WuHeBeH1bk39d_Eg@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250324183203.30127-6-quic_rlaggysh@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=TuvmhCXh c=1 sm=1 tr=0 ts=67e43c5b cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=oKCiNua1F0BOgjzGbBIA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: k73HTQLKiditnqwIFsS6Qbah0rAtaQom
+X-Proofpoint-ORIG-GUID: k73HTQLKiditnqwIFsS6Qbah0rAtaQom
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_08,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=818
+ malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 adultscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260109
 
+On Mon, Mar 24, 2025 at 06:32:01PM +0000, Raviteja Laggyshetty wrote:
+> To facilitate dynamic id allocation, discard the static IDs
+> from node data and set alloc_dyn_id in descriptor structure
+> to indicate dynamic ID allocation. Update the topology to use
+> node pointers for links instead of static IDs and forward declare
+> the node pointer to avoid undefined references.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+>  drivers/interconnect/qcom/sa8775p.c | 952 ++++++++++------------------
+>  1 file changed, 347 insertions(+), 605 deletions(-)
+> 
 
---r56ki5hqfoc5hcq4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-MIME-Version: 1.0
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-On 26.03.2025 10:27:03, Ming Yu wrote:
-> Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2025=E5=B9=B43=E6=9C=881=
-7=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=885:21=E5=AF=AB=E9=81=93=EF=
-=BC=9A
-> >
-> > > > > +     priv->can.clock.freq =3D can_clk;
-> > > > > +     priv->can.bittiming_const =3D &nct6694_can_bittiming_nomina=
-l_const;
-> > > > > +     priv->can.data_bittiming_const =3D &nct6694_can_bittiming_d=
-ata_const;
-> > > > > +     priv->can.do_set_mode =3D nct6694_can_set_mode;
-> > > > > +     priv->can.do_get_berr_counter =3D nct6694_can_get_berr_coun=
-ter;
-> > > > > +     priv->can.ctrlmode_supported =3D CAN_CTRLMODE_LOOPBACK |
-> > > > > +             CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_BERR_REPORTI=
-NG |
-> > > > > +             CAN_CTRLMODE_FD | CAN_CTRLMODE_FD_NON_ISO;
-> > > >
-> > > > Does your device run in CAN-FD mode all the time? If so, please use
-> > > > can_set_static_ctrlmode() to set it after priv->can.ctrlmode_suppor=
-ted
-> > > > and remove CAN_CTRLMODE_FD from ctrlmode_supported.
-> > > >
-> > >
-> > > Our device is designed to allow users to dynamically switch between
-> > > Classical CAN and CAN-FD mode via ip link set ... fd on/off.
-> > > Therefore, CAN_CTRLMODE_FD needs to remain in ctrlmode_supported, and
-> > > can_set_static_ctrlmode() is not suitable in this case.
-> > > Please let me know if you have any concerns about this approach.
-> >
-> > Where do you evaluate if the user has configured CAN_CTRLMODE_FD or not?
-> >
->=20
-> Sorry, I was previously confused about our device's control mode. I
-> will use can_set_static_ctrlmode() to set CAN_FD mode in the next
-> patch.
-
-Does your device support CAN-CC only mode? Does your device support to
-switch between CAN-CC only and CAN-FD mode?
-
-regards,
-Marc
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---r56ki5hqfoc5hcq4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfkPEwACgkQDHRl3/mQ
-kZwXaAf/a0RArL3RY/rCsvGqnhAz/Nk1ljI1/sjXn6b6BRnEzwSev7b8LpGNMeTK
-ygCzVEDcFHwfjhcV2/C2irc0XtxnLLmh3YqpNF54IY/vAAFDzqPGqzOHYPiOE+Al
-ZFK6zjj26zmBDh011lfjyWk9EYvhDUfZNCUAX6N8Cdic+9wNGDiN9HKVfz6cUj9K
-oGTTUPVTU0Nh7bwnuHLuj5IIruIQlTPH6w0Yd56Uv4TvGZ0cQ+S9hgGvY2J6v4f8
-tdvZIe+xMQTR2d4kaK/HU+wA0iMdSoxKyu9sCszU3tWGH/Yb+UAF1/gcdc0f5Gk6
-0X0j7uJgXLMbbdpHbsWypGiIkORpqQ==
-=mUFO
------END PGP SIGNATURE-----
-
---r56ki5hqfoc5hcq4--
+-- 
+With best wishes
+Dmitry
 
