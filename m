@@ -1,275 +1,150 @@
-Return-Path: <linux-kernel+bounces-577582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F88A71F23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:27:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376BDA71F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C27323B2D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B6F189462C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413AB255E40;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A22561AD;
 	Wed, 26 Mar 2025 19:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7H1zHfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U78CtHDd"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718ED253B67;
-	Wed, 26 Mar 2025 19:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CAB253F1F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017233; cv=none; b=l+RTEifZEJndSgTACGn0GoTJpyuJEmeooRq2kbMt4svZRbcTVLRgbVVvyfk96194iHZTpkHvXkbozchlMr1ufj6U13Sgd03yz0G6SKyhA842O/yjX19y818Zv7SwhpgzA+ulGm/iABLCL01Xt98wJZbQ35/5NO+t3JAxF3L+4fo=
+	t=1743017233; cv=none; b=SWOjEM2IJZyQNCs0xeTfNWH4eMqvW/otjfCLV1z9+W8OdS1Yh5EkKztLSDweqvwsRybcoJs/+tBgvinRIJkBieU7m125Vbe7an1ocgb+mWvAe0OvisOb+xCDRUf7Ii+VjhzOMjT9EUx55uRL6rO/1KQmra2TDUZGxJ+gJSEtWqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743017233; c=relaxed/simple;
-	bh=5iHQPfbctrSC7dSBsYc3jaiqsRDAIya5ZCYxpgK5Nc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnR7OaVbRq4yJ9OSsnfQzmTTPX4VI8Pr1Al1Xmu6guwtH2ygHRt0eUK950YkPlhVHfLk/QI3zM8u7Rj/eWn7zpXV829jHOJ2U0qS7051xmvUUZcYYT6Ajp/5DnKCHek8CpLFqF2yxbFxJeL64Jq0E7toPGJgUbgY2MqJjLSWIvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7H1zHfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DE0C4CEE2;
-	Wed, 26 Mar 2025 19:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743017232;
-	bh=5iHQPfbctrSC7dSBsYc3jaiqsRDAIya5ZCYxpgK5Nc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O7H1zHfeFlt52dwrzEEh5mv4LpX2PNy/dOB7Wd8PNZ7PD5XIkS3iBjuyc2MkouA1n
-	 FjVoON4CpOEBhrutKCQUlPg77r4OQ/5HDF3ZX1hug+vUzGHYmbYXN0Iit67t7lMV1l
-	 JtXWIA4m/cuUp5IdkWk7onZt9TtIcVOKVNbEg43VmW8CIYQnjpWwtPiH+yBhz4aYkh
-	 tC3lFgJYcDDzRV5uw0Ss5b2KkJEzoQlnKJ7fgnx4qqb9WTzHlu+6guLfT0UVAECEZY
-	 5/c1KkVMAGQJoGvyr7ovucnmCvciKuS97wmmyJtpemYl0wrWSZJyAZGotWeXXrjo/L
-	 egHC64ZXFLB2Q==
-Date: Wed, 26 Mar 2025 21:27:08 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, "H. Peter Anvin" <hpa@zytor.com>,
-	linux-coco@lists.linux.dev,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] svsm: add header with SVSM_VTPM_CMD helpers
-Message-ID: <Z-RVDPlrQ-OWzBo5@kernel.org>
-References: <20250324104653.138663-1-sgarzare@redhat.com>
- <20250324104653.138663-3-sgarzare@redhat.com>
+	bh=+U1O+GCFM+kfSFm0eIkLWeuXl8Ro1RJubQKh9PZzrw4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Uh6ToQeqyKTWzWDUVRVaWUKIeBD2fDc7Yn984vR1bhiVh8DErGywsW92KSFLWxKW/W5S8RK2OgM1Vdz/wlf1dniVVSQn39gTEchth//8vUJ5rZ5XEBtNyuaaWpOm05+Hc6KifRM9+8/Aylq0Spz+Kpu2Zy/JB3ivcR3ja4e+weo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U78CtHDd; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff69646218so376829a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743017231; x=1743622031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IohNF223XL3lH0XqoriWRvDMNHxugR0378pliy8M2k8=;
+        b=U78CtHDdwIdCTpa2wHy/8e4yaF4RxhQhQb7qa7IBsJhwt+QqBhXDMZ/l77HOHFGwJM
+         WVwURBQ0UD9LR4a82f7/kJcagYlIOrTsEgvrTHGumTMk/KPD56FVJAkUpu/NRaHNn+GX
+         qH3q+2yCBX5bkQj1NhmJ80Pox2MiKyEyWC1LdQE3jjnAEwOUmzusDRq8rfVRANgAUPPb
+         zfaZi2rL4EvelavbDTSqcDnt4CA6natUdMKVkQUxOJOmtdUpZns+5Gr40G631VnXwRXB
+         ttpA4bRNOVM98raGI32DvBIGEAWxcTEmF70v8mdE0P0pBzrajFl4EbRTMbUCuglCKWWN
+         AvWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743017231; x=1743622031;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IohNF223XL3lH0XqoriWRvDMNHxugR0378pliy8M2k8=;
+        b=Ea8Dd0z9h5kklUj+bTsfi7lX6ctPl5Gm0ydyoTdNRYgtSbr3U/W5Uh+N3HpZqDMAWP
+         pXk8YGTKvkQp/dio+6pfcKgxs9uzBl/oI4YIKOep0VYKDlsPyGCK9VSPgyrJ7j9e2UMm
+         PqjP/vxjRuyfOHOPPIr0yvHZuEkTYSVCBmtgvONhwMgkqBSICgLVNdS8UDdfwbXEuaAg
+         pUj0G9nGsh80pDE7KWT5Hu9Lh+xoYWTSFYryv2B/XI8tyRDz2K1APfo59f/mCeOR7cQR
+         Tk3H0abuxtM7pdkm59I6wlfFVQN66TXhs9gKb5AlGGrmzLbsU7bB2+xx8q3JmWCiBd0j
+         RsVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQUqw0Heariw8eLabP9UQyZn0Utx+2gBefMqdCzMHOI/2xI8yKN6WIYM3SwkMkdm7mblqDy1OL7Mhrpr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzivQ1FLm7bEnkL1FYCGxkEW2Yhbkqy6Gyr871NGXF2eivCXIiQ
+	7h4pZvPbNviY9AduuI4KNz1UWLMyO/Xl34YTO6KYk9tC12eoVWWExsWucg7jcjDJ8/hLrc+0DY1
+	rvA==
+X-Google-Smtp-Source: AGHT+IF5Vq2DzJpQNzldBZKP+C7bbGIGWzkK3jj6QX/Dtg84AwGkvpnqQi8XzN9QF/JkIytLyWzgiVzVlO4=
+X-Received: from pjl13.prod.google.com ([2002:a17:90b:2f8d:b0:2fc:2e92:6cf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c85:b0:2ea:a25d:3baa
+ with SMTP id 98e67ed59e1d1-303a7c5d2e8mr953814a91.5.1743017231491; Wed, 26
+ Mar 2025 12:27:11 -0700 (PDT)
+Date: Wed, 26 Mar 2025 12:27:09 -0700
+In-Reply-To: <CADrL8HV=ERo3dB7u-24VhjVQ6muBHEXeAfZYY7cuE7cxALRRRA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250324104653.138663-3-sgarzare@redhat.com>
+Mime-Version: 1.0
+References: <20250325015741.2478906-1-mlevitsk@redhat.com> <20250325015741.2478906-3-mlevitsk@redhat.com>
+ <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com>
+ <Z-RKZsQngjEgcfVU@google.com> <CADrL8HV=ERo3dB7u-24VhjVQ6muBHEXeAfZYY7cuE7cxALRRRA@mail.gmail.com>
+Message-ID: <Z-RVDQC4HNxrD-pI@google.com>
+Subject: Re: [PATCH v2 2/2] KVM: selftests: access_tracking_perf_test: add
+ option to skip the sanity check
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-kselftest@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 11:46:47AM +0100, Stefano Garzarella wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> Helpers for the SVSM_VTPM_CMD calls used by the vTPM protocol defined by
-> the AMD SVSM spec [1].
-> 
-> The vTPM protocol follows the Official TPM 2.0 Reference Implementation
-> (originally by Microsoft, now part of the TCG) simulator protocol.
-> 
-> [1] "Secure VM Service Module for SEV-SNP Guests"
->     Publication # 58019 Revision: 1.00
-> 
-> Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
-> v4:
-> - used svsm_vtpm_ prefix consistently [Jarkko]
-> - removed __packed where not needed [Jarkko]
-> - expanded headers to avoid obfuscation [Jarkko]
-> - used `buf` instead of `inbuf`/`outbuf` [Jarkko]
-> - added more documentation quoting the specification
-> - removed TPM_* macros since we only use TPM_SEND_COMMAND in one place
->   and don't want dependencies on external headers, but put the value
->   directly as specified in the AMD SVSM specification
-> - header renamed in tpm_svsm.h so it will fall under TPM DEVICE DRIVER
->   section [Borislav, Jarkko]
-> v3:
-> - renamed header and prefix to make clear it's related to the SVSM vTPM
->   protocol
-> - renamed fill/parse functions [Tom]
-> - removed link to the spec because those URLs are unstable [Borislav]
-> ---
->  include/linux/tpm_svsm.h | 149 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 149 insertions(+)
->  create mode 100644 include/linux/tpm_svsm.h
-> 
-> diff --git a/include/linux/tpm_svsm.h b/include/linux/tpm_svsm.h
-> new file mode 100644
-> index 000000000000..38e341f9761a
-> --- /dev/null
-> +++ b/include/linux/tpm_svsm.h
-> @@ -0,0 +1,149 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2023 James.Bottomley@HansenPartnership.com
-> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
-> + *
-> + * Helpers for the SVSM_VTPM_CMD calls used by the vTPM protocol defined by the
-> + * AMD SVSM spec [1].
-> + *
-> + * The vTPM protocol follows the Official TPM 2.0 Reference Implementation
-> + * (originally by Microsoft, now part of the TCG) simulator protocol.
-> + *
-> + * [1] "Secure VM Service Module for SEV-SNP Guests"
-> + *     Publication # 58019 Revision: 1.00
-> + */
-> +#ifndef _TPM_SVSM_H_
-> +#define _TPM_SVSM_H_
-> +
-> +#include <linux/errno.h>
-> +#include <linux/string.h>
-> +#include <linux/types.h>
-> +
-> +#define SVSM_VTPM_MAX_BUFFER		4096 /* max req/resp buffer size */
-> +
-> +/**
-> + * struct svsm_vtpm_request - Generic request for single word command
-> + * @cmd:	The command to send
-> + *
-> + * Defined by AMD SVSM spec [1] in section "8.2 SVSM_VTPM_CMD Call" -
-> + * Table 15: vTPM Common Request/Response Structure
-> + *     Byte      Size       In/Out    Description
-> + *     Offset    (Bytes)
-> + *     0x000     4          In        Platform command
-> + *                          Out       Platform command response size
-> + */
-> +struct svsm_vtpm_request {
-> +	u32 cmd;
-> +};
-> +
-> +/**
-> + * struct svsm_vtpm_response - Generic response
-> + * @size:	The response size (zero if nothing follows)
-> + *
-> + * Defined by AMD SVSM spec [1] in section "8.2 SVSM_VTPM_CMD Call" -
-> + * Table 15: vTPM Common Request/Response Structure
-> + *     Byte      Size       In/Out    Description
-> + *     Offset    (Bytes)
-> + *     0x000     4          In        Platform command
-> + *                          Out       Platform command response size
-> + *
-> + * Note: most TCG Simulator commands simply return zero here with no indication
-> + * of success or failure.
-> + */
-> +struct svsm_vtpm_response {
-> +	u32 size;
-> +};
-> +
-> +/**
-> + * struct svsm_vtpm_cmd_request - Structure for a TPM_SEND_COMMAND request
-> + * @cmd:	The command to send (must be TPM_SEND_COMMAND)
-> + * @locality:	The locality
-> + * @buf_size:	The size of the input buffer following
-> + * @buf:	A buffer of size buf_size
-> + *
-> + * Defined by AMD SVSM spec [1] in section "8.2 SVSM_VTPM_CMD Call" -
-> + * Table 16: TPM_SEND_COMMAND Request Structure
-> + *     Byte      Size       Meaning
-> + *     Offset    (Bytes)
-> + *     0x000     4          Platform command (8)
-> + *     0x004     1          Locality (must-be-0)
-> + *     0x005     4          TPM Command size (in bytes)
-> + *     0x009     Variable   TPM Command
-> + *
-> + * Note: the TCG Simulator expects @buf_size to be equal to the size of the
-> + * specific TPM command, otherwise an TPM_RC_COMMAND_SIZE error is returned.
-> + */
-> +struct svsm_vtpm_cmd_request {
-> +	u32 cmd;
-> +	u8 locality;
-> +	u32 buf_size;
-> +	u8 buf[];
-> +} __packed;
-> +
-> +/**
-> + * struct svsm_vtpm_cmd_response - Structure for a TPM_SEND_COMMAND response
-> + * @buf_size:	The size of the output buffer following
-> + * @buf:	A buffer of size buf_size
-> + *
-> + * Defined by AMD SVSM spec [1] in section "8.2 SVSM_VTPM_CMD Call" -
-> + * Table 17: TPM_SEND_COMMAND Response Structure
-> + *     Byte      Size       Meaning
-> + *     Offset    (Bytes)
-> + *     0x000     4          Response size (in bytes)
-> + *     0x004     Variable   Response
-> + */
-> +struct svsm_vtpm_cmd_response {
-> +	u32 buf_size;
-> +	u8 buf[];
-> +};
-> +
-> +/**
-> + * svsm_vtpm_cmd_request_fill() - Fill a TPM_SEND_COMMAND request to be sent to SVSM
-> + * @req: The struct svsm_vtpm_cmd_request to fill
-> + * @locality: The locality
-> + * @buf: The buffer from where to copy the payload of the command
-> + * @len: The size of the buffer
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +static inline int
-> +svsm_vtpm_cmd_request_fill(struct svsm_vtpm_cmd_request *req, u8 locality,
-> +			   const u8 *buf, size_t len)
-> +{
-> +	if (len > SVSM_VTPM_MAX_BUFFER - sizeof(*req))
-> +		return -EINVAL;
-> +
-> +	req->cmd = 8; /* TPM_SEND_COMMAND */
-> +	req->locality = locality;
-> +	req->buf_size = len;
-> +
-> +	memcpy(req->buf, buf, len);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * svsm_vtpm_cmd_response_parse() - Parse a TPM_SEND_COMMAND response received from SVSM
-> + * @resp: The struct svsm_vtpm_cmd_response to parse
-> + * @buf: The buffer where to copy the response
-> + * @len: The size of the buffer
-> + *
-> + * Return: buffer size filled with the response on success, negative error
-> + * code on failure.
-> + */
-> +static inline int
-> +svsm_vtpm_cmd_response_parse(const struct svsm_vtpm_cmd_response *resp, u8 *buf,
-> +			     size_t len)
-> +{
-> +	if (len < resp->buf_size)
-> +		return -E2BIG;
-> +
-> +	if (resp->buf_size > SVSM_VTPM_MAX_BUFFER - sizeof(*resp))
-> +		return -EINVAL;  // Invalid response from the platform TPM
-> +
-> +	memcpy(buf, resp->buf, resp->buf_size);
-> +
-> +	return resp->buf_size;
-> +}
-> +
-> +#endif /* _TPM_SVSM_H_ */
-> -- 
-> 2.49.0
-> 
+On Wed, Mar 26, 2025, James Houghton wrote:
+> On Wed, Mar 26, 2025 at 11:41=E2=80=AFAM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > Then the auto resolving works as below, and as James pointed out, the a=
+ssert
+> > becomes
+> >
+> >                 TEST_ASSERT(!warn_only, ....);
+>=20
+> I think the auto-resolving below needs to be flipped, and the
+> TEST_ASSERT should be for `warn_only`, not `!warn_only`.
+>=20
+> If warn_only =3D=3D 1, the assert should pass.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+/facepalm, yep
 
-BR, Jarkko
+> > > > +                       break;
+> > > >                 case 'h':
+> > > >                 default:
+> > > >                         help(argv[0]);
+> > > > @@ -386,6 +394,23 @@ int main(int argc, char *argv[])
+> > > >         page_idle_fd =3D open("/sys/kernel/mm/page_idle/bitmap", O_=
+RDWR);
+> > > >         __TEST_REQUIRE(page_idle_fd >=3D 0,
+> > > >                        "CONFIG_IDLE_PAGE_TRACKING is not enabled");
+> > > > +       if (warn_on_too_many_idle_pages =3D=3D -1) {
+> > > > +#ifdef __x86_64__
+> > > > +               if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
+> > > > +                       printf("Skipping idle page count sanity che=
+ck, because the test is run nested\n");
+> > > > +                       warn_on_too_many_idle_pages =3D 0;
+> > > > +               } else
+> > > > +#endif
+> > > > +               if (is_numa_balancing_enabled()) {
+> > > > +                       printf("Skipping idle page count sanity che=
+ck, because NUMA balance is enabled\n");
+> > > > +                       warn_on_too_many_idle_pages =3D 0;
+> > > > +               } else {
+> > > > +                       warn_on_too_many_idle_pages =3D 1;
+> > > > +               }
+> > > > +       } else if (!warn_on_too_many_idle_pages) {
+> > > > +               printf("Skipping idle page count sanity check, beca=
+use this was requested by the user\n");
+> >
+> > Eh, I vote to omit this.  The sanity check is still there, it's just de=
+graded to
+> > a warn.  I'm not totally against it, just seems superfluous and potenti=
+ally confusing.
+>=20
+> I agree, it's not adding much.
+>=20
+> Separately: I've finished the MGLRU version of this test. It uses
+> MGLRU if it is available, and marking pages as idle is much faster
+> when using it. If MGLRU is enabled but otherwise not usable, the test
+> fails, as the idle page bitmap is no longer usable for this test.
+>=20
+> I'm happy to post a new version of Maxim's patch with the MGLRU
+> patches too, Maxim, if you're okay with that.
 
