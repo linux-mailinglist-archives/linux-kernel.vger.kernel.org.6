@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-576443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341C7A70F50
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:14:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7314A70F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7B1188DF81
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDA1178DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9854A15ADB4;
-	Wed, 26 Mar 2025 03:13:50 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C92155A4D;
+	Wed, 26 Mar 2025 03:20:20 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D3113C682
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0396F199BC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742958830; cv=none; b=PR46O3cSsMhaxyWPVZ9tbfvr2LnsDLi5Ol0IzRzPj1yGkY+agN4nBV9aRKC2wjuJFURYy5tuQkv6AbsNC5Q1d9j0tAcZDT91b6QwugO/VICq/IRv8cl8a49DDMHmwkktZTatJTfywMHGMtuY+lPR/zbWg1aMuyH41Fz/cL8/LlQ=
+	t=1742959220; cv=none; b=t15H8QoFyKag6TIKQlc2LbeKw2f+1INunTd/TjnBpOVkyQJBO2GaJtn3w4qgmVQrl1ZG7X6GjlNJu5ZOcBiOOktaNQZSOdygxZfjOvlWgPn47z/hkzCIyyATwo3BPCyELqjF9enB19OvAjOuS1L5sbOMEUHEHIj3aRG8zy89SQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742958830; c=relaxed/simple;
-	bh=70vbRTzit+6BL+xOUjpuD0cSQSVS4Z1KKdbALHxhdvY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SC/YZf7HkJp0tc+02fivxOspLWd5H7FeqAb+9Ix9EnWCy1emFEL3AvNtDMT4lDa5jXQfo+78dguIjgO/P27l3gbfnrxka2YP6tNppYjA4PdXd1Uk2gxOPwxDsj/89MQrny/yL13uElOO4a8U/N1R/RL/aZgmBC2qZhgkfN8EEHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201605.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202503261112314780;
-        Wed, 26 Mar 2025 11:12:31 +0800
-Received: from localhost.localdomain (120.224.42.190) by
- jtjnmail201605.home.langchao.com (10.100.2.5) with Microsoft SMTP Server id
- 15.1.2507.39; Wed, 26 Mar 2025 11:12:31 +0800
-From: wangchuanguo <wangchuanguo@inspur.com>
-To: <akpm@linux-foundation.org>
-CC: <mhiramat@kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, wangchuanguo <wangchuanguo@inspur.com>
-Subject: [PATCH] mm: migrate: restore the nmask after successfully allocating on the  target node
-Date: Wed, 26 Mar 2025 11:12:18 +0800
-Message-ID: <20250326031218.487450-1-wangchuanguo@inspur.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1742959220; c=relaxed/simple;
+	bh=9ny9b8OZzDjF6cEsSrOnPRFxohT3o+etqOMzJI15+Iw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NKMlIyhu4A/doo8holYVUuS2OGByelk1COhMaJVhaWWJHIukocZRzRG4u0v1t/j4tIbc0QXjoPH0dKuzD+p7fEZPXuJJpvec2A/cVG4ctTZ6G/hmrKA6gMYdpHNIgIk388Ul7GORiOoAqrwrM2FtnlkKB3lH+Pgz8AahoY2Rxdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d5b3819ff6so22538525ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:20:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742959218; x=1743564018;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ny9b8OZzDjF6cEsSrOnPRFxohT3o+etqOMzJI15+Iw=;
+        b=iYfJep/JzFiMf6E4EeDxOtik373xi9Eszh5Pb6GsIW41fqUQSM1xsDCfpn7CPffC1i
+         MYjItpfq+b/U4miQbZ+k5mp0MJkC25rv+7Z4lh7Q+LW5lPdOWmympigdY0BWujFHNwqI
+         JEa/2FTjq65N5BLgJ4mdJEcPl3Kk1KAnufxBp0Stq386AqyD8oTcGpey39IJ3Ze+E8Qt
+         XcfPnq7RDJxWKqlJggyt907H9zqPo5F0Z8HeZ1ZRX+VxxRoM99nNZcmDC3o9sdWJzgsX
+         B3iWe4g9Of8gR/V+RTEr5oFjAiUaA+H6x7oyrsPFyIn0J0XQZ7FieDyNoh6RLta9o9zO
+         B8yA==
+X-Gm-Message-State: AOJu0Yw3h+EuuWYAmpBFnd1e6mRTufW5WQpzEX9ZudSzePeDB6iDTnTj
+	pb1chzTFDIl2YGb1BlSgGb4ENifwIL1uL6ni/rEG/7b8M4GcgDsxjuaDHcJbjcq/f0VX6RBjZQ1
+	HJyds/4N51Oln0eZdN/ce3FGAkFc4OTbftjBH6loA+LyUU43brkeITjQ=
+X-Google-Smtp-Source: AGHT+IFcrluuG6HxiUa4NB0GVJx/3M9t7kK4I7Eo17d5PoVMCmnjB6LD3dRcD2rfuqptqBMyOgQ/Sz7XojIAIbo5DC3nMA+aFUbc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025326111231d56feec8dbe32f716dcd6ffc18fa9dce
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-Received: by 2002:a05:6e02:1fcf:b0:3d4:36da:19a9 with SMTP id
+ e9e14a558f8ab-3d5961680ccmr170837045ab.15.1742959217971; Tue, 25 Mar 2025
+ 20:20:17 -0700 (PDT)
+Date: Tue, 25 Mar 2025 20:20:17 -0700
+In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e37271.050a0220.a7ebc.0057.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If memory is successfully allocated on the target node and the
-function directly returns without value restore for nmask,
-non-first migration operations in migrate_pages() by again label
-may ignore the nmask settings, thereby allowing new memory
-allocations for migration on any node.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: wangchuanguo <wangchuanguo@inspur.com>
----
- mm/vmscan.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+***
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b620d74b0f66..9467b2acef28 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1026,8 +1026,10 @@ struct folio *alloc_migrate_folio(struct folio *src, unsigned long private)
- 	mtc->nmask = NULL;
- 	mtc->gfp_mask |= __GFP_THISNODE;
- 	dst = alloc_migration_target(src, (unsigned long)mtc);
--	if (dst)
-+	if (dst) {
-+		mtc->nmask = allowed_mask;
- 		return dst;
-+	}
- 
- 	mtc->gfp_mask &= ~__GFP_THISNODE;
- 	mtc->nmask = allowed_mask;
--- 
-2.39.3
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+Author: richard120310@gmail.com
+
+#syz test
 
 
