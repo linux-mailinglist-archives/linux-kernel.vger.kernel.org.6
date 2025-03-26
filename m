@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-576880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F47A71586
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:16:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCD3A7158A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:17:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F09216E1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCDB188DBCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC201F463F;
-	Wed, 26 Mar 2025 11:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9601D7E52;
+	Wed, 26 Mar 2025 11:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LTm3OieY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rCuz3t0M"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751831F419E;
-	Wed, 26 Mar 2025 11:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8769D1D5CDD;
+	Wed, 26 Mar 2025 11:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742987447; cv=none; b=kjBI6jIsSIWxIWKQMsUqWaDRaZrQvAg6p2O7dJkVooNGfiTWFn5ctG3ee3fet/5uxf1GkkmlVH+L131qAwevj8mebHnbKqVpQrkSbRrdOONq7kZf80isg6epNXOZvNey3MvEjU9fIj74olnVoxpFm35RSusvDCDhFpTbMykZWxo=
+	t=1742987494; cv=none; b=FFshZA890Hd6MAkXYiyashgiZmpEt4QvlrQN0SgbIKCb3Dps5N7FHHtrau6m5XVhDsjoJbkz7wBqreVzPB6BhjHH1jQxDYzdvTF4Trvi1fdV0uAOAMBVg8tu21qBqaM92u52MT194uy7pH7MPZNlKHJYsIPWNwYzEQr5b++HHzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742987447; c=relaxed/simple;
-	bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ah+9QkxfzGJidBfg+K5t8peCZKCuaCXwptUSn5ri94CHvetWKGpZlSLsszDvSOeJ1XsQOAjSfTA/RzuLnDxbxSZVEVLbmSYSmIcz2SQnolxydv6N2bYddNh0Vk0t5Jc2zIvNEkw3oSktBkhQvaUcVTQ14RIzBPc4zOL9PWAc/wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LTm3OieY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 59A183A4;
-	Wed, 26 Mar 2025 12:08:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742987316;
-	bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LTm3OieYfmwLQ7NfUgAIiFZK6+xwuBXAgIqdq5anr6rmzQ8gF5BBBzMDjnTuXDlzf
-	 B4YZ/pVkf1Fl7uIbgONLYRFkYciWYQOXoq/E/kWwjlGrocXKkUzqaZ25sBF2mR/GA+
-	 o04LzTzWoe73/2hKmrWDILaaL9HLs1OmKK5rE/rg=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Wed, 26 Mar 2025 13:09:37 +0200
-Subject: [PATCH v2 15/15] media: rcar-isp: Add full streams support
+	s=arc-20240116; t=1742987494; c=relaxed/simple;
+	bh=87MHvrl+YOj6Eu0ubTsUyFme+L+LVnmn3Ojqp30CT3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWUCe1PoZhTptdzr19i34u8Tcq1Lwu6TzR5Wu85s6kYF/j1tzeEZuBpXbN9C4qpmr7y87nQ9ncj2sJi1sakqS4BcjJ4J16b5GcGMExGbuMZxzdW0+HGqqMf0GyxJYcq1vUHgXK5LT/IMh4BLx4F5XjDJAlFMhYC9knR9zCh/5gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rCuz3t0M; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=87MHvrl+YOj6Eu0ubTsUyFme+L+LVnmn3Ojqp30CT3M=; b=rCuz3t0MjuJSLfDG9uXX8NeDxS
+	2b86DYDfBkY2vpHqxwrkBtcR64dSJbsnKDVI17yRfIerD86WFtpaTvVq8rW2VcWSgf+KkRnASZxuR
+	mGhjYBjlNixH0uziVxvtfKLL6kfD9XN8C86mqnPzo7G+LAvm0EJ2aOuGqYDVFOr/VDCRmr817w7KN
+	CyhlbahiDBz9bAbsQq6RIym32TbxV8p8iAg2kDP6pE0/MsDD9GEzhYe1pztHR7lfkkDyXidduasRY
+	r2ZZl+wQzHhFw8XudVZXmqLnKijmN3Q5V+Rf2tXz8m9UgYtf4PzW5bMDT4n8F7P+c5e+5GWenK73l
+	bzSidnBA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txOfS-0000000HQvD-0tlX;
+	Wed, 26 Mar 2025 11:11:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CD3993003C4; Wed, 26 Mar 2025 12:11:29 +0100 (CET)
+Date: Wed, 26 Mar 2025 12:11:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
+ theoretical divide-by-zero in pwm_mediatek_config()
+Message-ID: <20250326111129.GC5880@noisy.programming.kicks-ass.net>
+References: <fb56444939325cc173e752ba199abd7aeae3bf12.1742852847.git.jpoimboe@kernel.org>
+ <174289169184.14745.2432058307739232322.tip-bot2@tip-bot2>
+ <4avdt2nru6cpypssyw5chxiuadh74qcobfboopwsske2ycr565@qnb6utlyxuj4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-rcar-streams-v2-15-d0d7002c641f@ideasonboard.com>
-References: <20250326-rcar-streams-v2-0-d0d7002c641f@ideasonboard.com>
-In-Reply-To: <20250326-rcar-streams-v2-0-d0d7002c641f@ideasonboard.com>
-To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3060;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=Smanb1nxDtTi2Zz0q9/a7xzSW0wrYV97VOh/qP6VxeE=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn4+CUtsAsdRCMJg1fSztF0EZpOO+TB0q1ENcwX
- x8zpmwLg4aJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ+PglAAKCRD6PaqMvJYe
- 9XRTD/oCU0QDXisa5jJK8im5p2dY97lRkWN4YoBFnMzQ4w92J9nRr/qYhTEJfGir21THyUKLF2g
- ak1qq0n2TH7x2dvIbp+ZJYgrvOlDT7mIi67Z5Onp1RSVJ3mHdl7CgupVwGLEAAuk7/6JQSD3GXr
- N7BIaP+qliIgkaRFsKNO/iXOzS+Yy/mRShikyR6dqajUfGZ6SCNiEIBnPUIbu/tAmEkmdeoKm5d
- 3d5RN8Vwzjw8bLuzsseMuivKmylQqt+NmrL/0GjB4x6I3gogQ0ETLhPloan2aEJ2wrHx++VgkEU
- R0/iHl3moJUWc4il02qQr+ozzmv/2JzNJmeXSUEoScefh5KxH0ZSTb/igDQvcqJ54h+QCzIefzb
- q0hDZ2AkSK/fE70k9+yKVD3BMjRISpMR0MVhisCJbOuKrjkdm/ieGqEF2JBYwxjiErylP1iJhqL
- vKWoIdcx6hh0VRr8Mo85LkfwWRX7zmdMiIA2BhDRXF+E5ae9twO8J5PPu1t7GSz1kyhJz0rrPSE
- GPmRM9RJpUpmDPq1EDvaJ0JOwl7Wiruu34v0caENfA+mxy8Qe9CdPvzhkYeX0JUX9kbn0XlJD1T
- TdTjv04fvaJsp1bToOrPaHr7Vsa1kmxij3b+G7w9FFJ90TA1ktnEgjZjHWRuiBIUWaoSIjMA0Gq
- v82ORSORc9NeU3g==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7tfg6nBs+W9DQVTr"
+Content-Disposition: inline
+In-Reply-To: <4avdt2nru6cpypssyw5chxiuadh74qcobfboopwsske2ycr565@qnb6utlyxuj4>
 
-Add the missing pieces to enable full streams support:
 
-- Add set_routing
-- Drop the explicit uses of a single stream, and instead use the streams
-  mask.
+--7tfg6nBs+W9DQVTr
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/rcar-isp.c | 41 +++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+On Wed, Mar 26, 2025 at 11:35:28AM +0100, Uwe Kleine-K=F6nig wrote:
 
-diff --git a/drivers/media/platform/renesas/rcar-isp.c b/drivers/media/platform/renesas/rcar-isp.c
-index 53927954ba73..20aa451cc64f 100644
---- a/drivers/media/platform/renesas/rcar-isp.c
-+++ b/drivers/media/platform/renesas/rcar-isp.c
-@@ -342,6 +342,7 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
- {
- 	struct rcar_isp *isp = sd_to_isp(sd);
- 	int ret = 0;
-+	u64 sink_streams;
- 
- 	if (source_streams_mask != 1)
- 		return -EINVAL;
-@@ -355,8 +356,13 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
- 			return ret;
- 	}
- 
-+	sink_streams = v4l2_subdev_state_xlate_streams(state,
-+						       source_pad,
-+						       RCAR_ISP_SINK,
-+						       &source_streams_mask);
-+
- 	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
--					 BIT_ULL(0));
-+					 sink_streams);
- 	if (ret) {
- 		risp_stop(isp);
- 		return ret;
-@@ -372,6 +378,7 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
- 				u64 source_streams_mask)
- {
- 	struct rcar_isp *isp = sd_to_isp(sd);
-+	u64 sink_streams;
- 
- 	if (source_streams_mask != 1)
- 		return -EINVAL;
-@@ -379,7 +386,12 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
- 	if (!isp->remote)
- 		return -ENODEV;
- 
--	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
-+	sink_streams = v4l2_subdev_state_xlate_streams(state,
-+						       source_pad,
-+						       RCAR_ISP_SINK,
-+						       &source_streams_mask);
-+
-+	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, sink_streams);
- 
- 	if (isp->stream_count == 1)
- 		risp_stop(isp);
-@@ -419,12 +431,37 @@ static int risp_set_pad_format(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int risp_set_routing(struct v4l2_subdev *sd,
-+			    struct v4l2_subdev_state *state,
-+			    enum v4l2_subdev_format_whence which,
-+			    struct v4l2_subdev_krouting *routing)
-+{
-+	int ret;
-+
-+	if (routing->num_routes > V4L2_FRAME_DESC_ENTRY_MAX)
-+		return -EINVAL;
-+
-+	ret = v4l2_subdev_routing_validate(sd, routing,
-+					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1 |
-+					   V4L2_SUBDEV_ROUTING_NO_SOURCE_MULTIPLEXING);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing,
-+					       &risp_default_fmt);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops risp_pad_ops = {
- 	.enable_streams = risp_enable_streams,
- 	.disable_streams = risp_disable_streams,
- 	.set_fmt = risp_set_pad_format,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.link_validate = v4l2_subdev_link_validate_default,
-+	.set_routing = risp_set_routing,
- };
- 
- static const struct v4l2_subdev_ops rcar_isp_subdev_ops = {
+> and the build works fine for me and there is no warning about
+> drivers/pwm/pwm-mediatek.o. What am I missing?
 
--- 
-2.43.0
+Could be compiler related; IIRC it is mostly clang that does this. When
+it finds /0 it simply stops code-gen.
 
+I *really* dislike this behaviour, but since C declares this UB, they're
+basically free to do whatever.
+
+IMO it should just emit the code; kernel has exceptions to deal with
+this and userspace gets signals.
+
+--7tfg6nBs+W9DQVTr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmfj4NsACgkQdkfhpEvA
+5Lpr+w/+MhHhFk1YjgRMumD+rUIqcpnGodIaU0wrRdEFCYBsSg7Omijp6BbTbPtl
+vcKTCihEurR+dzHONMvD5qf1l6LSTstAarJPu7YINArGBJgH8nj7vmEEDce1vXo3
+eA4qGHBdAEMGCmtz9AEOv6yMNMHZ0SXyUaGBJgg/BiUjrxwukUnP5Y/TrvdQU7mi
+XBHE+sM4CVzenovqFm/TlcpKbVdsFFeo9fykV/Fn0/BRqyoovGwrYMcb0Jx7BksH
+n8ZWx5hqZbpCL9lFQjsM9tpV0mukPsaFHuYpEce8WoGNlZdqgttYWtGkWYPfav4X
+3DL+aAlw5bKluDaMPM2/uBcsW+ilJFnCWL4VM1DRDlPMM6PXyStl3PLQynsnPOWe
+mdhHNQO45aURJg7qcWZ1kpACcCG6ToPWlwvb8SX6EwHYscSO22SRKBACo5ETgaJF
+5W0a+JUJ11CBh4kO8HsuMVnL7Dja+ugpq9oGSLbLhDio8vOfXBe4OvP18YkfWfUX
+i521nmobOaWVnnolIyS/G+8Ek3XKvoumt0Y46wPYZs0g3M9rjF122jDykRFpUELr
+5QesNoqNgldIUHtdQO+oeXsNujVskSjAjE+Q1y5GeQD4fMsn45kpzGwr7u8Mpxju
+ZzI8csg6Y4ve0TkSeg5+U8LfTIiGMr8/d+fy5CcRf6AlATdn8mQ=
+=6M7W
+-----END PGP SIGNATURE-----
+
+--7tfg6nBs+W9DQVTr--
 
