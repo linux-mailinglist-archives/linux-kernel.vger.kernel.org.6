@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-577362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A11A71C1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:44:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D06CA71C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80B9171386
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DD77A3B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A91F875F;
-	Wed, 26 Mar 2025 16:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4150D1F7561;
+	Wed, 26 Mar 2025 16:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iWbHoKQ3"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq1qAuYH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6315F1547E7;
-	Wed, 26 Mar 2025 16:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9961011185;
+	Wed, 26 Mar 2025 16:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007420; cv=none; b=iVJPrksbFISahrhES0k9S2BSeByp//DvmOXJa3xc+8fVf0Yr7MQUofg7KRlZIUVpMpc1eD/ZaYvUgnEfRpCRocjiTPmFYDC/jZKvaXVKOn/ylHljo2gMlc+8YEBTjRCtdV5UeGc3aJW3Lyt+8VkVQCWlBkBpnvK+mS6xTsBnN94=
+	t=1743007429; cv=none; b=oTRZrvuHXR2AwKW4JfaJ0iIIfVJMcsQO2XDMFoSqTyjPN/RxxzuVDmKxh8QsT/G3wAHLiyfwEAMEp9SgxH7MBiyCIXtky+HXwYexrbq1RVcpK4RgOQVZisKGqTUasUlF7f9s678SjHXgAax44dCkj6mp2zMUT6d3EoC3HLjTFL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007420; c=relaxed/simple;
-	bh=dRoILmxBCmB+LmPipcAncHBrEibSROR5ByjhNIYvaEk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FFVuXq8WsAWrkYcX9onnH7swgHbGtKbL0Rv7GsHOu4ofXx3fUGbtFh3RKLktKnYsLArKfL/YXITtaFCFZC6A+UCSOZUM7dqGR5jdVB1YBIdSxN6vhGlX/h9skPBBL3YS/ze+Dymcxv4EWDTam+1BT1wsLCd0f2bPPUcY62sAUOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iWbHoKQ3; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1743007415; x=1743266615;
-	bh=SBA0lIVlYigqsD6gj5BKr4rg3daBl3KuUvd0a5qoKyQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=iWbHoKQ3q//lzkeLnbXrpD/K0JBHRvanSfajOeHLvf/ABisj8J8MxZ+5Szf6IAVwz
-	 cm6CROl1XHcgLoi0c8f8WF2vZ4BIPsM5D4ffwPzx2P24j7XXDs8bhVLjBqCUUQbi4S
-	 LLTPIrty/DypE1RsJLAmhmdT++IBIwQDPOF6RiBEJViq1/YyFB1nebuFXfgkcSS3rv
-	 RnwsOHDfYpSHbih8pB5hshb/Yg11MvlDP7va/eqAPI5HhqXjCSJl0zPxG6x0qK8mjB
-	 Q4UuBTuuBwVXZquozIs6zNsdDgjSmdtxqbPbriXVgWN6nYRPn8UKI/p8DYLWx1pKoP
-	 XcdjKJZB0215Q==
-Date: Wed, 26 Mar 2025 16:43:29 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 7/7] rust: enable `clippy::ref_as_ptr` lint
-Message-ID: <D8QCK3CQES3Y.3LTZ4MVO5B3KT@proton.me>
-In-Reply-To: <CAJ-ks9nHKpQPuSBypXTSATYhbAFkQTJzUq8jN0nu4t=Kw+0xxg@mail.gmail.com>
-References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com> <20250325-ptr-as-ptr-v7-7-87ab452147b9@gmail.com> <D8POWLFKWABG.37BVXN2QCL8MP@proton.me> <CAJ-ks9mUYw4FEJQfmDrHHt0oMy256jhp7qZ-CHp6R5c_sOCD4w@mail.gmail.com> <D8PPIYIJCNX8.13VPQULEI0ALN@proton.me> <CAJ-ks9k6220j6CQSOF4TDrgY9qq4PfV9uaMXz1Qk4m=eeSr5Ag@mail.gmail.com> <D8Q4MSXXZ7OI.1NC226MO02VSN@proton.me> <CAJ-ks9nHKpQPuSBypXTSATYhbAFkQTJzUq8jN0nu4t=Kw+0xxg@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 56fa6bd54add0cb38181c1a80c576e471517373d
+	s=arc-20240116; t=1743007429; c=relaxed/simple;
+	bh=oomNfdMh6E2nDnQNhRCunwuBUsly+x4CicD2ka69jEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGvzL4m9pNZWyd49PCgvSWKYpZvqC+00NUD2Zv021cD390h/Br3egh5QrTRyx/K5XpJxTbsJ+CA5RQml01JI9hZYeyeHOVvRzdBp/mKV7AtiOqzpV5GPd+wrqpvWrEp9Vt3Lxh2qc3HYl7RIybw4Z2TLDE1gjB8fgGrNdwT3Cug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq1qAuYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3174DC4CEE2;
+	Wed, 26 Mar 2025 16:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743007429;
+	bh=oomNfdMh6E2nDnQNhRCunwuBUsly+x4CicD2ka69jEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tq1qAuYHIoYqh7GKYTOGbF1nPIOtr/x5x6ow9TyKUwo8DvopuEAsSq4mGhN6UaBgS
+	 Dur8UHx/bLiADLD9WRT8IQ1FOrRuAWU+WD+lWYXcDSbj0UPE8OBjNFecO0RQAatFBC
+	 IQNe06ZX8D940ybNAaclYEZxCFHi7XnQ6gs4mQrA2q7W916IHNbA+oSBQF/fctf8AE
+	 ISEUZbvK448yUbWmxAJqtN6SaaML+iKLKE7saQ3edgFIm0K+c2kds3LqDYNIJ8ddDB
+	 GT4i82tJfA9pdA2xKXyBfg2LuO+R2Zuv+Dsuvp9CQPq5RB2wW56ZcLpH1cG9C6Zj23
+	 FhQsrZQ7E0gEw==
+Date: Wed, 26 Mar 2025 16:43:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] dt-bindings: trivial-devices: Document SPI
+ measurement on LWE boards
+Message-ID: <20250326-unluckily-consuming-948176031b08@spud>
+References: <20250326140930.2587775-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xPU2MvtdTf8JZkvq"
+Content-Disposition: inline
+In-Reply-To: <20250326140930.2587775-1-lukma@denx.de>
+
+
+--xPU2MvtdTf8JZkvq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed Mar 26, 2025 at 11:35 AM CET, Tamir Duberstein wrote:
-> On Wed, Mar 26, 2025 at 6:31=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->> On Wed Mar 26, 2025 at 12:54 AM CET, Tamir Duberstein wrote:
->> > On Tue, Mar 25, 2025 at 6:40=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
->> >> On Tue Mar 25, 2025 at 11:33 PM CET, Tamir Duberstein wrote:
->> >> > On Tue, Mar 25, 2025 at 6:11=E2=80=AFPM Benno Lossin <benno.lossin@=
-proton.me> wrote:
->> >> >> On Tue Mar 25, 2025 at 9:07 PM CET, Tamir Duberstein wrote:
->> >> >> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> >> >> > index 40034f77fc2f..6233af50bab7 100644
->> >> >> > --- a/rust/kernel/str.rs
->> >> >> > +++ b/rust/kernel/str.rs
->> >> >> > @@ -29,7 +29,7 @@ pub const fn is_empty(&self) -> bool {
->> >> >> >      #[inline]
->> >> >> >      pub const fn from_bytes(bytes: &[u8]) -> &Self {
->> >> >> >          // SAFETY: `BStr` is transparent to `[u8]`.
->> >> >> > -        unsafe { &*(bytes as *const [u8] as *const BStr) }
->> >> >> > +        unsafe { &*(core::mem::transmute::<*const [u8], *const =
-Self>(bytes)) }
->> >> >>
->> >> >> Hmm I'm not sure about using `transmute` here. Yes the types are
->> >> >> transparent, but I don't think that we should use it here.
->> >> >
->> >> > What's your suggestion? I initially tried
->> >> >
->> >> > let bytes: *const [u8] =3D bytes;
->> >> > unsafe { &*bytes.cast() }
->> >> >
->> >> > but that doesn't compile because of the implicit Sized bound on poi=
-nter::cast.
->> >>
->> >> This is AFAIK one of the only places where we cannot get rid of the `=
-as`
->> >> cast. So:
->> >>
->> >>     let bytes: *const [u8] =3D bytes;
->> >>     // CAST: `BStr` transparently wraps `[u8]`.
->> >>     let bytes =3D bytes as *const BStr;
->> >>     // SAFETY: `bytes` is derived from a reference.
->> >>     unsafe { &*bytes }
->> >>
->> >> IMO a `transmute` is worse than an `as` cast :)
->> >
->> > Hmm, looking at this again we can just transmute ref-to-ref and avoid
->> > pointers entirely. We're already doing that in
->> > `CStr::from_bytes_with_nul_unchecked`
->> >
->> > Why is transmute worse than an `as` cast?
->>
->> It's right in the docs: "`transmute` should be the absolute last
->> resort." [1]. IIRC, Gary was a bit more lenient in its use, but I think
->> we should avoid it as much as possible such that people copying code or
->> taking inspiration also don't use it.
->>
->> So for both cases I'd prefer an `as` cast.
->>
->> [1]: https://doc.rust-lang.org/std/mem/fn.transmute.html
->
-> I don't follow the logic. The trouble with `as` casts is that they are
-> very lenient in what they allow, and to do these conversions with `as`
-> casts requires ref -> pointer -> pointer -> pointer deref versus a
-> single transmute. The safety comment perfectly describes why it's OK
-> to do: the types are transparent. So why is `as` casting pointers
-> better? It's just as unchecked as transmuting, and worse, it requires
-> a raw pointer dereference.
+On Wed, Mar 26, 2025 at 03:09:30PM +0100, Lukasz Majewski wrote:
+> The measurement device on Liebherr's (LWE) boards is used to monitor
+> the overall state of the device. It does have SPI interface to
+> communicate with Linux host via spidev driver. Document the SPI DT
+> binding as trivial SPI device.
+>=20
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
 
-Note that you're not transmuting `[u8]` to `BStr`, but `*const [u8]` to
-`*const BStr`. Those pointers have provenance and I'm not sure if
-transmuting them preserves it.
+You should not do a resend with no explanation as to why. Additionally,
+I would like to know why my review on the original patch was ignored:
+https://lore.kernel.org/all/20250225-despair-rural-dc10216005f4@spud/#t
 
-I tried to find some existing issues about the topic and found that
-there exists a clippy lint `transmute_ptr_to_ptr`. There is an issue
-asking for a better justification [1] and it seems like nobody provided
-one there. Maybe we should ask the opsem team what happens to provenance
-when transmuting?
-
-[1]: https://github.com/rust-lang/rust-clippy/issues/6372
-
----
 Cheers,
-Benno
+Conor.
 
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index fadbd3c041c8..5d736a9792c2 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -161,6 +161,8 @@ properties:
+>            - jedec,spd5118
+>              # Linear Technology LTC2488
+>            - lineartechnology,ltc2488
+> +            # Liebherr on-board measurement SPI device
+> +          - lwe,btt
+>              # 5 Bit Programmable, Pulse-Width Modulator
+>            - maxim,ds1050
+>              # 10 kOhm digital potentiometer with I2C interface
+> --=20
+> 2.39.5
+>=20
+
+--xPU2MvtdTf8JZkvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+QuvAAKCRB4tDGHoIJi
+0la8AP9wwuHP+ibdTfgyZRbLb0lAWCHK7mvcV2Kclx6o7EIQ+QD7B8V2mFu1CLzL
+etaG5we5NpJXY4fyAugjIJXq9JpbdgU=
+=joJo
+-----END PGP SIGNATURE-----
+
+--xPU2MvtdTf8JZkvq--
 
