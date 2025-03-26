@@ -1,86 +1,126 @@
-Return-Path: <linux-kernel+bounces-576457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA9FA70FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:48:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A556A70FA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276EC3B9A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61A8189A856
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE3145B25;
-	Wed, 26 Mar 2025 03:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E324158DA3;
+	Wed, 26 Mar 2025 03:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbZmNViN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kP+WiVAL"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03310E4;
-	Wed, 26 Mar 2025 03:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0533AC17
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742960866; cv=none; b=PONRSmXqBX6PIn5VY3EcJ+VLK5AfhQDAAfLqlnHTNaETeNrdyolVqlRsGuGUCbNB872U90QhOvhbJhFPoSh1Z+lbEvSUy52qxoa4D7ILQO2064bBv5kug54Hqm/6NzN8+CTDYO4meo0BW+Wh/Lex5TmPGWLbQHwLrZ2ftYM0teE=
+	t=1742961067; cv=none; b=eOimkyHBS6vojf24KvBmgyEKhJ/l06xh2Ua0DkSK3XovI059LYZ5PQHQH6tMuwJmYGtxyPlGdyZ4Nh0CpeDHbf+ZOsiQ5LJe/qOxn9oq7RfBgm0brw2CubNOHaAqqnyqS6pIkTgj3RggAq05iK5jvIIdIq8pqacUw1SH1eK7RkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742960866; c=relaxed/simple;
-	bh=bYXS2SsX/Qi2gSv2wWb1FHs98/UR/lhfVEIgUK70Scw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Miezrr+5VJhMW2neW/C4KdN2UBEkO/Bayp5NgwJKy/S4xt3ncO+kqOb/3F0nEKF9n78zSNZZaC25bA3MkkpK214FjvqpBAWuyhgvxap0DANDnSAFGicauY0APzsA0KHcq9gCn2xV1QNVad1JmBK/AcDH4YJNAGOpQRxV2y+Rz7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbZmNViN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433C9C4CEE2;
-	Wed, 26 Mar 2025 03:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742960866;
-	bh=bYXS2SsX/Qi2gSv2wWb1FHs98/UR/lhfVEIgUK70Scw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nbZmNViNSaeDldYLoMtg6puSuGB8XRZJuZOaotC6DrFrEcGt8+NgPrqr7L57ALNIh
-	 siTD5bPIdv3l/wPCfUQ//c/DW4Xl3lnAU793oMQV0TpPfeT8TM//QBmuJCVRUWA246
-	 KxjFrrOydPctMiqAJyKUtMC+U4BzyQAGqqZFVsaIRG7I9+eE905tR1O0a+d3oWJAGh
-	 306sAM2cm94t+6+x5S8yCHrvZALSWQ1sCpCBOHAwolLsY8RzZolfWWMdYWBR+cxYuU
-	 Q0AD9+cT0nGqZNzV+4au+QGwXE19tkcQS5s6O+ZkDx2I9iCdBH81TMiwuB3kp/XCD6
-	 d7nk7XuoWRMRQ==
-Date: Tue, 25 Mar 2025 23:47:43 -0400
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Xinyu Zhang <xizhang@purestorage.com>,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] nvme_map_user_request() cleanup
-Message-ID: <Z-N439fyHEyweXq0@kbusch-mbp>
-References: <20250324200540.910962-1-csander@purestorage.com>
+	s=arc-20240116; t=1742961067; c=relaxed/simple;
+	bh=OrNdDDtLr7sWANp1hVQxXXdW61TAcKhwpU/lYJV6sUI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YwmGjdgYAqaNJj3uvpO6GEix/zpRcg/Lf1VHxtrwCpM/I+dXoQ2wooyQ4xz8hYTJpFf52eK7FAS/IuCtoNC77cGFH2LlIVHJbV/1rlZjYnyMhFxatXXZH6rAfKGRf0FjweHJPhSg6pYsMrv+wC8ARz+/2zRUFV47ehalsHvh4fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kP+WiVAL; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22403329f9eso91333185ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742961065; x=1743565865; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q4SBEUeVaxUtokJPIUYjJGAnoRWPInWE392dc3Q7SjQ=;
+        b=kP+WiVAL/hBksX9PeSCEeTC9pI+ufxHlTmST9OMttl2oawKvio/fsP6ASgBtkIJZNK
+         6UUzIb42Pk7LtMaybxX+jXRmIBPdpIoLJrze1uEaxjRYHcyH8b/tXwN2SccqdJgY6QdR
+         TE08jrUdbT2TLT72lk637xZ/5O5ta86T9UeRbEMvfnZnYYvG0jMX7fHnQs1wJHLOHTFB
+         +hYxZ0xz7edWUx1V6NUpJ369sCttLG6AvgWiG+CRgo5V/Xqhnbsy2/PXayMaYORoHtvG
+         MNWsj5fE+k2CDk2CYwwa7ByXriKXAAXFtrYKgLXG0TERRjfY5OFL8jzNC6F6x6i+IWX0
+         /YZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742961065; x=1743565865;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4SBEUeVaxUtokJPIUYjJGAnoRWPInWE392dc3Q7SjQ=;
+        b=MD0flJxrLM/lix9pAm6RjnCKTB6D4PLAtYNSpQ6g5MZryrqtFJuJjYmDuynJQMMd65
+         7WowulrVJFhPY5Ep+CHd5X+eK/EyTLymYw4Q/OnE5waejevxwQtZZjnhe3LmT5km8beY
+         rrdkLrrvPiIjK9d/OYBH80mzM7/5P6FPKDxkEV3RtzDS40BBjvEVykD+lGdTpeMQGJLA
+         6TCbt31B0Sq9KlckKnas0s+mMKOQcb3z1Tu3014C6a62ZoaKqnN+m1bW21elq3q51Zvj
+         IxsAouYcHJ6WLhe8L2Dv8jCqsEChIdBp+Hlz8dI21qP4WYdcIhdQ23E88GpSo5B6wbPk
+         07AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoHn34gQjk+M463YGKtzJ3bsKf0t0bBqZi3mBjKrnaYGeFTQqafSjZaWwTZ7d4w7jCy1yCHV2i1o+oMM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz10OgPecP/XO4gnP6q9wc4SAPSs2SJbQ+QmVWmSyHCrfMvYYiN
+	6p/XF7RQo0QK8qw04hi6fpc5omZHjqRjdWR68yYPMpMYjn+m90QrYfqmNC0wufwfCYMF6TAyQ4Y
+	23h+bqA==
+X-Google-Smtp-Source: AGHT+IFX6TAUq+5C9170e0/iEjt+LX7tYFuOYRqyp7uoH5Mv47EnjgV63qQG1LlVmvC8atTnWkrS5Orlfjl2
+X-Received: from pffk14.prod.google.com ([2002:aa7:88ce:0:b0:730:8e17:ed13])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4602:b0:739:56c2:b661
+ with SMTP id d2e1a72fcca58-73956c2b9efmr534037b3a.12.1742961065431; Tue, 25
+ Mar 2025 20:51:05 -0700 (PDT)
+Date: Tue, 25 Mar 2025 20:50:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324200540.910962-1-csander@purestorage.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250326035045.129440-1-irogers@google.com>
+Subject: [PATCH v2 0/4] Add support for a DRM tool like PMU
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Weilin Wang <weilin.wang@intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Junhao He <hejunhao3@huawei.com>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 24, 2025 at 02:05:37PM -0600, Caleb Sander Mateos wrote:
-> The first commit removes a WARN_ON_ONCE() checking userspace values.
-> The last 2 move code out of nvme_map_user_request() that belongs better
-> in its callers, and move the fixed buffer import before going async.
-> As discussed in [1], this allows an NVMe passthru operation submitted at
-> the same time as a ublk zero-copy buffer unregister operation to succeed
-> even if the initial issue goes async. This can improve performance of
-> userspace applications submitting the operations together like this with
-> a slow fallback path on failure. This is an alternate approach to [2],
-> which moved the fixed buffer import to the io_uring layer.
-> 
-> There will likely be conflicts with the parameter cleanup series Keith
-> posted last month in [3].
-> 
-> The series is based on block/for-6.15/io_uring, with commit 00817f0f1c45
-> ("nvme-ioctl: fix leaked requests on mapping error") cherry-picked.
+DRM clients expose information through usage stats as documented in
+Documentation/gpu/drm-usage-stats.rst (available online at
+https://docs.kernel.org/gpu/drm-usage-stats.html). Add a tool like
+PMU, similar to the hwmon PMU, that exposes DRM information.
 
-Thanks, I've queued these up internally for 6.15; the next nvme pull
-request will need to rebase once the upstream branches sync with the
-existing outstanding pulls, so this series will be included in the next
-one for this merge window after that happens.
+v2: Add support to only scan hwmon and drm PMUs if the event or PMU
+wildcard can match. Add a test as requested by Namhyung. Add file
+comments.
+
+v1:
+https://lore.kernel.org/lkml/20250211071727.364389-1-irogers@google.com/
+
+Ian Rogers (4):
+  perf parse-events: Avoid scanning PMUs that can't contain events
+  perf parse-events: Avoid scanning PMUs that can't match a wildcard
+  perf drm_pmu: Add a tool like PMU to expose DRM information
+  perf tests: Add a DRM PMU test
+
+ tools/perf/tests/shell/drm_pmu.sh |  77 ++++
+ tools/perf/util/Build             |   1 +
+ tools/perf/util/drm_pmu.c         | 689 ++++++++++++++++++++++++++++++
+ tools/perf/util/drm_pmu.h         |  39 ++
+ tools/perf/util/evsel.c           |   9 +
+ tools/perf/util/parse-events.c    |  30 +-
+ tools/perf/util/pmu.c             |  15 +
+ tools/perf/util/pmu.h             |   4 +-
+ tools/perf/util/pmus.c            | 101 ++++-
+ tools/perf/util/pmus.h            |   2 +
+ 10 files changed, 951 insertions(+), 16 deletions(-)
+ create mode 100755 tools/perf/tests/shell/drm_pmu.sh
+ create mode 100644 tools/perf/util/drm_pmu.c
+ create mode 100644 tools/perf/util/drm_pmu.h
+
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
