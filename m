@@ -1,139 +1,163 @@
-Return-Path: <linux-kernel+bounces-577442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7796A71D1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:26:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991CEA71D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74AB2189D954
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:25:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9B57A8BEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02A5215F41;
-	Wed, 26 Mar 2025 17:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8902F215791;
+	Wed, 26 Mar 2025 17:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qii2k0XZ"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V6R0Iakg"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E262045B0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B7621579F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743009944; cv=none; b=Nm+xeXaWv/0BT5UnsKUftg07XLFgl9OJM0/qMu2X/UR0qs5vfN1TyTRzu41kzU93LgryJqmDtZ/pnsEDf6OOnZUiiOR3tOWnq8DVnY7OnAoakFzFrKbltLr15Sk6AfoidHi0YshQZJgvkBVRtkOjGw3rdlxn4J3aTwzfkAqKDN8=
+	t=1743009946; cv=none; b=Q8soKJyt7OYGDbQzxs2DyuIcjnqDWuAUPzWl+uODpuRDk1pAUUdzn/GUYc/fYrR6iqk3o1wFlreB/AdpqkcItqYwsfAgej9eNlSVsbyvVu2qKrIEtCnq7Y+iTJfLcsb/d6q4JktqA5yJuHpTFBuN+nb0ng2jEf7O/EOiEZLCJGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743009944; c=relaxed/simple;
-	bh=4aYu09xFX+L+1mcVNwZ+hreyYa0ujf5ZVNCAAM7dq2A=;
+	s=arc-20240116; t=1743009946; c=relaxed/simple;
+	bh=LyI82Ys2O9la28KCLjgrOfoLbD3OT0wDAR5iRRxrxIU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NhyjMPv3nMshUr7EeewJVVu2G3hmESSbjJx3Z//ewFe06qKk3U8ucdiyddMP9C5S805bkT8hmsx68WQMBsYRbggjKCUEXj4XYI1nYLHfob+XbGrLNTCXEfxTNb/4MnWSLxb/onL9R4BN/QDvG38DClqm/VW2QNrkWAfWrHiD6q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qii2k0XZ; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso2147007a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:25:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=uhz1XtEEqUFsuw/vj7NbPYzkQcBdd9a9bhr49PPik8FwbxhMRtztHVFMCmUVvTRrC9ZvwWEbTW5k2pFJo6HIb6SeYRzu2WlR5aIBp5oqsJ1P/6jRdire6Dt4ZkbFtOlx9sBaRIwJtAt1crMY6tW6NOvsbUbajv6nlDMUCl+ROjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V6R0Iakg; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac298c8fa50so11086366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743009940; x=1743614740; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743009943; x=1743614743; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tf/nVXRs8M37VNl8JutluOwbokflRbc83AMXv062mpA=;
-        b=Qii2k0XZ6DJE8H0ipD7rn43RH8NWjCdWJmYYsXVkloGObsD2q1FG5JJIh6cpivdRf2
-         TxuRa7n6WH3x1R1gj5BXOmk/IPGTy1OMM07/BOMB10wIFL+eYKOJhiyDNQVMu3h0TQci
-         9m/41yvtrMeOSKjJ8tAwGTuMzrXmxBPr+3PBY=
+        bh=hYZRfbu7gQUa+RW47dljr54AuBiOf4/iSQG+JvcYJ7s=;
+        b=V6R0IakghImbAizOFhr18XbYY31NyJAu2E8c0TacRLfnvPq9NB8YHj15eJBOs0ai6k
+         XkyF5ndUDvpfJ2sXtjTCRDbvHxLReF5HmJgBnclLI8oZG1Y0UmTm/CScRTAMlOZOClKm
+         tFL7+7IiJ4DC5GcVQnfTr5+bcqQAP7dNMiOs9PCw0WvZCp2iqy+LltzM6gp+7/+6ZAg1
+         3vYSSlw9Kuz3CFkQOMiXDhqF4/BfZEUUwbOc7RTurH4q6BN8VPGoZTTnlxtDcQIE1vWT
+         LODTEZEHFPSX4ca8uknCwsIVuXGWhJnPkVyq/p7Oa5e1D5tQZiKn1aJ559j4bFYgeYnd
+         APOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743009940; x=1743614740;
+        d=1e100.net; s=20230601; t=1743009943; x=1743614743;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tf/nVXRs8M37VNl8JutluOwbokflRbc83AMXv062mpA=;
-        b=udOeyDhpgtEeK9QZo+xF3eNGvPmIPEyMzOVL65XaIM1FPda5H1A2UAOqfBKuiioByr
-         1B8ldG8t5R6NAeIMkkfrNbyJ3Plonp5rS/gdrrKmfefP7eBAxMf6+BYUTsMHmpIa1hSm
-         V+XHMevdZmsJcB+SbvrlYEz50Iu6J7UhRTHhuskok/8iFj4ERELqZ1FYPUcI6p1oaYfa
-         lxXM0mkzwWcmIGlOyygBvdO6W/0mLyurDXgN2/n9yn/+5maEqR9BOipRyuWviuPSUlTO
-         DEN6VqQDc0WC4WWZdKyQsCPvpW7xG0lCg4YFn2a8dSVgq9aqN38QbKNmhxdBFLC1qEt+
-         cXXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAL6b9WLGHDIx0t1UAMWBeu9kbEm9LxGJEiOIoytvblWckF7Aw6+wFOGpWlDVao40ArVGAJtygkeejzUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqaf+0gZ/7M+sk1cR5K9JxxC/Irg+50XC5I/CCOVwwDEYz3VNI
-	QGxYCEWI5KB07LMnE2kSIFIW5ooN0pIx0KzNjwNWfukEOlS6gJmt3RzJ8iPQIOtp4Y/zjQsE5Tl
-	paO6tZQ==
-X-Gm-Gg: ASbGncub+uxrrZtEDlKy2vLF0VGkT8virk5hd7jRFhPqSnvtLxKg3pdsLKiZ7KkQiiz
-	UPp2GFvSidThsELUPVIGEz4C+0kZGfwLE36KnFtnwSXjYXP9HHqI/OVDo4fuwNJ9avliWERxBmv
-	6u8Gkqor2qYl9IVJK4Sx+fHv1jRnCqoIfA2jZle6fx3ShXMAXKZYQNRIft2Fm333H2aWVGts9fN
-	Qb1dFy5YHeOcgj/9YRJqMMPesso8VqdhYfUj9UKqt3gyRG23/vk9D7Sxa7Q4PUuKemSAAsML0lG
-	MPT1TRDdJ23/msjgmJbvGfSQgmmbrgTCtXAR/xKTLaFpQ1ldj72PrwPojucCh0BCvLMfD51ZGpw
-	e1oPD6vF/P2MdP419pQQ=
-X-Google-Smtp-Source: AGHT+IFeT0baFOZtFVfa+lr7fh6xNofh0sWULAOz1ubfwO/qyKyznit4GS6Gb7V9js0oSJw1Hrw57g==
-X-Received: by 2002:a05:6402:40d2:b0:5e0:6332:9af0 with SMTP id 4fb4d7f45d1cf-5ed43ba93dfmr4553587a12.14.1743009940027;
-        Wed, 26 Mar 2025 10:25:40 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccf893bfsm9745922a12.28.2025.03.26.10.25.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 10:25:39 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab771575040so236790866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:25:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlCdXBOhBF4LF5LwyOii+fpKYqjwzkQzTus7SBxT4Fd/UC4yKypsgqC1TKEpDlvZSERs9RsRscg6Ap1PY=@vger.kernel.org
-X-Received: by 2002:a17:907:3f1f:b0:ac2:32a:ee2f with SMTP id
- a640c23a62f3a-ac6e0d34700mr405560666b.17.1743009938565; Wed, 26 Mar 2025
- 10:25:38 -0700 (PDT)
+        bh=hYZRfbu7gQUa+RW47dljr54AuBiOf4/iSQG+JvcYJ7s=;
+        b=AOizM2KUss1xJMrf2voEvBR8EF7hEYlhMorXUNfcLNyoEb5uOk3re9mT6TjB+MYLLd
+         KgiBiqn9ycRX+3uB9CFC1gvmAdi9zwuqXy2N1j5LF43np8s7rlZpJs9ao1T8lWJOX/TS
+         +V2BUWobeRFOHOeBKB/eHkBpE669M0PXoXVR6EcZ1048fL4Ilb/NxoPRFD5ON+G8LELh
+         Ed+CFMtrHjloOFrhIz2bpW6/mdNFKA2Ja8cvvbkoJvDn1n+qvAqYBJHplx6fdEaqctWG
+         BVDOx4rSRuIPs6gJyiTjy+KiqqucdoY3y3D7HFW/OsIPNVr2qBzT9hEKajwvWqGyIzd/
+         a1rQ==
+X-Gm-Message-State: AOJu0Yx3hLikvirmO6hiLeQ8UMfLJfMK8HkjXzj4qWmLpulMvxUp6NdY
+	QcHoQbo+7zm95zAPvkbrNq3V42uSfe/1tf7i6xFce7uCZ0mVF2nd97EzsXsCyKG/Poali9dJyAG
+	MSNgzsKTZ3nUQ3mD7rcjMLS6EYgNF3h9xQDjA3w==
+X-Gm-Gg: ASbGncumBKVIVsne1/V+HRYqUlMCYfA8bLqhptXONucO1aBZQZOmC/UQJ61jDwRCLSW
+	ME7TwMGPpTJqdiV/IPscp+k4xkn8j8CeG3V6U4qOuLZr81we0BlsKbmNwjBEm7jSqudAv/u++QB
+	B70OESIN6bRYFAxmyB1ZDJmVGUtIMWqO567A2RYLB+2LeYDqKpMmS9y3s=
+X-Google-Smtp-Source: AGHT+IFiqtfLGcmnfHpM1daCPLkdk+Zjj2vcxw29bsJlYk8tY+5JeLYhHSgZF+MXNlcMpYBy4X5JyIRXSzPaUwwobjo=
+X-Received: by 2002:a17:906:c10b:b0:abf:7636:3cab with SMTP id
+ a640c23a62f3a-ac6faefef6fmr25273466b.29.1743009942974; Wed, 26 Mar 2025
+ 10:25:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325195322.3243734-1-catalin.marinas@arm.com>
- <CAADWXX-0hMgpyeQw_7Ko14hNMciqSnKJAROEWS5vwAdMKUt_zw@mail.gmail.com>
- <Z-NHugcLdLqkEHFR@arm.com> <CAHk-=wg_HipugbtswxFnekQy2g_ksKKXj+yht8naj2FEMtRMgA@mail.gmail.com>
- <20250326124025.1966bf8a@gandalf.local.home> <CAHk-=whwmmU+hv1SyMoyr8yAGP2JiAAP+g5BZaMajzAukzrM9w@mail.gmail.com>
- <20250326131200.1c86c657@gandalf.local.home>
-In-Reply-To: <20250326131200.1c86c657@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Mar 2025 10:25:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiXEvC2r=Sa_tpYjd=g+AxZDxxjSdq1WADTvZYZ9oUi_g@mail.gmail.com>
-X-Gm-Features: AQ5f1JrBx5kuViM5WHNXW8YzlTQ_bduJ7gLngRyjIWCWOOPEj676hv5PA0NpEzc
-Message-ID: <CAHk-=wiXEvC2r=Sa_tpYjd=g+AxZDxxjSdq1WADTvZYZ9oUi_g@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64 updates 6.15-rc1
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Konstantin Ryabitsev <mricon@kernel.org>
+References: <20250325150542.1077344-1-pierre.gondois@arm.com>
+In-Reply-To: <20250325150542.1077344-1-pierre.gondois@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 26 Mar 2025 18:25:30 +0100
+X-Gm-Features: AQ5f1Jq0RVdOAfjgGQWciTmYmToxBncRZeHG1o7A9n59ADSeEVtrCfZukyO6vf0
+Message-ID: <CAKfTPtCfaH6SvBesbKBHRNfjZHJXXC1h4NF8GoFUczE5NiRunQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Allow decaying util_est when util_avg > CPU capa
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org, Chritian Loehle <christian.loehle@arm.com>, 
+	Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 26 Mar 2025 at 10:11, Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, 25 Mar 2025 at 16:06, Pierre Gondois <pierre.gondois@arm.com> wrote:
 >
-> So it definitely goes through kernel.org.
+> commit 10a35e6812aa ("sched/pelt: Skip updating util_est when
+> utilization is higher than CPU's capacity")
+> prevents util_est from being updated if util_avg is higher than the
+> underlying CPU capacity to avoid overestimating the task when the CPU
+> is capped (due to thermal issue for instance). In this scenario, the
+> task will miss its deadlines and start overlapping its wake-up events
+> for instance. The task will appear as always running when the CPU is
+> just not powerful enough to allow having a good estimation of the
+> task.
 >
-> But it has no DKIM headers.
+> commit b8c96361402a ("sched/fair/util_est: Implement faster ramp-up
+> EWMA on utilization increases")
+> sets ewma to util_avg when ewma > util_avg, allowing ewma to quickly
+> grow instead of slowly converge to the new util_avg value when a task
+> profile changes from small to big.
+>
+> However, the 2 conditions:
+> - Check util_avg against max CPU capacity
+> - Check whether util_est > util_avg
+> are placed in an order such as it is possible to set util_est to a
+> value higher than the CPU capacity if util_est > util_avg, but
+> util_est is prevented to decay as long as:
+> CPU capacity < util_avg < util_est.
+>
+> Just remove the check as either:
+> 1.
+> There is idle time on the CPU. In that case the util_avg value of the
+> task is actually correct. It is possible that the task missed a
+> deadline and appears bigger, but this is also the case when the
+> util_avg of the task is lower than the maximum CPU capacity.
+> 2.
+> There is no idle time. In that case, the util_avg value might aswell
+> be an under estimation of the size of the task.
+> It is possible that undesired frequency spikes will appear when the
+> task is later enqueued with an inflated util_est value, but the
+> frequency spike might aswell be deserved. The absence of idle time
+> prevents from drawing any conclusion.
+>
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
 
-Funky.
+This change looks reasonable to me. Did you face problems related to
+this in a particular use case ?
 
-There's definitely something strange going on, because your *previous*
-email to me did have the DKIM signature:
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.rog>
 
-  Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF624C4CEE2...
-  DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;[..]
-  [...]
-  Date: Wed, 26 Mar 2025 12:40:25 -0400
-  Subject: Re: [GIT PULL] arm64 updates 6.15-rc1
-  Message-ID: <20250326124025.1966bf8a@gandalf.local.home>
 
-and gmail was explicitly happy with it:
-
-  ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass [...]
-
-but then this later one didn't:
-
-  Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDA5C4CEE2...
-  [...]
-  Date: Wed, 26 Mar 2025 13:12:00 -0400
-  Message-ID: <20250326131200.1c86c657@gandalf.local.home>
-
-and for some reason gmail also didn't actually react to the lack of
-DKIM on that second one and only talks about how spf was fine.
-
-Konstantin? Can you tell what's going on?
-
-               Linus
+> ---
+>  kernel/sched/fair.c | 7 -------
+>  1 file changed, 7 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c798d2795243..de7687e579c2 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4918,13 +4918,6 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
+>         if (last_ewma_diff < UTIL_EST_MARGIN)
+>                 goto done;
+>
+> -       /*
+> -        * To avoid overestimation of actual task utilization, skip updates if
+> -        * we cannot grant there is idle time in this CPU.
+> -        */
+> -       if (dequeued > arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq))))
+> -               return;
+> -
+>         /*
+>          * To avoid underestimate of task utilization, skip updates of EWMA if
+>          * we cannot grant that thread got all CPU time it wanted.
+> --
+> 2.25.1
+>
 
