@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-576479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D802A70FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09111A70FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:12:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEC03B1BE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6683AF046
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0304165F16;
-	Wed, 26 Mar 2025 04:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2608516DEB1;
+	Wed, 26 Mar 2025 04:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TGkXtYlz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X8Tnfrvc"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FEC13AA2A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B2415F41F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742962220; cv=none; b=ZMax2QebID2hRExwjDu3ADYIVHyama9awvNlTV4cc51RhPX6WwNPdxIa7tt7ffvO+en27sVJm7hXJD85faeZf4lyGp2iIcP6WxPNIzbOM51Mc/G/7lSZpHLvOGuRQZruyX2EUEUG3L7IbGeRfb4fntx00RmvCMQEPqy9E5XOHEo=
+	t=1742962327; cv=none; b=uiPdtcCeZk33jmTb4qKsAfbvWXL+4daWK0ZJsvyb9IQ6K2KV6f62HejTFp/zFIBJZcpzeJYt6ZyOVlha5PGWpuoxC/kPcru2mlUS9XViDkJlBeB8ZyyJJOtHu0GvgjirAFuwtkZwFvxfaojJNjfZFNDAgtzU3x5fxt3/VXcdriE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742962220; c=relaxed/simple;
-	bh=5OVzdy8+yyhJNUfmHdBUhH2WgwhbQfJlF7HcFu43WpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VLKomM9qWv5bFT0i77SFCbB9fQfaa9jOa0C3EAmsBvkl0W10ZdIhlkwliQmlZtRAb8U5Y06LPSU3+SmNs519WstrPMtS/u8oRDd3M4H9eAD1a8K6y65UALnhN2svpKf7KE24b27XMLZCEUpDRGloOKMpjvbhWIAzJr6jLCKzY9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TGkXtYlz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742962215;
-	bh=NqGabLQDHZ/ffqAij5vltrnM2D9upO51DjEv8gS+HMU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TGkXtYlzUKaOsLKcq8M3thmN0vucVQ6PhFfEZecbrOsoL2qVEq1tyfrgfnqnWNocx
-	 4jOwMpceg2ij6qXaoAcU41w0R36twOPwwMe0q64BNtVabnktwdiH2wbYxlXSz0wGj0
-	 DecpcA2d0wTezd7/Mmf8Roxl5VmUJ2Nvm7WdmLEVeCrV9AjDgS5puhTBkcLRDL4FYg
-	 1o0fvdDf8mPn0g7/7kd5n2ReBzgwaapoW2QZVU9cYBMtUIcWGEyyJlFB4nVQt3VIfJ
-	 W0KY1kazjCY65aULI7oHBBe/4yofw97P+3TuglktSKV4o67feMH39BYFHta83GiEhu
-	 aa2b0sNntnFbg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMtc72nb8z4x1t;
-	Wed, 26 Mar 2025 15:10:15 +1100 (AEDT)
-Date: Wed, 26 Mar 2025 15:10:14 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH] objtool: Fix NULL printf() '%s' argument
-Message-ID: <20250326151014.6a006c93@canb.auug.org.au>
-In-Reply-To: <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
-References: <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742962327; c=relaxed/simple;
+	bh=Z/HU/7IaCHp5V/l5qTpe48nAFGMbCgTdwft/kVyiMV4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=pekAm+5VG+46F9pJ9qdkvoWIJOs6WP2NgDi5GA6W33t/7xmq7+F+Rwrz1twHDvWvbA5JvQLIOZWezM9yCALSwl+91/yGs99Kzm6bt0fE5efuTm6Ysi243b5hrfYwMMjqGOiTeE1bWiZZDejGiS/eaSMgjLG9N5cCB+EIGdc4zSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X8Tnfrvc; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250326041158epoutp0259ba9497664b89a59b36c46a72dff8b6~wPv54_1m53057230572epoutp02F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:11:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250326041158epoutp0259ba9497664b89a59b36c46a72dff8b6~wPv54_1m53057230572epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742962318;
+	bh=Z/HU/7IaCHp5V/l5qTpe48nAFGMbCgTdwft/kVyiMV4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=X8TnfrvcSUrX6Jn97SxcvRF7sE+/QlWvoJyTbIo7Ao4UYDYMZyG5s6jnH6MSprHXZ
+	 hzHRbe5CC8Clp3H6PNP5yL160BwRh1BDbsQ82Cclg3Z+ERBFbO8/c9tW/8EkH2nVRI
+	 F4FcQZ5IFGsxczVIOdf0Ce1gVWb/MtKysFPQaZrc=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250326041157epcas5p40276f85d4e2dbdacbfd5aeeb24c61f5b~wPv5Sifpv2402124021epcas5p4m;
+	Wed, 26 Mar 2025 04:11:57 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4ZMtf409dpz4x9Ps; Wed, 26 Mar
+	2025 04:11:56 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9F.F4.19608.B8E73E76; Wed, 26 Mar 2025 13:11:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250326041155epcas5p17f14d57859e765d7835c9556a0e592ee~wPv3QbvJN1062310623epcas5p15;
+	Wed, 26 Mar 2025 04:11:55 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250326041155epsmtrp174d050273514138cd454533e2aa36e9d~wPv3Pr_mX1028010280epsmtrp1T;
+	Wed, 26 Mar 2025 04:11:55 +0000 (GMT)
+X-AuditID: b6c32a50-225fa70000004c98-da-67e37e8be0ad
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	80.90.19478.B8E73E76; Wed, 26 Mar 2025 13:11:55 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250326041153epsmtip2fe691706bea154c11bdf3b38bc47f0f7~wPv1sAitb2010920109epsmtip2y;
+	Wed, 26 Mar 2025 04:11:53 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Faraz Ata'" <faraz.ata@samsung.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>,
+	<suyash.bitti@samsung.com>
+In-Reply-To: <20250318075635.3372599-1-faraz.ata@samsung.com>
+Subject: RE: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
+Date: Wed, 26 Mar 2025 09:41:52 +0530
+Message-ID: <0ca401db9e05$35d331e0$a17995a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/I0E3k0E5RavfCd8u8OqRyed";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/I0E3k0E5RavfCd8u8OqRyed
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIiLJ9Qel8GAkpX5i6PIbvAaC3kAAM/bP3Ast21bPA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmlm533eN0g+2XrSzW7D3HZHFvxzJ2
+	i/lHzrFaXLuxkN3i5ax7bBabHl9jtbi8aw6bxYzz+5gs/u/ZwW7x5ecDZovZ82scuD02repk
+	89i8pN6jb8sqRo/Pm+QCWKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPIS
+	c1NtlVx8AnTdMnOAblJSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX
+	5qXr5aWWWBkaGBiZAhUmZGfMmdvAXjCRvWL3VLsGxj62LkYODgkBE4nF/0S7GLk4hAT2MEo8
+	+/uQGcL5xCjxZ18TI5zzYPsqoAwnWEfX3qPsEImdjBILvy5jgXBeMkp0zF4PVsUmoCuxY3Eb
+	G4gtIpAt8WbRZ7C5zAKPGCUOfPrHArKcU8BWYve/dJAaYQEvib6mW4wgNouAqsSOCXNZQGxe
+	AUuJQ+2noGxBiZMzn4DZzALaEssWvoa6SEHi59NlrBC7rCSuzD8LVSMu8fLoEbBLJQQWckjM
+	mtTPCtHgInHp8UomCFtY4tXxLewQtpTEy/42KDteYt+bFVA1BRJrrv1jgbDtJVYvOMMKcj+z
+	gKbE+l36ELv4JHp/P2GChCmvREebEES1qkTzu6tQndISE7u7oS7wkLj5Zj/7BEbFWUg+m4Xk
+	s1lIPpiFsGwBI8sqRqnUguLc9NRk0wJD3bzUcnh8J+fnbmIEp1itgB2Mqzf81TvEyMTBeIhR
+	goNZSYT3GOvDdCHelMTKqtSi/Pii0pzU4kOMpsDwnsgsJZqcD0zyeSXxhiaWBiZmZmYmlsZm
+	hkrivM07W9KFBNITS1KzU1MLUotg+pg4OKUamOYuuyKgkVheOYd3s8xFr7Pzay2d+X8VJP37
+	YRP3b7JD90nuwl/KT0M17/jP9C1ylDGV3uM7lfEhH1uHcMHXzdxFDyojz4perG45uYlDQKeq
+	m1UsTcCWUaxGcMvRmCtiNy1tH3toF6wNb+Lss5giZNAw4fbfizcvRahLJTTcVtLQMtgdfmpx
+	Rv6KpYdbYrqOeFaYTUsyaTqx+gPH7Llsonfvm/N0tB8+4NjM0H12bvHJngaJHb/XMb/vcjrW
+	seFTcVF8R8yOphMVntut/9l5Su+vnBd/5nqK04EQh+adzNu+yZr+ufKuNddnnsPqbaUHGsJf
+	Ni2Q8OthEpFw1hW7lnK50LLHevV/S+/Zy4uUWIozEg21mIuKEwFsu56nOgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJXre77nG6wY9uRYs1e88xWdzbsYzd
+	Yv6Rc6wW124sZLd4Oesem8Wmx9dYLS7vmsNmMeP8PiaL/3t2sFt8+fmA2WL2/BoHbo9NqzrZ
+	PDYvqffo27KK0ePzJrkAligum5TUnMyy1CJ9uwSujDOLl7AVvGeruNq8iLGB8Q1rFyMnh4SA
+	iUTX3qPsXYxcHEIC2xklzu36wQKRkJa4vnECO4QtLLHy33OooueMEutvrGMGSbAJ6ErsWNzG
+	BmKLCORLbPszjwmkiFngBaPEkwUnWCE6+hgl/nf0AnVwcHAK2Ers/pcO0iAs4CXR13SLEcRm
+	EVCV2DFhLthmXgFLiUPtp6BsQYmTM5+A2cwC2hK9D1sZYexlC18zQ1ynIPHz6TJWiCOsJK7M
+	PwtVLy7x8ugR9gmMwrOQjJqFZNQsJKNmIWlZwMiyilE0taA4Nz03ucBQrzgxt7g0L10vOT93
+	EyM4xrSCdjAuW/9X7xAjEwfjIUYJDmYlEd5jrA/ThXhTEiurUovy44tKc1KLDzFKc7AoifMq
+	53SmCAmkJ5akZqemFqQWwWSZODilGpg2ywu482u8/fXgdaN61I91zyVXh3BMUdqbGFLKKeG3
+	XHPmvwNHHR1SdlyazvlSj9uJzWZtYRnX8o0CegVHZjse+C7FfO2D0+F7n3NS+Osnfr3urVp/
+	6XaRydMpE3Uy1q7VnKKx78X7+FaH7mc/1DL8jAtav6f9TZ1cev98xmvZvK33+CeysR1I+DTn
+	N19YrrHyTPdNV0pXvpCz+GD8bKumWVXGi18hkUZZPhO7aqU69Lg/aZ0qdZsW/nXl/jsJ6imr
+	YpfeC3CYOKF1selh9oBl+7QaDsyd8PaxZFjCnVPbec4Kr9Mvyjzv113wP47zef8Jzzm1Iovf
+	yn/IPHf2jeSkjbyvmQ+4r88y91t44uIRJZbijERDLeai4kQAJowUFiADAAA=
+X-CMS-MailID: 20250326041155epcas5p17f14d57859e765d7835c9556a0e592ee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80
+References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
+	<20250318075635.3372599-1-faraz.ata@samsung.com>
 
-Hi Josh,
+Hi Faraz
 
-On Tue, 25 Mar 2025 18:30:37 -0700 Josh Poimboeuf <jpoimboe@kernel.org> wro=
-te:
->
-> It's probably not the best idea to pass a string pointer to printf()
-> right after confirming said pointer is NULL.  Fix the typo and use
-> argv[i] instead.
+> -----Original Message-----
+> From: Faraz Ata <faraz.ata=40samsung.com>
+> Sent: Tuesday, March 18, 2025 1:27 PM
+> To: alim.akhtar=40samsung.com; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org
+> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;=
+ linux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> faraz.ata=40samsung.com; rosa.pila=40samsung.com;
+> dev.tailor=40samsung.com; suyash.bitti=40samsung.com
+> Subject: =5BPATCH v2=5D arm64: dts: exynos: Add DT node for all UART port=
+s
 >=20
-> Fixes: c5995abe1547 ("objtool: Improve error handling")
-> Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Universal Serial Interface (USI) supports three serial protocol like uart=
+, i2c and
+> spi. ExynosAutov920 has 18 instances of USI.
+> Add all the USI DT node and subsequent uart nodes for all the instances.
+>=20
+> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
 > ---
->  tools/objtool/builtin-check.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-> index 2bdff910430e..e364ab6345d3 100644
-> --- a/tools/objtool/builtin-check.c
-> +++ b/tools/objtool/builtin-check.c
-> @@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
->  	for (int i =3D 0; i < argc; i++) {
->  		orig_argv[i] =3D strdup(argv[i]);
->  		if (!orig_argv[i]) {
-> -			WARN_GLIBC("strdup(%s)", orig_argv[i]);
-> +			WARN_GLIBC("strdup(%s)", argv[i]);
->  			exit(1);
->  		}
->  	};
-> --=20
-> 2.48.1
->=20
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
-Thanks.  I have applied this to the merge of the tip tree (which
-include the tip-fixes tree) in linux-next today.  It fixes the build
-failure for me.  I will apply it to the merge of the tip-fixes tree
-tomorrow unless it has already been applied by then.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/I0E3k0E5RavfCd8u8OqRyed
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjfiYACgkQAVBC80lX
-0Gy4pwf6AoT8O92NsoRiihhDMXRi6O9bPSI8byb1JMXkCmS9PsWEPLPKiiJEqd/H
-KJ0VhFiIvCdCzKapc3e243YBbLtAMnk0dit1ZPgzL0ZhftPKVJMbHM8bcSQ4/Dvi
-tOT3bXY5di616AH0m3iugeLN758Dotc6Lb9RjOnsTLLNzY8zGY+EKZ84AQ9I0GZz
-WxgXIOA3pskiXxQkTei4hRbsHVOx3GooctearnSPFQQ71M/tRjBoMvfbk33SA835
-p2z4hUFE5W+jx1oaO0vsYvJJUbD4/ynaN5g0nVFWFBvVZwBro+gKLSBctOsilF4o
-/Pb3ShMe4eq7nANvrrjo871NygkFvw==
-=YIsm
------END PGP SIGNATURE-----
-
---Sig_/I0E3k0E5RavfCd8u8OqRyed--
 
