@@ -1,59 +1,72 @@
-Return-Path: <linux-kernel+bounces-577330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E70A71B9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:19:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF902A71BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160B33BCB61
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E67C1762BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AA11F5428;
-	Wed, 26 Mar 2025 16:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337231F7092;
+	Wed, 26 Mar 2025 16:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFTmpIbS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QS8p2MJB"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39611EB5DD;
-	Wed, 26 Mar 2025 16:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BD41F5433;
+	Wed, 26 Mar 2025 16:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743005933; cv=none; b=qojEN9YPxWqtzryw/i9KHmdJZHwXv03aIy666X3ZZe6RHbJLD7iYWjYrbAfCGSKx07B0Q+iTIrZJip1lGeafRzavXwz7BkRA7PDWr+6k7czKAcaHJqot4+baWJFmck76qHDp865VFDgO98Z73srQNk6Dg3gm/my9ohrHSXkx96Q=
+	t=1743006085; cv=none; b=kyU8pegQ4fXuBpb2vKxWQ1qfSHNl9XJT4sPbMvy6H7TuY5ZutVRsIrcsmYikLf+URNuadSlAG7iBs9vEpaIblfU3Q8jdJh1xFzaoTqK0jO/VZHpUt9lz3XsZ4T7rvOgYBQQ2jMi0z2FvGrOV0ZLc7RzWwU4iXJcfBw9ml82UCGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743005933; c=relaxed/simple;
-	bh=Z4mfmOoHDjZnf6VjFetSlpm7EqU2U/ycpOa/pXxe3As=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AScncm2LssmMJdn91Uo7bUOcJRGXPJelygVPluMTeSocpfo80f72h/SecAaNb1OzZ4MLk3Hx+K1BKR8TXSrwgPMH9srnGalfTG3fcPqJc8Bkbts/LnbGcLe1PC+kizm6OtbW2RQe/RG51EnSjxoupEqt0f+ZLcaGBW5SPgJlRUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFTmpIbS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89A4C4CEE2;
-	Wed, 26 Mar 2025 16:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743005933;
-	bh=Z4mfmOoHDjZnf6VjFetSlpm7EqU2U/ycpOa/pXxe3As=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IFTmpIbSr02+z+3hzqVTVDVY47MUu+MuOh7sDPYKYTz9W4Zd/sQYszYl0O9V5NxkX
-	 ro8eQdeLPbf81UJ3rEAvCcKETeaMaTqNFybysQaLVDVYznROqZeReYdk/zIVHvahJq
-	 9ub88mDc/Pt283gQ59XiLm+C9NSbnzXBRqfXfGd0t7ndfTI+mubG4wdWd4PQ22mWzW
-	 dsUOJb01Ceo80+PjgjrRba4l13mM8/hI54RB52yN+lJJ4vjihzew2lQ4C8wnS4gjPu
-	 +LJwqrfHSl17NMWgSVk0Cc9LPF7bZyeEoR3qEwkiK4C4I3PtZGepUm6BlN0gr2FO8O
-	 +gaWp82UNZkIQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Sumit Garg <sumit.garg@kernel.org>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: Make chip->{status,cancel,req_canceled} opt
-Date: Wed, 26 Mar 2025 18:18:38 +0200
-Message-Id: <20250326161838.123606-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1743006085; c=relaxed/simple;
+	bh=nT6VRtgopQ8G6LxyrDepOfBp6qLTXcRbja01PY+hu7M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n60JBnKj17gW5I1GaZVYeBi2ThsUtNFALdhb2mR54ZxAJuCvBem8E4myG7HfmMB2Y1ruqs/A2QSH/dvUycjXrHmfALooQdzrZJX/FFFAGX0KDszE/6bzeEYadUwQYgorESwJVqnY7aevYJ8FIBt+YLJf8vbjjVGDSLxipYMjmkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=QS8p2MJB; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743006084; x=1774542084;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=nhr7gIYRxszAnMd29YWnQ+sqjq5QqSN5i/GFVwNuhZA=;
+  b=QS8p2MJBdiua1B492roh7kCbYQWNqmt7NC0MFSIZApqKL0G4ayyLbE3n
+   SHJEtiEflx0/IEHC8d70Z+MOqeMFDIqjfGley9I8oGQUB3WQcgEIZ4Nx8
+   9uRd9UM6nTWYIEbLYfo178Oy43S5AO6rku69oWusY/xVmH/u30aDSnldh
+   4=;
+X-IronPort-AV: E=Sophos;i="6.14,278,1736812800"; 
+   d="scan'208";a="77909939"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 16:21:19 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:64354]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.87:2525] with esmtp (Farcaster)
+ id 1abbc2fe-9a1d-48e3-9635-300968de39f9; Wed, 26 Mar 2025 16:21:18 +0000 (UTC)
+X-Farcaster-Flow-ID: 1abbc2fe-9a1d-48e3-9635-300968de39f9
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Mar 2025 16:21:17 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.100.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Mar 2025 16:21:14 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <john.johansen@canonical.com>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the apparmor tree
+Date: Wed, 26 Mar 2025 09:19:56 -0700
+Message-ID: <20250326162104.20801-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250326042655.4e160022@kernel.org>
+References: <20250326042655.4e160022@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,121 +74,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+From: Jakub Kicinski <kuba@kernel.org>
+Date: Wed, 26 Mar 2025 04:26:55 -0700
+> On Wed, 26 Mar 2025 15:01:48 +1100 Stephen Rothwell wrote:
+> > After merging the apparmor tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > security/apparmor/af_unix.c: In function 'unix_state_double_lock':
+> > security/apparmor/af_unix.c:627:17: error: implicit declaration of function 'unix_state_lock'; did you mean 'unix_state_double_lock'? [-Wimplicit-function-declaration]
+> >   627 |                 unix_state_lock(sk1);
+> >       |                 ^~~~~~~~~~~~~~~
+> >       |                 unix_state_double_lock
+> > security/apparmor/af_unix.c: In function 'unix_state_double_unlock':
+> > security/apparmor/af_unix.c:642:17: error: implicit declaration of function 'unix_state_unlock'; did you mean 'unix_state_double_lock'? [-Wimplicit-function-declaration]
+> >   642 |                 unix_state_unlock(sk1);
+> >       |                 ^~~~~~~~~~~~~~~~~
+> >       |                 unix_state_double_lock
+> 
+> Thanks Stephen! I'll pop this into the tree in a few hours,
+> just giving Kuniyuki a bit more time to ack.
 
-tpm_ftpm_tee does not require chip->status, chip->cancel and
-chip->req_canceled. Make them optional.
+Thanks for catching this, Stephen !
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
----
- drivers/char/tpm/tpm-interface.c | 31 ++++++++++++++++++++++++++++---
- drivers/char/tpm/tpm_ftpm_tee.c  | 20 --------------------
- 2 files changed, 28 insertions(+), 23 deletions(-)
+The patch itself looks good, for the patch:
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index f62f7871edbd..10ba47a882d8 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -58,6 +58,30 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
-+static void tpm_chip_cancel(struct tpm_chip *chip)
-+{
-+	if (!chip->ops->cancel)
-+		return;
-+
-+	chip->ops->cancel(chip);
-+}
-+
-+static u8 tpm_chip_status(struct tpm_chip *chip)
-+{
-+	if (!chip->ops->status)
-+		return 0;
-+
-+	return chip->ops->status(chip);
-+}
-+
-+static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
-+{
-+	if (!chip->ops->req_canceled)
-+		return false;
-+
-+	return chip->ops->req_canceled(chip, status);
-+}
-+
- static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- {
- 	struct tpm_header *header = buf;
-@@ -65,6 +89,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- 	ssize_t len = 0;
- 	u32 count, ordinal;
- 	unsigned long stop;
-+	u8 status;
- 
- 	if (bufsiz < TPM_HEADER_SIZE)
- 		return -EINVAL;
-@@ -104,12 +129,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- 
- 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
- 	do {
--		u8 status = chip->ops->status(chip);
-+		status = tpm_chip_status(chip);
- 		if ((status & chip->ops->req_complete_mask) ==
- 		    chip->ops->req_complete_val)
- 			goto out_recv;
- 
--		if (chip->ops->req_canceled(chip, status)) {
-+		if (tpm_chip_req_canceled(chip, status)) {
- 			dev_err(&chip->dev, "Operation Canceled\n");
- 			return -ECANCELED;
- 		}
-@@ -118,7 +143,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
- 		rmb();
- 	} while (time_before(jiffies, stop));
- 
--	chip->ops->cancel(chip);
-+	tpm_chip_cancel(chip);
- 	dev_err(&chip->dev, "Operation Timed out\n");
- 	return -ETIME;
- 
-diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-index 8d9209dfc384..53ba28ccd5d3 100644
---- a/drivers/char/tpm/tpm_ftpm_tee.c
-+++ b/drivers/char/tpm/tpm_ftpm_tee.c
-@@ -164,30 +164,10 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	return 0;
- }
- 
--static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
--{
--	/* not supported */
--}
--
--static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
--{
--	return 0;
--}
--
--static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status)
--{
--	return false;
--}
--
- static const struct tpm_class_ops ftpm_tee_tpm_ops = {
- 	.flags = TPM_OPS_AUTO_STARTUP,
- 	.recv = ftpm_tee_tpm_op_recv,
- 	.send = ftpm_tee_tpm_op_send,
--	.cancel = ftpm_tee_tpm_op_cancel,
--	.status = ftpm_tee_tpm_op_status,
--	.req_complete_mask = 0,
--	.req_complete_val = 0,
--	.req_canceled = ftpm_tee_tpm_req_canceled,
- };
- 
- /*
--- 
-2.39.5
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
+
+John:
+
+I had a cursory look at this commit and the exact user of
+unix_state_lock() is broken for SOCK_DGRAM.
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor.git/commit/?h=apparmor-next&id=c05e705812d179f4b85aeacc34a555a42bc4f9ac
+
+---8<---
++
++	/* TODO: update sock label with new task label */
++	unix_state_lock(sock->sk);
++	peer_sk = unix_peer(sock->sk);
++	if (peer_sk)
++		sock_hold(peer_sk);
++
++	is_sk_fs = is_unix_fs(sock->sk);
++	if (is_sk_fs && peer_sk)
++		sk_req = request;
++	if (sk_req)
++		error = unix_label_sock_perm(subj_cred, label, op, sk_req,
++					     sock);
++	unix_state_unlock(sock->sk);
++	if (!peer_sk)
++		return error;
++
++	unix_state_double_lock(sock->sk, peer_sk);
+
+Here, unix_peer(sock->sk) could have been changed and must be
+double checked.  See unix_dgram_sendmsg().
+
+The patch seems to be written in 2022 and recently merged.
+I'm not sure if it's reviewed by netdev folks at that time,
+but please cc me and netdev next time for patches regarding
+AF_UNIX.
+
+Thanks!
+
+
++	if (!is_sk_fs && is_unix_fs(peer_sk)) {
++		last_error(error,
++			   unix_fs_perm(op, request, subj_cred, label,
++					unix_sk(peer_sk)));
++	} else if (!is_sk_fs) {
++		struct aa_sk_ctx *pctx = aa_sock(peer_sk);
++
++		last_error(error,
++			xcheck(aa_unix_peer_perm(subj_cred, label, op,
++						 MAY_READ | MAY_WRITE,
++						 sock->sk, peer_sk, NULL),
++			       aa_unix_peer_perm(file->f_cred, pctx->label, op,
++						 MAY_READ | MAY_WRITE,
++						 peer_sk, sock->sk, label)));
++	}
++	unix_state_double_unlock(sock->sk, peer_sk);
+---8<---
 
