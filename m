@@ -1,126 +1,96 @@
-Return-Path: <linux-kernel+bounces-576739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B5AA713D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:36:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20818A713D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31A97A5A72
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1617526D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58FA1A8412;
-	Wed, 26 Mar 2025 09:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C801AB52F;
+	Wed, 26 Mar 2025 09:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c5gD+Uvg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQpLvIQJ"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9381624DF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D70815381A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981779; cv=none; b=V0R6sLw5Z7xmI5Ag5sdKVCD57NZ6jL7IXjPKTEgQbqcSyOP7PDBoi1+RhNtZOkyWnVp/Itmf6yUSReFAYuMN+KdvSnYoo1NpXWGMkHTyJphraz3rcTqiTnJ7fzTEnjqrBz6065kWyamdl1YbzIqDKa+9stno2yIaettIrCUB/TE=
+	t=1742981794; cv=none; b=A0R2RlyQRILxCjH50UCONcVfCwZMLXqo3k4C7Gu0cjtKU68nYaI1SWO+x7JM0ANLgIYrXvfTUxByg9slB64zY0FLD36afiRhMxTVMLRirxAvHs6POH3GdiiHYizQ3zLDxqMYLEwupy0wuei55mptnq+aOhYXO/yK1Clk9NAkFg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981779; c=relaxed/simple;
-	bh=aPS1tJ4jno8OgHfjqqCfT1rUCV0Rlu9rTyQpCyd/T3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grc7vAMNtHYHWoQR6XntclQk1LkDKEhzoIsoxOq146xxwm+zczWwLJKmNHqFrQcggDvh1Jb0lWCgHopxnjvGlwb0FVBVrNnTrR5UOx24A+LgGhtOmdqvdMtxFXUlkrkfgyD1CT4jcQQemR/oXq6wVqlg/UKQToZiJsQDBtb3qeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c5gD+Uvg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742981776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7s6kGrJksefYUT5ouwvuh5z8KUx3QyiVOgbgLYNxiYY=;
-	b=c5gD+UvgXhRBCGdCuLW/vJA1FtYuc0TpmCdlgBRqHoafZZt2kXQeKW0QwOrb3+PI0JNfjm
-	Vanjt6GQkMBH84Yhf/hkOMgUdhAWHeWwNY1gAS01eb9IXdTTWfKlmbhgqvvgjva3GvaahR
-	pmhLQEFk+YnIxLiycblcfXRX+L+Dl5A=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-Ntfzn1olMPiWbWipkhq9bA-1; Wed,
- 26 Mar 2025 05:36:12 -0400
-X-MC-Unique: Ntfzn1olMPiWbWipkhq9bA-1
-X-Mimecast-MFC-AGG-ID: Ntfzn1olMPiWbWipkhq9bA_1742981771
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 050D61809CA5;
-	Wed, 26 Mar 2025 09:36:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3517919541A5;
-	Wed, 26 Mar 2025 09:36:06 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Mar 2025 10:35:38 +0100 (CET)
-Date: Wed, 26 Mar 2025 10:35:33 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: kernel test robot <lkp@intel.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Phil Auld <pauld@redhat.com>
-Subject: Re: kernel/sched/isolation.c:50: undefined reference to
- `sched_numa_find_closest'
-Message-ID: <20250326093532.GA30181@redhat.com>
-References: <202503260646.lrUqD3j5-lkp@intel.com>
+	s=arc-20240116; t=1742981794; c=relaxed/simple;
+	bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=c++IYU7Q93DfV27ORz4YInu0zQAFIb20uK/9j+lxSUyu6GmEqgR4BQiNlfclUcaV1UXpiD9JlEAM4Hqqyn8fDRLJkaFdWcsRMQgcGJVudGI2/qRrpVkfSFqtudopHQWl5hqQOiVM/dopcQ/P5wLyGRFLJEheSpFrSyDoi+SVctI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQpLvIQJ; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30c05fd126cso58056121fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742981791; x=1743586591; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
+        b=LQpLvIQJvOpRHI0JUPHJCIHI7JDzQ7+ABfJREVxZngmtulE2ceFo2gWUTgCuCqzlRN
+         i9PT6m650YRk3nJiLtwo4MBKJD24eIyqmKG6etaFVG1X5I9HbjllixfYbNX7jX5YkvBv
+         OcDqIrIErxc9OiIkGu+0luNZMTWeQOnGuxYC6OE3oOrljntpDUJpk6MQsGorx0GgLPl9
+         8SdG+kaZmhDEKPPuO3ZB/56Dvvr6t8CvUDBB8oF5UnbaiAfHY8ShexxRisMMLZ4QDjGB
+         Wtqq1OKD9g+v2hoak0QshA/GJNmG3O+p4j5kQ+gpirtXVGcW7gPPKJAQ/zzP9OUWO0ag
+         94JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742981791; x=1743586591;
+        h=cc:to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
+        b=LedeAjj2hQ00zPAlbVOQRulEcpg19YdRUlMW+u8AzPTDOyJR9y8OO1BlrM5eBpLz9w
+         Z4O+Uwus7VO6r7ykWubMAtGLY1hfgpm0PezRbgpPOLtA9urzfjyU21NvxEgV6zA0EOtz
+         XjuGUi9eRByAej6NRJit/S+/FS9yo5QS2/+lrLJ2vyfwBP4NAS7FsonSasL/c1fqp86P
+         cKktjoYRqlkaxIpFeNg/IUUqhux/sndbdMe/n2d0Fk4ndbKKWKt6ML8+OJXgvSLMxUor
+         BZgCoGuFpNNm+T7tAUEPZTJWMK0J5wYMGcf0D+Judd7c2nlhhe2WbCp+ofMQGHu+2rFT
+         PAaw==
+X-Gm-Message-State: AOJu0YzwIugu8HnXdireQHPQTvO239JRSfcPnhw3jXjQ/9dHvAD9pgmq
+	SMQekDBJdxyk5IMA4X2B+5ZQAvVdDYZB/F0HrprU+ucTfzA/R7f0RrftmchkJ3wngeeajR3yFtk
+	dCUz/FjyIQfs1Rbec4Bv1ha01cWc=
+X-Gm-Gg: ASbGncsuRTkQB32bUuUAM/uUM8K2DiethQ+XBhTFPU4qrdkBYmHb9g/h3zKpPIe6IQJ
+	CbeqrbnKByrCYOj7qaUNRtmldISPQ8VwcPXpMVtsPaS+dPcuq25bzKSq6fDk+4K3hKarD9K9hlh
+	LBjarc8iTo59VjghrVCrmdAW1IoC1h
+X-Google-Smtp-Source: AGHT+IHVCVzJywQtI7xUtqkGya9R/4lk2Ir0ez0fQvOEygus1ZrNZ+sgrT4TS9VuoYrh4vsQS36mgSGK1NMzGPByF1U=
+X-Received: by 2002:a05:6512:350f:b0:54a:fa47:b2a5 with SMTP id
+ 2adb3069b0e04-54afa47b3bdmr1105871e87.23.1742981790917; Wed, 26 Mar 2025
+ 02:36:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202503260646.lrUqD3j5-lkp@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Wed, 26 Mar 2025 10:35:53 +0100
+X-Gm-Features: AQ5f1Joiar9OLwlwiBbZuWU3M4o3psZUGdRn779I-qQ8NF6j2dddDvL3o0PDvto
+Message-ID: <CA+icZUV6dLN3qBgzZFFq2gcG3Bssp6UShafLF-3A3BLpGAGt6g@mail.gmail.com>
+Subject: [Linus Git] nginx - 403 Forbidden
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, helpdesk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/26, kernel test robot wrote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   2d09a9449ecd9a2b9fdac62408c12ee20b6307d2
-> commit: 5097cbcb38e6e0d2627c9dde1985e91d2c9f880e sched/isolation: Prevent boot crash when the boot CPU is nohz_full
-> date:   11 months ago
-> config: sh-randconfig-r132-20250326 (https://download.01.org/0day-ci/archive/20250326/202503260646.lrUqD3j5-lkp@intel.com/config)
-...
-> >> kernel/sched/isolation.c:50: undefined reference to `sched_numa_find_closest'
+Hi Konstantin,
 
-kernel/sched/isolation.c makes no sense without CONFIG_SMP, but
+I see several ERRORs when reading Linus Git online.
 
-	config CPU_ISOLATION
-		bool "CPU isolation"
-		depends on SMP || COMPILE_TEST
+Example:
 
-and .config above has CONFIG_COMPILE_TEST but not CONFIG_SMP.
+Merge tag 'x86_cache_for_v6.15' of git://git.kernel.org/pub/scm/linux/kernel/...
 
-It also has CONFIG_NUMA, it doesn't depend on CONFIG_SMP in
-arch/sh/mm/Kconfig, so isolation.c can't use the dummy version
-of sched_numa_find_closest() in kernel/sched/sched.h, and
-kernel/sched/build_utility.c doesn't include topology.c without
-CONFIG_SMP.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2899aa3973efa3b0a7005cb7fb60475ea0c3b8a0
 
-Perhaps we can should simply remove this "|| COMPILE_TEST" ?
+^^ This one is reproducible.
 
-Oleg.
-
---- x/init/Kconfig
-+++ x/init/Kconfig
-@@ -709,7 +709,7 @@ endmenu # "CPU/Task time and stats accou
- 
- config CPU_ISOLATION
- 	bool "CPU isolation"
--	depends on SMP || COMPILE_TEST
-+	depends on SMP
- 	default y
- 	help
- 	  Make sure that CPUs running critical tasks are not disturbed by
-
-
+Best regards,
+-Sedat-
 
