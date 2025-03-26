@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-576501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA48DA7100C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:04:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE2EA71012
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5347816A4A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 236DC7A4EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5344F17A2FD;
-	Wed, 26 Mar 2025 05:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462D161321;
+	Wed, 26 Mar 2025 05:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fEBGEaq2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="GlKGdtJP"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4657463CB;
-	Wed, 26 Mar 2025 05:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942CC1F16B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742965445; cv=none; b=EL1GOSF9OcpYccfN36fS09CDh2moGtL/5UFuzlRCFrPUyz9Bb7gkFuESO/c4StSVKR6SqTq9l6240Q+2+sTFGyze/rdgmsuhJ69322cNBJCizUDEfJ8dqKENPcQP1C5oiuVXWjTJiNnzE8pEUd8+PKY8PgGPiQxdbuk9yMd8lt8=
+	t=1742966133; cv=none; b=MFUmikuHG9LuQeCkchoVyFtv7COdKEp/gc5NpMR7VAHcMaXcs0lRmfZcGLhxeWGCZkIeLXZ2WTrzPA6pO8wIuc0QH5yeZZCGRUi+czrV7ffLnKEDc9QTN5pX+xCx+1Z09fzK6Lrux6PzMwsRP5FvDD5QbrteKcM2FlMNbOM+yoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742965445; c=relaxed/simple;
-	bh=UkZgK3gWJKAeQy2tP8yA4E4vLiiRi7TPEAZHE0dakTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s+Ws5zMhUEAQl/XzK01bFnmerPgCeyegm+Qd0oA8gYZgss+awY4wfGFlgVB6B6sNPWTVMmjGLDlYlAo+WVW8WNFe4i/r2hBgEWB2nQyE/VzL8aGnCu0hO+uXuFB66yuul8JMn7qsYM0CMYi2geZvpPojp8MQPd3u/+APRQp62GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fEBGEaq2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742965441;
-	bh=NFxtqBMZtHnsUq+2u1R60ro6bjUVCSqvC75Ith8qvkA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fEBGEaq2phtJafyOG3vLFwvy88lWmOdfuiFIkPPqtq140aKa+K+V0xnqSD9LIpHOb
-	 CQM1LGzasl8NH3QsoKdzlKZRuFUEpD9QFKWAA7PrvCNI+NvBnyq2yIsDeWmQltj6vm
-	 vQ4WDTGTtY3xzADIrp9JnVM1JhQLJItv8RK/ARsUU2riYEtCJv1Uccy2cNUnV88Krv
-	 yNdi6n7m0tbw3nvPa9oMjAWM86z15l9wAdmBxwhIveVtFMGkp+Q2hOcimYaUQdLOAn
-	 m36W6Nchku2CJMVh4VH4pjG1iB9DQipzrlKwW5wKGq+5rJ9Ls/kG6uuRzkx91NmcP4
-	 tHYnyNFY45jIg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMvp93HzRz4wd0;
-	Wed, 26 Mar 2025 16:04:01 +1100 (AEDT)
-Date: Wed, 26 Mar 2025 16:04:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: Re: linux-next: manual merge of the tip tree with the mailbox tree
-Message-ID: <20250326160400.53093aaf@canb.auug.org.au>
-In-Reply-To: <20250303144637.71c25bc3@canb.auug.org.au>
-References: <20250303144637.71c25bc3@canb.auug.org.au>
+	s=arc-20240116; t=1742966133; c=relaxed/simple;
+	bh=+LJCCKn0opKh5cFi0ybzchKJT1o2HCUGFb7DQNDom4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXHh+hHlL9ZMd+RNdYOnQ5pICaRnMNpaMCUDfjSYymoulDkAzZSvUMgbSjnUNYDwfPEIyg4ftmVZHOYLO7JJ3BC7XFaJRwOc9fAJUqc1hoIgx83ccT+AARFEcPkNdamaNCsE7vzWHiJhk8X6JbvVz7osoIs9gPjINVAMvHxVsL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=GlKGdtJP; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5FFEF25C5C;
+	Wed, 26 Mar 2025 06:15:27 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ZlOByq6gm0eH; Wed, 26 Mar 2025 06:15:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1742966126; bh=+LJCCKn0opKh5cFi0ybzchKJT1o2HCUGFb7DQNDom4k=;
+	h=From:To:Cc:Subject:Date;
+	b=GlKGdtJPQuAkjEi/XT/OFxcpclRpWYtA+k9DvLM7Znud+qCNCBJqJn4mp9BJy6W+/
+	 PomhJVkhxGJKLP8LAlrm9XScPlP5VTtYtjhjGpx9YkeR4p1KMfJX180d2EwxFYHD2T
+	 0IzNoCmqEb2pJ+mUhGXQYH7whcB5OWyTLmJR3dWroRa6tiFUN5A5jgBrr98PeXO5MA
+	 VFVNCJJkqS4lCzymu76ghsLOxnSHIEW1Ghzy1ZPgm0yDgzs+wucD4cB41/zVC+SfWD
+	 5UqH8SJUxkCZbUeziR9YOI7+q+N2CzzQbQjihnw8oELA/KqCKpPRZgXNHwKRjOKn5l
+	 icyajgZHihFEw==
+From: Yao Zi <ziyao@disroot.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Petr Tesarik <petr@tesarici.cz>,
+	Ying Sun <sunying@isrc.iscas.ac.cn>,
+	Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Han Gao <rabenda.cn@gmail.com>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH] riscv/kexec_file: Handle R_RISCV_64 in purgatory relocator
+Date: Wed, 26 Mar 2025 05:14:46 +0000
+Message-ID: <20250326051445.55131-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/84mi_IAQ.EDINn3Qazw2nEK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/84mi_IAQ.EDINn3Qazw2nEK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit 58ff537109ac ("riscv: Omit optimized string routines when
+using KASAN") introduced calls to EXPORT_SYMBOL() in assembly string
+routines, which result in R_RISCV_64 relocations against
+.export_symbol section. As these rountines are reused by RISC-V
+purgatory and our relocator doesn't recognize these relocations, this
+fails kexec-file-load with dmesg like
 
-Hi all,
+	[   11.344251] kexec_image: Unknown rela relocation: 2
+	[   11.345972] kexec_image: Error loading purgatory ret=-8
 
-On Mon, 3 Mar 2025 14:46:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the tip tree got a conflict in:
->=20
->   drivers/mailbox/mailbox.c
->=20
-> between commit:
->=20
->   791d7e70a9f4 ("mailbox: Switch to use hrtimer_setup()")
->=20
-> from the mailbox tree and commit:
->=20
->   c158a29c5c5b ("mailbox: Switch to use hrtimer_setup()")
->=20
-> from the tip tree.
->=20
-> I fixed it up (I just used the former - only a whitespace difference) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+Let's support R_RISCV_64 relocation to fix kexec on 64-bit RISC-V.
+32-bit variant isn't covered since KEXEC_FILE and KEXEC_PURGATORY isn't
+available.
 
-This is now a conflict between Linus' tree and the mailbox tree.
+Fixes: 58ff537109ac ("riscv: Omit optimized string routines when using KASAN")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
 
---=20
-Cheers,
-Stephen Rothwell
+I noticed RISC-V support hasn't been merged into kexec-tools, so this
+patch is tested with this dowmstream branch[1].
 
---Sig_/84mi_IAQ.EDINn3Qazw2nEK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks for your time and review.
 
------BEGIN PGP SIGNATURE-----
+[1]: https://github.com/ziyao233/kexec-tools/tree/rv-Image
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjisAACgkQAVBC80lX
-0GyqUQgAhbcLgeaMi9z9q8QJzspY1hmsw5qL2wqfABtRUadY54llbZReJB2Ebwv1
-zK07e9Lb+nkwKByEB7RowUctM0+BuPUV6MDcLtzuoKmDvo68WMFfXn+XH1Ioc7VB
-ZUxKMzI4oS9VHgnHir1amj1Wm3r5qkEwMFTlIug74ofg8m7nYNVOS/ef3xxAz1wU
-qt7jldztmo/KWH4hRAJ9oFiTM5T0acM55V69pVlLMa0TyWQYqfQe+mkaIr1/vjK0
-dnXtF4EjKg1H8k98hMxe/RrCdlTqmMP7KEXStmdrznanXkZPpW1DZ8sbMHOESKF5
-M694brZ+7u/OCXqJsHjp8krXCEs5sQ==
-=uXR2
------END PGP SIGNATURE-----
+ arch/riscv/kernel/elf_kexec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---Sig_/84mi_IAQ.EDINn3Qazw2nEK--
+diff --git a/arch/riscv/kernel/elf_kexec.c b/arch/riscv/kernel/elf_kexec.c
+index 3c37661801f9..e783a72d051f 100644
+--- a/arch/riscv/kernel/elf_kexec.c
++++ b/arch/riscv/kernel/elf_kexec.c
+@@ -468,6 +468,9 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 		case R_RISCV_ALIGN:
+ 		case R_RISCV_RELAX:
+ 			break;
++		case R_RISCV_64:
++			*(u64 *)loc = val;
++			break;
+ 		default:
+ 			pr_err("Unknown rela relocation: %d\n", r_type);
+ 			return -ENOEXEC;
+-- 
+2.49.0
+
 
