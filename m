@@ -1,173 +1,165 @@
-Return-Path: <linux-kernel+bounces-576985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376F8A71700
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:58:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A60EA71707
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:02:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84A87A329A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C754173ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1B11E51FB;
-	Wed, 26 Mar 2025 12:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31FF1DE3DE;
+	Wed, 26 Mar 2025 13:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="nkgU++pT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MUrGBGmD"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YOny279i"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CD51E505;
-	Wed, 26 Mar 2025 12:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9235A1A0BDB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993862; cv=none; b=kTue2w5U7uQncawKToqJTtD8v0z/dhkjfn53s6xOwlsArRyfMRnvQxZeZF3STpJDwlkVbG4CoJTBnKKnBUSId0weZqMfQ1jdgPIpQipSCw0y8muSNNFqeuSdPABBDCxhDzxot7B/EvBJz+4D42wZ5NCmsAINac5u7B6YwX8ie5A=
+	t=1742994135; cv=none; b=CgNzPkaH/LivKPs6jp3Cb2T3xE1bfecWgu4dFOv4CZyxA2zgpBAP9Nai/v9sxFx+8TdHQ3jQIyTh7Nf2I6wcVc4mCIc3N7psA6Fogiztby+NDEeOT/4q7IV9rOLszJ1Y6sk6Rpbl9Y9+qsNNmPapoDJOEmsCx0fpXMHuAPxXVII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993862; c=relaxed/simple;
-	bh=bHXC3fXWuum1FoL9zvTiL1eryoAtkD94lq5aJl7xK+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YPIHpT8d3Qdsil/4nTSkhQRn8lC7QTzV8dR5hAGzIppJHv9MIwt8rLUcqWLV91S/rVoJHwQzlrcnP30f41O1LdVKt6cf3xDmuTgPeWpxciIbWJiUgJ9CpwolbljVrEhwkyQAXH6SJ3vny4iQ0Nw9v2Lccb24+DLcZ6DgT10BSe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=nkgU++pT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MUrGBGmD; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 69B441140114;
-	Wed, 26 Mar 2025 08:57:37 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Wed, 26 Mar 2025 08:57:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1742993857; x=
-	1743080257; bh=NAlqLH3kwcPC2CJDpUxLUmmxOvp3Wd9C6S24VbRA/0Q=; b=n
-	kgU++pTI+DRP6wPoVBNl14Gl+Vt26pSU9GJ7VMcr0nKES1/JdMEckN3kOFEmlY1A
-	H6N/9uMHxsYLVWlE1nHCBLiWedNX2/9FJp6hTnBOg3wRRsamDq9Y2dSKClpU60mv
-	EeRms+5z6MKxZnPIu2QbhVRs38uQ4KgWyrrYzBrSR2ArsEHIgX5gsZoSH6rK2BZU
-	KtM3Z6Oxt1YI8GdpKAdlfnnKMiCAckIeDBPx/YQlBn/ySNGo1W246HBItlNRch6t
-	Ki93u2cIgvAQr0HnmMtJKwBPrWse2WljKRGX4z+L7SkpQFLQsYAMjX4VgSKJDEiO
-	bbGnXRCdxGtISgN9rKwcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1742993857; x=1743080257; bh=NAlqLH3kwcPC2CJDpUxLUmmxOvp3Wd9C6S2
-	4VbRA/0Q=; b=MUrGBGmDmcb55nJGHAEGycJC6ifRqDRh6iuFHDwmvXpu8yvNYlM
-	FghbhppplFPo/n70YG4LfwJOvuga7U/Yi2GNJbVV9nSS2zKsFwMbUS/aAui2YI9m
-	7IeR+1mMR47H+6VF//0w59yjpfVwlCwDqTYK46xP2b/l27pnVwDI3DxDFER8FJXR
-	2kDQcLMULRDydIgjwmuNyV9jpuhzCLfYjDTFwsqSgH6RYZwowz/6Qnu9wIO60Hxi
-	DC9DWmzpW3jD6OxnO37X6ecxlxTWBoUnbPiJW/BWoTQ1Tl2JiXS0R6jhshNksYzW
-	VcLE3EfVyJMvU39ln3Bj917GuOm3vunwA5Q==
-X-ME-Sender: <xms:wfnjZ5cUF4Rpzzol7SK7PN-DT2RyF6bx0ay9VpBtNgNbT_dORSqWVQ>
-    <xme:wfnjZ3OKfS_87ntSKVm8lUOVrKFvsFHpccNCK67p-equMD5yfNd7nSMb2UB0r-e79
-    5roTYhlbth_hVs2-1U>
-X-ME-Received: <xmr:wfnjZyidO1ZXzHiZJsyNjE-tI36RZpBUKv7e2YJOnzj7LnM8w8AA6F58omdq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpuhhrvh
-    grhigvshhhihehhedtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggr
-    vhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgrhhgvrhhnsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvug
-    hhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:wfnjZy9GVxwB7SzXoeofemHgrGglut-6hDUUnKNBhtGciJwjUCjb1Q>
-    <xmx:wfnjZ1vgzivMMOuN6MXo2absrlKTyCb4juWjpS_SXbo5NGvNtOQUSQ>
-    <xmx:wfnjZxHlccPKhjIt_ISGXK3JpVu8qAriWoDzre9R3JF1jhlA7ip2wg>
-    <xmx:wfnjZ8NfleetIkJ02qKgvT_qBCRoV0Ar_JYfu-IaN55HSW3uyld7Xw>
-    <xmx:wfnjZ7JQFmvV8RB_SyBDgflWCq6Yr2-vbsFrKznQpMKmn3hWL0uFuNEN>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Mar 2025 08:57:36 -0400 (EDT)
-Date: Wed, 26 Mar 2025 13:57:34 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Purva Yeshi <purvayeshi550@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ipv6: Fix NULL dereference in ipv6_route_check_nh
-Message-ID: <Z-P5vvrdA5MHMW_o@krikkit>
-References: <20250326105215.23853-1-purvayeshi550@gmail.com>
+	s=arc-20240116; t=1742994135; c=relaxed/simple;
+	bh=+WeT361C4uR48LN35vN4a+HUmWx8jcf5h+0zSnm1M6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DaAoW4gH/Mhxi+qY8YLg/CFxwiD2rtuGsBm0WOif4po4YR2VgJ2uDY3Qe+qFGRSlFhRw0kiKVddhTVVTDMKity1zQpcsgFj3+k7h2Yv5BTfW+NrMd96y9Vx5hygR30eD/EcsS13krp4I8o00HhNffnwhx0p+4po8WzhBmhGh+1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YOny279i; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E3E35475;
+	Wed, 26 Mar 2025 14:00:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742994019;
+	bh=+WeT361C4uR48LN35vN4a+HUmWx8jcf5h+0zSnm1M6U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YOny279iADliXfqra7JdMO6WTE2NfjdvOyeWIVpjsn923WV339UWfktp/b0H6UOV0
+	 u68Ad7+7gM9pTlY+1mrr/vL6eRDeAD+4em30a2wMjN607obCnpvhhbA7EjslX2hziV
+	 RP5s3IgXYeCL06NyW2fvxe4nxPOt9sV4b/BdOKOk=
+Message-ID: <35675e0e-f717-4727-9e5c-4ef837219f30@ideasonboard.com>
+Date: Wed, 26 Mar 2025 15:02:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250326105215.23853-1-purvayeshi550@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/11] drm/fourcc: Add DRM_FORMAT_XV15/XV20
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
+ <20250212-xilinx-formats-v3-2-90d0fe106995@ideasonboard.com>
+ <e5ujn5lhj5vuvkbavoc3oppt3cpxnr7mm2vwh6liojmpxkfy2d@grpmckvbl5h4>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <e5ujn5lhj5vuvkbavoc3oppt3cpxnr7mm2vwh6liojmpxkfy2d@grpmckvbl5h4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-2025-03-26, 16:22:15 +0530, Purva Yeshi wrote:
-> Fix Smatch-detected error:
-> net/ipv6/route.c:3427 ip6_route_check_nh() error:
-> we previously assumed '_dev' could be null
+Hi,
 
-I don't think this can actually happen. ip6_route_check_nh only gets
-called via fib6_nh_init -> ip6_validate_gw -> ip6_route_check_nh, and
-ip6_validate_gw unconditionally does dev = *_dev. Which is fine,
-because its only caller (fib6_nh_init) passes &dev, so that can't be
-NULL (and same for idev).
-
-> Ensure _dev and idev are checked for NULL before dereferencing in
-> ip6_route_check_nh. Assign NULL explicitly when fib_nh_dev is NULL
-> to prevent unintended dereferences.
-
-That's a separate issue (if it's really possible - I haven't checked)
-than the smatch report you're quoting above. And if it is, it would
-deserve a Fixes tag for the commit introducing this code.
-
+On 17/02/2025 22:00, Dmitry Baryshkov wrote:
+> On Wed, Feb 12, 2025 at 04:56:06PM +0200, Tomi Valkeinen wrote:
+>> Add two new pixel formats:
+>>
+>> DRM_FORMAT_XV15 ("XV15")
+>> DRM_FORMAT_XV20 ("XV20")
+>>
+>> The formats are 2 plane 10 bit per component YCbCr, with the XV15 2x2
+>> subsampled whereas XV20 is 2x1 subsampled.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/drm_fourcc.c  | 8 ++++++++
+>>   include/uapi/drm/drm_fourcc.h | 8 ++++++++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+>> index 1e9afbf6ef99..bb0a2294573b 100644
+>> --- a/drivers/gpu/drm/drm_fourcc.c
+>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>> @@ -346,6 +346,14 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>>   		{ .format = DRM_FORMAT_P030,            .depth = 0,  .num_planes = 2,
+>>   		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
+>>   		  .hsub = 2, .vsub = 2, .is_yuv = true},
+>> +		{ .format = DRM_FORMAT_XV15,		.depth = 0,
+>> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
+>> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
+>> +		  .vsub = 2, .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_XV20,		.depth = 0,
+>> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
+>> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
+>> +		  .vsub = 1, .is_yuv = true },
 > 
-> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> ---
->  net/ipv6/route.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-> index ef2d23a1e3d5..ad5b3098eba0 100644
-> --- a/net/ipv6/route.c
-> +++ b/net/ipv6/route.c
-> @@ -3424,9 +3424,20 @@ static int ip6_route_check_nh(struct net *net,
->  		if (dev != res.nh->fib_nh_dev)
->  			err = -EHOSTUNREACH;
->  	} else {
-> -		*_dev = dev = res.nh->fib_nh_dev;
-> -		netdev_hold(dev, dev_tracker, GFP_ATOMIC);
-> -		*idev = in6_dev_get(dev);
-> +		if (res.nh->fib_nh_dev) {  /* Ensure fib_nh_dev is valid */
+> It might be beneficial to use the same formatting as previous entries,
+> it simplifies reviewing. If the patchset is resent, it would be nice to
+> get that fixed..
 
-I don't think any of these comments are particularly helpful. It's
-pretty clear that you're checking for NULL/setting NULL in all those
-cases.
+But which formatting... The previous entry (singular) is indeed a bit 
+different. But many formats before DRM_FORMAT_P030 are formatted as 
+these new entries (but then it again changes in earlier entries). It's a 
+bit messy list...
 
-> +			dev = res.nh->fib_nh_dev;
-> +
-> +			if (_dev)  /* Only assign if _dev is not NULL */
-> +				*_dev = dev;
-> +
-> +			netdev_hold(dev, dev_tracker, GFP_ATOMIC);
-> +			*idev = in6_dev_get(dev);
-> +		} else {
-> +			if (_dev)
-> +				*_dev = NULL;  /* Explicitly set NULL */
-> +			if (idev)
-> +				*idev = NULL;  /* Explicitly set NULL */
-> +		}
->  	}
->  
->  	return err;
+But maybe the style in DRM_FORMAT_P030 is better than the style used in 
+the new entries, so I could just go with that style.
 
--- 
-Sabrina
+  Tomi
+
 
