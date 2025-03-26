@@ -1,89 +1,271 @@
-Return-Path: <linux-kernel+bounces-576376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7FEA70E6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:31:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EC3A70E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1267A4019
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D94C516B57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B331F94A;
-	Wed, 26 Mar 2025 01:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E15D78F5F;
+	Wed, 26 Mar 2025 01:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZb/op7r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SBfqqYy9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D028E8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D0020328;
+	Wed, 26 Mar 2025 01:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742952660; cv=none; b=g9aJRBx+qz4hnR77czLw2/WS/M4DoIKIGhDlBquC8lUlPKKrJtiU9b7+vUTljTZ0+CKuU9C6D/JOEO7dZ2HRG9PYhh9XN3WOZStFTD/WZlE/u18VTdffh4UZhqXH25uwY//UtrXYI6wtnyHu5x0ivT96j4UWuaGT4MdgfKmxQiI=
+	t=1742952754; cv=none; b=WHFhcj4LkHdnDbJFErOx7+5GCIkt6iVgqW8XXHcg6xZm/ahyl9O+A+BBgALhBPdRtP1UYNsw7GrR4cwpwhXz/aWc1IdYtOWY6Ohb0kj1VeP2Z1abelJR4oMFUBd5YngVnC9mZ4q9v5GzE8T3ieRbFNzPkmDsy1bKkivqynTtKew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742952660; c=relaxed/simple;
-	bh=5gHcAuTQrQAksQjRD53/tJhS2YvQTnGQBoKv1ZxbKtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q55A+N1WPt9LROg3D0kQ5eCIktOP/tZovHNmRANJecGo2uuRBOO3srho/6UqofF0+B1q0vKoMGpzLd4rAPiERv05mW1kGezsGPNElMy/k30OtJqu3q/bZdbUXA7VT8/Iui3UYuaoC/aEgt+y2uTxlegoJzbimJOrBCX+6UmAya0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZb/op7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F84AC4CEE4;
-	Wed, 26 Mar 2025 01:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742952659;
-	bh=5gHcAuTQrQAksQjRD53/tJhS2YvQTnGQBoKv1ZxbKtc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iZb/op7rvCWqB+BDOtjzmAJVdKM+MFCc/ACrLvy+IJ1v/PiW1QBhO5N8Debc1p5sX
-	 +tcMltZXEJXF4KSDHd6uuEaRogEyIyyNtZqiewSVwudBsdCKigul3CSYEz5ggltwhX
-	 DOcnU/AtdRAo08SlDIT7l1D5u4+PNgt5uO3GL+D+H94iB5oAO+zkjI1h//9M3rTbyP
-	 G1mNbJkD/NYaSO1PIoqj4M/7+gMLStRM4d6b/4n7HULc5i9DqUiER6Gu92+YPQ34G8
-	 f9CcCfzboqQHrx99ytKpY3GG9xeWW59f6Rj4wHVKoy3zVbG1QZT2uKt9T0++7CIW3q
-	 gp5AipQgr+p5g==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] objtool: Fix NULL printf() '%s' argument
-Date: Tue, 25 Mar 2025 18:30:37 -0700
-Message-ID: <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742952754; c=relaxed/simple;
+	bh=8MnpI20UdxMqh87LFXJcjku4Q1JF33CL6rL7FBIsOPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gM7MMfkzjDvVN6lRcuQ3IIIHepSZKzzNYrmKwySY5AEnP0D0R9HCHGpkwu7Jq0p/FO6IInGebmO93tp8zT7yUSxhU6emkbGc1xXrX/sdZLU3pTcJt8NilLo6ISBnQUZqOuDjZ7uNdXjEHcsCnDtXBuUIBKT33nSioRmiSaN9XvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SBfqqYy9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PGawBt008370;
+	Wed, 26 Mar 2025 01:32:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Vuyh7BqsJ/hMBEiNyvqf3QR6amTKUZvN5jLgpWwgKT0=; b=SBfqqYy9PVSRgtl1
+	FFIlQXMDW3DGzQhMZe7t+Io+Syj+yGFhU7BoQXkhOptdi1EW9GD2FTZGdO+P62PT
+	Owq9F/5fv2mhDZMNpziewRWGdvATkcDHZ5OlyOl41IS/PFJsa+NHWf7M4/WLH+lG
+	TTdr2QSmmwhnqfSS+55K5HEJeXIqizw4pc1+uH0gukja8KoYnP1nWulweBkHAO32
+	NTidUx9bF+U7y2gk/k0r/uQlnE/ieezKO6dX0o6RNAlcaA59HEhSC8Q8DkDFFV2a
+	ua9dArd+Cf14MRuKMcp0UNbjjBqgTxPvonLxiyOqcEG7aCxqeE4S8R931sR1k4iX
+	7/+wew==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd33969-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 01:32:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q1WFeh005964
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 01:32:15 GMT
+Received: from [10.71.112.253] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
+ 2025 18:32:15 -0700
+Message-ID: <5a7442c9-493d-4c23-a179-128f02a29f73@quicinc.com>
+Date: Tue, 25 Mar 2025 18:32:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v36 28/31] ALSA: usb-audio: qcom: Introduce QC USB SND
+ offloading support
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        Luca Weiss
+	<luca.weiss@fairphone.com>
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
+ <20250319005141.312805-29-quic_wcheng@quicinc.com>
+ <Z-J7n8qLMPVxpwuV@linaro.org>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <Z-J7n8qLMPVxpwuV@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: E0ngsLGvFpb83eXG9z44oDKFD781KFLE
+X-Proofpoint-ORIG-GUID: E0ngsLGvFpb83eXG9z44oDKFD781KFLE
+X-Authority-Analysis: v=2.4 cv=P646hjAu c=1 sm=1 tr=0 ts=67e35920 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=JhZuM8AjDx3iezwaYmoA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260008
 
-It's probably not the best idea to pass a string pointer to printf()
-right after confirming said pointer is NULL.  Fix the typo and use
-argv[i] instead.
+hi Stephan,
 
-Fixes: c5995abe1547 ("objtool: Improve error handling")
-Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- tools/objtool/builtin-check.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 3/25/2025 2:47 AM, Stephan Gerhold wrote:
+> On Tue, Mar 18, 2025 at 05:51:38PM -0700, Wesley Cheng wrote:
+>> Several Qualcomm SoCs have a dedicated audio DSP, which has the ability to
+>> support USB sound devices.  This vendor driver will implement the required
+>> handshaking with the DSP, in order to pass along required resources that
+>> will be utilized by the DSP's USB SW.  The communication channel used for
+>> this handshaking will be using the QMI protocol.  Required resources
+>> include:
+>> - Allocated secondary event ring address
+>> - EP transfer ring address
+>> - Interrupter number
+>>
+>> The above information will allow for the audio DSP to execute USB transfers
+>> over the USB bus.  It will also be able to support devices that have an
+>> implicit feedback and sync endpoint as well.  Offloading these data
+>> transfers will allow the main/applications processor to enter lower CPU
+>> power modes, and sustain a longer duration in those modes.
+>>
+>> Audio offloading is initiated with the following sequence:
+>> 1. Userspace configures to route audio playback to USB backend and starts
+>> playback on the platform soundcard.
+>> 2. The Q6DSP AFE will communicate to the audio DSP to start the USB AFE
+>> port.
+>> 3. This results in a QMI packet with a STREAM enable command.
+>> 4. The QC audio offload driver will fetch the required resources, and pass
+>> this information as part of the QMI response to the STREAM enable command.
+>> 5. Once the QMI response is received the audio DSP will start queuing data
+>> on the USB bus.
+>>
+>> As part of step#2, the audio DSP is aware of the USB SND card and pcm
+>> device index that is being selected, and is communicated as part of the QMI
+>> request received by QC audio offload.  These indices will be used to handle
+>> the stream enable QMI request.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  sound/usb/Kconfig                 |   14 +
+>>  sound/usb/Makefile                |    2 +-
+>>  sound/usb/qcom/Makefile           |    2 +
+>>  sound/usb/qcom/qc_audio_offload.c | 1988 +++++++++++++++++++++++++++++
+>>  4 files changed, 2005 insertions(+), 1 deletion(-)
+>>  create mode 100644 sound/usb/qcom/Makefile
+>>  create mode 100644 sound/usb/qcom/qc_audio_offload.c
+>>
+>> diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
+>> index 4a9569a3a39a..6daa551738da 100644
+>> --- a/sound/usb/Kconfig
+>> +++ b/sound/usb/Kconfig
+>> @@ -176,6 +176,20 @@ config SND_BCD2000
+>>  	  To compile this driver as a module, choose M here: the module
+>>  	  will be called snd-bcd2000.
+>>  
+>> +config SND_USB_AUDIO_QMI
+>> +	tristate "Qualcomm Audio Offload driver"
+>> +	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND && SND_SOC_USB
+>> +	help
+>> +	  Say Y here to enable the Qualcomm USB audio offloading feature.
+>> +
+>> +	  This module sets up the required QMI stream enable/disable
+>> +	  responses to requests generated by the audio DSP.  It passes the
+>> +	  USB transfer resource references, so that the audio DSP can issue
+>> +	  USB transfers to the host controller.
+>> +
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called snd-usb-audio-qmi.
+>> [...]
+>> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+>> new file mode 100644
+>> index 000000000000..3319363a0fd0
+>> --- /dev/null
+>> +++ b/sound/usb/qcom/qc_audio_offload.c
+>> @@ -0,0 +1,1988 @@
+>> [...]
+>> +static int __init qc_usb_audio_offload_init(void)
+>> +{
+>> +	struct uaudio_qmi_svc *svc;
+>> +	int ret;
+>> +
+>> +	svc = kzalloc(sizeof(*svc), GFP_KERNEL);
+>> +	if (!svc)
+>> +		return -ENOMEM;
+>> +
+>> +	svc->uaudio_svc_hdl = kzalloc(sizeof(*svc->uaudio_svc_hdl), GFP_KERNEL);
+>> +	if (!svc->uaudio_svc_hdl) {
+>> +		ret = -ENOMEM;
+>> +		goto free_svc;
+>> +	}
+>> +
+>> +	ret = qmi_handle_init(svc->uaudio_svc_hdl,
+>> +			      QMI_UAUDIO_STREAM_REQ_MSG_V01_MAX_MSG_LEN,
+>> +			      &uaudio_svc_ops_options,
+>> +			      &uaudio_stream_req_handlers);
+>> +	ret = qmi_add_server(svc->uaudio_svc_hdl, UAUDIO_STREAM_SERVICE_ID_V01,
+>> +			     UAUDIO_STREAM_SERVICE_VERS_V01, 0);
+>> +
+>> +	uaudio_svc = svc;
+>> +
+>> +	ret = snd_usb_register_platform_ops(&offload_ops);
+>> +	if (ret < 0)
+>> +		goto release_qmi;
+>> +
+>> +	return 0;
+>> +
+>> +release_qmi:
+>> +	qmi_handle_release(svc->uaudio_svc_hdl);
+>> +free_svc:
+>> +	kfree(svc);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void __exit qc_usb_audio_offload_exit(void)
+>> +{
+>> +	struct uaudio_qmi_svc *svc = uaudio_svc;
+>> +	int idx;
+>> +
+>> +	/*
+>> +	 * Remove all connected devices after unregistering ops, to ensure
+>> +	 * that no further connect events will occur.  The disconnect routine
+>> +	 * will issue the QMI disconnect indication, which results in the
+>> +	 * external DSP to stop issuing transfers.
+>> +	 */
+>> +	snd_usb_unregister_platform_ops();
+>> +	for (idx = 0; idx < SNDRV_CARDS; idx++)
+>> +		qc_usb_audio_offload_disconnect(uadev[idx].chip);
+>> +
+>> +	qmi_handle_release(svc->uaudio_svc_hdl);
+>> +	kfree(svc);
+>> +	uaudio_svc = NULL;
+>> +}
+>> +
+>> +module_init(qc_usb_audio_offload_init);
+>> +module_exit(qc_usb_audio_offload_exit);
+>> +
+>> +MODULE_DESCRIPTION("QC USB Audio Offloading");
+>> +MODULE_LICENSE("GPL");
+> 
+> What will trigger loading this if this code is built as module?
+> 
+> Testing suggests nothing does at the moment: If this is built as module,
+> playback via USB_RX will fail until you manually modprobe
+> snd-usb-audio-qmi.
+> 
 
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index 2bdff910430e..e364ab6345d3 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
- 	for (int i = 0; i < argc; i++) {
- 		orig_argv[i] = strdup(argv[i]);
- 		if (!orig_argv[i]) {
--			WARN_GLIBC("strdup(%s)", orig_argv[i]);
-+			WARN_GLIBC("strdup(%s)", argv[i]);
- 			exit(1);
- 		}
- 	};
--- 
-2.48.1
+Yes, it would only get triggered on a modprobe.  I think the more important
+part is when snd_usb_register_platform_ops() is called.  This is what would
+register the vendor USB offload driver callbacks for USB connect/disconnect
+events.
 
+> I think the easiest way to solve this would be to drop the
+> module_init()/module_exit() and instead call into these init/exit
+> functions from one of the other audio modules. This would also ensure
+> that the QMI server is only registered if we actually need it (if the
+> board sound card actually has a USB DAI link).
+> 
+
+It would be difficult from the perspective of USB SND, because if we got
+rid of the vendor ops, it would be messy, since the USB offload vendor
+driver will be specific for every SoC.
+
+Thanks
+Wesley Cheng
 
