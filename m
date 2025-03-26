@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-577241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4483CA71A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:31:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA49A71A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3923A3A7E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF70B1885291
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C7C1F3BB3;
-	Wed, 26 Mar 2025 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC80C1F3BA5;
+	Wed, 26 Mar 2025 15:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxHxZUcv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpnWHTgi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C341F2B8B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901EE1A8F60;
+	Wed, 26 Mar 2025 15:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743002903; cv=none; b=QOpH9EHjqYkr9nNphdvEBPZQo3w5/wATCoRKk1kBsVo8vpQy5j1qtGGojWzwratAgC6d4x8W03sBeXwH1aqwigc740nifcoBTRMqh3tQ+5wiyYg3FanFkyo2K6rDidowteOxV9fYa27OyVN92VueDjXVOKNKCtWoadm3Y5gmh/Q=
+	t=1743002983; cv=none; b=EObJBKmd5NzM8RnTmrgV+ZcTEQ1VmNtzNBJEUzw8aj3CYZh4Zge89pfokJ1lxnaiGhBAddtoVp2nW0+HOfN3GfR4woMqRQjhfxn4TUYSwpzYSvrS+Cv9XBKMGpLwrwhaMA2oHbEDPggmeGwVRE+T8T5ifilpGr+3hkimhi7Se9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743002903; c=relaxed/simple;
-	bh=+iTDM1up9bQyibbW8Bm0+4EO+vdNAR+vKU9j9w34kYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feKpHdpzzEdgwVggDKHppeD+mqUzLvuNxsz1W5lk5Ao8HjN+Xq+Lu8R1ArYmQ91cClo7xJZnBsnIfSI1USWNSYYGQA4Vupj47yzsGs2cMY9LO0B3NDsbattu/bnacav08P3cmBmc6xOdgm7i/NATV+e54B3S1qE7ww7q+NIF6fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxHxZUcv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94415C4CEED;
-	Wed, 26 Mar 2025 15:28:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743002902;
-	bh=+iTDM1up9bQyibbW8Bm0+4EO+vdNAR+vKU9j9w34kYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SxHxZUcvd0c+VlPOSawUfFkduDYadlR37K+FMQHCAZy/++rzWlaixMcDoJGDdDANs
-	 CzS18JGEuldUJe6AsKytDKVwHQ9xt4Ep9Ey3h+dr2vqvz9pC3hXoz9Cayui9SEH5L5
-	 AFRxbWeruM0yX6xgmQnjFL/wH1VGWmzFlRqR8nVOcVRAKZqIqM/F7T6bwXhEd/QGJq
-	 y5+vQWyYB+j+f/m0OmBGTHaLnadR4kBT6F2ZANgmrruC4DxuPV6cdMjXv0iYkkvd2t
-	 jtriA0FWrU2cxJXwwCSHz1hd3ZxKSuhPmNmy4J8Nn6f5b6wK4TWFONJQp00YE4qN8S
-	 GaKuqQjiwu2pw==
-Date: Wed, 26 Mar 2025 16:28:20 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 2/5] drm/panel: Add refcount support
-Message-ID: <20250326-persimmon-parrot-of-glamour-f31fdb@houat>
-References: <20250325-b4-panel-refcounting-v1-0-4e2bf5d19c5d@redhat.com>
- <20250325-b4-panel-refcounting-v1-2-4e2bf5d19c5d@redhat.com>
+	s=arc-20240116; t=1743002983; c=relaxed/simple;
+	bh=1rR+/faxkHLlYltbcuI3PbbS4s/fXFMou00xu/7HeXY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Zae7GFlcvFZ+zZoK6x80xO/ZEZqFII5ehynVM8SbJ0k3Nn7k6VFvBomGhKBoVDxMdfn2Pp6zWendT+EzRSZfPMvTZXJN85jzso6zCiV5C0RL9nLhYd6OSZ6Uo6bArpzeKITWhK0bNfcLWMjgIBtK6VN9+yiD92TaKCqJXfaA6DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpnWHTgi; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743002981; x=1774538981;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=1rR+/faxkHLlYltbcuI3PbbS4s/fXFMou00xu/7HeXY=;
+  b=mpnWHTgiDJBA/64CQhfDNg4MSTqk9xEr/6q004lzqoV6b6T+Oc5rbKRL
+   H5lUOtSxTRPjPfeiDqb7Ez0LXdfGuZajEp//ZgmuVCnrfmz/OnkwcL4Fl
+   G1Wj5MtOiuKFBMiLCX1i9Y2OQB5RGL1Ny1JwWEfJhEU3hfp6zUM+daAet
+   DHNM6h0HYaUImpRnALMdg2X5U4vKjPEWYfmVKbaUu/WjO7frBEAwvRDHn
+   9QgX4AoiVOR0B0hyDUDJiM0MIghrC+dCumza2E86bwnj3PpyPKWj9ImCW
+   i2zfx5JYRr4UGxONZ3QLkn01EVXrYzhAOecZj4Dd4b6ZSYdojBEEBRi0a
+   g==;
+X-CSE-ConnectionGUID: jByE/pSPSzaswhum6VvZvA==
+X-CSE-MsgGUID: 5Cyg2YVUTvSYJo8AxW4SXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48090994"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="48090994"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:29:41 -0700
+X-CSE-ConnectionGUID: YzU27J2ySvuWW45LWD51FQ==
+X-CSE-MsgGUID: zcEnZjfDTm2RZuW6qMnLTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="125742493"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:29:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 26 Mar 2025 17:29:31 +0200 (EET)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v6 6/6] drm/xe/pf: Set VF LMEM BAR size
+In-Reply-To: <20250320110854.3866284-7-michal.winiarski@intel.com>
+Message-ID: <bdfe5413-547a-67b0-b822-9852d3f94cc5@linux.intel.com>
+References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-7-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="35mfar5h62wtrpdj"
-Content-Disposition: inline
-In-Reply-To: <20250325-b4-panel-refcounting-v1-2-4e2bf5d19c5d@redhat.com>
+Content-Type: multipart/mixed; boundary="8323328-1374919276-1743002971=:942"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---35mfar5h62wtrpdj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/5] drm/panel: Add refcount support
-MIME-Version: 1.0
+--8323328-1374919276-1743002971=:942
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Tue, Mar 25, 2025 at 01:24:09PM -0400, Anusha Srivatsa wrote:
-> Allocate panel via reference counting.
-> Add _get() and _put() helper functions
-> to ensure panel allocations are refcounted.
-> Avoid use after free by ensuring panel is
-> valid and can be usable till the last reference
-> is put. This avoids use-after-free
+On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
+
+> LMEM is partitioned between multiple VFs and we expect that the more
+> VFs we have, the less LMEM is assigned to each VF.
+> This means that we can achieve full LMEM BAR access without the need to
+> attempt full VF LMEM BAR resize via pci_resize_resource().
 >=20
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> Always set the largest possible BAR size that allows to fit the number
+> of enabled VFs.
+>=20
+> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
 > ---
->  drivers/gpu/drm/drm_panel.c | 65 +++++++++++++++++++++++++++++++++++++++=
-+++++-
->  include/drm/drm_panel.h     | 19 ++++++++++++-
->  2 files changed, 82 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/xe/regs/xe_bars.h |  1 +
+>  drivers/gpu/drm/xe/xe_pci_sriov.c | 22 ++++++++++++++++++++++
+>  2 files changed, 23 insertions(+)
 >=20
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index bdeab5710ee324dc1742fbc77582250960556308..079c3c666a2ddc99a0051d1a3=
-c9ba65d986dd003 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -355,24 +355,87 @@ struct drm_panel *of_drm_find_panel(const struct de=
-vice_node *np)
->  }
->  EXPORT_SYMBOL(of_drm_find_panel);
+> diff --git a/drivers/gpu/drm/xe/regs/xe_bars.h b/drivers/gpu/drm/xe/regs/=
+xe_bars.h
+> index ce05b6ae832f1..880140d6ccdca 100644
+> --- a/drivers/gpu/drm/xe/regs/xe_bars.h
+> +++ b/drivers/gpu/drm/xe/regs/xe_bars.h
+> @@ -7,5 +7,6 @@
 > =20
-> +static void __drm_panel_free(struct kref *kref)
-> +{
-> +	struct drm_panel *panel =3D container_of(kref, struct drm_panel, refcou=
-nt);
+>  #define GTTMMADR_BAR=09=09=090 /* MMIO + GTT */
+>  #define LMEM_BAR=09=09=092 /* VRAM */
+> +#define VF_LMEM_BAR=09=09=099 /* VF VRAM */
+> =20
+>  #endif
+> diff --git a/drivers/gpu/drm/xe/xe_pci_sriov.c b/drivers/gpu/drm/xe/xe_pc=
+i_sriov.c
+> index aaceee748287e..57cdeb41ef1d9 100644
+> --- a/drivers/gpu/drm/xe/xe_pci_sriov.c
+> +++ b/drivers/gpu/drm/xe/xe_pci_sriov.c
+> @@ -3,6 +3,10 @@
+>   * Copyright =C2=A9 2023-2024 Intel Corporation
+>   */
+> =20
+> +#include <linux/bitops.h>
+> +#include <linux/pci.h>
 > +
-> +	kfree(panel->container);
+> +#include "regs/xe_bars.h"
+>  #include "xe_assert.h"
+>  #include "xe_device.h"
+>  #include "xe_gt_sriov_pf_config.h"
+> @@ -62,6 +66,18 @@ static void pf_reset_vfs(struct xe_device *xe, unsigne=
+d int num_vfs)
+>  =09=09=09xe_gt_sriov_pf_control_trigger_flr(gt, n);
+>  }
+> =20
+> +static int resize_vf_vram_bar(struct xe_device *xe, int num_vfs)
+> +{
+> +=09struct pci_dev *pdev =3D to_pci_dev(xe->drm.dev);
+> +=09u32 sizes;
+> +
+> +=09sizes =3D pci_iov_vf_bar_get_sizes(pdev, VF_LMEM_BAR, num_vfs);
+> +=09if (!sizes)
+> +=09=09return 0;
+> +
+> +=09return pci_iov_vf_bar_set_size(pdev, VF_LMEM_BAR, __fls(sizes));
 > +}
 > +
-> +/**
-> + * drm_panel_get - Acquire a panel reference
-> + * @panel: DRM panel
-> + *
-> + * This function increments the panel's refcount.
-> + *
-> + */
-> +struct drm_panel *drm_panel_get(struct drm_panel *panel)
-> +{
-> +	if (!panel)
-> +		return panel;
+>  static int pf_enable_vfs(struct xe_device *xe, int num_vfs)
+>  {
+>  =09struct pci_dev *pdev =3D to_pci_dev(xe->drm.dev);
+> @@ -88,6 +104,12 @@ static int pf_enable_vfs(struct xe_device *xe, int nu=
+m_vfs)
+>  =09if (err < 0)
+>  =09=09goto failed;
+> =20
+> +=09if (IS_DGFX(xe)) {
+> +=09=09err =3D resize_vf_vram_bar(xe, num_vfs);
+> +=09=09if (err)
+> +=09=09=09xe_sriov_info(xe, "Failed to set VF LMEM BAR size: %d\n", err);
+
+If you intended this error to not result in failure, please mention it=20
+in the changelog so that it's recorded somewhere for those who have to=20
+look up things from the git history one day :-).
+
+> +=09}
 > +
-> +	kref_get(&panel->refcount);
-> +
-> +	return panel;
-> +}
+>  =09err =3D pci_enable_sriov(pdev, num_vfs);
+>  =09if (err < 0)
+>  =09=09goto failed;
 
-This should be exported
+Seems pretty straightforward after reading the support code on the PCI=20
+core side,
 
-> +/**
-> + * drm_panel_put - Release a panel reference
-> + * @panel: DRM panel
-> + *
-> + * This function decrements the panel's reference count and frees the
-> + * object if the reference count drops to zero.
-> + */
-> +struct drm_panel *drm_panel_put(struct drm_panel *panel)
-> +{
-> +	if (!panel)
-> +		return panel;
-> +
-> +	kref_put(&panel->refcount, __drm_panel_free);
-> +
-> +	return panel;
-> +}
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Ditto,
+--=20
+ i.
 
-> +/**
-> + * drm_bridge_put_void - wrapper to drm_bridge_put() taking a void point=
-er
-> + *
-> + * @data: pointer to @struct drm_bridge, cast to a void pointer
-> + *
-> + * Wrapper of drm_bridge_put() to be used when a function taking a void
-> + * pointer is needed, for example as a devm action.
-> + */
-> +static void drm_panel_put_void(void *data)
-> +{
-> +	struct drm_panel *panel =3D (struct drm_panel *)data;
-> +
-> +	drm_panel_put(panel);
-> +}
-
-You can drop the documentation on that one.
-
-Looks good otherwise,
-Maxime
-
---35mfar5h62wtrpdj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+QdEwAKCRDj7w1vZxhR
-xYQOAP9w3MTmVHhd861+uBbT6ku5QPjuAF8QKp2uW930Xg0/ngEA8+IQLZq8MDQH
-cJZsh0JTE1RLVLeeQTyRMOo8NM6g5wk=
-=WCTM
------END PGP SIGNATURE-----
-
---35mfar5h62wtrpdj--
+--8323328-1374919276-1743002971=:942--
 
