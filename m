@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-576551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD98A710E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:59:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64675A710F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68A57A5A9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19120188A2F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377A31917D0;
-	Wed, 26 Mar 2025 06:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D66A1946AA;
+	Wed, 26 Mar 2025 07:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hqoWs1/Q"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="J2IKZvBp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HikZFqdC"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6264D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C7D155316
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972362; cv=none; b=D6dEYS+pMMWTC+TkMqHD232vWoA+0VBdzyRUXRNW6DhwURLZQv6tDWymO7b5rAMe88uIMiR9LUZ+zzSGEfCvimT1AfVZXON52RpRpAMo9fUEXXGDdznjZZ5WMfiDWpiCnUCufxvCON7aKFSmjiYf016/hYeSjZXQu+B5hrEYyYU=
+	t=1742972520; cv=none; b=gf2y5plR3ZUfxu7M3vNfnA8wOyi8fTtM6jbbgxEUy2pev/CqwRLptR8+JFHR4eB7v+bSjKfqRJP9MPe38CjjX3JO+StdGG3ehK9Mfmi/6grqMNiQS3NyOMks92X1jkWONwbf0AofkcraZ6ZIDHJXaZqbo8V5iS+btUTwVfQWbo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972362; c=relaxed/simple;
-	bh=o4pJTwQhKx1ogb22BxjoekeOmT8QtFxvmttKFqre+9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y7G24fILipSMMoD+oe6QsvLwuXWr+RpY537MrPNCeDGnx+FdX4JS2g+qc9R3Vkor99OWoXyS14YamSKBMumEd1C18n3wi/M2mpcZvRKscrOcTXo5qk+0a3+LQ/eeXfzH+K/zm/w8pnzOxIDBx2f6bOnuKXSGSZnxU9ywVrbH4CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hqoWs1/Q; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3f6eaa017d0so4706223b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:59:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742972360; x=1743577160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tt2QTPR0dr6VE3DPwaU0qrg+/GigT8JzO3x4vxwhPLk=;
-        b=hqoWs1/QIWP+4BYSkY78BXYwJ/5Atdq3O4EXqxAAZGxHWeFRcVggWwCOgdpLQXcMln
-         cRV9QIitowNrggCXOsAOTkgT+WDjxk5kXf/seWUnsA7r3KHZBxqitGglULL5Tja7x5pO
-         auhUYIQtLplw60EpkHpMNqVFU80UpOXS0vk68oXt0qcZZhDIYS3NmhzHxXkIWmCecDxx
-         RSK/dancHOaIrcF4dYiXQAXxgjlnsvMOQ0oIAWemhv6m16NpZ9m6IfnhuELXh7ctg1us
-         XfczYLCJqq9FVM0suSe+Ut4e6vlPqjgLWN0gDMyUoFydXom1wrJPOOPoI1oZTXP8UiUR
-         uqtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742972360; x=1743577160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tt2QTPR0dr6VE3DPwaU0qrg+/GigT8JzO3x4vxwhPLk=;
-        b=CqTGajU5B7mwuBC1sHkXZX12iUc3xCG+0SJDxKXkCTNCgL02/bwxmPxGvUKCMfsNB7
-         c2NSRRuQ7wWhFUNLvkHVt/14TZcc7Rdbf6/rrf43HsBNkOJcqq1j9pztKMKBtMaRNUBh
-         +BIsE3OIhhts4ZbBdwgKm/5aZZoxnJzdS4UqAB/uJRkM8/sgoYSqY8a3PBHmiHrGbYzV
-         Yer6Zm1PI+QKdogI9EICu3EcbWpe+OyCcgWJ/TvX9xcwkvdvXDw3VTXv+RfraBVyanMh
-         pUeeH+sY+jmaVUZoC1idixLOx96B66ibcfcoFWdcMHD0TBI0UUnvQMCkSWroVS7Se+0j
-         5YLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWN999Na0dRMag+BNQlRpk/Rtr738Ue9k8rftp0XZ+Y9dXownZcQ4sCWQJ/lrJ2iQBMOmMRCjUcYciwTT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+MenASPs30i/gs1OUUq+rOh7umFEJ/4qvxc9tmk9m2xQz5o9S
-	tb4r9xR2fTFDYBZCcLfOfdqYUC0iUdBpFs3g/ujV3Bi1cXDyjQSSMSO511/DlnTyvVeQeqIsED9
-	HdtL/e9qf/pZsvYvk5mFDxgo/yLz6W/TZC+k5/g==
-X-Gm-Gg: ASbGnct8svgH3NByF/40pldmYcX0PjwNG+elGN35eYxk+OTwq0pKL2bWI9fTHYGU7WH
-	RUBN/5PPVd7bjxjMS3WfYKAx29t/cb/VNvnl0ebD4y0QpiQzzIr9xCdGnbveNYh/Q7Eelv/Qxx3
-	SVWrs561v1cY9qfi4ucxtmwJZBmAp1MFkRBB5wRA==
-X-Google-Smtp-Source: AGHT+IGkpF+jjcvOywbgej1wg2C5sn/xBVM42DFut896JZoRImXnEyterR24izyQNVyIxI770eb6+FAYE53FsilCgm0=
-X-Received: by 2002:a05:6808:f90:b0:3f8:e55c:16ea with SMTP id
- 5614622812f47-3febf78f4e7mr10960519b6e.24.1742972359680; Tue, 25 Mar 2025
- 23:59:19 -0700 (PDT)
+	s=arc-20240116; t=1742972520; c=relaxed/simple;
+	bh=kbfn5AxD6Ehm0QJCn9Njt6hlzD6AjlNkNsiSSAUueQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RpqPQrJAfweptlIzoXC62O1ueIeECU+AadKNCcnjbXbj9DY7q2StObof72yQTq1nMTEvQWmQg0wXsJO7dr06U+OQyIO4EOciYlxxBzUgxU+nRqqOkRmilcEROQ0k0GHfdvExAUZFNvwIhaZGBJ4+mGyT2e9GAq3Bn8uatCm4gO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=J2IKZvBp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HikZFqdC; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 93D351140137;
+	Wed, 26 Mar 2025 03:01:57 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Wed, 26 Mar 2025 03:01:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1742972517; x=1743058917; bh=S6n1PFsC1w5DEottY+AwJ
+	eJag53HyiRO+q5bkxFofLY=; b=J2IKZvBp6WoCuSf+Enj1G4HWsyNAexnVcN/G+
+	0lp1e79REc9ggHYcHtkm7Yt2cdFIXn3OPOglRgmwX1QgeDcHx46G8KJW7VgYb6cf
+	FTj8KnNd0fWCPSOVxYNMwPlsvsFNIZG+nIMPxwgdpTpCsZRmBK9yBXwgFjccRWZ5
+	LjKxP7JdgnuKcDEkIP3qPstle6g75sXt24SE1PUlbeqDmVJ0x0ibBeG6oqn1Avkk
+	RxpsUg0V8NbeXx3xHB9TdmyABLrHwS8YD0+zD9745NT4mAboZhk199DkewBXc93j
+	g80qMYztjn9b3stN2iacVq0K7MQPyLF58RQv63rlWiS9JcQHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1742972517; x=1743058917; bh=S6n1PFsC1w5DEottY+AwJeJag53HyiRO+q5
+	bkxFofLY=; b=HikZFqdCQkVrfylr12dgbQ2WTcsjuKjaJa5FyEmXT0wdVXfxKRA
+	lPp4txpNprnnrr4s0yk7AZe+YAOF5s9wbgpmDywyIiVNHi/n/Q8IOlReXlJN13lP
+	0sl/3y6lc7AMKy/eLIAiG9OAJu7vnTB/QyPjXabuek9DXE8XdZ5wVCM4CINXramI
+	oKzxiQKUneB7S5xfIQFK7KQB/fZhJJ939lpzfVrCKN/QQaX6nxShAd8JwagBCAiS
+	OQMIjuD4aD1aeh3i4YYOY9h11p7OANsR34lEzEd9gr7kRqTbOcit5Z7o8IHX0aJV
+	0QZI6mxuWoyZ6HM59faSAn6xDDbpLmTDmrQ==
+X-ME-Sender: <xms:ZKbjZxY0fe4sN8gYyrP8q8p6raVgKgxsHgI4Cydmmfk5yxj8shVbGA>
+    <xme:ZKbjZ4YNWWgb_BorMIat-fJEOfUPopoIcIGop_sN9Eft07gOq95DhnteXl9EB0u-2
+    Pe3FEbcRxrByaINzeY>
+X-ME-Received: <xmr:ZKbjZz9--RII037CM1GABfIXmXb0DDjcAAwRpHR9SYHQGwz07smOqd2DUJBDVQIgJnlE3WZzoImTZlNYUvf3rTlPM9wfF9yjUcK9299GJC8bvO3m>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieegkeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeflrghmvghsucfhlhhofigvrhhs
+    uceosgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhvefgkeeiuddtudfhgefgiedvuefhhedtffejtddtfeekieefieejveet
+    hfegheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhlugdriihonhgvvdefjeefsehfrghsthhmrghilhdrtghomhdpnhgspghrtghpthht
+    ohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghrrhihrdifvghnth
+    hlrghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdr
+    tghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpth
+    htoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthho
+    pegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopegrih
+    hrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhl
+    rdgthhdprhgtphhtthhopegruhhrrggsihhnughordhpihhllhgrihesrghmugdrtghomh
+    dprhgtphhtthhopegrlhgvgidrhhhunhhgsegrmhgurdgtohhm
+X-ME-Proxy: <xmx:ZKbjZ_rGnoREY8PfpwEgVG0VmuD6B4WRPWPRNm7UquJhy6FkvH09gw>
+    <xmx:ZKbjZ8oYG5WQNPFFAommQaMW7ZrXJciXBBLre_fUM0UpMb8Ow7Tj2Q>
+    <xmx:ZKbjZ1Sm7VvTxzgF6xPX4xSt5QQtmqq0-6xVHwx0TSfcMew5Kx0Q8g>
+    <xmx:ZKbjZ0rbrEfZvo_9sYl0PyyHI2jvklYp1YZMnpgNK2WMrImCnXt0qQ>
+    <xmx:ZabjZ4a3pZHLl8x8CSh0Mzcv5ww2ntLzwGpSnBrU9ZkUXlCAU8R1Itiy>
+Feedback-ID: ibd7e4881:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Mar 2025 03:01:54 -0400 (EDT)
+From: James Flowers <bold.zone2373@fastmail.com>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	siqueira@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	aurabindo.pillai@amd.com,
+	alex.hung@amd.com,
+	skhan@linuxfoundation.org
+Cc: James Flowers <bold.zone2373@fastmail.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amd/display: replace use of msleep(<20) with usleep_range for better accuracy
+Date: Wed, 26 Mar 2025 00:00:10 -0700
+Message-ID: <20250326070054.68355-1-bold.zone2373@fastmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325200740.3645331-1-m.felsch@pengutronix.de>
-In-Reply-To: <20250325200740.3645331-1-m.felsch@pengutronix.de>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 26 Mar 2025 07:59:08 +0100
-X-Gm-Features: AQ5f1Jq45SG7SaCOOmhWUmhN881gom88KcW957TXYjlGk-WJ-HNHypGMjlhKHhE
-Message-ID: <CAHUa44G_z0b42kHcaxvRJOou=pPT+MgWkJ5-5kbEOdJOFLMsAA@mail.gmail.com>
-Subject: Re: [PATCH v2] tee: shm: fix slab page refcounting
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: sumit.garg@kernel.org, vbabka@suse.cz, akpm@linux-foundation.org, 
-	willy@infradead.org, kernel@pengutronix.de, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Marco,
+msleep < 20ms will often sleep for ~20ms (according to Documentation/timers/timers-howto.rst).
 
-On Tue, Mar 25, 2025 at 9:07=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
-de> wrote:
->
-> Skip manipulating the refcount in case of slab pages according commit
-> b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page").
->
-> Fixes: b9c0e49abfca ("mm: decline to manipulate the refcount on a slab pa=
-ge")
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
-> v2:
-> - Make use of page variable
-> v1:
-> - https://lore.kernel.org/all/20250325195021.3589797-1-m.felsch@pengutron=
-ix.de/
->
->  drivers/tee/tee_shm.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index daf6e5cfd59a..35f0ac359b12 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -19,16 +19,24 @@ static void shm_put_kernel_pages(struct page **pages,=
- size_t page_count)
->  {
->         size_t n;
->
-> -       for (n =3D 0; n < page_count; n++)
-> -               put_page(pages[n]);
-> +       for (n =3D 0; n < page_count; n++) {
-> +               struct page *page =3D pages[n];
-> +
-> +               if (!PageSlab(page))
-> +                       put_page(page);
-> +       }
->  }
->
->  static void shm_get_kernel_pages(struct page **pages, size_t page_count)
->  {
->         size_t n;
->
-> -       for (n =3D 0; n < page_count; n++)
-> -               get_page(pages[n]);
-> +       for (n =3D 0; n < page_count; n++) {
-> +               struct page *page =3D pages[n];
-> +
-> +               if (!PageSlab(page))
-> +                       get_page(page);
+Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page")
-mentions that more page types will have a zero refcount in the longer
-term. So we'll need to add exception after exception here. Is there a
-helper function somewhere to get all the pages we need? Or can we do
-this differently?
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+index 2cd35392e2da..2d225735602b 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+@@ -682,7 +682,7 @@ static bool execute_synaptics_rc_command(struct drm_dp_aux *aux,
+ 		if (rc_cmd == cmd)
+ 			// active is 0
+ 			break;
+-		msleep(10);
++		usleep_range(10000, 10200);
+ 	}
+ 
+ 	// read rc result
+-- 
+2.49.0
 
-Cheers,
-Jens
-
-> +       }
->  }
->
->  static void release_registered_pages(struct tee_shm *shm)
-> --
-> 2.39.5
->
 
