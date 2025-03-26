@@ -1,306 +1,164 @@
-Return-Path: <linux-kernel+bounces-577390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F91A71C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF543A71C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF158406BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D57B3B62CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4021FF1D9;
-	Wed, 26 Mar 2025 16:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCEE1F5845;
+	Wed, 26 Mar 2025 16:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="Ti1+oqFM"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mUP/DVgm"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01411FC0F3;
-	Wed, 26 Mar 2025 16:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566B91F30C0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007767; cv=none; b=aQv9hz1PEJuN6tTocAJqyQbeDAC8bJwJhO0lVd83bULZ0Jb/QLFbrWteK6koRvPuhWs/rIpbJ8Hom7Y4LkjJbIujM8NRB9/PJZvgbhT/5RTM4OeHDHOKa0wvlWq5QvHrGW+0gBiCXykC9c9AtKg/+JZ13A/Yx54Aq3E8NDn32GQ=
+	t=1743007721; cv=none; b=tqgEQf6eGb+sotp7xxU2pt2O00nHByUL5HxvgzqnRx5sVTCsgftYvU77f9VdIpmjE2P/o4Q8+Ai495cgeJ1QCe7BvhGOqgHUDMneW6OrKlX6hadoUy9brgyZu03FabTGrg6l4fJ+u9eDGoh/6158xvJ2wlmXtg1gmr1iDWE9p9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007767; c=relaxed/simple;
-	bh=AGBvIBv7eUE58QmH1vxKVNMYOVNCjNhYNw59cwAmh/o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=TEUf5F2EIN5jB3afOkNiPU2lIsCNM0+rxuxrtqCu9sHYZZAAFwCY/VHzOYctynKPrTsNr4MJyngCDlTyH4PAlsAiar1KLzp153KDRQCkUARkZm30DVm8Syb7bBHRtTaGyu/SlFh8D5vN6NlugFFKcFzkSQlHEsVIZCeSv/rQ8d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=Ti1+oqFM; arc=none smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QBt2Sk012691;
-	Wed, 26 Mar 2025 16:48:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=F
-	A0lyH8FWOP6f5VYzns8OJMOqNymYsYVmZjrDckF4co=; b=Ti1+oqFM+luH1KI0g
-	gu0mHq8MRFMu0P1wRR8QwOoTRmqFhdwG+3MsM1K03MHc10ZsRzDmuTPkv9Fr7S7e
-	KcPAODQM4J5gmcK93i3DDJVZC1K1i+l0uCG3/MhAjHG/llD64oMNq6vH9C9yoiTJ
-	DcnDjyHWB14cWUVUusS9+HEcG6RqjLRuRkO4LBvxkhhlSba2VICJgIoF0fDAZPx4
-	CA0genhJZxekiCz249qnXxch0AFJR8E9FLiahq8RO7Y6KrYOVs6hyOw9dFYt91ZD
-	beMUnegxsaH3+bDl7vrYLX2TA/eFiQpjNbgAwUbwOqkusOru/SPoOLO1ISbnp/wL
-	J/L0Q==
-Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 45kbmy9d6d-13
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 26 Mar 2025 16:48:59 +0000 (GMT)
-Received: from
- 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
- (172.25.0.133) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 26 Mar 2025 16:48:49 +0000
-From: Matt Coster <matt.coster@imgtec.com>
-Date: Wed, 26 Mar 2025 16:48:32 +0000
-Subject: [PATCH v5 12/18] drm/imagination: Use callbacks for fw irq
- handling
+	s=arc-20240116; t=1743007721; c=relaxed/simple;
+	bh=v+AmZUmpN4LDUzxm3w5ft1I/+r4feJlmYE8bhA3zNfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppp3jnE5DpPD2PKs3skM2fpQmguqsD8AZKCSdAYrDTrqdhZBPLdIL7hEgk0iiHeuWhRt3vXfKXxy8XwA1/jFt0HwCdTfCWxmlnFV+pU7dMRcnSO9KYU0mvwNhtiE7ZpgDY4pYV5l4NIH9MhOYmNo0Oq7r7ONT7dlMZ8ATztwj7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mUP/DVgm; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so5850a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743007717; x=1743612517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xIONhgKygIJfrRbEsZfUKmIHxiah0KpnWCpr3sd5zNk=;
+        b=mUP/DVgm+gU6G0fk+R7hdL9Dt/I8ahmOMfat54qqRwGQ/W1EV3nxTWNH0BQ5i/US0P
+         dvTdbofnWXCHI14e/ztzohVx+8cN7/vF3LhWtMidmZCrRjfcKMlycbt1HRx+rdy2isnm
+         KhIXVxQw1nYW2QECs9U7v3vOtgOO6Zd6A6kdnaM9Ta0PhfLanY6y1eMOhkgFtvgoqUTN
+         MSKIYOoJrhPpsysj7Se2b9FpxrcgKZbyjFmVw9/1dWK/FTA7bq0sDr7+zjI+NkVGJUXy
+         2OBbVIoLVTEOuz3u9CI8Di0pAG6MnYn11DSUwZOLUfMFHSCQFbMngzEj7PE8gB1Lv1Fg
+         XrwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743007717; x=1743612517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIONhgKygIJfrRbEsZfUKmIHxiah0KpnWCpr3sd5zNk=;
+        b=UOPeaHTq/Aiih3kZppkA/gQLPOATGU3A/XLpmlX3cybJQRXs287FJwP8yVGUjBIf5g
+         aK213EPQCT+fQeKYTI4Ag/6suemBQ+MMYTDGUKeaJqJYiouv+P21rJdGHOIH2TL9tJYm
+         TcEAzc8cdUpzW8yVOJxvkGwb3hC0I/a0Xutp/nSHi62z4KZrbmHMVX05++0w0m3LGUed
+         o/N7M6gN1GTIVNhu4EBnWOt+2dR/WtFdZIfBF+DSMHBO0R5D4SBf/L3amXj6QYmB2k/B
+         eGmmq886UTPqIIUzX3nMPfC3u/kK0i2v+0FkxstJvy12JhU/adxcopYXOZQjoQPGY4uQ
+         cyMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuqqZsVduc6f9udHpPofWgMXTPjNOxEbJa1w8Ae4ONDC1/yw4wtCRyTffIrGB47bUBLZP+gRfjrhui9R0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjxQFFGXTNIYp3brWe92gT/Z+lomu3ZqZvE/TQiBRrvdnsjwrG
+	Aqulwq3x/2YOKatre/4o6+WZ+wTxG5KjbGLCUH+Tha9Rx33BO0xzV9pKGmPjBQ==
+X-Gm-Gg: ASbGnctni10S9e3YoW5AsXjnJYdOd5+MfpeQ1CU8O2+esLw3Sqz4DZZeJ79pw6qJ15z
+	zBXKR3nZ11OkjV8SrRRzdvIvyxUE10avGOLHmcgRuvQ4Opm1KZazvEoYzXtnO/lLCn/HGQomn8i
+	saNhHoo6g9XrLR3KE11ccY+xaD8BgBB4QQ9FZgw0sNV97TDdAIovNSFPVWWCsdzNvpNTYnctngD
+	NJjo0ko5P51bAYH8wsnepTG9PbOF0bAFFa5J/p7qiVVZAfw4c2c9qi5G7g9QKN2bhaGx8qMIcGX
+	dLoyE/x0Dw/PsNrd78XIDpJvc6yhfRSF/G8kCFIzCPwV0F5KTRE187NwSCBrVwlw3PT2xm5iqSo
+	rV8w=
+X-Google-Smtp-Source: AGHT+IELoh1UdGLEoChuBbrPrSJlW3iazs22Tqnm/p66h/kdfAKvlGAngZOzasm3FVG0orud4x07LQ==
+X-Received: by 2002:a17:907:7f86:b0:ac1:e881:89a7 with SMTP id a640c23a62f3a-ac6fae48539mr15547466b.6.1743007717280;
+        Wed, 26 Mar 2025 09:48:37 -0700 (PDT)
+Received: from google.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac404959f47sm907950666b.170.2025.03.26.09.48.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 09:48:36 -0700 (PDT)
+Date: Wed, 26 Mar 2025 16:48:33 +0000
+From: Quentin Perret <qperret@google.com>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
+	will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, Andrei Homescu <ahomescu@google.com>
+Subject: Re: [PATCH v4 3/3] KVM: arm64: Release the ownership of the hyp rx
+ buffer to Trustzone
+Message-ID: <Z-Qv4b0vgVql2yOb@google.com>
+References: <20250326113901.3308804-1-sebastianene@google.com>
+ <20250326113901.3308804-4-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250326-sets-bxs-4-64-patch-v1-v5-12-e4c46e8280a9@imgtec.com>
-References: <20250326-sets-bxs-4-64-patch-v1-v5-0-e4c46e8280a9@imgtec.com>
-In-Reply-To: <20250326-sets-bxs-4-64-patch-v1-v5-0-e4c46e8280a9@imgtec.com>
-To: Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster
-	<matt.coster@imgtec.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Vignesh
- Raghavendra" <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
-        "Michal
- Wilczynski" <m.wilczynski@samsung.com>,
-        Alessio Belle
-	<alessio.belle@imgtec.com>,
-        Alexandru Dadu <alexandru.dadu@imgtec.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7264;
- i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=AGBvIBv7eUE58QmH1vxKVNMYOVNCjNhYNw59cwAmh/o=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMaQ/0X/6dNXOj5uz5JqW//wulnuh/MfNnbdU+99MSXins
- nuy4/Ii6Y5SFgYxDgZZMUWWHSssV6j9UdOSuPGrGGYOKxPIEAYuTgGYCIsDwy/mTvG8mq3fWRkM
- N+/m+fNyl47zL4NfJz6z/AoTcjJgVS9iZOhq2NW47YLr1uv2XuZxL98f87OxCjaqFtB9vTEq4p2
- aJT8A
-X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
- fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Proofpoint-ORIG-GUID: Wg3OsmSnEgPpzeCYAIwQcTIYwUhxhmAk
-X-Authority-Analysis: v=2.4 cv=L+sdQ/T8 c=1 sm=1 tr=0 ts=67e42ffb cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=Y33Pwm5EY2qbWUOeHhAA:9
- a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: Wg3OsmSnEgPpzeCYAIwQcTIYwUhxhmAk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326113901.3308804-4-sebastianene@google.com>
 
-This allows for more versatility in checking and clearing firmware
-registers used for interrupt handling.
+On Wednesday 26 Mar 2025 at 11:39:01 (+0000), Sebastian Ene wrote:
+> Introduce the release FF-A call to notify Trustzone that the hypervisor
+> has finished copying the data from the buffer shared with Trustzone to
+> the non-secure partition.
+>
+> Reported-by: Andrei Homescu <ahomescu@google.com>
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 6df6131f1107..ac898ea6274a 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -749,6 +749,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  	DECLARE_REG(u32, uuid3, ctxt, 4);
+>  	DECLARE_REG(u32, flags, ctxt, 5);
+>  	u32 count, partition_sz, copy_sz;
+> +	struct arm_smccc_res _res;
+>  
+>  	hyp_spin_lock(&host_buffers.lock);
+>  	if (!host_buffers.rx) {
+> @@ -765,11 +766,11 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  
+>  	count = res->a2;
+>  	if (!count)
+> -		goto out_unlock;
+> +		goto release_rx;
+>  
+>  	if (hyp_ffa_version > FFA_VERSION_1_0) {
+>  		/* Get the number of partitions deployed in the system */
+> -		if (flags & 0x1)
+> +		if (flags & PARTITION_INFO_GET_RETURN_COUNT_ONLY)
+>  			goto out_unlock;
+>  
+>  		partition_sz  = res->a3;
+> @@ -781,10 +782,12 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  	copy_sz = partition_sz * count;
+>  	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+>  		ffa_to_smccc_res(res, FFA_RET_ABORTED);
+> -		goto out_unlock;
+> +		goto release_rx;
+>  	}
+>  
+>  	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
+> +release_rx:
+> +	ffa_rx_release(&_res);
 
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
----
-Changes in v5:
-- None
-- Link to v4: https://lore.kernel.org/r/20250320-sets-bxs-4-64-patch-v1-v4-12-d987cf4ca439@imgtec.com
-Changes in v4:
-- None
-- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-12-143b3dbef02f@imgtec.com
-Changes in v3:
-- None
-- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-14-3fd45d9fb0cf@imgtec.com
-Changes in v2:
-- None
-- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-14-4ed30e865892@imgtec.com
----
- drivers/gpu/drm/imagination/pvr_device.h  | 18 +++++++++++++
- drivers/gpu/drm/imagination/pvr_fw.h      | 45 +++++++++----------------------
- drivers/gpu/drm/imagination/pvr_fw_meta.c | 22 ++++++++++-----
- drivers/gpu/drm/imagination/pvr_fw_mips.c | 22 ++++++++++-----
- 4 files changed, 63 insertions(+), 44 deletions(-)
+I'm a bit confused about this release call here. In the pKVM FF-A proxy
+model, the hypervisor is essentially 'transparent', so do we not expect
+EL1 to issue that instead? How is EL1 supposed to know that the
+hypervisor has already sent the release call? And isn't EL1 going to be
+confused if the content of the buffer is overridden before is has issued
+the release call itself? What would otherwise prevent that from
+happening?
 
-diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
-index 12bf0b9e5bfb48ef9e5ed9faa44e0896b7555f49..eb5da8c7040fc9e9751f433279cb0c92fd4d1336 100644
---- a/drivers/gpu/drm/imagination/pvr_device.h
-+++ b/drivers/gpu/drm/imagination/pvr_device.h
-@@ -739,4 +739,22 @@ pvr_ioctl_union_padding_check(void *instance, size_t union_offset,
- 					      __union_size, __member_size);  \
- 	})
- 
-+/*
-+ * These utility functions should more properly be placed in pvr_fw.h, but that
-+ * would cause a dependency cycle between that header and this one. Since
-+ * they're primarily used in pvr_device.c, let's put them in here for now.
-+ */
-+
-+static __always_inline bool
-+pvr_fw_irq_pending(struct pvr_device *pvr_dev)
-+{
-+	return pvr_dev->fw_dev.defs->irq_pending(pvr_dev);
-+}
-+
-+static __always_inline void
-+pvr_fw_irq_clear(struct pvr_device *pvr_dev)
-+{
-+	pvr_dev->fw_dev.defs->irq_clear(pvr_dev);
-+}
-+
- #endif /* PVR_DEVICE_H */
-diff --git a/drivers/gpu/drm/imagination/pvr_fw.h b/drivers/gpu/drm/imagination/pvr_fw.h
-index 88ad713468ce3a1ee459b04dde5363c24791a4f1..ab69f40a7fbc6304171f16dd16d825a68b0362a5 100644
---- a/drivers/gpu/drm/imagination/pvr_fw.h
-+++ b/drivers/gpu/drm/imagination/pvr_fw.h
-@@ -167,29 +167,22 @@ struct pvr_fw_defs {
- 	int (*wrapper_init)(struct pvr_device *pvr_dev);
- 
- 	/**
--	 * @irq: FW Interrupt information.
-+	 * @irq_pending: Check interrupt status register for pending interrupts.
- 	 *
--	 * Those are processor dependent, and should be initialized by the
--	 * processor backend in pvr_fw_funcs::init().
-+	 * @pvr_dev: Target PowerVR device.
-+	 *
-+	 * This function is mandatory.
- 	 */
--	struct {
--		/** @status_reg: FW interrupt status register. */
--		u32 status_reg;
-+	bool (*irq_pending)(struct pvr_device *pvr_dev);
- 
--		/**
--		 * @clear_reg: FW interrupt clear register.
--		 *
--		 * If @status_reg == @clear_reg, we clear by write a bit to zero,
--		 * otherwise we clear by writing a bit to one.
--		 */
--		u32 clear_reg;
--
--		/** @status_mask: Bitmask of events to listen for in the status_reg. */
--		u32 status_mask;
--
--		/** @clear_mask: Value to write to the clear_reg in order to clear FW IRQs. */
--		u32 clear_mask;
--	} irq;
-+	/**
-+	 * @irq_clear: Clear pending interrupts.
-+	 *
-+	 * @pvr_dev: Target PowerVR device.
-+	 *
-+	 * This function is mandatory.
-+	 */
-+	void (*irq_clear)(struct pvr_device *pvr_dev);
- 
- 	/**
- 	 * @has_fixed_data_addr: Specify whether the firmware fixed data must be loaded at the
-@@ -390,18 +383,6 @@ struct pvr_fw_device {
- 	} fw_objs;
- };
- 
--#define pvr_fw_irq_read_reg(pvr_dev, name) \
--	pvr_cr_read32((pvr_dev), (pvr_dev)->fw_dev.defs->irq.name ## _reg)
--
--#define pvr_fw_irq_write_reg(pvr_dev, name, value) \
--	pvr_cr_write32((pvr_dev), (pvr_dev)->fw_dev.defs->irq.name ## _reg, value)
--
--#define pvr_fw_irq_pending(pvr_dev) \
--	(pvr_fw_irq_read_reg(pvr_dev, status) & (pvr_dev)->fw_dev.defs->irq.status_mask)
--
--#define pvr_fw_irq_clear(pvr_dev) \
--	pvr_fw_irq_write_reg(pvr_dev, clear, (pvr_dev)->fw_dev.defs->irq.clear_mask)
--
- enum pvr_fw_processor_type {
- 	PVR_FW_PROCESSOR_TYPE_META = 0,
- 	PVR_FW_PROCESSOR_TYPE_MIPS,
-diff --git a/drivers/gpu/drm/imagination/pvr_fw_meta.c b/drivers/gpu/drm/imagination/pvr_fw_meta.c
-index 62ddfea6b7306784b979ce209bfdf4a9938f8984..d72e0eae9e4b16cb31c48797ffcf5138d2728862 100644
---- a/drivers/gpu/drm/imagination/pvr_fw_meta.c
-+++ b/drivers/gpu/drm/imagination/pvr_fw_meta.c
-@@ -533,6 +533,20 @@ pvr_meta_vm_unmap(struct pvr_device *pvr_dev, struct pvr_fw_object *fw_obj)
- 			 fw_obj->fw_mm_node.start, fw_obj->fw_mm_node.size);
- }
- 
-+static bool
-+pvr_meta_irq_pending(struct pvr_device *pvr_dev)
-+{
-+	return pvr_cr_read32(pvr_dev, ROGUE_CR_META_SP_MSLVIRQSTATUS) &
-+	       ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_EN;
-+}
-+
-+static void
-+pvr_meta_irq_clear(struct pvr_device *pvr_dev)
-+{
-+	pvr_cr_write32(pvr_dev, ROGUE_CR_META_SP_MSLVIRQSTATUS,
-+		       ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_CLRMSK);
-+}
-+
- const struct pvr_fw_defs pvr_fw_defs_meta = {
- 	.init = pvr_meta_init,
- 	.fw_process = pvr_meta_fw_process,
-@@ -540,11 +554,7 @@ const struct pvr_fw_defs pvr_fw_defs_meta = {
- 	.vm_unmap = pvr_meta_vm_unmap,
- 	.get_fw_addr_with_offset = pvr_meta_get_fw_addr_with_offset,
- 	.wrapper_init = pvr_meta_wrapper_init,
--	.irq = {
--		.status_reg = ROGUE_CR_META_SP_MSLVIRQSTATUS,
--		.clear_reg = ROGUE_CR_META_SP_MSLVIRQSTATUS,
--		.status_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_EN,
--		.clear_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_CLRMSK,
--	},
-+	.irq_pending = pvr_meta_irq_pending,
-+	.irq_clear = pvr_meta_irq_clear,
- 	.has_fixed_data_addr = false,
- };
-diff --git a/drivers/gpu/drm/imagination/pvr_fw_mips.c b/drivers/gpu/drm/imagination/pvr_fw_mips.c
-index 2c3172841886b70eb7a9992ec3851f18adcad8d5..524a9bd0a20b64c509f5708cc61d93b4c864b835 100644
---- a/drivers/gpu/drm/imagination/pvr_fw_mips.c
-+++ b/drivers/gpu/drm/imagination/pvr_fw_mips.c
-@@ -227,6 +227,20 @@ pvr_mips_get_fw_addr_with_offset(struct pvr_fw_object *fw_obj, u32 offset)
- 	       ROGUE_FW_HEAP_MIPS_BASE;
- }
- 
-+static bool
-+pvr_mips_irq_pending(struct pvr_device *pvr_dev)
-+{
-+	return pvr_cr_read32(pvr_dev, ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS) &
-+	       ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS_EVENT_EN;
-+}
-+
-+static void
-+pvr_mips_irq_clear(struct pvr_device *pvr_dev)
-+{
-+	pvr_cr_write32(pvr_dev, ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR,
-+		       ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR_EVENT_EN);
-+}
-+
- const struct pvr_fw_defs pvr_fw_defs_mips = {
- 	.init = pvr_mips_init,
- 	.fini = pvr_mips_fini,
-@@ -235,11 +249,7 @@ const struct pvr_fw_defs pvr_fw_defs_mips = {
- 	.vm_unmap = pvr_vm_mips_unmap,
- 	.get_fw_addr_with_offset = pvr_mips_get_fw_addr_with_offset,
- 	.wrapper_init = pvr_mips_wrapper_init,
--	.irq = {
--		.status_reg = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS,
--		.clear_reg = ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR,
--		.status_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS_EVENT_EN,
--		.clear_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR_EVENT_EN,
--	},
-+	.irq_pending = pvr_mips_irq_pending,
-+	.irq_clear = pvr_mips_irq_clear,
- 	.has_fixed_data_addr = true,
- };
+Thanks,
+Quentin
 
--- 
-2.49.0
-
+>  out_unlock:
+>  	hyp_spin_unlock(&host_buffers.lock);
+>  }
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
