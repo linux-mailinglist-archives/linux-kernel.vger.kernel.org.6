@@ -1,107 +1,96 @@
-Return-Path: <linux-kernel+bounces-577154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6FAA71913
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:45:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B629EA71948
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F127A2003
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8FF189B233
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDEA1F4622;
-	Wed, 26 Mar 2025 14:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BF21F4734;
+	Wed, 26 Mar 2025 14:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxhotcz2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fi5grXho"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861B1F3BAC;
-	Wed, 26 Mar 2025 14:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B41F4716;
+	Wed, 26 Mar 2025 14:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000133; cv=none; b=h163KISYrxx5g3ZwPYf+DbVBIAw3UtgJSBtYqF4yIFoyKCkEs0MW3+emi3yDrgeAvU6Qjj885I49qqb/18gDrAlW7E7kV6TA1kyanVnWoVbOVehuFHV3tiR/9ZZq3hZDWI3+ezvRi59FC0viCGlRpgwONnqMIUMsGIrrFLcgy0w=
+	t=1743000142; cv=none; b=c7eRWZGk/TxFmLQk7i1x0LBNrz/Z6Md02tI2Lyu4xK4HU3q4UAKPVHwSEkcSgeertvxplYgLUOGgYklugQsGRu6JlUrw8UOHaj93T6/2PHxo/rhxBHVrbTGZv4IclBCVxZj+th5s4/6Eu7aCN5A2NV1J4+q36AfQNXEYwRpbkHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000133; c=relaxed/simple;
-	bh=Dyk+tSg/FQJ1Tiv4p0b3SWvDWFAEEatlceeuJ25kl1I=;
+	s=arc-20240116; t=1743000142; c=relaxed/simple;
+	bh=QOSV12oqDthT8kmpiZMJDPHD5H7Z+8eiVAijdvHwdyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NeyDuYb6sFE+DulOJJKh42ERZYkYo5H26q23t5Q+ZCeuaptJaFtJK1jlu1oSwhS/WWnBJbfN0bxQoIE7VsmF8b//vSHSNpFpgG9v0EUJ64OF6EuiFM57xtEF/jYj9cTQLl5zsDUB0r4K0jFbQwsaAKPlT07tQ4bVryCLx32PyqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxhotcz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93605C4CEE2;
-	Wed, 26 Mar 2025 14:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743000133;
-	bh=Dyk+tSg/FQJ1Tiv4p0b3SWvDWFAEEatlceeuJ25kl1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pxhotcz2sMGqI/csayQvUfmEivYpMnZmOmKqCy+G/WF5w9VwF8PwrR0RWrIxJBygF
-	 vbe1KlReyaHuIIvfvlm1RzBo4bjJiLDfeM/33MaXmMVEg9CijnkkjiFP9kohFiKB2B
-	 4jVnc08A7ioHkVeLUUpjNrv3nfgxEXQ7tawLRJtj4OjhttYF/nG4TqMPaBX3PcIrwE
-	 FEsDryj9/Hj07cV2dDszVxcvjRLexPvEyWhDeYfsOrAedEZFOFeAw4uJK6+vz0dU7P
-	 Z4SkpHkhgcZCTRQ/gKmhKNHAz3wBvPncNsIYyQkBl+G0OM7CUO002/MxRUlKlGZ8eT
-	 P2IMZRxW/v2CQ==
-Date: Wed, 26 Mar 2025 14:42:08 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org
-Subject: Re: [PATCH V1] spi: Add support for Double Transfer Rate (DTR) mode
-Message-ID: <3aa2c190-ce4d-4805-943b-f65e98ce762c@sirena.org.uk>
-References: <20250326083954.3338597-1-quic_msavaliy@quicinc.com>
- <40db39ef-7ef3-4720-9c85-ccfe1c11c299@sirena.org.uk>
- <c89603b7-b70c-4b55-ac87-f84ce5be2c6c@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtNIqh4ZadfYvkaE+Ra2N4bmWsnCUdUNv/B6qvmHI4DQ+XA9GsGumnF0YPUCwGLZE6zyyz3PK+K6bdp5X3uP6Mq2mIbuIsbPXe6YJKJyxl64jiCPNJVGyR0aKrJuM9G+9tS0xypoklZBXbC5JjWvjiXbrxhBQdqui3VZ8D487M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fi5grXho; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CyI5K/SbyVvcE4g5wfQNWdFDhiMRKaxUcHqMuaIlGQc=; b=fi5grXhoyB3Nj5W5Qhy3rhB7rf
+	GFTaVdZNcQgjPb39f83cVHaeL/TySAew0gXvxNjKcoWCASs28BrAgFzAC7DqOG2yfte72K/z3wosl
+	nIwbhsVEkmPIjwUaYpVSYfOjInU703Ma9KUxeRcjOd+jh0awIW6Nj+rjtddXmWk7YhUuppkrO1/Og
+	biyhbFtRJ96MEoTXuJO/RSnCWiUCBhRF5Cx04G4MqFLTWYbM2YxRKekAKokiY52/jExtVITG+egW0
+	fwznsyAflV7BTPwZO9YqS/sCTHeVhdYUBZ/z0p4drZVSjC/qgu8nw5S2HU40MDRlEyG0JWEjJCSyE
+	m62pcuuA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txRxN-00000005on6-2zyn;
+	Wed, 26 Mar 2025 14:42:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BD2A23004AF; Wed, 26 Mar 2025 15:42:12 +0100 (CET)
+Date: Wed, 26 Mar 2025 15:42:12 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Petr Mladek <pmladek@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+	mingo@kernel.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
+	jikos@kernel.org, joe.lawrence@redhat.com,
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
+ live-patching
+Message-ID: <20250326144212.GG25239@noisy.programming.kicks-ass.net>
+References: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
+ <Z-PNll7fJQzCDH35@pathway.suse.cz>
+ <20250326103843.GB5880@noisy.programming.kicks-ass.net>
+ <alpine.LSU.2.21.2503261534450.4152@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YMz6PHeRr6110ohj"
-Content-Disposition: inline
-In-Reply-To: <c89603b7-b70c-4b55-ac87-f84ce5be2c6c@quicinc.com>
-X-Cookie: To err is humor.
-
-
---YMz6PHeRr6110ohj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2503261534450.4152@pobox.suse.cz>
 
-On Wed, Mar 26, 2025 at 07:55:05PM +0530, Mukesh Kumar Savaliya wrote:
-> On 3/26/2025 6:34 PM, Mark Brown wrote:
+On Wed, Mar 26, 2025 at 03:37:50PM +0100, Miroslav Benes wrote:
 
-> > We should have a flag in the controller indicating if it supports this,
-> > and code in the core which returns an error if a driver attempts to use
-> > it when the controller doesn't support it.
+> If I remember correctly, we had something like this in the old kGraft 
+> implementation of the live patching (SUSE way). We exactly had a hook 
+> somewhere in the kthread freezing code. This looks much cleaner and as far 
+> as I know the fridge went through improvements recently.
 
-> Have added below in spi.h which can be set by client and controller driver
-> should be using it to decide mode.
+Yeah, I rewrote it a while ago :-)
 
-> + bool        dtr_mode;
+> Peter, so that I understand it correctly... we would rely on all kthreads 
+> becoming freezable eventually so that both suspend and livepatch benefit. 
+> Is that what you meant by the above?
 
-> since default it's false, should continue with SDR.
-> I believe for QSPI, it supports SDR or DDR, but it's not applicable to
-> standard SPI right ? So not sure in which case we should return an error ?
+Well, IIRC (its been a while already) all kthreads should have a
+FREEZABLE already. Things like suspend-to-idle don't hit the hotplug
+path at all anymore and everything must freeze, otherwise they fail.
 
-Standard SPI is the main thing I'm thinking of here, or possibly some
-limited QSPI controller that doesn't support DTR.  It's not something
-that should actually come up really, it's more error handling if things
-aren't set up properly.
-
---YMz6PHeRr6110ohj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfkEj8ACgkQJNaLcl1U
-h9DczQf+IuYimvwoNmv2OV/WxcZYF+eVWn8NIpbmTbXJOkVIbQktDkbeSr+9WLoo
-y/53GWXVRJ23P55zDZmKHmfWBPQy10Ni+5V5LoVc0CxbMTQWcORU7lY/Po7IPsoK
-zGdkebpI+AwHywHtnA8whq2ysWKuuCbvdSm6tk7fZV7iJJMK9hUwCYJ6ygc7RScT
-SCpFzPyYm2DavsSc5SKpboamYdo06HSGyxfojQ0bJuq7+p58bFSoGjyGD9RRuEBM
-rqkOzT1y7nabKM9xtPkGGOVozrPe+36rRXIumckQEo43ivMxeOmzUVoVG9D7PU5m
-nr0XDtJ8r9bEb77Cl2CL7huAM32RqA==
-=Y40e
------END PGP SIGNATURE-----
-
---YMz6PHeRr6110ohj--
+I was more meaning the time-to-freeze; if some kthreads take a long time
+to freeze/patch then this would want improving on both ends.
 
