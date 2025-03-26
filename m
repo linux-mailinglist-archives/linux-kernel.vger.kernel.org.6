@@ -1,246 +1,245 @@
-Return-Path: <linux-kernel+bounces-577116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D35AA71888
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:31:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4742A71889
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D9A172B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:31:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD4247A44DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590F01DDC2C;
-	Wed, 26 Mar 2025 14:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E861EE01B;
+	Wed, 26 Mar 2025 14:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Sg4N00aZ"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kVKckCvz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lJcrwkpd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lhTEV18N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="85SlvJWV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB331B4132;
-	Wed, 26 Mar 2025 14:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999496; cv=fail; b=t4WxFIZXBm3Q4vBJfxouM5g4fKa+ml3VOvneYoVTR0hqK+xMPLdZQDyUbc4iadJd8FN8W1wqiHEGNRYN9USqCbfjEpvtd8bP+kg3mklq9SThA4pnCY7xlPZjg5l1lJBPEkuFiTg9gnZaxdpEMPzMXDy7asdVhiTLPFeRBV9J8ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999496; c=relaxed/simple;
-	bh=/YTYZPeH6M0ESPm64xmUer3Jo6i26QZSGH/RWYvfXVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qvi48ilxZIdB/lAmx7MUqig4Y9FAhxIfSyRv+iJ6KFGulToNtAl0vHORVdFbmzLvhzmBQUSZZEZIR7iHsOjNIMn1f9EhootKuEM0FHU8qSNqKGYyvkDu88ZrfL+GHYZF0QyAvz2fdFZFyKnBdVcL0mcxxOmE/RN0WAj2j+RIaYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Sg4N00aZ; arc=fail smtp.client-ip=40.107.21.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GCMPqMVXDjsebB3IM0gONC5KzmGs1oW3Bqe7AI6d1wLptTzkWJb1ZYpg4DSqGLfZRS6uEi7P78nl9Jr1bqJgPzPKrTLeOxDYGF4Q3giwBDAILi1r8D16a5PI3TIpThlW+rYFTiV6THtvlvlrlhDd/VI/qzE+hKDOqseBYSeo3P/sey5b/1d4XYA16Y7/eMuSAGR2IwFqPIURqaEhIh1Z7X9vbjDlM9JVBA/w7fY4hA7lDq7vVYMKd7zWZZNwXTClhNUcbIPFQxcfdZZzmxQSCdkn2whZyM4VgzNdsKliLC0/ydsQmpkQunTziBmKXSIIMf695ii3l/mIztECDu5SpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R6lBtZCRLN3GuVWwNtx9yxfFsMzYr2zJPwCQ7C9PLA8=;
- b=Q1uopvADxC8uyA0tDIgBCR8YkVVou4nvAD6xDxqnfJNPpm+Keh3ykmXrmzMpH3RHAXeLSrhaXrkAChvnmLlACiD/Qqx/doPVgw3eLsjjcnFo9OD0Nm2d6tDL0p4iVyhy4dOXPOF+DQ4pM1aZD4I+H1ImPdM9bDXXSsG9+HjQ7Dquae9UHgaGt56EyT14C1OaH0fJO5towByIxmdV/4VoRevxWGqXNoreBRD2mYKL+7u5h8ZaHTO/KjmLUG9Gr+fPsMtEfHJxeM7rJkZ7XjumsWIv9YKuNCD0zrj13EqrhzRkKYOcZjWR6ruyISjbnyl3AJ0mOTbry3DMPUmHG68L1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R6lBtZCRLN3GuVWwNtx9yxfFsMzYr2zJPwCQ7C9PLA8=;
- b=Sg4N00aZQbz6abWFKfZ4bq8IoIxRRyUOaUEWjUPopvJCuFipxELUggFsbk1dmBpSAx/Oeyt8INQXRgOJSIwk2ZY85KhK0xiCBvx8q5qdhWQqXD3SK4Qu397D93N4CZlf39pjsjKwtGoe/F5xvKJqsdyAS0z0cZmrczxor5q1dSOCG1ApnLcteWxqLpVFzMc++LAv5xYxXavu4yJ9rLUzZdsHDtzCTzLeCcp5K3dbOVDU6aVrEHZrZvF5KqBVfVJs43kTkfa64behJr98JZutULqk5/vdhruCbUt7HYy020LwQhjJqT7RMl2NxH+KyxfR1deXoN4s59WxOO9JByq62g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB7043.eurprd04.prod.outlook.com (2603:10a6:208:19b::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 14:31:30 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 14:31:30 +0000
-Date: Wed, 26 Mar 2025 10:31:22 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] PCI: imx6: Toggle the cold reset for i.MX95 PCIe
-Message-ID: <Z+QPukWbfYfHKrg9@lizhi-Precision-Tower-5810>
-References: <20250326075915.4073725-1-hongxing.zhu@nxp.com>
- <20250326075915.4073725-3-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326075915.4073725-3-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0223.namprd03.prod.outlook.com
- (2603:10b6:a03:39f::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BC74778E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742999497; cv=none; b=pbAG2KtWVjbtvEEmkivDwVZnepr4sdY+ydAkhuWtag/feXWUP9WxZ+1++tT9nir2/jndhntz9ix5zVpza4DqJd0BasVGpusMdlmmdz4XeG3R+oZbcrMbcrhT28q941t9BNhW2hy6jpjYlbS0OxW5b7fZqIKo+KdDaa3qcZvSWw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742999497; c=relaxed/simple;
+	bh=w/LJlRqg/ucJ1PTPapgmCKKLD4EnTKDdusOND4brjN8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ALZDCX7iE9iKl02mZk4GI56Mr4sdvW8z2xA1oROwVmessMlKC+MSfyMoQe7lmbvCd7Ys3vFrOhWO7ZyKk2SwsyQxMKFfk9K8QH8qM56iVLzXG6nQ5+6l3aAQy7ZauT6IT5oJVGc2OIxCBtk8j/9+m2IMH1V/Xgt/5UpFbG507aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kVKckCvz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lJcrwkpd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lhTEV18N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=85SlvJWV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E609B1F395;
+	Wed, 26 Mar 2025 14:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742999493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOicSyzfVMbHHC7eHpyo6OQBGSesLf5layaaEZRtN4Y=;
+	b=kVKckCvzrDxWkJb2SCfa7MOz6ebJMZF+N3EzIWu3XVLvUgkF9h10ZfnobalW017hpxURmn
+	fbb7EfCVRRIQIAxw/HDCc68LKeNcPAMuNKEHSxZb+4ABbTj1SaBVvdK+LtoW/RINbK5WxS
+	N16jOaTq3MxeLjYobN1a3/29eQqN0b4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742999493;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOicSyzfVMbHHC7eHpyo6OQBGSesLf5layaaEZRtN4Y=;
+	b=lJcrwkpdXBE4y/yJFmfu/p+oM4UDN8vQDsXhqpf3Ra7HDER3bSYQGG4MhonIKR4s4HF1ob
+	zpRCr0K3KVWx6aAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lhTEV18N;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=85SlvJWV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742999492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOicSyzfVMbHHC7eHpyo6OQBGSesLf5layaaEZRtN4Y=;
+	b=lhTEV18NnqnnAzOOJMtVdZr5l6kynuP1PGjkSLJ/YUKCFkqyhWAPq/uC8pOh6h6FCdqeiR
+	X4Sa0nSojj6Ze3Xejt2OQ7QTCkDTG2hu0kaBKQRLGlM3koRduqp6rBFAaVHHOLApPWOLnT
+	GE8lDf725vbbpC2FFoR2Z24TtoZ7sA8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742999492;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOicSyzfVMbHHC7eHpyo6OQBGSesLf5layaaEZRtN4Y=;
+	b=85SlvJWVL15DgpEhXbhwuzbXCjjkXtG9kYLvL+p7ea8iFvxWbb1M12tgnRhwYxtvuCxJWm
+	MLBKCUlFM74za+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A135213927;
+	Wed, 26 Mar 2025 14:31:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G3UTJsQP5GezSAAAD6G6ig
+	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 14:31:32 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Roberto Sassu
+ <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+  Eric Snowberg <eric.snowberg@oracle.com>,  Jarkko Sakkinen
+ <jarkko@kernel.org>,  James Bottomley
+ <James.Bottomley@HansenPartnership.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
+In-Reply-To: <a4bf93f0c64f4b329e022663afecf6edf0e22884.camel@linux.ibm.com>
+	(Mimi Zohar's message of "Wed, 26 Mar 2025 10:18:41 -0400")
+References: <20250323140911.226137-1-nstange@suse.de>
+	<20250323140911.226137-4-nstange@suse.de>
+	<e492df76d30b0b95f83b577499a25cdca2256407.camel@linux.ibm.com>
+	<a4bf93f0c64f4b329e022663afecf6edf0e22884.camel@linux.ibm.com>
+Date: Wed, 26 Mar 2025 15:31:32 +0100
+Message-ID: <87semzoocb.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB7043:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77e859c4-6695-4dea-3872-08dd6c72e67a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OYN6fHfTroOPkbX3ef7Kiln0vlszvMAOs/5PIyHTg1ZCpBrYhNFCf8r20rAK?=
- =?us-ascii?Q?xGPi1HvKHXIc7CrVS/8gzROH3AhkBEcoBBZx0Stuw4cgFD9vGe26dTF+n77V?=
- =?us-ascii?Q?iWP5gzW8K7/3lXS9TTBrG2wswFL2mjFn3b61dfdEEOhT9zv2/e0p5WVOshvO?=
- =?us-ascii?Q?q5ZYyBMsgQuiZlpRzo5Cw3WYFDPZvPJrpGHGB93ylXNvA/QH8HsmBlp42M6f?=
- =?us-ascii?Q?YgzesrGpoujSjx2egMj1oYm5hmJgsjHxFwbkgGPQM0OsSBcHGnywFUww35zl?=
- =?us-ascii?Q?ZeP3+fYHPjfn24zv5Zn3w1by0I2KCW/QDdYWOVhfPJZ2Cm2RbjI4z0Rk+U6N?=
- =?us-ascii?Q?z9kSN9kOYCbQt8yEbAIjwv6qMbptJqHhB3a8lDSzxYqUqGLB0L/CO5QnpH5K?=
- =?us-ascii?Q?tdtowFFSZH1NJzCYtf3aoyBSm7bObtLKwkdDpHJsYcmi0t0IsFx9Snz1BlKK?=
- =?us-ascii?Q?qHvQ8RcbJ6CSPRIxW3SzqWcZbuMXaiMa8bhHyjCkwd0R/Eldo96+MxcPF0cs?=
- =?us-ascii?Q?z9ukeFG1F2MpKykQRAevHW6Lv/LEuXlYXQ3xr2kYB1mVfIzXWKjH9/fOZ4hU?=
- =?us-ascii?Q?fC8iUoCvmsKYTLh2EXa/8IXLXXJEbdYoINF9MWCMNj7KYODC7MDr0ycIl383?=
- =?us-ascii?Q?M3eRhH8FE1W82qxaedXowm4byDr8KgR0uOt1Pn/0i5lRxrjvuw6ANIUfYgBg?=
- =?us-ascii?Q?l03jBzvvIgCqfA7VihKCHWrlmobiNVnroFV2LQ449cMFi18EWkW/exvFBtZJ?=
- =?us-ascii?Q?lMvK/egTsYtGimOjTSSpwmZH0otb2tdn0pFrkNVhDPS4gNV0gDnexJYKUytR?=
- =?us-ascii?Q?kTg03X+BfoYq1z5X4TYqDjakEPUFbDGe43TTvLWxilCTXJMtWUCv8dkD9QTX?=
- =?us-ascii?Q?4BUC5kLHuTW8oj+pvM175Y5sq/URHjHbatBTAPpbtn6DkJGbTkwFm6e+Rt4I?=
- =?us-ascii?Q?W6FQb59a4FPy4jpi6tKxgKAB4bjy7uYPz1nlTSfROJjr3mDXqyuQAWEVpOD9?=
- =?us-ascii?Q?OWhG3mc6Z8YRxkuUf3lJ2PPnydKDdWyoCVHHlNV1FSfuiJDTn1Kdqb92qlIr?=
- =?us-ascii?Q?923UOfXZezOJ9jWF8XxC/Pqfhnyxy4j9bqYU5qcYyFJpzvjMAyYAx8ucExH4?=
- =?us-ascii?Q?LwKsV77u5IxZKw7QZcT1zPIfoiDG76k6eBt+01vd9QDoTAiD63a/zhPtvbZl?=
- =?us-ascii?Q?2rGibLCylxEEm2mMVZKxbjjgZz+QuOTiIczlIyfNDyS8U31I+YTcKxpVPeDw?=
- =?us-ascii?Q?zK1hHBvXec5D0qi2Qh8rH57lQ07cM1qF/7fFuBsAIZSdJwd8HKRUCRhxvdFv?=
- =?us-ascii?Q?Arwn8GPV7vTZVV/dwD8aUfR2NsgNxdK/5qNpkZAhpX5XEBf/gvr8F+vMjul1?=
- =?us-ascii?Q?V/jG6OBoB6szBLFoO4PTrVX0isRKTZA0eg/1A0uM+Kjx84evLuYJqDD47ogA?=
- =?us-ascii?Q?zyai6llLthLMlwXHOqh6XUj1F/j/1pZt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GdjjrbFkwqSJgxI/R0kWEGv5EC6IrdAXpaBjrZdoJ8W9wIgh/qmkj85cxuMt?=
- =?us-ascii?Q?dGclWI3qKvdC5X8u9AsCFIQTw9i92xNb/NdisixEAzBXpCVxS5eNAvM+SeHR?=
- =?us-ascii?Q?M80YuEnBHYqHhfHaPYaZBSSFcyQHLmOz5FbLdZRtcfDKLuD9nQ2lguKx+d06?=
- =?us-ascii?Q?e+zMBhzBGEAOZ3PSnotcIQdMGFkDp3O4mFUphLHOvcyH0pVjLIaPGHQ1XnHK?=
- =?us-ascii?Q?KPHhvyCBbaO7ygH2SHmuPpIkHPykrilh6uC9GeL49MtpBJEiYGGbmKS8fb9F?=
- =?us-ascii?Q?yvnLMJrgMh90KWbTAmJC+C8Xwok0BNwyIGfEL2+/AX20JdL0kbAy/o7SeEkb?=
- =?us-ascii?Q?oBc0dYRxssktTsOaezXflQZqnN3SMwm5uaRRPxo38W/AoyzloqB8CmLz8g+u?=
- =?us-ascii?Q?sfeihTgn4LBq+sz5Nfq2R4Vwe0VhwwRXs7mNYJZgG5B9OGOpUiroeNKBSR3J?=
- =?us-ascii?Q?zUbqxfBkPBzgPEs5eDFwBnslbbctcxYPP8fC4gRRcvhF3EI5Rjml3biECg96?=
- =?us-ascii?Q?PcT0tuUgKeYS6CQ853H/KXyTGz8aDKxZ8JMhLb9Et/DVLr2uymxD4n4Q0KM9?=
- =?us-ascii?Q?GxikrWemAxfR9D6E5Pd4AA4dvLzAcoiIcxVAM3xv0C5i3nnG4gvlzVEGm9U1?=
- =?us-ascii?Q?V95mzG5Ba3fmhtIKmeiPU0UXlwSkCpzVIQLs964jc2gGiOsfc8AwG7e8keAq?=
- =?us-ascii?Q?3Xp1AJ+sjiucu3mmu5OP3eSxiGrxtGiYV/rZcGzMvGQy8VNsQcUnmhOmmW4z?=
- =?us-ascii?Q?Jo76uSRm7U+XAFFnMylgPSj6uRCQ2JYvqBI8R3BFO177UAyHb8L4554XCQel?=
- =?us-ascii?Q?UvwyreioUbfgkgEbHSnnWJOovMVkTXiSM7y8bZzL8fX+nkX0TnVMiSL7DAa9?=
- =?us-ascii?Q?5RnwEMg2w7k2TQFx8YZmtT4ulP/+DTRAqXx2iksBkBcB/V5PigfqdM9ILOI8?=
- =?us-ascii?Q?fz852+LQTVastz/0m05ahYaGm3Kjftn1fqYqZ8Lyx95Z3xoEQYBpiyFSgXrC?=
- =?us-ascii?Q?OWMhhR5MgG9JwV/B+766hQNEMMXffrHzYjaBYUKgIJ8d3NdZeqZrfd22OcKf?=
- =?us-ascii?Q?1amQgnZNGU3UdSFCGNVy55Ib+/2qzW8IfmxS5gyIrNu44TjEgdLlscFo7tN5?=
- =?us-ascii?Q?4ixF8CLrr4E4N32GkgP5kbEu5kgP53gCS5Y6KEAbboTIMzBHf6KMDZwSMlRd?=
- =?us-ascii?Q?H1f4G/cyPDGoGIjcm0LL2OpSYWvTYvR05Ao39UGQYcj9WDmnzkqHbUxJeUaw?=
- =?us-ascii?Q?Ni0EzD4QHcr4roOGXtxHG9XO4O60usVSli5vNXGEn062/VplZ5e92JKpCY0x?=
- =?us-ascii?Q?IiDlTSSOgnV82/RoOTP7vvsSylBij5icDtwaMfRZQq7DTiwe8/bFyQBr2UM6?=
- =?us-ascii?Q?TcPz5vVjNLC/0AQuguPS5BHG4EXZTzpLK1urecMPaw3ivKYm6KzuYsF8z+Uw?=
- =?us-ascii?Q?vl55urrynLf1DWGuxF5FmA1Pw97i1F8kTIfd3qDLteyuDpZvD+XzjVqcuA62?=
- =?us-ascii?Q?iw61dp5BcvnSx9eCJC4mPWZkTOfpiILj3/+G8QU70T6CGWIXEf1cgel2dqEJ?=
- =?us-ascii?Q?1XTTkUCgfQx8BvZBuWaquxxIER/sfXp11D8dRpkb?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77e859c4-6695-4dea-3872-08dd6c72e67a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 14:31:30.7154
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: inSfNBtalxbYOleMhAFb+y0llsmWakVId22hRO8comNn2woOydUM1OJHfwXw5Cv+Hy9LyXSdvgk4VdECxh099w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7043
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,huawei.com,gmail.com,oracle.com,kernel.org,HansenPartnership.com,vger.kernel.org];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Spam-Score: -0.81
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: E609B1F395
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 
-On Wed, Mar 26, 2025 at 03:59:11PM +0800, Richard Zhu wrote:
-> Add the code reset toggle for i.MX95 PCIe to align PHY's power on sequency.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 40 +++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 57aa777231ae..13e53311cc0e 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -71,6 +71,9 @@
->  #define IMX95_SID_MASK				GENMASK(5, 0)
->  #define IMX95_MAX_LUT				32
->
-> +#define IMX95_PCIE_RST_CTRL			0x3010
-> +#define IMX95_PCIE_COLD_RST			BIT(0)
-> +
->  #define to_imx_pcie(x)	dev_get_drvdata((x)->dev)
->
->  enum imx_pcie_variants {
-> @@ -773,6 +776,41 @@ static int imx7d_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
->  	return 0;
->  }
->
-> +static int imx95_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
-> +{
-> +	u32 val;
-> +
-> +	if (assert) {
-> +		/*
-> +		 * From i.MX95 PCIe PHY perspective, the COLD reset toggle
-> +		 * should be complete after power-up by the following sequence.
-> +		 *                 > 10us(at power-up)
-> +		 *                 > 10ns(warm reset)
-> +		 *               |<------------>|
-> +		 *                ______________
-> +		 * phy_reset ____/              \________________
-> +		 *                                   ____________
-> +		 * ref_clk_en_______________________/
-> +		 * Toggle COLD reset aligned with this sequence for i.MX95 PCIe.
-> +		 */
-> +		regmap_set_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_RST_CTRL,
-> +				IMX95_PCIE_COLD_RST);
-> +		/*
-> +		 * To make sure delay enough time, do regmap_read_bypassed
-> +		 * before udelay(). Since udelay() might not use MMIO, and cause
-> +		 * delay time less than setting value.
-> +		 */
-> +		regmap_read_bypassed(imx_pcie->iomuxc_gpr, IMX95_PCIE_RST_CTRL,
-> +				     &val);
-> +		udelay(15);
-> +		regmap_clear_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_RST_CTRL,
-> +				  IMX95_PCIE_COLD_RST);
-> +		udelay(10);
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-Is This 10us critial? if yes, also need read register before it.
-
-Frank
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
->  {
->  	reset_control_assert(imx_pcie->pciephy_reset);
-> @@ -1762,6 +1800,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.ltssm_mask = IMX95_PCIE_LTSSM_EN,
->  		.mode_off[0]  = IMX95_PE0_GEN_CTRL_1,
->  		.mode_mask[0] = IMX95_PCIE_DEVICE_TYPE,
-> +		.core_reset = imx95_pcie_core_reset,
->  		.init_phy = imx95_pcie_init_phy,
->  	},
->  	[IMX8MQ_EP] = {
-> @@ -1815,6 +1854,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0]  = IMX95_PE0_GEN_CTRL_1,
->  		.mode_mask[0] = IMX95_PCIE_DEVICE_TYPE,
->  		.init_phy = imx95_pcie_init_phy,
-> +		.core_reset = imx95_pcie_core_reset,
->  		.epc_features = &imx95_pcie_epc_features,
->  		.mode = DW_PCIE_EP_TYPE,
->  	},
-> --
-> 2.37.1
+> On Wed, 2025-03-26 at 10:01 +0100, Nicolai Stange wrote:
+>> Mimi Zohar <zohar@linux.ibm.com> writes:
+>>=20
+>> > > diff --git a/security/integrity/ima/ima_crypto.c b/security/integrit=
+y/ima/ima_crypto.c
+>> > > index 6f5696d999d0..a43080fb8edc 100644
+>> > > --- a/security/integrity/ima/ima_crypto.c
+>> > > +++ b/security/integrity/ima/ima_crypto.c
+>> > > @@ -625,26 +625,43 @@ int ima_calc_field_array_hash(struct ima_field=
+_data *field_data,
+>> > >  	u16 alg_id;
+>> > >  	int rc, i;
+>> > >=20=20
+>> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+>> > >  	rc =3D ima_calc_field_array_hash_tfm(field_data, entry, ima_sha1_i=
+dx);
+>> > >  	if (rc)
+>> > >  		return rc;
+>> > >=20=20
+>> > >  	entry->digests[ima_sha1_idx].alg_id =3D TPM_ALG_SHA1;
+>> > > +#endif
+>> > >=20=20
+>> > >  	for (i =3D 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
+>> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+>> > >  		if (i =3D=3D ima_sha1_idx)
+>> > >  			continue;
+>> > > +#endif
+>> > >=20=20
+>> > >  		if (i < NR_BANKS(ima_tpm_chip)) {
+>> > >  			alg_id =3D ima_tpm_chip->allocated_banks[i].alg_id;
+>> > >  			entry->digests[i].alg_id =3D alg_id;
+>> > >  		}
+>> > >=20=20
+>> > > -		/* for unmapped TPM algorithms digest is still a padded SHA1 */
+>> > > +		/*
+>> > > +		 * For unmapped TPM algorithms, the digest is still a
+>> > > +		 * padded SHA1 if backwards-compatibility fallback PCR
+>> > > +		 * extension is enabled. Otherwise fill with
+>> > > +		 * 0xfes. This is the value to invalidate unsupported
+>> > > +		 * PCR banks with. Also, a non-all-zeroes value serves
+>> > > +		 * as an indicator to kexec measurement restoration
+>> > > +		 * that the entry is not a violation and all its
+>> > > +		 * template digests need to get recomputed.
+>> > > +		 */
+>> > >  		if (!ima_algo_array[i].tfm) {
+>> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+>> > >  			memcpy(entry->digests[i].digest,
+>> > >  			       entry->digests[ima_sha1_idx].digest,
+>> > >  			       TPM_DIGEST_SIZE);
+>>=20
+>>                                ^
+>> That's been here before, just for the record for the below.
 >
+> And it is correct.
+>
+>>=20
+>> > > +#else
+>> > > +			memset(entry->digests[i].digest, 0xfe, TPM_DIGEST_SIZE);
+>> > > +#endif
+>> >=20
+>> > Using TPM_DIGEST_SIZE will result in a padded 0xfe value.
+>>=20
+>> Yes, but as the sysfs files for unsupported algos are gone, this will be
+>> used only for extending the PCR banks. tpm[12]_pcr_extend()
+>> (necessarily) truncate the digests to the correct size before sending
+>> them to the TPM.
+>>=20
+>> But if you prefer I can absolutely replace TPM_DIGEST_SIZE by
+>> hash_digest_size[ima_algo_array[i].algo].
+>
+> Unlike violations, which are the full digest size, a padded sha1 is exten=
+ded
+> into the unsupported algos TPM banks.  I assume you'd want it to be the f=
+ull
+> digest size like violations.
+
+You are so right, thanks for spotting! What I wanted is
+TPM_MAX_DIGEST_SIZE, not TPM_DIGEST_SIZE (=3D=3D 20).
+
+Thanks,
+
+Nicolai
+
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
 
