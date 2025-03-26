@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-577668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C76A72011
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:40:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67271A72013
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADBB1684AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:39:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D487A3586
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E957F25D55A;
-	Wed, 26 Mar 2025 20:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1C525DD15;
+	Wed, 26 Mar 2025 20:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhKJK7Mh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tiut/nE5"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51175137930;
-	Wed, 26 Mar 2025 20:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06321253F1C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021572; cv=none; b=YQ+d++gGJ5YGx6IkO/bE1iNPSw8S9AbXRuOH66KB8O3ReDiaRguXW7NivZYd3wPFJ7OYdFfP4imEnnEKsaBFQOXfA5vTVXRgpy3Sd1tSdv36Z/C0+OLPeiebqfednVXJQP0gV50hkUTsBmvmBuzJ8C7FK+h+5rMjKQC34BTGn6k=
+	t=1743021636; cv=none; b=JELFYYwmTHjEoZkXgUgledEQ9/ttdOYTXSPN1Ya67tMqKMAFk1E8A6HysVfGLyMeZ6JSRBPFd+emllcW/jQgS8rntiO4V7bskNtoULFsEziIVz6mVqeoJF2k7Eq6A9FVg2VmgE01mokU7Sh7DprTcCZNPT+E5xauqHd/qK8F4Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021572; c=relaxed/simple;
-	bh=+xhFLxmEGTa5Cg2nJVUgqjUIL4XXdacwm62BcgyS+F0=;
+	s=arc-20240116; t=1743021636; c=relaxed/simple;
+	bh=vsDzlSImn7SIlQBYWw98T4RqAX3WL8B/3H0BPKPwr7g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GpPuLUMsGCOPnbpKqZ9HmJXA/CKs7IXF7t4wjgFYb7Lqsia1KNaq890uva1KDiLpOuM0OoqgjYnQAMNe3brcc9PQhdrmKRcw1aE5tHLhnyUgiYUjQN/y1qQb4NVcvevmlJLCFIkxy7rrcRPnCpFYQRfMRSlq4c8n9JMA7SS0q4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhKJK7Mh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3441EC4CEE2;
-	Wed, 26 Mar 2025 20:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743021570;
-	bh=+xhFLxmEGTa5Cg2nJVUgqjUIL4XXdacwm62BcgyS+F0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WhKJK7MhBwJvG2bla2kDcOZjyNSnttVqkKSjTxeRDrEJ8JaiS+hodKtNPcBS1A67a
-	 Zk2ggluCnQ7YOAHfmy/XReWMSGGsRy6WEnr/52IJc8ZgkkcR3DQtSXVh4NqjGY5oqT
-	 JgLUFb9dRX1wiYEwfaUlksjSggYm6f4bdCyK2NvhmiZmEQcG+lLW80wyqC7PUpBgZD
-	 zpXoYZ5+2fAUF4gnhw5XGmbk5UG6mLRWjO+BrG3Uuro9bAzJauLhSZ4bviRwF56ZG7
-	 guDtBMLj7fL8YkzMMkQxbIUUSKqEh7/Vv4ADM+Uju3a+oUYhe+zWdrWgdLN8BBiXEG
-	 wSwBP6W5KvSIA==
-Date: Wed, 26 Mar 2025 13:39:26 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jann Horn <jannh@google.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
-Message-ID: <20250326203926.GA10484@ax162>
-References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JO1zotAWXMBsus2N2CeuV2BAj7QgTeuWc00g5ELLLPmrX5t4YnaOEuerC5nh1hoiQ7hts7ex+rz3oz3bnQS/kx7SsVir+6851Zu+12rLdYbPRCeGbC7V9Ga6Gkr7+7Eik9pgOMh+ftseSsq8w37ZntJd01dLAHrgnupzbJJQ9Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tiut/nE5; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Mar 2025 13:40:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743021623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wg2P5N/lgAa+Pjwmt6Xv30iT0//GYcryM47I3itLJEs=;
+	b=tiut/nE5Sd50+xXN1DOthjMja5xf6A769EkXEIuON8c27ybVj1FLwM/UIPbk4rdmXybG84
+	MMf9m+ycBH8XC+mocUwwkhYuTmxb62uNkK5Q8sdlZMjJf2WeVJy1t7AgzpI1pZFHYMrCT/
+	k9ZPVoxbEfJk42i66cO5qQ4rwyy9WmI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: James Clark <james.clark@linaro.org>
+Cc: Colton Lewis <coltonlewis@google.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>, kvm@vger.kernel.org,
+	robh@kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com,
+	will@kernel.org, maz@kernel.org, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	pbonzini@redhat.com, shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH v3 5/8] KVM: arm64: Introduce module param to
+ partition the PMU
+Message-ID: <Z-RmMLkTuwsea7Uk@linux.dev>
+References: <gsnt1pulnepv.fsf@coltonlewis-kvm.c.googlers.com>
+ <f7d543f6-2660-460f-88ac-741dd47ed440@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,46 +65,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
+In-Reply-To: <f7d543f6-2660-460f-88ac-741dd47ed440@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jann,
+On Wed, Mar 26, 2025 at 05:38:34PM +0000, James Clark wrote:
+> On 25/03/2025 6:32 pm, Colton Lewis wrote:
+> > > I don't know if this is a stupid idea, but instead of having a fixed
+> > > number for the partition, wouldn't it be nice if we could trap and
+> > > increment HPMN on the first guest use of a counter, then decrement it on
+> > > guest exit depending on what's still in use? The host would always
+> > > assign its counters from the top down, and guests go bottom up if they
+> > > want PMU passthrough. Maybe it's too complicated or won't work for
+> > > various reasons, but because of BRBE the counter partitioning changes go
+> > > from an optimization to almost a necessity.
+> > 
+> > This is a cool idea that would enable useful things. I can think of a
+> > few potential problems.
+> > 
+> > 1. Partitioning will give guests direct access to some PMU counter
+> > registers. There is no reliable way for KVM to determine what is in use
+> > from that state. A counter that is disabled guest at exit might only be
+> > so temporarily, which could lead to a lot of thrashing allocating and
+> > deallocating counters.
 
-On Tue, Mar 25, 2025 at 05:01:34PM +0100, Jann Horn wrote:
-> Also, since this read can be racy by design, we should technically do
-> READ_ONCE(), so add that.
+KVM must always have a reliable way to determine if the PMU is in use.
+If there's any counter in the vPMU for which kvm_pmu_counter_is_enabled()
+is true would do the trick...
+
+Generally speaking, I would like to see the guest/host context switch in
+KVM modeled in a way similar to the debug registers, where the vPMU
+registers are loaded onto hardware lazily if either:
+
+  1) The above definition of an in-use PMU is satisfied
+
+  2) The guest accessed a PMU register since the last vcpu_load()
+
+> > 2. HPMN affects reads of PMCR_EL0.N, which is the standard way to
+> > determine how many counters there are. If HPMN starts as a low number,
+> > guests have no way of knowing there are more counters
+> > available. Dynamically changing the counters available could be
+> > confusing for guests.
+> > 
 > 
-> Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer infrastructure")
-> Signed-off-by: Jann Horn <jannh@google.com>
-...
-> diff --git a/include/asm-generic/rwonce.h b/include/asm-generic/rwonce.h
-> index 8d0a6280e982..e9f2b84d2338 100644
-> --- a/include/asm-generic/rwonce.h
-> +++ b/include/asm-generic/rwonce.h
-> @@ -79,11 +79,14 @@ unsigned long __read_once_word_nocheck(const void *addr)
->  	(typeof(x))__read_once_word_nocheck(&(x));			\
->  })
->  
-> -static __no_kasan_or_inline
-> +static __no_sanitize_or_inline
->  unsigned long read_word_at_a_time(const void *addr)
->  {
-> +	/* open-coded instrument_read(addr, 1) */
->  	kasan_check_read(addr, 1);
-> -	return *(unsigned long *)addr;
-> +	kcsan_check_read(addr, 1);
-> +
-> +	return READ_ONCE(*(unsigned long *)addr);
+> Yes I was expecting that PMCR would have to be trapped and N reported to be
+> the number of physical counters rather than how many are in the guest
+> partition.
 
-I bisected a boot hang that I see on arm64 with LTO enabled to this
-change as commit ece69af2ede1 ("rwonce: handle KCSAN like KASAN in
-read_word_at_a_time()") in -next. With LTO, READ_ONCE() gets upgraded to
-ldar / ldapr, which requires an aligned address to access, but
-read_word_at_a_time() can be called with an unaligned address. I
-confirmed this should be the root cause by removing the READ_ONCE()
-added above or removing the selects of DCACHE_WORD_ACCESS and
-HAVE_EFFICIENT_UNALIGNED_ACCESS in arch/arm64/Kconfig, which avoids
-the crash.
+I'm not sure this is aligned with the spirit of the feature.
 
-Cheers,
-Nathan
+Colton's aim is to minimize the overheads of trapping the PMU *and*
+relying on the perf subsystem for event scheduling. To do dynamic
+partitioning as you've described, KVM would need to unconditionally trap
+the PMU registers so it can pack the guest counters into the guest
+partition. We cannot assume the VM will allocate counters sequentially.
+
+Dynamic counter allocation can be had with the existing PMU
+implementation. The partitioned PMU is an alternative userspace can
+select, not a replacement for what we already have.
+
+Thanks,
+Oliver
 
