@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-577321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADABA71B81
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:08:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5EEA71B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0381D1892326
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E72179916
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165AF1F55E0;
-	Wed, 26 Mar 2025 16:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C65A1F5402;
+	Wed, 26 Mar 2025 16:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="J5CbCd7I"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emp9bxV5"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC9F1F4E21
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FC11B3950;
+	Wed, 26 Mar 2025 16:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743005056; cv=none; b=ZxV8k7036qya7hBgyJxgJ98ek3Wa3CW9rWX28bygY1zoK5DGA6x9pMkmzUx7PykXSTcLuFaFIO1rEtP+8zof+MhaPDol8Qm0f/Lw/qffS62dKbUJzSud9P6HbKNStgGSwFUPrUKT/U8aF3UyTE5rclFM0xzMlKFITJQigF9rPII=
+	t=1743005072; cv=none; b=XZCzP/r7oi3UImNFnUxSBiv2r2b43zavUtysGWOLhhipfTJZ/1/W3RimsiNgyvmc76pzZArGqjr4+nPkDNS/qCWIi5QgkxD43bzhWN0MKr0xRFKS1FoiztWteK3WLWsaJk5hXIcioI7pii3slUBikrBDp1ue+U9zlMZU3CvPVR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743005056; c=relaxed/simple;
-	bh=oqYKM1ZpqC7RtfF7IzC0cixXHyD/NT9TgSDoB1yKb90=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aohzGmj1DlCqf6L3cveGRkUBwYBjjITl19TrfO9kSE8tIH8N86T77hGT8PC+JyLEPycD7FpiD1g1KJBk9i2lm5k2LqNphRd+sDAECxyDOvY6QmvNHqboavqM5CsOsr0LUsqzQuXSU2FuCR1cy3Q2WITRE1JelGdiB+L5vqGTAMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=J5CbCd7I; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2243803b776so1855465ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:04:14 -0700 (PDT)
+	s=arc-20240116; t=1743005072; c=relaxed/simple;
+	bh=/hqzhHCMaoF1ikFlSDbqGo7f8iTiieN/aBvX4e0gdgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o3EHEtDGNY91tN/G6voVTTRdYiB5xWlCAwM4cXw6QhhZ0P3l22qeQP8D4lrit4LRcKvp2AgkLf2EWjEOWHM5pX//v6Ph3XwfI/q271ncSbBdWd5fB1NWvjD8128K0Nz15Yn6SZMzHnjdr+uOJMoTbLxVRzFwkpzcC7NEvK5jW/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emp9bxV5; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-227cf12df27so392855ad.0;
+        Wed, 26 Mar 2025 09:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1743005054; x=1743609854; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743005070; x=1743609870; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V92Mcu6ROGqDUYrr0Vu3d5f14OfoLPIUJ7IhtsUxhlQ=;
-        b=J5CbCd7IhHSd5Doa2D3yEmNf2yBrzCT9957Q1N/HEdy+tC6KpSCHIWZLnF5XyAstxb
-         jG4XXMbGvCCdv9p97UmuLfsTnPMVonYwr5lPd+77pxWEhV0bJa89bJVzLN0gtn8vWHY3
-         KhIQRzM56xdA5BQnMWiCSiwDohx6qDIHCwv9E=
+        bh=DCL2/LCom/dIJu/gC9WnHR/cpfIuT7F4DmmxpA9R5hg=;
+        b=emp9bxV5sKoV8tgGou5/uNBSwgDzz5AF8DyweV/1y+RBhrSeh9z//qNy7/X2xg7pvQ
+         CDGtLp+zDEreufn125iAneRZZse7VfEuRuJ754++zW+rzJ6AMu2kXeIFXCQjx5aUdYZV
+         7O9fUinZK59TN8XWu+e6f+kLOwtWyjRH89x88yp8QsB0XFg7uFY7bi9GUJBc+d5YUnOT
+         89Yw49X692qBz54U8wwRoT82zxIglSv9ffz12tUKjFpn4L9npsYzMIq8QNnAcfuPpq4u
+         k+lQ/jFI8T+BZi2SUJrE5SIOmOBqheF8sm9rN1NCrZVWwKaj7IzB/JAWl1CwCBAUREb1
+         TqBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743005054; x=1743609854;
+        d=1e100.net; s=20230601; t=1743005070; x=1743609870;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V92Mcu6ROGqDUYrr0Vu3d5f14OfoLPIUJ7IhtsUxhlQ=;
-        b=sbmUA79dhHEcjeSEqshxcQPqwi5iFzIjZ1ABlKT9mD33RnNVVDUiKaK7YOOpBDw1Ks
-         LTsIFe83l5Mz6dPNI0IpAhHw5WvUJER09n7oW071hY+4PfDIAkmcd0T83QY24K4H/gz2
-         5pF4rCWiJFFOwIDfzQUeJ65+S5R37yJW0tY7iTAPR9UowQ5NMbhUuVOGLLQIiVERj+K4
-         ELNuvt8Z06eFHwprydY50/S+50xXfI4I6SXigSo/A1qtNQkIaa23S9sefpxRlRKK4qOy
-         dAH8uFJ6/BQNZPJhFS5m8utKSED9pIA9B720ri7ZRx6kqUcFNaPxPO0k177XsbDS0ngB
-         bF0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXA71ewHOwazYF53NCj26p2mBx/FfS6HhVXopF/5pBWF+dKbGL1oANTzOMjz3nSJnfwUfKVGx2BKUb+ce0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEobW9NiQ9BFvU5ybLTdowpUyx0vs01j1PKjCUwD6hRY8GK0P3
-	Sqx54wNCJH7SL26tILSiSFsx/gDJqMReJElxdG2oT2HyQepLYfGmzaadR9Vut14=
-X-Gm-Gg: ASbGncugych2mZdWPp6F7/r7tRcfTeUgf6OG+idoo+mXiVeX8z1PSOTCF6WK6PSUOez
-	MY6rcjjesoUbL2Mqvwf787AlX7g88vPy5YHG8ufVDGabdPfyXTRM9B2Tmf/ejcm9Z38eAwfwql2
-	SrjrnRBlhnjCteaYJRs3xt9gzev8NrNCJh4uSlLfvq1Iigure6kx4UrUEcIxBj98AncTTTVlc2Z
-	57AsHq4Q0NTCoGvFuWzUrfVAgqaZtoyYcM32TSVrYYgilXFzcPbQ5fPpzIzVtaGv75uF6UlWTBz
-	uHl637K2NKM8TvE14s1tF/7YTyxFZcXdz7OplPE3S4mAbrgBzcO7b4H//PBq6+8zD0EaEPIoxWy
-	sJfrc
-X-Google-Smtp-Source: AGHT+IHW8xu1XUEic/d8MMjR4RQnRgGFxBNA9gZny8EZQSOeF0ZVLLhc++6oIw8DXemWvzAssm4PLg==
-X-Received: by 2002:a05:6a00:180b:b0:736:6d4d:ffa6 with SMTP id d2e1a72fcca58-739610a4c99mr141933b3a.15.1743005054274;
-        Wed, 26 Mar 2025 09:04:14 -0700 (PDT)
-Received: from sidong.sidong.yang.office.furiosa.vpn ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73907b36bfasm12217947b3a.2.2025.03.26.09.04.11
+        bh=DCL2/LCom/dIJu/gC9WnHR/cpfIuT7F4DmmxpA9R5hg=;
+        b=sQlNGmPKEQsBxbV7W5Z+CAGHGIketESK0WaZoVGO8/cIySkBbXj8pSDuLnqZU20dq7
+         ErjISwL81ZFOmVHUMkmF5K1SPZIvQEFmhhXW0AlyjKjJjjzkBqJ3P9NJ63bMjtmjYihb
+         ROVocuragQAo+Xjd64QMuu82hjm72bHc44iFWGJqj1YB6/6868CnKeK0bJ0a+lm8Zi6/
+         c1eHKwKXm9LwCfP2XnCAdZJSZIz1XeA8KS0g0Gjvzw5SwUXXeJvDK1MPAeNI1g2Oxqt5
+         9z5E4IuA8nNr2tUTsCB2Q0rAJtL7bWyGTrondWQgrwKWPfW84Vs8yemHoq4HAsbyIyii
+         e1wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8OmZbvcs3nikfnVDJM7sxU7zljB71D62mFRkZZSQ38ACXloCtlFrex1gnPBXMSJsTmCMHlooZG7MDFT4H8yLs1w==@vger.kernel.org, AJvYcCV7bHkXhuYONI8JsbfnEOWKWex7bcZSd3GU375Dozv3hH8fmjYNkpF6mfNMKYqgLKK92EodiSXIpBBP8UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZBFfaPQlOCSdJgMsgXWGXr7nYWZu+z00V4DJw3dxH1NgeO12Q
+	Z/gPF7VwNbahE6I0kB6FPNobt8cPejHxgnwPEoeHw5CFRl8vst7t
+X-Gm-Gg: ASbGncuH6OCn7Jdw7MXtfm7rAikj1D9t9cWa+XtJUfO7dVdM17PGlYMQysMM194sCyx
+	g0fLpC3yV64E2FjQn3gxw2+7BAnZoXNg8bB1Mn1NysthCc8+YObfCVqA7nMIV0fE8Xux0CEVHSf
+	HWxlkzfdjrIc2IPdsymdEF49vvb/Wi/2/Ea54UNd9w5+oNeG9Er0Wuq7NQmVxYnFwX38irFzRB8
+	+BmOK7aP4b/S0yi3f3D5gwx+rky6AWuPj63CszjFAw6LQCtG2svFOhVyKryB4i6p6eliHwvmE3w
+	RUBiEftzHAc7JRKSdL/ZyhcpPQQ91LdpEmwUjzPVCPeC97Sad2bkOWD4cblhIBkK6HP8++Td0rS
+	55cNS
+X-Google-Smtp-Source: AGHT+IF0QK7H6xH2o6TwkMOq7tw4dHANmuQTSlCxdvxV/vO1e0iv4BsdiD0tfK0QqdMnQsy+ltpB1g==
+X-Received: by 2002:a17:902:d549:b0:21f:53a5:19e0 with SMTP id d9443c01a7336-227efb041f5mr74046565ad.12.1743005070296;
+        Wed, 26 Mar 2025 09:04:30 -0700 (PDT)
+Received: from howard.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b2b07sm111370645ad.123.2025.03.26.09.04.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 09:04:13 -0700 (PDT)
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Mark Harmstone <maharmstone@fb.com>
-Cc: linux-btrfs@vger.kernel.org,
+        Wed, 26 Mar 2025 09:04:29 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: mingo@redhat.com,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	peterz@infradead.org,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Sidong Yang <sidong.yang@furiosa.ai>
-Subject: [PATCH 6.13] btrfs: ioctl: error on fixed buffer flag for io-uring cmd
-Date: Wed, 26 Mar 2025 16:03:51 +0000
-Message-ID: <20250326160351.612359-1-sidong.yang@furiosa.ai>
-X-Mailer: git-send-email 2.43.0
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v1] perf doc: Improve perf trace's doc on --force-btf option
+Date: Wed, 26 Mar 2025 09:04:16 -0700
+Message-ID: <20250326160416.1725322-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,35 +96,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the io-uring fixed buffer cmd flag is silently dismissed,
-even though it does not work. This patch returns an error when the flag
-is set, making it clear that operation is not supported.
+As mentioned by Arnaldo in a past discussion (Link:
+https://lore.kernel.org/linux-perf-users/Z2m0pWiQgZNXhvxK@x1/), the
+current documentation on --force-btf is vague and inaccurate, this patch
+aims to provide a clearer explanation of the option.
 
-Fixes: 34310c442e17 ("btrfs: add io_uring command for encoded reads (ENCODED_READ ioctl)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
 ---
- fs/btrfs/ioctl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/Documentation/perf-trace.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 4d9305fa37a8..98d99f2f7926 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4906,6 +4906,12 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
- 		ret = -EPERM;
- 		goto out_acct;
- 	}
-+
-+	if (cmd->flags & IORING_URING_CMD_FIXED) {
-+		ret = -EOPNOTSUPP;
-+		goto out_acct;
-+	}
-+
- 	file = cmd->file;
- 	inode = BTRFS_I(file->f_inode);
- 	fs_info = inode->root->fs_info;
+diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+index 887dc37773d0..cf2445d2ba3d 100644
+--- a/tools/perf/Documentation/perf-trace.txt
++++ b/tools/perf/Documentation/perf-trace.txt
+@@ -246,10 +246,10 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+ 	arguments to strings (pid to comm, syscall id to syscall name, etc).
+ 
+ --force-btf::
+-	Use btf_dump to pretty print syscall argument data, instead of using hand-crafted pretty
+-	printers. This option is intended for testing BTF integration in perf trace. btf_dump-based
+-	pretty-printing serves as a fallback to hand-crafted pretty printers, as the latter can
+-	better pretty-print integer flags and struct pointers.
++	Use libbpf's btf_dump to pretty print syscall arguments, utilizing only the debug
++	information from BTF. This option is intended for testing BTF integration in perf
++	trace. Using libbpf is a fallback to perf trace's own prettifiers generated from the
++	kernel source, as the latter can better pretty-print integer flags and struct members.
+ 
+ PAGEFAULTS
+ ----------
 -- 
-2.43.0
+2.45.2
 
 
