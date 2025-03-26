@@ -1,178 +1,216 @@
-Return-Path: <linux-kernel+bounces-577009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696F4A71742
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:17:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAD8A71746
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D63170C31
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90C73A644A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94971E8343;
-	Wed, 26 Mar 2025 13:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B101E5721;
+	Wed, 26 Mar 2025 13:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SAkJfa8J"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ImckGktg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5921E1DFE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DD01B21A7;
+	Wed, 26 Mar 2025 13:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742995028; cv=none; b=YVJLiVoTCTimqcmt/YuWkIqr8FrHXnWr/cCSyDXJrTc1F5OCQ1JEXjcBO9//NpMfKBs3lbz6TtFN1jFhkCFkNxt/F0blpWanYrTpUK+IzOrMMtC6MYwFncgcd9F53vUvBLkuHAPz6Plndh8kTXiaKmy94JHUyqe55bRnIV3JC+A=
+	t=1742995047; cv=none; b=HI6CjcA0dOgDRiE0EG0i5Y+B8OTnhC21D6ecYs8O9hmLK52cY98/iPN+i3gkhpz01LtrOFe5hezZUQDNL5V16fCauEjl9ippbjmaKicZ/p51ysg90kCzyu7vKsABiUwNrbvn0S8GVAoGetvansfGb5YOch9gs9eVzVSP1eZq1D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742995028; c=relaxed/simple;
-	bh=PlpLHMfHugWlyvKNdNjrSPwA2fM3W7l6yatfEAvFyzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OkgLaPDot9CRuyZVRLCYymOJ2BrMvO40PlZqa+TBKubWstcFlUOH+gOY02qLSivwxhA8UOkT/r8CuBBGiARobGhRPMDhCGYujZ5S7jHdF5ud3j2Kt7iSe1o9TkWIpEih2AIXYmKvo9S+yLWdTj9eiyyrapOyGBwLGctikmSvibo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SAkJfa8J; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QA1kUd025399
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:17:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OSWNGu5ysI/ZrwWG3IadgQt1ZqUFERWo1HxXteYiRbc=; b=SAkJfa8JuX+DNtj9
-	aR1o3nDU52THt+xRPiVBJexltNqEQQUijtXVy44OrctV9wUA9aukpqJGsXXe+zJR
-	UMmBpSNlbOJn/nU7eDzIWZDZNR+5VkY7AIeZ+ZTbAeQWGviadIT8gLzpM1ut1+8O
-	M8pRiZiErAdwhtiZNCS2+wZdCRg2fZjqR4VyZiRSkRcDfOJf7RArA2hexpNTCljp
-	5FlrMWZOjZa0sHwSuGfhUknALabDD7cBYu4KrqmUmw2YqwrI1OATJZ4qErwxjIHl
-	FTm4pNuw74nmhY48W+z3aVkYb6gEjcsd1ZuQYR9c0AqVQL8j12nGJmVM9ZWmbeC+
-	Ek25Vw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45mffcghmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:17:05 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8fd4ef023so12400916d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:17:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742995024; x=1743599824;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSWNGu5ysI/ZrwWG3IadgQt1ZqUFERWo1HxXteYiRbc=;
-        b=j54SN6FWLpqKtaLf2CkRSU1paieUo4FdVtCJTbZ3PA6nTmtLmgdlBRaUCg2i9sbRsW
-         R9HAMexpd2+JLWxddI6EC1J3X1stKDUfBuzEKd9ljo38ZHS4xcFeovBzBEWMle9ULPix
-         /hPRg9xiYvd5Lfg10zpBSYX4/UBNDdjLA4EFSXWbgCENpoLJrShuoGs1mmHez6JfNPAc
-         MT6L3C4d3MOivuIc2A3SjH3nV6y84/IemwzX4CXltrzOq8ItGCFqntP/0+u7veDSPCyG
-         zbaY/i6f7PX0G4yxOPH2jX4anWS6732HURDLJ6ro7ZxWbLtllRuU6BDl+M7gYHziUf4a
-         fIBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbtquqfkY4FMV9c0/M5RdWirSmFotOBrc7E+zQDoFtJsHEK3vpaiLcWgwISznjvJC4dMYgR6IKYipk3NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwl2ftWwyHWV3wXCjL6NwHR6CvKExrcfMfndxqY5dteiLEdnYY
-	zg6SY0d3KE+BwFL8VvxcVXad63Guu8eR4ekPZXu1OHbdp0ad7pnIHFK0SCPWWm+4sDDw8kMHnBa
-	9aPziLrc6DVamgpVnafoPgjZDT4qMx3+WYdi/X9dblYqRcugUFWmb1Lgduvz2gwc=
-X-Gm-Gg: ASbGncu/LkAizBEu7XM16KocTyVzXGtp7IUsUVCZqrI0HxmwRi2HuRhkrfq3XFJ9dS8
-	s3XyDIvehFZBrWOyfy2gHTQFOde5qvLTIh54V3NdCwIR/6xkaA7sAhh18ss3gz6OAvrz8T34PN8
-	uzap99RllZfiBvSf2a64pkmQaHFdFmL995W2wndvu9+zF2qOFf3xdnJt1fJnuRWe5qrgka/NjK6
-	YwJcnKnbrMl8cPeUdiuzAl8bwfwOLgiVcYsHt7sNdTdcfGEHMIhD/IWRWZMidae2Rh7bnfOpqVJ
-	+9HMR6Bq+EUBN5VAl5xt/HaIIMtVKS2J9Jm01CSFgj2AUJ+lMRroNI/p4jV9Fnjh1gabVg==
-X-Received: by 2002:a05:620a:d8a:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7c5ba1f1008mr1014047985a.11.1742995024168;
-        Wed, 26 Mar 2025 06:17:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEWk+3aH6NV32r5YxqB7ELx5oUnVppF66A+EP9/TIjpwwijOlbyXw3XzCIrY9S6UeSPK/mWQ==
-X-Received: by 2002:a05:620a:d8a:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7c5ba1f1008mr1014046685a.11.1742995023623;
-        Wed, 26 Mar 2025 06:17:03 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfaecfbsm9373513a12.41.2025.03.26.06.17.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 06:17:03 -0700 (PDT)
-Message-ID: <b31eafb9-a485-4a95-b49f-7da865eb2579@oss.qualcomm.com>
-Date: Wed, 26 Mar 2025 14:17:00 +0100
+	s=arc-20240116; t=1742995047; c=relaxed/simple;
+	bh=5LTt8toHUOmillf4ck7JAEUd0cRbvsUvltg7TJScrQc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VrsXXL1kPDjdSYr9Y27fTXl6laZlp4fWwd4orhIGLvNlXbnjEIOwCap8FNdg0XEbmcaSA3gW8ShzACUo+KVC/iMgcq6sgCr10VN0o41y06p4DsrFdMCx0G9YIAMcv6rZtHrMzxuGbcjYViffby5jEHfI/j0hx5IqGtEEKRO7d1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ImckGktg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QDAEaA001561;
+	Wed, 26 Mar 2025 13:17:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=eLXGk8
+	E+7+fznpZBnrreYff0kjvF6A1PBo2NCZhX8Rk=; b=ImckGktgbzsPEASON+RNT0
+	bYuYqPqckPpNjp+UVrQ+YWV+WDov/5J0Skbz209cnv54QGTVr4Rm6DqXW3wQgSpq
+	R6cyGy8CB9Rg9PckCfcGTJ2Cpv35hqyXuoKXOxrw4pJ8vSZGFKWR1m6A3bka2O8a
+	FZPq2Z9Oms/agnK7uManhwS1/kp1JqW/s7MHCFtw0LiMrUvM3DPh7rUnq4si2HLI
+	BxOYdJdgGGUzAn0OajTZ+rGCXidF7DtXoXw+3FT1sDMo6cejVBl9Sl1ubsZGVO/O
+	PRji74v1EQJvyGypaBvVP/qm8X1UBx4uOpMSq9jHT6K2zO/KbHiWu2oVwFjx0x/g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m9ya2k4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 13:17:09 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QD7xU7012270;
+	Wed, 26 Mar 2025 13:17:08 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m9ya2k4s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 13:17:08 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q93gUk030325;
+	Wed, 26 Mar 2025 13:17:07 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htgn92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 13:17:07 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QDH6D225363086
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 13:17:07 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F2AB5805C;
+	Wed, 26 Mar 2025 13:17:06 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 024C058051;
+	Wed, 26 Mar 2025 13:17:06 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 13:17:05 +0000 (GMT)
+Message-ID: <fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
+ sysfs file for ima_hash
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 26 Mar 2025 09:17:05 -0400
+In-Reply-To: <875xjwrymf.fsf@>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-3-nstange@suse.de>
+	 <35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
+	 <875xjwrymf.fsf@>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] Add snps,dis_u3_susphy_quirk for some QC targets
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Prashanth K <prashanth.k@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
- <ee0848ea-7a06-4f4e-9115-5e3c0ab8bf95@oss.qualcomm.com>
- <7029a455-47be-475d-b429-98031d227653@oss.qualcomm.com>
- <db0bbc62-ecf2-4f72-a0c9-462fbaadebc4@oss.qualcomm.com>
- <5k45tcntn2bhxqt35quzfm2dsq6eug3hgqdcrta25oy47zuqja@4jclvspwob5x>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <5k45tcntn2bhxqt35quzfm2dsq6eug3hgqdcrta25oy47zuqja@4jclvspwob5x>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CdgI5Krl c=1 sm=1 tr=0 ts=67e3fe51 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=xMnwRdS-aKneeMBeM7YA:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 4XhmwF0gABlV5q2dAWk8iguWdmHm4EdN
-X-Proofpoint-ORIG-GUID: 4XhmwF0gABlV5q2dAWk8iguWdmHm4EdN
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xIM3n18FKTyExZinkz8ePcD2lJ0Ic1s5
+X-Proofpoint-ORIG-GUID: q8NXFVyH80ec7ZUwiRabWHbxZ7zVLtN2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0 phishscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260081
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260079
 
-On 3/25/25 11:10 PM, Bjorn Andersson wrote:
-> On Tue, Mar 25, 2025 at 05:31:28PM +0100, Konrad Dybcio wrote:
->> On 3/25/25 4:01 PM, Prashanth K wrote:
->>>
->>>
->>> On 25-03-25 08:11 pm, Konrad Dybcio wrote:
->>>> On 3/25/25 1:30 PM, Prashanth K wrote:
->>>>> During device mode initialization on certain QC targets, before the
->>>>> runstop bit is set, sometimes it's observed that the GEVNTADR{LO/HI}
->>>>> register write fails. As a result, GEVTADDR registers are still 0x0.
->>>>> Upon setting runstop bit, DWC3 controller attempts to write the new
->>>>> events to address 0x0, causing an SMMU fault and system crash. More
->>>>> info about the crash at [1].
->>>>>
->>>>> This was initially observed on SM8450 and later reported on few
->>>>> other targets as well. As suggested by Qualcomm HW team, clearing
->>>>> the GUSB3PIPECTL.SUSPHY bit resolves the issue by preventing register
->>>>> write failures. Address this by setting the snps,dis_u3_susphy_quirk
->>>>> to keep the GUSB3PIPECTL.SUSPHY bit cleared. This change was tested
->>>>> on multiple targets (SM8350, SM8450 QCS615 etc.) for over an year
->>>>> and hasn't exhibited any side effects.
->>>>>
->>>>> [1]: https://lore.kernel.org/all/fa94cbc9-e637-ba9b-8ec8-67c6955eca98@quicinc.com/
->>>>>
->>>>> Prashanth K (3):
->>>>>   arm64: dts: qcom: sm8150: Add snps,dis_u3_susphy_quirk
->>>>>   arm64: dts: qcom: sm8350: Add snps,dis_u3_susphy_quirk
->>>>>   arm64: dts: qcom: sm8450: Add snps,dis_u3_susphy_quirk
->>>>>
->>>>> Pratham Pratap (2):
->>>>>   arm64: dts: qcom: qcs615: Add snps,dis_u3_susphy_quirk
->>>>>   arm64: dts: qcom: qdu1000: Add snps,dis_u3_susphy_quirk
->>>>
->>>> Are there more targets affected, from the list of the ones currently
->>>> supported upstream?
->>>>
->>>> Konrad
->>>
->>> My initial plan was to add it for all the QC platforms, but wasn't
->>> confident enough about it. Because we have seen the issue only on these
->>> targets and hence tested only on these.
->>
->> Okay, let's proceed with these and in the meantime please query internally
->> whether it could be applicable to others too
->>
-> 
-> But if it applies to all qcom targets, wouldn't it make more sense to
-> add the property in the qcom glue driver?
+On Wed, 2025-03-26 at 09:21 +0100, Nicolai Stange wrote:
+> Mimi Zohar <zohar@linux.ibm.com> writes:
+>=20
+> > On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+> > > runtime_measurements_<hash-algo> sysfs files are getting created for
+> > > each PCR bank + for SHA-1.
+> > >=20
+> > > Now that runtime_measurements_<hash-algo> sysfs file creation is bein=
+g
+> > > skipped for unsupported hash algorithms, it will become possible that=
+ no
+> > > such file would be provided at all once SHA-1 is made optional in a
+> > > later patch.
+> > >=20
+> > > Always create the file for the 'ima_hash' algorithm, even if it's not
+> > > associated with any of the PCR banks. As IMA initialization will
+> > > continue to fail if the ima_hash algorithm is not available to the
+> > > kernel, this guarantees that at least one such file will always be
+> > > there.
+> > >=20
+> > > Signed-off-by: Nicolai Stange <nstange@suse.de>
+> > > ---
+> > >  security/integrity/ima/ima_fs.c | 6 ++----
+> > >  1 file changed, 2 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima=
+/ima_fs.c
+> > > index a8df2fe5f4cb..f030ff7f56da 100644
+> > > --- a/security/integrity/ima/ima_fs.c
+> > > +++ b/security/integrity/ima/ima_fs.c
+> > > @@ -436,10 +436,8 @@ static int __init create_securityfs_measurement_=
+lists(void)
+> > >  	u16 algo;
+> > >  	int i;
+> > > =20
+> > > -	securityfs_measurement_list_count =3D NR_BANKS(ima_tpm_chip);
+> > > -
+> > > -	if (ima_sha1_idx >=3D NR_BANKS(ima_tpm_chip))
+> > > -		securityfs_measurement_list_count++;
+> > > +	securityfs_measurement_list_count =3D
+> > > +		NR_BANKS(ima_tpm_chip) + ima_extra_slots;
+> > > =20
+> > >  	ascii_securityfs_measurement_lists =3D
+> > >  	    kcalloc(securityfs_measurement_list_count, sizeof(struct dentry=
+ *),
+> >=20
+> > "ima_hash" is the default file hash algorithm.  Re-using it as the defa=
+ult
+> > complete measurement list assumes that the subsequent kexec'ed kernels =
+configure
+> > and define it as the default file hash algorithm as well, which might n=
+ot be the
+> > case.
+>=20
+> I don't really see why the ima_hashes would have to match between kexecs
+> for this to work -- all events' template hashes are getting recreated
+> from scratch anyway after kexec (ima_restore_measurement_list() ->
+> ima_calc_field_array_hash()).
+>=20
+> That is, if ima_hash=3Dsha256 first, and ima_hash=3Dsha384 after kexec, o=
+ne
+> would have *runtime_measurements_sha256 first and
+> *runtime_measurements_sha384 after kexec. And both had exclusively
+> template hashes of their respective algo in them each.
+>=20
+> What am I missing?
 
-If we did that and the issue was ever fixed in future hw, we'd have to
-either re-add this patchset again or invent a snps,*en*_u3_susphy_quirk
+Your solution would work nicely, if the "ima_hash" algorithm could be guara=
+nteed
+to be built into the kernel.  It's highly unlikely someone would choose a h=
+ash
+algorithm not built into kernel, but it is possible.  hash_setup() only ver=
+ifies
+that the hash algorithm is a valid name.
 
-Konrad
+Either fix hash_setup() to guarantee that the chosen hash algorithm is buil=
+t
+into the kernel or use the CONFIG_IMA_DEFAULT_HASH and add a Kconfig to sel=
+ect
+the hash algorithm.  This would be in lieu of v2 05/13.
+
+> > Drop this patch.
+>=20
+> Fine by me, but just to confirm, in case there's no TPM attached and
+> SHA1 was disabled, there would be no /sys/*/*runtime_measurement* at all
+> then. Is that Ok?
+
+Of course not.  :)
+
+> ima_hash was chosen here only, because after this series, it will be the
+> only single algorithm guaranteed to be available.
+
+With the proposed changes to "[RFC PATCH v2 05/13] ima: select CRYPTO_SHA25=
+6
+from Kconfig', SHA256 would be added to the "extra" measurements if the TPM
+SHA256 bank is disabled.
+
+Mimi
 
