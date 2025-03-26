@@ -1,364 +1,167 @@
-Return-Path: <linux-kernel+bounces-576757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19E1A7140E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FA7A7140F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39413BABED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C971898B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4241AE876;
-	Wed, 26 Mar 2025 09:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DD31B0435;
+	Wed, 26 Mar 2025 09:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dS0IZ9JA"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OY8Pzm7k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C261ACECE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8022A1B2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982384; cv=none; b=iGRB5bxJF6e/rHNhL3aZ7pziYM9TzyfkD0J1Uv8jVratfo1WDbN8Vjnmd96x72tIdcbC+CLxTjwJzUtlPjyKgQCgMU03VLHodBVrpddZSSdjuqkfLbJnL1L1gLeEFgGB+WLOLEa/Aj3KlWSoPQXmgNEeQ5fI3KksC5X0k6Nk3V0=
+	t=1742982392; cv=none; b=B+yY64M8hJ+gMzw+twTbUMlZkyFRujtG/zvHROv68ovaFPiIhNGnal9Z7UegCL33KHbxoVVq//qkOLkWzjrBCqYtgXry0DyKq83TDMsoEraSR8xMPVI62HLze5YCoPlZpxntZzXDQR8/Y8AE6w9C5VC0oLIwVFgXzfdkp3UXCpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982384; c=relaxed/simple;
-	bh=OLm2NDU+f3fxSPefoFTu44hZydq90XpR5rmarbi++1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dy2NBS0AIReTO7WuZlv17u9pt8l3HSCNQIpq7k7feE7ZuZJUzRJ4FzEH39Ayyl4EesT46/ofCC0XDYthV6ZOSerGM86TEk7ap2ObCBSH3strGjr5Y3ojPe4Ft+BbYhjFedazFcFN+zL6ODE1Xsnwb6tUrE9hJqqa7+QEFO+m/cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dS0IZ9JA; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499614d3d2so7636214e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742982381; x=1743587181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Di4HbPtps/vZaIVsnnfkU3gBNA4h8hopxZA5u72GX94=;
-        b=dS0IZ9JA4tOyAmdNrYzliuLUPDpz/lr1/+8w02mF3SwZ3yOdcua7RQ98HAJ7IJPkUv
-         BI20xclbZEwCcwlv4h0kQnSRQDCpRJguSpjnRLitjqIa2aJ8yWqU6Dj6rnpU/Nrkacuu
-         mJKHbRX4zR38k8RQtrmV93Apv6KQa2Z7QVSkDP/nMfOxeZhnaCspSSdIIGmB4jlEox9c
-         fI7ZrQmIGbSxiFUp2LyrTClnOlahl9HK800FsqA03purr8g8qMbG7E1u4gErgHZ2hKVS
-         YXr/M4a3JYHI1pcYTX488bUUMF+DWO5Y565v2PkOalq8Y75RiG/aDm75DjltooIHcYQZ
-         lwrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742982381; x=1743587181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Di4HbPtps/vZaIVsnnfkU3gBNA4h8hopxZA5u72GX94=;
-        b=IKBQN6E2+tItRCCAEScjOm9XlvG+OKgjZxGhjjvBhr6OVNSjX679GXt5bmJXmPFp/P
-         g2vhKplmo+jD3rUiRc9RCjLQqEqECRBZdU/d//NGTdzwqq+tAvt+MUNotmpgd+N3IdgA
-         WQ3hPRjeo/HHeUitregR6zJWU0VnM346TvH7t1JinnivYsK8CRFg4kRXfsWU2C3NY0hg
-         AeyK5uw9hA/D3IyQXs8fa1ra/xD+W6zMpUS/0e4yYVkuJuxnuppcyiPM5nNLOeFjKbmZ
-         nKmQc/I9tjB27d0Fiag/YaVsieghJTTE/EuPI5AN9lLYR2eDBiYuzPTS8oqrUoW0hMJN
-         C7pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz7Jg5KMIekMNpeO1O2s2qhREMItikiSHjsaCPiYZoqjhk/1qOzgdK2ZMv5oPcarGm63ZysOO4fq6ePtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJjdW3wbh6yqvW0mb68WsoOKS5DvhFJDAFiWl/IpCPpmy1dIrm
-	9H89uzDOvUMXtRby7D0zSlCiJrle4po37bksecEWf8LRx3clSjdTs/NFu3/CWpbmOux5k2A/0/k
-	NBUs4311X7q1uA4FL28wVxY7lr6bBvvMJ4v0D1A==
-X-Gm-Gg: ASbGncun60VG+QxqRWYL3hNj1ucUWSnICOssIMEuBIQNyc8ejMz7BE0NY/y8xkd4H+0
-	MlLezhBej/p9718bRxx6a6zaFS48isggbemE4DZZLDdFVXySJFpC1S4L6Dmxl1rxF6qS+NLN0KJ
-	3jH9WUHNo8lQbnIkigrKoLxTVvN+tQyod7KIupBahMfw8n/hiwNWR7D5XX88U=
-X-Google-Smtp-Source: AGHT+IFFoqICBg3/2VlFm+oUDxj2X0WGExTZw7EWBYX1rt0NOmB23EDYayRfmPwBbL9bypFP4W+JtgajlnNNmmIMpKo=
-X-Received: by 2002:a05:6512:1105:b0:549:7145:5d28 with SMTP id
- 2adb3069b0e04-54ad6492e6dmr5623522e87.25.1742982380428; Wed, 26 Mar 2025
- 02:46:20 -0700 (PDT)
+	s=arc-20240116; t=1742982392; c=relaxed/simple;
+	bh=pSdpOBH3OsiqWCKed9YZ+vvLO/0PxNNz2Btrj67jOc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4yh2ALdptzfNg+5m7EZZmoZfHKtwc3B8XOtUWM0p1xvsdv7jXqKDKN6MoOrO0qoarc3HEkwBGWxWsxt6OORB8vhqAY3IoKNujUILe8UeyQ1BmMyII/J4cvXsO16hpvgl972TGP7mLIAGoH+HPM9iQ4i/f45eqBAxng4dVGcAeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OY8Pzm7k; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742982391; x=1774518391;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pSdpOBH3OsiqWCKed9YZ+vvLO/0PxNNz2Btrj67jOc4=;
+  b=OY8Pzm7kwmT+NEsIuXNQB3u12qDjgXdi4IDzI0ExGERyAgsqmyV/aTGr
+   kWF1KZH/axaUMwm/nDXlDMusfRCEFaahbQbUBGeTTzK+Fa1Dx+j1M/HVN
+   u3KpXtnf+2XV3YWfQstUmJZDnI9BUiM5nhAdfxbEBf1LKFbYENcwWbYdz
+   eCbLSPgpBEhL8rzzz0rr9Ul/14QCYrXxCv6/ROT3Wd8dTjms8JrpHdfz3
+   qCqEMiymNzHJMLQ/y64WO+W+0/96tN5Z1cZWs2A8TJZgjsfhCAQcE+oAX
+   V5vmwILdF9QAwOnCbHdlVpG3ZQlNrxaE9lbj1qo94M1GuMVV1UQWyj7kf
+   A==;
+X-CSE-ConnectionGUID: c6ubI6KvTLGZP6DA49EWBw==
+X-CSE-MsgGUID: GYZe/L9wSR+yECNgpgSaiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="47912494"
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="47912494"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 02:46:31 -0700
+X-CSE-ConnectionGUID: QvIovGnnTvK+1T0AfTwcDw==
+X-CSE-MsgGUID: 5IGA7C2wQ0uIRiBikBXcnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="124447276"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 02:46:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1txNL8-000000061wz-1N9h;
+	Wed, 26 Mar 2025 11:46:26 +0200
+Date: Wed, 26 Mar 2025 11:46:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ofir Bitton <obitton@habana.ai>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Oded Gabbay <ogabbay@kernel.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v3 1/1] accel/habanalabs: Switch to use %ptTs
+Message-ID: <Z-PM8oBtTPzqv-S2@smile.fi.intel.com>
+References: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315194002.13778-1-marco.crivellari@suse.com>
- <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
- <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
- <alpine.DEB.2.21.2503211747150.35806@angie.orcam.me.uk> <CAAofZF5yaGMG0Kyax+ksfGngQ0T6AxvN5-60SnasQh7=OabaOg@mail.gmail.com>
- <CAAhV-H7Tko290LSCJPuVFE2qds81N4C=8RPz4edC-xddFvZGjA@mail.gmail.com>
-In-Reply-To: <CAAhV-H7Tko290LSCJPuVFE2qds81N4C=8RPz4edC-xddFvZGjA@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Wed, 26 Mar 2025 10:46:08 +0100
-X-Gm-Features: AQ5f1JpgTQ1SqmyR3a5xmBD_8Mo146X-iNLNkrJ8C_qhiyfg-2DRPNGOh7-zOw8
-Message-ID: <CAAofZF52_yKcpd+GBE9ygggeNTOVQDP7AKau5xZE+N4fHGCgSQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-I'm mostly thinking about future changes in this part of the code.
-But if it is ok what we have now, and future changes are not a
-problem, let's keep this version.
++Cc: Jani (sorry, forgot to add you in the first place).
 
-Would this be ok with you @Maciej?
+Do you think it's applicable now?
 
-If so, the region is now 40 bytes. This is what I did yesterday:
+On Wed, Mar 05, 2025 at 01:00:25PM +0200, Andy Shevchenko wrote:
+> Use %ptTs instead of open-coded variant to print contents of time64_t type
+> in human readable form.
+> 
+> This changes N/A output to 1970-01-01 00:00:00 for zero timestamps,
+> but it's used only in the dev_err() output and won't break anything.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> 
+> v3: explained the difference for N/A cases (Jani)
+> v2: fixed the parameters to be the pointers
+> 
+>  drivers/accel/habanalabs/common/device.c | 25 +++---------------------
+>  1 file changed, 3 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
+> index 68eebed3b050..80fa08bf57bd 100644
+> --- a/drivers/accel/habanalabs/common/device.c
+> +++ b/drivers/accel/habanalabs/common/device.c
+> @@ -1066,28 +1066,11 @@ static bool is_pci_link_healthy(struct hl_device *hdev)
+>  	return (device_id == hdev->pdev->device);
+>  }
+>  
+> -static void stringify_time_of_last_heartbeat(struct hl_device *hdev, char *time_str, size_t size,
+> -						bool is_pq_hb)
+> -{
+> -	time64_t seconds = is_pq_hb ? hdev->heartbeat_debug_info.last_pq_heartbeat_ts
+> -					: hdev->heartbeat_debug_info.last_eq_heartbeat_ts;
+> -	struct tm tm;
+> -
+> -	if (!seconds)
+> -		return;
+> -
+> -	time64_to_tm(seconds, 0, &tm);
+> -
+> -	snprintf(time_str, size, "%ld-%02d-%02d %02d:%02d:%02d (UTC)",
+> -		tm.tm_year + 1900, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+> -}
+> -
+>  static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
+>  {
+>  	struct eq_heartbeat_debug_info *heartbeat_debug_info = &hdev->heartbeat_debug_info;
+>  	u32 cpu_q_id = heartbeat_debug_info->cpu_queue_id, pq_pi_mask = (HL_QUEUE_LENGTH << 1) - 1;
+>  	struct asic_fixed_properties *prop = &hdev->asic_prop;
+> -	char pq_time_str[64] = "N/A", eq_time_str[64] = "N/A";
+>  
+>  	if (!prop->cpucp_info.eq_health_check_supported)
+>  		return true;
+> @@ -1095,17 +1078,15 @@ static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
+>  	if (!hdev->eq_heartbeat_received) {
+>  		dev_err(hdev->dev, "EQ heartbeat event was not received!\n");
+>  
+> -		stringify_time_of_last_heartbeat(hdev, pq_time_str, sizeof(pq_time_str), true);
+> -		stringify_time_of_last_heartbeat(hdev, eq_time_str, sizeof(eq_time_str), false);
+>  		dev_err(hdev->dev,
+> -			"EQ: {CI %u, HB counter %u, last HB time: %s}, PQ: {PI: %u, CI: %u (%u), last HB time: %s}\n",
+> +			"EQ: {CI %u, HB counter %u, last HB time: %ptTs}, PQ: {PI: %u, CI: %u (%u), last HB time: %ptTs}\n",
+>  			hdev->event_queue.ci,
+>  			heartbeat_debug_info->heartbeat_event_counter,
+> -			eq_time_str,
+> +			&hdev->heartbeat_debug_info.last_eq_heartbeat_ts,
+>  			hdev->kernel_queues[cpu_q_id].pi,
+>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci),
+>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci) & pq_pi_mask,
+> -			pq_time_str);
+> +			&hdev->heartbeat_debug_info.last_pq_heartbeat_ts);
+>  
+>  		hl_eq_dump(hdev, &hdev->event_queue);
+>  
+> -- 
+> 2.47.2
+> 
 
-@@ -110,6 +110,7 @@ LEAF(__r4k_wait)
-       .set    noreorder
-       /* Start of idle interrupt region. */
-       MFC0    t0, CP0_STATUS
-+       nop
-       /* Enable interrupt. */
-       ori     t0, 0x1f
-       xori    t0, 0x1e
-@@ -128,7 +129,11 @@ LEAF(__r4k_wait)
-        */
-       wait
-       /* End of idle interrupt region. */
--1:
-+__r4k_wait_exit:
-+       /* Check idle interrupt region size. */
-+       .if ((__r4k_wait_exit - __r4k_wait) !=3D 40)
-+       .error  "Idle interrupt region size mismatch: expected 40 bytes."
-+       .endif
-       jr      ra
-        nop
-       .set    pop
-@@ -139,10 +144,10 @@ LEAF(__r4k_wait)
-       .set    push
-       .set    noat
-       MFC0    k0, CP0_EPC
--       PTR_LA  k1, 1b
--       /* 36 byte idle interrupt region. */
-+       PTR_LA  k1, __r4k_wait_exit
-+       /* 40 byte idle interrupt region. */
-       ori     k0, 0x1f
--       PTR_ADDIU       k0, 5
-+       PTR_ADDIU       k0, 9
-       bne     k0, k1, \handler
-       MTC0    k0, CP0_EPC
-       .set pop
-
-Under QEMU is working, but I'm not so sure the latest part is correct.
-
-Thanks!
-
-
-
-On Wed, Mar 26, 2025 at 2:20=E2=80=AFAM Huacai Chen <chenhuacai@kernel.org>=
- wrote:
->
-> On Tue, Mar 25, 2025 at 10:09=E2=80=AFPM Marco Crivellari
-> <marco.crivellari@suse.com> wrote:
-> >
-> > Hi Maciej,
-> >
-> > Thanks a lot for all the information.
-> >
-> > >  Unlike `__r4k_wait' that code is not in a `.set noreorder' region an=
-d
-> > > the assembler will therefore resolve the hazard by inserting a NOP wh=
-ere
-> > > required by the architecture level requested (with `-march=3D...', et=
-c.).
-> > > Try compiling that function for a MIPS III configuration such as
-> > > decstation_r4k_defconfig or just by hand with `-march=3Dmips3' and se=
-e
-> > > what machine code is produced.
-> >
-> > I tried with the configuration you suggested, and indeed I can see a NO=
-P.
-> >
-> > >  Whatever manual you quote it refers to MIPS Release 2, which is only
-> > > dated 2003
-> >
-> > About the MIPS manual, anyhow, it is "MIPS32 M4 Processor Core" (year 2=
-008).
-> > Maybe I've also picked the wrong manual.
-> >
-> > I've also found the manual you mentioned online, thanks.
-> >
-> > >  Best is to avoid using a `.set noreorder' region in the first place.
-> > > But is it really needed here?  Does the rollback area have to be of a
-> > > hardcoded size rather than one calculated by the assembler based on
-> > > actual machine code produced?  It seems to me having it calculated wo=
-uld
-> > > reduce complexity here and let us use the EI instruction where availa=
-ble
-> > > as well.
-> >
-> > Well, considering the complexity and how the code looks fragile even wi=
-th
-> > a small change, yes, that's likely better to avoid noreorder.
-> In my opinion keeping "noreorder" is the simplest, which means just
-> add an "nop" after MFC0 in the current version.
->
-> Huacai
->
-> >
-> > I think I'm going to need some guidance here.
-> > Please, correct me where something is wrong.
-> >
-> > 1)
-> > When you say "let us use the EI instruction where available" are you
-> > referring to do
-> > something like below?
-> >
-> > #if defined(CONFIG_CPU_HAS_DIEI)
-> > ei
-> > #else
-> > MFC0    t0, CP0_STATUS
-> > ori     t0, 0x1f
-> > xori    t0, 0x1e
-> > MTC0    t0, CP0_STATUS
-> > #endif
-> >
-> > 2)
-> > Removing "noreorder" would let the compiler add "nops" where they are n=
-eeded.
-> > But that still means the 3 ssnop and ehb are still needed, right?
-> >
-> > My subsequent dumb question is: there is the guarantee that the
-> > compiler will not
-> > reorder / change something we did?
-> > This question also came after reading the manual you quoted (paragraph
-> > "Coprocessor Hazards"):
-> >
-> > "For example, after an mtc0 to the Status register which changes an
-> > interrupt mask bit,
-> > there will be two further instructions before the interrupt is
-> > actually enabled or disabled.
-> > [...]
-> > To cope with these situations usually requires the programmer to take e=
-xplicit
-> > action to prevent the assembler from scheduling inappropriate
-> > instructions after a
-> > dangerous mtc0. This is done by using the .set noreorder directive,
-> > discussed below"
-> >
-> > 3)
-> > Considering the size is determined by the compiler, the check about
-> > the idle interrupt
-> > size region should not be needed, correct?
-> >
-> > 4)
-> > ori and PTR_ADDIU should be removed of course from the rollback handler=
- macro.
-> > Can I have some hints about the needed change?
-> > Using QEMU is always working, so I'm not sure if what I will change is
-> > also correct.
-> >
-> >
-> > Many thanks in advance, also for your time!
-> >
-> >
-> >
-> >
-> > On Fri, Mar 21, 2025 at 9:11=E2=80=AFPM Maciej W. Rozycki <macro@orcam.=
-me.uk> wrote:
-> > >
-> > > On Fri, 21 Mar 2025, Marco Crivellari wrote:
-> > >
-> > > > >  This instruction sequence still suffers from the coprocessor mov=
-e delay
-> > > > > hazard.  How many times do I need to request to get it fixed (cou=
-nting
-> > > > > three so far)?
-> > > >
-> > > > Can I have more details about this?
-> > > >
-> > > > I can see it is the same code present also in local_irq_enable()
-> > > > (arch_local_irq_enable()),
-> > >
-> > >  Unlike `__r4k_wait' that code is not in a `.set noreorder' region an=
-d
-> > > the assembler will therefore resolve the hazard by inserting a NOP wh=
-ere
-> > > required by the architecture level requested (with `-march=3D...', et=
-c.).
-> > > Try compiling that function for a MIPS III configuration such as
-> > > decstation_r4k_defconfig or just by hand with `-march=3Dmips3' and se=
-e
-> > > what machine code is produced.
-> > >
-> > > > and from the manual I've seen:
-> > > >
-> > > > "The Spacing column shown in Table 2.6 and Table 2.7 indicates the
-> > > > number of unrelated instructions (such as NOPs or SSNOPs) that,
-> > > > prior to the capabilities of Release 2, would need to be placed
-> > > > between the producer and consumer of the hazard in order to ensure
-> > > > that the effects of the first instruction are seen by the second in=
-struction."
-> > > >
-> > > > The "Spacing column" value is 3, indeed.
-> > > >
-> > > > "With the hazard elimination instructions available in Release 2, t=
-he
-> > > > preferred method to eliminate hazards is to place one of the
-> > > > instructions listed in Table 2.8 between the producer and consumer =
-of the
-> > > > hazard. Execution hazards can be removed by using the EHB [...]"
-> > >
-> > >  Whatever manual you quote it refers to MIPS Release 2, which is only
-> > > dated 2003 (following Release 1 from 2001), but `__r4k_wait' has to
-> > > continue handling older architecture revisions going back to MIPS III
-> > > ISA from 1991.  We also support MIPS I ISA from 1985 which has furthe=
-r
-> > > instruction scheduling requirements, but `__r4k_wait' is for newer
-> > > processors only, because older ones had no WAIT instruction, so we ca=
-n
-> > > ignore them (but note that the MIPS I load delay slot is regardless
-> > > observed in current code in the form of a NOP inserted after LONG_L).
-> > >
-> > > > What am I missing?
-> > >
-> > >  This is common MIPS knowledge really, encoded in the GNU toolchain a=
-nd
-> > > especially GAS since forever.  While I can't cite a canonical referen=
-ce,
-> > > the hazard is listed e.g. in Table 13.1 "Instructions with scheduling
-> > > implications" and Table 13.3 "R4xxx/R5000 Coprocessor 0 Hazards" from
-> > > "IDT MIPS Microprocessor Family Software Reference Manual," Version 2=
-.0,
-> > > from October 1996.  I do believe the document is available online.
-> > >
-> > >  I'm fairly sure the hazard is also listed there in Dominic Sweetman'=
-s
-> > > "See MIPS Run Linux," but I don't have my copy handy right now.
-> > >
-> > >  Best is to avoid using a `.set noreorder' region in the first place.
-> > > But is it really needed here?  Does the rollback area have to be of a
-> > > hardcoded size rather than one calculated by the assembler based on
-> > > actual machine code produced?  It seems to me having it calculated wo=
-uld
-> > > reduce complexity here and let us use the EI instruction where availa=
-ble
-> > > as well.
-> > >
-> > >  HTH,
-> > >
-> > >   Maciej
-> >
-> >
-> >
-> > --
-> >
-> > Marco Crivellari
-> >
-> > L3 Support Engineer, Technology & Product
-> >
-> >
-> >
-> >
-> > marco.crivellari@suse.com
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
 
