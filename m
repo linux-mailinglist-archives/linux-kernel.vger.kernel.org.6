@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-577672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22DCA7201B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:45:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5863EA7201D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A63F33B8B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 871E37A3C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC2D1EA7F3;
-	Wed, 26 Mar 2025 20:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B225E45D;
+	Wed, 26 Mar 2025 20:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d260P5wQ"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nuIH7naF"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBD01A2541
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C8C1A2541
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021931; cv=none; b=f9zX3pN2CmE4nAv0N/MT/s9iv06ZYAjzl8wNR5I53E7kuGL3o+HpaNOsnRQGbdr/P69Ce2L/cg0l+mOL4014frvH5XgCvYF0XiGefl4X7FFmXDr28HltyNYpcG9eI+o4sDBP68ZC9bde8r5HvngjW6EuVGDtRJ/eLvPzhMvs4Z0=
+	t=1743021968; cv=none; b=NkRlGTdrLT3ClwRHyPhitA3X4DG4lCaE/45psxRXYOkN/ib+NMYKuC/sBNDD6ZS1eQw5e7VB7sIneoodbHYGy8hXcndDPhvumXV3ELzi2SyWPo6t9r22jopbiV6fYfRXzQmkzsxbb9oq8bnWxW768RI3Tbxx1pRrYJBY0CuMqec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021931; c=relaxed/simple;
-	bh=bpCz5P/IGbW1PJcmJdHsh0Ct4MpaP9/+sfxMG+ksfRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a6bqL7B4fxtW28Dz1Nvan7bKffbz6j3U+TzU9q5TTtcJHUyjseGMIg22CDo+aCbS9u8G2llH0L5GPCwzcgzQbVa4/1rF4myOQpTBP4sCeK7BZZgZGAHh+wO/7CQ1pwOwjY0VQ0fxyroaH0+eMhyI8Aquh6I+xhyCEAL/OjXHEdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d260P5wQ; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1743021968; c=relaxed/simple;
+	bh=Y6AhyK49pxkzn1ksbUR43T1pZXDv+BVv5QZJqfe+jkw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CsIxbinTWmC9y+hvgTlq+UONjbEQXb3ZSRGEi7+hN8xQ5mEKHNzmX9cKUmwAqC6PRj3WkzfGneZ1vj+M5Qj0U0jbjoKPazx963m2M3pSibEH8xKfxterXw8d/VRhyi43NkhuR5/pVh/13CI3hTno5upUO7QVynrUmQ/oS0zUh7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nuIH7naF; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so958a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:45:29 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22647ff3cf5so4529955ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743021928; x=1743626728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7ktHXesu2kfcG5Dhn1yOjglQsPkU7kg2rXgHib344o=;
-        b=d260P5wQHa/fWoX2/Be/iIY26P6GR057Kcg30KMVLYimA1hO/x3R6+Hj+qQUzk9zMX
-         pW0WmUCp+AbAT9E1/4urY+RdJ+Ioyt+QQmTFu89IdPvkIlkS43XmbJU1ogNI3YMmHjiO
-         ClaYwxCLeRVczjyU60Yxay65rIDTgngXgFxSakI/Xz8CZTwvI0Reu4gLXwKe5bh3BhNI
-         6oh6Xcm1cp8vqOxh+xPtzJ9trtgNWtS+Wx1Abm7o8MfB9QwH5KEcDG7yFfjXe010u6vw
-         nCAg9ZrK4mru/A8eR7OIyTpFqw1DKhK7laJKv8RUqGqTA06aMWR50uWljALxTMKM35Sj
-         bH1Q==
+        d=google.com; s=20230601; t=1743021966; x=1743626766; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4TnW2Uz5dKZRhVJDSlrRtrZST0v5S6K4ANZzv9qPFY=;
+        b=nuIH7naFl3andnO/WLEGB0RkwVV1XsSxdZhCZDP90ZTXCuBa3lSoNuhM6FeWE4A0FE
+         Y3TOuPt8vB7HSJ2smQ/e8CEAtaz9zFQ6n7RIRiOoE6EV8cLWX432CG8XBitNDYRDdPHC
+         OLNP9hdFH0EjQemyjhk4KyIhuOeG2usFuN76u1NSc3tEUwWBJrgsyI6TSa5zqLXOBSsJ
+         6kT2qaHhHIZK6OTIMLDZNnVVsVUfpqS4JzRtIfzYIrrpLJkTmmOQuv2eNHzeABwn4JO0
+         YSXV7+UOkLIDUpAoWltMYZvAjZU5GxemKKnw8hWCzE5uSZJJ4NMTH3eW0Ko5yXCzen56
+         oVhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743021928; x=1743626728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z7ktHXesu2kfcG5Dhn1yOjglQsPkU7kg2rXgHib344o=;
-        b=fI8Rqo+GTAptuuKmELSn8Z47s8ngf+JNgzgn/d2Z+HK13E04Uw0oS+BozA5Nji92yL
-         j3GJlaFbYeiVC6lg4NmRJPL+i6tFWxjA4lQv32A8l3SE95XgMUfUnaW9Ncqbr6vjlt9a
-         +ANHwzy0fOMu6cwn/U2vLxGAM6ixl+DfjXgauk/Y7FhZzqZs6vUYNHDSige5mENCvT4b
-         IfLUOIGnFMZi6gU3GnR+yLNYOBfuC6RszsAemHqPgLtLdFK51+fDQDpH87KEPBbVbdCS
-         dSXzRqsQGyelmE3S/OYmqDqtmw5us0syI3tpFl+nq3LGBcD1UA6DiQIZopd+4aEcFQtP
-         rMBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+si1YVM+OkRCZ8+ZuqdAjM/7WS+Oh5ugaA7PDysWyDjMRtxM2Fz1sJ81F1/Jl9alh+UV72MoqBNG5470=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJjfoJvYbChpkiwqRHpW0VWIcSLKMwwIfyjihaPP6rVY0H4iJA
-	SVaqUIrb++PH99QpdFC2gITUYZ6/skgFxNuVGn994a2tVPT9Zc9loWLeneZVRFkEgIzV0CejaQ7
-	2olZ25bHIkQpKYypfaQHiO62GiUMA7Atfosia
-X-Gm-Gg: ASbGncssXZUeALfVfr8J5WbdUHYyfYsV7shU0DBwckIl6Jot402AE8RZG1sCeBWetTk
-	03lZwD0rGwpHHWCFYgAIWIT/QS1VhiPFIDloVzVSOhIhJMdQ5iBarvN4XtOf6mRvhPkcbVJEbPe
-	IolCNAHYEgJb67DR57F/9jA746TesrqW2etg9/x9CJzzSul2GD7let/eA=
-X-Google-Smtp-Source: AGHT+IHwrjgZpcRulsDKiR6zDY29alu/eb5flZ9dkCDaZWzF1ZfCyNNDZdRtJ2/5IMq9El6tbI6vFM9Cu7fmz6kLVF4=
-X-Received: by 2002:aa7:db89:0:b0:5e5:606e:d5a8 with SMTP id
- 4fb4d7f45d1cf-5edaad0f6d7mr5611a12.4.1743021927533; Wed, 26 Mar 2025 13:45:27
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743021966; x=1743626766;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4TnW2Uz5dKZRhVJDSlrRtrZST0v5S6K4ANZzv9qPFY=;
+        b=eRjM/FlxvhZE15n1OBnWoAK/ZujyFem0ioOPdmvcVNHpkjj1z5l87Vr2R500ss9Cub
+         9qteSdAaDSIjhGrrGvRFV19Zf5MD84RAy4+sHcQ6fYt7qx2oFQK4/oB9AxmpOdWIqu0k
+         tojF3KSON5l3yCOaKSmN4chv39npQxOZKuQKy68w+lbc8eCadPhZnfAgjSb0mK/a18MW
+         GhZSKoRni+nasGVYKNtPAFtZHWZsXMsEYEbCVw7zytp7ZjtCBdFe7ZZ9GCFYqnfSlaFM
+         lEMM7BtgOqffxiefkZvPhpVlANybL3JYTbSE75W8I5ko6PMeC+DbniQ479+Gx6YkgfLz
+         BOaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk7z6wO/ehBmAn7569YR/Ql0x62UbV76yXpcCMIQBca0moMLiqVMCFzyePU230ZMr30ijNetmzTWSpKe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXBNE4MwbK+0860j5aEYbl5DIGUd3BnLMcK4FN018RMdcTb+as
+	0ObzESw60qKaakm1C0LtJPIqF8pobJth1gLYcXyEw/4MUVk/S9QMYBVFaceANBOvqo7ymUEuIT9
+	05A==
+X-Google-Smtp-Source: AGHT+IG8fkyy0WUh4763nYORNLKBqfCAbmVWPy9jfWL/7DeLL3/hOCRU5DW9gPneZ9vs+KSuQSR91LQmU04=
+X-Received: from pfbdf2.prod.google.com ([2002:a05:6a00:4702:b0:736:adf0:d154])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:198f:b0:739:4a30:b900
+ with SMTP id d2e1a72fcca58-73960e3239dmr1232609b3a.7.1743021966483; Wed, 26
+ Mar 2025 13:46:06 -0700 (PDT)
+Date: Wed, 26 Mar 2025 13:46:04 -0700
+In-Reply-To: <20250320013759.3965869-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com> <20250326203926.GA10484@ax162>
-In-Reply-To: <20250326203926.GA10484@ax162>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 26 Mar 2025 21:44:50 +0100
-X-Gm-Features: AQ5f1JrP1Q2mctLjPTyd7EAIrLTDiLFwqKWpzfLsUtx5LAsqHO0kWByN0mYn4cM
-Message-ID: <CAG48ez05PsJ3-JUBUMrM=zd5aMJ_ZQT4mhavgnCbXTYvxFPOhQ@mail.gmail.com>
-Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	kasan-dev@googlegroups.com, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250320013759.3965869-1-yosry.ahmed@linux.dev>
+Message-ID: <Z-RnjKsXPwNWKsKU@google.com>
+Subject: Re: [PATCH] KVM: x86: Unify cross-vCPU IBPB
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Mar 26, 2025 at 9:39=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
-> On Tue, Mar 25, 2025 at 05:01:34PM +0100, Jann Horn wrote:
-> > Also, since this read can be racy by design, we should technically do
-> > READ_ONCE(), so add that.
-> >
-> > Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer infrastru=
-cture")
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> ...
-> > diff --git a/include/asm-generic/rwonce.h b/include/asm-generic/rwonce.=
-h
-> > index 8d0a6280e982..e9f2b84d2338 100644
-> > --- a/include/asm-generic/rwonce.h
-> > +++ b/include/asm-generic/rwonce.h
-> > @@ -79,11 +79,14 @@ unsigned long __read_once_word_nocheck(const void *=
-addr)
-> >       (typeof(x))__read_once_word_nocheck(&(x));                      \
-> >  })
-> >
-> > -static __no_kasan_or_inline
-> > +static __no_sanitize_or_inline
-> >  unsigned long read_word_at_a_time(const void *addr)
-> >  {
-> > +     /* open-coded instrument_read(addr, 1) */
-> >       kasan_check_read(addr, 1);
-> > -     return *(unsigned long *)addr;
-> > +     kcsan_check_read(addr, 1);
-> > +
-> > +     return READ_ONCE(*(unsigned long *)addr);
->
-> I bisected a boot hang that I see on arm64 with LTO enabled to this
-> change as commit ece69af2ede1 ("rwonce: handle KCSAN like KASAN in
-> read_word_at_a_time()") in -next. With LTO, READ_ONCE() gets upgraded to
-> ldar / ldapr, which requires an aligned address to access, but
-> read_word_at_a_time() can be called with an unaligned address. I
-> confirmed this should be the root cause by removing the READ_ONCE()
-> added above or removing the selects of DCACHE_WORD_ACCESS and
-> HAVE_EFFICIENT_UNALIGNED_ACCESS in arch/arm64/Kconfig, which avoids
-> the crash.
+On Thu, Mar 20, 2025, Yosry Ahmed wrote:
+>  arch/x86/kvm/svm/svm.c    | 24 ------------------------
+>  arch/x86/kvm/svm/svm.h    |  2 --
+>  arch/x86/kvm/vmx/nested.c |  6 +++---
+>  arch/x86/kvm/vmx/vmx.c    | 15 ++-------------
+>  arch/x86/kvm/vmx/vmx.h    |  3 +--
+>  arch/x86/kvm/x86.c        | 19 ++++++++++++++++++-
+>  6 files changed, 24 insertions(+), 45 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 8abeab91d329d..89bda9494183e 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -1484,25 +1484,10 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+>  	return err;
+>  }
+>  
+> -static void svm_clear_current_vmcb(struct vmcb *vmcb)
+> -{
+> -	int i;
+> -
+> -	for_each_online_cpu(i)
+> -		cmpxchg(per_cpu_ptr(&svm_data.current_vmcb, i), vmcb, NULL);
 
-Oh, bleeeh. Thanks for figuring that out. I guess that means we should
-remove that READ_ONCE() again to un-break the build. I'll send a patch
-in a bit...
+Ha!  I was going to say that processing only online CPUs is likely wrong, but
+you made that change on the fly.  I'll probably split that to a separate commit
+since it's technically a bug fix.
+
+A few other nits, but I'll take care of them when applying.
+
+Overall, nice cleanup!
+
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 69c20a68a3f01..4034190309a61 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4961,6 +4961,8 @@ static bool need_emulate_wbinvd(struct kvm_vcpu *vcpu)
+>  	return kvm_arch_has_noncoherent_dma(vcpu->kvm);
+>  }
+>  
+> +static DEFINE_PER_CPU(struct kvm_vcpu *, last_vcpu);
+> +
+>  void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  {
+>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+> @@ -4983,6 +4985,18 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  
+>  	kvm_x86_call(vcpu_load)(vcpu, cpu);
+>  
+> +	if (vcpu != per_cpu(last_vcpu, cpu)) {
+
+I have a slight preference for using this_cpu_read() (and write) so that it's more
+obvious this is operating on the current CPU.
+
+> +		/*
+> +		 * Flush the branch predictor when switching vCPUs on the same physical
+> +		 * CPU, as each vCPU should have its own branch prediction domain. No
+> +		 * IBPB is needed when switching between L1 and L2 on the same vCPU
+> +		 * unless IBRS is advertised to the vCPU. This is handled on the nested
+> +		 * VM-Exit path.
+> +		 */
+> +		indirect_branch_prediction_barrier();
+> +		per_cpu(last_vcpu, cpu) = vcpu;
+> +	}
+> +
+>  	/* Save host pkru register if supported */
+>  	vcpu->arch.host_pkru = read_pkru();
+>  
+> @@ -12367,10 +12381,13 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+>  
+>  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>  {
+> -	int idx;
+> +	int idx, cpu;
+>  
+>  	kvmclock_reset(vcpu);
+>  
+> +	for_each_possible_cpu(cpu)
+> +		cmpxchg(per_cpu_ptr(&last_vcpu, cpu), vcpu, NULL);
+
+It's definitely worth keeping a version of SVM's comment to explaining the cross-CPU
+nullification.
+
+> +
+>  	kvm_x86_call(vcpu_free)(vcpu);
+>  
+>  	kmem_cache_free(x86_emulator_cache, vcpu->arch.emulate_ctxt);
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
