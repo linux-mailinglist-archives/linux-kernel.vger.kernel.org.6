@@ -1,247 +1,123 @@
-Return-Path: <linux-kernel+bounces-577548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02160A71E91
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:41:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8DDA71E95
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869421795FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:41:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808FD1893E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D397C253340;
-	Wed, 26 Mar 2025 18:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A10253344;
+	Wed, 26 Mar 2025 18:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xz8HToQ+"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqqicsDb"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE124EAB0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 18:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C275D24EA9A;
+	Wed, 26 Mar 2025 18:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743014507; cv=none; b=fs3M5e46wB5CflVUrKlxmRSmEKqsMooX7Fn3g716Ga1IbGMY2k8nQZ4Cn8zvxXrCZ9a5Qbl1++RzyorniwtaW0zZH5j0igDAseG3I5Wj7yfN7EGXLoQUXiy9iTRgRBhZNHad/vvIxbG2Ail3AegnTi21TYcqB9dihcuSvBP+ixk=
+	t=1743014544; cv=none; b=qab9dlsx1H3LdPs4iI4n8w39XYbfaAiS1muy6bCk7XfKeDCiqppH/lqtrXSohHxoiFGT/azktY1G3PvLvu3Pmfg306Z/enCPj2sW/++K5RTZOrqVVQb6B679UiWim2ktxPtdlL8Z0BG7JTjPlQ24KipFIszzJhRa3hpkAZw3vKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743014507; c=relaxed/simple;
-	bh=VVc2l+RicUNkNGY2b16Zifrn/ayX0O/xBaNwcPR177s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bUJ+aFQjU3E9diFjwfnBD5viKzy77DTScWZ8nf/d56TCdukTgDv5TUxW/ciAayqHVjHlV44REC4p7fp7K6K1KIMg/tn+LBaTCpKRySS+5o9lsEX1wiaPFYLAVOICW6xEunwSKt5SdcpDSQYJwCYlWxUv4JQHeU0tfH2AhArzN7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xz8HToQ+; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-301bbe9e084so270444a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:41:44 -0700 (PDT)
+	s=arc-20240116; t=1743014544; c=relaxed/simple;
+	bh=3GCuaFRiBJqbAVFYSqi9R3hp1bxmX5HXeie7MDE5R1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hqX7VnVfjdLnLxnpQLeUMqqG/B7WdLD8IorHLSDJVpvMvBxLEzJSMcWVLdc7MYhUxMGKNVtSYTX9Nac0jDBMYMXTQ709epM7X0TRzMT5ikrHIP+vOK+80kPWfTCnBCjPv3r5tmqxKvr09Vp4lE2WO/xlaYQYVBpHsF4jkmjScqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqqicsDb; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ed1ac116e3so216109a12.3;
+        Wed, 26 Mar 2025 11:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743014504; x=1743619304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b0rQ7XUfLkQfGZ5vjukC+h9cixCqTMdpfEOutTgyqNI=;
-        b=xz8HToQ+ylbG0V6i48ssIeX9WI/dVoFrhOeEvWWshavZQq5x+FsNpg67X01+6cK/QG
-         gDsmKDWZqwLD+2mhpUGNTfCjwfqM3rnVq86um8iJ64gsFgPOuJcJUogCQrH+ljlTJEM4
-         YY7E2PZaf/om9R1m5pKq7/TsEzJPfXdwHByj1107orAeyn63iDnAwgzZJ8o0y6fOeQQ8
-         n8bvwOcZ/ElfXox5msnNrP9xliL/i0J3u/gTkTf0Bfa3y/8pDBNmb6xMyj0i2jL4ASOD
-         jywiNyr7RXz8tSoeMOLa7kreTBV2vEGmU2LTfMgQTkf5DLEdrUFpirlrNtYRrdv48kQB
-         bdVw==
+        d=gmail.com; s=20230601; t=1743014541; x=1743619341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fsiPA+wQiDjy+/qU9eR9YHSnTKpdRuheNLQ9Ls8sYTc=;
+        b=JqqicsDbY6fcYq5vS0SauUOioRJb0A5+IdzUpYgQt7y9aLAxbeH8jDUlfuf3QtOcJu
+         unAie76QDHkvr+70lcEM2nvmW+bzG8+daWoG5DpPht0R2rxHGqkfUocIwn/v9pz5clQQ
+         rNYLHfrvxCm1+G1gc6pmu4MHngWlQioeTupdzEQjAhKkPqD3IjavpXAVX8IflP0tQ/8D
+         XNOxE/ggNNzLJimN30i8kCLDDECm2tMuz5Gmqr6SfJIHnS3uRh6m1RmM6byco+DXg8ZS
+         AhK9FkvjTtR0tkS2XYhPqbkvodXz041MYyDp366H7oqtuKQkB33B+HqD3Eo/jCIrbbbI
+         92TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743014504; x=1743619304;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b0rQ7XUfLkQfGZ5vjukC+h9cixCqTMdpfEOutTgyqNI=;
-        b=nYSsB3i+Tl84YrKw9brvRpiVpZS0jEWKCHSy5UWonVeCj5nsFCh61WWW+gRwhC4QZt
-         njyqWUjwuYansWFKm5GucNo+5E1bqU3Efv36Up8JLCNIS2brhj5VVmuGFXgy6Yrzw00y
-         iqv8I9LuwPmRGhVRWuBbLOdq5LshSpVpgOaKZXRAEPUhLD+s6pZkwXFJH1NLtkMsqE7f
-         sLOHQfM+pUAFezIv3x0hA4GrM5nZGkL4ogMalUiNFKbp8+9abI5yS9rwGdx1uti44qdt
-         yx6JYGTemISWOaGt41RDxHeBXCbXDaTClxxQnu73urqxRNx0MW9XrNu8CdKC4GTTG7Og
-         Kcqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrwsi6JDjEewMpADpMDl9wyMlpIendFwUEZChOhb40Sc89/nAewqHuoDS16QOmVH723mdAx6a4AOlIKJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz20ZEayd3PEooS+imZsmvkWrjD3FzYM2oKrc06AnRFz9RzmNu6
-	bXlj4pq8fFbKvS3JBeuFLXsQ3yUpGfxMR0JYwjWAV0r0ZvcDdB2ts/ngOqYhIbORvaE8pi3ybfT
-	ulg==
-X-Google-Smtp-Source: AGHT+IGYOoK6Qcw78W9ZnM4jh2jTBVQGR9cWfoA9Lc2F9ro2+49zKJCs1PFrziVBd1fP1tMWosQcGl/OD1k=
-X-Received: from pjl13.prod.google.com ([2002:a17:90b:2f8d:b0:2ea:46ed:5d3b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c106:b0:2ff:6aa6:47a3
- with SMTP id 98e67ed59e1d1-303a9171aa0mr1173178a91.25.1743014504284; Wed, 26
- Mar 2025 11:41:44 -0700 (PDT)
-Date: Wed, 26 Mar 2025 11:41:42 -0700
-In-Reply-To: <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1743014541; x=1743619341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fsiPA+wQiDjy+/qU9eR9YHSnTKpdRuheNLQ9Ls8sYTc=;
+        b=Sd+oOYGgnqMQkBGo7m6su+VPdopQk0d1QoA1PWBrYl/hE1pipKe5DjhuUFwQiiCbO4
+         OvKEPHpfeGN6pRoT/S6y5+xmPjlWpvs6QMZhg2ohTtz2o1KMPjeCKIMCP4u6jRMUB+tb
+         Gljyzww5vwK0ql6YFIx1p0tigxdFFX87TI5qrX1n6ip1dvC9ZIG414wLBlaQivlaUJtY
+         FnzsvF8f/LXiArTcj2TdI+nThcY+a0WpapJholwtHfJJunVqQxowF8mIsKMTBltMvBXu
+         qYoYcX7lD6PYKq2YoqT+U6aEeNvPe+dWl7132mSMY+38jloya07Yyfdq5TsJyYMGYKv7
+         9WbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjhKaansyV4AsNebIDjWmRZ5KcY3BL0GlMKh9IiV+kjKO0XeHkKBSypCarBjGWdOSGITGjDEna0LhIIrq8@vger.kernel.org, AJvYcCWGxcasJo/IClsY8kkb522tGSn/yypYclNKfW8VAwRwXzOeT9XZi2OFEWM0WvyNH6ffQf4MYRCP@vger.kernel.org, AJvYcCXIng3Sa1kY0oN5RzzbyW7K11jXtdQZvBE+68C+fpDfiP9EfT4nSwXf/iG3PGiWiIeY7eX9r3vK6l50BIqN2Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlexyx0YnYYBmy+kgmSY1Jl5nAZiahpNcMXBwKK6KKLTGENrX8
+	ZCUm27Ylbd8Lf5QjLZKMTUQo8doNzCa+JpcY5V+pO1gB2dKOchY6JS9Kmkq/pi+b5k+OgfTot2X
+	x+2g4++Mxh3uADnbRfrzinjZkLfM=
+X-Gm-Gg: ASbGncv5lLaGu7Y5EhFJSOOOUiuvEfcj1whT7liWfPJkxjHKZghjhKawn5/bVX6sGWG
+	ewmysAS90WIn7WouAAXHO4GocC98yeyWvKuAI7Eu5Vc2WtsVn7misEpOhzj8oQfWzn2ms3P55YE
+	VlWq/OVOyH7mESxxCyGPhPhNxnXOgagut0EsYl
+X-Google-Smtp-Source: AGHT+IHvjBEb8u3bGux3ahHtVwunzcocu6dQwS2Xse9Cp8eI4Z66HuwdqhCdzBpOe4XmdyMVe7tLDyY+cjoIXRJFZBM=
+X-Received: by 2002:a17:907:3fa3:b0:abf:6ebf:5500 with SMTP id
+ a640c23a62f3a-ac6faeb7134mr50473666b.16.1743014540877; Wed, 26 Mar 2025
+ 11:42:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250325015741.2478906-1-mlevitsk@redhat.com> <20250325015741.2478906-3-mlevitsk@redhat.com>
- <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com>
-Message-ID: <Z-RKZsQngjEgcfVU@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: selftests: access_tracking_perf_test: add
- option to skip the sanity check
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	Shuah Khan <shuah@kernel.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-kselftest@vger.kernel.org, Anup Patel <anup@brainfault.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
+ <20250326-string-add-wcslen-for-llvm-opt-v2-2-d864ab2cbfe4@kernel.org> <CAHp75Vd_mJggRRLfziWUf0tgr3K125uVBNh9VdSo9LHVJz2r_w@mail.gmail.com>
+In-Reply-To: <CAHp75Vd_mJggRRLfziWUf0tgr3K125uVBNh9VdSo9LHVJz2r_w@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 26 Mar 2025 20:41:44 +0200
+X-Gm-Features: AQ5f1JqGF7dttWsEgjPhabIJU0Qow2xz-VT0UfD-t8uVq_PkVNBOsCT8C5GAZHk
+Message-ID: <CAHp75VdQv=0wvgMDGNoXojALWh2B-92gjkO7zrv=d42ocamM4Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] lib/string.c: Add wcslen()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025, James Houghton wrote:
-> On Mon, Mar 24, 2025 at 6:57=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.c=
-om> wrote:
-> >
-> > Add an option to skip sanity check of number of still idle pages,
-> > and set it by default to skip, in case hypervisor or NUMA balancing
-> > is detected.
-> >
-> > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
->=20
-> Thanks Maxim! I'm still working on a respin of this test with MGLRU
-> integration, like [1]. Sorry it's taking me so long. I'll apply my
-> changes on top of yours.
->=20
-> [1]: https://lore.kernel.org/kvm/20241105184333.2305744-12-jthoughton@goo=
-gle.com/
->=20
-> > ---
-> >  .../selftests/kvm/access_tracking_perf_test.c | 33 ++++++++++++++++---
-> >  .../testing/selftests/kvm/include/test_util.h |  1 +
-> >  tools/testing/selftests/kvm/lib/test_util.c   |  7 ++++
-> >  3 files changed, 37 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/=
-tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > index 3c7defd34f56..6d50c829f00c 100644
-> > --- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > +++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > @@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPU=
-S];
-> >  /* Whether to overlap the regions of memory vCPUs access. */
-> >  static bool overlap_memory_access;
-> >
-> > +static int warn_on_too_many_idle_pages =3D -1;
-> > +
-> >  struct test_params {
-> >         /* The backing source for the region of memory. */
-> >         enum vm_mem_backing_src_type backing_src;
-> > @@ -184,11 +186,10 @@ static void mark_vcpu_memory_idle(struct kvm_vm *=
-vm,
-> >          * are cached and the guest won't see the "idle" bit cleared.
-> >          */
-> >         if (still_idle >=3D pages / 10) {
-> > -#ifdef __x86_64__
-> > -               TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-> > +               TEST_ASSERT(warn_on_too_many_idle_pages,
->=20
-> I think this assertion is flipped (or how warn_on_too_many_idle_pages
-> is being set is flipped, see below).
->=20
-> >                             "vCPU%d: Too many pages still idle (%lu out=
- of %lu)",
-> >                             vcpu_idx, still_idle, pages);
-> > -#endif
-> > +
-> >                 printf("WARNING: vCPU%d: Too many pages still idle (%lu=
- out of %lu), "
-> >                        "this will affect performance results.\n",
-> >                        vcpu_idx, still_idle, pages);
-> > @@ -342,6 +343,8 @@ static void help(char *name)
-> >         printf(" -v: specify the number of vCPUs to run.\n");
-> >         printf(" -o: Overlap guest memory accesses instead of partition=
-ing\n"
-> >                "     them into a separate region of memory for each vCP=
-U.\n");
-> > +       printf(" -w: Skip or force enable the check that after dirtying=
- the guest memory, most (90%%) of \n"
-> > +              "it is reported as dirty again (0/1)");
-> >         backing_src_help("-s");
-> >         puts("");
-> >         exit(0);
-> > @@ -359,7 +362,7 @@ int main(int argc, char *argv[])
-> >
-> >         guest_modes_append_default();
-> >
-> > -       while ((opt =3D getopt(argc, argv, "hm:b:v:os:")) !=3D -1) {
-> > +       while ((opt =3D getopt(argc, argv, "hm:b:v:os:w:")) !=3D -1) {
-> >                 switch (opt) {
-> >                 case 'm':
-> >                         guest_modes_cmdline(optarg);
-> > @@ -376,6 +379,11 @@ int main(int argc, char *argv[])
-> >                 case 's':
-> >                         params.backing_src =3D parse_backing_src_type(o=
-ptarg);
-> >                         break;
-> > +               case 'w':
-> > +                       warn_on_too_many_idle_pages =3D
-> > +                               atoi_non_negative("1 - enable warning, =
-0 - disable",
-> > +                                                 optarg);
->=20
-> We still get a "warning" either way, right? Maybe this should be
-> called "fail_on_too_many_idle_pages" (in which case the above
-> assertion is indeed flipped). Or "warn_on_too_many_idle_pages" should
-> mean *only* warn, i.e., *don't* fail, in which case, below we need to
-> flip how we set it below.
+On Wed, Mar 26, 2025 at 8:39=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Wed, Mar 26, 2025 at 7:19=E2=80=AFPM Nathan Chancellor <nathan@kernel.=
+org> wrote:
 
+...
 
-Agreed.  I like the "warn" terminology,  Maybe this?
+> > --- a/include/linux/string.h
+> > +++ b/include/linux/string.h
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/cleanup.h>     /* for DEFINE_FREE() */
+> >  #include <linux/compiler.h>    /* for inline */
+> >  #include <linux/types.h>       /* for size_t */
+>
+> > +#include <linux/nls_types.h>   /* for wchar_t */
+>
+> I know it's not ordered, but can we at least not make it worse, i.e.
+> squeeze this to be after the compiler.h? Or even somewhere after below
+> the err*.h? Whatever gives a better (sparsely) ordered overall
+> result...
 
-	printf(" -w: Control whether the test warns or fails if more than 10%\n"
-               "     of pages are still seen as idle/old after accessing gu=
-est\n"
-               "     memory.  >0 =3D=3D warn only, 0 =3D=3D fail, <0 =3D=3D=
- auto.  For auto\n"
-               "     mode, the test fails by default, but switches to warn =
-only\n"
-               "     if NUMA balancing is enabled or the test detects it's =
-running\n"
-               "     in a VM.");
+I just checked, and the only unordered piece is those two: types +
+stddef right now, and if you move nls_types.h after errno.h it will
+keep the status quo.
 
-And let the user explicitly select auto:
+> >  #include <linux/stddef.h>      /* for NULL */
+> >  #include <linux/err.h>         /* for ERR_PTR() */
 
-		case 'w':
-			warn_only =3D atoi_paranoid(optarg);
-			break;
-
-Then the auto resolving works as below, and as James pointed out, the asser=
-t
-becomes
-
-		TEST_ASSERT(!warn_only, ....);
-
->=20
-> > +                       break;
-> >                 case 'h':
-> >                 default:
-> >                         help(argv[0]);
-> > @@ -386,6 +394,23 @@ int main(int argc, char *argv[])
-> >         page_idle_fd =3D open("/sys/kernel/mm/page_idle/bitmap", O_RDWR=
-);
-> >         __TEST_REQUIRE(page_idle_fd >=3D 0,
-> >                        "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-> > +       if (warn_on_too_many_idle_pages =3D=3D -1) {
-> > +#ifdef __x86_64__
-> > +               if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
-> > +                       printf("Skipping idle page count sanity check, =
-because the test is run nested\n");
-> > +                       warn_on_too_many_idle_pages =3D 0;
-> > +               } else
-> > +#endif
-> > +               if (is_numa_balancing_enabled()) {
-> > +                       printf("Skipping idle page count sanity check, =
-because NUMA balance is enabled\n");
-> > +                       warn_on_too_many_idle_pages =3D 0;
-> > +               } else {
-> > +                       warn_on_too_many_idle_pages =3D 1;
-> > +               }
-> > +       } else if (!warn_on_too_many_idle_pages) {
-> > +               printf("Skipping idle page count sanity check, because =
-this was requested by the user\n");
-
-Eh, I vote to omit this.  The sanity check is still there, it's just degrad=
-ed to
-a warn.  I'm not totally against it, just seems superfluous and potentially=
- confusing.
+--=20
+With Best Regards,
+Andy Shevchenko
 
