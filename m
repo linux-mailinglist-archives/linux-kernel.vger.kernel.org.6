@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-576785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECE7A7146F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:08:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C67A7145A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE863AD2A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253E5188D622
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5B41B0F0B;
-	Wed, 26 Mar 2025 10:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0245D1B043C;
+	Wed, 26 Mar 2025 10:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="A6flIxTz"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhAxOtVn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255BF19DF66
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3621AD41F;
+	Wed, 26 Mar 2025 10:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983663; cv=none; b=TdxKSDsp71n92hYVj3VCQxiv/VYA5FEYenuNly3pUqSIY08OdGjN039dea2DljIHySzZpUO8zPu5bFHKYDvrOVHxQIMOnbqAX1AkPB94T83464Le27GxRFcIHKQ8zolcEnw+G5sNq3672uuzC2hv/esHg/9MqcYVMlejaN5qRDQ=
+	t=1742983369; cv=none; b=Vcii6MUboZXpqZypqSepdkuR/8fso9Vr5uUy5R7O+U7Td6P+gymLOuvjyt5eM2ps9a8HELHbGBiy1SZSgXpz+fYo6pPtmwzjjNREBfZbaz4cc+uOnFsPYhzsJP8EnHs7e95bMGY+EsQDchAC60EPQzZ1KpzyhfYybjb8f9xrv4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983663; c=relaxed/simple;
-	bh=o1OW7eMPI7BT9Kuja4q/FC0vO0bwCYy1NuCvSDE5Qag=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=V5Ek0CouRswwWVNpmlCpR6l1+mH0Y1OBp7reZLolcYZrTLmkajB2yVH2ZWK0kDnL4QMTKJPxlEi1ckQOX6cpykS9EMPxv3+LGrYB6K5HHPPOGbyL39yuTYtMPoBHQQfUoaGHy8XgZQpgUQ7XUG1OfrRnEcdKIiMcyHrYnYtAJxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=A6flIxTz; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742983350; bh=11V6Ppzqx37uke9W1v3EMjT5frvAqdD1NpkPS7WBiS8=;
-	h=From:To:Cc:Subject:Date;
-	b=A6flIxTzH9Eg8+55wZ2eeyN1ffNQg/4IY8p5r3gM1FPVkVnXSdCb4ONgtfVNaCd+Y
-	 lJ2ERtJNje4+6xTHC2XO4Fz8TY9UtS3wdl0MfbAoWke3NsJxGQXjTOrpoGfrwTQO9E
-	 ftbU0YNOX6zA5ZiX/BTB6bz3qDkSGYK3LYi7aNQo=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 9CB1E93; Wed, 26 Mar 2025 18:02:28 +0800
-X-QQ-mid: xmsmtpt1742983348tymg8gqam
-Message-ID: <tencent_788D1D0B2D8FF4E718D8627502FE0A949C0A@qq.com>
-X-QQ-XMAILINFO: MMvVzQSdFuTpw/8JYyJ3ooYbJzsFXNTv1AzBVLrEzcEDozd7Gi3pxJXXng3JTf
-	 4EyF9cys7CNem1txEpdA0W/FqJcoHUOotZzyj9sjtBKblw0YDcUmBbddAjUXNzyClLjm+VSPPY0Z
-	 H7xWsuMkfTmJ9lR0gclwtET0zyi2mTsXIQQPHjnQ/eAmMBxQseDA/EAgNB0S4gyxnKHz6zxToGlT
-	 tjMe7224lEQuxLFAilMZ789i5APrAo0JxreeMeP+wodSLgLafET17iUlYIZz4ZCPJiQjeZ73mucp
-	 +rkMoAUy/CBjbTSKMlc/aV4bPeRcHcIpkVAZdUcdbNQjW9m9d8KnGSLCPG9JcpqI2HQTGfWhAHxO
-	 Npd+//ypEMa8h4R70oLh8htZi9GZ3nwj1cNEbRwcDVSMVcOBk/SY4AZjt8Iy0We2GgUzLeebRu/p
-	 qBFuiYUp+xFNvt48laKMQ1J6Dr1n+9DonEz4wXFJNmqOfsjqFlC3/vErNAr6gWA0rx5DO5o2PIYp
-	 vaog3W+fk7bfDs4U6+ijKX6F4uzGZc8psttgGXbTl30QYtyCCY2qsN6+fTOZj55cjpauP8zopAEw
-	 XJmS43XMGNR2otxD5reKGKl6sucBOp77lGRnCSOMxgJTDNyxO/wL+gw3dB4QGlyr/sCE7YYZZz3/
-	 CUmzUByLesj+q0wjY5DDMZGwnDes+ndQpZmt6YuiHVaKkwNX8yGCSl4kMC5eKzII09I4Q1mCcewT
-	 n38w2IlxgZKp9wiA9RaC/buwz38BSmI0/dRFcs7csJMQzrnaK6nKlVqynXmR0BOFeY5wC6gtcPku
-	 kjdADH9/q3d5EHjeWv0FvgC2XupewcexET9C1Lo/S6VdhGZMuUOFHJBSPD2deAjfpjkKE1US/Be/
-	 qt8PVzA9rrS1l7N3VmgMZYacoxTAUbuMKK9DfR6SSSvvrOslsk1Txur/5CdU9yM6muEGXG476kk4
-	 6RAb8+PoYJ1iUAJsnIOPPwdWYgxB6hAYQ4fHLTFojRgBrUp8w2tcAjgidERJ8NWDZJD/S0eMuXL2
-	 bSmbDr+w==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH 0/3] nvme: Add sysfs interface for APST configuration management
-Date: Wed, 26 Mar 2025 18:02:24 +0800
-X-OQ-MSGID: <20250326100227.1306684-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742983369; c=relaxed/simple;
+	bh=ltuYgOBoRIHSm1h/laNdzdjkrsOJvZ1PJctSimi+EH4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Nkr4A43jzb0G0eiSZK+pUAlxhqRWC2YITTRBWZH7Rl0HLK84G2r+/qbdnJ0ZQG5xO1juJzJntF7C6ve5SfvryGB6AlnvOK6BPaQGEhgy/2DSG7TLdegNJoNuLjI4ryInvqRUggbcsRoRNyagpnL9RkavcZwDNNy7/s3sriuPGZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VhAxOtVn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22580c9ee0aso135225405ad.2;
+        Wed, 26 Mar 2025 03:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742983367; x=1743588167; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ltuYgOBoRIHSm1h/laNdzdjkrsOJvZ1PJctSimi+EH4=;
+        b=VhAxOtVnSX7tjRf/CZM4o4tBMS58bdJzjH1MMaIRKRyRJ8QvoEoXjB4HS5DzW6W5z/
+         PKlAu2DEOPPS0zbDilzT2JiWIr/PGnpqCPft6siKeLJSnczsAOiJXlPI+7s1A5ZcEXOQ
+         NNr8haunoqKa21/yi7IZpfgIoCUuKB8iCY0HBaeme8Yr9cY01EVbFFAY60btEdMvNB77
+         MF2OHTSlGdZnvrN13s3GB9XjxAEh9gtawDGfuKU7MBvfct+K1tMReud1TBuRdVfCpHNY
+         O04hdXCYP/UdxK8DZS863yL5Qk582bxDALjaV0zK53Sr/39W2motLdk3FiDCnfVi6Pqg
+         3l/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742983367; x=1743588167;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ltuYgOBoRIHSm1h/laNdzdjkrsOJvZ1PJctSimi+EH4=;
+        b=VJ9fLq6QhLi6D/wCqq0VqPQ156kZZnA7tOOP0wAUcquGjk/gWIHi0Xzk9ISzUgmoub
+         C8sgGDK6XKfg9xE/FLeR/M4zUnNyGUPyxV5mSsoBKmY7uD00X2OZEuIlYRTq5fP8p+SB
+         j51mcgxbzf6gGPGQpFuemF1tZAh9XSLMxVK75QZqOlNzdAjUYX0g0HJ2SixUOMLKDLb0
+         sGvpjnj+zMr5Nbfn3A8AFt0L67yeuUiMAunMVh5j4ymWUXB9aLpn2vAJWKebNP1teR0c
+         RDozhafTbJnOt/OH8aXTSj1AV4uvieLs4zblhxSD49/eTfRaSyE6zqU9AO9NyZqxNUuD
+         eXzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKFxcTQkS4CCK/YkMVoiVE4dpbpE8xS+gJClv4lt91B4ydddd4DffijvRyA+YBHWSpddEh9tj/pgYPMsV31g==@vger.kernel.org, AJvYcCXIN1SquEIyCxuZZi4k5Ky71SHaSbDkxHwMvNj4TRBCyuiD4lek5b6MOr6+K7qgH9QMb10WDd7Tt5JJBs0a@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9M0tvgK2JwTtUCOZv0vC7vE1v1arFX/Pl6cVajclEuzgUuRs6
+	3vTFK/1NQtkfPgZR3ayVzRD6E34kYF86WfvyEVzV3fDZSFcOn72C
+X-Gm-Gg: ASbGncvnjS8g3X4TjWttayvaR4rpQnwRWy0KWd7RZV3jhrKK8FVy+mkZKclxr1sEPvb
+	5qf8I7piltNTfSNiGQ9z2RP6TFB1qdbBK1WPmBz56pciqN/WI4jZhL12/8LIeefB/YneWsxxb9T
+	w/MDTPz8ABtFBlL/R4oS8GRNvJ/HfIAtDBtucy//6ws9cl99S3U/KFbLqJ5O02MlS6hXp6fxBVl
+	0mEsfisuJPH83QXV1hZEIA5/v6MOoFRsLyn+WfmUiS+FKVUY7iiIH5RHSkxzGv3EKLH1LmSVJms
+	oCSnrNUoZs3+Hz1GaByn3IyZge4a
+X-Google-Smtp-Source: AGHT+IFmRyDrWSokAiWcXtmt94I5j1NjixzYSrCGTSWharoB2uW3Raf6+3NbGkx8mxeuoWEV6s6VYg==
+X-Received: by 2002:a17:902:f548:b0:224:a74:28cd with SMTP id d9443c01a7336-22780dacae2mr271815945ad.31.1742983367118;
+        Wed, 26 Mar 2025 03:02:47 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227967dfe4dsm88116595ad.167.2025.03.26.03.02.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Mar 2025 03:02:46 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH] bcachefs: replace deprecated strncpy() with strscpy()
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <20250326094449.16473-1-nicolescu.roxana@protonmail.com>
+Date: Wed, 26 Mar 2025 18:02:31 +0800
+Cc: kent.overstreet@linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5F3AB2BC-43DA-47A6-A07A-72540B327D11@gmail.com>
+References: <20250326094449.16473-1-nicolescu.roxana@protonmail.com>
+To: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+On Mar 26, 2025, at 17:44, Roxana Nicolescu =
+<nicolescu.roxana@protonmail.com> wrote:
+>=20
+> strncpy() is deprecated for NUL-terminated destination buffers. Use
+> strscpy() instead.
+>=20
+> Link: https://github.com/KSPP/linux/issues/90
+> Signed-off-by: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
+> ---
+> fs/bcachefs/btree_trans_commit.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/bcachefs/btree_trans_commit.c =
+b/fs/bcachefs/btree_trans_commit.c
+> index c4f524b2ca9a..7ab25b425d11 100644
+> --- a/fs/bcachefs/btree_trans_commit.c
+> +++ b/fs/bcachefs/btree_trans_commit.c
+> @@ -364,7 +364,7 @@ static noinline void =
+journal_transaction_name(struct btree_trans *trans)
+> struct jset_entry_log *l =3D
+> container_of(entry, struct jset_entry_log, entry);
+>=20
+> - strncpy(l->d, trans->fn, JSET_ENTRY_LOG_U64s * sizeof(u64));
+> + strscpy(l->d, trans->fn, JSET_ENTRY_LOG_U64s * sizeof(u64));
 
-This series enhances NVMe APST (Autonomous Power State Transition) support by:
-1. Adding warnings for PST table allocation failures
-2. Exposing APST tables via sysfs for runtime inspection
-3. Providing per-controller sysfs interface for APST configuration
+The last time I asked Kent about this line, he didn=E2=80=99t want this.
 
-The changes allow better visibility and control of power management settings
-through userspace tools while maintaining the existing functionality.
-
-Yaxiong Tian (3):
-  nvme: Add warning for PST table memory allocation failure in
-    nvme_configure_apst
-  nvme: add sysfs interface for APST table updates
-  nvme: add per-controller sysfs interface for APST configuration
-
- drivers/nvme/host/core.c  | 24 ++++++++++------
- drivers/nvme/host/nvme.h  |  6 ++++
- drivers/nvme/host/sysfs.c | 59 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 8 deletions(-)
-
--- 
-2.25.1
+> }
+>=20
+> static inline int btree_key_can_insert(struct btree_trans *trans,
+> --=20
+> 2.34.1
+>=20
+>=20
+>=20
 
 
