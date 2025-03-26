@@ -1,169 +1,367 @@
-Return-Path: <linux-kernel+bounces-577126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98924A7189D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:36:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCC2A718A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085A1178A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0E5173D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA1D1E485;
-	Wed, 26 Mar 2025 14:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319F61F30C7;
+	Wed, 26 Mar 2025 14:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bucX4Nzb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bw8L71c5"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81BA1C8638
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79A926AD0;
+	Wed, 26 Mar 2025 14:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999743; cv=none; b=u/eJp56uBoxNgmoSG0DvbGg5z4h1I3On66Qj8t4+vodXAf2Ppf5r4Eji/aJaAvHbnORaB6VgW7de62UG32A2raWvHXKZ2khwW7c6sj23VB+7drBewvqDb9UnlyTuIpe81xk1KD/JS1qz/A0Pl7eytNw2Hns/bsC6MIDPKtAw4og=
+	t=1742999755; cv=none; b=R9epSUMUdXxcBsGrH36OoGOhfoKtOqiOZ298sPLWo0GqqqR4dnKI8escKPmbhjJnl4SecA77s8xY3ZexZAGkuf6Nwyp43EVMJlif5inEsrxwixk2jNgiF+vickDvUGzvGPcBinT72MJ3icfrv70G7eSJLUR92r6/eYxdVMzo4Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999743; c=relaxed/simple;
-	bh=uTWEOiRebzK1HpCztN7qLyQNV8AB5yFfQg/jL7Wglms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmESwqNiqasA3iCXwcdROnUYegUGaYdGJmDYhRFdTjZ15NNNMZttYlG+ori80MrnzHEle4/lYNppuiQakv/75u1KuqRyHrOlprUc9Jiy19pjPJoorWAURz6NFKJk2d2HNvBi9AZHP6lD2z4LEaqW47bR56yFEtYaz5OCAoUfxvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bucX4Nzb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q737x1023554
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:35:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=a3LBv2dL/fjVHNDpQ8LXA7nk
-	O+aChHlItG4zFaoX6Rw=; b=bucX4Nzbhs4E4B5QrJ5dJaDhiNM9BgRijA+Pc+bV
-	LtOk5jD7GuaoSUEJfM8zxasBnL3L5u3Z8ChYD3inN4DBljATvrM5fPbKXLO1ydcb
-	Zuuu+mmy0Tn5y0lvj1GpDqt2wvCQITabvngMEjRtDFx2j7GSga9pQefR0Bus9Ky+
-	qgcJFRkvBF/Xg2TLtlq0nM8B3NqaMfmFmyN4v9AnFECMeBcVvKq8FyU3Jtgucx+9
-	TKW38q8PFrbeSilfqmoPWeMAEUfoAi55x7gbOJB0v2imXednWPQFF67FQv0n5RFY
-	2obZXx+/NJrvWbZwooFIlC4MiGP6AGP4Iyq9BMAWFDaDbA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m7nf21mh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:35:41 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54e7922a1so165221585a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:35:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742999740; x=1743604540;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a3LBv2dL/fjVHNDpQ8LXA7nkO+aChHlItG4zFaoX6Rw=;
-        b=mg9ZE8ouoPVzy5hVlxONTQcQtPU4PVZDzZ3x3xAaL4LIl6WunQXSPZhoTVERakjh7h
-         xZ4nAYWd/Jd58WliW2+7V3G6hiVeZzdb6XBgqsm6ILXDA9REkHy1N+Nest+4381h+sn1
-         OSMpCqmK3iPlGrXy3XjmfrcSqH2AcuEDDInOk6zmIsIh4WYsBsxmqCGhwegRPT25spGL
-         km+8vsWqvzOqWhMoXJ6lZVvAsCeI3Hz8hJZgVuijOFl/V6ROxsZT3T2YczzEHw6ubmsU
-         5XFzGpZURF6QmEqEPbbOoXfoAT2Nyo9SqlhPi889bdsv9rYgIPH+2Sl7twK76DGrnBMt
-         tkZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHkhleVznoEDUZaYHOqd4wEfcAZrMtR/nmRCnHGdCfI7pBvYBneGZpGxVAHsh2jq5tmI6JH8O4Xjt3K6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNv1F3ia9zI+NNU0S/+GsQt7u77h63F71Ut82Mw8wu//ys2Ld/
-	VdfgtCp3rfEpAPR2o0lvif3F92OIlIEFUgkzMNrsYBpjIg1tHjIz4DCydih9bxmvFW5hFdO04nR
-	8zcTQRgdkRDo4MKkc32FBaPALyqbqvxxrlVGB/fZkypjQtadVBAuUiBoEQAIJT7M=
-X-Gm-Gg: ASbGnctQFrCWkTWGEn/5vhdeTFdC43XaGKWZ6WO2P4At0Tpg016pq+rWz4VNIAQHXal
-	DmZWZx+fQzEaKRaMAyC4ou4qSgdaJJPlgIL1fkeO8jNnKau8ps1lJWFaruH3NuMOHmAueZhv3GR
-	5DUmZlCXwUi30XHPMRFGR3i80xd9BrdNvFJYxg+F/xKhUCdrKdCd5FUer/FblRM8XCuxRzK54yZ
-	ORKCCablzhu2ej+euZSiBCSMFvXqsOHRwpBv7CTwtHAgzyS+khSBcoIB3SglQOO7SeYU4XDHfWw
-	k82KOqEWL010HpvBxAOMheltyq2X94cG7ru67bWotmNPkP2SPnXT1uSRfNV/5iSpGS0UHroWhyG
-	3T6Y=
-X-Received: by 2002:a05:620a:1995:b0:7c5:3b8d:9f34 with SMTP id af79cd13be357-7c5ba190732mr2254546685a.34.1742999739219;
-        Wed, 26 Mar 2025 07:35:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEs46zlTmPxSPGBWjaeuOLf0lsuPSVQruFQsyK0XBUrWy53Jjrx2JCfX0d2UmjavDBdWj800A==
-X-Received: by 2002:a05:620a:1995:b0:7c5:3b8d:9f34 with SMTP id af79cd13be357-7c5ba190732mr2254541885a.34.1742999738705;
-        Wed, 26 Mar 2025 07:35:38 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7fea69sm21494631fa.59.2025.03.26.07.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:35:37 -0700 (PDT)
-Date: Wed, 26 Mar 2025 16:35:36 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Prashanth K <prashanth.k@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] Add snps,dis_u3_susphy_quirk for some QC targets
-Message-ID: <vy62ivsp7ibgotyczg7tzmxtirwwhx7kwhkatsltsprtsoqinb@5ctysskl76rj>
-References: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
- <ee0848ea-7a06-4f4e-9115-5e3c0ab8bf95@oss.qualcomm.com>
- <7029a455-47be-475d-b429-98031d227653@oss.qualcomm.com>
- <gyeppjlzfpmazj5seohhab75mbhv5kyzdbxh7iqddd33dnah3n@w2tpd5gme2rq>
- <9a4c51a3-ebae-486c-b8ea-44035ae5e616@oss.qualcomm.com>
+	s=arc-20240116; t=1742999755; c=relaxed/simple;
+	bh=qZADYuv1O0VMmv2xs3qYIXuBVFL1d4WAbkxhCqQ6Bwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DA+yU5BzfeB+YMTRTn7XyueHlbekdUS0Dwp8UGUjN4LuSC8Bv7W5WHvpUkSnUYAbiFbCPE0fibYt8GP9YOWLvx8jm5887DE1gm2vtvJS4XILQzJ7k6l+qM/lWa0QHWPiuwSOv+3i/XJVEyk22lqkmTAOyHYz/f1JPmNMbw6bSoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bw8L71c5; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EF4A24440F;
+	Wed, 26 Mar 2025 14:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742999750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQRovkh+/s+2V3L1Jz4o46KSoqh+7aTtBz4CLyvMG+k=;
+	b=bw8L71c5N71riQY/nJmC/FN+V1CHLHLWuRY4mcv4aWmvThJJBw2g5nJVoLn3QrMP8dLpjH
+	O1u+SGyX/13N2hYj/XGj/sVEliDjh0kbf47xwnpbglCRhkUSLCY4WdrpoZV4vM6iet+CKh
+	eyEQJJB+TQMG9olSA7FfZ1rQVZdxYxtVbLjNYQpBIktV7kBYUDEGJncgWZwsq9Re00FM1i
+	tM69hG6JFdue7rqrINrN3ACT+xvPV/t8nnzX0/O+VUb3yaZlUjnI4kkKyYej231PhzI3hm
+	xy8qb4/mriNJfmzO9OLbwA0RtL3BKJXKZXSmfvSHVYnoSq93jnWJyi206zdR0g==
+Date: Wed, 26 Mar 2025 15:35:45 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Kyle Swenson <kyle.swenson@est.tech>, Andrew Lunn <andrew@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, Dent Project
+ <dentproject@linuxfoundation.org>, "kernel@pengutronix.de"
+ <kernel@pengutronix.de>, Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v6 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <20250326153545.6f1b16ab@kmaincent-XPS-13-7390>
+In-Reply-To: <Z-PQbyKj1CBdqIQh@pengutronix.de>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+	<20250304-feature_poe_port_prio-v6-6-3dc0c5ebaf32@bootlin.com>
+	<Z9gYTRgH-b1fXJRQ@pengutronix.de>
+	<20250320173535.75e6419e@kmaincent-XPS-13-7390>
+	<20250324173907.3afa58d2@kmaincent-XPS-13-7390>
+	<Z-GXROTptwg3jh4J@p620>
+	<Z-JAWfL5U-hq79LZ@pengutronix.de>
+	<20250325162534.313bc066@kmaincent-XPS-13-7390>
+	<Z-MUzZ0v_ZjT1i1J@p620>
+	<Z-PQbyKj1CBdqIQh@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a4c51a3-ebae-486c-b8ea-44035ae5e616@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: eZCCHgfKeGywUVnMJAIV7MoOrR9p2n4l
-X-Proofpoint-GUID: eZCCHgfKeGywUVnMJAIV7MoOrR9p2n4l
-X-Authority-Analysis: v=2.4 cv=IMMCChvG c=1 sm=1 tr=0 ts=67e410bd cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=-bij7ddDyyIky5GfeWYA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 mlxscore=0 clxscore=1015 phishscore=0
- priorityscore=1501 mlxlogscore=709 adultscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260089
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmeekfeegrgemsggvvddvmegrtdgvugemkeguvdgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemkeefgegrmegsvgdvvdemrgdtvggumeekugdvrgdphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkhihlvgdrshifvghnshhonhesvghsthdrthgvtghhpdhrtghpt
+ hhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, Mar 26, 2025 at 10:52:46AM +0530, Krishna Kurapati wrote:
-> 
-> 
-> On 3/26/2025 5:51 AM, Dmitry Baryshkov wrote:
-> > On Tue, Mar 25, 2025 at 08:31:55PM +0530, Prashanth K wrote:
-> > > 
-> > > 
-> > > On 25-03-25 08:11 pm, Konrad Dybcio wrote:
-> > > > On 3/25/25 1:30 PM, Prashanth K wrote:
-> > > > > During device mode initialization on certain QC targets, before the
-> > > > > runstop bit is set, sometimes it's observed that the GEVNTADR{LO/HI}
-> > > > > register write fails. As a result, GEVTADDR registers are still 0x0.
-> > > > > Upon setting runstop bit, DWC3 controller attempts to write the new
-> > > > > events to address 0x0, causing an SMMU fault and system crash. More
-> > > > > info about the crash at [1].
-> > > > > 
-> > > > > This was initially observed on SM8450 and later reported on few
-> > > > > other targets as well. As suggested by Qualcomm HW team, clearing
-> > > > > the GUSB3PIPECTL.SUSPHY bit resolves the issue by preventing register
-> > > > > write failures. Address this by setting the snps,dis_u3_susphy_quirk
-> > > > > to keep the GUSB3PIPECTL.SUSPHY bit cleared. This change was tested
-> > > > > on multiple targets (SM8350, SM8450 QCS615 etc.) for over an year
-> > > > > and hasn't exhibited any side effects.
-> > > > > 
-> > > > > [1]: https://lore.kernel.org/all/fa94cbc9-e637-ba9b-8ec8-67c6955eca98@quicinc.com/
-> > > > > 
-> > > > > Prashanth K (3):
-> > > > >    arm64: dts: qcom: sm8150: Add snps,dis_u3_susphy_quirk
-> > > > >    arm64: dts: qcom: sm8350: Add snps,dis_u3_susphy_quirk
-> > > > >    arm64: dts: qcom: sm8450: Add snps,dis_u3_susphy_quirk
-> > 
-> > It is hard to belive that this quirk is to be set for SM8150, SM8350,
-> > SM8450, but not SM8250.
-> > 
-> 
-> At the moment we wanted to add this quirk for targets where issue has shown
-> up either internal to QC or at customer's end. But the issue didn't come up
-> on SM8250/ SM8550/ SM8650 so far either from customer end or ours. Would
-> like to update for other targets on need basis.
+On Wed, 26 Mar 2025 11:01:19 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-I'm not questioning SM8[56]50, but not seeing SM8250 here is really
-doubtful.
+> Hi folks,
+>=20
+> On Tue, Mar 25, 2025 at 08:40:54PM +0000, Kyle Swenson wrote:
+> > Hello Kory,
+> >=20
+> > On Tue, Mar 25, 2025 at 04:25:34PM +0100, Kory Maincent wrote: =20
+> > > On Tue, 25 Mar 2025 06:34:17 +0100
+> > > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> > >  =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+> > >=20
+> > > Ack I will go for it then, thank you!
+> > >=20
+> > > Other question to both of you:
+> > > If we configure manually the current limit for a port. Then we plug a
+> > > Powered Device and we detect (during the classification) a smaller
+> > > current limit supported. Should we change the current limit to the one
+> > > detected. On that case we should not let the user set a power limit
+> > > greater than the one detected after the PD has been plugged. =20
+> >=20
+> > I don't know that we want to prevent the user from setting a higher
+> > current than a device's classification current because that would
+> > prevent the PD and PSE negotiating a higher current via LLDP.
+> >=20
+> > That said, I'm struggling to think of a use-case where the user would be
+> > setting a current limit before a PD is connected, so maybe we can reset
+> > the current limit when the PD is classified to the classification
+> > result, but also allow it to be adjusted after a PD is powered for the
+> > LLDP negotiation case.
+> >=20
+> > In our implementation, don't really let the user specify something like,
+> > "Only class 3 and lower devices on this port" because we've not seen
+> > customers need this.  We have, however, implemented the LLDP negotiation
+> > support after several requests from customers, but this only makes sense
+> > when a PD is powered at it's initial classification result.  The PD can
+> > then request more power (via LLDP) and then we adjust the current limit
+> > assuming the system has budget available for the request.
+> >  =20
+> > >=20
+> > > What do you think? Could we let a user burn a PD? =20
+> >=20
+> > This seems like a very rare case, and if the PD is designed such that
+> > it's reliant on the PSE's current limiting ability then seems like it's
+> > just an accident waiting to happen with any PSE.
+> >=20
+> > Very rarely have we seen a device actually pull more current than it's
+> > classification result allows (except for LLDP negotiation). What's more
+> > likely is a dual-channel 802.3bt device is incorrectly classified as a
+> > single-channel 802.3at device; the device pulls more current than
+> > allocated and gets shut off promptly, but no magic smoke escaped.   =20
+>=20
+> Here=E2=80=99s my understanding of the use cases described so far, and a =
+proposal for
+> how we could handle them in the kernel to avoid conflicts between differe=
+nt
+> actors.
+>=20
+> We have multiple components that may affect power delivery:
+> - The kernel, which reacts to detection and classification
+> - The admin, who might want to override or restrict power for policy or
+> safety reasons
+> - The LLDP daemon, which may request more power dynamically based on what=
+ the
+> PD asks for
+>=20
+> To avoid races and make things more predictable, I think it's best if each
+> actor has its own dedicated input.
+>=20
+> ## Use Cases
+>=20
+> ### Use Case 1: Classification-based power (default behavior) =20
+> - Kernel detects PD and performs classification
+> - Power is applied according to classification and hardware limits
+> - No override used
+>=20
+> Steps:
+> 1. Detection runs
+> 2. Classification result obtained (e.g. Class 2 =E2=86=92 7W)
+> 3. Kernel computes:
+>=20
+>    effective_limit =3D min(
+>        classification_result,
+>        controller_capability,
+>        board_limit,
+>        dynamic_budget
+>    )
+>=20
+> 4. Power applied up to `effective_limit`
+>=20
+> ### Use Case 2: Admin-configured upper bound (non-override) =20
+> - Admin sets a policy limit that restricts all power delivery
+> - Does not override classification, only bounds it
+>=20
+> Steps:
+> 1. Admin sets `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT =3D 15000`
+> 2. Detection + classification run normally
+> 3. Kernel computes:
+>=20
+>    effective_limit =3D min(
+>        classification_result,
+>        AVAIL_PWR_LIMIT,
+>        controller_capability,
+>        board_limit,
+>        dynamic_budget
+>    )
+>=20
+> 4. Classification is respected, but never exceeds admin limit
+>=20
+> This value is always included in power computation =E2=80=94 even if clas=
+sification
+> or LLDP overrides are active.
+>=20
+> ### Use Case 3: Persistent classification override (admin) =20
+> - Admin sets a persistent limit that overrides classification
+> - Power is always based on this override
+>=20
+> Steps:
+> 1. Admin sets `CLASS_OVERRIDE_PERSISTENT =3D 25000` (mW)
+> 2. Detection/classification may run, but classification result is ignored
+> 3. Kernel computes:
+>=20
+>    effective_limit =3D min(
+>        CLASS_OVERRIDE_PERSISTENT,
+>        AVAIL_PWR_LIMIT,
+>        controller_capability,
+>        board_limit,
+>        dynamic_budget
+>    )
+>=20
+> 4. Power applied accordingly
+> 5. Override persists until cleared
+>=20
+> ### Use Case 4: Temporary classification override (LLDP) =20
+> - LLDP daemon overrides classification for current PD session only
+> - Cleared automatically on PD disconnect
+>=20
+> Steps:
+> 1. PD connects, detection + classification runs (e.g. 7W)
+> 2. LLDP daemon receives PD request for 25000 mW
+> 3. LLDP daemon sets `CLASS_OVERRIDE_TEMPORARY =3D 25000`
+> 4. Kernel computes:
+>=20
+>    effective_limit =3D min(
+>        CLASS_OVERRIDE_TEMPORARY,
+>        AVAIL_PWR_LIMIT,
+>        controller_capability,
+>        board_limit,
+>        dynamic_budget
+>    )
+>=20
+> 5. Power is increased for this session
+> 6. On PD disconnect, override is cleared automatically
+>=20
+> ---
+>=20
+> ### Use Case 5: Ignore detection and classification (force-on) =20
+> - Admin forces the port on, ignoring detection
+> - Useful for passive/non-802.3 devices or bring-up
+>=20
+> Steps:
+> 1. Admin sets:
+>    - `DETECTION_IGNORE =3D true`
+>    - `CLASS_OVERRIDE_PERSISTENT =3D 5000`
+> 2. Kernel skips detection and classification
+> 3. Kernel computes:
+>=20
+>    effective_limit =3D min(
+>        CLASS_OVERRIDE_PERSISTENT,
+>        AVAIL_PWR_LIMIT,
+>        controller_capability,
+>        board_limit,
+>        dynamic_budget
+>    )
+>=20
+> 4. Power is applied immediately
+>=20
+> ## Proposed kernel UAPI
+>=20
+> ### SET attributes (configuration input)
+>=20
+> | Attribute                                 | Type     | Lifetime
+>  | Owner           | Description |
+> |-------------------------------------------|----------|-----------------=
+-------|------------------|-------------|
+> | `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT` | u32 (mW) | Until cleared
+>   | Admin            | Persistent classification override | |
+> `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`  | u32 (mW) | Cleared on detecti=
+on
+> failure / PD replug | LLDP daemon / test tool | Temporary override of
+> classification | | `ETHTOOL_A_PSE_DETECTION_IGNORE`          | bool     |
+> Until cleared          | Admin            | Ignore detection phase | |
+> `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT`       | u32 (mW) | Until changed
+> | Admin            | Static admin-defined max power cap (non-override) |
+>=20
+> ### GET attributes (status and diagnostics)
+>=20
+> | Attribute                                  | Type     | Description |
+> |--------------------------------------------|----------|-------------|
+> | `ETHTOOL_A_PSE_EFFECTIVE_PWR_LIMIT`        | u32 (mW) | Final power lim=
+it
+> applied by kernel | | `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT`  | u32 (m=
+W) |
+> Current persistent override (if set) | |
+> `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`   | u32 (mW) | Current temporary
+> override (if active) | | `ETHTOOL_A_PSE_DETECTION_IGNORE`           | bool
+>  | Current detection ignore state |
+>=20
+> ### Power Limit Priority
+>=20
+> Since we now have multiple sources that can influence how much power is
+> delivered to a PD, we need to define a clear and deterministic priority
+> order for all these values. This avoids confusion and ensures that the ke=
+rnel
+> behaves consistently, even when different actors (e.g. admin, LLDP daemon,
+> hardware limits) are active at the same time.
+>=20
+> Below is the proposed priority list =E2=80=94 values higher in the list t=
+ake
+> precedence over those below:
+>=20
+> | Priority | Source / Field                          | Description |
+> |----------|------------------------------------------|-------------|
+> | 1        | Hardware/board-specific limit         | Maximum allowed by
+> controller or board design (e.g. via device tree or driver constraints) |=
+ | 2
+>        | Dynamic power budget                  | Current system-level or
+> PSE-level power availability (shared with other ports) | | 3        |
+> `ETHTOOL_A_C33_PSE_AVAIL_PWR_LIMIT`       | Admin-configured upper bound =
+=E2=80=94
+> applies even when classification or override is used | | 4        |
+> `ETHTOOL_A_PSE_CLASS_OVERRIDE_TEMPORARY`  | Temporary override, e.g. set =
+by
+> LLDP daemon, cleared on PD disconnect or detection loss | | 5        |
+> `ETHTOOL_A_PSE_CLASS_OVERRIDE_PERSISTENT` | Admin override that persists
+> until cleared | | 6        | `ETHTOOL_A_PSE_CLASSIFICATION_RESULT`     |
+> Result of PD classification, used when no override is present |
+>=20
+> The effective power limit used by the kernel will always be the minimum o=
+f the
+> values above.
+>=20
+> This way, even if the LLDP daemon requests more power, or classification
+> result is high, power delivery will still be constrained by admin policie=
+s,
+> hardware limits, and current budget.
 
--- 
-With best wishes
-Dmitry
+Kyle thanks for your PoE user side answer!
+Oleksij, thanks, as usual you have done an intense brainstorm! ^^
+These two replies could be helpful in the future.
+
+I asked this because I found out that the over current event of the TPS23881
+was resetting the power limit register of the port. I think I will simply
+fix it by reconfiguring the power limit if this event happens.
+So it won't change the current behavior where the user setting of power lim=
+it
+prevail over the power limit detected during classification.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
