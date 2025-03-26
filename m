@@ -1,107 +1,146 @@
-Return-Path: <linux-kernel+bounces-577446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020D1A71D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:30:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AE8A71D29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54AEE171208
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B37189F005
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A28D21930A;
-	Wed, 26 Mar 2025 17:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60BE21A42F;
+	Wed, 26 Mar 2025 17:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mtroyal.ca header.i=@mtroyal.ca header.b="cn5I5NX/"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="anrzRB+N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4175219301
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC7F21ABB0;
+	Wed, 26 Mar 2025 17:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010120; cv=none; b=HwA1BlsRwT7/Y46grMHNVU/InZ9QWrfeJ1xqt+Koa7mXQ1FvDCKxhfmCbahBDYywbtB4fMvXpk+tnWrcm3eJMrMdaHFggNkXV09YnwEAyeT0v6WYVCWv3m9f7JnqIWGwziBJN8uYQchqkRiqKGCo/poL0OERrob0R9VE7do8/8w=
+	t=1743010232; cv=none; b=oApiuawjsvDFQvN3zI89/bEgyPTWj9AS1jLF5typN8b07weaLpBv6OoxlaXOuPoQWPAq4dQfkuDgZanU1dWpmqDBlfYZd2j6AGiLeqU/trg+6bWKgoNAQU7IFk0NtCYSQf0wEIp47e/5VrD3azAUrGgu37RSUII4qPVekoshK6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010120; c=relaxed/simple;
-	bh=oKt+TJWqyStRMCKk1W9jz+VuWUxxZ79pbpj1FVu5hKo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VYDXV0/HDRJp6NXmxr0D4Al4EukrEgc1GkhuSfvvsljIue28Ng4fF1MW0G26OhfAQWq+ZC8Cd9HKcZ9WBOeMzQOGfg//PdktRZAiN6rrS/0xZBiaesGpzS/5/gtQDTL64QSOLcejhcTdMI0Xt5bZEGhWII4PP5eUXQzPfZIDhvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mtroyal.ca; spf=pass smtp.mailfrom=mtroyal.ca; dkim=pass (2048-bit key) header.d=mtroyal.ca header.i=@mtroyal.ca header.b=cn5I5NX/; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mtroyal.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mtroyal.ca
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523ffbe0dbcso108969e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mtroyal.ca; s=google; t=1743010116; x=1743614916; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DnFKKB83AHK6QdBloILmeM8/LL4TGbDb871A/NdEh+g=;
-        b=cn5I5NX//IiFFUrWEuf2/VCc6jFR76VQjdyfb1ipYiXcra/f83XxloXiL+RuX5yQIK
-         Ns8edghr9PepNjcW3SFgW8mSw54PkyocTo0evyI5H35+ThpgelFbyJe/bixQRZRCZ5SA
-         K8QypVqCGd8F/NCFv/iH2SpIZaBiilJXxOSoj7bjiuLoIh43sycjv7t5fmInSJ77K3FF
-         P0NxLHqiEW2Pa62+Zdo5ZCT89X8TaV67vH5GxcmhIN/NMkf8NNcWHGUDCWlFK1aDO6HQ
-         V8WvKIsnqWkEzStubpLVG7lWH8N8FV2U0D10BsKVGHd16BUykMSHRCPL766lr22/obup
-         1mrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743010116; x=1743614916;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DnFKKB83AHK6QdBloILmeM8/LL4TGbDb871A/NdEh+g=;
-        b=vSxv6OgQB2ft5WHkLr0sf8CSlghPH9AoUv2Wd5kKWSloYRchkN/wGe5HDvLC0YvubK
-         PGjVBffAz+3HWNiS5z/HXBJ/siLSxMyzU4ezbODSO9keN3pFJduAUeR5WeroWL3/TQiQ
-         yObwQSx+v7YOWXQqN+10ZWnYgfx4qF1I7JFt6MznriVHSTgHvOhg0wALXPAPhhaq2v87
-         Do38p0Sn75KZx5OKQ1FhkFQKjlcwBHNMNgB0cxMKYYIkJma7DUgZN8tOlj8BruN+Jdds
-         Dz43Zx7qusdaLGhcA4B7SYVQR/UU8Q+Vy/m/uLRq5hyrxM57Pq6xWN7kzKd6gQrSGr/t
-         /LVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0kNtokeBmAoImerLR+K4hyZRWvZ9ahteZCqLJ+sIW/h2Ed4WipJZ1j0Dmw7Bsab8oN6DTei7Lhw/8SNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5YbwwRBYvL1i2MkLGqfqG8aHiSohEl8K9+/pK4T+QaTk6U52Q
-	AM+NKY4mS4D3Yjsf4UTrjfS8o7dERd7y+vPBGEFBhp1/inABwOhSKne2l+glWwB8IVyVlX1yQ2o
-	HeXxIesfevhoYeDJzk4CU53p49RueiJaUZRMv
-X-Gm-Gg: ASbGncvFtqkpZ4IiLtdJWLGryD2nhAgNU1s38wAeMcFp94SlbjO55OgRytxGRa0Plq/
-	AyXF88UwsCnmyl+bkqW8U0GiSy4OOKqs/Hzf3EQHL8RjPG3OMVodfWB7z3r81z5jw6mBpyjo1nL
-	4rjZqNGogU2x3CkUsZRpPO/qsVIMCwVb6zukxzp52VH7oX5GDsUAWmUsPwhro=
-X-Google-Smtp-Source: AGHT+IHTEVES3E7yvKEH6kXCoK7OqzN2cJjE/BYKxwOODulv2btgTc48eKqaBdFhGyOwAyJGFKhRUpfyqRfJUgkDklU=
-X-Received: by 2002:a05:6122:8d3:b0:523:f1f9:d03f with SMTP id
- 71dfb90a1353d-526008d0d5fmr581007e0c.1.1743010116288; Wed, 26 Mar 2025
- 10:28:36 -0700 (PDT)
+	s=arc-20240116; t=1743010232; c=relaxed/simple;
+	bh=Mbm+u3QizKBZ40iFAnVyDC65anxDLftBvvbQxnugJVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTg1497BD5AOsscgDFjd2rlQqlx8LIWZiE28t+cUyG3/FSbw2W0bQDfj4au9kit0U0GChVu5CgQ8c391pzxdKF55IwqLfS5eggvyNO8SZCPYBa87jae0WaszK3jofiHMHivJFrtKHrVXkZwmOAHVx9t39V6OUecw7k8my+2g5pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=anrzRB+N; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743010230; x=1774546230;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Mbm+u3QizKBZ40iFAnVyDC65anxDLftBvvbQxnugJVg=;
+  b=anrzRB+NzplXdyf3d+urjVKOW8EYfM/C4KB/NbbmoW8CZB35Jy4v4VdJ
+   DeN/44682jN7SCIUinrxj4OBxv4ZH2XcUZCWwlsI7uIPuRf0P/Eeg248c
+   QO4OlGxdp9e/d+MTS3IgYVHPM3W6qQawj5kPIa2duGqBNFzgNWm2XNSS1
+   iGaPUIA3Dt8bA12s7/CDh4H0vad30xphrMj7qeGLnIEfcwaiaYUpLzpJ8
+   TnhmIysd2NW0lWFfLiUeG3NWqnNuovZnpoC3r18Rs2Hz8wSIw+4UVlI6H
+   HC12qlc7qvOLH79dGQLqIEudKheyRPOYCJxrnZzQTP/WsnjxL+Ra6oLC0
+   A==;
+X-CSE-ConnectionGUID: z8KFgJiyR7OkLBmGvIXIUQ==
+X-CSE-MsgGUID: dxN1p4cRRIOlYfUpVbuxvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="54963834"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="54963834"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 10:29:54 -0700
+X-CSE-ConnectionGUID: UIK73DulR02oLJP0y32Jng==
+X-CSE-MsgGUID: /KhZetHOQU2AmYDSKiRyeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="125304370"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Mar 2025 10:29:52 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txUZY-0005wX-1i;
+	Wed, 26 Mar 2025 17:29:48 +0000
+Date: Thu, 27 Mar 2025 01:29:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Asahi Lina <lina@asahilina.net>
+Cc: oe-kbuild-all@lists.linux.dev, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: Re: [PATCH v9 2/5] rust: Rename AlwaysRefCounted to RefCounted
+Message-ID: <202503270014.4G907YMY-lkp@intel.com>
+References: <20250325-unique-ref-v9-2-e91618c1de26@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Matthew Hrehirchuk <mhreh594@mtroyal.ca>
-Date: Wed, 26 Mar 2025 11:28:25 -0600
-X-Gm-Features: AQ5f1JqrPHaHofLZCfX9KpSinbKHknbHEky92oCIwp1iHqZDQ-IW1rGaj7YxIq8
-Message-ID: <CAF3zC4z36GuA+vZte8TwLSfPEe9tZUUbT+=GRAFtZvt2g_Jsnw@mail.gmail.com>
-Subject: [PATCH] added support for PRIME B650M-A AX6 II motherboard network card
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: marcel@holtmann.org, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325-unique-ref-v9-2-e91618c1de26@pm.me>
 
-From 2bd405f7ce07d6891bff195c58c5b1a0c823a0ff Mon Sep 17 00:00:00 2001
-From: Matthew Hrehirchuk <mhreh594@mtroyal.ca>
-Date: Wed, 26 Mar 2025 10:17:16 -0600
-Subject: [PATCH] added support for PRIME B650M-A AX6 II motherboard network
- card
+Hi Oliver,
 
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a0fc465458b2..44b9965541f3 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -536,6 +536,8 @@ static const struct usb_device_id quirks_table[] = {
-                              BTUSB_WIDEBAND_SPEECH },
-     { USB_DEVICE(0x13d3, 0x3591), .driver_info = BTUSB_REALTEK |
-                              BTUSB_WIDEBAND_SPEECH },
-+    { USB_DEVICE(0x0489, 0xe112), .driver_info = BTUSB_REALTEK |
-+                             BTUSB_WIDEBAND_SPEECH },
-     { USB_DEVICE(0x0489, 0xe123), .driver_info = BTUSB_REALTEK |
-                              BTUSB_WIDEBAND_SPEECH },
-     { USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
+[auto build test ERROR on 4701f33a10702d5fc577c32434eb62adde0a1ae1]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oliver-Mangold/rust-types-Add-Ownable-Owned-types/20250325-200247
+base:   4701f33a10702d5fc577c32434eb62adde0a1ae1
+patch link:    https://lore.kernel.org/r/20250325-unique-ref-v9-2-e91618c1de26%40pm.me
+patch subject: [PATCH v9 2/5] rust: Rename AlwaysRefCounted to RefCounted
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250327/202503270014.4G907YMY-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250327/202503270014.4G907YMY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503270014.4G907YMY-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS= -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
+   make: Entering directory '/kbuild/src/consumer'
+   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+>> Diff in rust/kernel/pid_namespace.rs at line 9:
+    
+    use crate::{
+        bindings,
+   -    types::{AlwaysRefCounted, RefCounted, Opaque},
+   +    types::{AlwaysRefCounted, Opaque, RefCounted},
+    };
+    use core::ptr;
+    
+>> Diff in rust/kernel/pid_namespace.rs at line 9:
+    
+    use crate::{
+        bindings,
+   -    types::{AlwaysRefCounted, RefCounted, Opaque},
+   +    types::{AlwaysRefCounted, Opaque, RefCounted},
+    };
+    use core::ptr;
+    
+   make[2]: *** [Makefile:1816: rustfmt] Error 123
+   make[2]: Target 'rustfmtcheck' not remade because of errors.
+   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+   make: *** [Makefile:251: __sub-make] Error 2
+   make: Target 'rustfmtcheck' not remade because of errors.
+   make[1]: *** [Makefile:251: __sub-make] Error 2
+   make: Leaving directory '/kbuild/src/consumer'
+   make[1]: Target 'rustfmtcheck' not remade because of errors.
+
 -- 
-2.48.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
