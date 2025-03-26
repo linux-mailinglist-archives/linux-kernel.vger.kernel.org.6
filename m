@@ -1,150 +1,591 @@
-Return-Path: <linux-kernel+bounces-577141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F92CA718F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71335A71940
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36DB0177530
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8764B17A4A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDD31F7902;
-	Wed, 26 Mar 2025 14:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83621DDC2C;
+	Wed, 26 Mar 2025 14:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJ8yihbh"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Tnx1TjYk";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Tnx1TjYk"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012046.outbound.protection.outlook.com [52.101.71.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEE31F543F;
-	Wed, 26 Mar 2025 14:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000009; cv=none; b=S4Kmj2c7Rh3x3GxsA2THA9zRDqyanOL8GInj+bvXCxX6D0BO9Lp5B7UNJiKJ104meWsR0pXVyGhZcnGTspleLDkNWqjdA5UamRM51fj+Yea215gFcp0OUgGV3Ld7dBDEnQmWl+q1L4QxrnvS2FKhEU0apIB92Yj3QqRaeguHyxM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000009; c=relaxed/simple;
-	bh=Im/ujHBZDbDagi4RGHUSi6sQR6/F1nq9HzO7V8ZfdGk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rjaWl6+wOMhqK756IoBts7AC9Xm1cqK1ocNigI3NPgh3OwMVUY4gvULnd+wnbLyhk3Rqj7nDZhJfOEU/zopjJ25rCy89iAgLUMsP3ZgM6qQM2l/S11O8Eg1Cooc/hyucutf/VIgj7Ux1ppoGOHCB8qBpUrSzBW0RcDQzaSUqSVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJ8yihbh; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30c2d427194so71125921fa.0;
-        Wed, 26 Mar 2025 07:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743000005; x=1743604805; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EuDjXKidQBl0tqYxtEZ2ruC/3IuVI6jN86tCBBzL/s=;
-        b=YJ8yihbhK17QH+DR3Xx0l8wqv0so3t9d1+1YDtX6RX6l/GYNq0CmvoVWNoC0TMA5nZ
-         h4+gBH8J0IoUiE6gTlkf41ZXH3TTTTjnyGloiqKXoeNbErtS22l2hsiO60eHZBjg2GEA
-         jQ9SUGBc6BEMei79oRpz0vHQtZUKXl8kgBTuc2wgTOpkBviiTMfuTktOAJj8TZNYsnxr
-         Z7m4txpKe4/7s3ckh820ugLjwU8ftfqP8RVhyXx8dJ5/IauDAMqULoIxBQkftEFeLKcg
-         PYQimfGkaJQRv1ytnx7Xv3U4lG8uBuXoe33BKrK5YehupZhoHg9Iyvzl6DUjAQlHs+yl
-         5VPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000005; x=1743604805;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6EuDjXKidQBl0tqYxtEZ2ruC/3IuVI6jN86tCBBzL/s=;
-        b=kIrpqW0RGxV7GonQpQPjjiKfpmqi3VKB4+INPRwniCcRwWy0OzwybUD4NiQpCaW21/
-         nbYtGGCZifXkqDbsAipLJ3zKlq9xI2nQ59UdTV+IFl7PUc+TgSk3298cX4YMf3IeYuF1
-         fVVLdYunOZsQBg2EUXKkmHuiaNDSMV42u5rpdmjMUlRx+wAl8nDwpHa279n+9ZEbKlBS
-         hub3ppYKO0pP4U1RT7UEhAsOvxPDWSqJxMkVwhuY8DOw6czmIHB/Q98WQH7vgk2SUeim
-         NZotbFC1tcg8wVmBn3jtOykHO5iWX40AKIFsj+6AdeXcUlORgLYrWB5zabQDObUrsI24
-         JQ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCvd57792gg5Hau+GNjgdT23atzFFPd3rjUn7e/Hzrm8CtV3T2AdvYonAJlmj5pSX0XoQm42vCIsVzcx3l@vger.kernel.org, AJvYcCVaA62SZPYRDU3i17fwlGvffBmSBAo9j7Q2VYf+lfkTA1wAwbm2KJ9yWSV/M8M67li3s7L1QgwdpUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytUDSnVKplRJPtQGikUgatP/T2Fri34VzzJeTbrstpvtBNSsnG
-	IAj+ndK9ZLIvmObyYtFyZ2FPp463eX281IZAD6G+ZnQTQesVmNlQ8MnRtmxjdHs=
-X-Gm-Gg: ASbGncu8f8wj3CilacpxdyydeT58+bEEQPMNarkmfBFR7buxOzT5+ZwuCMBhlNHiPpw
-	8KkBoQkU5J9rl+6RZYwv5b+Lm9mcvy1j82SMeUBA0Odqk6iD7ZSKT8RoquIn9kvFSN0hY/rCO9V
-	z6F+tpxCu48ukFUCJIrki6K/QAYSy2A9lHstXNWBySFO850lUeZQ72P6KN+lp3smnia3/B/POut
-	Lt8HT139znwrtr9K8BG3tX1WN8njMbn7UiNJ4bA1Ih8vpUDb4wPabqS1YbIOhV8e3Vm+8M6JYsy
-	MLknN4o15Y6twlTh9V8tapf2rjWYElLw6Nx0KCmZMjnqM07EM+vgDq3wTrCPktJJ9SunDPMd9gs
-	zUuUAdXmwM23O/27ngcWgG/o=
-X-Google-Smtp-Source: AGHT+IGGn5bSE4gjHMGAHWfQJJacrQvAex99kJygteLoNoccgFY1I0pKwaSx1wgBttcnB2NtTW5XBQ==
-X-Received: by 2002:a05:651c:c9:b0:30b:ef98:4653 with SMTP id 38308e7fff4ca-30dc5f50f0fmr19151fa.36.1743000004960;
-        Wed, 26 Mar 2025 07:40:04 -0700 (PDT)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7e05f8sm21595771fa.32.2025.03.26.07.40.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:40:04 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Wed, 26 Mar 2025 15:39:47 +0100
-Subject: [PATCH] i2c: davinci: add I2C_FUNC_PROTOCOL_MANGLING to feature
- list
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69D41F3FF5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.46
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743000032; cv=fail; b=IHWG0AsFVkQzG5qRPIpfyHjG86R5m7Arl5/Q3lpLrFzIS86eeQDggCsrjyL2dyH6gCRkPqn93jeI6yJURS8RdgZxGQUJlyIo54rEfqwd3jwmcNqscxTVu0QcPiuG514d9+5rsTxlLerz5GsUBPsSPVkEYj+4yD0Mc+Ps+hZXPEU=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743000032; c=relaxed/simple;
+	bh=J8qnHgdsISVKrK02s1EKIPas6psDflLPME0E/owqAIw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NZDGsV1luTfE3Cnt0mvehNB28qULryBzPmAnrHorjUvFjuPInDGSghstyMSFgWzQf7ZKeKWxSsqkd9oBtHIj9Nw5hAjXsF6EpdTTQ4zZDRvE8zY+tNROJ51OW3dus8VORppVdWiofzO2RZxVFWH6qbYpxVDQ3hsuzVN8OO72Wf8=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Tnx1TjYk; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Tnx1TjYk; arc=fail smtp.client-ip=52.101.71.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=OkTfk86BTj20xRM2DgsYBucwLtL9LuFXEukAaekcpcAAw9aQbhSAe5LNiSLOd+/Cf9IK9dlNMT+xUVYTZyX/0ydUlTeQ1pFGSoA58YvR80L0QLgA0j1prFG76//cZ67N8tJtneT+6KDhXQ1Ose501Diwq3eatWVgImbXkw777gA2Cgj08Qs5zg+7Ajcek0eiyqZsMcQTBq7AB7fUGzTnDkObE9iFlDVMW11lrCK/c2IsQW1eWvXbfVhQFOwqVzx9Kmo4K2QRnMMruPL07mrPDr21T+wUjHpu4RXF9/vjuR3t3MnDCERYAsnm33md7eYLKua92tzYCsoxocbqLOS1jQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dCnfLBMWq6eO8uggeBktLlL4EcgYcIJ8a0cGTTul6Mo=;
+ b=EBN/Lz42ibv/E9nbt3YpQ302oDTv0gYXNJl4NsGaBe5kbrqQszYAjeXGjdEUyUuDntJ4+G5+YO6zwqIJspyJH330m9DxJMK63cezRQt+PCDcu+vjVpl41ExdBtaZCsOWWtyGrd/lugSdyu+/LR2dzGOnKonI7qtIvgC19+5b12JnM0T8iThweowI9QDVSzacllvZ753KHwUuVBY7sonFcpTbwRB/KMQs7+948pylh0N/Vt5YttJ1RUBEZ4DGFDoDtjfvVw7yUCrTe9XoEtwNKbte3dNsxo/j5kewvNtOqbaiXqzASsyGWZd6CzGz3BGFIOlJGwlt5VEB6gUM6WYbrg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dCnfLBMWq6eO8uggeBktLlL4EcgYcIJ8a0cGTTul6Mo=;
+ b=Tnx1TjYkX/kmFqEvQQi/PC1CEDTyrEsSDmKCxPGi8yvXKPt9OIJQLLZOLGRV66+bQs0hFS6Q9abtGsMRHMYX7B3NVrlubCEIsGTzSCbZaAXXOElpROICVLDv6LaJncVRYzSOmax81pxU2WPoazI76KtvwFxs6wtg0pbqIyjEsMs=
+Received: from PAZP264CA0151.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1f9::15)
+ by AS8PR08MB6101.eurprd08.prod.outlook.com (2603:10a6:20b:29a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 14:40:24 +0000
+Received: from AMS0EPF00000197.eurprd05.prod.outlook.com
+ (2603:10a6:102:1f9:cafe::12) by PAZP264CA0151.outlook.office365.com
+ (2603:10a6:102:1f9::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Wed,
+ 26 Mar 2025 14:40:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AMS0EPF00000197.mail.protection.outlook.com (10.167.16.219) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
+ via Frontend Transport; Wed, 26 Mar 2025 14:40:23 +0000
+Received: ("Tessian outbound d933a9851b56:v604"); Wed, 26 Mar 2025 14:40:22 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 6e16856b378e1705
+X-TessianGatewayMetadata: 6UBJzW+ovfTF5ZrHHXdgP33hLrKJSFy1caljJA0omI+1V/QYaSRrsEwCrtA3PJ3NO+JVovgzNYhanrsBh17n9lcZ/fMKhdtwcfMD70rfzSgak5sygDKMnWdScv+ykNbE3TYeRQhWnmzdf0RQXicxV/81xac8/7M0i2VXHGvWem4=
+X-CR-MTA-TID: 64aa7808
+Received: from L17e3ae6a567d.1
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 197DAC9B-B2BE-4E7E-AF27-2308792B618E.1;
+	Wed, 26 Mar 2025 14:40:15 +0000
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L17e3ae6a567d.1
+    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+    Wed, 26 Mar 2025 14:40:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jQQ8GXSAxBpYYP5LCLW2Tbs5up4kQqgmeO1yduysGsG/TdcEu4F0uqC16cW2NfDmYMlDVa5aDAEgCTGKV2a6Lg2NnMSL7ekHCktqGLU9iaBx+kmrzqn2R/+yHwFvR6hmDreFyasF0NLVXCS6bvISbVX0dCN9R84ZEaH8yeD4YZ0gbxdvMPxiJs0RsWUxAsQ2nLSgWP59vk6HZ0hqQzDpxIg9qyhmYzfu2IkKofndMIr45Mw8MfcCRIf3dJhu+BjJw07ghIqEc90XYjAljSzJ1Mpfmr68E8XzuVjg4NYfHxpqTtzx8Aa+1LddU5h7wyaMFiZsnUDy4esrJSBeBvHj3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dCnfLBMWq6eO8uggeBktLlL4EcgYcIJ8a0cGTTul6Mo=;
+ b=vQl0W2h5zHU8zJVO3TQUzGeBb/SjoncwjrPrrurtW9bRmqPgUShZA5Wu27qfvuEckcemOcKyRY2PApTCasNVa/l/r8qM05dv+Q52LEqeMGZ+XaZG7Aff9qyNW//SpHVGbgjGvDV3tNpcOqwM+1CLx7ZPtgRSLQAHEFWUU+o/QltUqeZJA7OIoDHv0aFElavtBIGulCANY239u1DvpBG/s5dn85YNg4Z60P3dxgmkAvBMAp9QSO9K1KenACcpzEv8DOMC9Okdaxl0OXGntY5JZkMo0FiZYDNCLWXRAdFG12esy8WzhYWQaGWLkvfVnY7qOv4FWWN5fTMHHAWrDpx5Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dCnfLBMWq6eO8uggeBktLlL4EcgYcIJ8a0cGTTul6Mo=;
+ b=Tnx1TjYkX/kmFqEvQQi/PC1CEDTyrEsSDmKCxPGi8yvXKPt9OIJQLLZOLGRV66+bQs0hFS6Q9abtGsMRHMYX7B3NVrlubCEIsGTzSCbZaAXXOElpROICVLDv6LaJncVRYzSOmax81pxU2WPoazI76KtvwFxs6wtg0pbqIyjEsMs=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM0PR08MB3315.eurprd08.prod.outlook.com (2603:10a6:208:5c::16)
+ by DB9PR08MB6425.eurprd08.prod.outlook.com (2603:10a6:10:261::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 14:40:13 +0000
+Received: from AM0PR08MB3315.eurprd08.prod.outlook.com
+ ([fe80::42a0:1b6e:cf98:d8fc]) by AM0PR08MB3315.eurprd08.prod.outlook.com
+ ([fe80::42a0:1b6e:cf98:d8fc%6]) with mapi id 15.20.8534.042; Wed, 26 Mar 2025
+ 14:40:13 +0000
+Message-ID: <87f5e445-9485-475a-ad17-d3a2a1c963a6@arm.com>
+Date: Wed, 26 Mar 2025 14:40:12 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 4/8] drm/panthor: Add panthor perf ioctls
+Content-Language: en-GB
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Mihail Atanassov <mihail.atanassov@arm.com>, nd@arm.com
+References: <20241211165024.490748-1-lukas.zapolskas@arm.com>
+ <20241211165024.490748-5-lukas.zapolskas@arm.com>
+ <eqt4prsabmlacdbdepk47ef4nojjdlzrv3djqinfsphrfwgvp5@54d6ritzd2gu>
+From: Lukas Zapolskas <lukas.zapolskas@arm.com>
+In-Reply-To: <eqt4prsabmlacdbdepk47ef4nojjdlzrv3djqinfsphrfwgvp5@54d6ritzd2gu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0015.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ad::18) To AM0PR08MB3315.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-i2c-v1-1-82409ebe9f2b@gmail.com>
-X-B4-Tracking: v=1; b=H4sIALIR5GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYyMz3UyjZF1TUzPDpDQLU+M0ixQloMqCotS0zAqwKdGxtbUA+hD6FVU
- AAAA=
-X-Change-ID: 20250326-i2c-5561bf853f8d
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1325;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=Im/ujHBZDbDagi4RGHUSi6sQR6/F1nq9HzO7V8ZfdGk=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn5BG9NAOxehASk4e1pFtaO3cbQpTn2CrmEBGM2
- YmGZqjRpYmJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ+QRvQAKCRCIgE5vWV1S
- MpMqD/0ZBxXUzH+XujR8gYWy6eMIbJDaF2Aov8H/slrc+vlPbqozidmexoUC7AoEB4s9tdotYmx
- hF2ko8DQXK4XFcyqI37/JoB+OEb+cce00U0sHGA3jJypk4Dj5KkwL4IgAKkuObZ9YmiX0xZ3F1H
- tSOgVQNmhI88KbUNV57wDPmMr2z8KYHK+D/7pi56iCRVr4VvCS84tyBcN8gZSAi3ayYObAkgTx1
- M7gG60WyPOZmobjQPacpz+lFslnBHj5UExruDrGvPTffQQZsc3wykz5zutpLVrqlbbrV/XfybmC
- KWzxI9dFp9Zb+nTiMT+ge3qbwYbvU5Lh5urpn0ImO2aUVdo1hvMqi5ezjnPEBA7y1WMU5vW/Dwy
- V0R8fYx5vPVhTmNSQDm9dega5t2AR2uO+bSq1cyowU5GWcrZ0nl/bdj4cuIQw68XCoHOWQjsXI/
- UqyrXLxz4773FZzS3kAEZaQbiOnJUcOcI7W89rjY9dXoKkdULqbuY91I0vKcCe5dHwLHixUm39m
- w+yMLA04IukrY6rNCXMhWwsR9qLbclRWpCKCTabz1U2eAgJZeHdD46UYu7yO9Na+46I2ulrC4gk
- vs10XGNbwEjp7/mxQ6zR22GSRa4qYcyGjWQ8BLRAUT/DzpZS6sziUQoFPwkAG7l/2LqPLzVk8bL
- kdabjV5sNdNojog==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+X-MS-TrafficTypeDiagnostic:
+	AM0PR08MB3315:EE_|DB9PR08MB6425:EE_|AMS0EPF00000197:EE_|AS8PR08MB6101:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b751350-d30a-4a68-6a7c-08dd6c7423fb
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?UnpYQ2NBYiswYUt3ZHpTOFFQQ1pPYTluK2xqRVZyZ3lCK3RUVTluT3h5NldZ?=
+ =?utf-8?B?ejFNTU5MWkdValNBQTFWck05SThzSHhkcVFUS3dnMkIzaEdWaWEybXFTV1hC?=
+ =?utf-8?B?WW5YczUySVU0cTNJUEwySWxUbHZpbmdmWHhwMnRWSTB5aUhOU3J0OXRxVHo3?=
+ =?utf-8?B?cEFvNTlWcVpuSVpvMVdySUVJd05JcXoxc3Z3bExFRitNYjFFYTdLQndvc3d4?=
+ =?utf-8?B?YzdjbEpVazRZRFJrazlnalRvUldtOUFsdTRZdFNLMm9Ycm1VTXNZRHVPZTlN?=
+ =?utf-8?B?RGY0dk5zQWU5c1VwRllWL0t6SFY0R3oyVUtYS2V3dGVJWW5GY2Y3V0lPN2V4?=
+ =?utf-8?B?dzQ5TGoyczNVQzhMdlNZenpNYjZyVE1Fc0pPbkVURXhHaHlwZHFNbGpVUVY2?=
+ =?utf-8?B?WUtWWElSamw4R01SaTQ4VTU4YkU2b2JIcUh2RGxGY1lyQUZoSTVZcVhGb1do?=
+ =?utf-8?B?OFdwSFFuWTBSUzNERSs0N2xNdGh2ajV5d2pTbXZCS3FQNWdsTkpVVGhmdzZN?=
+ =?utf-8?B?a0hMUkNrYXU5L2VwZ290bFhwL0E5OUtZemYwTkdaaTA2aE1WMkJEbGhuSVJ6?=
+ =?utf-8?B?Qi9RbWlSdWl2U05YeHVEUHB6OUFYaTNoM2RHeG9UNnlZUVMvY3hDM0pDbmtO?=
+ =?utf-8?B?K3RYVGltbC9laGFFckZnVEFMTzV6SXJZdDYzbjA5YlVCWDBSZlpJL2ZldmxP?=
+ =?utf-8?B?RTFEQkV5M09IazhKam9jU1QvOE9WWnZNS3hjeHlLdkNoQXc0WmIzSDkzOVVZ?=
+ =?utf-8?B?VTR6a3NhTkVNSVVvSGtuM1F3QTUwbjh6WHBOUWNaYlZEWHhqM2VLbThSVFBL?=
+ =?utf-8?B?dHNIWHgwakdZRGxPSHpVRTM3bTRueVk2YUtPWkpkcUxka3hxTEI3OWQ0cUhY?=
+ =?utf-8?B?OGwxVk1YM3J4d3VsRHRmZVh5LzhQUU1yeG5rU2hIS3lJQWZ4Q0lKWkZKWEkz?=
+ =?utf-8?B?eFNuN2s4L0ZzN2tIaityUFRHbm5OWEh5WXk3WGJyeklZLzFzTGt1OWZaSm1E?=
+ =?utf-8?B?TmE2T1lqSXRoUng5TlVHaWY5NVl3WXRtanl5Umw3TURlMmEzT1A0azN5SFBK?=
+ =?utf-8?B?U1dheEVRVTZTZE8xQlVlZXg5N2g3cTNlQkkrVm4vTjdrc0xWWU1UNlhmODM5?=
+ =?utf-8?B?VWltSG11aElQeWhaR3ZUWi9pM1FoUEtSeEJTRzBHTGU4aTloM25uR3ZXK2I4?=
+ =?utf-8?B?QXA5akVHVzN5YWxpbkV5QzRKTVNxUFRGQUJmbktvNE1jdDAwTUxHaFhERmdJ?=
+ =?utf-8?B?N0NhaVRKeS9rZlNmVjlMSnVob3RjalJqUjNqcEhBQjJPcUtOZWQ2YXVOTVNS?=
+ =?utf-8?B?eVh3VVBnU0Zrckp4QnZIclZkZEN1UU5TYVA0bUNrRUh0S1ZObjU4ZVltMWJn?=
+ =?utf-8?B?TXZwWEd4dURLZW4ySU0yRTZwM2RsUTlEV0wvTWpGb2JYTHQ1blJzdlNCZHEx?=
+ =?utf-8?B?aThFRHFaOGg1QkxuK0lNZmhVYk1Tc2pKeGMxZUN4Z0wxL3Y2NFBLNGJrRzZ5?=
+ =?utf-8?B?SUZ3SllXQ1phWVRLN0lVR054am0yblJZZk13dHU5L0RUTDFBaEk2azU5Nndx?=
+ =?utf-8?B?bC96U2tuc2cvQTZqT2lzc3ZGTDFKRHpoOUVkZVcvTUErU3pqRUVhb2xHSWlt?=
+ =?utf-8?B?WmhPTHMvc3QvZ2dZUVZSZDl4TUtPYUxvMUdBY0dtNDFlQytFcnRDb2N4bGVB?=
+ =?utf-8?B?bklSbHBHU2kwTEYxY3FkR0Rlbm1yYUoyRFdTOWJYcWNMWXdZTUVYeHhXMUdO?=
+ =?utf-8?B?TGZXTmFidDd5cGw3VEV5aVZFUXRMdlE0MHZWSlZnMnpuTFpuVWtCc3RsTmND?=
+ =?utf-8?B?MUphcXZJYmh1c0M3bUUrZUpPNXdUT3lRQTdJaE0zUnZxMEpKVkdzYUY5cDRG?=
+ =?utf-8?Q?RhtfbsRvDTC9P?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB3315.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6425
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:208:5c::16];domain=AM0PR08MB3315.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF00000197.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	52716010-6dba-4997-0ff0-08dd6c741dff
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|14060799003|35042699022|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHN0enlMRTgrMDYweWk4T2ZlMGNETVNLUFhITTljUjRaaVd0QkNTZGpRVm5M?=
+ =?utf-8?B?R1QyM0ZaYzhIRnY0elJYZ1FUTStldTRrWWlzKzc4SklDWElhMWJxUzl5dzJ6?=
+ =?utf-8?B?Wll5QXFYYlgrVGJ6eTluOXI5TkFteGdjZnFXZzhjYWw4T0wvNEIxaEY4cnVY?=
+ =?utf-8?B?SCtMdlA0NnRGNFF0OC9hcXpwcExUSmlycHc5cGg3L2tqUjJuNlNmcHhBeG02?=
+ =?utf-8?B?ZmJkM2w2VGFXenM4YUhscy9QUnJadlhpNE5TdXphSWJQbkl2UUUwMHdnekVG?=
+ =?utf-8?B?K1p1akE3Y3B0QzRpVjRsaHhsOUFEMmZxOExULzVMWDN6VzdycjZhS2d3RlJV?=
+ =?utf-8?B?VEYzSEp4MlN3dWtJQ1hvUFJ0RVJWaGQ2SGE1eXg1cXVPbE80VFd5QUJEVWox?=
+ =?utf-8?B?UFh3K001NFprb0VZZDZPako3RGUydWJlOS9NNEpyamFYUHBpUkEzcFlxalRC?=
+ =?utf-8?B?STRDMVRMZDZ1dk5pa09pdmI5cS80TnJjcndCZ1JDSU51SmtEQnlyQThDYUhX?=
+ =?utf-8?B?MVVqSEVkRnNOY3Rrb3hWNU9XZUxwSjlTZkh1NlFGTnQrMGNIRjdjUXhncE9z?=
+ =?utf-8?B?OHJMMisvYkk3VmhKNzVRWHVNREZhRitlTzVmZVFCZ0srK3dNOVZSMnJQRkVN?=
+ =?utf-8?B?NWdCNEZWRkZ0aCswcEt4UXprbk5WZW1JVW5FMGdvdmNVTFczblZTcjN2SFR3?=
+ =?utf-8?B?U3VuczVxWnE3a1piWUlDRnRUalpzTGozL2FVS3pPeUxJMzc1QnA4c08zNUFt?=
+ =?utf-8?B?WWc3YVFTUk5XdDROQ1c0L0tFMXY1OVNmcEkxZkdwbER2aGIyTzZwMkRCWDdV?=
+ =?utf-8?B?OXBVS2tTTFRtUTk5TEw4TXJ5dHFjeEZWL0N0b29rQWpLMjJvaGI3Q2NES0xq?=
+ =?utf-8?B?UUgrVDBOdmQwQUtJakF2S2RqYVJTRXBGSHF2MDJUN0hKYWFNRlllV2FSb091?=
+ =?utf-8?B?RCswSThyakM3OUlwQkRQb2tzQlNXQlYwUlJoQ0dwL1VEVWxHWmM3ajYzUld2?=
+ =?utf-8?B?UHBQcmxtRFRaYnM5bEExaXhiUTE4a0VTcVZtZy9oQW92eGNTMno3RzF4dWwx?=
+ =?utf-8?B?NTFTMmZoMy9vcGV4V3piVG9mdHBLZ1g2eVVqRXNxTmNueWRsdW44RXJjcE9R?=
+ =?utf-8?B?YVBzMzd6VXF5enVudjhIR0lsZGxTd0xEWnpCY0dhRVlVeXNmQUtsZnplOUhU?=
+ =?utf-8?B?U1VEVDVkbnV5TEVGSHdVWkxzN0xiL2g1eVhaZzcydWNzRThjcTI4SE5vN1V6?=
+ =?utf-8?B?c2tRSk9YcXFZaXJrbGs3eDFvOU5rZFp5VHFLZC9rQjY2am5WUExiK3JVN3p4?=
+ =?utf-8?B?RGYzcUxjVGFaa1RDZFdGdi92Njd3Y1JlZ0o3M2syemc1MkxPUnNPOHVVZWFu?=
+ =?utf-8?B?YzFCTnZnK2dSV1hGcXhpMnZXdE52STFiTnE2VUFBekM0WFBkSktWdmlZQVdS?=
+ =?utf-8?B?QXErSzRKYjk3czhyNVZBY3BpaHBITVFhOVJHZkU5dHpaOWNBVUx2dkN0aEhv?=
+ =?utf-8?B?czJmTUtCTExiN0RkNUQ2Q3NMSEY3QXdnRE1yUkI5bmpIOWtjdlVGUENQVjZr?=
+ =?utf-8?B?V2d3NDhldHpMMWh2a0JoQXM4SmtuRkJ0NXBsZXFYZzhjRmVlMm1wcjVwOFNF?=
+ =?utf-8?B?QkI5VUV1YWxCZzBjcjczdkNXdVRhUzFEMDhqQUNldytTV3F2T3FwVGk4TFBJ?=
+ =?utf-8?B?TmFSQmtNSzhhSFNVeTU2a1grMEtKYUthV2R2d3hGNTkxWThYdklUOWpTUHVo?=
+ =?utf-8?B?akFKUmpocVE2cTRuanlNUTVHTUxjNG50OXJITmc4OHB5c0svZGl5VkpFczdk?=
+ =?utf-8?B?aEJUSjFzV0lYT1prc1hJWGtiWmRzSDNNNGpBYTB4c2JGOHVJcFpWbnphUE9p?=
+ =?utf-8?B?QjJCaWtGZi94TWZvZkFjK00vOHkvTjd2ZDlteVlhZTBYM0hCWjBHSVVVZnFw?=
+ =?utf-8?B?TTBSMjVmOWhEdDBGV0o1aEl3WHJJcCsyQlJxczZJa1R2MGhUekFsa3c0ZC92?=
+ =?utf-8?Q?Vncs8Ks9A/cZX2Yh5JTfKnaYvqbZho=3D?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(14060799003)(35042699022)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 14:40:23.0757
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b751350-d30a-4a68-6a7c-08dd6c7423fb
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000197.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6101
 
-The driver do support I2C_M_IGNORE_NAK, so add
-I2C_FUNC_PROTOCOL_MANGLING to the feature list.
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
-The driver do support I2C_M_IGNORE_NAK, so the
-I2C_FUNC_PROTOCOL_MANGLING bit should be set.
 
-I2C_M_IGNORE_NAK is the only supported "mangling-feature" though, but
-other i2c bus drivers also seems to support only a subset of available
-mangling-features, so I guess this is ok.
----
- drivers/i2c/busses/i2c-davinci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 27/01/2025 14:06, Adrián Larumbe wrote:
+> On 11.12.2024 16:50, Lukas Zapolskas wrote:
+>> This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
+>> a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
+>> compatibility of the uAPI.
+>>
+>> Stub function definitions are added to ensure the patch builds on its own,
+>> and will be removed later in the series.
+>>
+>> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+>> ---
+>>   drivers/gpu/drm/panthor/panthor_drv.c  | 155 ++++++++++++++++++++++++-
+>>   drivers/gpu/drm/panthor/panthor_perf.c |  34 ++++++
+>>   drivers/gpu/drm/panthor/panthor_perf.h |  19 +++
+>>   3 files changed, 206 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+>> index e0ac3107c69e..458175f58b15 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+>> @@ -7,6 +7,7 @@
+>>   #include <asm/arch_timer.h>
+>>   #endif
+>>   
+>> +#include <linux/cleanup.h>
+>>   #include <linux/list.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of_platform.h>
+>> @@ -31,6 +32,7 @@
+>>   #include "panthor_gpu.h"
+>>   #include "panthor_heap.h"
+>>   #include "panthor_mmu.h"
+>> +#include "panthor_perf.h"
+>>   #include "panthor_regs.h"
+>>   #include "panthor_sched.h"
+>>   
+>> @@ -73,6 +75,39 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * panthor_get_uobj() - Copy kernel object to user object.
+>> + * @usr_ptr: Users pointer.
+>> + * @usr_size: Size of the user object.
+>> + * @min_size: Minimum size for this object.
+>> + *
+>> + * Helper automating kernel -> user object copies.
+>> + *
+>> + * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
+>> + *
+>> + * Return: valid pointer on success, an encoded error code otherwise.
+>> + */
+>> +static void*
+>> +panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size)
+>> +{
+>> +	int ret;
+>> +	void *out_alloc __free(kvfree) = NULL;
+>> +
+>> +	/* User size shouldn't be smaller than the minimal object size. */
+>> +	if (usr_size < min_size)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	out_alloc = kvmalloc(min_size, GFP_KERNEL);
+>> +	if (!out_alloc)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	ret = copy_struct_from_user(out_alloc, min_size, u64_to_user_ptr(usr_ptr), usr_size);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	return_ptr(out_alloc);
+>> +}
+>> +
+>>   /**
+>>    * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
+>>    * @in: The object array to copy.
+>> @@ -176,8 +211,11 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+>>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
+>> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
+>> -
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
+>>   
+>>   /**
+>>    * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
+>> @@ -192,6 +230,24 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>>   			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
+>>   			 sizeof(_src_obj), &(_src_obj))
+>>   
+>> +/**
+>> + * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
+>> + * @_dest_ptr: Local varialbe
+>> + * @_usr_size: Size of the user object.
+>> + * @_usr_ptr: The pointer of the object in userspace.
+>> + *
+>> + * Return: Error code. See panthor_get_uobj().
+>> + */
+>> +#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
+>> +	({ \
+>> +		typeof(_dest_ptr) _tmp; \
+>> +		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
+>> +				PANTHOR_UOBJ_MIN_SIZE(_tmp[0])); \
+>> +		if (!IS_ERR(_tmp)) \
+>> +			_dest_ptr = _tmp; \
+>> +		PTR_ERR_OR_ZERO(_tmp); \
+>> +	})
+>> +
+>>   /**
+>>    * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
+>>    * object array.
+>> @@ -1339,6 +1395,99 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
+>>   	return 0;
+>>   }
+>>   
+>> +static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
+>> +		struct drm_file *file)
+>> +{
+>> +	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+>> +	struct panthor_file *pfile = file->driver_priv;
+>> +	struct drm_panthor_perf_control *args = data;
+>> +	int ret;
+>> +
+>> +	if (!args->pointer) {
+>> +		switch (args->cmd) {
+>> +		case DRM_PANTHOR_PERF_COMMAND_SETUP:
+>> +			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
+>> +			return 0;
+>> +
+>> +		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
+>> +			args->size = 0;
+>> +			return 0;
+>> +
+>> +		case DRM_PANTHOR_PERF_COMMAND_START:
+>> +			args->size = sizeof(struct drm_panthor_perf_cmd_start);
+>> +			return 0;
+>> +
+>> +		case DRM_PANTHOR_PERF_COMMAND_STOP:
+>> +			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
+>> +			return 0;
+>> +
+>> +		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
+>> +			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
+>> +			return 0;
+>> +
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	switch (args->cmd) {
+>> +	case DRM_PANTHOR_PERF_COMMAND_SETUP:
+>> +	{
+>> +		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
+>> +
+>> +		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
+>> +		if (ret)
+>> +			return -EINVAL;
+>> +
+>> +		if (setup_args->pad[0])
+>> +			return -EINVAL;
+>> +
+>> +		ret = panthor_perf_session_setup(ptdev, ptdev->perf, setup_args, pfile);
+> 
+> Shouldn't we return the session id as an output param in setup_args or is the
+> ioctl's return value enough for this?
 
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index 6a909d339681214ed4f382b62f8cd924f4295e69..6a3d4e9e07f45ecc228943e877cde1fd9d72e8cb 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -551,7 +551,8 @@ i2c_davinci_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
- static u32 i2c_davinci_func(struct i2c_adapter *adap)
- {
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL |
-+		I2C_FUNC_PROTOCOL_MANGLING;
- }
- 
- static void terminate_read(struct davinci_i2c_dev *dev)
+Returning it via the ioctl return value has worked for a single session,
+but it may have an impact when handling multiple sessions, not sure. Is
+there anything done by DRM to normalize the return values from ioctls? I
+could not find anything.
 
----
-base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
-change-id: 20250326-i2c-5561bf853f8d
-
-Best regards,
--- 
-Marcus Folkesson <marcus.folkesson@gmail.com>
+> 
+>> +
+>> +		return ret;
+>> +	}
+>> +	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
+>> +	{
+>> +		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
+>> +	}
+>> +	case DRM_PANTHOR_PERF_COMMAND_START:
+>> +	{
+>> +		struct drm_panthor_perf_cmd_start *start_args __free(kvfree) = NULL;
+>> +
+>> +		ret = PANTHOR_UOBJ_GET(start_args, args->size, args->pointer);
+>> +		if (ret)
+>> +			return -EINVAL;
+>> +
+>> +		return panthor_perf_session_start(pfile, ptdev->perf, args->handle,
+>> +				start_args->user_data);
+>> +	}
+>> +	case DRM_PANTHOR_PERF_COMMAND_STOP:
+>> +	{
+>> +		struct drm_panthor_perf_cmd_stop *stop_args __free(kvfree) = NULL;
+>> +
+>> +		ret = PANTHOR_UOBJ_GET(stop_args, args->size, args->pointer);
+>> +		if (ret)
+>> +			return -EINVAL;
+>> +
+>> +		return panthor_perf_session_stop(pfile, ptdev->perf, args->handle,
+>> +				stop_args->user_data);
+>> +	}
+>> +	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
+>> +	{
+>> +		struct drm_panthor_perf_cmd_sample *sample_args __free(kvfree) = NULL;
+>> +
+>> +		ret = PANTHOR_UOBJ_GET(sample_args, args->size, args->pointer);
+>> +		if (ret)
+>> +			return -EINVAL;
+>> +
+>> +		return panthor_perf_session_sample(pfile, ptdev->perf, args->handle,
+>> +					sample_args->user_data);
+>> +	}
+> 
+> For the three cases above, you could define a macro like:
+> 
+> #define perf_cmd(command)							\
+> 	({								\
+> 		struct drm_panthor_perf_cmd_##command * command##_args __free(kvfree) = NULL; \
+> 									\
+> 		ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
+> 		if (ret)						\
+> 			return -EINVAL;					\
+> 		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, command##_args->user_data); \
+> 	})
+> 
+> 	and then do 'perf_cmd(command);' inside each one of them
+> 
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>>   static int
+>>   panthor_open(struct drm_device *ddev, struct drm_file *file)
+>>   {
+>> @@ -1386,6 +1535,7 @@ panthor_postclose(struct drm_device *ddev, struct drm_file *file)
+>>   
+>>   	panthor_group_pool_destroy(pfile);
+>>   	panthor_vm_pool_destroy(pfile);
+>> +	panthor_perf_session_destroy(pfile, pfile->ptdev->perf);
+> 
+> I would perhaps do this first because pools are first created during file
+> opening, just to undo things in the opposite sequence.
+>>   
+>>   	kfree(pfile);
+>>   	module_put(THIS_MODULE);
+>> @@ -1408,6 +1558,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
+>>   	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
+>>   	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
+>>   	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
+>> +	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
+>>   };
+>>   
+>>   static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+>> index e0dc6c4b0cf1..6498279ec036 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_perf.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+>> @@ -63,6 +63,40 @@ void panthor_perf_info_init(struct panthor_device *ptdev)
+>>   	perf_info->shader_blocks = hweight64(ptdev->gpu_info.shader_present);
+>>   }
+>>   
+>> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
+>> +		struct drm_panthor_perf_cmd_setup *setup_args,
+>> +		struct panthor_file *pfile)
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +}
+>> +
+>> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid)
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +}
+>> +
+>> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data)
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +}
+>> +
+>> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data)
+>> +{
+>> +		return -EOPNOTSUPP;
+>> +}
+>> +
+>> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data)
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +
+>> +}
+>> +
+>> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf) { }
+>> +
+>>   /**
+>>    * panthor_perf_init - Initialize the performance counter subsystem.
+>>    * @ptdev: Panthor device
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+>> index 90af8b18358c..bfef8874068b 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_perf.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+>> @@ -5,11 +5,30 @@
+>>   #ifndef __PANTHOR_PERF_H__
+>>   #define __PANTHOR_PERF_H__
+>>   
+>> +#include <linux/types.h>
+>> +
+>> +struct drm_gem_object;
+>> +struct drm_panthor_perf_cmd_setup;
+>>   struct panthor_device;
+>> +struct panthor_file;
+>> +struct panthor_perf;
+>>   
+>>   void panthor_perf_info_init(struct panthor_device *ptdev);
+>>   
+>>   int panthor_perf_init(struct panthor_device *ptdev);
+>>   void panthor_perf_unplug(struct panthor_device *ptdev);
+>>   
+>> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
+>> +		struct drm_panthor_perf_cmd_setup *setup_args,
+>> +		struct panthor_file *pfile);
+>> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid);
+>> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data);
+>> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data);
+>> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
+>> +		u32 sid, u64 user_data);
+>> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf);
+>> +
+>>   #endif /* __PANTHOR_PERF_H__ */
+>> -- 
+>> 2.25.1
+> 
+> 
+> Adrian Larumbe
 
 
