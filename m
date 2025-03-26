@@ -1,130 +1,239 @@
-Return-Path: <linux-kernel+bounces-576743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC1FA713E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:39:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173ECA713ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA47F3B4C89
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987C917072E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2AD13D539;
-	Wed, 26 Mar 2025 09:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C4215381A;
+	Wed, 26 Mar 2025 09:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApaHC+Uf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WnarsT1J";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ct6QOskY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WnarsT1J";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ct6QOskY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79302A1B2;
-	Wed, 26 Mar 2025 09:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535013D539
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981965; cv=none; b=AgMN6tkUeDNb+Wa/BB98SDydO3UFD3yu2RTLd59wEF7tDhtv8lTHRFPkMDj2VkH2sIJRdyHxu5o6kf/tFaVH493Haih2J9ziej8EsNMHv1nX5RfmYXFU2V4f9633t3OFfFlcVyHvi3d438IyiQNngxXz+apiLFuNzFMik2/GMF8=
+	t=1742982067; cv=none; b=r+yMtCU5RqbEXBJmKsK8i/3mKtIo3BglURSG3tZGaim299CzN42gMX7CfvMfGdAtShFrh8tIj+UUOgJcF6i/eGz/eTszpOJCOy81FA3hvgL9hn0q/5heRM5REwNJfTJHPEZaPFbgxMLeKuu+JnBgzIR7VsMZQO0pJ3uMP5CtN8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981965; c=relaxed/simple;
-	bh=Mp7PS2Hsz1Y1++3pUe2iXl59mJgfLQOY3hRaKyxKOI4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QMSXGYDTxx6rNhPjh/CUHnFFlquS9fW60Ov1ALeOkqgyVp9H4xL48OEDYC/ZDM0RlqyayVdheWDX+b6VB2Zzo7l+bYEBJ/hh49BURfctiXDrk94uLE12QtohqGax1QgOs14fNCvok52dkUgOLWMxKuW1AodltV3UM4njRVxFIOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApaHC+Uf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58BCFC4CEEA;
-	Wed, 26 Mar 2025 09:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742981965;
-	bh=Mp7PS2Hsz1Y1++3pUe2iXl59mJgfLQOY3hRaKyxKOI4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ApaHC+Uf5A1ua9ePUD6nc+4eNxhxdmJH86reahFps3SZnbjkkcaDbtuuLG46Q2vwn
-	 9p5C9lhcUgbVIhErca64F5Klq1j3vBjf3203GoyfTL/1Ro3RxORx4H5PUAFgz0CJXC
-	 wxcnse2vbdu3drRJT+Z0zstzCF+lYGNA9ZRRB9WCR7RMeTFQa0zpLwVoa5pGPS4v0O
-	 qDEgtHVffgkTlaXwitLFukstMZB7CmXrI4VU6YUTefSWl8J3+KbKaqMRbMeHp67iK6
-	 D9VB2WjE1p5cAafC/2mhoTnozJlOzRP8luEoYrO4R4rHj9gFFHz8lVA3PTc1+23VCy
-	 3TmocOn5qRnXw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1txNEJ-00HEb9-0v;
-	Wed, 26 Mar 2025 09:39:23 +0000
-Date: Wed, 26 Mar 2025 09:39:22 +0000
-Message-ID: <86zfh8ku5x.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Keir Fraser <keirf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: mops: Do not dereference src reg for a set operation
-In-Reply-To: <20250326070255.2567981-1-keirf@google.com>
-References: <20250326070255.2567981-1-keirf@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742982067; c=relaxed/simple;
+	bh=/7lSSy7WrPIvgvtMsd8Z/i5e0RTzrYrd6/yP9NCp93Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S9y43GyVaon0sGPhpjhHIk4PeGdORJS8j6+zm1h0cPNFpbkRaV5LUEeeENA2xxJ+GsHbiefoA09YfPdT4k0VwVmb2tcHtVFBx/Dar/ELsUqFTUKhEP7dPEWDHgeuN3sl80jTHjZmjd6bZZ3UnHxngCHdVt8kE5zvIKe/PHdd2Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WnarsT1J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ct6QOskY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WnarsT1J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ct6QOskY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4DFC421179;
+	Wed, 26 Mar 2025 09:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742982064; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OV6Y+bvAQ4j6dj4kHxXjpT3o9nRIcJRh1yhwfpE15/k=;
+	b=WnarsT1JLYUFR/FzJ2DLUop9vqDnefw/Ntm+IdS2b618IONGIFJrDdU7bj1MIdTY4NcU0N
+	M7RlmnFm3qzbmpWDMCqXUy5UQthvNLAqrzMnUs9dsvSYlRBBloFQgkAnHJn0QLULPpOYu/
+	2z8WBW7Cn78Mel+ONnGyMUj1pQlPkTg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742982064;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OV6Y+bvAQ4j6dj4kHxXjpT3o9nRIcJRh1yhwfpE15/k=;
+	b=ct6QOskYUQQV+w6xDWd0/Y/DaddcTn6hpWCaIg2GW2yFrFiERzpvmZf3kUdzyVQivGiJ+S
+	LCFf4DqthP5sTvDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WnarsT1J;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ct6QOskY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742982064; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OV6Y+bvAQ4j6dj4kHxXjpT3o9nRIcJRh1yhwfpE15/k=;
+	b=WnarsT1JLYUFR/FzJ2DLUop9vqDnefw/Ntm+IdS2b618IONGIFJrDdU7bj1MIdTY4NcU0N
+	M7RlmnFm3qzbmpWDMCqXUy5UQthvNLAqrzMnUs9dsvSYlRBBloFQgkAnHJn0QLULPpOYu/
+	2z8WBW7Cn78Mel+ONnGyMUj1pQlPkTg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742982064;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OV6Y+bvAQ4j6dj4kHxXjpT3o9nRIcJRh1yhwfpE15/k=;
+	b=ct6QOskYUQQV+w6xDWd0/Y/DaddcTn6hpWCaIg2GW2yFrFiERzpvmZf3kUdzyVQivGiJ+S
+	LCFf4DqthP5sTvDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F196C1374A;
+	Wed, 26 Mar 2025 09:41:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Tp+jOa/L42d9aAAAD6G6ig
+	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 09:41:03 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Roberto Sassu
+ <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+  Eric Snowberg <eric.snowberg@oracle.com>,  Jarkko Sakkinen
+ <jarkko@kernel.org>,  James Bottomley
+ <James.Bottomley@HansenPartnership.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 07/13] tpm: enable bank selection for PCR extend
+In-Reply-To: <4021363dd955236ad55b5d0c26bcf788fa782d79.camel@linux.ibm.com>
+	(Mimi Zohar's message of "Tue, 25 Mar 2025 21:18:38 -0400")
+References: <20250323140911.226137-1-nstange@suse.de>
+	<20250323140911.226137-8-nstange@suse.de>
+	<4021363dd955236ad55b5d0c26bcf788fa782d79.camel@linux.ibm.com>
+Date: Wed, 26 Mar 2025 10:41:03 +0100
+Message-ID: <87tt7gp1sg.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: keirf@google.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kristina.martsenko@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, will@kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-0.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,huawei.com,gmail.com,oracle.com,kernel.org,HansenPartnership.com,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 4DFC421179
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -0.81
+X-Spam-Level: 
 
-On Wed, 26 Mar 2025 07:02:55 +0000,
-Keir Fraser <keirf@google.com> wrote:
-> 
-> The register is not defined and reading it can result in a UBSAN
-> out-of-bounds array access error, specifically when the srcreg field
-> value is 31.
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-Gah, XZR/SP encoding strikes back...
+> On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+>
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index dfdcbd009720..23ded8ea47dc 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -226,16 +226,34 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_i=
+dx,
+>>   * @chip:	TPM chip to use.
+>>   * @pcr_idx:	index of the PCR.
+>>   * @digests:	list of pcr banks and corresponding digest values to exten=
+d.
+>> + * @banks_skip_mask:	pcr banks to skip
+>>   *
+>>   * Return: Same as with tpm_transmit_cmd.
+>>   */
+>>  int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+>> -		    struct tpm_digest *digests)
+>> +		    struct tpm_digest *digests,
+>> +		    unsigned long banks_skip_mask)
+>>  {
+>>  	struct tpm_buf buf;
+>> +	unsigned long skip_mask;
+>> +	u32 banks_count;
+>>  	int rc;
+>>  	int i;
+>>=20=20
+>> +	banks_count =3D 0;
+>> +	skip_mask =3D banks_skip_mask;
+>> +	for (i =3D 0; i < chip->nr_allocated_banks; i++) {
+>> +		const bool skip_bank =3D skip_mask & 1;
+>> +
+>> +		skip_mask >>=3D 1;
+>> +		if (skip_bank)
+>> +			continue;
+>> +		banks_count++;
+>> +	}
+>
+> Setting ima_unsupported_pcr_banks_mask used BIT(i).  Testing the bit shou=
+ld be
+> as straight forward here and below.
 
-> 
-> Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Keir Fraser <keirf@google.com>
-> ---
->  arch/arm64/include/asm/traps.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-> index d780d1bd2eac..82cf1f879c61 100644
-> --- a/arch/arm64/include/asm/traps.h
-> +++ b/arch/arm64/include/asm/traps.h
-> @@ -109,10 +109,9 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
->  	int dstreg = ESR_ELx_MOPS_ISS_DESTREG(esr);
->  	int srcreg = ESR_ELx_MOPS_ISS_SRCREG(esr);
->  	int sizereg = ESR_ELx_MOPS_ISS_SIZEREG(esr);
-> -	unsigned long dst, src, size;
-> +	unsigned long dst, size;
->  
->  	dst = regs->regs[dstreg];
-> -	src = regs->regs[srcreg];
->  	size = regs->regs[sizereg];
->  
->  	/*
-> @@ -129,6 +128,7 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
->  		}
->  	} else {
->  		/* CPY* instruction */
-> +		unsigned long src = regs->regs[srcreg];
->  		if (!(option_a ^ wrong_option)) {
->  			/* Format is from Option B */
->  			if (regs->pstate & PSR_N_BIT) {
+I opted for not to using BIT(i) here because in theory
+->nr_allocated_banks could be > BITS_PER_LONG. Not in practice though,
+but I felt it would improve code readabily if there aren't any implict
+assumptions. Also I'm not sure static checkers wouldn't complain about
+for (i =3D 0; i < a; i++) {  1ul << i; }
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Anyway, I'm realizing now that the code above is effectively just a
+popcnt implementation on the lower bits of ~banks_skip_mask.
 
-	M.
+IMO it would be perhaps even better to do
 
--- 
-Without deviation from the norm, progress is not possible.
+	unsigned long skipped_banks_count, banks_count;
+
+	skipped_banks_count =3D 0;
+	skip_mask =3D banks_skip_mask;
+	for (i =3D 0; skip_mask && i < chip->nr_allocated_banks; i++) {
+        	skipped_banks_count +=3D skip_mask & 1;
+                skip_mask >>=3D 1;
+	}
+        banks_count =3D chip->nr_allocated_banks - skipped_banks_count;
+
+instead. That way it's almost a nop in the common case of a clear
+banks_skip_mask, plus there are no conditionals in the body.
+
+
+> The first TPM extend after boot is the boot_aggregate.  Afterwards the nu=
+mber of
+> banks being extended should always be the same.  Do we really need to re-
+> calculate the number of banks needing to be extended each time?
+>
+
+Otherwise the number of banks to skip would have to get stored somewhere
+and passed around, IIUC. I don't think that's worth it, the total number
+of allocated banks is expected to be relatively small and
+banks_skip_mask is zero in the common case anyway.
+
+Thanks!
+
+Nicolai
+
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
 
