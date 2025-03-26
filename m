@@ -1,166 +1,310 @@
-Return-Path: <linux-kernel+bounces-576549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C22A710EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 215DAA710ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B53B9626
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F163BC17A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB13B19DF62;
-	Wed, 26 Mar 2025 06:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052C31946AA;
+	Wed, 26 Mar 2025 06:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjaS5yUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iEYiOf+d"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2088.outbound.protection.outlook.com [40.107.249.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C02E1990B7;
-	Wed, 26 Mar 2025 06:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972246; cv=none; b=a4p3gFf4ceVwA8H5jWCyjd5j6U2OgZzNRW7ZaoPtIoXNFCYC45ufPKzDheKhbMeTx2OaZzuJ6dRkeAcQ+06CvX58VJZoeuLKB3gci7gwIj/KpubsEOsjSlevrBo3+91I8NJG4SjkvhyuFPu9fqQfLofWcdH4qCVJyZWsaL2CgyM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972246; c=relaxed/simple;
-	bh=5edM3cdV/+75eEQTrQ/LXEZm/Jg8YlmkP78el+GFR4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eH7gjbS+fRTJeiTczR9JxL9zM6tM1lTRoT6LwWV2CiyPn3W+hgDtB0BP2HyBiEVOqWRLyeGjDhTxNm0Kk0jaMwkeNXGgHBVEYk5mKLI+2BA75A/TKdaCUtxQx9F1iWUpdysbekKVIFVCNkEjoDorazMbWH9zzdRd/FTPgkkyXPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjaS5yUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC578C4CEED;
-	Wed, 26 Mar 2025 06:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742972245;
-	bh=5edM3cdV/+75eEQTrQ/LXEZm/Jg8YlmkP78el+GFR4s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MjaS5yUrwIRRQpEcqUrteJ6V/VpmKrDDXMBwUgYtmR95HFoaGV+dmGjFfN9wHHJky
-	 2LXis7MYWsUAH86eKbxaxoVqMkxbVVcRzBG/uVb/VcKWOn9qOHC1OpoW26P8iDtiW3
-	 PXFmE13XxjPSXuV//EWYrTdKvIpakWXeZ/7DSK8cgE/w5RfT3ThbQIdE/HiOWlB1KI
-	 tltRWfQ1EHhQAzA2TmqtKbryqfvnAfNFQsvhPbFdAWdnZ2vmfZJkOCMAafElD8H9Fq
-	 6yJesazDxTjO4zdrbsAouQHjiMAkyVNn1S4lphvICYvb+5nckjD1xPneoNflEGcATY
-	 gh9GgeknjfQhw==
-Message-ID: <492da0ab-3a5c-4ee9-bc37-d66b007ffd81@kernel.org>
-Date: Wed, 26 Mar 2025 07:57:16 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE8764D;
+	Wed, 26 Mar 2025 06:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742972335; cv=fail; b=iAP5EQ/1sNY+VjtAnMu0H9sAnP4tNs/5Yecz4tiV5FYaKegbDvNyt7YIkXAjYyRxckwil8nNgH3sjpntks78pX4X/067KjGAhxGE/64KRzzL7eFmI7du9NxW8OSAdP98rpWbdPZGg/XUWZKFdQmuDxSAvlYguNxsd+GS/bcs6q4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742972335; c=relaxed/simple;
+	bh=MwUzHsZdHXkes/PUoCLRdssfLR14oNFKGSNinAB45gs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CdXwTl/QMDa8SQGbDpLT2Xc7ct3P1nnIe4ktzc8xwpzhj3n9pP5YArl0f5BTEF/LWLZzUKy/l3nBOuvwUzSqPUP0Y12Ipk2SM5fxnWzpOqC/0MM+ZLsjFbkoxIticI7Y2yF/VOrWGSTi7Fvzezf0mPW95shGDZ0Bp1TDw0E69e0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iEYiOf+d; arc=fail smtp.client-ip=40.107.249.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zS5SFy8GLFDVpGmhupOc7DiR1Yvm59BLiuEXxQLlf0B17XkIa49ArxE7Z2QwY9t/twKNd5flcd+L6eCRe6i4Plcwc+AEPh5zRbHyY8g8943cxICom2/y9pJAs0nftpHechqP6aRXpmGSpxpuCMKoCTkLirXfx078fdDvSJ9imI8YF53ULfvVTyhg1aSwqO3nOWK686Ea+SuAVNPtQrNe7PPPVW3UBZHT4Wc6RiOam0jlqr2knN6tVsVTHKkJYnpUJBtArTuza1cymVTskzNMgNBp0575Wg1whzor82W4mVWVGMZnzQt/4bWBXZmkFh/42tnepltuxiSFVyyue1HNfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xqIebak3oYApFrQIoFNS+v3Eyx+wOcSyNpLdEIkR7aU=;
+ b=JMFHm4fLmcmSPiDW2Y4cNYR+qtWFZCUUm7DpAHaDas3zdugTOsgDyw16oeZcMSrQk6ONjdcLhK+lXOERDdQJExKK+a8TblXIUxvvnKmFewNQ1wXwRTKKF8fLHB67PXyM38Ojlr2TIEfhbSGhKlrdY58AdM3jNrMclwsRIPuXBm8H2SsPOPltbTCtp1mhjElDO05F9fOHmvWmKzy7motgYye4KATthCQIg1BOjFcld0vx9Ne0bZTIG0biuHGy3DF8GTwRwieU67YrlmKuzFRnhdglB1U5cempMJNVOsBEjsnQXmhUxIdc0SwOaA1cloHZUDfUAYnEKoTuEnm5Zitgmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xqIebak3oYApFrQIoFNS+v3Eyx+wOcSyNpLdEIkR7aU=;
+ b=iEYiOf+dya8CCEhBP9BQ3YcujEznsadvpjpKRlT2SLJP4b8c+xJ9iaHE8DI59CEqAZHTM8WqI/69swhFtlDZeZMM7DMoHlmoSIOVbfBmub0AhrDHVU+4xP6olqdO9TG7FyJuuHxyxSIUEJ8gMoR2Znsji+QTm9jAL5fTMN+A+v7/Qe+5aPGz7urIVLTstaXUGqJu495rGkh0QGeICB1PFG5vMK6ORlKZDGxdMfn1M/BKnqDwA4rv+wRe0C1w3rLp2P88cs4hxlLiDlPICU4mwsTask8kTvcpJkhFouqWFd36Q6vIOXdKk7Zo1TLEA8gPczQCeomkUIl5hjviz9hAcA==
+Received: from VI1PR04MB10049.eurprd04.prod.outlook.com
+ (2603:10a6:800:1db::17) by DB9PR04MB8124.eurprd04.prod.outlook.com
+ (2603:10a6:10:246::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 06:58:49 +0000
+Received: from VI1PR04MB10049.eurprd04.prod.outlook.com
+ ([fe80::d09c:4c82:e871:17ee]) by VI1PR04MB10049.eurprd04.prod.outlook.com
+ ([fe80::d09c:4c82:e871:17ee%4]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
+ 06:58:48 +0000
+From: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, Frank Li
+	<frank.li@nxp.com>
+CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"arnd@arndb.de" <arnd@arndb.de>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "bbrezillon@kernel.org"
+	<bbrezillon@kernel.org>, "linux-i3c@lists.infradead.org"
+	<linux-i3c@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "rvmanjumce@gmail.com"
+	<rvmanjumce@gmail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [EXT] Re: [PATCH v5] i3c: Fix read from unreadable memory at
+ i3c_master_queue_ibi()
+Thread-Topic: [EXT] Re: [PATCH v5] i3c: Fix read from unreadable memory at
+ i3c_master_queue_ibi()
+Thread-Index: AQHbnW/7PXTpawcfAEm3Y/HvAU7//7OD7ZIAgAEMvgCAAAJv0A==
+Date: Wed, 26 Mar 2025 06:58:48 +0000
+Message-ID:
+ <VI1PR04MB10049E90AC1CB4823F91D1D698FA62@VI1PR04MB10049.eurprd04.prod.outlook.com>
+References: <20250325102332.2435069-1-manjunatha.venkatesh@nxp.com>
+ <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
+ <8c624cf0-febc-4ab9-8141-2372bfe4d577@quicinc.com>
+In-Reply-To: <8c624cf0-febc-4ab9-8141-2372bfe4d577@quicinc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR04MB10049:EE_|DB9PR04MB8124:EE_
+x-ms-office365-filtering-correlation-id: 151209a5-202f-44a6-9730-08dd6c33a874
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ZKOs0Iv7KfHGhYFXVz0XbJ3JTKY/9j3DsL9W7tx+Bo3yw/XI4XfuWiuNX2f4?=
+ =?us-ascii?Q?WRQRK0slUusHDoNOZk2FFg6QwLBmBrWEQaZibg58NxUnu6JGk4YASpXFjRW3?=
+ =?us-ascii?Q?NN4ai8eMvV1+wPbz9U36EcdwD+wWcf8mArVdagoL+KUNdD3jKliJziI6BW7Z?=
+ =?us-ascii?Q?rfqStRDqIAnQBNB1jx2IkxsNtaBwurC/gu+lMUOQT69+PbvNODT92o54kAmo?=
+ =?us-ascii?Q?3LZ5UkJL8RCirV2z1WSvtSwNp4+iZvgKQMx1GbWfOpcu0gl2eI4Gg2VTwdva?=
+ =?us-ascii?Q?MzzNYHeRPA0Era2U7AdCNiG62YerxfOMC7rHlNHSKs0xqCiXym7sIRWGqJ6Y?=
+ =?us-ascii?Q?vgKvzp9z5PaMZV+6TcfiaZIzNyVohRegQrVJpbJA+O7JY5LYWxds94BCsM79?=
+ =?us-ascii?Q?FbgtFWaS2oDEv6gWfRQkZNcVqpkMdjpaz/CtDKz6CHv3LdzKx+xkdAUpQFII?=
+ =?us-ascii?Q?YfuAMEpG228yjfnbrz7cZbDMbS5e3zoQi0akWaoPbTq33Zi+Pf2DyuKoy3Sn?=
+ =?us-ascii?Q?AWpRiyPiI8qMNGg3VEuCkdAwH4+m84FeaT2uhMxj1kvuadRkEHdDPQM0zdBH?=
+ =?us-ascii?Q?9MBVs5Hfc7AC58RL1vNPlnItAZm89989SHXJn3ujCP+NcX6gPoFlF5UJDdOj?=
+ =?us-ascii?Q?/yaMFqdkLd2VZ5jGqmHvvxkEngie7eJDK3vvhLq/SUJBubQtnH1fxj4Ge679?=
+ =?us-ascii?Q?Oa4m0stl1jNIsqqcxdRnDA0UlBLEjuxGsT2AaJLb3fyKLxMKWOTg69kplAF/?=
+ =?us-ascii?Q?Ojxs/fIC2ES5yvmY48KOmzcJ/9+EYZplCa4+cQ2rAGAun8Wn5baK+vsiEgOS?=
+ =?us-ascii?Q?6AHxvDBY/4GQeNLBYApVzN+RYzWElRwDl82WbPZJz/vuTn1uj+BUgKIbQS7B?=
+ =?us-ascii?Q?/5wU5Og7IcSBrSq1UIjIJw/OVyJK0MklawHDU94ixpDrwogljaLwAzK532kD?=
+ =?us-ascii?Q?oD2lkjw9JTiu0Sv2q1gpw+iqOPr/uv0Osq43WWZ9UI9kXZNy9q3hOZc2j6fS?=
+ =?us-ascii?Q?rqVM/oQZWJTBsABlhLKFNDsV+TnUQdenTgTFTYig4aOguHPiyH23+gsWPWSa?=
+ =?us-ascii?Q?eyN0jNA81UFRBU8joFDT7PiwTJ6NwPWK5akyR9S+qA4NeUkzmlOSeQ6/aHdh?=
+ =?us-ascii?Q?40ubaoBvp06w0J3myQtg6Pt1Li0sybirN6M8SJAZho3jvRIgp9lBcmRHhQxP?=
+ =?us-ascii?Q?Zys0MsINBc49woCQG2ST5hd302z2d+6vP8EsHZR8u3kODTu9gc2pr2oLXAlG?=
+ =?us-ascii?Q?sNEQoWbrvyJXDpU7U1/GECF+2iVe/2Bw1QG0AtqabsfGigLWXClyGboF4LDj?=
+ =?us-ascii?Q?FNWf/VhXJyxoBxePUkju2MEPxkyBLR5CzWtOCCPPPp+A/4JHytc2oNLFUmlg?=
+ =?us-ascii?Q?KTxDKC+LiD2b+LHik1/aOfQu7EHyiPWv2tI8R1L7YzcNgKWc1aN720qbqwqp?=
+ =?us-ascii?Q?+Bp8nnm4/yt5TuVVr8d1YkHXw0DGLdxq?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB10049.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?BWPOk+XRyl3EJuTXQdzRR96A/8+yfQdymQ1yaGHqsnNjiGEqO5g4FmXAeqMP?=
+ =?us-ascii?Q?zrwNmNK8ZY1FEAgKbFr9zxPrGurwP3/mUdv4t+aZ4GOy2j6HIP5C3cKZh9oO?=
+ =?us-ascii?Q?gdSMGj/PKRbxv2MHpwBgsoKXBtWpn/iPGs0TFyhMeWyfaqvlqz+lHtCs8mcZ?=
+ =?us-ascii?Q?FQbwwRff9Rz/pFxB53KvvRqkjJ/92mObsW7L9qxYWdVbVfpzpeoAdpey5nig?=
+ =?us-ascii?Q?/B6VpgauoN0A5oht/0VbtGwmotG/mX5IwEm9H8vcgcNae29lLC8kajT4Rp5q?=
+ =?us-ascii?Q?eZZeMHZKnHuIuu5coacbcIFw8Ee0DhkjeczMs+M3hN1lqfcBXhCBkWCKk9+2?=
+ =?us-ascii?Q?sX7/k55/d22ny5PTAiBi4bHyRzw4REFCMh1gV1YmBnIVfmQSpkzSQ2sUmtU5?=
+ =?us-ascii?Q?g/nrsr8b4WcHwvJbg94Y6TCnfOTwL5nOgTaDSWDD0a+KDS3WSmjsLrTLNG/c?=
+ =?us-ascii?Q?qd3i9pjaYY87hTLBvlttVE5yKOYEpcAeVi6r+lmfbzvllz41RNcFZ7+/u4ZQ?=
+ =?us-ascii?Q?2e7VMZNzqMQtPLwQ82f0rMJ9mm446RQcohdsDXTEsyeQdt3bgPXqxltqIXtl?=
+ =?us-ascii?Q?Jedj0pNq/k5D2sKlfI0MaDFZY/nAaH7uNgApJaKf2YmCncz/EThxjyKFeEdj?=
+ =?us-ascii?Q?9UtA8Ygbx4fAPVXF9L9VAGDwSaFpFyn/477O/qOVcURrq1W31DU5cf8kNr09?=
+ =?us-ascii?Q?tJxdZp8DfUizdiu9O1913gXzt/7remHoMs8XjcMhW3xH33ZoGta+ymkrAUSy?=
+ =?us-ascii?Q?W1SKk9rW8D10hbn6/hXZXWNIXcYvHsDZd/503HucNg82pPeYeAZfz0aQol5j?=
+ =?us-ascii?Q?HwPeFk24YzIodwRsksfBn42khto8rN3epSo0c4CK/OycZS1+40XmNAW81Rzh?=
+ =?us-ascii?Q?LIL/lLwo5E961Ue+opCiCxc0znPPIJUnGsV+YauAiGNskF7lRFdZS3daHG34?=
+ =?us-ascii?Q?OqISz5qlTywj+LRovMRdodr0QUUenaXDefm/5iHuxtyNlfZjt77VdEFlz4Hg?=
+ =?us-ascii?Q?AbLZT0dFe+e6GEpByCTKamSGVhU+DYc5A9qI/WddEIp26QkOpBDuj2cMjJos?=
+ =?us-ascii?Q?EkOgMSYOEGO+6VLU4K1XxVbRQfiAnX5TQQWsCEh3lKK0NGeG9WxkQFV2VdwZ?=
+ =?us-ascii?Q?3wD4A34vvpYnIUPwfhkdL4rBRE8vVScLD+npa/6ufWOdcGJXjywZeZEQHu1W?=
+ =?us-ascii?Q?Kio5B7UhcBzqwj0dRKYA80REqij5enh22DA92gyO5Dt68Eq4etP+qOYVn8mE?=
+ =?us-ascii?Q?5OtWrXyDIvTTR8ySnzUnywU8PU2WX3eZS73PnJUSY8miCHjRbaMmxOYbuoc+?=
+ =?us-ascii?Q?flr/p4JPPDe3P/PV40Mad876OgZg01IcfzQd7l7WsxIn779//dDAwk3Ukp7i?=
+ =?us-ascii?Q?ZD6vhZWSAK77gw+ZXwgnpmI4JH9qSs6dBHO7gVdXMIxUizXAiIeoZWcQ4O7+?=
+ =?us-ascii?Q?hho7UycZwAP9XS+8vV2VviUpjAGkIr6zIE8YBPg1NDTT7ibfGkWbllUebEGK?=
+ =?us-ascii?Q?xs6A6R7v1K4FXblvl5eP12LDMD+sXcPR6izBaiySJz3DCBCOH1yScNDltX2w?=
+ =?us-ascii?Q?egoern+VUh5UVq8AjNV2MLz+w3sdrWY9gkLKbqOPfdOxvzVtVIP6m6gyTDSw?=
+ =?us-ascii?Q?SQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
- syna,pdt-fallback-desc
-To: Caleb Connolly <caleb.connolly@linaro.org>,
- David Heidelberg <david@ixit.cz>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
- <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
- <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
- <3c5e12fc-eb91-46e8-a558-9896f0bdcab4@ixit.cz>
- <b3a5ec89-0125-4b01-8cca-69b9985b6089@kernel.org>
- <48bb62eb-8aa9-465c-9e77-c0b375df0c9f@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <48bb62eb-8aa9-465c-9e77-c0b375df0c9f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 25/03/2025 14:23, Caleb Connolly wrote:
-> 
-> 
-> On 3/25/25 08:36, Krzysztof Kozlowski wrote:
->> On 24/03/2025 19:00, David Heidelberg wrote:
->>> On 10/03/2025 10:45, Krzysztof Kozlowski wrote:
->>>> On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
->>>>> From: Caleb Connolly <caleb.connolly@linaro.org>
->>>>>
->>>>> This new property allows devices to specify some register values which
->>>>> are missing on units with third party replacement displays. These
->>>>> displays use unofficial touch ICs which only implement a subset of the
->>>>> RMI4 specification.
->>>>
->>>> These are different ICs, so they have their own compatibles. Why this
->>>> cannot be deduced from the compatible?
->>>
->>> Yes, but these identify as the originals.
->>
->>
->> It does not matter how they identify. You have the compatible for them.
->> If you cannot add compatible for them, how can you add dedicated
->> property for them?
-> 
-> Hi Krzysztof,
-> 
-> There are an unknown number of knock-off RMI4 chips which are sold in 
-> cheap replacement display panels from multiple vendors. We suspect 
-> there's more than one implementation.
-> 
-> A new compatible string wouldn't help us, since we use the same DTB on 
-> fully original hardware as on hardware with replacement parts.
-> 
-> The proposed new property describes configuration registers which are 
-> present on original RMI4 chips but missing on the third party ones, the 
-> contents of the registers is static.
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB10049.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 151209a5-202f-44a6-9730-08dd6c33a874
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2025 06:58:48.1585
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +jKOX5ngdNCKJV61z+IwcMha0zfm+CzPQH/4OAQdWO+oGDTk5Br3lRD/47m+L0mMm7SpH3xIyYreQYp0m1qXc5J1zkcEZDy6H4yLlRPv8bU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8124
 
 
-So you want to add redundant information for existing compatible, while
-claiming you cannot deduce it from that existing compatible... Well,
-no.. you cannot be sure that only chosen boards will have touchscreens
-replaced, thus you will have to add this property to every board using
-this compatible making it equal to the compatible and we are back at my
-original comment. This is deducible from the compatible. If not the new
-one, then from old one.
 
-Best regards,
-Krzysztof
+> -----Original Message-----
+> From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Sent: Wednesday, March 26, 2025 12:15 PM
+> To: Frank Li <frank.li@nxp.com>; Manjunatha Venkatesh
+> <manjunatha.venkatesh@nxp.com>
+> Cc: alexandre.belloni@bootlin.com; arnd@arndb.de;
+> gregkh@linuxfoundation.org; bbrezillon@kernel.org; linux-
+> i3c@lists.infradead.org; linux-kernel@vger.kernel.org;
+> rvmanjumce@gmail.com; stable@vger.kernel.org
+> Subject: [EXT] Re: [PATCH v5] i3c: Fix read from unreadable memory at
+> i3c_master_queue_ibi()
+>=20
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>=20
+>=20
+> On 3/25/2025 8:13 PM, Frank Li wrote:
+> > Subject should be
+> >
+> > i3c: Add NULL pointer check in i3c_master_queue_ibi()
+> >
+> yes, Aligned.
+> > On Tue, Mar 25, 2025 at 03:53:32PM +0530, Manjunatha Venkatesh wrote:
+> >> As part of I3C driver probing sequence for particular device
+> >> instance, While adding to queue it is trying to access ibi variable
+> >> of dev which is not yet initialized causing "Unable to handle kernel
+> >> read from unreadable memory" resulting in kernel panic.
+> >>
+> >> Below is the sequence where this issue happened.
+> >> 1. During boot up sequence IBI is received at host  from the slave dev=
+ice
+> >>     before requesting for IBI, Usually will request IBI by calling
+> >>     i3c_device_request_ibi() during probe of slave driver.
+> >> 2. Since master code trying to access IBI Variable for the particular
+> >>     device instance before actually it initialized by slave driver,
+> >>     due to this randomly accessing the address and causing kernel pani=
+c.
+> >> 3. i3c_device_request_ibi() function invoked by the slave driver where
+> >>     dev->ibi =3D ibi; assigned as part of function call
+> >>     i3c_dev_request_ibi_locked().
+> >> 4. But when IBI request sent by slave device, master code  trying to a=
+ccess
+> >>     this variable before its initialized due to this race condition
+> >>     situation kernel panic happened.
+> >
+> > How about commit message as:
+> >
+> > The I3C master driver may receive an IBI from a target device that has
+> > not been probed yet. In such cases, the master calls
+> > `i3c_master_queue_ibi()` to queue an IBI work task, leading to "Unable
+> > to handle kernel read from unreadable memory" and resulting in a kernel
+> panic.
+> >
+> > Typical IBI handling flow:
+> > 1. The I3C master scans target devices and probes their respective driv=
+ers.
+> > 2. The target device driver calls `i3c_device_request_ibi()` to enable =
+IBI
+> >     and assigns `dev->ibi =3D ibi`.
+> > 3. The I3C master receives an IBI from the target device and calls
+> >     `i3c_master_queue_ibi()` to queue the target device driver's IBI ha=
+ndler
+> >     task.
+> >
+> > However, since target device events are asynchronous to the I3C probe
+> > sequence, step 3 may occur before step 2, causing `dev->ibi` to be
+> > `NULL`, leading to a kernel panic.
+> >
+> > Add a NULL pointer check in `i3c_master_queue_ibi()` to prevent
+> > accessing an uninitialized `dev->ibi`, ensuring stability.
+> >
+> >>
+> >> Fixes: 3a379bbcea0af ("i3c: Add core I3C infrastructure")
+> >> Cc: stable@vger.kernel.org
+> >> Link:
+> >> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flo=
+r
+> >> e.kernel.org%2Flkml%2FZ9gjGYudiYyl3bSe%40lizhi-Precision-Tower-
+> 5810%2
+> >>
+> F&data=3D05%7C02%7Cmanjunatha.venkatesh%40nxp.com%7Ceda8be8c7abc4
+> 3b4ab9
+> >>
+> 608dd6c31c8e7%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6387
+> 856832
+> >>
+> 77582903%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYi
+> OiIwLjAu
+> >>
+> MDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%
+> 7C%7C
+> >>
+> &sdata=3Doyc9Wv%2Fj8HMRFIiIGL9nIw0XvI6FsLK2SvsQJ55H7XI%3D&reserved=3D
+> 0
+> >> Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+> >> ---
+> >> Changes since v4:
+> >>    - Fix added at generic places master.c which is applicable for all
+> >> platforms
+> >>
+> >>   drivers/i3c/master.c | 3 +++
+> >>   1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c index
+> >> d5dc4180afbc..c65006aa0684 100644
+> >> --- a/drivers/i3c/master.c
+> >> +++ b/drivers/i3c/master.c
+> >> @@ -2561,6 +2561,9 @@ static void
+> i3c_master_unregister_i3c_devs(struct i3c_master_controller *master)
+> >>    */
+> >>   void i3c_master_queue_ibi(struct i3c_dev_desc *dev, struct i3c_ibi_s=
+lot
+> *slot)
+> >>   {
+> >> +    if (!dev->ibi || !slot)
+> >> +            return;
+> >> +
+> 1. Shouldn't this be a Logical AND ? what if slot is non NULL but the IBI=
+ is
+> NULL ?
+>=20
+[Manjunatha Venkatesh] : I think Logical OR operation is correct,
+ Since if any one of the variable is NULL need to return before accessing t=
+hose variables.
+> 2. This being void function, it doesn't say anything to caller if it's su=
+ccessful or
+> failed ? Should we make this non void function ?
+> if not, i am thinking it may run into multiple attempts, no log too.
+[Manjunatha Venkatesh] : If required we can add error print log, Others ple=
+ase confirm your opinion on this. =20
+> >>      atomic_inc(&dev->ibi->pending_ibis);
+> >>      queue_work(dev->ibi->wq, &slot->work);
+> >>   }
+> >> --
+> >> 2.46.1
+> >>
+> >
+
 
