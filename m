@@ -1,100 +1,98 @@
-Return-Path: <linux-kernel+bounces-577396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA42FA71C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:56:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784C9A71C7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284C0842CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967E63A1F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E991F4190;
-	Wed, 26 Mar 2025 16:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D581F76A8;
+	Wed, 26 Mar 2025 16:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMW9oG75"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXGV3BTK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9137F1547E7;
-	Wed, 26 Mar 2025 16:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CDF1E835A;
+	Wed, 26 Mar 2025 16:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743008035; cv=none; b=WNwSM8ytjh1nK2EXLUK1rZ6qImL01RTXG1YXxsPReRGtlc6iMukARwnvnI2/PeK8hpNVoOBgtlBZ+Tp9tpMx0JyqLNY1gBmRqE23j4P684yYVN4e4XvGuapYLfgAVq1b6vpJ8O19+Z4iwBOenX3qYWTGRaIC3huj0vS7dW+KcZI=
+	t=1743008129; cv=none; b=V0bxMhZQF8TzmEJLyGVclGz/3RrxuHLbVajAMH4wFHzYHfgpW5+Tx+39YosmK9P4vFBR3JKPMj85UA7jKcI/cM6HM7HqgL2e40szRFBdqDGCAkRFJCwF4DyfxcdExfjd0WZlzQYPhrkqqhuZ+CiGnlM/KqiN0c5htza7Ket9Ey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743008035; c=relaxed/simple;
-	bh=GD9/Unp7kHxkjyBxvRNjmE21o0vBLYIrBR+MU3QlEeY=;
+	s=arc-20240116; t=1743008129; c=relaxed/simple;
+	bh=xUH+r591VfZvvi48wtVpf1oVKcmO4AvfWE+ihcIT/sI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqeWAzJWLoFIHOx0+lcFstD5l5J9vAJKJdssnePsRaIRj+4tuLUZa5GW2gXZ/SNSVO8E/CwkY03u/rF4J3X1MTfcp9hsSWR2roUB6vTMTQ0xXj4tEkzNspRY0MsuPlTXsCkd5+lbcCljbVTyz+SRGauMauzJg+IDcbtg/+OB/PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMW9oG75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35F3C4CEE2;
-	Wed, 26 Mar 2025 16:53:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pChUWaRmpbrbSLONmFWAicHdRT9McAFXHSjqi66QJ6a/JfiomNMv90PT0cz2DUIt61d+mo79D8eij7ZqnFxaqzYu2zim94nJEZpYqvG8N1IO6reOggc8aWTo6sid2WRfeRpkPgVHTJ74ODmVNYptY3T2FGJyGsx9+b6J64cb+rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXGV3BTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA92C4CEE2;
+	Wed, 26 Mar 2025 16:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743008035;
-	bh=GD9/Unp7kHxkjyBxvRNjmE21o0vBLYIrBR+MU3QlEeY=;
+	s=k20201202; t=1743008129;
+	bh=xUH+r591VfZvvi48wtVpf1oVKcmO4AvfWE+ihcIT/sI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XMW9oG75dOAkY6lTifdvJK6RSCOfjhN7eboKLZY4VQ3Ar1+gvOgO8OtgBqqv1WFxC
-	 9te4wvjtVj7LDHX4kl0omSGGNQZFE/rS4M953rNI6oNNlsbcEbXa8x8tEUzKCAD8Lt
-	 AMeKOgXftNyKvDQJpkvNixlmteQ213LrzyGfre5EDrn9MG7JpXYzXv/dGSQ/xHDYHy
-	 ns51mHh5GRDIXh4tnX4zl03AcauqeVJ0basYWsBwZq95znB6atrIjFc1EQMZGYbFMX
-	 qaZ2Y/rUwE6h3DeCjjasdS06QbS4ljirUjdczuj9M3h7GwkS4uq+1kBiGzSQfz5DFx
-	 xcs64XumVtgRg==
-Date: Wed, 26 Mar 2025 18:53:51 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH 1/2] tpm: add send_recv() op in tpm_class_ops
-Message-ID: <Z-QxH7aDjlixl2gp@kernel.org>
-References: <20250320152433.144083-1-sgarzare@redhat.com>
- <20250320152433.144083-2-sgarzare@redhat.com>
+	b=lXGV3BTKRSh52WreuGx6SZ13KMFC9b/jMYXF78SjuQYL4LLk62DH8ljs32wONa1tX
+	 7KwtviOXJ3XQrfraMv70gcQhyK6p05XuFU4CdR6Wju/qFF5roLMJSTiudyd4wW5Vfr
+	 kF4gmYouaJ3tuDZArUV3QWovUtAldpWfB0URt6uO/qDsxE9zPU1xcdgJoPgcHh5ilc
+	 PrhHLx1BaunkVbXalZf9EW2E0IoscE06jD06IDKlKEeU0+PTCVE5XpWmu3C+0GSdz5
+	 v7Vljtof8M5E1/v/sn67QtGkIfn4c2m/IErdXn3lqBvCzbMYIgT+U2Kxugo96wk9EZ
+	 FlVZGiTYFMNsQ==
+Date: Wed, 26 Mar 2025 16:55:25 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: spidev: Add compatible for LWE's btt device
+Message-ID: <6575e094-dbf9-459e-b222-95a7ce7e1c85@sirena.org.uk>
+References: <20250221155644.1168860-1-lukma@denx.de>
+ <5661510e-3aea-4c07-88d6-2c3efccadb37@sirena.org.uk>
+ <20250326174228.14dfdf8c@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bint7rKj/FLQArSq"
+Content-Disposition: inline
+In-Reply-To: <20250326174228.14dfdf8c@wsk>
+X-Cookie: To err is humor.
+
+
+--bint7rKj/FLQArSq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320152433.144083-2-sgarzare@redhat.com>
 
-On Thu, Mar 20, 2025 at 04:24:32PM +0100, Stefano Garzarella wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> Some devices do not support interrupts and provide a single operation
-> to send the command and receive the response on the same buffer.
-> 
-> To support this scenario, a driver could set TPM_CHIP_FLAG_IRQ in the
-> chip's flags to get recv() to be called immediately after send() in
-> tpm_try_transmit(), or it needs to implement .status() to return 0,
-> and set both .req_complete_mask and .req_complete_val to 0.
-> 
-> In order to simplify these drivers and avoid temporary buffers to be
+On Wed, Mar 26, 2025 at 05:42:28PM +0100, Lukasz Majewski wrote:
+> > On Fri, Feb 21, 2025 at 04:56:44PM +0100, Lukasz Majewski wrote:
 
-Simplification can be addressed with no callback changes:
+> > This is fine but we need a bindings document update too
+> > (trivial-devices.yaml should be fine I think).
 
-https://lore.kernel.org/linux-integrity/20250326161838.123606-1-jarkko@kernel.org/T/#u
+> I've just resend the update for trival-devices.yaml.
+> https://lore.kernel.org/linux-devicetree/20250326140930.2587775-1-lukma@denx.de/T/#u
 
-I also noticed that tpm_ftpm_tee initalized req_complete_mask and
-req_complete_val explictly while they would be already implicitly
-zero.
+> Hopefully you can pull it soon.
 
-So it reduces this just a matter of getting rid off the extra
-buffer.
+I would have expected the two updates to go together...
 
-> used between the .send() and .recv() callbacks, introduce a new callback
-> send_recv(). If that callback is defined, it is called in
-> tpm_try_transmit() to send the command and receive the response on
-> the same buffer in a single call.
+--bint7rKj/FLQArSq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I don't find anything in the commit message addressing buf_len an
-cmd_len (vs "just len"). Why two lengths are required?
+-----BEGIN PGP SIGNATURE-----
 
-Not completely rejecting but this explanation is incomplete.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfkMXwACgkQJNaLcl1U
+h9Abewf/YkPA8w4NfZYSC3pvZCu3Fn+bI+hKTgg6ZspkStlk1z9gZiqFIgmcrrdF
+CQTsMTRzc6gEdS8FagkLObLxsRUJVmSsAm2Mi/DRtW7UmD+DOspi35AbKhqX/dlE
+coNrLJWQ9I1ROT9OtRUX6JNVtOfFl/RdZy9dlyC05df01K9a6qkXfPf6T6ljLbvD
+YA73XJaWGOXqAecnJtvnG/CMO6TQo+6IjTi1XWb8Sy0aJspQqd7RrrIvMn7cEjFv
+4PbVOEKMJhngBlTqVTJVOhLrKaPhhONg+LMQ7n6ho8YA8kOHm3jgavIThCy3wq5W
+M29Jjy3zmhRE9gXK9+b7+o2cfTV2mg==
+=CPvd
+-----END PGP SIGNATURE-----
 
-BR, Jarkko
+--bint7rKj/FLQArSq--
 
