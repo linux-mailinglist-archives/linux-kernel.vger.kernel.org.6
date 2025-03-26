@@ -1,437 +1,197 @@
-Return-Path: <linux-kernel+bounces-576397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BF9A70EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:00:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B829A70EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD02C3B4AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516843B172D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636F129A78;
-	Wed, 26 Mar 2025 01:59:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8595B85270;
+	Wed, 26 Mar 2025 01:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EKwDNW4J"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013014.outbound.protection.outlook.com [52.101.72.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D885F85270
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742954347; cv=none; b=OcrxAqmvdjRVpDcsXmhvzc6zqZLF1GIQ80JiIo+jIiqGC44/Et44rQN5YnjIgR+2WO0jY2nl/PqSLPiQ4GVpfr1luxRz2eS01EHzr7QVs3YMstOYBy7Zz//JCzFmKwpThQUJZAUOJRjkKz4Sc6vnBkmACsHrVULVC3CXmsB5H5I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742954347; c=relaxed/simple;
-	bh=WVwXpsaxWtSxyJwhFPIYqMB7fzY/pHXBLGss72k/2SY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CoZse84xPWKG1C92vmk3wPYGrkZWjJudNIPonh/JoilGhurXcw5mPVM3ftG6MX10hFqIHUghfIgq/kDGK8faU7Tq0CZopFQPkZrZrC7OmGBN/KynZ5LZZ9Kaj9jhfbkFrYV91+wjHTq6xmAJqazipFJR902Oz8+RDBIKUDUW91o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d5b3819ff9so22683315ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:59:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742954344; x=1743559144;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yy2nnZnPh0qyaK4Z14QpCXIUWFLUG2dFuN+uKSMqr4c=;
-        b=N80KJLavHMfY1yYBqEkBIDzWTAzCIMK2xlOEmns50JX2kzJZXnHpY7Tp2Gf8Wl9h1t
-         4XZ3ENsHdAJQ3V2CmI3VMCtpyMLuq14mckDGP5UoHS6CXgr32qzJuCty3HKHZyBlgM9Y
-         5KieEv1tSnJSD6ozQB/ILkOdnX5+CxKnqNB5wVPfS9oJxAvR7Z9blSlHSI2EsRfn4H8u
-         Vk/elcx7R9OojpgY0jUQyjl34eZl/thi2DaHEFBZUwk5vzLhInrKIIOFveHz9Fc9eZ0E
-         HaYC/HktYFgLguqG3qIqUjqjlKcFSYahDk0+ZV9M+x6m9hNmK/XCDMN+rA74uAcfMaZ7
-         5jzA==
-X-Gm-Message-State: AOJu0Yxrcs55clUi7nwOCWu7nBdr6RpygVgi0Ep9MxY8Zm8Mz7rldn+k
-	grb4mG8bB6AnSsMjdAIXccj+r0Abit0NlfnBVx/yFwB9bSrstLMfTy7oZE/o4Nvw8Haln9olpK3
-	z5tinD0BlmXmXGV4eqD/a6H2+LlyWKtqGQF9xOTOFQNI0c33hh5ArOP0=
-X-Google-Smtp-Source: AGHT+IEY3VY5yH8q/bMpJLgdmFKRteDTdiTCK3XfiyzhTWfW9vhxT/EujtU0R6hmbBh5ZsIL7KYPyTsnNlBPbxYiHfmzLoCTBxlI
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EFA7404E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742954334; cv=fail; b=g4E1v27xMtO1Q8Ye56dbCTeuk2HFiq/JIH2am1m2J7stiVDaYxWf/UzkcDQrzvaRY/VA5oO5sH/6w1pPYKOln78XhHOcdQ99TIoApU5ulA2eAaPkOnKDOwYDQhAJ5TalKtv9qDm/HDNMv0I29sd8p/quZh84MBKk9FdfHm9igAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742954334; c=relaxed/simple;
+	bh=qm41Rcf/Fo4dDKtX0dFTBPF46I0W4fgZCg5EQ/t1lbY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kWE3Mzyj16z0YstjqP8C2iaCEbLOtRBJDWKQoB+TivpzQd6qPMDrIDdk9wtXYWmzMy0AFdahbYQIcXNxoiFgP+mvsTdraDGzdc7fmwJ7RrG06KkJcFJ3akGz8aRgoJKtkY3GTBEEUBsm0a1Cih6SVaSDIHSB6n+hhto649E5YXA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EKwDNW4J; arc=fail smtp.client-ip=52.101.72.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VuwHqq74NOMhXslpRG6UxA9HQTQgxMNRBEm1h1lxWCUTo35A10QttXAdQ6z0efjlkS9leCoMOSJQ8tp5N+faFqXyJ2Fuq1kItjqGMVFl7Hvjosn8vFzF+ZYj7UQxDT4dDGs/E0U7B5EOyQ3xSdLeDSns9xGEbkcZ2cAus7pBMym+Yw4u4EqJCNcQQ3t523k/+++ciUM9daXNXLWPkC/nL9xdZ2d4MrpEpiwFG8vkhKqe3Mk7b/H74mvD1HbfrBquLGXKvZpBfRpoOs9+ghcw1PCNOP1r3tlHN9xCoxATg1KL8HVqk8Z4K0YU/qrD4cPxW+Pp3fhFkgOlNfHeKYkkDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lvmv/YjyP2BsBolHU4w6h12pYcCOC7Uc8SmJWXhZbwE=;
+ b=QHITPASLL1HcL9cKNf0WCSIFTxdlTw183nBbXEKe7Zrp61FsFTt+ZPy1SIcFWL3JSu808f/LimuaB5He5VL5lCLTErAId7MZ2JE13NY8RwWbPD29o+ESVvMlskHIQFMJauo32guzGeEf0D/c0OafcrgkAPRK0xJFZG/vfetq8gyCbhXlPu5OJvX3d3HBQtGYEzOgFSi9clHi/sakitg6XK0xMHQihL8zXMUgE7ORIXQhNjuiq8VX8ENmleSBJUj3nxAXhrCcmJ3sNUSFV2+CHZMs5I2rksIPEr19AhjUt7iQqX5yxuxlKacO97jjkiz5LoyRJS1gyrmHUtZv6MHHGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lvmv/YjyP2BsBolHU4w6h12pYcCOC7Uc8SmJWXhZbwE=;
+ b=EKwDNW4JgFkd41WhfaVbMQTmapjSokBBtwmn4Qo5jd5dG+hqG4Ibv/qTkdzvnAfmwzjm0Ymb83FBkE0KcEnWRwNXqkb/vsD0T0BW2UnGqPsewcTCBLkSWKGGDI8S7xknPtXaeMCbTV83XKLU9qQ9BshyMJeM9J1vf9CPjL1N6tEbOUD8mcRCOsdzrOXg8zNMD5ytnswWZeyemSthnHtAT97rc8Xg5BAZC691YC4d7Q1z3ekgdE9+kjGl8321HIFGA/e4Br7zx2z9H+YtCWX3KkJaF1OV0TD8VhYalqvzb3aJc78I6vEI19/ob3IvteAE7oKrJ17MZJ0yDg7o4DAKXg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB8PR04MB7051.eurprd04.prod.outlook.com (2603:10a6:10:fd::20)
+ by DB8PR04MB6890.eurprd04.prod.outlook.com (2603:10a6:10:117::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
+ 2025 01:58:48 +0000
+Received: from DB8PR04MB7051.eurprd04.prod.outlook.com
+ ([fe80::8f9d:4273:ea83:167a]) by DB8PR04MB7051.eurprd04.prod.outlook.com
+ ([fe80::8f9d:4273:ea83:167a%6]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
+ 01:58:48 +0000
+Message-ID: <e82e2cb1-d48c-42f3-9fec-1750717d9ca1@nxp.com>
+Date: Wed, 26 Mar 2025 10:00:07 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/imx: legacy-bridge: fix inconsistent indenting
+ warning
+To: Charles Han <hanchunchao@inspur.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250325075503.3852-1-hanchunchao@inspur.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250325075503.3852-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR06CA0009.apcprd06.prod.outlook.com
+ (2603:1096:4:186::17) To DB8PR04MB7051.eurprd04.prod.outlook.com
+ (2603:10a6:10:fd::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188b:b0:3d2:b0f1:f5bd with SMTP id
- e9e14a558f8ab-3d5960bf875mr177765045ab.3.1742954343786; Tue, 25 Mar 2025
- 18:59:03 -0700 (PDT)
-Date: Tue, 25 Mar 2025 18:59:03 -0700
-In-Reply-To: <20250326012356.9099-1-richard120310@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e35f67.050a0220.1ec46.0004.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
-From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
-	richard120310@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB8PR04MB7051:EE_|DB8PR04MB6890:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9d4c66f-0f3e-4540-3c99-08dd6c09bfa4
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?WU1lWTRIa3k0bHk4NWhYU3ZMWDRXMFFBZTZRWnpKNGI4VUtabG9CK2RHVGI0?=
+ =?utf-8?B?S1EzOXJaN1RaaWNxYXIzd2ZQTXhhaEJJRTlTZlY5WGp2S24xbSsvOXBNeVh0?=
+ =?utf-8?B?RFhVZG9ac3N6ejFJNlVLNkRPendreFNNcE9leVphZlJTUDhKd3hwZTZZSUNT?=
+ =?utf-8?B?dlU1N3lvVEJGankrT2t1Wmx2VHNCVk92RHJvNmV6QysvWlN4Smcza1QrQWxy?=
+ =?utf-8?B?MHYxVFhyVjE2QjJtZjRWSkgydFhVdHdYaDZuQURUazFIZVZDOVc4TlAyWWZS?=
+ =?utf-8?B?VGNzbzZkcU91TVlDZlhScFJaS2tiUHRUSmprSTE5K3RXcmZuVVZ1ZnNzZnVx?=
+ =?utf-8?B?UnNhWnpnRkJnWGlvUlpQb3hxempxeVBuczhucWxZYnl2d3l3Ykl5RzRFbERp?=
+ =?utf-8?B?Lzl2VTRVQjBOdTlzdXhibys4WlJ3aHBsZGJHNEJEWHZvWEV4RktrSmxWeXl6?=
+ =?utf-8?B?aFM0UFZJaXRzNXEwSVlualE0NmtQR1dVbmp0N0dVc3JaNnRmaUVVR2pjbUhq?=
+ =?utf-8?B?NU43WlVMREZPelQwT2RMUkpBWTRsaHB4L3RKSnVqQXBGak16L1RXZEQ5RmtQ?=
+ =?utf-8?B?YS9KbzlvMXVzVTFDUmQrVDFadE9WMERhUXJsaG44QnlmRDZOcklEUWY5K3hN?=
+ =?utf-8?B?eGlFR0YyblBIZmNpRktrdHhhNjVNQ05FLy9tZWEvMXFrZHNnRnRLR0wya01H?=
+ =?utf-8?B?Wnd2SzVtNkx3Z1hFTUxzY0MydjlPUHlyYWl6NDA0SEtVNnRVYm5kS2E2M1E3?=
+ =?utf-8?B?R3o2OEJYaG9ubml3ZGJyUkczSEU1OGxHdTVoa254dlo0L0M2SW51SkUrUjI5?=
+ =?utf-8?B?emFNT0Z0SElyc3VrWkY0dGg2SWxxWUhUU2pMYTErajB4b2RNZTNGWTJ6eFNw?=
+ =?utf-8?B?MXdhZ2lza1BuNDgrV090ajJ0RHE3UFJEMnBwN3owYXNuZVg0V1VDUjRWWXcw?=
+ =?utf-8?B?T00zL0x4bzV0cVZIRFNBbHhyQ3l3WW5id0dxUEx2WW5Ga3F4K0JBRVJlbHJj?=
+ =?utf-8?B?WGdEMXkyL2FySHVoc002ZE5FYUNrdWR6S0prcjFCUlJ0SmZlT3RVcklyM1JM?=
+ =?utf-8?B?UjJReDh5WXN2K1c1L2RWOGlIU1RBWHZrOTg1QUtSVFREN0ZUc2VjVHlSWE9L?=
+ =?utf-8?B?WSs1SXhxelVScmJHUDhpSlhUS09ETXpscyt2R3ZUNGlwSDhPNENXc2VWTEw4?=
+ =?utf-8?B?L3dlR1MvaE1qWjFEZERJN0lOTXd6RVZaekh0bTAyM2tMRVRwTUZBSGtXMmN6?=
+ =?utf-8?B?RUtDeUpXTGZnYXUzTmYrMlViZHdGKzh5RGhJamhWM2hZS1N1anNrUzdCd04v?=
+ =?utf-8?B?c0Z1dWRXNmF1Z2M5ZSszSG5SSkQ4SEw2OTBpamFHSHlXYUVFd25sZnBteXdO?=
+ =?utf-8?B?bGlwcDUxOXNlMVFmVnhON1FMSUlYeHpHSnp0T09JK1FPNlQzRE1xaGJnR3ZK?=
+ =?utf-8?B?c2I2ZDNKR1pPcWZsR1VCVForY3lxbXJkWEpoYzVRVkJ3ZlU5VDZVZllpUVg4?=
+ =?utf-8?B?SEdrV1NTTWNKK1orQnhtNm5PbFNhNFdjRUk1clh4WjhmZXp6eVV6WE1ER09D?=
+ =?utf-8?B?T1FEU1VYOFdraFRYQW9SbEt3N2hYSFkwWW5nYTlBUERNZzNTZXIyRy9VcVBK?=
+ =?utf-8?B?VEFvOUVMcWM2dDR6bENXUnZIV2ZOdnRIN3JMK1NxWmZ5czdBOFA3allPdjRQ?=
+ =?utf-8?B?U2x6QzRpVEtWVWlxODJpdVEzN3dNSmxtOGpjVVF0VzB0akJjYWF4eVU2Uldh?=
+ =?utf-8?B?c1ZaQTFmOWFKRTVjc1M3SDkwWkR4cFJTR2ZFaCtQSnJTK2wxdGc1eEloN00v?=
+ =?utf-8?Q?LlZjk3lLBBp7ibu4DwkRkK3ecetyhaj4vdcIg=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7051.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?V2lhK1RIcW1rUkhoTXE3b1NvWFd0eS95MkUzMkxjWlp4WmNla1FyTG1ybXFF?=
+ =?utf-8?B?alRYV1U2cEFuWTRqWGQvTjRKczd4eGswYVJNZXRaL3ZDTFREK0FheDd1VWww?=
+ =?utf-8?B?aFBMOGhMenVrTHJMYTZaL0VRQkRvSEl4ZUl3eWdpWVJCVExkcE13OVBsMlJk?=
+ =?utf-8?B?c21PZnd0M3hMRGtvZzNsS0EzUml4RjJsSkpvTzREdGN2NWg1Q1pQU2VjVDFZ?=
+ =?utf-8?B?eHo0bGlreGQ0cURsRUpiZlhwWWVwckNvRFliQ2FCbGs4bVI0bWVVMlFpVCt1?=
+ =?utf-8?B?ek12c0g1a3BJYkFMbExnRkk4RXpvOWthMFlscStVckxFSFhnd2huMkpyV2Fi?=
+ =?utf-8?B?MWIvT1NyNHBPT3V4ZTF3Y1YwbFJoWXIrN1YvdXUrVXh2SS9tQktSOHV5Vlkv?=
+ =?utf-8?B?MG51cmxGb3d2dVFoai9mUkw4cVZ6Yk1EajM1c2xJQUE5QTMvcng4aVRhRDBx?=
+ =?utf-8?B?MXY3NDZvOWVNZDFBeXErWUVtRGd2cWRWb3B2ZU1UV1B5WlBwQ283OGZYMzQ2?=
+ =?utf-8?B?ODhOOWFPTnRvS1NWV1IxZDE2WXp2Z3pqY2dURVVBWC9EdlgxMDBabjBJNmxa?=
+ =?utf-8?B?QXlOL3Z3VEc2aUpONFRYY0hnR3JJclNXQm5DdHNrRDRjdzcyWjd3Z1dFZHQ4?=
+ =?utf-8?B?QnJkTndYUTFvSHZBY2RCcnNvcHVndzB2eFdOaWgwL2RBdXBnTUMrQ2JtQjNl?=
+ =?utf-8?B?ejVqV1ZVd3RYNVZDRisyNXJsOUxNRUw4MWUzbW9rMHFmdTNGYmRyMlFLSDlB?=
+ =?utf-8?B?NHdkcjUxWnkzZ3dsVnplbkRmU0oxditCYURBeEhOWGFteFJBUkt3WTV2QjRS?=
+ =?utf-8?B?NmJEWTBOVy9NdzlOVkhJdGcybWpJUWQ4MjdtNHhwSzZSMWZUazNHVTNOaDdl?=
+ =?utf-8?B?Qm5RemZwZUpvcWRKY29hRE1MNVhsMENOTy92MjhUQzkyQlVJdGVldmpqTmxZ?=
+ =?utf-8?B?ZWZvNGJISnB0YUwveFhhdFc2Qk1uRWNGZG0wQ1ZQOUlwbUZhcWVMZ0xiK2VL?=
+ =?utf-8?B?KzQzejNSZ2ZlR291eFYwcG9GS2ZuVzFwVVhra3FidXRqaVh6RHp5SUU2NG5K?=
+ =?utf-8?B?cHlYTG5Dd21zeHl3djVsb21PeEZhUFJEUHFJQWQxZU9vMnlZL1B1QXJPc2pI?=
+ =?utf-8?B?Y0kvbEhYV1E3a0U1SGNucm51QWJlc3RjQmdER0dwY285SkFXejNPZHZYMUJs?=
+ =?utf-8?B?bjF4a2w3Z3J0TmNlYnYzUHg2NjlQZkFRaDkzWXQrL3FFNVp1VGh0d0laOVNv?=
+ =?utf-8?B?T2Fpek1OakxwUHRzVVRsOUhxUlcvWmlZbmRPcndUWktsYzNkcTJVa0wvVUZl?=
+ =?utf-8?B?aEdzcCtINC9ZUjQ1ekNGVjFRZjhwb0RUTUNVcWp1TXRPVjdrWjdCWXVtZ1NF?=
+ =?utf-8?B?WVJYN2NpdmY0N0pvaTM5YXE5OU8xaktKempWSVBkOXIwdlYzM1Q0cHpzK2hr?=
+ =?utf-8?B?NDN5cyswWm5nc0VyVW5LM2c1OFVnbkdJcG1yd2xSNmI4M1lKNlpSRGNUSzNH?=
+ =?utf-8?B?TlMxaGZialJYQmk2dmhudEVDNHRnK0x0bjdBNmV5OTlmUVRFZ1lvdStzeTlP?=
+ =?utf-8?B?ZGRRMldUcHV5ZExhVE1HT1NMck9FR2hoY3dFQ2IrZjliQ0s2Nzd2NUN1cDdr?=
+ =?utf-8?B?UUR4Mmk4cUtFZlFOVnd0Vy82UEY3b1o3OTNCclNNVHdndFNGWVNTNlh3d091?=
+ =?utf-8?B?MjB2MkJCbWEwNVBBSUozUUgyVXR6Y1lYZHVMcFFQbkNPN29RUGdncmozb1Vx?=
+ =?utf-8?B?SnhkMFY4ZFZZK1lHNVluU25rZzJ5SHBMWTBydjFPdjRXYVpCcm1VWjF3Y0NL?=
+ =?utf-8?B?bXJFQmxZTkFJdXVQanMzZFRGUDRWdWxLcW9GWXVtOFZxdWhOUHVncVdiNStY?=
+ =?utf-8?B?bEUvS24yeFZ5U2FKNHlOQkpwckIrS0d4OHdhNERmWlBxV0VKNmF2SWtpSk5S?=
+ =?utf-8?B?aHdCL0x0dThISEFFaDZrdjYxek8yM1ZCVGUwcVZTME03bXFDY0ExN1ZINXNX?=
+ =?utf-8?B?NUNxQXhQa25uSGxMR2tXbFZtZzVGa04zTlhyQ2dZTG0xc2VNRWVDQ0UyS1Z3?=
+ =?utf-8?B?NExHTDNjSHQ1MWNDTGhsSndWTlZrSlVZRkU5ODNodmNEVUZGWWdySk4xYnJt?=
+ =?utf-8?Q?QAS8X+ofD5D9DT7VWByILkC4Y?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9d4c66f-0f3e-4540-3c99-08dd6c09bfa4
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7051.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 01:58:48.5607
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X6fsQdsVmtQ8Ia9tdQdAgYGpnyxbgccM8RblK4IDvDv5QX1Sp0uFAr863mSjB04ZoeTjrZqFhRnxVAy5m8Wp4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6890
 
-Hello,
+On 03/25/2025, Charles Han wrote:
+> Fix below inconsistent indenting smatch warning.
+> smatch warnings:
+> drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c:79 devm_imx_drm_legacy_bridge() warn: inconsistent indenting
+> 
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>  drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This was applied[1], as I mentioned in [2].
 
-us 0000:00: resource 4 [io  0x0000-0x0cf7 window]
-[    6.611729][    T1] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff windo=
-w]
-[    6.614346][    T1] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bff=
-ff window]
-[    6.616924][    T1] pci_bus 0000:00: resource 7 [mem 0xc0000000-0xfebfef=
-ff window]
-[    6.624654][    T1] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
-[    6.628537][    T1] PCI: CLS 0 bytes, default 64
-[    6.630437][    T1] PCI-DMA: Using software bounce buffering for IO (SWI=
-OTLB)
-[    6.632704][    T1] software IO TLB: mapped [mem 0x00000000bbffd000-0x00=
-000000bfffd000] (64MB)
-[    6.635938][    T1] ACPI: bus type thunderbolt registered
-[    6.765209][    T1] RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters=
-, 10737418240 ms ovfl timer
-[    6.850100][    T1] kvm_amd: CPU 1 isn't AMD or Hygon
-[    6.851373][    T1] clocksource: tsc: mask: 0xffffffffffffffff max_cycle=
-s: 0x1fb6eddb419, max_idle_ns: 440795238405 ns
-[    6.857108][    T1] clocksource: Switched to clocksource tsc
-[    6.883495][   T65] kworker/u8:4 (65) used greatest stack depth: 11832 b=
-ytes left
-[    6.889522][   T66] kworker/u8:3 (66) used greatest stack depth: 10984 b=
-ytes left
-[   27.208530][    T1] Initialise system trusted keyrings
-[   27.218330][    T1] workingset: timestamp_bits=3D40 max_order=3D21 bucke=
-t_order=3D0
-[   27.231513][    T1] DLM installed
-[   27.247670][    T1] squashfs: version 4.0 (2009/01/31) Phillip Lougher
-[   27.271132][    T1] NFS: Registering the id_resolver key type
-[   27.277462][    T1] Key type id_resolver registered
-[   27.282686][    T1] Key type id_legacy registered
-[   27.288363][    T1] nfs4filelayout_init: NFSv4 File Layout Driver Regist=
-ering...
-[   27.296225][    T1] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Drive=
-r Registering...
-[   27.333103][    T1] Key type cifs.spnego registered
-[   27.339373][    T1] Key type cifs.idmap registered
-[   27.352720][    T1] ntfs3: Enabled Linux POSIX ACLs support
-[   27.358946][    T1] ntfs3: Read-only LZX/Xpress compression included
-[   27.366297][    T1] efs: 1.0a - http://aeschi.ch.eu.org/efs/
-[   27.372753][    T1] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
-[   27.379120][    T1] QNX4 filesystem 0.2.3 registered.
-[   27.384778][    T1] qnx6: QNX6 filesystem 1.0.0 registered.
-[   27.392301][    T1] fuse: init (API version 7.42)
-[   27.403332][    T1] orangefs_debugfs_init: called with debug mask: :none=
-: :0:
-[   27.412516][    T1] orangefs_init: module version upstream loaded
-[   27.420673][    T1] JFS: nTxBlock =3D 8192, nTxLock =3D 65536
-[   27.468138][    T1] SGI XFS with ACLs, security attributes, realtime, qu=
-ota, no debug enabled
-[   27.496532][    T1] 9p: Installing v9fs 9p2000 file system support
-[   27.504768][    T1] NILFS version 2 loaded
-[   27.509106][    T1] befs: version: 0.9.3
-[   27.514617][    T1] ocfs2: Registered cluster interface o2cb
-[   27.521829][    T1] ocfs2: Registered cluster interface user
-[   27.531815][    T1] OCFS2 User DLM kernel interface loaded
-[   27.557799][    T1] gfs2: GFS2 installed
-[   27.602711][    T1] ceph: loaded (mds proto 32)
-[   31.788483][    T1] NET: Registered PF_ALG protocol family
-[   31.794660][    T1] xor: automatically using best checksumming function =
-  avx      =20
-[   31.802658][    T1] async_tx: api initialized (async)
-[   31.808258][    T1] Key type asymmetric registered
-[   31.813372][    T1] Asymmetric key parser 'x509' registered
-[   31.819440][    T1] Asymmetric key parser 'pkcs8' registered
-[   31.825504][    T1] Key type pkcs7_test registered
-[   31.831461][    T1] Block layer SCSI generic (bsg) driver version 0.4 lo=
-aded (major 238)
-[   31.842315][    T1] io scheduler mq-deadline registered
-[   31.848032][    T1] io scheduler kyber registered
-[   31.853733][    T1] io scheduler bfq registered
-[   31.872561][    T1] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN=
-:00/input/input0
-[   31.882251][  T127] kworker/u8:5 (127) used greatest stack depth: 10624 =
-bytes left
-[   31.896988][    T1] ACPI: button: Power Button [PWRF]
-[   31.904914][    T1] input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN=
-:00/input/input1
-[   31.915245][    T1] ACPI: button: Sleep Button [SLPF]
-[   31.950129][    T1] ioatdma: Intel(R) QuickData Technology Driver 5.00
-[   32.035057][    T1] ACPI: \_SB_.LNKC: Enabled at IRQ 11
-[   32.040824][    T1] virtio-pci 0000:00:03.0: virtio_pci: leaving for leg=
-acy driver
-[   32.114546][    T1] ACPI: \_SB_.LNKD: Enabled at IRQ 10
-[   32.120352][    T1] virtio-pci 0000:00:04.0: virtio_pci: leaving for leg=
-acy driver
-[   32.195707][    T1] ACPI: \_SB_.LNKB: Enabled at IRQ 10
-[   32.201394][    T1] virtio-pci 0000:00:06.0: virtio_pci: leaving for leg=
-acy driver
-[   32.258757][    T1] virtio-pci 0000:00:07.0: virtio_pci: leaving for leg=
-acy driver
-[   33.408986][    T1] N_HDLC line discipline registered with maxframe=3D40=
-96
-[   33.416297][    T1] Serial: 8250/16550 driver, 4 ports, IRQ sharing enab=
-led
-[   33.429926][    T1] 00:03: ttyS0 at I/O 0x3f8 (irq =3D 4, base_baud =3D =
-115200) is a 16550A
-[   33.462358][    T1] 00:04: ttyS1 at I/O 0x2f8 (irq =3D 3, base_baud =3D =
-115200) is a 16550A
-[   33.491731][    T1] 00:05: ttyS2 at I/O 0x3e8 (irq =3D 6, base_baud =3D =
-115200) is a 16550A
-[   33.524186][    T1] 00:06: ttyS3 at I/O 0x2e8 (irq =3D 7, base_baud =3D =
-115200) is a 16550A
-[   33.577101][    T1] Non-volatile memory driver v1.3
-[   33.587337][    T1] BUG: kernel NULL pointer dereference, address: 00000=
-00000000000
-[   33.594496][    T1] #PF: supervisor read access in kernel mode
-[   33.594496][    T1] #PF: error_code(0x0000) - not-present page
-[   33.594496][    T1] PGD 0 P4D 0=20
-[   33.594496][    T1] Oops: Oops: 0000 [#1] SMP PTI
-[   33.594496][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.1=
-4.0-syzkaller-01979-g61af143fbea4-dirty #0 PREEMPT(undef)=20
-[   33.624396][    T1] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 02/12/2025
-[   33.634086][    T1] RIP: 0010:msix_capability_init+0x95c/0x18c0
-[   33.644292][    T1] Code: ff ff ff 48 89 9d 60 fe ff ff 48 89 9d 08 ff f=
-f ff 48 83 bd 30 ff ff ff 00 4c 8b 75 c8 0f 85 1d 02 00 00 48 8b bd 58 ff f=
-f ff <44> 8b 27 b8 00 00 40 00 41 21 c4 e8 b4 b2 ad fb 8b 18 44 8b 3a 41
-[   33.664287][    T1] RSP: 0000:ffff888100642fb0 EFLAGS: 00010246
-[   33.664287][    T1] RAX: ffff8880bba43080 RBX: ffffc90000b3f008 RCX: 000=
-0000100243080
-[   33.674041][    T1] RDX: ffff888100243080 RSI: ffff88813fffacc0 RDI: 000=
-0000000000000
-[   33.684352][    T1] RBP: ffff888100643178 R08: ffffea000000000f R09: 000=
-0000000000000
-[   33.694105][    T1] R10: ffff8880bba43020 R11: ffffffff86cfbc29 R12: 000=
-0000000000000
-[   33.694105][    T1] R13: 0000000000000000 R14: ffff8881408d0b58 R15: 000=
-000000000000b
-[   33.704327][    T1] FS:  0000000000000000(0000) GS:ffff8881ab2b0000(0000=
-) knlGS:0000000000000000
-[   33.714083][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   33.724299][    T1] CR2: 0000000000000000 CR3: 0000000011a80000 CR4: 000=
-00000003526f0
-[   33.734034][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
-0000000000000
-[   33.734034][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
-0000000000400
-[   33.744273][    T1] Call Trace:
-[   33.754028][    T1]  <TASK>
-[   33.754028][    T1]  ? show_trace_log_lvl+0x268/0x3d0
-[   33.764298][    T1]  ? __pci_enable_msix_range+0xad9/0xc40
-[   33.764298][    T1]  ? __die_body+0xce/0x1a0
-[   33.774026][    T1]  ? __die+0x20f/0x270
-[   33.774026][    T1]  ? page_fault_oops+0xe58/0xfb0
-[   33.774026][    T1]  ? exc_page_fault+0x56c/0x700
-[   33.784287][    T1]  ? asm_exc_page_fault+0x2b/0x30
-[   33.794040][    T1]  ? __pci_enable_msix_range+0xad9/0xc40
-[   33.794040][    T1]  ? msix_capability_init+0x95c/0x18c0
-[   33.804364][    T1]  __pci_enable_msix_range+0xad9/0xc40
-[   33.804364][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   33.814074][    T1]  ? kmsan_internal_set_shadow_origin+0x6c/0x100
-[   33.814074][    T1]  pci_alloc_irq_vectors_affinity+0x111/0x3a0
-[   33.824317][    T1]  vp_find_vqs_msix+0x84d/0x1560
-[   33.834083][    T1]  ? kmsan_internal_unpoison_memory+0x14/0x20
-[   33.834083][    T1]  vp_find_vqs+0x6c/0xa80
-[   33.844490][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   33.844490][    T1]  ? __pfx_vp_find_vqs+0x10/0x10
-[   33.854046][    T1]  probe_common+0x3b4/0x970
-[   33.854046][    T1]  ? __pfx_random_recv_done+0x10/0x10
-[   33.864284][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   33.864284][    T1]  virtrng_probe+0x2d/0x40
-[   33.874036][    T1]  ? __pfx_virtrng_probe+0x10/0x10
-[   33.874036][    T1]  virtio_dev_probe+0x1640/0x19a0
-[   33.884351][    T1]  ? __pfx_virtio_dev_probe+0x10/0x10
-[   33.884351][    T1]  really_probe+0x4dc/0xd90
-[   33.894100][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   33.894100][    T1]  __driver_probe_device+0x2ab/0x5d0
-[   33.904311][    T1]  driver_probe_device+0x72/0x890
-[   33.914058][    T1]  __driver_attach+0x7ea/0xb50
-[   33.914058][    T1]  bus_for_each_dev+0x350/0x540
-[   33.914058][    T1]  ? __pfx___driver_attach+0x10/0x10
-[   33.924300][    T1]  driver_attach+0x51/0x70
-[   33.934048][    T1]  bus_add_driver+0x74c/0xdb0
-[   33.934048][    T1]  driver_register+0x3fb/0x660
-[   33.934048][    T1]  __register_virtio_driver+0xf1/0x120
-[   33.944314][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
-[   33.954051][    T1]  virtio_rng_driver_init+0x2e/0x40
-[   33.954051][    T1]  do_one_initcall+0x228/0xbf0
-[   33.964344][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
-[   33.964344][    T1]  ? kmsan_internal_unpoison_memory+0x14/0x20
-[   33.974071][    T1]  ? irqentry_enter+0x37/0x60
-[   33.980235][    T1]  ? sysvec_apic_timer_interrupt+0x52/0x90
-[   33.984318][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   33.994074][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   33.994074][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   34.004347][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   34.004347][    T1]  ? parameq+0x43a/0x470
-[   34.014040][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   34.014040][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   34.024360][    T1]  ? parse_args+0xfde/0x10a0
-[   34.024360][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
-[   34.034052][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[   34.034052][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
-[   34.044310][    T1]  do_initcall_level+0x140/0x350
-[   34.054046][    T1]  do_initcalls+0x1a6/0x2f0
-[   34.054046][    T1]  ? __pfx_native_smp_prepare_cpus+0x10/0x10
-[   34.054046][    T1]  do_basic_setup+0x22/0x30
-[   34.066107][    T1]  kernel_init_freeable+0x306/0x4c0
-[   34.074047][    T1]  ? __pfx_kernel_init+0x10/0x10
-[   34.074047][    T1]  kernel_init+0x2f/0x800
-[   34.084307][    T1]  ? __pfx_kernel_init+0x10/0x10
-[   34.084307][    T1]  ret_from_fork+0x6d/0x90
-[   34.094354][    T1]  ? __pfx_kernel_init+0x10/0x10
-[   34.094354][    T1]  ret_from_fork_asm+0x1a/0x30
-[   34.104353][    T1] RIP: 1f0f:0x0
-[   34.104353][    T1] Code: Unable to access opcode bytes at 0xfffffffffff=
-fffd6.
-[   34.114061][    T1] RSP: 0000:0000000000000000 EFLAGS: 841f0f2e66 ORIG_R=
-AX: 1f0f2e6600000000
-[   34.124569][    T1] RAX: 0000000000000000 RBX: 1f0f2e6600000000 RCX: 2e6=
-6000000000084
-[   34.124569][    T1] RDX: 0000000000841f0f RSI: 000000841f0f2e66 RDI: 008=
-41f0f2e660000
-[   34.134075][    T1] RBP: 00841f0f2e660000 R08: 00841f0f2e660000 R09: 000=
-000841f0f2e66
-[   34.144315][    T1] R10: 0000000000841f0f R11: 2e66000000000084 R12: 000=
-000841f0f2e66
-[   34.154402][    T1] R13: 0000000000841f0f R14: 2e66000000000084 R15: 1f0=
-f2e6600000000
-[   34.164295][    T1]  </TASK>
-[   34.164295][    T1] Modules linked in:
-[   34.164295][    T1] CR2: 0000000000000000
-[   34.174038][    T1] ---[ end trace 0000000000000000 ]---
-[   34.174038][    T1] RIP: 0010:msix_capability_init+0x95c/0x18c0
-[   34.184305][    T1] Code: ff ff ff 48 89 9d 60 fe ff ff 48 89 9d 08 ff f=
-f ff 48 83 bd 30 ff ff ff 00 4c 8b 75 c8 0f 85 1d 02 00 00 48 8b bd 58 ff f=
-f ff <44> 8b 27 b8 00 00 40 00 41 21 c4 e8 b4 b2 ad fb 8b 18 44 8b 3a 41
-[   34.204268][    T1] RSP: 0000:ffff888100642fb0 EFLAGS: 00010246
-[   34.214047][    T1] RAX: ffff8880bba43080 RBX: ffffc90000b3f008 RCX: 000=
-0000100243080
-[   34.214047][    T1] RDX: ffff888100243080 RSI: ffff88813fffacc0 RDI: 000=
-0000000000000
-[   34.224282][    T1] RBP: ffff888100643178 R08: ffffea000000000f R09: 000=
-0000000000000
-[   34.234034][    T1] R10: ffff8880bba43020 R11: ffffffff86cfbc29 R12: 000=
-0000000000000
-[   34.244291][    T1] R13: 0000000000000000 R14: ffff8881408d0b58 R15: 000=
-000000000000b
-[   34.254082][    T1] FS:  0000000000000000(0000) GS:ffff8881ab2b0000(0000=
-) knlGS:0000000000000000
-[   34.264357][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   34.264357][    T1] CR2: 0000000000000000 CR3: 0000000011a80000 CR4: 000=
-00000003526f0
-[   34.274080][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
-0000000000000
-[   34.284395][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
-0000000000400
-[   34.294083][    T1] Kernel panic - not syncing: Fatal exception
-[   34.294083][    T1] Kernel Offset: disabled
-[   34.294083][    T1] Rebooting in 86400 seconds..
+[1] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/5f7a654b5ed2828e0da8e8331f236854c70f0893
+[2] https://patchwork.freedesktop.org/patch/641089/?series=145843&rev=1
 
-
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
-1-go1.23.6.linux-amd64'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
-.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.23.6'
-GODEBUG=3D''
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build647643234=3D/tmp/go-build -gno-record-gcc=
--switches'
-
-git status (err=3D<nil>)
-HEAD detached at 22a6c2b175
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D22a6c2b1752ef57d8d612e233d35f6be8c3bf7df -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20250318-101307'" -o ./b=
-in/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"22a6c2b1752ef57d8d612e233d35f6be8c=
-3bf7df\"
-/usr/bin/ld: /tmp/ccvpz9QI.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D1584024c580000
-
-
-Tested on:
-
-commit:         61af143f Merge tag 'Smack-for-6.15' of https://github...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc96d28eebe225e1=
-2
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D7ea0b96c4ddb49fd1=
-a70
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1058024c5800=
-00
-
+-- 
+Regards,
+Liu Ying
 
