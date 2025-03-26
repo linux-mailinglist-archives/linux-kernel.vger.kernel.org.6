@@ -1,84 +1,181 @@
-Return-Path: <linux-kernel+bounces-577329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F545A71B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:18:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E70A71B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628F63B674B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160B33BCB61
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7DF1F5428;
-	Wed, 26 Mar 2025 16:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AA11F5428;
+	Wed, 26 Mar 2025 16:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GSoYnput"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFTmpIbS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21A81EB5DD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39611EB5DD;
+	Wed, 26 Mar 2025 16:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743005888; cv=none; b=LynjUj34Lcyeu+xB3q+CgglZsCOBxUMVNdIRl8jXZdjmlQeFX+OEiPSIGWx7C/zEj83V/gVSd6Sb+n4SzYgMX/YayWv2ohwNvV/KQuT+RxX71bJwOlTUZlkLiHdMRbM59g3n4J7yxpn/8Y1ZSRoOu0a3IIzUiVJHc1Tas48cO5Y=
+	t=1743005933; cv=none; b=qojEN9YPxWqtzryw/i9KHmdJZHwXv03aIy666X3ZZe6RHbJLD7iYWjYrbAfCGSKx07B0Q+iTIrZJip1lGeafRzavXwz7BkRA7PDWr+6k7czKAcaHJqot4+baWJFmck76qHDp865VFDgO98Z73srQNk6Dg3gm/my9ohrHSXkx96Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743005888; c=relaxed/simple;
-	bh=ofP62jXvBIqAWzWviTNCbSn41MACM6sOf1GC1vNYNR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iT5dxbT371nkSpWQnr1evEANGlvV8KzHgMUKd64BMnEyzNhKTcg6Ce10T/WE/UHtWVV/nSTlqhOo7B4/h0/svQ52kJpsJU9ZgEg/6K1PhpDkqwHGmR8HT/tbGPW1T/PQ2Ew5PiiJP+b5Hn3FrSpDRgYv0nGLC0z5pqVv65qA6kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GSoYnput; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Mar 2025 12:17:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743005874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8j2vw7QjUbZln+KhxU2q51f1/Vi5QWt5LCZG2SQyQhc=;
-	b=GSoYnput23BCDTjyJjM3MqjCtBm+2shfO+gy5phrERaIjJOYOW44aYxDzadqpjMY6qjAID
-	j+pjMA0G7vSRllMl99Djsm+09LgA968lV81iPkiEtyyUwo25AxFCNK5/pbEEebDi3d83gP
-	n1tyvvzhcbvGGqdG2lakaO39gyjMloU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Cc: Roxana Nicolescu <nicolescu.roxana@protonmail.com>, 
-	Alan Huang <mmpgouride@gmail.com>, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] bcachefs: replace deprecated strncpy() with strscpy()
-Message-ID: <vfszytfd66lqj54nmkymhnrdjodylb7l3alxblzixnlzv7kxom@4dji3xuvmknj>
-References: <20250326094449.16473-1-nicolescu.roxana@protonmail.com>
- <5F3AB2BC-43DA-47A6-A07A-72540B327D11@gmail.com>
- <bmjvipermsvb454mdh5zmlmw4gv4oub5fgh4eowedlit75gqei@3or3va3e52ce>
- <MnHJR6KH9EcCqnLtdxKf3XYBSQQbvXWJafG28O2C2itnS_eETVFoDMfVvFva3dkLMZ-LPRWUhG2g_5HBY_lPZkWOYW2aOg_T4YWTrzXmVZ0=@protonmail.com>
- <wdagx2vwyv7s2t2tcndwmambwdhmoitvhmnzcopdl3xkfq6ct2@evmzpxnuhi4e>
- <CAPZ5DTF+Q_-10xF915wF3b3aUm5jqZepqoyivF+G4S6ONf_PcQ@mail.gmail.com>
+	s=arc-20240116; t=1743005933; c=relaxed/simple;
+	bh=Z4mfmOoHDjZnf6VjFetSlpm7EqU2U/ycpOa/pXxe3As=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AScncm2LssmMJdn91Uo7bUOcJRGXPJelygVPluMTeSocpfo80f72h/SecAaNb1OzZ4MLk3Hx+K1BKR8TXSrwgPMH9srnGalfTG3fcPqJc8Bkbts/LnbGcLe1PC+kizm6OtbW2RQe/RG51EnSjxoupEqt0f+ZLcaGBW5SPgJlRUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFTmpIbS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89A4C4CEE2;
+	Wed, 26 Mar 2025 16:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743005933;
+	bh=Z4mfmOoHDjZnf6VjFetSlpm7EqU2U/ycpOa/pXxe3As=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IFTmpIbSr02+z+3hzqVTVDVY47MUu+MuOh7sDPYKYTz9W4Zd/sQYszYl0O9V5NxkX
+	 ro8eQdeLPbf81UJ3rEAvCcKETeaMaTqNFybysQaLVDVYznROqZeReYdk/zIVHvahJq
+	 9ub88mDc/Pt283gQ59XiLm+C9NSbnzXBRqfXfGd0t7ndfTI+mubG4wdWd4PQ22mWzW
+	 dsUOJb01Ceo80+PjgjrRba4l13mM8/hI54RB52yN+lJJ4vjihzew2lQ4C8wnS4gjPu
+	 +LJwqrfHSl17NMWgSVk0Cc9LPF7bZyeEoR3qEwkiK4C4I3PtZGepUm6BlN0gr2FO8O
+	 +gaWp82UNZkIQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Sumit Garg <sumit.garg@kernel.org>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: Make chip->{status,cancel,req_canceled} opt
+Date: Wed, 26 Mar 2025 18:18:38 +0200
+Message-Id: <20250326161838.123606-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPZ5DTF+Q_-10xF915wF3b3aUm5jqZepqoyivF+G4S6ONf_PcQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 26, 2025 at 09:19:06PM +0530, Bharadwaj Raju wrote:
-> On Wed, Mar 26, 2025 at 8:22 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> > Or better, a new helper: when we're copying to a fixed size buffer we
-> > really want to zero out the rest of the buffer - we don't just want a
-> > single terminating nul.
-> 
-> I believe strscpy_pad does this?
-> 
-> https://docs.kernel.org/core-api/kernel-api.html#c.strscpy_pad
+From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-almost, we don't want the 'required nul termination'; that's a
-requirement at least for disk labels where we need to preserve existing
-behaviour
+tpm_ftpm_tee does not require chip->status, chip->cancel and
+chip->req_canceled. Make them optional.
+
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+---
+ drivers/char/tpm/tpm-interface.c | 31 ++++++++++++++++++++++++++++---
+ drivers/char/tpm/tpm_ftpm_tee.c  | 20 --------------------
+ 2 files changed, 28 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index f62f7871edbd..10ba47a882d8 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -58,6 +58,30 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
++static void tpm_chip_cancel(struct tpm_chip *chip)
++{
++	if (!chip->ops->cancel)
++		return;
++
++	chip->ops->cancel(chip);
++}
++
++static u8 tpm_chip_status(struct tpm_chip *chip)
++{
++	if (!chip->ops->status)
++		return 0;
++
++	return chip->ops->status(chip);
++}
++
++static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
++{
++	if (!chip->ops->req_canceled)
++		return false;
++
++	return chip->ops->req_canceled(chip, status);
++}
++
+ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ {
+ 	struct tpm_header *header = buf;
+@@ -65,6 +89,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 	ssize_t len = 0;
+ 	u32 count, ordinal;
+ 	unsigned long stop;
++	u8 status;
+ 
+ 	if (bufsiz < TPM_HEADER_SIZE)
+ 		return -EINVAL;
+@@ -104,12 +129,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 
+ 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+ 	do {
+-		u8 status = chip->ops->status(chip);
++		status = tpm_chip_status(chip);
+ 		if ((status & chip->ops->req_complete_mask) ==
+ 		    chip->ops->req_complete_val)
+ 			goto out_recv;
+ 
+-		if (chip->ops->req_canceled(chip, status)) {
++		if (tpm_chip_req_canceled(chip, status)) {
+ 			dev_err(&chip->dev, "Operation Canceled\n");
+ 			return -ECANCELED;
+ 		}
+@@ -118,7 +143,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 		rmb();
+ 	} while (time_before(jiffies, stop));
+ 
+-	chip->ops->cancel(chip);
++	tpm_chip_cancel(chip);
+ 	dev_err(&chip->dev, "Operation Timed out\n");
+ 	return -ETIME;
+ 
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index 8d9209dfc384..53ba28ccd5d3 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -164,30 +164,10 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	return 0;
+ }
+ 
+-static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
+-{
+-	/* not supported */
+-}
+-
+-static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
+-{
+-	return 0;
+-}
+-
+-static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status)
+-{
+-	return false;
+-}
+-
+ static const struct tpm_class_ops ftpm_tee_tpm_ops = {
+ 	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.recv = ftpm_tee_tpm_op_recv,
+ 	.send = ftpm_tee_tpm_op_send,
+-	.cancel = ftpm_tee_tpm_op_cancel,
+-	.status = ftpm_tee_tpm_op_status,
+-	.req_complete_mask = 0,
+-	.req_complete_val = 0,
+-	.req_canceled = ftpm_tee_tpm_req_canceled,
+ };
+ 
+ /*
+-- 
+2.39.5
+
 
