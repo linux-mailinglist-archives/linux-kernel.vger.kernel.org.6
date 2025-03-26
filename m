@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-576982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68893A716F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:56:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D377CA716FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:57:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0451890FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E260C189C328
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78601DE3B5;
-	Wed, 26 Mar 2025 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3C01A83E6;
+	Wed, 26 Mar 2025 12:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rMQ0Sfzd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l/ebEhV7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0391E485
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120D71DDC12
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993711; cv=none; b=hKKGFm+4H5hIVOs1RkMqZ2IBFIxFsiUdY7t6TwBitVrsJpuSz/nyU4de6nxVDqBiiDVU0MMR4aXoS2QSMjZIiX+8MQw4iOF2n5HommCt9arCL3HJ9xFT0pqrJIWmX1LWs0Vtot1DpXwCiFPKanbLfczaodBKQo7eT7SaQmQsPRY=
+	t=1742993752; cv=none; b=G38LR/okpL1oAiG2EobGCUW1oqrg380nns/hhu19vRbh1v/AtRZB5SG6sfJ1JZ3eLiouWEPmS3pavvFjVdY6SMZGauAza3kVmkuUjnZR5rhlqIKXtAwBJBUiajC4NLM9nn8cPj5k7bUrsMwB8m4OpZedFUk0pl5tAS+4gA7kWy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993711; c=relaxed/simple;
-	bh=yHaJWfUDOgIcM4VyUEbvZmViTVzoPTaliN4XUQoPTl8=;
+	s=arc-20240116; t=1742993752; c=relaxed/simple;
+	bh=Hlpcqk5lqaENv3KqC4F73OEnJFQv5GOY/52c173rl4w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WDULq1VcsuzNQC9BR51fhbse9dWD4fYtP0WRBwHFRopWqOGPUneD8Tv3GrJIqPsale0Z1pWP1oOdelJ4lINBVeU6vXfP5mKPGL28mn9AUwUqRk4LCiScKYs6wx0ecOMJTEXzstWmiBXpc2/6S2J/siFsuo1ZePOv2FHgKLSHrZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rMQ0Sfzd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q9ocmk032105;
-	Wed, 26 Mar 2025 12:54:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=fJNU42
-	ThsQPoAClWgMGahyKWXC0siBkUSW80fzgGaoU=; b=rMQ0Sfzd0iCn2qshGj1pDj
-	mjzQyPVZ0ijLxMqaIe2xLvSRga2Bq4dyIorOgONvnzoN8sPUoVXKR4JwbQ7aQyk5
-	M0XQklT32ibauJV2ubEK0BvVSEmupxveMowK1xu66Vk+i2+4ixVFinafgKOnlAqz
-	jyKJ2M1IwejqfVzR2GLD9gkCRp+/CK0ATWnaWyvuuqIApWCLlMbBrNdbLmN6a6HE
-	4kgqlk+PqGChL06MqWg1ENhdUlI0hNG4OQOc3mHQxnsJP+ZKVykOTgbxPAqScV9c
-	xYPKACyjDYI27uqR0Dm9IzD/QFKRLPMngL0e7gigsa+g9rIEOXpZhsrXy12ZSJwA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0krp4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 12:54:43 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QAReGV012352;
-	Wed, 26 Mar 2025 12:54:42 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j91m8apa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 12:54:42 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QCseFq52494646
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 12:54:40 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CB6A2004B;
-	Wed, 26 Mar 2025 12:54:40 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DCDB720043;
-	Wed, 26 Mar 2025 12:54:37 +0000 (GMT)
-Received: from [9.124.217.36] (unknown [9.124.217.36])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 12:54:37 +0000 (GMT)
-Message-ID: <7c660d7a-6c70-4307-895f-70d4aa274886@linux.ibm.com>
-Date: Wed, 26 Mar 2025 18:24:37 +0530
+	 In-Reply-To:Content-Type; b=KFn0QCyduiTGuFHzp/JN3Wl/ZWp1DZaWtjHDGijKjBUx8ud7kqKIoQz8gpCUO0oOl4eMM0eC5f2LVaQkkgkh1qcQuhd+3ymkCEngWsKWkAyjfmy+hOTCMw1s8jogWpW6SvovX/yXMryf0GQnPDFKh8PBjmYWXTEj/Jj9PkFwKQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l/ebEhV7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73DJK029695
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:55:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hlpcqk5lqaENv3KqC4F73OEnJFQv5GOY/52c173rl4w=; b=l/ebEhV76SQj544f
+	+Y9r1ooTACuPTCY63Yqe56Nqli39mCMsLBfhIwNpvnuSkj3yOVipyx0k8/Bd2GUA
+	odTtkngLscm0xc5KyIbSwBzZ03m/9Oe0UyQF9sWlt8QNqmMbWi9L3Hc5Qo2twtjp
+	qZuEPh/13Z9ajYyXJNLsbjABFpEEA0SSW2kShMdzSdQUq9IHSBylS1ieI3jB938k
+	0dPGaPBj7tQCeUQrRAKCnkMhUXm1tPK3crHcfynVoflTZswRKFa9IWO7Al28g+nE
+	DKJeuDjYII7JnYL7mcz94MJyWKQPnquiXS0XJiqT+RcoFcUdqqoOSJyKN9tQD44n
+	xovTvw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ktenbupc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:55:49 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c53d5f85c9so183236985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:55:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742993730; x=1743598530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hlpcqk5lqaENv3KqC4F73OEnJFQv5GOY/52c173rl4w=;
+        b=WcflSwxXW27g7fS4orSKTeFgDjPXVN9+p2cg1Lh1yIUVRYO3VHFjfF8bOXBVLrFqEc
+         2pH49H9DuQe54Z8ad7nCO09N7BejAC/dHGrLWxg1rjU7aJGtWoAe0ALyjZkGX9pXnyfl
+         jU9ewIqF2kE5TTu4XxPIPmP58QUJnRSgaPIT23YoYSVzxsfb1uLKYtM+brBQLQ8ZiBZc
+         lLFxB792yPf//HbqnqNYuNCeXFJ54KsgEqgFdGi7vkg6ktQZnhxwaO5nCvyjeNCLVgsx
+         OHZsJ0vblXxHkIRXsHihYE75aki7NFYZRlpvbrvmGNqbsMncDMkPqtE4Rd+YlGUArYdI
+         9zAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7fYL3mUlj6sHvM+TQCCNuOfXaOt8KWuY/orNLeOgOH4pTrCWTt1jSGvFpOUHejqE1wDOYwLvaprMIqWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzezoAVojGhA8LBIiNwJThvb9Adc9gsoAlD5GpM1IKQPVLakOIe
+	f38t89nY2nF+0ADyiJHl3r+KxO6eqpnNG+spvramzU3fTtL3bRjkAi/2U5gvHYJQMXj1WtooDRN
+	X6mv0Rz5FSWG9uGKb6EHwbc5olN1p4r4dyjmEB5IEv5rbstSRlE43jqe3THfedBs=
+X-Gm-Gg: ASbGncvKeKPhl7dTj9R6ELVZPMsFuvytY+louTCkGTi1+FpF7Mqrv3DMRvF7RpSUYXa
+	FR6w6kiZr9I3zoexDmQRiZBEkUrqhkWZf10bm9nEbSb4tf2qUD5liMJctAfuwCY/PEr4kh3vGJh
+	Ov3HbL30fZDlXrEeyDrNfg6sisU0tSftdu6kNdWBmrKcUPKKmNZMyBSIRdjBE0Y4FSJ4i/3P3lO
+	DhrqspBHD41hn1BDCB7dEEK4DkwhumTsJLh6TgL5qYa9oh4okMsQKnW7QOV0EJajAFJMPrINxi5
+	yHGVRqGP8PX38PR6M1ZCJXa7OdCGKg0B5HQ4or2Sn1qzgQhPdxABsxQKvH4c8Gka12VXEQ==
+X-Received: by 2002:a05:620a:bcd:b0:7c3:c814:591d with SMTP id af79cd13be357-7c5ba12db8fmr1183627885a.1.1742993730497;
+        Wed, 26 Mar 2025 05:55:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWjYJmUaR2pS0MBM+C9tZ4PgAEjRTIBh+2Os/3Hu9gB8kQ2ZslbY19JmbOXtqnWcm0svpCcw==
+X-Received: by 2002:a05:620a:bcd:b0:7c3:c814:591d with SMTP id af79cd13be357-7c5ba12db8fmr1183626085a.1.1742993729994;
+        Wed, 26 Mar 2025 05:55:29 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6f0b99fc4sm51757966b.85.2025.03.26.05.55.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 05:55:29 -0700 (PDT)
+Message-ID: <b1f16d67-b61c-44ef-9e96-869aad0e17c8@oss.qualcomm.com>
+Date: Wed, 26 Mar 2025 13:55:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,117 +88,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-        "Nysal Jan K.A." <nysal@linux.ibm.com>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
- <587d45c3-2098-4914-9dfc-275b5d0b9bb7@linux.ibm.com>
- <20250326093153.Ib5b2p6M@linutronix.de>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH V1] spi: Add support for Double Transfer Rate (DTR) mode
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org
+References: <20250326083954.3338597-1-quic_msavaliy@quicinc.com>
+ <d6210c5e-339e-4feb-ad4b-fad456ec5710@quicinc.com>
 Content-Language: en-US
-In-Reply-To: <20250326093153.Ib5b2p6M@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <d6210c5e-339e-4feb-ad4b-fad456ec5710@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6D4zOKx5v0RH6aft5mp3FQsG7IqnUT0A
-X-Proofpoint-GUID: 6D4zOKx5v0RH6aft5mp3FQsG7IqnUT0A
+X-Authority-Analysis: v=2.4 cv=TuvmhCXh c=1 sm=1 tr=0 ts=67e3f955 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=qToX29ahzgIKO7lzqbIA:9 a=QEXdDO2ut3YA:10 a=ibwWHe-yqzEA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: gX191oBjiOrAIZFgfLiySdDC2qGr5kry
+X-Proofpoint-ORIG-GUID: gX191oBjiOrAIZFgfLiySdDC2qGr5kry
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_04,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=945 priorityscore=1501 adultscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260076
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=823
+ malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 adultscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260079
 
+On 3/26/25 10:21 AM, Jyothi Kumar Seerapu wrote:
+> Tested-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
 
+It doesn't look like there's much to test here, you may want to
+leave an a-b or r-b instead
 
-On 3/26/25 15:01, Sebastian Andrzej Siewior wrote:
-> On 2025-03-26 00:34:23 [+0530], Shrikanth Hegde wrote:
->> Hi Sebastian.
-> Hi Shrikanth,
-> 
-
-Hi.
-
->> So, did some more bench-marking using the same perf futex hash.
->> I see that perf creates N threads and binds each thread to a CPU and then
->> calls futex_wait such that it never blocks. It always returns EWOULDBLOCK.
->> only futex_hash is exercised.
-> 
-> It also does spin_lock() + unlock on the hash bucket. Without the
-> locking, you would have constant numbers.
-> 
-Thanks for explanations.
-
-Plus the way perf is doing, it would cause all the SMT threads to be up and 1 case
-probably get the benefit of SMT folding. So anything after 40 threads, numbers don't change with baseline.
-
->> Numbers with different threads. (private futexes)
->> threads	baseline		with series    (ratio)
->> 1		3386265			3266560		0.96	
->> 10		1972069			 821565		0.41
->> 40		1580497			 277900		0.17
->> 80		1555482			 150450		0.096
->>
->>
->> With Shared Futex: (-s option)
->> Threads	baseline		with series    (ratio)
->> 80		590144			 585067		0.99
-> 
-> The shared numbers are equal since the code path there is unchanged.
-> 
->> After looking into code, and after some hacking, could get the
->> performance back with below change. this is likely functionally not correct.
->> the reason for below change is,
->>
->> 1. perf report showed significant time in futex_private_hash_put.
->>     so removed rcu usage for users. that brought some improvements.
->>     from 150k to 300k. Is there a better way to do this users protection?
-> 
-> This is likely from the atomic dec operation itself. Then there is also
-> the preemption counter operation. The inc should be also visible but
-> might be inlined into the hash operation.
-> This is _just_ the atomic inc/ dec that doubled the "throughput" but you
-> don't have anything from the regular path.
-> Anyway. To avoid the atomic part we would need to have a per-CPU counter
-> instead of a global one and a more expensive slow path for the resize
-> since you have to sum up all the per-CPU counters and so on. Not sure it
-> is worth it.
-> 
-
-resize would happen when one does prctl right? or
-it can happen automatically too?
-
-fph is going to be on thread leader's CPU and using atomics to do
-fph->users would likely cause cacheline bouncing no?
-
-Not sure if this happens only due to this benchmark which doesn't actually block.
-Maybe the real life use-case this doesn't matter.
-
->> 2. Since number of buckets would be less by default, this would cause hb
->>     collision. This was seen by queued_spin_lock_slowpath. Increased the hash
->>     bucket size what was before the series. That brought the numbers back to
->>     1.5M. This could be achieved with prctl in perf/bench/futex-hash.c i guess.
-> 
-> Yes. The idea is to avoid a resize at runtime and setting to something
-> you know best. You can also use it now to disable the private hash and
-> stick with the global.
-
-yes. SET_SLOTS would take care of it.
-
-> 
->> Note: Just increasing the hash bucket size without point 1, didn't matter much.
-> 
-> Sebastian
+Konrad
 
