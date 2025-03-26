@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-577085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5FDA71826
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:12:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9DEA71834
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FEE172718
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395D5188FFDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A971F1911;
-	Wed, 26 Mar 2025 14:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C7C1F12EB;
+	Wed, 26 Mar 2025 14:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKABfhct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+K0jFDr"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944C018EB0;
-	Wed, 26 Mar 2025 14:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950011EDA34
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998353; cv=none; b=JeunvFaNe+okY9rMhc4vRn0lSeKfQYi8QdH3ivbhToe6Z9PXPj0XE2b0aVH2xa9rfPxXttNKO5AbnyRdJTNO+LgWCje1H87WmqJkH+88DVM87xMPAi3slCJmrNZfIR205yO9/gHpKHciJmWNvAgH3QXC5cGGGCQ7cTZ2BI0oCjc=
+	t=1742998479; cv=none; b=rLxqqBew/yEKyr1CTTgypbhld17SONNgl+EGO264LBGrOmN7BawQQwwJSQ22/1Yk7xAOTqEsD9OFRNJdPddmAF5/4qkyB2oi5CWyMuvcnnjao390XX4rCfVJTbvlqIpx4/NMVTePB0tP8VaxqUYPaT7CbkNdk+QNgXkThdjvMj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998353; c=relaxed/simple;
-	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6D6oICdxgJCERUnnvC5RpB9ioDqozBVuhnMM/QhCyn2oDVEApaeop1WrO5WVTrBN2hzdTrChA5pVYvfu8nrBU4pv4eAabaDSEIlVXnOICRYOTdjfhoHWFiKYvCmg2aqibUVxQRQzX/hsvS9cuJZs75J/J6bKiHjR56TbffN7qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKABfhct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7141C4CEE2;
-	Wed, 26 Mar 2025 14:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742998353;
-	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CKABfhctp9RkWeycV6li1QBPsIcjaYadrPGg7X6d052msqvdJddCXOo4ae8/jHXPq
-	 IdAAOIYgCF09DPH8f+gcfVeOtcx9QWKQHGBxthWN1VGOb25SGPoShAYmclCszsSycp
-	 yILPvYj3eCGPzuaEiB+rbYZq427YXxOdgBLWlhOcjo1d0k/D5dH8zdl00sq+6BaKqF
-	 igYUCSmctKnQh2fhoDRnp1ySn4Zc4a3Q6xBch5CQp4B3kMWPgTW9k1RndiQ9ImD3HM
-	 RWFoVgXHOfav9CF4QYRKhzE9Hzwas+bQ2VZ+lFJfQ+hlkkah+EIYYU29Huj7BmVxDt
-	 lTWODQ7ZvZ5jA==
-Message-ID: <6073eb68-560c-4864-92d7-c6f61b187f6d@kernel.org>
-Date: Wed, 26 Mar 2025 15:12:25 +0100
+	s=arc-20240116; t=1742998479; c=relaxed/simple;
+	bh=iLiiKX6XB+he1+5qj4K7lcdkVBffO0LVrE165P8Pa8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q++jjTQcZedpr7JJ0khYDvYutsnuBJM4xYnE3CPO0kAutV3QQ1ysyX0CXMeMRj+0GwcZ0ZGEP0+GUp8YfIPNiwUv3957JgFLpwKZlYIalxAMkBz8C6+iAjQd7SHjpHvb4yrw9A7Vt+3Lnsg5fM0VMOVdqtdJNcHwmQeFYqtmDcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+K0jFDr; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2255003f4c6so133200035ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742998477; x=1743603277; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Anvf65kFlASXiYrhuvhmi9oEZJmpnJM1LPwfUNxcGpU=;
+        b=Q+K0jFDrlZtBG0uxBEHjuH152LXf2EeJoVcfJqm3TGkG/iWOB9+F9wiCm5Eks8tGAc
+         6VydR0Qls54J0jphI+MU01Ziq2j3AIb4yArJf6hC9j/A9X/B5keQFM2+qqUIt4+Vl3DS
+         IqDYXWvBOKqs4hr2UQ0qRUIcwuVfQKTHNCfIxThYrLE8ChX+nELPf6Ch14S6SwqeASTo
+         +dIw1GkLGCsNR6uftFzAqeZzlzc9et+4sMy4uAcjvabX0EoojNjV5//k/cnJ4gPg+jiM
+         V3eB+V7bLKVFhQY9hBaBEq0KTklZPbAoTaAX0Nb+TxNrl/bC2pb78najH28k4Y3mY57S
+         fgWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742998477; x=1743603277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Anvf65kFlASXiYrhuvhmi9oEZJmpnJM1LPwfUNxcGpU=;
+        b=R/6l/BtnxtS8r10v/ZfefMehu9cQARAOxMjR3JRziUHglnc5paPCFEbc8rG9QSSM0o
+         GLkdOVHI9O/9Kmx2Ruxexx2Cso9/uEv9stXe21aZ/Hx+tK+O0O0gzW7xvQheKppCb48d
+         daQvbGoknSKvHZJA7qkWs55KDnNGOsI8oAPQ89/ix6BGfbcLjj0qI12OIKnNBUAlzlSg
+         ++7XxjEtEylzExy4zhPcILrv1hA3N7BIckMz/1JM156cZPFEzptYNrRAsesAtV/QOxDf
+         hJb7H15GrA4bvqdC6S+5ldLOTNYU4icX4B/zvAhdr7pF4nxcSSjF0ENlnEPL9hpb4QBy
+         43oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTeyd0Ti+jKtWNXrz4c501ZO4a5E5kcY9Hwy17RWwoyEZmouC/BbQjW4r8mJZqiQncZSYS7W/NnWY/dCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEzQd6AnSarts/9UOmeWiwoXcw0pqJp8z6zX2NyeHhywthlKQT
+	McO4UHRloZZBvzDaraVQMPEBk0hr92dY1Kqe4x5VqPRrCV+FB7FSV2r1ZnhT
+X-Gm-Gg: ASbGncuIVL+sRRQaOsCoSrV437Zr2kuiZyJDCYnppDUH1jHEg2PQ3d88H3guUVZN+VA
+	xdZmnCclw2ftFaGkwIOpomYlufFwe4NNzt4ovBgact31H9mwLGo0xboXkN3jK5RuUAY9zzdZxxS
+	jExTGtw6GBYrhYtuJ71PZq6+TfGPEwyYnplBe91XbD9XInRambDgLo+puHFmGgvZHuPRxk+WwYt
+	nW7T0fRpO624W3TkuDaYhGZ0X+VwlL2FLDU3E4Hxp0HM55M0aTpXIHmYFTKjJ7EyX5kxizYM6Or
+	c1rXW5vFbLHGKFEpinjscY0SvT4oQDRDA1xKAzKgzRQDOIO3FIoN0elQ45Ryln86et2HHlmmyw=
+	=
+X-Google-Smtp-Source: AGHT+IGK01CfleCX2pzM5nt0ir3um7yD8M9syjpA5VmHgXO/F4LfW2P+UBe4DgFIy/ycLsbdmFIZ2A==
+X-Received: by 2002:a17:902:cec8:b0:225:abd2:5e4b with SMTP id d9443c01a7336-22780d7fb22mr302208615ad.16.1742998476493;
+        Wed, 26 Mar 2025 07:14:36 -0700 (PDT)
+Received: from DESKTOP-B5TBVBT.localdomain ([175.117.51.71])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227967dfe4dsm92323315ad.167.2025.03.26.07.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 07:14:36 -0700 (PDT)
+From: Yohan Joung <jyh429@gmail.com>
+X-Google-Original-From: Yohan Joung <yohan.joung@sk.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	daeho43@gmail.com
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Yohan Joung <yohan.joung@sk.com>
+Subject: [PATCH] f2fs: prevent the current section from being selected as a victim during garbage collection
+Date: Wed, 26 Mar 2025 23:14:28 +0900
+Message-Id: <20250326141428.280-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
- accessing ::hws[] in probe()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 26/03/2025 13:08, André Draszik wrote:
-> With UBSAN enabled, we're getting the following trace:
-> 
->     UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
->     index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
-> 
-> This is because commit f316cdff8d67 ("clk: Annotate struct
-> clk_hw_onecell_data with __counted_by") annotated the hws member of
-> that struct with __counted_by, which informs the bounds sanitizer about
-> the number of elements in hws, so that it can warn when hws is accessed
-> out of bounds.
-> 
-> As noted in that change, the __counted_by member must be initialised
-> with the number of elements before the first array access happens,
-> otherwise there will be a warning from each access prior to the
-> initialisation because the number of elements is zero. This occurs in
-> s2mps11_clk_probe() due to ::num being assigned after ::hws access.
-> 
-> Move the assignment to satisfy the requirement of assign-before-access.
-> 
+When selecting a victim using next_victim_seg in a large section, the
+selected section might already have been cleared and designated as the
+new current section, making it actively in use.
+This behavior causes inconsistency between the SIT and SSA.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Yohan Joung <yohan.joung@sk.com>
+---
+ fs/f2fs/gc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 2b8f9239bede..4b5d18e395eb 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1926,6 +1926,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 		goto stop;
+ 	}
+ 
++	if (__is_large_section(sbi) &&
++			IS_CURSEC(sbi, GET_SEC_FROM_SEG(sbi, segno)))
++		goto stop;
++
+ 	seg_freed = do_garbage_collect(sbi, segno, &gc_list, gc_type,
+ 				gc_control->should_migrate_blocks,
+ 				gc_control->one_time);
+-- 
+2.25.1
+
 
