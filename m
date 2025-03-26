@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-576699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9312A71335
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:59:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB059A7133B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9751704B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF6218983FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0665F1A4E98;
-	Wed, 26 Mar 2025 08:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mc4mL7AH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6CD1A5BAE;
+	Wed, 26 Mar 2025 09:00:01 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B91862BB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F131A2C25;
+	Wed, 26 Mar 2025 08:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742979546; cv=none; b=j/Q4yBmas2EkJBf1z9f3h6pQlEtc3wtB+Q+mnWBahkda1whldjYR9IuAFNjarC6dSuDsfwgY+Z35MJ9StA+Ju5cfDv6f5KK2FAY0fDl/1vlWsgvGPapDOOnIEthOzSleWJbuHV9c4fJcBwMTa/NiP7AmYP5JSaTeOx8u5BTcbXA=
+	t=1742979600; cv=none; b=WIl33/dQWk03gHTNOMBUDWgmviuO7ggKshc1GvRMtkcv1Wy4F23N4fA91umS3uFxWQoTogKptSGrERevf0xU5L/R2FkKh0IH/6Nj0qBnzRnu5pn342EfgbPXbw2obgy8Ac7rgPHPKK8gcBWp+TWRghbtz/uw4zPc5tutmFI3oYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742979546; c=relaxed/simple;
-	bh=FdsJiAbVWh4zlGzzu5hykozqWOHEFR+0JZ6czLPTNlY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KmEJfieQC039ldI2s3cAXyfQrlWNPKCYatMOT1pwMOWhWM3LZhi3g8hmvuSJHc3z0gvtMYhhFRoPBMXunsZqRfnsvZ2DBOoWNUZOuzgXLFyHOEWylbtRcuDhG2ybFwr28u7VXtX+nNo4Fup0/pp1lCVXPqANGIn59mKZv3/m2hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mc4mL7AH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7173C4CEE2;
-	Wed, 26 Mar 2025 08:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742979545;
-	bh=FdsJiAbVWh4zlGzzu5hykozqWOHEFR+0JZ6czLPTNlY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mc4mL7AHlA+W62MdbSABDrCa62oQwnlMkklcTzJtGgQvAA2TI3V/6g0F+0acT9ffp
-	 QyI6c7bi261DOnwOHOe3uQ27s2HqUkvQvVaP3KqeefOCoRTI0ekVNxJhqVpK9DpeZV
-	 mP3jrrkGwYspWw7VqrdfG1RMxivRS/gEW4+HyNDm6BpABQShW8BvS0THY3vJnrBcgu
-	 8sd5ftOv87zMV8xTtMok2ZUZQDxnATJi87fGaICmHRXe7BqjCM1MBNA71mURG7aYJ6
-	 tblU4kcC4WF1eu+lKBq7tPpcVlDzJKj2oVDFfJVc9frsYwFjdKNxAlK4udy4sdBBR4
-	 PyjTHNymuWekg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1txMbH-00HE1j-6p;
-	Wed, 26 Mar 2025 08:59:03 +0000
-Date: Wed, 26 Mar 2025 08:59:02 +0000
-Message-ID: <8634f0mall.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Ulf Hansson
-	<ulf.hansson@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	hajun.sung@samsung.com,
-	d7271.choe@samsung.com,
-	joonki.min@samsung.com
-Subject: Re: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in GICv3 ITS driver
-In-Reply-To: <Z+Nv8U/4P3taDpUq@perf>
-References: <CGME20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5@epcas2p3.samsung.com>
-	<Z+Nv8U/4P3taDpUq@perf>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742979600; c=relaxed/simple;
+	bh=cEOMS4NEOhLRyL6A1qhVyFvxw9AAqRQ8LmqLAn9RWWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awIQ2ohJghWsFeRAug8Lv0gY8H9z6txaw5DzTcLXFh0kAduDbheQ2f0qf20NCqVcb2aU+LmcsDZ7D19kN+oJFwe+43aKc3QxudV1ZeoTf00jRReuOg11Zj+IH5xtYpe+KCC4f+DTOWlYb9xTiobxWojB775WimlrE54hO1gUqRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: o70urK2iR1yea92pXgJPpA==
+X-CSE-MsgGUID: JHN6j5gRTl+Y2VsvhCeAkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="43409486"
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="43409486"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 01:59:58 -0700
+X-CSE-ConnectionGUID: pyw8qMDbTZqZu4Krs27rzw==
+X-CSE-MsgGUID: R7zM2+QWTt6T8FnX4whgMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="161898657"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 01:59:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1txMc4-000000061Ja-3Xo1;
+	Wed, 26 Mar 2025 10:59:52 +0200
+Date: Wed, 26 Mar 2025 10:59:52 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] wcslen() prototype in string.h
+Message-ID: <Z-PCCCAPS4uvL3jZ@smile.fi.intel.com>
+References: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
+ <20250325-string-add-wcslen-for-llvm-opt-v1-2-b8f1e2c17888@kernel.org>
+ <Z-LXHssrcpdtFqqn@smile.fi.intel.com>
+ <20250325165847.GA2603000@ax162>
+ <Z-LiWDbrEvVaTLZU@smile.fi.intel.com>
+ <20250325214516.GA672870@ax162>
+ <20250326003303.GA2394@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: youngmin.nam@samsung.com, tglx@linutronix.de, saravanak@google.com, ulf.hansson@linaro.org, vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com, hajun.sung@samsung.com, d7271.choe@samsung.com, joonki.min@samsung.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326003303.GA2394@ax162>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 26 Mar 2025 03:09:37 +0000,
-Youngmin Nam <youngmin.nam@samsung.com> wrote:
+On Tue, Mar 25, 2025 at 05:33:03PM -0700, Nathan Chancellor wrote:
+> On Tue, Mar 25, 2025 at 02:45:21PM -0700, Nathan Chancellor wrote:
+
+...
+
+> > +#include <linux/nls.h>		/* for wchar_t */
 > 
-> Hi.
+> Good thing I waited :) This include makes s390 unhappy:
 > 
-> On our SoC, we are using S2IDLE instead of S2R as a system suspend mode.
-> However, when I try to enable ARM GICv3 ITS driver (drivers/irqchip/irq-gic-v3-its.c),
-> I noticed that there is no proper way to invoke suspend/resume callback,
-> because it only uses syscore_ops, which is not called in an s2idle scenario.
-
-This is *by design*.
-
-> Please refer to the codes below.
+> https://lore.kernel.org/202503260611.MDurOUhF-lkp@intel.com/
 > 
-> <drivers/irqchip/irq-gic-v3-its.c>
-> 5028 static struct syscore_ops its_syscore_ops = {
-> 5029         .suspend = its_save_disable,
-> 5030         .resume = its_restore_enable,
-> 5031 };
-> ...
-> 5803         register_syscore_ops(&its_syscore_ops);
+> It is possible that should be fixed by adding -Wno-pointer-sign to
+> KBUILD_CFLAGS_DECOMPRESSOR so that arch/s390/boot matches the rest of
+> the kernel but...
+
+Ah, yes, you beat me up to commenting on this, the string.h and string.c made
+in a way that they may be and are used in early boot code, i.e. it must not be
+dirtyfied with the kernel code.
+
+...
+
+> >  #include <linux/errno.h>
+> >  #include <linux/limits.h>
+> >  #include <linux/linkage.h>
+> > +#include <linux/nls.h>
+> >  #include <linux/stddef.h>
+> >  #include <linux/string.h>
+> >  #include <linux/types.h>
 > 
-> <kernel/power/suspend.c>
-> 444         if (state == PM_SUSPEND_TO_IDLE) {
-> 445                 s2idle_loop();
-> 446                 goto Platform_wake;
-> 447         }
-> 448
-> 449         error = pm_sleep_disable_secondary_cpus();
-> 450         if (error || suspend_test(TEST_CPUS)) {
-> 451                 log_suspend_abort_reason("Disabling non-boot cpus failed");
-> 452                 goto Enable_cpus;
-> 453         }
-> 454
-> 455         arch_suspend_disable_irqs();
-> 456         BUG_ON(!irqs_disabled());
-> 457
-> 458         system_state = SYSTEM_SUSPEND;
-> 459
-> 460         error = syscore_suspend();
-> 
-> How should we handle this situation ?
+> I wonder if would be better to do something like the below patch in lieu
+> of the EFI change above (since there is no chance for a collision) then
+> change both of the includes for wchar_t in this diff to nls_types.h? I
+> have no strong opinion but this seems like it would be cleaner for the
+> sake of backports while not being a bad solution upstream?
 
-By implementing anything related to GIC power-management in your EL3
-firmware. Only your firmware knows whether you are going into a state
-where the GIC (and the ITS) is going to lose its state (because power
-is going to be removed) or if the sleep period is short enough that
-you can come back from idle without loss of context.
+>  #define _LINUX_NLS_H
+>  
+>  #include <linux/init.h>
 
-Furthermore, there is a lot of things that non-secure cannot do when
-it comes to GIC power management (most the controls are secure only),
-so it is pretty clear that the kernel is the wrong place for this.
+As I just replied to your previous mail, consider fixing this list as well
+by adding module.h and types.h.
 
-I'd suggest you look at what TF-A provides, because this is not
-exactly a new problem (it has been solved several years ago).
+...
 
-	M.
+Overall, can you browse the Ingo's series [1] for the stuff related to this,
+if any?
+
+I would avoid doing double efforts or different approaches if we already have
+something ready.
+
+[1]: https://lore.kernel.org/linux-kernel/YjBr10JXLGHfEFfi@gmail.com/
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
+
+
 
