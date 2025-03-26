@@ -1,192 +1,306 @@
-Return-Path: <linux-kernel+bounces-576791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3236FA71480
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:12:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE00FA71488
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41663ADA68
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E58D3B0BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286751B412B;
-	Wed, 26 Mar 2025 10:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E0D1B4227;
+	Wed, 26 Mar 2025 10:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kLQzLr8v"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nGOZiOKk"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A9D1ACEC6;
-	Wed, 26 Mar 2025 10:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983940; cv=fail; b=IHxoy0KTsu3BFGmJiqXRH+YMEjbfXYZijLFlhjw+ZehS0A7iGUtjUb7JMh4g4Inznwyg5PgIOC4XmdgFclthKLrTmYmzRrXmLo8IotKfVu5HdD3jJC/iX5VBjCKlv4ScrRiA/EeWz1zh9XTbLgefvxbXtI4bqKUWZDiMpy1DXyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983940; c=relaxed/simple;
-	bh=ELAsXX1MNBVxvr0Iec/DVb/CN7U4Lkz21gIR7EkYlH4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eITVl5SAJXykDLuAozQQ7lrjbUgHLLXrFLr7Kj1jnKGDDJKwktWc+OJGjx38aIM3gGK4cuSRguEyycLInl21FvLgYcCkuBLXBKlMA+IuUVP8eWN5F9BqGt8VsBge1/iXOWfJ35824RDbFiryl2qJ8vrf41By2BuhMCmMhKWLy40=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kLQzLr8v; arc=fail smtp.client-ip=40.107.237.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rmoTfDJGZ5ktCFzuWe9zXiSnBgg04CFPirTgu1jweN08HfZN/uRztqHic7XLElATRGDSRt1lOK6c8kHsNPg3qPPF9Ub5F4KGU8PN5YtkMXqXCmN/EtHx7jsmhSL8VAE5ZjfOMDD0EERt3u511RZIqJKNvEVFQc/FLRwwbU5DbJBeHxYTvbCi/gXSkB8G9GmAHWacY4ROXBhNq2WJDvknZotTdEwD8zuUc51mjmPMbNGCcSbIfg+eMLFgbtFr+hah0pYD3783BSULDXafqjQo07xaD+DNxfEZRsPQeblr0WA2ZwgkbAxpdf2Jl1+O4kdoXYToqZEO9R1EI3iTppRm0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hk/9iR4YfgnEIevL0VgjeiiKyQ0TYLAd6HbDnWLFep4=;
- b=ehYY+eInrty0EbchJr7XSISLDZ99lRs5YT44Vm0hjYYFCzh6iKlU3PsgHPBsodkPIfmvsF46Y2oK+rvhLF+fjDJ48WSUj4TMYwDBSgotwuhmgSIumJq123pHqZ0LttBZmGCexAoXFwKzY4/PAwvWDaHow4cf3aZKQWVHpkZqWc97kTsAKAkvufvvttK06L8Os4BT4Eeoj0fQ4oduaae0A/lHVCHfdem23qf2YKN5pfsIrDDRpaqfLYTe1J9FNpCqZwftDfuWPD+VMni87y0l/ZhPo3UeFpmXAWEhXJPmOQ/tKpaGzOZJ2A6iBgU2qB37kTZYJW7E2sOsmHpIocboQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hk/9iR4YfgnEIevL0VgjeiiKyQ0TYLAd6HbDnWLFep4=;
- b=kLQzLr8vHaZpoqMzcJyzY4pWivRhzIeVYyKEEp7VarShtf7072TnidNCtHHGRIbRspSCUjTMgB45KLZB3ciC4dWJV0fwc4Wg9v+3ylyeMO9DsGc4YLXXnuoV2hLs/NEDylSPUFTIV/kWcKcDWIjXk6rqxOp0Cv29D3KgxKLDxA0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com (2603:10b6:510:1fd::14)
- by CH3PR12MB7665.namprd12.prod.outlook.com (2603:10b6:610:14a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.43; Wed, 26 Mar
- 2025 10:12:13 +0000
-Received: from PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421]) by PH7PR12MB6395.namprd12.prod.outlook.com
- ([fe80::5a9e:cee7:496:6421%6]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 10:12:13 +0000
-Message-ID: <836f2d63-7b9a-4fef-ba52-3d481ea91077@amd.com>
-Date: Wed, 26 Mar 2025 15:42:06 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] spi: espi_amd: Add support for IO/MMIO
- configuration
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
-References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
- <20250313183440.261872-9-Raju.Rangoju@amd.com>
- <b409f5e3-2259-4427-8d4a-1652e7fec135@sirena.org.uk>
-Content-Language: en-US
-From: "Rangoju, Raju" <raju.rangoju@amd.com>
-In-Reply-To: <b409f5e3-2259-4427-8d4a-1652e7fec135@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0116.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::31) To PH7PR12MB6395.namprd12.prod.outlook.com
- (2603:10b6:510:1fd::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC308C1F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742984085; cv=none; b=PXtII99YuX11VJ3WSAXCZMxEMfLvG6vzXIbzt0EoGas1cy57bDrZ16H9RpIIHLF2vL5Cxq1d/YpsAZGz5GRTCEyPPgzNTe3soFZH7RT9ZEYKfUW4anRn9UhuPCKAzCWDBYZpvghxUpgAdxaF9r0ek56z7UBUy8DS5LAmIGBMGrM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742984085; c=relaxed/simple;
+	bh=UmsMuhpZlu+Njl9EMinVLEfXAWYFXiGBm7wBgkQV+HM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVofjq7Hv62Lb6gqlI9bSo3jh/iXrsnZU8OUq2VOdrvr83G4/5HVJ4z7/AtHFf3m6bcvAImqBAY160ZASmrob7vHoYb2jk1MTEv/QstBhpynVoowOxp7ci9AKVqd3P8T0KeIu+Oz+RYngx1lPo8LYayG3By0UyjmxBk5izUGZkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nGOZiOKk; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso56857725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742984080; x=1743588880; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u+DNp9QMgdrRGLxMsL46W/r+9G/+hiEbxecdzU4iISI=;
+        b=nGOZiOKkGcDJb357qlVR8SRL0tkKb4UmIAvL9qApqeuGVLuVvjxRqZd1HZ1rgM3ZnA
+         0fuV6zqZ5pYYgVh1Bl3OtseXLN/9VYf7gT0JshJY5Av95wWkc6U6kjEXyCgNAey7imyu
+         LFOwKBWajFFifWhD4KGG+0FBLzJKcmAeo8EIjav67CxmJh2i7oLAB62oDEztUlzBOO1g
+         BOSRJhUmLnz8enKW92n4DwyNKI+0k6JExO4L0DPWO2V56TbNl4PVLPTPTWeKwG8TMETD
+         QwthG2pog2DbZGIb6yKZic9VD4RYt5E8BgBfELXYiGaHQ3lUAEpCQWq3nMGe2Qy2awMy
+         ZLUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742984080; x=1743588880;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+DNp9QMgdrRGLxMsL46W/r+9G/+hiEbxecdzU4iISI=;
+        b=gI8OGvRjJpwD7sooa8/RMxsneDUZysjwY8MJU3qBGTL9NMZkVrYUOIJGwR2A32Opc+
+         RiLiFJ7Utc0+No0dV5ZIb/Es5S/xqkE41gd1fQS8pOVcGADUR5tRIsVOX9Frnye+i3dh
+         8FlV3jFmYxl1mGlpTsopk3/mxGMI0g6G47di4QnEIrLyAwfLQPSLJpudmE7+igSwMKfn
+         YYc8rv2Hlvc+8VZbisR1xxq2YD/Zc71Upwz4RRlnYnCBnYz/B6GpjdGYrhbqvLs6w3eZ
+         s/rQBZrOMFH/eH1MeEOedtiCW3heP6tFTnmmwhwLkJsDwTCmbG4dQeEV3a2HdJMiDccB
+         8ufw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIWLvVw8UQPP8GMFFrzkYcc7Ib/X2ZLPp/gWFrbr6sNqWhQ3DQ8sf6PN5OWe6Lk0x+Dgqv6y8mX71bS/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz87OUfg7Y+LYuZ8Kr/SBTJ5jgBe28TWP5T52EGsJadWdEpMaNB
+	2HLyXbZNRTMF06CrfgZLgdSX54v86vo7rR5EGBCciMOhqbAIB4mNlcxa0OGprYw=
+X-Gm-Gg: ASbGncu7iP+JGVSvfLn54ln8oQNbMMMCjwrJbGzAxjq3Cnrl80DyQRJMP4JTojR66Aj
+	xi2HimCGibZflJrXWgmBmUFMNcBtDYHwfjr9rfUBiEBvaE7jfeBFlxkCwzbGp35yO9Hz1q5foim
+	UlA4YzeHAXSL7Vqcmx+kUObt2KlQJKQZTDt+09hC1o2BEJHo/L03ZJYQuUTqNhB0b7bwrsUv9J9
+	Yk7cmI/oc1oZRBK4o35+LzRN0y9LXf4EItQP5Md5WxlYcMIcCZkNN4736V+69bIGzHPMauX05M2
+	IwNhJR14AWT8UBOTCHoUdmvfx5sapsJREufMSPyAEO2HP/lYFw9ahq5Jw5k/N01vIA+t5Rvvlzw
+	ksTnSUmyYLcsvM4bH
+X-Google-Smtp-Source: AGHT+IHwhUQzzlTOSTisycIZUmQB3vcpLzOCNhJ8f/5tktjjSbuVrOP11IMJCJMu5JzNW6Sn0rBjNw==
+X-Received: by 2002:a05:600c:1e07:b0:43c:fdbe:439b with SMTP id 5b1f17b1804b1-43d509e374bmr207124305e9.4.1742984079808;
+        Wed, 26 Mar 2025 03:14:39 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:5ee:79d0:9b00:d804:1c3a:7697? ([2a01:e0a:5ee:79d0:9b00:d804:1c3a:7697])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbcfaasm176097065e9.35.2025.03.26.03.14.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 03:14:39 -0700 (PDT)
+Message-ID: <8fde6af6-baaa-4f26-b9c0-a17ebcb67073@baylibre.com>
+Date: Wed, 26 Mar 2025 11:14:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6395:EE_|CH3PR12MB7665:EE_
-X-MS-Office365-Filtering-Correlation-Id: da1d2e17-a408-49fa-2b92-08dd6c4ead99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bklkQ3ZQZVdaL2dNcnZYR01KYXVubzh0SlRaeHZHL25VdTh1WFNoTUY2RzlI?=
- =?utf-8?B?bDZBUlI3bmxGc3NQbkliWTJIcVMvd0hUTjBhek43ZHFoQit3OEtsd3pXcFFl?=
- =?utf-8?B?WEtMNDlKbTY1dHlRYkR0QUtiYWl4K2FweDJGNVVWSUJ3ZmtjTHRhanNUMWY0?=
- =?utf-8?B?bWxGUUkyUG1keld1MjJxcVJ2V0pKVmRnRzdST1BqTHUvcmduWG9KR0ptSVNa?=
- =?utf-8?B?VkxqSHlZdndvN0h6ajA0SmNIMm5RQk5sRzA0TEFTTkx1ZGFhclNvQ1FURmxW?=
- =?utf-8?B?bkhMdzllWjU0MTl2ZjZsSDBxam1vUmpsTy9Cd1dQbDkraS9obWlRbzBaL2Z0?=
- =?utf-8?B?S3ZEYXJVajhnMjBnUzJudFI5bjh2UE1sUW9LVi92T3JVK09UZjF5eFNlOVYy?=
- =?utf-8?B?MHhJVmQrOFZZUktVUmIvdjdPMWoybytJbXVmRzRTemU1UWpsajlmZ1B0L3dY?=
- =?utf-8?B?OWFGRlNPQ2xiV3VTQW90MGx1UExBN1N4MUFpUWZsOEFNWnkrbHhtZllmVmR1?=
- =?utf-8?B?c3R2dnl1M0RuUk5TWEtiQnBQYys2ZHo4Z3dDY3RnRVNaTHB6M3FlSll0dlpP?=
- =?utf-8?B?VjNyMG9GN0k4clRtZkxmUFZLWjhSazF1dTdIZU9JelpiMEd5elBnK3ZQbHo3?=
- =?utf-8?B?eFFFRFUxU2ZVZGVubTlRNDZSa3NkaHFRZzZPNGFydHA5ZGlkTVBrK1U3bWI1?=
- =?utf-8?B?Q1c2NTRZMXlTaldXVFN1RnpvQVF6SURncC9uNUcvVVNXdk1jR0FoREZ2Yjla?=
- =?utf-8?B?ckkybGZkZ2FGV3hRd1FWWlptanBZNitabGVLaUNpcHVtNmMrMjBmWHY1RVNX?=
- =?utf-8?B?Mnc2NS92R1dPNEJ1UkVERFVSVS93VC93RzZhSnRNY0IxTDJMQkpBUEpVQTEv?=
- =?utf-8?B?NnZQRnBEUVJqWUdLeXhOOXduKzFmZnAvR1BEYUZZMW5jblpwSDNQKzBpaVpX?=
- =?utf-8?B?V0FCempGUitxMk56TFZTeWZuTTBRbC9QNUZ3TkFCblUrY0NGckE2OTFhSTdF?=
- =?utf-8?B?RGhjUmhMU3FIYm9zaHZLQWtaZURiUW1TZGxrdGFmc0RlMFBnNEV5eVBKRHVO?=
- =?utf-8?B?S3IyTUdFRHZwUjcyUkZaa1Z6bWxjcUdyc2g5UnFSYzhjL1djRktSMGZhWlA0?=
- =?utf-8?B?YTl1TFBPSzhjU0RmeTNwS3RZRjg3UVJYOElpSUU0akZudDVnWHN3cEtvN1E0?=
- =?utf-8?B?NUdhNFRhcmpHWWtnUnJ1YUFINlVjTDRqVnFZanNlSExzcnU3dGNDSW5Xa0Uw?=
- =?utf-8?B?ZmxJY0p6V2VkQzBueUhISUFiT0NFRHZwL3Y5dUtVQkpmR2VBNFcwNy8xS1k4?=
- =?utf-8?B?ZzNUdFZabkIramxSWTQ5NjNBejZWZXhZWksrQXJldVZCNENRUzdocGhUWHhp?=
- =?utf-8?B?YzFWVStMYnlDQUhhei9XZUlOM1NGTVEwMTk3ZFQvN0tBQWRmdlNYTlJYN29R?=
- =?utf-8?B?eDBSNFltajBVNjV3emtvVUdRczQ4MEQ1dHpmS05oU0VxM0lMSlJKVlN5dTNK?=
- =?utf-8?B?eStvVzVjL2sxTlA2dWNCYnY0R0xoUnZESnNGV0NrVlhXZDZ3aGNka2xJajhj?=
- =?utf-8?B?Q0tJU3o1dUliL0dTNHpHdGRNUDN6UVNzT3F5K3IxaXQwMEVBUFZtRGtoeVBP?=
- =?utf-8?B?VGNYeE11S1I5UzhBd1grVTRkWXByODUxWFZVTmM0L0ZHS2o0QlQ1bGNYL0ZV?=
- =?utf-8?B?ZnREWlplSWVzWTQwL0JlRFZmTzJOUklHZ3B0YU8vaERvcHFpYzV5dmo5a0Nv?=
- =?utf-8?B?MlFMZ2hQUjBLcHlrTnFwMXBra0tYQVlzMGlsK25WR1A3NDRRbEF3UUlPNk1D?=
- =?utf-8?B?RFJ3a0g0MUpwWGJmUEZnT0hXYVAwbzFudzV0blAwbE5naTcyUU9KVG1UQVA3?=
- =?utf-8?Q?pCfIZ8KZkLRcD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6395.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M1krMVFDZCtuSTI4ZVJkMWtrYkNURUF3MUt2dU1Jek1MWTk3akpxRGdvcmR2?=
- =?utf-8?B?Unk1ZlFZOGJrRnZrZ0grYklWYzNvZUJsM09zY1JjdUZTNGVPRkQvdTVYM2lI?=
- =?utf-8?B?a05Vc2h6aitrQXJ6QnVPZ0dPNDZKd3NnMWM1ZVN6SDlFWEN0SHBBdXlqZkxV?=
- =?utf-8?B?ZEYvdTJaemp2eFpncUxvRnRBY0F5SHNhbzNKT3MyL0RDT2JzMTdCenBlWURr?=
- =?utf-8?B?Z3JpQzA1VFRpZDBZVWNORW1VYzBoc3ovd3dGNDNSQ2Rqd01QSFl0aHRSdk41?=
- =?utf-8?B?NUZUWDQwM00xdW9zMG1Bd0M0RjlWVmp6WVhmaHg3WnRBaENRdGh3SEs1SGsx?=
- =?utf-8?B?SnlFVExrNjQ3UDV1RytOOEp1SjU1N3BzYjFxa1pzdTBMMWJRMi9XZVR4M21q?=
- =?utf-8?B?VmdBeHNsSC9EME9ZTG9kNWFXVitlNUNYcHdQdzdMcUczam5PbElJelpZUmRY?=
- =?utf-8?B?eGh6MDJRRjAzQ0NycTIwci9BZGtxU0owbXY4aWRpSGVScGk3cytZOWlvSGdp?=
- =?utf-8?B?eUNCL3BRamtHbjVtZE9CQVlVQ2hKWElFaS9wQURuR1AreTNlRU83RnlvSS9M?=
- =?utf-8?B?OUhHaEd1Tk14YzZrS0QvUTlwMS9md2Z4dWVqRjBWWkNleEJyd0w3ODBZa0pj?=
- =?utf-8?B?TDgydHU5UVZJdHlZZXJzTklURS9sMDhkZ2FYVTVXMWFCZjB0QTZZV3ZEWHU1?=
- =?utf-8?B?SG9EYU5JNnlQQkcxWXBGRWRIN0FiV1MvREd1dEJjZGFTQmg2bEw0U1BvUlJ4?=
- =?utf-8?B?ZjdFTmRyUkZFRnIrczhjQm95STl1ZVNlVXptTEk5d1QrRXZZcUpIRnplUWZw?=
- =?utf-8?B?RW5meWFNQmtJRlpKU0JacWQ3UUI5b0NSS0ZPSVVkNnV5cHNQWTYxLzYwSFl0?=
- =?utf-8?B?WUJWcU0zWDJ3U3dkcUVGTms4dXU3NGwrREVPS0FlamdMUml6TkZlSEEyR3JG?=
- =?utf-8?B?WW4xdzR2aGtKWDcxMWRHajF2U2pyM2lCK2hTNHErZUJNOWkydkhvM05lU29P?=
- =?utf-8?B?bFYxOEMzMVp2M0owSDI5VHBsR3E5bWxvUlU3SlZHamVFbDhaQnpUK21DclNX?=
- =?utf-8?B?NHREYi9LWnROd0crcXBNL21vcGczNzN1ZUZMbzJnRkMyRFg3VG1wOGIzZVlP?=
- =?utf-8?B?bEcyejhhZ2tVS2xiZzBrWEZHK2x5NUpxeTNjWHFHRlhyYkl0TW95MkRTczlm?=
- =?utf-8?B?UnlML1ZZNkFvMFRJdEdXMzFQZUFrN1llTjNYRnhvTi9sRlMvWURVNFVqVURY?=
- =?utf-8?B?cmFBeHVQV1MxdlBuL01wNE53SllRU0JUbGlVTHJUTnVPUnp2cjN2Zm5rWTFB?=
- =?utf-8?B?TXNZRkdPSVZIbGtYbUphd0NheGVyVUxmNk9KQzlmdHRQMTg5bTlwN0lJUllD?=
- =?utf-8?B?b0g0ZG16MlVEV2ZiNWtMTlhhdGZScHVnN2R0c1RMSE5vaUhkdTliRmRHVHB3?=
- =?utf-8?B?MjV2bHBFOGJXcE50R0VwZ0NFSko4ckFidWNxTnRhVUNMRURwWjdxbXFwWktn?=
- =?utf-8?B?VzF5UFI2MUYrQ2Y1WmhCVGkxb2Eya0J5VWpxR2t4bk1OWmh0NUVmU2J5WFFy?=
- =?utf-8?B?ZUx2MmVabjk2NkM2eTJPaXpiRGZyMUl6WWZDYXdLV2RIK05RUTZNc0h1WHN2?=
- =?utf-8?B?OTV2ZDMzT0FHeDdSOVNmd0ZhcHlwZzFablZOb2lFZ0ZlVmVYY1VyMW9XMHhp?=
- =?utf-8?B?QW5IZzI5WFBpN2poNytoL2ZmN3dnRnExTzQ4TXlWMTlwYzdydzN3MzcxMW5I?=
- =?utf-8?B?N0UxcW9IMWxpdFFYUm02UEJpQ29UdWQ5cEc1V0ZDYnYvbjJzVmE5Z0xwbC9o?=
- =?utf-8?B?L2J6c2ZxS0tlSEhHckRFOVp5RlV1NTVPOHNFdVdOeENTT2hxMHpOOFFUZ2pC?=
- =?utf-8?B?SDRFMDJHSVNVd1pSbXYveVZRMzlJYm82UEQ1aThsOXFVbjdlTEJVRXVwclFj?=
- =?utf-8?B?bjN0dm85T1BxRjFPelp4TVNVdFIvUWtodWp1MHRZUENXK2NtL3hhTVNjcHZQ?=
- =?utf-8?B?MDBuaXlHdHN3SXM2SWREQ3BDc2VZTUtQbnhWUkdjK3NXbGVaKzFiSFN3V1Vi?=
- =?utf-8?B?YVQ2d0RKY2Jub21tMEpwcFRyMnI1alFUTHpxOXdEc1lnZ1puWVM1cDJJNmhB?=
- =?utf-8?Q?ZstnVqnJs9u7PFeQrf/MB0D96?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da1d2e17-a408-49fa-2b92-08dd6c4ead99
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6395.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 10:12:13.5655
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yp+160BHxZ2bWR7xZBR0/U6DHpkTbkgDn2TSE6pMnGUjX2Fq9933hTPY/yLBokDYlIaQo+HQW1QtyLQIYUp07g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7665
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2] arm64: dts: mediatek: add mmc2 support for
+ mt8365-evk
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, macpaul.Lin@mediatek.com
+Cc: vsatoes@baylibre.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250109-mmc2-support-v2-1-5f660c809610@baylibre.com>
+ <ecd8a46e-0f87-498e-8a12-fdeae6f5791d@collabora.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <ecd8a46e-0f87-498e-8a12-fdeae6f5791d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hello Angelo,
 
+Thanks for the review :D
 
-On 3/17/2025 7:40 PM, Mark Brown wrote:
-> On Fri, Mar 14, 2025 at 12:04:38AM +0530, Raju Rangoju wrote:
+I've some comment below:
+
+On 24/03/2025 15:09, AngeloGioacchino Del Regno wrote:
+> Il 24/03/25 14:54, Alexandre Mergnat ha scritto:
+>> Adds support for the MMC2 interface on the MT8365 EVK board.
+>> It introduces a fixed regulator for the MMC2 VDD33 supply and configures
+>> the MMC2 node with a 4-bit bus width, high-speed capabilities, UHS
+>> modes, and appropriate power supplies. Enabled SDIO IRQ, wakeup source,
+>> and kept power during suspend (to save firmware module) for wireless
+>> chip functionality.
+>>
+>> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+>> ---
+>> Changes in v2:
+>> - Apply alphabetical order to pinctrl property items.
+>> - Improve commit message
+>> - Link to v1: https://lore.kernel.org/r/20250109-mmc2-support-v1-1-9b9d1b1ae35d@baylibre.com
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 103 +++++++++++++++++++++++++---
+>>   1 file changed, 94 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts 
+>> b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> index 7d90112a7e274..a87f1b3ed6500 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> @@ -53,6 +53,15 @@ memory@40000000 {
+>>           reg = <0 0x40000000 0 0xc0000000>;
+>>       };
+>> +    mmc2_vdd33: mmc2_vdd33-regulator {
+>> +        compatible = "regulator-fixed";
+>> +        regulator-name = "mmc2_vdd33";
 > 
->> Add support to configure the eSPI slave0 IO/MMIO address before
->> initiating the peripheral channel IO/MMIO read and write operations.
->> This patch introduces new IOCTLs to enable, disable and read IO/MMIO
->> configurations.
+> mmc2-vdd33 please
+
+Ok
+
 > 
-> This absolutely does not seem like something that should be exposed to
-> userspace, if there is some reason for this to be runtime configured it
-> needs to be clearly explained.
+>> +        regulator-min-microvolt = <3300000>;
+>> +        regulator-max-microvolt = <3300000>;
+>> +        gpio = <&pio 121 0>;
+>> +        enable-active-high;
+>> +    };
+>> +
+>>       usb_otg_vbus: regulator-0 {
+>>           compatible = "regulator-fixed";
+>>           regulator-name = "otg_vbus";
 
-Hi Mark,
+Then, I will change this too.
 
-Thanks for reviewing this. In subsequent series we are planning to drop 
-the IOCTLS that are exposed to userspace
+>> @@ -197,6 +206,28 @@ &mmc1 {
+>>       status = "okay";
+>>   };
+>> +&mmc2 {
+>> +    assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
+>> +    assigned-clocks = <&topckgen CLK_TOP_MSDC50_2_SEL>;
+>> +    bus-width = <4>;
+>> +    cap-sd-highspeed;
+>> +    cap-sdio-irq;
+>> +    hs400-ds-delay = <0x12012>;
+>> +    keep-power-in-suspend;
+>> +    max-frequency = <200000000>;
+>> +    non-removable;
+>> +    pinctrl-0 = <&mmc2_default_pins>;
+>> +    pinctrl-1 = <&mmc2_uhs_pins>;
+>> +    pinctrl-names = "default", "state_uhs";
+>> +    sd-uhs-sdr104;
+>> +    sd-uhs-sdr25;
+>> +    sd-uhs-sdr50;
+>> +    vmmc-supply = <&mmc2_vdd33>;
+>> +    vqmmc-supply = <&mt6357_vcn18_reg>;
+>> +    wakeup-source;
+>> +    status = "okay";
+>> +};
+>> +
+>>   &mt6357_pmic {
+>>       interrupts-extended = <&pio 145 IRQ_TYPE_LEVEL_HIGH>;
+>>       interrupt-controller;
+>> @@ -324,8 +355,8 @@ cmd-dat-pins {
+>>                    <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+>>                    <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+>>                    <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+>> -            input-enable;
+>>               bias-pull-up;
+>> +            input-enable;
+> 
+> This is a cleanup and goes to a different commit
+
+Agree
+
+> 
+>>           };
+>>           rst-pins {
+>> @@ -337,8 +368,8 @@ rst-pins {
+>>       mmc0_uhs_pins: mmc0-uhs-pins {
+>>           clk-pins {
+>>               pinmux = <MT8365_PIN_99_MSDC0_CLK__FUNC_MSDC0_CLK>;
+>> -            drive-strength = <MTK_DRIVE_10mA>;
+>>               bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
+>> +            drive-strength = <MTK_DRIVE_10mA>;
+> 
+> While at it, in a cleanup commit, if you could also remove those MTK_DRIVE_xxx and
+> use just the number that'd be great.
+
+Sure
+
+> 
+>>           };
+>>           cmd-dat-pins {
+>> @@ -351,21 +382,21 @@ cmd-dat-pins {
+>>                    <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+>>                    <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+>>                    <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+>> -            input-enable;
+>> -            drive-strength = <MTK_DRIVE_10mA>;
+>>               bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+>> +            drive-strength = <MTK_DRIVE_10mA>;
+>> +            input-enable;
+>>           };
+>>           ds-pins {
+>>               pinmux = <MT8365_PIN_104_MSDC0_DSL__FUNC_MSDC0_DSL>;
+>> -            drive-strength = <MTK_DRIVE_10mA>;
+>>               bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
+>> +            drive-strength = <MTK_DRIVE_10mA>;
+>>           };
+>>           rst-pins {
+>>               pinmux = <MT8365_PIN_97_MSDC0_RSTB__FUNC_MSDC0_RSTB>;
+>> -            drive-strength = <MTK_DRIVE_10mA>;
+>>               bias-pull-up;
+>> +            drive-strength = <MTK_DRIVE_10mA>;
+>>           };
+>>       };
+>> @@ -386,16 +417,16 @@ cmd-dat-pins {
+>>                    <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+>>                    <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+>>                    <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+>> -            input-enable;
+>>               bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+>> +            input-enable;
+>>           };
+>>       };
+>>       mmc1_uhs_pins: mmc1-uhs-pins {
+>>           clk-pins {
+>>               pinmux = <MT8365_PIN_88_MSDC1_CLK__FUNC_MSDC1_CLK>;
+>> -            drive-strength = <8>;
+>>               bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
+>> +            drive-strength = <8>;
+>>           };
+>>           cmd-dat-pins {
+>> @@ -404,9 +435,63 @@ cmd-dat-pins {
+>>                    <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+>>                    <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+>>                    <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+>> -            input-enable;
+>> +            bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+>>               drive-strength = <6>;
+>> +            input-enable;
+>> +        };
+>> +    };
+>> +
+>> +    mmc2_default_pins: mmc2-default-pins {
+>> +        clk-pins {
+>> +            pinmux = <MT8365_PIN_81_MSDC2_CLK__FUNC_MSDC2_CLK>;
+>> +            bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
+>> +            drive-strength = <4>;
+>> +        };
+>> +
+>> +        cmd-dat-pins {
+>> +            pinmux = <MT8365_PIN_82_MSDC2_DAT0__FUNC_MSDC2_DAT0>,
+>> +                 <MT8365_PIN_83_MSDC2_DAT1__FUNC_MSDC2_DAT1>,
+>> +                 <MT8365_PIN_84_MSDC2_DAT2__FUNC_MSDC2_DAT2>,
+>> +                 <MT8365_PIN_85_MSDC2_DAT3__FUNC_MSDC2_DAT3>,
+>> +                 <MT8365_PIN_80_MSDC2_CMD__FUNC_MSDC2_CMD>;
+>>               bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+>> +            drive-strength = <4>;
+>> +            input-enable;
+>> +        };
+>> +
+>> +        sys-en-pins {
+>> +            pinmux = <MT8365_PIN_120_DMIC1_CLK__FUNC_GPIO120>;
+> 
+> My schematics say that the DMIC1_CLK pin is PERST_N, DMIC_DAT0 is PWR_EN: what's
+> the intention here?!
+> 
+> In any case, this is not a mmc2 pin, but something else :-)
+
+First of all, name in schematic are wrong, I noticed that when I've port these feature from kernel 
+5.15 to 6.6. After digging and talking to MTK, they confirm me that PERST_N is actually an enable 
+pin (or power_on).
+
+Secondly, MT7663_PERST_N (MT8365_PIN_120_DMIC1_CLK__FUNC_GPIO120) is part of mmc2 pin since is it 
+connected to the MMC2 connector pin number 52.
+
+> 
+> Cheers,
+> Angelo
+> 
+
+-- 
+Regards,
+Alexandre
 
