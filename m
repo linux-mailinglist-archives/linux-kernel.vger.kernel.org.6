@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-577638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928F3A71FC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:58:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1891A71FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB981899EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:58:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26FDC3B4C8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAECA25290D;
-	Wed, 26 Mar 2025 19:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60A25484A;
+	Wed, 26 Mar 2025 20:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2ouwNU9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k35KV8C3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246663CB;
-	Wed, 26 Mar 2025 19:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979C314F125;
+	Wed, 26 Mar 2025 20:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743019089; cv=none; b=A+rPTVdike5jof2lMdVwoGA2u733LFeU/CY4b4N4t1w0nU+YQSko0Tp93+qPqivSZGuOdmng0lpWx+SZRzPxrQS8NhOsxoCGG16zN6MthVUqAd8y2jGbnQBUA0q7WxFbYo6fvIKnm+3apUIvhATZ/TlhwMoczXlwGkByHT8DsuU=
+	t=1743019207; cv=none; b=YiXbfRGa9W7siMTSlvkukZZ1yw+vLf8cCmuOyQb/phRBQ5pbDx9CS+E2ISLQy/XjPqBgcVwE7Sz09bShw27PfJfyE4KB6/945vgJMVEZyHIJL2mjBjrCEKyOfezBA2TODC6Ki6p4UJUp6zqHbUHQpRPX7/TyjqJOXHmPgjlHaY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743019089; c=relaxed/simple;
-	bh=cnnF8YwXc3kNePxw2hcgk6nQOCjxSdYljW7QRm3pbdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=spy6ZMBb/0aFJvRcXrr/BlVaEQvQmqArzRLi1lv7DQo87fDX68s8rvx6jSocjL890caFIJlmi9N9daBe1E2qMWdOgk65atcTPsKrmEjc+6N8eENp/mNS6SjBfhfRAR96bDmADWXVOnP9/r34MTzYchVt0aeedbPxZoqS6NZSTPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2ouwNU9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227b828de00so5324315ad.1;
-        Wed, 26 Mar 2025 12:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743019087; x=1743623887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=94/hsm05gbOZ1gOP8w/7nLNNkppkAVjxG6Q+5hmNpNU=;
-        b=H2ouwNU9UG7nAVTftMxG7aF/qeH7TlCNqbevQX4JRhVFBykX7+dY/K2DKHXaXaLPC2
-         BjN6i0yU3V6XkfMVqv/j+2/FxUNwt3mJpRbPE8rgxk7BntQywZObcfrwHlnNjRJAptVy
-         oEfrMZbz8uAUi5ub7FiPj5ZWG723Lg2Ai1EX9DqHDIyXiGm9kqD5Mq3Q+cCQ1H3i/qVs
-         Qz+4oqXmtQkdbL+JTLDXiIucrWsQONJuUMSk3TTTMFAE1Nzg8VFMprYqCYcw1fuY+A1W
-         8/2yP7HXEBi4AEo0eRXv/CWY0qMfXb/hRHq8m8OCd5faE+8LFgJzak0ADzi2ho7gihvA
-         bLXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743019087; x=1743623887;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=94/hsm05gbOZ1gOP8w/7nLNNkppkAVjxG6Q+5hmNpNU=;
-        b=RAEcgsvI8jDqO6P06zXisHPLIRzJUXHTflhHkTkvhH3em+hug1MNb0RqWneaG8pUxk
-         7cgfpqUlL/9xaaKkIrs7/kCIYqupRRLlZSqXBXHuBijaKFKDSPAMOlhKmUgvrcTWWBDZ
-         +UpfXiDXhWr8YZYTGgJBHswn+yG0c8Y8TEpWJ5K1jbx37OTzwsgq3VRFo4pTEZUSjz+1
-         lzPIjCEyhIhsDD0Mj1vdegLnJhOHXbX0eRuWfczYegY9zJExEjhHoQq2+O0LoIoOW5bP
-         dyL3IPB+NcqLy1QXldBH/bunYrx97hLEpjundfr2aSltmPcsCWx+oryOe3VxqSXV/S8z
-         UXcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGd7n4+dVNaAHyDeBxZYhVQj220rhEWyi9/OUChHXu/P2BB+/2xMKT4OphCEvSJ41d8a+YP5iHvAlzlvo=@vger.kernel.org, AJvYcCXbAhGHUt6sJn4YUOW1+DnaPlSdrX+ovfSvoY9CCP4Xtr2V6g62NCpiD72d45EPWurzlSKKCUsDpf/OKKr/SDHUOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwikDkJE7rMJ8ZssH5I83t6S+MEEOa7Ycqte8BHTHnXPRpddh+Y
-	eqild7qq3Sa18uoWQ4MeeoOK4Z/PdW4HIPAoT2Y2PYEfBmSchF0d
-X-Gm-Gg: ASbGnctHzdtimimSjwNsoNoD9LwjcIOjHU3gRf84n2qNWTYkEaUPKJkL1HZNsMJ9JQ3
-	/Lco3xi8L9jSlHyzcTKpA0n9/WalJGSKBr9k+f8eXecKNKQ/OfxLW7L975f8nq2QFwqtBBKI6ho
-	2l/Msv5e6Z2AZaxYUuDK2z92m7cKvqrYYY3y6UGFFUSX4ET8/eAx5EKthLDgv4a9Yl63FGmIhUv
-	xCt37vMPIrrQhuE8g00ynxnN/cGdtDcTlcbZikIK/aFvI5jBjRYQbHnGCeVMzCxM92FO11CMxqM
-	h+9nPAep2H+UjOOoDHXqkMygIwA0AcxNLeWwbS1c5g0RgYaKzXe4E2ZxWXYhD+BoKArfwLTkaWh
-	AXf2D
-X-Google-Smtp-Source: AGHT+IHjxGXQCgm4QMy/i4oVktdD2BaG4w7WoG4F+QMs6cropxlWU96uEB7KuJWxHA1v+vHPzW28qQ==
-X-Received: by 2002:a05:6a00:1914:b0:736:d6da:8f9e with SMTP id d2e1a72fcca58-73960cd5ba4mr1346549b3a.0.1743019086876;
-        Wed, 26 Mar 2025 12:58:06 -0700 (PDT)
-Received: from howard.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611d7d4sm12649972b3a.86.2025.03.26.12.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 12:58:06 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	peterz@infradead.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH] perf trace: Change __augmented_syscalls__'s value to int
-Date: Wed, 26 Mar 2025 12:58:01 -0700
-Message-ID: <20250326195801.1837855-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1743019207; c=relaxed/simple;
+	bh=W8zqW4dtBk6ymMiBHK3/DdV0RoQiheix8bbRh+cEjoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QElzMVouTtgbFG9LK4FhwCkkVXG3Gtq+0BafVCzVm1Jj0HbcW2eC+6Aif9G07BqW72muPk4SwvmOy4+LQjIUVE39UnlZYucpERReryWu4Lj1KNsfJfvipzOwH+4xJOWiwwOZ753j6a2Ghy16kS6iBHESVi3jNHvfi/0tj+B6GnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k35KV8C3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E0F8C4CEE2;
+	Wed, 26 Mar 2025 20:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743019207;
+	bh=W8zqW4dtBk6ymMiBHK3/DdV0RoQiheix8bbRh+cEjoA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k35KV8C3WeEZg+PyXMFzeJrTJYXoRlwfbVlt4Oiufeu9mBlRxRDGfoyDIvu/UWgha
+	 AkT6kTzfrXJY2epj7N/X+i0ESDPM86MLooxHhHxiP6+zEio/m92WVk9beQJmi/sbp0
+	 9LXdWlquhs32em6DVmIb+RQyV+Hmkm+DyCbvhzK9nn6sBHAYLtF/u5fyfh0dAknDfU
+	 2exOL6LTq+yrhivuTQVdNPiqmSKtjo4iDM2ssHtHfoXuCeIKO/bMNTonKIUKPPFnLw
+	 BF2jmXR+Rs+nrJ6vi4WRKhkReX8EziNx4P55Gh0IXgpv3Q0Q9OLlX7ol3hhOgP7HiJ
+	 J2+scQaPnWDAQ==
+Date: Wed, 26 Mar 2025 13:00:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 0/7] selftests/net: Mixed select()+polling
+ mode for TCP-AO tests
+Message-ID: <20250326130005.0f12741d@kernel.org>
+In-Reply-To: <CAJwJo6YoGz1aPv5nkJJKa05mxF-Zhc+B4U6kRw95KSduLCApaw@mail.gmail.com>
+References: <20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com>
+	<20250325061525.01d34952@kernel.org>
+	<CAJwJo6YoGz1aPv5nkJJKa05mxF-Zhc+B4U6kRw95KSduLCApaw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is to match the type of file descriptors, as suggested by Ian
-Rogers in this discussion:
-https://lore.kernel.org/linux-perf-users/CAP-5=fU+9EQKT2fOuBQ5ds6s4Bh6rWrvco1ow6B-CQ92XuO1kQ@mail.gmail.com/
+On Wed, 26 Mar 2025 19:48:16 +0000 Dmitry Safonov wrote:
+> On Tue, 25 Mar 2025 at 13:15, Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > On Wed, 19 Mar 2025 03:13:33 +0000 Dmitry Safonov via B4 Relay wrote:  
+> > > Should fix flaky tcp-ao/connect-deny-ipv6 test.
+> > > Begging pardon for the delay since the report and for sending it this
+> > > late in the release cycle.  
+> >
+> > Better late than never, thanks a lot! :)  
+> 
+> Thank you, Jakub!
+> 
+> I also noticed that recently, self-connect-ipv6 became slightly flaky:
+> https://netdev.bots.linux.dev/flakes.html?br-cnt=75&tn-needle=tcp-ao
+> 
+> Seems unrelated to select()+poll selftests changes, but rather to
+> timings in the kernel:
+> # # 1249[lib/proc.c:213]    Snmp6            Ip6OutNoRoutes: 0 => 1
+> 
+> It seems that the test relied on kernel adding a link-local route with
+> a loopback interface, but probably adding the interface got faster.
+> Seems like a trivial two-line fix by manually adding the link-local
+> route in userspace. Though, can't reproduce that flake locally on
+> thousands of runs.
+> 
+> Should I send the potential fix now for -net or wait until the merge
+> window closes and send for -net-next?
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Suggested-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index e4352881e3fa..18a3086489ea 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -31,7 +31,7 @@
- struct __augmented_syscalls__ {
- 	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
- 	__type(key, int);
--	__type(value, __u32);
-+	__type(value, int);
- 	__uint(max_entries, MAX_CPUS);
- } __augmented_syscalls__ SEC(".maps");
- 
--- 
-2.45.2
-
+I reckon you can send it now, maybe other maintainers will disagree
+but to me test stability fixes should be okay during the MW.
+You can tag it as net-next for the benefit of the build bot, 
+tho we'll end up merging it to net once/if Linus pulls.
 
