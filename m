@@ -1,135 +1,93 @@
-Return-Path: <linux-kernel+bounces-576764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC0CA7142C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:54:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761F6A71434
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847E63B3E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A4F17310F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E7D1A83F5;
-	Wed, 26 Mar 2025 09:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3E81ABEAC;
+	Wed, 26 Mar 2025 09:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTBozQ01"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxBm/3zm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7562915C15F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D062A1B2;
+	Wed, 26 Mar 2025 09:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982843; cv=none; b=NWOJ3kae8YmyvEB7XQixIwKXEZPhuQ2ntMcCwsSF1RUdY1qafzvk/jNIoqMMHddtjl/NJbvT6KdJ/u2J/JFrrkdKF1fr32hk6+mJV69vCO9B1WmV37AVTijjXpZ5BTOogwE8rgW6Bq4c6nTwxqwQZ4VzppwU80s2qXjinFrSwsk=
+	t=1742982898; cv=none; b=uzzl5qNHP1gF2B7KVXQA6SMwoxscsdzVqDcM0AA4VFGeetJw5cKM24Q/SozCs9B7rlO05p5w38YS8P8W6QRxg23yfSnZpa1P6lHySLhbs2Luly9zJd9xHbZJZWfuNCFU0Z4qUhdQyokiGrZSB7BIvQj71i+DlriKs4SwGAF0mG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982843; c=relaxed/simple;
-	bh=Do401Dto4eRSvtWazEdu6e192DKWa4YpzeqwJ406zZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iuD8DiuxXHqnsnWIr53w9u2AI9tBXXsF5F48QpkEJnwjWGBDzo7nb2SvVXEoQiWL5rFc6vCRPRY7ymnaYyjAFGcEtOTkbol9lDmrBsmCOETy6ukXyc2h2OTx7Iw/ovdbDP3m3+WWhyfRONyg4UV3GWjKFEL6IIQhViK/DpIUer0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTBozQ01; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbb12bea54so924731766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742982839; x=1743587639; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yjXPiRIp8YYDhIIaTUKI9YmEVChKDwNiiPGSatLAKIA=;
-        b=hTBozQ01hw/r8dhwoRtXPlP0d97h4uIxyLqFJ3OY7R60GK+kKC50ZTpUaRiUizfZhI
-         AWjXwP3ZGiPJtrXE8pcOxX1Zthw9b9jA8U/KFTpnDg1P1oBGPTDphj0xwx/QKemBDfre
-         8X75ghAfyFhdZjoFSKPRqD0OxThf1r6mSB5Afpua5U1/hRH+qmXNYkT6XXXzlzdhKrj5
-         drHwjzaQstyIh0NWpO7VqIAMhqBPupFZemwqgermFoLMDc0skaeF119v8byKRTBYt+Tl
-         vPZUxilMD5I+05TX2WEvfd5Nh3jICAMBCPQZJnopPSt3HD4lM5Xv2OcoGu3tGGhT1U/2
-         l+sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742982839; x=1743587639;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yjXPiRIp8YYDhIIaTUKI9YmEVChKDwNiiPGSatLAKIA=;
-        b=PTeF31iwhMUp669cRLhBu4Hvl2ap4YZTnLybMrDiqUAOQE4dB1sjqYr/WyhauHbI4Y
-         tHTdgygK/FPH5Px1gzKwxCVyoTEZAh5D8Bl7mgMuxpPdOoUgfd/Q1nUr+FWpPE92lJIa
-         2pVc8iyb2Sx1YzNKOtpTiQePKm1vzd0lBTtwIAufsVUjUQjf0Hufa8IXo2fYjles7T8b
-         rcDFYV3ConLmO5sgLjZ1HmDEhTVzFNG97pnwfm6ObD0zZIqHN5dhMfgA0v9CZIoCHfRC
-         FsacR+QAogr11PKqd8kXQEWPlY79gyEQr9bu0Rq3RH8UHUseUbCVJ/neHdeacD+dlcWh
-         eOSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVCxDlS+Y91vAwHevWgLpBI5a+bShWXl5NHKaQwBQ+eLwBpSmzUozG+jgFzCGmVvyiZ2n206qU5TgCzJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqwTC/zhAaReMZx72j8hw7zydGzC/vKepzko1ElVf7wG9syHtj
-	b1/A8upqlkBva6m+JAcxpdeNvepSYBVM5UyVKovYU2znH04kKt7R1Z8909a5
-X-Gm-Gg: ASbGncuUFLwb/2vHxF3/oaDQTNGQg75dtfODvbij3kusW178/V9J5m0FG2xYqow5LlH
-	hJXJj5DJCs8SBPGkLYcH/5Xn1iBi41xu/JvSVznZoZkY0TFMblDcFn5HBZQFnYirboit+Dx7sNS
-	VE2k4yIObz2RiJ6ROeaIjb+NPPmv/Zl7jaRmHOSvzcoP+kssC6v06a1XVjNO6C1KPNOc/yVl+FQ
-	G8hEGNzsJC3fFqzBt/dKpmdQ1NeanKn8vYT0XMysudoswlOqQOXrc8JAeVIqu96OoioFKUuvHKu
-	CvwPvNmZeugGMo7m/OzsZtMEK9o89wzjccL3kNW+iqr7mrxIjA==
-X-Google-Smtp-Source: AGHT+IFZQfqPmKMBaA5lUpDx8wSPCrGqm+FenqOZLIhKis+yFvTwmUpU0KWJCXNfGlHGxrAzmuiCyg==
-X-Received: by 2002:a17:907:7295:b0:ac6:dd5c:bdfc with SMTP id a640c23a62f3a-ac6dd5cec3cmr389055766b.50.1742982839262;
-        Wed, 26 Mar 2025 02:53:59 -0700 (PDT)
-Received: from HP-650 ([105.112.122.183])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb52c24sm987282466b.114.2025.03.26.02.53.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 02:53:58 -0700 (PDT)
-Date: Wed, 26 Mar 2025 10:53:45 +0100
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Julia Lawall <julia.lawall@inria.fr>, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8723bs: remove braces around single statements
-Message-ID: <Z+POqQpWsgMRz/UT@HP-650>
+	s=arc-20240116; t=1742982898; c=relaxed/simple;
+	bh=Ov1AgyYh3kM4hCEm6V6qb5sdi+6O1RBZvGdEtbZlBnU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bchcsYllnrmrfBnnExEQCAWd8ASYQNUMQVYr6poNd5U0/Zri7DnWT+DrPQ4rNjrUbkjdVhH3e9StrHlIWsZKxrZ5vBARbxQ3Ldv6fEGqV2Xicef/bk5TW52gT8GaYMNB5FVzV3lf5u0MFBOzRSH/blppQJTQaCZIjXGDjPWbmkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxBm/3zm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41EE3C4CEE2;
+	Wed, 26 Mar 2025 09:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742982896;
+	bh=Ov1AgyYh3kM4hCEm6V6qb5sdi+6O1RBZvGdEtbZlBnU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=BxBm/3zmwoyfzil4KP1ekcmQhwFLh874LJq8SGnYExJvY+7ZDKuNTo9eeo2Gqf4Gz
+	 QWs5eH48XqvcMr+C0NSY2tbdj+JWPRoJeK5nTwTstf8vojgyaCrpIJubgiMvQ/0eEG
+	 4SGQQf2C4Rhxk9mhuYPMeW0d++3UieNW0TkhcwmghOI7EyulZOxpBpvXRsBYCOUPIV
+	 GZ0d08KcjZmN1cwA4J0wH2IVz1ZuqF0/zrsBZwhEYtdw56Oqz6zXA83nba0ve8R/Bn
+	 T7H3BmH+qcMiQ49qWglS45TPgGcpIyDBG2NaFnOtoRImVVw5EdTw5kwolR+x/aAytj
+	 01hFUS+/XcKcA==
+Date: Wed, 26 Mar 2025 10:54:53 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+cc: Aditya Garg <adityagarg1208@gmail.com>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    "admin@kodeit.net" <admin@kodeit.net>, 
+    "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>, 
+    "kekrby@gmail.com" <kekrby@gmail.com>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+    "orlandoch.dev@gmail.com" <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple
+ Touch Bar
+In-Reply-To: <PN3PR01MB95979ECF0C403CA6622E56D0B8A72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Message-ID: <7rsn5334-npo6-408r-8442-6o3qo3qp05q7@xreary.bet>
+References: <bzb6rk7q7rs27kbonihpfftkgueievpux7vpqjgrgsud5pf5g2@tuxymj7vk3it> <219B5F93-611D-48FA-A4D9-F9B71401A57D@gmail.com> <PN3PR01MB95979ECF0C403CA6622E56D0B8A72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 
-The code contains braces around single statements in the if blocks
-which are unnecessary according to the Linux kernel coding style.
+On Tue, 25 Mar 2025, Aditya Garg wrote:
 
-Remove the braces to improve readability and maintain consistency.
+> >>> Yes I can move hid_find_field to the original location as well. But, 
+> >>> I would not want to devm_kzalloc as well unnecessarily if the 
+> >>> touchbar is in the basic mode instead of drm mode which will cause 
+> >>> this -ENODEV to be executed right?
+> >> 
+> >> It shouldn't matter. hid_core calls devres_open_group() before calling
+> >> .probe(), and calls devres_release_group() on failure. So yes, we'll
+> >> allocate a piece of memory and release it after, but it's not something
+> >> uncommon.
+> > 
+> > Fair. I'll send a v2
+> 
+> I've sent a v2 from my gmail address. Outlook is being too fussy these 
+> days, so hopefully I don't have to sign off twice using gmail as well as 
+> outlook.
 
-Reported by checkpatch:
+Thanks. Please always make sure that either in the cover letter or in the 
+individual patches you otline the differences between individual patch 
+submissions.
 
-WARNING: braces {} are not necessary for single statement blocks
-
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
-Changes in v2:
-	- Remove extra blank line
-
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index c60e179bb2e1..74a8fcf18e84 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -56,9 +56,8 @@ int _ips_leave(struct adapter *padapter)
- 		pwrpriv->ips_leave_cnts++;
-
- 		result = rtw_ips_pwr_up(padapter);
--		if (result == _SUCCESS) {
-+		if (result == _SUCCESS)
- 			pwrpriv->rf_pwrstate = rf_on;
--		}
- 		pwrpriv->bips_processing = false;
-
- 		pwrpriv->bkeepfwalive = false;
-@@ -549,9 +548,8 @@ void LeaveAllPowerSaveMode(struct adapter *Adapter)
-
- 		LPS_Leave_check(Adapter);
- 	} else {
--		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off) {
-+		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off)
- 			ips_leave(Adapter);
--		}
- 	}
- }
-
---
-2.34.1
+-- 
+Jiri Kosina
+SUSE Labs
 
 
