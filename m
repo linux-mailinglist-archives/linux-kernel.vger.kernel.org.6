@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-577612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F67A71F6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:46:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD14A71F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C31178DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CCC117C472
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F06256C79;
-	Wed, 26 Mar 2025 19:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B3259C88;
+	Wed, 26 Mar 2025 19:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJABBfyp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qQxf6/LZ"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6812566D0;
-	Wed, 26 Mar 2025 19:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFBA2571D8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018232; cv=none; b=jgXJa8rW+Ute9JK8H/jVWsM4UQIEoG+d/UQoZotZuN2/DYlbP6uy96JIcxkP9ovpBoZXlZiF7kLqeaSOFF1OHlJ8Ga4w+hq2HNDgBO9G5iTutO1IvHiY3lDbWStxOnFuokP3fVmTloM/9p8lAjHsDv/P4Wg16elc7M8vxssEWtI=
+	t=1743018309; cv=none; b=qzM03RTphfW+Dq1xXhO7oms6zHyhf/q6ZmNS10o1uIHQV5NhXlTaqkuv6w/tNcAf0LPbT40SRpi+O/JPP77v05mhNP16wf/gBYzgSEjScDip8Fj9UI3c9hP47vpYVuDI/si+2xGt3mb0vGDYt0OT4VCgL2l06+ZLxLIzXN8l69c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018232; c=relaxed/simple;
-	bh=LilCrq6gFnjk7WcOa6HyB4QAzegZU8PDndDSyDEdMkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EP3oQT0GXmf9m3g796/R/OagzCCKWLeH6e413oR7pT4DVP6NJdm7fl5fG9dC7CzH2T1ZrbeH0AHTCjYxN7ArMlXIsuAFsF921nXeLf2cOh5mfEqsMLtSuPAP4asw0n8vJnzQXOJuC+mYW3/4kn7SWpcnxuIUJnYii1DatPRpe+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJABBfyp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E59BC4CEE2;
-	Wed, 26 Mar 2025 19:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743018231;
-	bh=LilCrq6gFnjk7WcOa6HyB4QAzegZU8PDndDSyDEdMkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJABBfypFBAMyG2hDWr0QuqqiSXOCwiLkYieEvYnTtGP9iemVgb0BFv4h+Nll1Dfq
-	 C+m4gHe5zrRmML/RuUIBaryctXxD0VceBVPiKEAyKY/Ko+Ho9efasJxhxM/QCjthYg
-	 tyQjTMOEqjmdAbauw9PBBxpvYG+kuR/ZeoJttgc8EjPeLjlTuPEXBUtpRLZgZvjh2c
-	 ujWRK6X+UGpHUVhmoCQUqRHo9a8HSpzroNmHn19pXH679f72i2gIvlNSi3ew5PC8pJ
-	 fYl4IFKVxSiEBo8Kf8cnbFxkQfYg2EIYwxe0S1IY3e8JiMvWMlJBUUQR1GOeY56bkq
-	 lg3lKFgEwQnZQ==
-Date: Wed, 26 Mar 2025 21:43:47 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"Cai, Chong" <chongc@google.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"Annapurve, Vishal" <vannapurve@google.com>,
-	"dionnaglaze@google.com" <dionnaglaze@google.com>,
-	"bondarn@google.com" <bondarn@google.com>,
-	"Raynor, Scott" <scott.raynor@intel.com>,
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>
-Subject: Re: [PATCH 1/4] x86/sgx: Add total number of EPC pages
-Message-ID: <Z-RY8-bL2snpRKTB@kernel.org>
-References: <20250321123938.802763-1-elena.reshetova@intel.com>
- <20250321123938.802763-2-elena.reshetova@intel.com>
- <Z98yki-gH4ewlpbP@kernel.org>
- <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1743018309; c=relaxed/simple;
+	bh=p3QwBU+jBVDcTlSsMqq7CihkMh5Nzv5/+k/utju49uE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fKI+simoLSUfsJUJSVSk6D1YAzZhaNaMgHm5FZptebT83goeHGg4B8p1YOZos46T4VzdkUbG8aaYmiGXyGTghxV1x+ktDVOjL6f31DzK/9Iss3o29vlKcrMXBaGfu7dqhL9SUY8pkLPqPGYOMdnlqh2vmPUpFNrIaXVgR4Dq18M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qQxf6/LZ; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743018295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eUdDAUOASl+dv9HtsY1A+uMvUg3QBNYQ0WgEzzzA9VU=;
+	b=qQxf6/LZIhhOHf7RdxU5oF3iUu63ZVB4yWc04hzLaQtQup9nLw5sJmZTyAeeZiPaUgElFY
+	R1Zxu5jyECSHC8uQuubeWtK5a8bT83agBGqrSQeT+B1E2C5mha8jIhpw+qaKopHI1Jm+HB
+	wxdGWRG4a+TusQqr1hFYQGJ4BUA8MNg=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Rik van Riel <riel@surriel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	x86@kernel.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: [RFC PATCH 20/24] KVM: nSVM: Do not reset TLB_CONTROL in VMCB02 on nested entry
+Date: Wed, 26 Mar 2025 19:44:19 +0000
+Message-ID: <20250326194423.3717668-1-yosry.ahmed@linux.dev>
+In-Reply-To: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
+References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 24, 2025 at 12:12:41PM +0000, Reshetova, Elena wrote:
-> > On Fri, Mar 21, 2025 at 02:34:40PM +0200, Elena Reshetova wrote:
-> > > In order to successfully execute ENCLS[EUPDATESVN], EPC must be empty.
-> > > SGX already has a variable sgx_nr_free_pages that tracks free
-> > > EPC pages. Add a new variable, sgx_nr_total_pages, that will keep
-> > > track of total number of EPC pages. It will be used in subsequent
-> > > patch to change the sgx_nr_free_pages into sgx_nr_used_pages and
-> > > allow an easy check for an empty EPC.
-> > 
-> > First off, remove "in subsequent patch".
-> 
-> Ok
-> 
-> > 
-> > What does "change sgx_nr_free_pages into sgx_nr_used_pages" mean?
-> 
-> As you can see from patch 2/4, I had to turn around the meaning of the
-> existing sgx_nr_free_pages atomic counter not to count the # of free pages
-> in EPC, but to count the # of used EPC pages (hence the change of name
-> to sgx_nr_used_pages). The reason for doing this is only apparent in patch
+TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING on nested transitions to
+L2 in nested_vmcb02_prepare_control(). This is unnecessary because:
+- TLB_CONTROL is set in vcpu_enter_guest() if needed when servicing a
+  TLB flush request (by svm_flush_tlb_asid()).
+- TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING after the guest is run
+  in svm_cpu_run().
 
-Why you *absolutely* need to invert the meaning and cannot make
-this work by any means otherwise?
+Hence, at the point where nested_vmcb02_prepare_control() is called,
+TLB_CONTROL should have already be set to TLB_CONTROL_DO_NOTHING by
+svm_cpu_run() after L1 runs.
 
-I doubt highly doubt this could not be done other way around.
+There is a TODO in nested_svm_transition_tlb_flush() about this reset
+crushing pending TLB flushes. Remove it, as the reset is not really
+crushing anything as explained above.
 
-BR, Jarkko 
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+---
+ arch/x86/kvm/svm/nested.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+index ca8db246ac050..544913461693c 100644
+--- a/arch/x86/kvm/svm/nested.c
++++ b/arch/x86/kvm/svm/nested.c
+@@ -511,12 +511,7 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
+ 		svm->nested.last_asid = svm->nested.ctl.asid;
+ 		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
+ 	}
+-	/*
+-	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
+-	 * things to fix before this can be conditional:
+-	 *
+-	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
+-	 */
++	/* TODO: optimize unconditional TLB flush/MMU sync */
+ 	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
+ 	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
+ }
+@@ -710,9 +705,6 @@ static void nested_vmcb02_prepare_control(struct vcpu_svm *svm,
+ 	vmcb02->control.msrpm_base_pa = vmcb01->control.msrpm_base_pa;
+ 	vmcb02->control.asid = svm_nested_asid(vcpu->kvm);
+ 
+-	/* Also overwritten later if necessary.  */
+-	vmcb_clr_flush_asid(vmcb02);
+-
+ 	/* nested_cr3.  */
+ 	if (nested_npt_enabled(svm))
+ 		nested_svm_init_mmu_context(vcpu);
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
