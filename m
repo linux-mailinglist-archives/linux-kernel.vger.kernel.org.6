@@ -1,192 +1,121 @@
-Return-Path: <linux-kernel+bounces-577290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E07A71B03
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D851BA71AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B93A95D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04A616E031
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3473B1F7580;
-	Wed, 26 Mar 2025 15:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RA5zcMMK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93BE1F417C;
+	Wed, 26 Mar 2025 15:43:45 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709591F754E;
-	Wed, 26 Mar 2025 15:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4C62747B;
+	Wed, 26 Mar 2025 15:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003731; cv=none; b=sLCCpEBdGjmR5FzrGG+zJLypQOTvixlMGYIfRlMaWzQkGXM0cRReEpICkbOHkGE73yVikoohRJWS1L0XL+V6+S+QmxjkSvLloxkiK6cfqgnAcocbC72lM/LvH+KtjDf1TVtMDxXdqN6UaQ2GYX9XqI5fI3lhvcaOAUm4uB8CJXE=
+	t=1743003825; cv=none; b=pNt5MCJCEomtBfZxBxGpwXDm8Gzr7fWCeo5mOV79PdW50pXH1IZz8muMbz9SuUmpM8OuqXjbN0dw1iijhdJP2EnJG0t1ANE5uVbTASrHn23ABbhHNJ3WaOdzJn5XeWnIjqw4Ocj1z5NAleUcNAulDso9rZv3sajmg2V+FBY9+QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003731; c=relaxed/simple;
-	bh=ib4x6OcF6rnhMi00OM/dZg1cf6CcAyobXf3DKclgFn4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBa5Cfv6FbNFOulJh8uv82BTp7LrBzRhUvw1VlNaCX66HUm+0ggTRRBcDvV8yBOPi1kf+fXhqaSwzSlvZgueoj9hSSWc739RnTrejQHfPF6Llh3qVAmmrLkRxGw9f72uCBMgFsEAD3nI6ArMITAAPQKxMo8UI5M+b/+pniTl7Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RA5zcMMK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D642CC4CEE2;
-	Wed, 26 Mar 2025 15:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743003730;
-	bh=ib4x6OcF6rnhMi00OM/dZg1cf6CcAyobXf3DKclgFn4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RA5zcMMKSAFp+Sh6oqJ3dX3rcY2FQARSZe3fzCcqx+YdXwmJmltd36L5z7JEyWNRR
-	 E1/gMw7VlL8gsmHWk5QCI6PGRpNZjS3qFdHQHMUBdpDaHSsLuWDFP6EerC0UVnoWeK
-	 wr6AAiI/4UmBiQoanAekZkm8TDlqBpx/4JsKMhV5WmhZMsp96eytxyPxSIwArlgJY2
-	 YjPQSnooP5f/O2oqjwAES11D0byOrlNKYrtGVn38ABjZzU9v4UbGEZn1pU52t5JuPp
-	 sPOlEHMZpz+0i6kRj/w81AwnuupB/SHLgAkC6aHYwRjl1tgl4zQOMVRlPPZ+XRe/qU
-	 KDo82i7zupSoQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1txStM-00HLiv-1l;
-	Wed, 26 Mar 2025 15:42:08 +0000
-Date: Wed, 26 Mar 2025 15:42:06 +0000
-Message-ID: <86y0wrlrxt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ankit Agrawal <ankita@nvidia.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>,
-	Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>,
-	Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>,
-	Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>,
-	Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
-In-Reply-To: <Z-QU7qJOf8sEA5R8@google.com>
-References: <86wmcmn0dp.wl-maz@kernel.org>
-	<20250318125527.GP9311@nvidia.com>
-	<Z9nJ42PllG8a7AY7@linux.dev>
-	<20250318230909.GD9311@nvidia.com>
-	<Z9pryQwy2iwa2bpJ@linux.dev>
-	<20250319170429.GK9311@nvidia.com>
-	<Z9sItt8BIgvbBY8M@arm.com>
-	<20250319192246.GQ9311@nvidia.com>
-	<Z9s7r2JocpoM_t-m@arm.com>
-	<SA1PR12MB7199C7BD48EB39F536DD34DBB0A62@SA1PR12MB7199.namprd12.prod.outlook.com>
-	<Z-QU7qJOf8sEA5R8@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1743003825; c=relaxed/simple;
+	bh=YL2g2vdTQCsD/VV/d7k2JXRS3ngb34nAG6s1dADB2NA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvebiQ7NcAKwYzkSjfqaWGI7J4vv1PgGflUA/QJiemHVE6VyK/oX2V1PzSkddvtwuMBM4RBvyn9+TLBpNX4DcLWtJ429d2MiB5QOnespvt+86Ax4uX7DjopsiAu+55H0conARigPSB395WoNBlDOEaG9GVGPJP7e9Rl9jrq3CRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: nGJM6v/fRGue4cOjV2yGsw==
+X-CSE-MsgGUID: f+xw0YD1Qim4UvCHWRS2bQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43456242"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="43456242"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:43:43 -0700
+X-CSE-ConnectionGUID: A37PRNtgRBeun/0iH89Bxg==
+X-CSE-MsgGUID: wJ5EablBTsq4ffeo6ftU5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="124774487"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:43:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1txSuo-000000067YG-0JwM;
+	Wed, 26 Mar 2025 17:43:38 +0200
+Date: Wed, 26 Mar 2025 17:43:37 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] wcslen() prototype in string.h
+Message-ID: <Z-QgqZW3zj-RT5dB@smile.fi.intel.com>
+References: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
+ <20250325-string-add-wcslen-for-llvm-opt-v1-2-b8f1e2c17888@kernel.org>
+ <Z-LXHssrcpdtFqqn@smile.fi.intel.com>
+ <20250325165847.GA2603000@ax162>
+ <Z-LiWDbrEvVaTLZU@smile.fi.intel.com>
+ <20250325214516.GA672870@ax162>
+ <20250326003303.GA2394@ax162>
+ <Z-PCCCAPS4uvL3jZ@smile.fi.intel.com>
+ <20250326153756.GB1105284@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: seanjc@google.com, ankita@nvidia.com, catalin.marinas@arm.com, jgg@nvidia.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com, aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com, alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org, ddutile@redhat.com, tabba@google.com, qperret@google.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326153756.GB1105284@ax162>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 26 Mar 2025 14:53:34 +0000,
-Sean Christopherson <seanjc@google.com> wrote:
-> 
-> On Wed, Mar 26, 2025, Ankit Agrawal wrote:
-> > > On Wed, Mar 19, 2025 at 04:22:46PM -0300, Jason Gunthorpe wrote:
-> > > > On Wed, Mar 19, 2025 at 06:11:02PM +0000, Catalin Marinas wrote:
-> > > > > On Wed, Mar 19, 2025 at 02:04:29PM -0300, Jason Gunthorpe wrote:
-> > > > > > On Wed, Mar 19, 2025 at 12:01:29AM -0700, Oliver Upton wrote:
-> > > > > > > You have a very good point that KVM is broken for cacheable PFNMAP'd
-> > > > > > > crap since we demote to something non-cacheable, and maybe that
-> > > > > > > deserves fixing first. Hopefully nobody notices that we've taken away
-> > > > > > > the toys...
-> > > > > >
-> > > > > > Fixing it is either faulting all access attempts or mapping it
-> > > > > > cachable to the S2 (as this series is trying to do)..
-> > > > >
-> > > > > As I replied earlier, it might be worth doing both - fault on !FWB
-> > > > > hardware (or rather reject the memslot creation), cacheable S2
-> > > > > otherwise.
-> > > >
-> > > > I have no objection, Ankit are you able to make a failure patch?
-> > >
-> > > I'd wait until the KVM maintainers have their say.
-> > > 
+On Wed, Mar 26, 2025 at 08:37:56AM -0700, Nathan Chancellor wrote:
+> On Wed, Mar 26, 2025 at 10:59:52AM +0200, Andy Shevchenko wrote:
+> > On Tue, Mar 25, 2025 at 05:33:03PM -0700, Nathan Chancellor wrote:
+
+...
+
+> > >  #include <linux/init.h>
 > > 
-> > Maz, Oliver any thoughts on this? Can we conclude to create this failure
-> > patch in memslot creation?
+> > As I just replied to your previous mail, consider fixing this list as well
+> > by adding module.h and types.h.
+
+...
+
+> > Overall, can you browse the Ingo's series [1] for the stuff related to this,
+> > if any?
+> > 
+> > I would avoid doing double efforts or different approaches if we already have
+> > something ready.
 > 
-> That's not sufficient.  As pointed out multiple times in this thread, any checks
-> done at memslot creation are best effort "courtesies" provided to userspace to
-> avoid terminating running VMs when the memory is faulted in.
-> 
-> I.e. checking at memslot creation is optional, checking at fault-in/mapping is
-> not.
-> 
-> With that in place, I don't see any need for a memslot flag.  IIUC, without FWB,
-> cacheable pfn-mapped memory is broken and needs to be disallowed.  But with FWB,
-> KVM can simply honor the cacheability based on the VMA.  Neither of those requires
+> In Ingo's last fast-headers tree [1], nls.h only has export.h and init.h
+> included, so it does not look like anything around this was changed from
+> what I can tell.
 
-Remind me how this work with stuff such as guestmemfd, which, by
-definition, doesn't have a userspace mapping?
+Thanks for checking!
 
-> a memslot flag.  A KVM capability to enumerate FWB support would be nice though,
-> e.g. so userspace can assert and bail early without ever hitting an
-> ioctl error.
+> types.h is going to be included via the new nls_types.h and while it
+> does definitely look like module.h should be included, I do not really
+> have the time and build capacity at the moment to incorporate testing
+> that change into this series. I will stick with these two changes for
+> now then I, you, or someone else can revisit cleaning up nls.h later.
 
-It's not "nice". It's mandatory. And FWB is definitely *not* something
-we want to expose as such.
+Fair enough.
 
-> 
-> If we want to support existing setups that happen to work by dumb luck or careful
-> configuration, then that should probably be an admin decision to support the
-> "unsafe" behavior, i.e. an off-by-default KVM module param, not a memslot flag.
-
-No. That's not how we handle an ABI issue. VM migration, with and
-without FWB, can happen in both direction, and must have clear
-semantics. So NAK to a kernel parameter.
-
-If I have a VM with a device mapped as *device* on FWB host, I must be
-able to migrate it to non-FWB host, and back. A device mapped as
-*cacheable* can only be migrated between FWB-capable hosts.
-
-Importantly, it is *userspace* that is in charge of deciding how the
-device is mapped at S2. And the memslot flag is the correct
-abstraction for that.
-
-	M.
+> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/mingo/tip.git/tree/include/linux/nls.h?h=sched/headers
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
+
+
 
