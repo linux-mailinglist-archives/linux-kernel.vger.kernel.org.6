@@ -1,156 +1,192 @@
-Return-Path: <linux-kernel+bounces-576651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EA5A71289
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:21:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FFFA71288
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3EB3B95A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77F99189A706
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BF91A2632;
-	Wed, 26 Mar 2025 08:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="GKbVgywd"
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF721A238A;
-	Wed, 26 Mar 2025 08:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E991A38E3;
+	Wed, 26 Mar 2025 08:20:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40C61993B9;
+	Wed, 26 Mar 2025 08:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742977159; cv=none; b=s1IgfyfzbukBQtBLDmYr58M3mZyXoExtKc8NBunBxDEaZ6GALuki4ATVzUQEmXpA/bbd/mgAC/S2/Lg1b9RQIafPPl9a5vIt0ZyFoBeXv+Hk0VyJo7G5QPX9M7DSCkT+4qAo5mOYHYXEiVOZVFdv6ysxa1cs/it7MZb+ZVoZGSk=
+	t=1742977211; cv=none; b=DjGTcsXutNzoOqdp1HMWP2A+JP2Xy3GEU0cmB0otc076xLu9jndghSIMkLuZFRAQv+84pqal/t7glEIBGPr39IzrFmc3Z5dWIF50xjs1OhNYj/GLYmqI61ehIZMEBU/zlvPYmpssDyy217EHbCInMWtMKW4MNPk3xcuS79CoAFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742977159; c=relaxed/simple;
-	bh=9boWrYTnkDHxjxIvatXQeQ7APvW2q/H1C05tml8kUfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cu0dHNSWxRltaECdnoSSB9c9o/m4g0ydscRGws+XAfYoAPuxT/+jl9DtfIOPh9+XjRFJeMwPWCmZMnUlBpf5+0cJW6dsOrWALI5Zk4KjsDNLcis2NGIS6J9gTF/hdJcuWgoT/nqpqXO3/vj92h7hxio/4n1xCbQJ00peNu+ynR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=GKbVgywd; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0CF52C1B4F;
-	Wed, 26 Mar 2025 09:19:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1742977154; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=1AgcysEH2rq3izDsjeZYo+7tUxUVzeU8PqQli3w/9CY=;
-	b=GKbVgywdMGAonWZbkqzKiJcDrCw7gROBJ3VDW2dAV5CcGkAnD6v6Hf91U9R2d0qgpxJeqX
-	8uHw1ucwIjgrBXiGSaCJ7isonEXmk4wSPXyE/9R0xUKpFChcG28KPuu8HGzeYClKkQreol
-	dr+o9Aq3CuP7phH2TRvWB0G94rMt5jzp6uouDSb63ncvUflTgASo3B97sT05YTHvatNgbJ
-	iBTsMLEIjdbkLPgy9kgkK50idVCwEzBCVNBTSpMKkU18X4KOeny5eKoBLCTFo2G1LCJiZi
-	/0u/xe0DephN3JN/wx3K551Zm1BWSg4C5ZDACBv2E/m7yX/b14x49WSlBdETxw==
-Message-ID: <890a302e-9105-446c-a2a9-110e94457dac@cjdns.fr>
-Date: Wed, 26 Mar 2025 09:19:10 +0100
+	s=arc-20240116; t=1742977211; c=relaxed/simple;
+	bh=qfShk4bhL7iYGDRb7/pk26sSvncKfUcnktfK3iLgfGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qz1xbii5BwiXuOO5baNOp8hmFF0zjXqoBW4PuH5RYCtFmA/vAH4O36X1wiRqMZp6JrM1/+OlXR0V7zZaT7KaYtykXGYNsh5WFTQ4p5zV9k/Yas0bLryFJL1lG5OxF2OpdCJnJmFAcpp47qUdJ+b8znZdDNsQMmeCRASMsvwjLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A95991596;
+	Wed, 26 Mar 2025 01:20:14 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 604933F63F;
+	Wed, 26 Mar 2025 01:20:06 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	mingo@kernel.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	elver@google.com,
+	leo.yan@arm.com,
+	james.clark@linaro.org,
+	suzuki.poulose@arm.com,
+	mike.leach@arm.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v5 1/1] events/core: fix failure case for accounting child_total_enable_time at task exit
+Date: Wed, 26 Mar 2025 08:20:03 +0000
+Message-Id: <20250326082003.1630986-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2 04/10] dt-bindings: timer: Add EcoNet EN751221 "HPT"
- CPU Timer
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
-References: <20250325134349.2476458-1-cjd@cjdns.fr>
- <20250325134349.2476458-5-cjd@cjdns.fr>
- <20250326-gigantic-mauve-capuchin-e667ed@krzk-bin>
-Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <20250326-gigantic-mauve-capuchin-e667ed@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+The perf core code fails to account for total_enable_time of event
+when its state is inactive.
 
-On 26/03/2025 09:04, Krzysztof Kozlowski wrote:
-> On Tue, Mar 25, 2025 at 01:43:43PM +0000, Caleb James DeLisle wrote:
->> +title: EcoNet EN751221 High Precision Timer (HPT)
->> +
->> +maintainers:
->> +  - Caleb James DeLisle <cjd@cjdns.fr>
->> +
->> +description:
->> +  The EcoNet High Precision Timer (HPT) is a timer peripheral found in various
->> +  EcoNet SoCs, including the EN751221 and EN751627 families. It provides per-VPE
->> +  count/compare registers and a per-CPU control register, with a single interrupt
->> +  line using a percpu-devid interrupt mechanism.
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
-> Drop items, that's const directly.
-Got it.
->
->> +          - const: econet,en751221-timer
->> +      - items:
->> +          - const: econet,en751627-timer
->> +          - const: econet,en751221-timer
->> +
->> +  reg: true
-> Widest constraints are always here.
+Here is a failure case for accounting total_enable_time for
+CPU PMU events:
 
-(AFACT) there's no common constraint to both.
+sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 2s
+...
 
-en751221 => minItems: 1, maxItems: 1
+armv8_pmuv3_0/event=0x08/: 1138698008 2289429840 2174835740
+armv8_pmuv3_1/event=0x08/: 1826791390 1950025700 847648440
+                           `          `          `
+                           `          `          > total_time_running with child
+                           `          > total_time_enabled with child
+                           > count with child
 
-en751627 => minItems: 2, maxItems: 2
+Performance counter stats for 'stress-ng --pthread=2 -t 2s':
 
-I spent some time playing with this, thinking I could override constraints
-but everything I tried lead me to validation errors. Please let me know if
-there's something I'm missing here...
+     1,138,698,008      armv8_pmuv3_0/event=0x08/                                               (94.99%)
+     1,826,791,390      armv8_pmuv3_1/event=0x08/                                               (43.47%)
 
->
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +    description: A percpu-devid timer interrupt shared across CPUs.
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +if:
-> This goes under allOf:, to save re-indent later, and then after
-> required: block (see example-schema).
-Got it.
->
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        const: econet,en751627-timer
->> +then:
->> +  properties:
->> +    reg:
->> +      items:
->> +        - description: Base address for VPE timers 0 and 1
-> s/Base address for//
-> because it is redundant. Bus/parent addressing already defines this as
-> base address, cannot be anything else.
+The two events above are opened on two different CPU PMUs, for example,
+each event is opened for a cluster in an Arm big.LITTLE system, they
+will never run on the same CPU.  In theory, the total enabled time should
+be same for both events, as two events are opened and closed together.
 
-Indeed, got it.
+As the result show, the two events' total enabled time including
+child event are different (2289429840 vs 1950025700).
+This is because child events are not accounted properly
+if a event is INACTIVE state when the task exits:
 
+perf_event_exit_event()
+ `> perf_remove_from_context()
+   `> __perf_remove_from_context()
+     `> perf_child_detach()   -> Accumulate child_total_time_enabled
+       `> list_del_event()    -> Update child event's time
 
-Thank you for the review.
+The problem is the time accumulation happens prior to child event's time
+updating. Thus, it misses to account the last period's time when event
+exits.
 
-Caleb
+The perf core layer follows the rule that timekeeping is tied to state
+change. To address the issue, make __perf_remove_from_context() to
+handle task exit case by passing the 'DETACH_EXIT' to it and
+invokes perf_event_state() for state alongside with accouting the time.
+Then, perf_child_detach() populates the time into parent's time metrics.
 
+After this patch, this problem is gone like:
 
->
->> +        - description: Base address for VPE timers 2 and 3
->> +else:
->> +  properties:
->> +    reg:
->> +      items:
->> +        - description: Base address for VPE timers 0 and 1
-> Best regards,
-> Krzysztof
->
+sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
+...
+armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
+armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
+
+ Performance counter stats for 'stress-ng --pthread=2 -t 10s':
+
+    15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
+    22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
+
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Fixes: ef54c1a476aef ("perf: Rework perf_event_exit_event()")
+---
+ kernel/events/core.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 823aa0824916..f191e92c2f48 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
+ #define DETACH_GROUP	0x01UL
+ #define DETACH_CHILD	0x02UL
+ #define DETACH_DEAD	0x04UL
++#define DETACH_EXIT	0x08UL
+ 
+ /*
+  * Cross CPU call to remove a performance event
+@@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 			   void *info)
+ {
+ 	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
++	enum perf_event_state state = PERF_EVENT_STATE_OFF;
+ 	unsigned long flags = (unsigned long)info;
+ 
+ 	ctx_time_update(cpuctx, ctx);
+@@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
+ 	 * Ensure event_sched_out() switches to OFF, at the very least
+ 	 * this avoids raising perf_pending_task() at this time.
+ 	 */
+-	if (flags & DETACH_DEAD)
++	if (flags & DETACH_EXIT)
++		state = PERF_EVENT_STATE_EXIT;
++	if (flags & DETACH_DEAD) {
+ 		event->pending_disable = 1;
++		state = PERF_EVENT_STATE_DEAD;
++	}
+ 	event_sched_out(event, ctx);
++	perf_event_set_state(event, min(event->state, state));
+ 	if (flags & DETACH_GROUP)
+ 		perf_group_detach(event);
+ 	if (flags & DETACH_CHILD)
+ 		perf_child_detach(event);
+ 	list_del_event(event, ctx);
+-	if (flags & DETACH_DEAD)
+-		event->state = PERF_EVENT_STATE_DEAD;
+ 
+ 	if (!pmu_ctx->nr_events) {
+ 		pmu_ctx->rotate_necessary = 0;
+@@ -13448,12 +13453,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
+ 		mutex_lock(&parent_event->child_mutex);
+ 	}
+ 
+-	perf_remove_from_context(event, detach_flags);
+-
+-	raw_spin_lock_irq(&ctx->lock);
+-	if (event->state > PERF_EVENT_STATE_EXIT)
+-		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
+-	raw_spin_unlock_irq(&ctx->lock);
++	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
+ 
+ 	/*
+ 	 * Child events can be freed.
+-- 
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
