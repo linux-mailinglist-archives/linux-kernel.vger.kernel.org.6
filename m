@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel+bounces-576413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939CCA70EE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EAEA70EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2753B8D11
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D713BBE52
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9851012F5A5;
-	Wed, 26 Mar 2025 02:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOhDP9Hd"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDBD13AA31;
+	Wed, 26 Mar 2025 02:20:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC71EEA9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DFAEEA9;
+	Wed, 26 Mar 2025 02:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742955562; cv=none; b=HEV5TmWdVPplYXru/9VU8lXMXm6+z63JbGTIy7T+vJWk4KZiFFUGEFhqGaDacrhD8Ly5obCBj3iHWnjwvb3p8xJ+y2030H0cht39TUcsgj83w9cT2Cu+SncBXvUCd9Xu7wDi5AAmdfzzdUw7fVAJXQNLEQ37iX6PQDhYNcxUMoU=
+	t=1742955642; cv=none; b=hVrb3DBcybriLmpa2SjkFVOCwRQR7KUcGjhO5evOeTPYYMPNzJ42LU0+coT2A0vJWNrnXj7iDP2a7CnjNkTZQUwGvArICXedyOzBJi8PgJ9DanpQEQSvDWRSrWjjQr35psIfzcVW9sNqQUG1xgBC6K045RPrP+PGMFJlLDzs6BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742955562; c=relaxed/simple;
-	bh=TfxFK9jsSWKqRnxwXCns93febKGMUKg797Y4sPzkXAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dmPvVib2SjYQ8Fpb3WtP4oan4/MJNZGpZzDCfZDVpDaGTr1bNM7LrptgBZRO3iWloJPJf5vrQRzJQbLMBuGWwH89r6S0yS4FfVQoI+9eF3pp/T/m0T9ZbI6gtROfID2zlpt2wSC5i7cvUOuNOtXrxvhKbwRZJiaj+gB9heDmAtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOhDP9Hd; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227b828de00so57999155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742955560; x=1743560360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PAT0zokbIOKhPWn+286xYZMuNKFDGnURedHLTd/KJUs=;
-        b=MOhDP9HdOJljQi+AMMOSx7ktDk3KXPuoecwD6Q1RzE2tW4yhiDawPKDFUYg0z9JBnr
-         Bjhq0OHEWP0Eqc6Cs5AHewYfd+ZotufUioHeUG2t7wwnjlsMQRZF7T0P/VFiY4EoVzcb
-         YpsGejnCdJYJKdgsFvuJnQMc15XNkp1VN/+6PkA3n4jNYPrydo8R85pbL2kosLoIFJnx
-         VJK4Ois/LSiEsU9L6+BAEjHP+OeEaRTNgGNNyQlCGInR5AvWAaKkPOdicjGauwp9DD2N
-         QGN4MKQRhue7wjORBD5UmLBobQSc+56uK/i/9G/fE7IfL4l8KxRALJ5aO6jT/7KV1IAr
-         2N+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742955560; x=1743560360;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PAT0zokbIOKhPWn+286xYZMuNKFDGnURedHLTd/KJUs=;
-        b=pSi7mwtMo+nVXZN8ydFD1HCZ74Gqu8CqdwzCHBIN88DsZ9XEMWBpK5JOGj0vtbZeZM
-         6XMY8QT/QzRuXe8kJRfKInt4c8O37cQ7RBP4AvbuPWvlqOTzIbKaYQnBj/lW8DCFmRg5
-         BCMN0HEmCItAmHyIZEMij2ep0AI6J+v7eyTQbZiO1MJWFa6XGfzlIXiEW/sl4PRlzmP4
-         DdPm/TCzcoa0l34zGF7Ov4vB4yXbf8sclPADl107qPZDMU2UUoTZKYHFsaL4Rx/kmb+o
-         HLEnyRkFPtcXy42aym9qUeG8m9oVpprGLzR2puo2MS1GhxM+wPODxGzYvkyWb/6m2gzG
-         dGBA==
-X-Gm-Message-State: AOJu0YwXoPqnRVH5LJW4xXnH+trvZJt6ZaiaSx3N2fSwWkhW9bSO2hA5
-	PExW+oc2esg5z/pStajEPihL/K5hh4bIT+gmoKIEd9pokntkQa45
-X-Gm-Gg: ASbGncvZR623h6fnfjKznSv2oy1AFPU26bBjAMhcn5k3hhkh1H7hbhXtazjxDN3VOOC
-	eZcRZCyFiYa3/DmUTqyKlaTDBcFkDd38LmVPSIBX0ayWuSeepzng9PhTzTPLyrpS8UTDQ/u4lIx
-	gQp5/p6pXUc1UG53vFeBkcmqE7daeJaGjLCgfbHbf5/HrbkAFloeiCYiY+2n4GKLLvnbT88m6/E
-	99HX6hBUgr9SRfFZbjjd49UTmQsPhD5yrveeDHu+0c+DU3yqlaDE1fawSRbgTWQVrBMGt5Q5SJj
-	/A2SuZwJP39VubohI4G47jBEF10AqNmOv0hBGaALhmFQ1GM1262mjWkExTNAQsKAUkYL31VW0Q=
-	=
-X-Google-Smtp-Source: AGHT+IE9MGbXHDllv+CWXOFGyfbZpdi2K2ZEOSrOrv5zn0f0h35JYS0x/syi4jJWc/3Xk5XNnUraJw==
-X-Received: by 2002:a17:903:2346:b0:224:c76:5e56 with SMTP id d9443c01a7336-22780da3761mr286694315ad.27.1742955559733;
-        Tue, 25 Mar 2025 19:19:19 -0700 (PDT)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:7cf9:c75d:456:248c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3966esm98323905ad.13.2025.03.25.19.19.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 19:19:19 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
-Date: Wed, 26 Mar 2025 10:19:14 +0800
-Message-ID: <20250326021914.49794-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
-References: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+	s=arc-20240116; t=1742955642; c=relaxed/simple;
+	bh=Gd9ZdX7vXb/xGpvEuuY5fym5Nrk9/rQzhFroCZyhdHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AOnsLBSVnIIm5rjMEAwcONaTUF6FN8xwX6cBQwtRI/gizazRHYlJgUa0baaScvy+Xfoo6QjzrVgkawGZGMb+A5rREf4G9nksRd7dQ+/0FxJR4S1j6OSbY1VkcBnYeIiKoaItEwVqEXrFuVB56/J0igtKTxq6lVvNr8O/D+ePhbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: e10e9b7c09e811f0a216b1d71e6e1362-20250326
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_EXISTED, SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:20e6d293-0125-4ee8-8d8d-b3dde439d568,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-INFO: VERSION:1.1.45,REQID:20e6d293-0125-4ee8-8d8d-b3dde439d568,IP:0,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:re
+	lease,TS:5
+X-CID-META: VersionHash:6493067,CLOUDID:dd945ea749cb232eb412d347a8c5ed73,BulkI
+	D:250326100250278RLHOF,BulkQuantity:1,Recheck:0,SF:19|38|66|72|78|102,TC:n
+	il,Content:0|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
+X-UUID: e10e9b7c09e811f0a216b1d71e6e1362-20250326
+X-User: dengjie03@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <dengjie03@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 54479125; Wed, 26 Mar 2025 10:20:26 +0800
+From: Jie Deng <dengjie03@kylinos.cn>
+To: stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	xiehongyu1@kylinos.cn,
+	Jie Deng <dengjie03@kylinos.cn>
+Subject: [PATCH] usb-storage: apply IGNORE_UAS for Realtek on RTL9210
+Date: Wed, 26 Mar 2025 10:20:19 +0800
+Message-Id: <20250326022019.1593669-1-dengjie03@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,21 +77,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-#syz test
+The UAS mode of Realtek USB_HDD is reported
+to fail to work on several platforms with
+the following error message, then after
+re-connecting the device will be offlined
+and not working at all.
 
-diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-index 2956d888c131..c0bbfdab40ec 100644
---- a/fs/ocfs2/quota_local.c
-+++ b/fs/ocfs2/quota_local.c
-@@ -302,7 +302,7 @@ static int ocfs2_add_recovery_chunk(struct super_block *sb,
- 	if (!rc)
- 		return -ENOMEM;
- 	rc->rc_chunk = chunk;
--	rc->rc_bitmap = kmalloc(sb->s_blocksize, GFP_NOFS);
-+	rc->rc_bitmap = kzalloc(sb->s_blocksize, GFP_NOFS);
- 	if (!rc->rc_bitmap) {
- 		kfree(rc);
- 		return -ENOMEM;
+[  143.361210] sd 9:0:0:0: [sdg]
+tag#6 uas_eh_abort_handler 0 uas-tag 2 inflight: CMD IN
+[  143.372377] sd 9:0:0:0: [sdg]
+tag#6 CDB: Read(10) 28 00 00 00 00 10 00 00 10 00
+[  143.382908] sd 9:0:0:0: [sdg]
+tag#5 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD IN
+[  143.394080] sd 9:0:0:0: [sdg]
+tag#5 CDB: Read(10) 28 00 00 00 00 00 00 00 10 00
+[  143.404610] sd 9:0:0:0: [sdg]
+tag#4 uas_eh_abort_handler 0 uas-tag 4 inflight: CMD IN
+[  143.415782] sd 9:0:0:0: [sdg]
+tag#4 CDB: Read(10) 28 00 00 00 00 30 00 00 10 00
+[  148.437916][ 22] xhci_hcd 0000:ba:02.0:
+xHCI host not responding to stop endpoint command.
+[  148.462295][ 22] xhci_hcd 0000:ba:02.0:
+xHCI host controller not responding, assume dead
 
+The Realtek Manufacturer's device cannot
+initialize properly using the UAS driver,
+so we need to switch it to usb-storage
+
+Signed-off-by: Jie Deng <dengjie03@kylinos.cn>
+---
+ drivers/usb/storage/uas-detect.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/storage/uas-detect.h b/drivers/usb/storage/uas-detect.h
+index 4d3b49e5b87a..23579a2a1181 100644
+--- a/drivers/usb/storage/uas-detect.h
++++ b/drivers/usb/storage/uas-detect.h
+@@ -125,8 +125,11 @@ static int uas_use_uas_driver(struct usb_interface *intf,
+ 	 */
+ 	if (le16_to_cpu(udev->descriptor.idVendor) == 0x0bda &&
+ 			le16_to_cpu(udev->descriptor.idProduct) == 0x9210 &&
+-			(udev->manufacturer && !strcmp(udev->manufacturer, "HIKSEMI")) &&
+-			(udev->product && !strcmp(udev->product, "MD202")))
++			(((udev->manufacturer && !strcmp(udev->manufacturer, "HIKSEMI")) &&
++			(udev->product && !strcmp(udev->product, "MD202"))) ||
++			((udev->manufacturer && !strcmp(udev->manufacturer, "Realtek")) &&
++			(udev->product && !strcmp(udev->product, "RTL9210")))
++			))
+ 		flags |= US_FL_IGNORE_UAS;
+ 
+ 	usb_stor_adjust_quirks(udev, &flags);
+-- 
+2.25.1
 
 
