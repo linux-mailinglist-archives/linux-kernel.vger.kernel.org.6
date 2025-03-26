@@ -1,263 +1,184 @@
-Return-Path: <linux-kernel+bounces-577606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3144A71F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:41:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5469A71F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:43:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640157A47FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03FB71896AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76B625522B;
-	Wed, 26 Mar 2025 19:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D73255E2E;
+	Wed, 26 Mar 2025 19:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a0XMwuyG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SPtI7YW9"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F97E1F5615
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00139255E23
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017900; cv=none; b=hpNLeq9Nggof9jOJWeqGAl30JAD9k/hYYOy4418VsJsDQEpE+EKl7cmCKhtL4FtS+OaQtsDlX9xgMvGjVIjxHGwkOHA1l686yyqIi/sMGqtnMVOV507NCUAMn6X9RscpqKDPwCCKgtOu7Be+7HaSX4Lxa/TipzHXgcEiJeUd/vk=
+	t=1743017920; cv=none; b=Pi0QNVjrwwonlosjQHgXKJF3/SjumZ4A0PdgrDmt5Y5s1pyLYVXHG65tdMds/Qn5Hfn5l0bOwEnwreQSz2kzjhm2gXsXwGZnmLC8/Lji9VJARIoUUbxM0/o5QymqMjquxegzOlNqb1bccARWF3AzNTS+qhCQPsiMnPFVfHD80r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743017900; c=relaxed/simple;
-	bh=ni5DLjoigc4YEqVDxu3C+xdGh9eEwpzQRQuhmWV3oFY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k4kahm9J9k7EySTrBQGHUjrfTK1ibm036/GXDPo1jXJGRT8bFMaDERIc1hFDU3ooNuPH2EHhRhuu485+uO47c77J7HpN7ugWzS9ZTryc51JALWraEmJsyNAyAHQq3IYqz23Yd9jHaOh5ExxWkBC+d+N7/zAM62rh0ySCFuaXT50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a0XMwuyG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743017897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bh+o0Eq5gmVZwd3ePVQ84C8a4y5x4wc3UzpBy1woWao=;
-	b=a0XMwuyGde5w1O9p//4T1PZb4oFBtLDR8mfHrtqpTzkqiseEeOmQyf9Sx/MFd5w6o9c2Ex
-	ooLaJmYeGg5QUzcG4dYi9I7Y83hplVOIk2uCmr8IIVTW2GtaYqALKIQkU9OugnbjhTkXCn
-	uKh9Y99IQ/MGwECQU3yk0A1kIorUhaA=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-b9o5DnqaNj284Z11oqjcmw-1; Wed, 26 Mar 2025 15:38:15 -0400
-X-MC-Unique: b9o5DnqaNj284Z11oqjcmw-1
-X-Mimecast-MFC-AGG-ID: b9o5DnqaNj284Z11oqjcmw_1743017895
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e91d8a7183so2897536d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:38:15 -0700 (PDT)
+	s=arc-20240116; t=1743017920; c=relaxed/simple;
+	bh=3w4M9U/6KMoXnHUmGA2Lbn4KvHbZmjf8oMnVhzAkMas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t7Gv99CGcW6dTHN4b6ZpflYkuqcvBEACJfeQE6GM/kHEyXiR/y3NIIV4xBWhRTECpzD2QjUStnZrDxYCmqsBrKuxmlaTvoWGSR2TF3i6MT3cVawbwB7t5P7ZBS9h024NFm1p9w01zdXI4PC8pRI0Zrwi06dhJrwiTlHwrCE4OTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SPtI7YW9; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e53ef7462b6so277132276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1743017917; x=1743622717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=37blrJ4dA4pbuNAhm4qoJ4s8JjE8q0/IzkGXMncvmgs=;
+        b=SPtI7YW9hruD3jTLpYMd4BOFVnzWvq4gewA/J4It6G89jQ3IB4MYte098qHXDkg6ym
+         qCEmscQwUAEPxJO5g7IFw/22q/9NidZYeEmokN6lCtBFBpTS6IIokmpxNhoQsTSERmrD
+         UHf/D4hbfUrXezZRp878wok25HJT49imr8fsewED+nJL1ZvMESJzkdBmBb/6wfejUqnB
+         4+TG+Sg0L7hEHOhgvEm79R/o8YQN/g5dy1FcCk8LsvYbPfniJ61oUYfCyMiF1s+Xv4D9
+         s2PkoN2mI1Q1vv2Fi20x9YO+X+q5cM/ozD2TaU5CvW52KuCYK2nQUEuIfEOMM4ApM04s
+         QuOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743017895; x=1743622695;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bh+o0Eq5gmVZwd3ePVQ84C8a4y5x4wc3UzpBy1woWao=;
-        b=T6MmTMxLF5fn99QgPw5TUze4ik1cf+kYpckSE4EyRVOohBlkVvDZSwlzi0CBrvll1E
-         kWOmAwPvm+IfRVqIusGihPmRTHUttONzsMhj4Lnj4P7p6jeWto0rG/ULub4e4ZXgGrOh
-         C8w/ARJiAeMkDqAanwOVT2wWDNQAQuzsxmffYF6V2wrujn2Jg/45HG6Ost8JXfX0p5PN
-         Ebqi4PsDQf2b8dHnWXO/ffpxwAdSSBZSgCSLScg5L6ILoqg9Kz6LqCMCn//aAeh3hU2z
-         yUUEowk7+7dWH7CZXzLe80WNJ/FITpPcDs0QYJr69IOnUCzU9NeB/OY9vTqbviPrp7A0
-         sTcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG55CgGGgcdahv8X3HVmI/ecIUy57LisgG3GrHN9Meynuhq/xoTFHLrTle5MCsUULXBfURdE4nPUrvD/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoGSJZ/uuJx21h8alj5Ayy1jC/ts53DByClZf4KTfQ3tVsAgNn
-	Eg4+gQYy7JsVsIGOUigSIq2fEd6Vwhc3RfPN50hNmZpEi1qw2wyaFPAQoboyuXbpZolyy4xEdcJ
-	5iozwrZLNX8UvxOtMWQr77KGkExu0j3hv0koaBExlqXiG0Qzj9I3E0aJ4vZkEIQ==
-X-Gm-Gg: ASbGncsbfXh1saJ+arU4TUg8pjGOHEB1X3koJLYpFhJy+b+TEK/gEO6F2AtaJW4b4T8
-	uGl8vwaSUX3JtAvxDsRv1sJDApQkgAD6fcxgxw2WWrDu2lqMnI/sHOisCWQgZymkFkLlSTgd3PO
-	nv1GuONQ9AA9HpqhVkFxP1yCJeAJeDGbEdIktonzUB6tKEFanUi3sDnUSlV6R8c5renx4Al2XwX
-	u8MGGkKFWQv4mf15uGDL8VtG8N+8CZScEVZQk4BkQAcRhl13We8Ck64xqWHQPl5c4Vgs9NaVEj1
-	+nmDr5/mmiDtdqA=
-X-Received: by 2002:ad4:5ec5:0:b0:6e6:6c7f:1116 with SMTP id 6a1803df08f44-6ed238d7b21mr9194126d6.24.1743017894837;
-        Wed, 26 Mar 2025 12:38:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES5BQrGvTlTVzodj7mSmVgS7g34qhKgTxcZF2l+qD44xC2dhVK38HYIxTUX3Aw95ISiL9kTg==
-X-Received: by 2002:ad4:5ec5:0:b0:6e6:6c7f:1116 with SMTP id 6a1803df08f44-6ed238d7b21mr9193776d6.24.1743017894310;
-        Wed, 26 Mar 2025 12:38:14 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f15fsm70765636d6.34.2025.03.26.12.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 12:38:14 -0700 (PDT)
-Message-ID: <bd09a55c777c9342e950f8cfbd9e5f8c1cdecd23.camel@redhat.com>
-Subject: Re: [PATCH v2 2/2] KVM: selftests: access_tracking_perf_test: add
- option to skip the sanity check
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: James Houghton <jthoughton@google.com>
-Cc: kvm@vger.kernel.org, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
- linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
- Shuah Khan <shuah@kernel.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>,
-  linux-kselftest@vger.kernel.org, Anup Patel <anup@brainfault.org>
-Date: Wed, 26 Mar 2025 15:38:12 -0400
-In-Reply-To: <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com>
-References: <20250325015741.2478906-1-mlevitsk@redhat.com>
-	 <20250325015741.2478906-3-mlevitsk@redhat.com>
-	 <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        d=1e100.net; s=20230601; t=1743017917; x=1743622717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=37blrJ4dA4pbuNAhm4qoJ4s8JjE8q0/IzkGXMncvmgs=;
+        b=BQwWzIak6mkVMteoQoO4nIurkJ3EkTJ3HkW1V/UNrfj6lBnEi9CnRwy8WDiFRonf1T
+         By+IomiuWYhlPeVR2ngCIsjP5HLIP8LXNO1PjaXYuGKPPwpABUv4HLGkSM8wJbnbKUFP
+         nl+CRWnwdm6Q1N4guNP26a/AWA7w2lzNIQb+18CFsTb9ecVzUn2eKVjOBnuvgXa5z2ig
+         mBWrHvkeWUHLQ05x3hrvj4xmDmTt/HqadJEPvbVp2RvcYKDVgOHwbJk1vNB53WCCJPGs
+         9XYYWxY/Gc5Xgn9HLYX7/j+/CEbDViZHxbPfcNiYRxOUL9sK3ryRtWzIMKmw5szUveyC
+         eMeQ==
+X-Gm-Message-State: AOJu0YxB7LdFQE7YG+QldsSMieeVDUr32ddP890nfYUIsQX5bN7kmtxl
+	sPx2vmYjJEvik7u5KAaxZuGwkGTSMCifAWCG5BksNMaUMm1Tn10QDXcxBe2QukSKdXCKgYmH1Eh
+	AR90836mUI3zggZ2vXbvOs7F0EhhP3sYAyABe
+X-Gm-Gg: ASbGnctVagpV3NMLZnNt14ErPeCUSFqxvR18tYQ5KphLuxd3nfk2rdl7Jdl2lRwhSR5
+	gDma2zUmtK1pmB6puhQvHGbEZ2YRBUslQh5kUHR/eJaJ25R6DQN99Pd/zzf6MAkg4uVHOfFwUss
+	JyYdXOKtVFmwlAQwVwIBhxZXm5Aw==
+X-Google-Smtp-Source: AGHT+IEKQn/nJM0uTtrV4JZhrCW9IJH+yJidlTMVM2nALH+VjfWmiWTfWqHmGlsegAJ2Tfw9AccjfAhu1hVM+OJq0PI=
+X-Received: by 2002:a05:690c:968a:b0:6f6:d01c:af1f with SMTP id
+ 00721157ae682-70224fbfd87mr11354817b3.16.1743017916900; Wed, 26 Mar 2025
+ 12:38:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250326074355.24016-1-mowenroot@163.com>
+In-Reply-To: <20250326074355.24016-1-mowenroot@163.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 26 Mar 2025 15:38:25 -0400
+X-Gm-Features: AQ5f1JpWlU1-iecgrVs8fJXGenKH2jxovnmTGIWOOp81NIsiGDtaZoSu2Wqu7J4
+Message-ID: <CAHC9VhRUq0yjGLhGf=GstDb8h5uC_Hh8W9zXkJRMXAgbNXQTZA@mail.gmail.com>
+Subject: Re: [PATCH] netlabel: Fix NULL pointer exception caused by CALIPSO on
+ IPv4 sockets
+To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Debin Zhu <mowenroot@163.com>, 
+	Bitao Ouyang <1985755126@qq.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-25 at 11:01 -0700, James Houghton wrote:
-> On Mon, Mar 24, 2025 at 6:57 PM Maxim Levitsky <mlevitsk@redhat.com> wrote:
-> > Add an option to skip sanity check of number of still idle pages,
-> > and set it by default to skip, in case hypervisor or NUMA balancing
-> > is detected.
-> > 
-> > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> 
-> Thanks Maxim! I'm still working on a respin of this test with MGLRU
-> integration, like [1]. Sorry it's taking me so long. I'll apply my
-> changes on top of yours.
-> 
-> [1]: https://lore.kernel.org/kvm/20241105184333.2305744-12-jthoughton@google.com/
-> 
-> > ---
-> >  .../selftests/kvm/access_tracking_perf_test.c | 33 ++++++++++++++++---
-> >  .../testing/selftests/kvm/include/test_util.h |  1 +
-> >  tools/testing/selftests/kvm/lib/test_util.c   |  7 ++++
-> >  3 files changed, 37 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > index 3c7defd34f56..6d50c829f00c 100644
-> > --- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > +++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> > @@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
-> >  /* Whether to overlap the regions of memory vCPUs access. */
-> >  static bool overlap_memory_access;
-> > 
-> > +static int warn_on_too_many_idle_pages = -1;
-> > +
-> >  struct test_params {
-> >         /* The backing source for the region of memory. */
-> >         enum vm_mem_backing_src_type backing_src;
-> > @@ -184,11 +186,10 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
-> >          * are cached and the guest won't see the "idle" bit cleared.
-> >          */
-> >         if (still_idle >= pages / 10) {
-> > -#ifdef __x86_64__
-> > -               TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-> > +               TEST_ASSERT(warn_on_too_many_idle_pages,
-> 
-> I think this assertion is flipped (or how warn_on_too_many_idle_pages
-> is being set is flipped, see below).
-Yes it is no doubt about. 
+On Wed, Mar 26, 2025 at 3:44=E2=80=AFAM Debin Zhu <mowenroot@163.com> wrote=
+:
+>
+> Added IPv6 socket checks in `calipso_sock_getattr`, `calipso_sock_setattr=
+`,
+> and `calipso_sock_delattr` functions.
+> Return `-EAFNOSUPPORT` error code if the socket is not of the IPv6 type.
+> This fix prevents the IPv6 datagram code from
+> incorrectly calling the IPv4 datagram code,
+> thereby avoiding a NULL pointer exception.
+>
+> Signed-off-by: Debin Zhu <mowenroot@163.com>
+> Signed-off-by: Bitao Ouyang <1985755126@qq.com>
+> ---
+>  net/ipv6/calipso.c | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
 
-I didn't notice this when I flipped the meaning
-of the variable as Sean suggested.
-Thanks!
+Adding netdev and Jakub to the To/CC line, original lore link below:
 
-Best regards,
-	Maxim Levitsky
+https://lore.kernel.org/all/20250326074355.24016-1-mowenroot@163.com/
 
+> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+> index dbcea9fee..ef55e4176 100644
+> --- a/net/ipv6/calipso.c
+> +++ b/net/ipv6/calipso.c
+> @@ -1072,8 +1072,13 @@ static int calipso_sock_getattr(struct sock *sk,
+>         struct ipv6_opt_hdr *hop;
+>         int opt_len, len, ret_val =3D -ENOMSG, offset;
+>         unsigned char *opt;
+> -       struct ipv6_txoptions *txopts =3D txopt_get(inet6_sk(sk));
+> -
+> +       struct ipv6_pinfo *pinfo =3D inet6_sk(sk);
+> +       struct ipv6_txoptions *txopts;
+> +       /* Prevent IPv6 datagram code from calling IPv4 datagram code, ca=
+using pinet6 to be NULL  */
+> +       if (!pinfo)
+> +               return -EAFNOSUPPORT;
+> +
+> +       txopts =3D txopt_get(pinfo);
+>         if (!txopts || !txopts->hopopt)
+>                 goto done;
 
-> 
-> >                             "vCPU%d: Too many pages still idle (%lu out of %lu)",
-> >                             vcpu_idx, still_idle, pages);
-> > -#endif
-> > +
-> >                 printf("WARNING: vCPU%d: Too many pages still idle (%lu out of %lu), "
-> >                        "this will affect performance results.\n",
-> >                        vcpu_idx, still_idle, pages);
-> > @@ -342,6 +343,8 @@ static void help(char *name)
-> >         printf(" -v: specify the number of vCPUs to run.\n");
-> >         printf(" -o: Overlap guest memory accesses instead of partitioning\n"
-> >                "     them into a separate region of memory for each vCPU.\n");
-> > +       printf(" -w: Skip or force enable the check that after dirtying the guest memory, most (90%%) of \n"
-> > +              "it is reported as dirty again (0/1)");
-> >         backing_src_help("-s");
-> >         puts("");
-> >         exit(0);
-> > @@ -359,7 +362,7 @@ int main(int argc, char *argv[])
-> > 
-> >         guest_modes_append_default();
-> > 
-> > -       while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
-> > +       while ((opt = getopt(argc, argv, "hm:b:v:os:w:")) != -1) {
-> >                 switch (opt) {
-> >                 case 'm':
-> >                         guest_modes_cmdline(optarg);
-> > @@ -376,6 +379,11 @@ int main(int argc, char *argv[])
-> >                 case 's':
-> >                         params.backing_src = parse_backing_src_type(optarg);
-> >                         break;
-> > +               case 'w':
-> > +                       warn_on_too_many_idle_pages =
-> > +                               atoi_non_negative("1 - enable warning, 0 - disable",
-> > +                                                 optarg);
-> 
-> We still get a "warning" either way, right? Maybe this should be
-> called "fail_on_too_many_idle_pages" (in which case the above
-> assertion is indeed flipped). Or "warn_on_too_many_idle_pages" should
-> mean *only* warn, i.e., *don't* fail, in which case, below we need to
-> flip how we set it below.
-> 
-> > +                       break;
-> >                 case 'h':
-> >                 default:
-> >                         help(argv[0]);
-> > @@ -386,6 +394,23 @@ int main(int argc, char *argv[])
-> >         page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
-> >         __TEST_REQUIRE(page_idle_fd >= 0,
-> >                        "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-> > +       if (warn_on_too_many_idle_pages == -1) {
-> > +#ifdef __x86_64__
-> > +               if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
-> > +                       printf("Skipping idle page count sanity check, because the test is run nested\n");
-> > +                       warn_on_too_many_idle_pages = 0;
-> > +               } else
-> > +#endif
-> > +               if (is_numa_balancing_enabled()) {
-> > +                       printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
-> > +                       warn_on_too_many_idle_pages = 0;
-> > +               } else {
-> > +                       warn_on_too_many_idle_pages = 1;
-> > +               }
-> > +       } else if (!warn_on_too_many_idle_pages) {
-> > +               printf("Skipping idle page count sanity check, because this was requested by the user\n");
-> > +       }
-> > +
-> >         close(page_idle_fd);
-> > 
-> >         for_each_guest_mode(run_test, &params);
-> > diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-> > index 3e473058849f..1bc9b0a92427 100644
-> > --- a/tools/testing/selftests/kvm/include/test_util.h
-> > +++ b/tools/testing/selftests/kvm/include/test_util.h
-> > @@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
-> >  void backing_src_help(const char *flag);
-> >  enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
-> >  long get_run_delay(void);
-> > +bool is_numa_balancing_enabled(void);
-> > 
-> >  /*
-> >   * Whether or not the given source type is shared memory (as opposed to
-> > diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-> > index 3dc8538f5d69..03eb99af9b8d 100644
-> > --- a/tools/testing/selftests/kvm/lib/test_util.c
-> > +++ b/tools/testing/selftests/kvm/lib/test_util.c
-> > @@ -176,6 +176,13 @@ size_t get_trans_hugepagesz(void)
-> >         return get_sysfs_val("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size");
-> >  }
-> > 
-> > +bool is_numa_balancing_enabled(void)
-> > +{
-> > +       if (!test_sysfs_path("/proc/sys/kernel/numa_balancing"))
-> > +               return false;
-> > +       return get_sysfs_val("/proc/sys/kernel/numa_balancing") == 1;
-> > +}
-> > +
-> >  size_t get_def_hugetlb_pagesz(void)
-> >  {
-> >         char buf[64];
-> > --
-> > 2.26.3
-> > 
+For all three function, I'd probably add a single blank line between
+the local variable declarations and the code below for the sake of
+readability.  I'd probably also drop the comment as the code seems
+reasonably obvious (inet6_sk() can return NULL, we can't do anything
+with a NULL ptr so bail), but neither are reasons for not applying
+this patch, if anything they can be fixed up during the merge assuming
+the patch author agrees.
 
+Anyway, this looks good to me, Jakub and/or other netdev folks, we
+should get this marked for stable and sent up to Linus, do you want to
+do that or should I?
 
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> @@ -1125,8 +1130,13 @@ static int calipso_sock_setattr(struct sock *sk,
+>  {
+>         int ret_val;
+>         struct ipv6_opt_hdr *old, *new;
+> -       struct ipv6_txoptions *txopts =3D txopt_get(inet6_sk(sk));
+> -
+> +       struct ipv6_pinfo *pinfo =3D inet6_sk(sk);
+> +       struct ipv6_txoptions *txopts;
+> +       /* Prevent IPv6 datagram code from calling IPv4 datagram code, ca=
+using pinet6 to be NULL  */
+> +       if (!pinfo)
+> +               return -EAFNOSUPPORT;
+> +
+> +       txopts =3D txopt_get(pinfo);
+>         old =3D NULL;
+>         if (txopts)
+>                 old =3D txopts->hopopt;
+> @@ -1153,8 +1163,13 @@ static int calipso_sock_setattr(struct sock *sk,
+>  static void calipso_sock_delattr(struct sock *sk)
+>  {
+>         struct ipv6_opt_hdr *new_hop;
+> -       struct ipv6_txoptions *txopts =3D txopt_get(inet6_sk(sk));
+> -
+> +       struct ipv6_pinfo *pinfo =3D inet6_sk(sk);
+> +       struct ipv6_txoptions *txopts;
+> +       /* Prevent IPv6 datagram code from calling IPv4 datagram code, ca=
+using pinet6 to be NULL  */
+> +       if (!pinfo)
+> +               return -EAFNOSUPPORT;
+> +
+> +       txopts =3D txopt_get(pinfo);
+>         if (!txopts || !txopts->hopopt)
+>                 goto done;
+>
+> --
+> 2.34.1
+
+--=20
+paul-moore.com
 
