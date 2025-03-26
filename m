@@ -1,207 +1,106 @@
-Return-Path: <linux-kernel+bounces-576680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B614A712FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:45:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A13A71300
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA833A4924
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E0E170E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7641A4E98;
-	Wed, 26 Mar 2025 08:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C596417CA1B;
+	Wed, 26 Mar 2025 08:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FaHMFtpa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W+luWktA";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FaHMFtpa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W+luWktA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ess85WSl"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4A71A5B8A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F7B1DFDE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978709; cv=none; b=IV+ruxomNLvz9zMV0a5sNPuMwZx0qwK4cEZUw+R/9fCr9UKQpnVWz6XbyAeFC3b+teNd9K6TFCnDNQX/1OwawqVUSWoKYyRdanckcuOXzzo6KTajasf/OBuGmbyqm3sa/eQRXDoN5V7fSRmZAXG1c0V/7qf1JEnwVgjIalvB3cU=
+	t=1742978766; cv=none; b=As9d+Qzp86nPinY8mkqgd873T4jWQuYyc+hKov4GpokMqarBmIK9a80wxjZIo3ufWKReVDUDi+tectbpojiwERBtacA5nGCjZlLxr5Eg3mr8/x+SPyDbI/JqRNrafqeRNlcp4VU+MT4c9BFAnkXK12NPj3ulT9/McfW+K8WmlSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978709; c=relaxed/simple;
-	bh=HWAiggdTKxJZL2el/jilM8w3A7auhTpdSaIDXER4twg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BWwNFSwKQRNrsp9/VBggikesjjXeYvGFXPJz0oB1ouTpq7GQmJ2O9uazUY3/FlJplQJkH5Kl2rF547XVX2zFUAyOOvwWUWVVm8bMZlr+TTh3Xjqy9hRlkfJFmdWQc7vuNH7ejZvj2kmGd8p4JohcGjXUYvcBtYAJ1GukMLG4WgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FaHMFtpa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W+luWktA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FaHMFtpa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W+luWktA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC98B21179;
-	Wed, 26 Mar 2025 08:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742978705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
-	b=FaHMFtpaHeZY8gADsMX/tH4zQAWSJNMHC+Q386fji5echHlZsxH9r5mwP5UMqUeJjYC9Hv
-	cQErBHtmqwj9rulwjb8LjYBrOslFfx/gxFNllV/FFKppqM11vOl7Cg/UfzXcF/HkOE7S83
-	xbzXvibrngdz31u+P6xS8FC78is49+4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742978705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
-	b=W+luWktAB6rJ3T3bJI5wJX+nXwSEtS1t6WF+UW9Y7kAvSYcURIavVwyhIiTP+zFEYNu70h
-	fEzwpXr6SafXi1Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742978705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
-	b=FaHMFtpaHeZY8gADsMX/tH4zQAWSJNMHC+Q386fji5echHlZsxH9r5mwP5UMqUeJjYC9Hv
-	cQErBHtmqwj9rulwjb8LjYBrOslFfx/gxFNllV/FFKppqM11vOl7Cg/UfzXcF/HkOE7S83
-	xbzXvibrngdz31u+P6xS8FC78is49+4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742978705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
-	b=W+luWktAB6rJ3T3bJI5wJX+nXwSEtS1t6WF+UW9Y7kAvSYcURIavVwyhIiTP+zFEYNu70h
-	fEzwpXr6SafXi1Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63E1C13927;
-	Wed, 26 Mar 2025 08:45:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WUMbF5G+42ecVgAAD6G6ig
-	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 08:45:05 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,  Nicolai Stange <nstange@suse.de>,
-  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
-  Jarkko Sakkinen <jarkko@kernel.org>,  linux-integrity@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
-In-Reply-To: <eded3bf8d7aeb90ffa85bb160af0060c1d10ad34.camel@HansenPartnership.com>
-	(James Bottomley's message of "Tue, 25 Mar 2025 11:44:59 -0400")
-References: <20250323140911.226137-1-nstange@suse.de>
-	<20250323140911.226137-4-nstange@suse.de>
-	<5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
-	<f7d257cd3f98447b2b3d7aff1eee6586c1596606.camel@linux.ibm.com>
-	<eded3bf8d7aeb90ffa85bb160af0060c1d10ad34.camel@HansenPartnership.com>
-Date: Wed, 26 Mar 2025 09:45:04 +0100
-Message-ID: <87sen0qiy7.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1742978766; c=relaxed/simple;
+	bh=D9Q6Bq7rIfP8pL1DuBYQK0tNWYv+vU65XyhnzF+UYlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tto5h3fxxYv0eoISPgwKWSL8JPUHmdZB0ulyu1lS2g25+BiJr7e9/4WfKHW8RG6vceTz2tbc5Fha/pRMKNFJj/si21Aff8v7IXDxlW5cTcHMMC6iVsXhIv7IWdEnq+cke3VsDB6FgN/f7s65u7o3VWOWbxQtxgA0IvUeXCWY8W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ess85WSl; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3015001f862so8178363a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742978762; x=1743583562; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mTKaj6KL96qFCBnkU6QrFMZuOf/XUp8SJyy8b7qf9F8=;
+        b=Ess85WSlnZVBdTgu/A0jRK/1NY11CAbwbVSOjI/O/98jt6k9jQYkjywsXCUgv1pNuq
+         tRmBbUtqfWVF4rXhdXto5INHbw5e2AgMSfVzZIts3audVsqZBeXZmGWo7ueDv4hEJOXR
+         nCdxb3GFQ694gG6PBVLEfaz9mwAuKwYbz74oY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742978762; x=1743583562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mTKaj6KL96qFCBnkU6QrFMZuOf/XUp8SJyy8b7qf9F8=;
+        b=XoJDszGTBNsU0xRBgzEYdg6KciS8TUH7CbR0BQ5JAZFW9YH2UKQDEpk5VBwtwupPcX
+         jePZxlLyT8S9wpHVzrYku9ficQ4a/JCXUj5i2tsR9omFc4bYn03rqR/W/CbkAzam/cVq
+         5S6Nz/0VgK5hm9CFBp+W4mJXXFBOcoJI3itqUe6jaILmapssVRL8Vg1NrHF6rebBmpvy
+         eutfP4osgLNfj70996IVyLGAAH4tdrthgBpcacKSLO2M0+rE8YLyHRK2VheulwEgramH
+         7tpfrdnwyTsU+2kwxs+01U8m6rd+Vvxm+NlR7c7niEDA3Ol66kKW3FtmOuQqCjxhiGuE
+         16Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVoyRZYQpHlp4h3q7AlhtHQg1zxHELCz/UTR/onVF0dDc2fsf9m+aoHEyoXvoJgktV2lklBoHLpG9kftg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdnnUkQt4Todvh2VQNaZXgS3YHZ3fZj4QPiULeW8DXszoJp63w
+	7UAUlzZi5AIY3ZCl+qQDSrPPegTSNRcqG01H/4pOpReUhVAc/t4Y7JcfWT5WaA==
+X-Gm-Gg: ASbGncuCKd9a71WsyBDBT74trJEy2b1QADk5TsH0+VzEO/HLJlMavH1NGxak95HcDA5
+	iI4/uE2dYTX30YMQht5X71vJ3cXx9BvMWSd1MZfBDA1PjJRcUUuKeHKR70OnjdvBm6EDWVhuVwB
+	Iu0gycMUtM+gFp39ryNdzvhZ/tGcZK3Gf7y6LNJigLNpDuWC+YhfR9eYGc2Hm84zhUScBrczkgR
+	M+zVzgD3Y1HlrO6XSYOclJCgp01psA9Edwx7g/LukzuronJPiu6MGDkQm5VRpDAWNJxG90Ako93
+	T48aB/hUoERGkah+y9flITsnEIxGr9WMXOll+BZdglJ/YxCP
+X-Google-Smtp-Source: AGHT+IGisvnfs4SlEXOwlnXep8AOnrWVjOmA+e82dVgBI4R5OxY1nQbWHtCBn1UGC10gQ6jKlVnTrA==
+X-Received: by 2002:a17:90b:134c:b0:2ff:53ad:a0f4 with SMTP id 98e67ed59e1d1-3030fe93f0dmr39067080a91.12.1742978761631;
+        Wed, 26 Mar 2025 01:46:01 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:d343:29c5:4565:9d95])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3037c8ecaf8sm843442a91.0.2025.03.26.01.45.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 01:46:01 -0700 (PDT)
+Date: Wed, 26 Mar 2025 17:45:56 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Richard Chang <richardycc@google.com>
+Cc: Minchan Kim <minchan@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Brian Geffon <bgeffon@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] zram: modernize writeback interface
+Message-ID: <awuyw4jfm2nwxxunchaxazc27m6gqkcyn7zx4gkin7fqg3ogrc@uq55swn7atrx>
+References: <20250325034210.3337080-1-senozhatsky@chromium.org>
+ <Z-MlsM2Gmxdvl_1D@google.com>
+ <CALC_0q8Mv_UWvFjo3HW_gRsG2N8P--R1OqDj7=2x_98XiRXy4w@mail.gmail.com>
+ <5l4pjqlgu4afndn3ysa7ynecjmvepkfjlh56ycm5jt5e4mioqm@dujakwaomhlk>
+ <CALC_0q9hRAX=46Zd+qh5Pq1myXx+=9gSTT5hu7t1s_Ko4xd_Og@mail.gmail.com>
+ <iiav3vvvvu7lzcl3e2rzfh4kyz6kwymqurncjdsv62wvlge63k@ewgbdmzdnb2p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Score: -0.60
-X-Spamd-Result: default: False [-0.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	INVALID_MSGID(1.70)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	HAS_WP_URI(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,suse.de,huawei.com,gmail.com,oracle.com,kernel.org,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[hansenpartnership.com:email,trustedcomputinggroup.org:url,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <iiav3vvvvu7lzcl3e2rzfh4kyz6kwymqurncjdsv62wvlge63k@ewgbdmzdnb2p>
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+On (25/03/26 17:15), Sergey Senozhatsky wrote:
+> On (25/03/26 15:07), Richard Chang wrote:
+> [..]
+> > Another alternative thought, how about page_index supporting both
+> > single instance and ranges?
+> > The key is shorter and the parser is relatively simpler.
+> > Eg: page_index=500 page_index=10000-10001
+> 
+> I probably can look into it.
 
-> On Mon, 2025-03-24 at 21:03 -0400, Mimi Zohar wrote:
->> On Sun, 2025-03-23 at 17:18 -0400, James Bottomley wrote:
-> [...]
->> > Instead of any of that, why not do what the TCG tells us to do for
->> > unsupported banks and simply cap them with 0xffffffff record
->> > EV_SEPARATOR and stop extending to them? (note this would probably
->> > require defining a separator event for IMA)
->>=20
->> open-writers and ToMToU integrity violations are added to the IMA
->> measurement list as 0x00's, but are extended into the TPM using
->> 0xFF's.=C2=A0 Unfortunately, as mentioned previously, some verifiers
->> ignore these integrity violations by automatically replacing the
->> 0x00's with 0xFF's.
-
-I've researched the EV_SEPARATOR now, and according to [1], sec. 10.4.1
-("Event Types"), PDF p. 128, the _digest_ of 0xffffffff is to get
-extended. So there's no conflict with how IMA violations are extended
-(plain 0xff ... ff), in case that was the reason Mimi mentioned it.
-
-However, the main point of this patchset is to handle unsupported algos,
-so I think the HASH(0xffffffff) constant cannot get computed.
-
-
-> That sounds like something that should be fixed ...
->
->> What do you mean by "simply cap" them?=C2=A0 Does it automatically preve=
-nt
->> the PCR from being extended?=C2=A0 If not, then this patch set is doing
->> exactly that - preventing the TPM bank from additional extends.
->
-> The idea of separators as understood by the TCG (the EV_SEPARATOR
-> event) is that they divide the log up into different phases.  If you
-> see a measurement belonging to a prior phase after a separator you know
-> some violation has occurred, even if the log itself verifies.  The
-> point being that if you log a separator in the last phase of boot (and
-> for IMA logs there only is a single phase) there can be no more valid
-> measurements after that event because of the separator, so the PCR is
-> termed capped, meaning you can't validly extend to it and if you do the
-> verifier shows a violation.
-
-The motivation for extending with constant 0xfe ... fe into unsupported
-banks is based on a very similar line of reasoning: because no event
-template HASH() would possibly come out as that particular constant, no
-sequence of events, including an empty one, could get verified against
-such a bank.
-
-Thanks,
-
-Nicolai
-
-[1] TCG PC Client Platform Firmware Profile Specification, Level 00
-    Version 1.06 Revision 52, December 4, 2023
-    https://trustedcomputinggroup.org/wp-content/uploads/TCG-PC-Client-Plat=
-form-Firmware-Profile-Version-1.06-Revision-52_pub-3.pdf
-
---=20
-SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
-rnberg, Germany
-GF: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG N=C3=BCrnberg)
+Can't say I really like that "index" will mean both index and
+a range of indexes.  But let me think more.
 
