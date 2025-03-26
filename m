@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-577439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9D3A71D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:23:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24806A71D15
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C307F16FBEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A693B8EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715A021506E;
-	Wed, 26 Mar 2025 17:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DDB215788;
+	Wed, 26 Mar 2025 17:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DLnT6LM9"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="VE7+O4vO"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E30215065
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7BD2045B0;
+	Wed, 26 Mar 2025 17:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743009806; cv=none; b=q5K+QYWttb9U2Cm6rGori1fmlIMXhSASQPv/ohW6BhWy03mldAinEZP3FmVI8HY4XwCaFr//5warqhzIrGsqcUPGKEOM4+LcWdTtKjrb4s0Wk3TJULSrG+RTxG2+yTXFMGwDrt8H1GpaVw82HUxr3MUs9iGx99T2s2oJq0VHH0U=
+	t=1743009930; cv=none; b=S1/6st7rPjE4EiSmWWrYJxepWWCy+pgZJYjwm6WhG9ChlcM8C+cTyyP8Qs8Qi5r0srq+AsH6nKxY4MTq/e0p0vlxmHKFBCiRB0y3V8Y7EvHzorYT1y66+zkWxwGP5exMHXtPRtRb5PqQswYCCPnBlIJfDD2W6PfclbfihIq1WsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743009806; c=relaxed/simple;
-	bh=a2NyMrUiQOV80ARg/+DvduuMj0SZhgXE4j7q8A388ds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u/ZdPGUFh5Bh5Yi0u6bR8e0HhP6SeaYXr5/uTxOut0gNEinMkCSDzVLn3h54AtfxCE/WvJB6Mb5t8E7VpfmqPjFM6KRdRnMSaZcr/Pq9TXP/OS+cPetJUkvrPAfTe8ubGVLUCeWQwRMlM2BYTRyWPJrMiFK+OnfMt9TXR4dFzGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DLnT6LM9; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff6b9a7f91so4162a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743009804; x=1743614604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2NyMrUiQOV80ARg/+DvduuMj0SZhgXE4j7q8A388ds=;
-        b=DLnT6LM9SlB6RMADbirhr6CNJF2sQaAioJA4LSFomc9vVEe2phAN4OMEUouTeZAfvo
-         ltQ3hH1WCR9uC7Q+HvTNku8cAEpb0f7gDHGspIi25u1DboQ2PX0VpLR7g6vWTtBS29jK
-         lEPji/A0X5QVcGlec1f3XoHLBubcx/6wwNZpdjxeEhaMlc3VelQ4ayMkzjinVzSkmlcQ
-         uMHugj5FgBdIHggxKkVVaPjrEA5hpIwNAuXXmIPksy9fP1AIy5caVYO4rcrtHo6hzS08
-         3g+vXrGPieLruDPg5QUVJFzVDGcxkJm8mxM/vS6PqqWvHM9CInNnLzOKC5J3e986sP/2
-         4Ulg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743009804; x=1743614604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a2NyMrUiQOV80ARg/+DvduuMj0SZhgXE4j7q8A388ds=;
-        b=mhaMM0oQgaYpA9uMq/vsBmauazFBH22K2TjZHxkVvlB900ydHradkVnTIbCuRsDxBn
-         fuN0jtV9m3eAXHI0OtQjmdzTFxm/GMQYYUrVPTsVGAj26ftlrfpy1o4aBcrE4cWgTo4B
-         /80sCxEyyNBgIRGoJ4uCl+0xnrxBoPbaQw0R/7uIx4jK+BnTcq9ordYX484/1bZrW0LC
-         D74cwgDrhN1SjA7kSswmF/k+6tsJkqceCSyYoLYOri9zEHGTcW9z//CwDbZJBR/xSmBT
-         DMRkF0C1EvbwLyPEozXABnr/doFESNheQRGwvzBOeXOwsPNDrN2aQrlFtPOahMbtCfDu
-         nFVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBuzlV+ZnH/hX/NdZdZpetedIehaW1MCS/Y1oy89PhtUtHCfVz4X2MIVd2Hx8fDj0ftWiJce41dTazUM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrgJeNdE0I5pv0+d/ZAKrlrKD51FjL5zCq0ablcnOLeo6IM15y
-	5YCqE2j+TzJeWhSp9HYDDQS5uK9Xdg1YOow6fsjPDmbtH5IGY4N76ZDEJuR9Hl9TdpgnOxtvx2c
-	vrgbE7I55oPByI+uLSFoJu9Px+fQaWmqnSpS6dw==
-X-Gm-Gg: ASbGncs6MmzueGXIBqoXVsqDr1ZeD70ho3PgC3h6C7bwjPCGUzynHM/epg65/4pzxrA
-	KfIjjtsGP/OL0frpFIsLVcKALmM9YGRwvPDdJXJtK2H/2cy+IRYUcAjkdrZcwVk4YI5C2UPbznb
-	rXCHHh6A00rp+nhKWuV3D5Alwv
-X-Google-Smtp-Source: AGHT+IH7rIFlWyEYfIZ3WN0p7Zb9qCbUlZyp5L8giHJ9QZiKfqAiDrKPrmG0kZcCYX063nmTDXOGpO6drIVHOa7BaQQ=
-X-Received: by 2002:a17:90b:1c04:b0:2ff:7970:d2b6 with SMTP id
- 98e67ed59e1d1-303a9185a25mr255538a91.5.1743009804102; Wed, 26 Mar 2025
- 10:23:24 -0700 (PDT)
+	s=arc-20240116; t=1743009930; c=relaxed/simple;
+	bh=4xpFGtrF5dg9n6Tq2W6rWfUIQLdcdUdHf01Fz54ZoYk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d7dWjqNblkgmiZmmJl4YK6Ujo1mE98nFigs1i5sW4Sap/iPB4Wig+cOcyTNB87ISmZbFfCoMHnNfjauxnTiwoe3qJA46zNzJSw3vV41ixvPXdXX04aG8pUZFzIr5Naw4eNSvxvPCClyvIsL88vDOefy5Z01e7rwKiSfI5MFHSY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=VE7+O4vO; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3574A101CA7F1;
+	Wed, 26 Mar 2025 18:25:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743009926; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=/Vhwv7L1RuBItYtm4Om0dbp42wUxgwI2TCiRaX1W1Qw=;
+	b=VE7+O4vOKIlJbBmYNFZi4VQgbkeNU71IKCE7CN8p74poRZCM4TR48b/YdoQF6sqQF6Rq2d
+	5OqYJjWx5zCtRqxe+fzKevBqf5dBndppckdopM6MMxZlW9u4oBhDrDRN4wnuafPwbFQaKO
+	8NN0jCxXOrGuutretZeOAbHfv+WUGjunH0t/Ib/Oba/MfhHBMpH7TiVTf4qVxeLvq7Em2U
+	eiGHHpcClaJ6l81apGvFB3MToBAd+1Ed0dqKkIbUocaWmISF1RvyCrYEt/sS+CLsBxZOR+
+	Ow5l/BpM1bqx2ReOvgVHhjd/L4EQB9Jt8Nf309mA69Rbkq5RjMPy70ykJWVthQ==
+From: Lukasz Majewski <lukma@denx.de>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v2] spi: spidev: Add compatible for LWE's btt device
+Date: Wed, 26 Mar 2025 18:24:45 +0100
+Message-Id: <20250326172445.2693640-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250326174228.14dfdf8c@wsk>
+References: <20250326174228.14dfdf8c@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325143943.1226467-1-csander@purestorage.com>
- <5b6b20d7-5230-4d30-b457-4d69c1bb51d4@gmail.com> <CADUfDZoo11vZ3Yq-6y4zZNNoyE+YnSSa267hOxQCvH66vM1njQ@mail.gmail.com>
- <9770387a-9726-4905-9166-253ec02507ff@kernel.dk>
-In-Reply-To: <9770387a-9726-4905-9166-253ec02507ff@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 26 Mar 2025 10:23:12 -0700
-X-Gm-Features: AQ5f1Jq090bRbktCGQj6AKofeV73gODEjcWkjhMdf9jWJZQbbcbRL1wJhVOvgeM
-Message-ID: <CADUfDZr0FgW4O3bCtq=Yez2cHz799=Tfud6uA6SHEGT4hdwxiA@mail.gmail.com>
-Subject: Re: [PATCH v2] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Mar 26, 2025 at 10:05=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
-:
->
-> On 3/26/25 11:01 AM, Caleb Sander Mateos wrote:
-> > On Wed, Mar 26, 2025 at 2:59?AM Pavel Begunkov <asml.silence@gmail.com>=
- wrote:
-> >>
-> >> On 3/25/25 14:39, Caleb Sander Mateos wrote:
-> >>> Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER =
-to
-> >>> track whether io_send_zc() has already imported the buffer. This flag
-> >>> already serves a similar purpose for sendmsg_zc and {read,write}v_fix=
-ed.
-> >>
-> >> It didn't apply cleanly to for-6.15/io_uring-reg-vec, but otherwise
-> >> looks good.
-> >
-> > It looks like Jens dropped my earlier patch "io_uring/net: import
-> > send_zc fixed buffer before going async":
-> > https://lore.kernel.org/io-uring/20250321184819.3847386-3-csander@pures=
-torage.com/T/#u
-> > .
-> > Not sure why it was dropped. But this change is independent, I can
-> > rebase it onto the current for-6.15/io_uring-reg-vec if desired.
->
-> Mostly just around the discussion on what we want to guarantee here. I
-> do think that patch makes sense, fwiw!
+The Liebherr's BTT devices are using spidev to communicate via
+SPI to monitoring devices. Extend compatibles to allow proper
+DTS description.
 
-I hope the approach I took for the revised NVMe passthru patch [1] is
-an acceptable compromise: the order in which io_uring issues
-operations isn't guaranteed, but userspace may opportunistically
-submit operations in parallel with a fallback path in case of failure.
-Viewed this way, I think it makes sense for the kernel to allow the
-operation using the fixed buffer to succeed even if it goes async,
-provided that it doesn't impose any burden on the io_uring
-implementation. I dropped the "Fixes" tag and added a paragraph to the
-commit message clarifying that io_uring doesn't guarantee this
-behavior, it's just an optimization.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+Changes for v2:
+- Use 'lwn' vendor prefix instead of 'lwe' (as the former one is already
+  well used in Linux sources).
+---
+ drivers/spi/spidev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1]: https://lore.kernel.org/io-uring/20250324200540.910962-4-csander@pures=
-torage.com/T/#u
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 6108959c28d9..2568240490fa 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -708,6 +708,7 @@ static const struct spi_device_id spidev_spi_ids[] = {
+ 	{ .name = /* elgin */ "jg10309-01" },
+ 	{ .name = /* gocontroll */ "moduline-module-slot"},
+ 	{ .name = /* lineartechnology */ "ltc2488" },
++	{ .name = /* lwn */ "btt" },
+ 	{ .name = /* lwn */ "bk4" },
+ 	{ .name = /* lwn */ "bk4-spi" },
+ 	{ .name = /* menlo */ "m53cpld" },
+@@ -740,6 +741,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "elgin,jg10309-01", .data = &spidev_of_check },
+ 	{ .compatible = "gocontroll,moduline-module-slot", .data = &spidev_of_check},
+ 	{ .compatible = "lineartechnology,ltc2488", .data = &spidev_of_check },
++	{ .compatible = "lwn,btt", .data = &spidev_of_check },
+ 	{ .compatible = "lwn,bk4", .data = &spidev_of_check },
+ 	{ .compatible = "lwn,bk4-spi", .data = &spidev_of_check },
+ 	{ .compatible = "menlo,m53cpld", .data = &spidev_of_check },
+-- 
+2.39.5
 
->
-> >> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-> >
-> > Thanks!
-> >
-> >>
-> >>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> >>> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> >>
-> >> Note for the future, it's a good practice to put your sob last.
-> >
-> > Okay. Is the preferred order of tags documented anywhere? I ran
-> > scripts/checkpatch.pl, but it didn't have any complaints.
->
-> I think that one is minor, as it's not reordering with another SOB. Eg
-> mine would go below it anyway. But you definitely should always include
-> a list of what changed since v1 when posting v2, and so forth. Otherwise
-> you need to find the old patch and compare them to see what changed.
-> Just put it below the --- line in the email.
-
-Sorry about that, it slipped my mind. Will try to remember next time!
-
-Thanks,
-Caleb
 
