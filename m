@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-576690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0183FA7130D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:50:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A500A71312
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D50E63AB55D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B1C189C753
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57EA1A2632;
-	Wed, 26 Mar 2025 08:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB641A4F2F;
+	Wed, 26 Mar 2025 08:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BuQqIv0C"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="k38PEtqH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="em4EobGm"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7930019CC02
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E102E3D6A;
+	Wed, 26 Mar 2025 08:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978976; cv=none; b=pHsmTfaEWu0urm3ascpNP6HyB/ViUXdaLZSx436BFX56m4s4VS1DePFelSc6p1n71KKFwackis5GXPqTWROyygodnPK8RqmYykvKDSqxp8m6U3dP2wQnwP8ra8p6gtARmtt5j6Pv1JM/2T+kO20gPOZ8CU0U7UrOnz9B6gvjQiQ=
+	t=1742979022; cv=none; b=KU58YRE+bHCjxcFMUi94fGy79FusxoFr7UYs/4yguhRhEqg8sndkMe6Dt7oxbeTWYgyR0fhE6vNxTx6mFoNqDvLX8D1z5JrHeB50nGBag4qPkdJaq+QLCG+8b8ULmdo8/W0ZH4lU9S7aKTJfDnEdkAKd8AgMV+6w9mcOaeygb20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978976; c=relaxed/simple;
-	bh=ZA1Ac6DarqLHrHBuo5JGC8xWF9bwRLLdYnUT1IqWCyw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CyQRw7NQ7uybCvg6Nh2mzOppIO0HLx2Jd8Rta200FBl3ElXsqHZi9QhuqFXT8JH+L8VuIj+ZMRYf/rboCdCz9Yp5ETKfRHvNVaer8gPijPbZQJ2jj97ExeHcW5WJfTn3zokGiobQQ3hz5HRULD3LDFU29fm4CSt8blox6X6y7VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BuQqIv0C; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742978921; x=1743583721; i=markus.elfring@web.de;
-	bh=F0gKURSAiuIUqSPfcoCp0bxD+Fxnceq0ZyFc1KA1xQs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BuQqIv0Ci6zUWrVFLwaIenmk5iqiLVqJ4ea/kZ95RVVtSXEnWdW0QYNFc9QX4byP
-	 NzEsd+G4x+C43DzTlhScpRHWIwQiycD+6gtLObdE2kZMzRdj3jN3J8x2lxALD6wf8
-	 QcCgUITAoNGyUvH+rScUBk762I2DBBC3sj872gzyYcIMh8VK8qnxycfw8w4wKZklQ
-	 0m9Iurco4KeTfKulS9z/h5pmZMMD2aKlhaLBkxi2tQuvipPvV0eYOKlRYrUFeeDcA
-	 rd0d7c+buD8wQP/wM2OnavUbmZxVxL5fOgzEbG5YYlTseZXWSBCehxLklmg0ZwsaT
-	 4HugaMiGSZTlAzzLKQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MFJnh-1tupCC2D0L-00BDDp; Wed, 26
- Mar 2025 09:48:41 +0100
-Message-ID: <0ceb4ab8-adb5-46bf-98e4-61a1bd908e20@web.de>
-Date: Wed, 26 Mar 2025 09:48:10 +0100
+	s=arc-20240116; t=1742979022; c=relaxed/simple;
+	bh=zckyWCR8co9b4ewG7tpvLex3uvCol9oBpbVIwzyjzag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q5L0iLQX2AaXiCK7C0Tvs2ZmO3oD2HaaAtr/htZTl4662PcI/1u2lJUp/Fv3BpPgqff0sSj1BEjUsP9C7Pzqkm3kf3JvXNLl2xiNd0rMb2lcB+Y7vpgl7411NFgyS0tFtHcpFhjeGoW7i4QQWtzOrvdLHMPzDDNLQuJc7pfp9cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=k38PEtqH; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=em4EobGm reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1742979019; x=1774515019;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZP0l56nxJaRM6ya5wloLaFklD8MUTQmVk56fPxgwkqI=;
+  b=k38PEtqHQa4FtgjmkFzE5l8gZ4o9xLKE0M3sXYwcTpkEuWtfwZwcJRvd
+   Fy2ghc8PMpbPUfFUxE8VjP7hE3ZcrGLnB+3DZWicWEDrl7HXIlQ+3nrZO
+   AfLmWvfoDpEq5NKoJFU3ndDL1SVrdsGYI9uFflvs0BDYHUJ0R6ytan2GO
+   11rMhAkE2w6yvOEDXB5kr5uiTs8lxcbbrBVfgeSCXfaXGT6bQLq0PUt4F
+   LQLW3B9GOuu0dflJw54GxVExN7xAlEEQHZGUvsS9Mx11DLlCvoYeWKGJI
+   W6ZVkvuUuT53MccGFfixZTVPgX9V5/2B6T02Pn0kilWvbe6l6UO4XWVXM
+   Q==;
+X-CSE-ConnectionGUID: MfDwbYMlScqJ+JJEsYNc2Q==
+X-CSE-MsgGUID: QpMB02+nQjmsFCzLs9HGZA==
+X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
+   d="scan'208";a="43164243"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 26 Mar 2025 09:50:15 +0100
+X-CheckPoint: {67E3BFC7-37-903EAEAC-E04C76C8}
+X-MAIL-CPID: F04AAAF7416FCDBA5B861161D3D6F77C_5
+X-Control-Analysis: str=0001.0A006368.67E3BFCE.0036,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95F75166EFA;
+	Wed, 26 Mar 2025 09:50:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1742979011;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZP0l56nxJaRM6ya5wloLaFklD8MUTQmVk56fPxgwkqI=;
+	b=em4EobGmpORctKzGb651E+9YPDv0naO9NFFUwMSq7jZ9NonsqAQMfMPyCACKdSXs8EsPNC
+	5/3FYn0z+iyPvaoayosYcCwpUhYzVgUGZoxC83kijimQdRdmWSiyYN3ZJ0hbr5gpH9UlNT
+	kMw3gIs0lIvqbswdrIMXItqebsaOmmva2IMPdUZ6u3F83JGxBK5QU3UNTe0/mP2fD1eT+2
+	+E5YGY6y3FZqWzUegymx+CzAaoRcFq6l7iysU23V+MHx6VdtTlOnmjdpOVqVYoYkzL5O3m
+	/cNTer68kHH7+HGNffpgKuNMo/FBqvLUCfD1KDiAcZOTfc59mbVlYpROxflPDw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] i2c: imx: add some dev_err_probe calls
+Date: Wed, 26 Mar 2025 09:49:36 +0100
+Message-ID: <20250326084937.3932383-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH v3] mm/page_alloc: Consolidate unlikely handling in
- page_expected_state
-To: Ye Liu <liuye@kylinos.cn>, linux-mm@kvack.org
-Cc: Ye Liu <ye.liu@linux.dev>, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>
-References: <20250326011752.917564-1-ye.liu@linux.dev>
-Content-Language: en-GB
-In-Reply-To: <20250326011752.917564-1-ye.liu@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vWhInb2AlYD4tAVbHvewD1VPWvI0+YNui6YWeK2xih+zmZ4CSyL
- SJpDrk76hOSy3i5nYndkseF1JbE4OsvD++81zPnQ7hQZBut7tJ8t2jicirwW4KpnHnKjZHZ
- fdUUCo2OOPXonMMk0S6Yf1A5OMNFmcZE25K1BCCkncSd/9TrbV9RzvqMUxhLj9R33XT2PnW
- e8J2AfgjyyHN3ypT3f/4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fsvazxaONtc=;dTSNIURCaZ7ykEaAXXTEcAHFPWD
- 85cNrth6Yqlmx1Nw5liNL1tZX2aF+g1OaZok5xSWLTEf2tAmpbLIwm/vdCiXt9BFQY9OzwMvB
- hUww1luu+HBJKDk9uns2K0a7AYc54ifnnASUHdE8Zkx9M8ObfinZ9Bj2KTjoY8XqJnSJ8FeFM
- Rt7MOfMEBndU3/kAJe1lMYoYgokeNonYgecvQ2vlp5uqLOK/mluRkThFRDK/RonQnRSrqfgla
- YTMj2jzNE8LZ2Rzs5dqYQ5idgQ+wyKCrAMjbvpG7+Z2WWhsChI6PfloqZ11hIIx51BFI+AS7s
- OyAg62phZtzYiT6ock29ar8Uadz8XZCCeW9jCywKACNpJadsfMNSRopT6iL6rr3cFeMcD5/sU
- LDi8NfTzYixg7lSEY1hPIty18zjE2QV66J+wDRChbakCq85wILwAb/0mvzObG9hOGx2n4I0Vl
- 4scLcub8wu3gfXtIgumup8658ctp43B4KQmmLfn093jgepVUHi33PSdKCc4jgLyGJ5IRCi5oG
- BoMrTVY5wsUfrD/38n5y0F4Az1q9dO4HTWuBnygHCQSw0tXCiKw8xleFilbGySduXacJjx1W2
- CvGRtUGJ6uZIR0TYnc51eabgWDDFampBWCQ6RmajziT4L6btw0yqo1MgLL3SvuFYoIUAXAR1b
- 8R72Amotpw70OOCmD6WQnAP8csbnnRnRHHGA0CimMpuZqaMXKUjjWmrY0sexFvmzUXOTG38gm
- 95ppwSsKP+N9qRhkK0fbDUeMt/N3r1Fjix5qlYS0H+cmu7KGxgUuXbJcYDjgJ5/5d1Ys9Zqlu
- qQH9w6CE3LHU3ZYTUDjPWv1E9bj8m1abtBjFkl6Zlx6ssfZ5PS5hUUGyTRzsf2mlvWWNXSRIw
- HNzwDHv8nnUZFFZDOu7jf83z+emt7V6gGIYUcoLt3jj1D+tbpQraXu89yjve5b66I8pbcwUao
- AuCpMG1OMVhmmUfJfM2DVaM+XIgjS/OrdUdRWeZtD8zkzSmr9fQHjBv3p1VnbNBBROox3859c
- w+K+pct7zO5NQe+9mexJGcBz5BR2pGtqswcPocNHiK89jvNw//EowOvsQ1VCRnrQtUcvzSHUL
- q+eBJqgiRWCm17DXyDTZ28uJ6oeIqG7SBdiU1pStPvDmcceCbHE9w8fNAeKtBdzRCcy2Q/U5/
- lSE6ab9zHgCLADIJ0D8Hhft26QgcLt04Rj0hlIlGpbjYsrpH1NgNchzZCIGCMRJEqwlUNOnSY
- FjEXrS9XgZamvpeyC/2zAbAZg2KJukeVJBxtbwMA1h3HL+iVfZSxr3FtQknljiJW5jVKDKL4e
- Nl56Z/V5B88luz4xNC6tF1czrfvzIQGlIdLVWHTwa/TmoK71zYcgOjnNZFeHmu2McWwuPPslU
- YDodLBcHhyHZTa5MRafvzSAiYIY3lFFRbL8YJb3cBySAfql/gsQP33z8PkGkvpBNhodETx72n
- R0Df+CB7owyskCV4ydJKQYTO/4BtbuiCR79kZfn8SmiOIGqql
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-> Consolidates the handling of
-=E2=80=A6
-> This change simplifies
-=E2=80=A6
-> ---
-> V3: Delete 'This patch'.
+Especially DMA channels might not be available. Add some deferred probe
+messages accordingly.
 
-How good does such information fit to the wording requirement =E2=80=9Cimp=
-erative mood=E2=80=9D?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14#n94
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-=E2=80=A6
-> ---
-> ---
->  mm/page_alloc.c | 24 ++++++++----------------
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 9e5d454d8318e..e6e09d5a2bbd4 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1711,11 +1711,13 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+-		return irq;
++		return dev_err_probe(&pdev->dev, irq,
++				     "can't get IRQ\n");
+ 
+ 	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(base))
+-		return PTR_ERR(base);
++		return dev_err_probe(&pdev->dev, PTR_ERR(base),
++				     "can't get IO memory\n");
+ 
+ 	phy_addr = (dma_addr_t)res->start;
+ 	i2c_imx = devm_kzalloc(&pdev->dev, sizeof(*i2c_imx), GFP_KERNEL);
+@@ -1810,13 +1812,15 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+ 	if (ret) {
+-		if (ret == -EPROBE_DEFER)
++		if (ret == -EPROBE_DEFER) {
++			dev_err_probe(&pdev->dev, ret, "can't get DMA channels\n");
+ 			goto clk_notifier_unregister;
+-		else if (ret == -ENODEV)
++		} else if (ret == -ENODEV) {
+ 			dev_dbg(&pdev->dev, "Only use PIO mode\n");
+-		else
++		} else {
+ 			dev_warn(&pdev->dev, "Failed to setup DMA (%pe), only use PIO mode\n",
+ 				 ERR_PTR(ret));
++		}
+ 	}
+ 
+ 	/* Add I2C adapter */
+-- 
+2.43.0
 
-How do you think about to omit redundant marker lines?
-
-Regards,
-Markus
 
