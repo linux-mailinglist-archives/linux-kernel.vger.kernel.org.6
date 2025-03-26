@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-576914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE47A715F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:40:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3E1A715F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B473B70B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C291895B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAD1DE3DE;
-	Wed, 26 Mar 2025 11:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12521DE2B6;
+	Wed, 26 Mar 2025 11:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pGjXBoVE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hArIpLSc"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6384415C15F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5C61DDC0B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989148; cv=none; b=S77Eb9Rdkye6OzB/U3sibr64SndQjh1vo+g/E5CkPu/eMv3n4+s+9GUJUbYyhNlPD22gR+5TKMwfkHZ1wajBYVy+1TCPRdSGTPFFJ7mTly+0ZUG5oScumUgXDJK7cdr+nKO4gCIpb5MSxpQPzr9bgaqdJ6UPbc+i6m6L+LYftRY=
+	t=1742989150; cv=none; b=LRDf1isBVJscZpqETU5KuT9z/F5Uox5VGmzjzrzV59nWAbQrOn8J2OjnzyLtPtr8cIdgau5NOKjnQ/8OBpCoVmXd5Bc1jgamhH+tgUhOPL3mkJU/oIc/00Jx5r+EU77fVgsSxKtvAvh2CGqdF2rW9/tbqTC2/dlL06t7o103FrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989148; c=relaxed/simple;
-	bh=IuSEcVY+XQgcWWiKyPKuUnqqYJm+G9BasCoqCLzldog=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KWtWqZgfdDCvMTMEhqg3pBRX8OP8BS7qNgbeWoCkwK1TbCkj80mbaeFjMJskqzVLcX9hisZ8cMCU1h61vP1/W6QtOtNq0SN4qWoMrivd6NK/SE2yTxAV/nD9DstkdTu4/RD+3zKJan8xwzUWSQlOWX5Zb/y0tVWDL4SUZkFkZII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pGjXBoVE; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1742989150; c=relaxed/simple;
+	bh=suNMKt6I15eicpIrRigEwbTXV0qPPOxVmXKEqjZInKo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mkP4jopD+Cj900pjURtou4jqsfe7wd6y0JlIWDToNvqeDuF0WjIAoVOkwfNkizGwTS+xeigEvwQ+1f74ecE7zCVHCrewRDS8TAPgp3M32G18Kr0H+BK080IZr5ymIiWCN9S6fmsYeplMMc5gbDvDBCWfpKtfw166UBOXm7OWSJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hArIpLSc; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so52311485e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:39:06 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4394c489babso31344895e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742989145; x=1743593945; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fAUrsz9OdOg3wQLEmYa5D4cgvz4ST0mmGNxgNjOcyeU=;
-        b=pGjXBoVEsvg3PfnZJq3/Lnne5Oe6YI4NqAdHyxSnvLw8jdqMB1MAFEM8yhIBUrOFrJ
-         QcTtuEDzj+pB4ldkbiZew6E0TIzzcft3hrn4C39D2nbdj6OCqawJV0byzdRK1uVgKG0F
-         qIYGegswmv6tm0JY7Nw4KpZQGDW8xv7dH4lGSA80Q/eObmIJNohc4SVtt86FgdCAU7Af
-         RQVvNw8AZitRIWd7SKTB7fquM4nSOAknGUt9JOcKaT0c2q5OQvgrml4/k03BVCkfBvAt
-         7DcEXNaE9LxZcNTC+sjPJG2BjXYw7ulfzD/DKV9aaNi/p8AMWqtdsRoEslz9fAIoxbwA
-         SYIg==
+        d=google.com; s=20230601; t=1742989147; x=1743593947; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXpneY+J8yPscOLP7jhAaiNlTKvyhknsIBSzw8J5v1o=;
+        b=hArIpLScYbFZ8BdkcuBEypEHlPDw+5Nkub8/7JUbl8tzJ+IS4xJU8rakGqw4HFv9yP
+         1ZYjDxVG0ChoVs4yqKmJ0XNN0Qhu8ykEKDb34jxR1erxpgodqIZBa0/HhF1g+Y5FWrTL
+         4VRU27xghfE9TNuhJMg/fMHzcpPptjMVoqOQgrwy8cxYNwkz2bVTtjJJ2Qhsu1zbYiZr
+         9kBptH3bODY/aHjk+A5bXuPXvsxyxOX6+pZpHeGNkmeSZIvDV3lnz2nBB/xUf0HlcgHT
+         mM+TiaPnfcJOW75jf9TqWJ+n5KKJH0COOarh0n+PneaaaBX3vYpxrk4rgFnO4xn9dsbR
+         XqUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742989145; x=1743593945;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fAUrsz9OdOg3wQLEmYa5D4cgvz4ST0mmGNxgNjOcyeU=;
-        b=MikVf6rTnnUcXUE/KBjXukwWT+4/bOpdldD38vk00SdKuk3BScKg//sl6Mj5Wrm8qM
-         hjFsD0bgAvcrjvLRbM3ESzx5BNGBzJg9jKDAKCFNaRgIWYbMgHddMxsXXC+OvHLFuhJR
-         gtNbC4PqFOb9CDLCjrFaXA0QOfeemgdZezVaqvc/mcC+V4uI26O9sMHiiob6CoiQPhK8
-         V4/IFHQFj5RPFkiOepV9pGsh+kkPIAoGnHZmeNzb2qm0KB3/MziJOUX1lnRlWqPLiocv
-         nV7vCsnlUBxoGKNPttoOqvEvbHyCzweU2zGiIsBYHXDoV4M/QmsEVMNk4hLW97uFkn52
-         kvow==
-X-Forwarded-Encrypted: i=1; AJvYcCVNOikZVwMzI+XfuNQrYWDqjAFlHw8uv3G4YIU/Bbn3LdhxllDpytHytTrlnb2BYT81u3Q7dSDyWT4XkY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsk4evW9fk6GGrqWF7nUFW+gAOH61XLdreGYLcRSFxX8z62aqe
-	lI5ZY89642CxNh1ovZyIRz6kV6nnhKiT1QHwG+xwV92hLnqTkq1KDxMrM3Vbwxf0DWjrKhbs/HB
-	JJ7a1XKEUE7+v49VZkG0qtG5Upw==
-X-Google-Smtp-Source: AGHT+IGHwZHepscP8ejJ/xKjHvWMmfkRYj/uDkAFERn0R3gk+2OvGbhbfX9XWEWX38kk7ftW0gGcZ4p7ZxAAjcKTqDs=
-X-Received: from wmpz15.prod.google.com ([2002:a05:600c:a0f:b0:43c:ef1f:48d8])
+        d=1e100.net; s=20230601; t=1742989147; x=1743593947;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXpneY+J8yPscOLP7jhAaiNlTKvyhknsIBSzw8J5v1o=;
+        b=CQBgkRQqqYl+kj6dB7bMAqksV07Pu+iP+9nxEl5b3hf4d51Ue2xTVrpqwU1IPVYS6I
+         qm5aMo3RFmpzVlex1DduNtlBOztGagJWMd/uh5H6Rf9WZSiVaC4rRUcMuBRqbWdYktPr
+         WkSnazNjmz2AYrPxn++ZC7eu6cC64wGv0C6DCPo7fmh0RHHVtKxR6t8bPX/X5YxJ0xJI
+         MerOsoSccCsXi9d6USNy9J7OY0EIrbz33vpcaOEQl3E2otMRJi9vcQBVMy1Au1Ylm9Zv
+         iVskKNAQNTAnEm0cLSCTgNY2g+Nsm6VidC22l4XV8CWHlKOLeksDOnBYY1T+YpEb1Evh
+         Miiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlv1/BET7uJOKQxBrYNJYqZWE0yT7lgzQ1PNCKeDi9ucHsGMclPGBxpHlTRXRr/rDbkWI6xiircxPUFdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPS4s1QkiQ+P0aMo1nNsGVlsWARQxDS7PIP+kC4aPCyYNgDFS0
+	3rsuA30So28OFs5OxU6Ye2r5T7mVd1xihpBtGK4vTcsXi8gkPeHUji6FBd6CB3x/wbok4FZl3P/
+	ZM6ESR1ME9ovxwJNZ9iUOakoX+Q==
+X-Google-Smtp-Source: AGHT+IGmIIwQP0bm2M7IlxhsZXhvvis8SEyv8YAEqMxAp7vxQ4ixz0CF6DGy8JLA3pEu/5AAb31WyHaG1CNXPPwbNdA=
+X-Received: from wrxt15.prod.google.com ([2002:a05:6000:1cf:b0:39a:bf28:66d8])
  (user=sebastianene job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5021:b0:43c:ea1a:720c with SMTP id 5b1f17b1804b1-43d509f6307mr221896365e9.18.1742989144752;
- Wed, 26 Mar 2025 04:39:04 -0700 (PDT)
-Date: Wed, 26 Mar 2025 11:38:58 +0000
+ 2002:a5d:59a6:0:b0:390:f6aa:4e72 with SMTP id ffacd0b85a97d-3997f8fabdbmr17862518f8f.18.1742989146887;
+ Wed, 26 Mar 2025 04:39:06 -0700 (PDT)
+Date: Wed, 26 Mar 2025 11:38:59 +0000
+In-Reply-To: <20250326113901.3308804-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250326113901.3308804-1-sebastianene@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250326113901.3308804-1-sebastianene@google.com>
-Subject: [PATCH v4 0/3] KVM: arm64: Separate the hyp FF-A buffers init from
- the host
+Message-ID: <20250326113901.3308804-2-sebastianene@google.com>
+Subject: [PATCH v4 1/3] KVM: arm64: Use the static initializer for the version lock
 From: Sebastian Ene <sebastianene@google.com>
 To: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org, 
 	oliver.upton@linux.dev, sebastianene@google.com, snehalreddy@google.com, 
@@ -82,48 +84,35 @@ Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Replace the definition of the hypervisor version lock
+with a static initializer.
 
-This moves the initialization of the hypervisor FF-A buffers
-away from the host FF-A map calling path. If the hypervisor
-cannot map the buffers with Trustzone, it rejects any FF-A call
-when it runs under protected mode. 
-Other than that it moves the definitions of the ffa_to_linux_err
-map from the arm_ffa driver to the ffa header so that the hyp code
-can make use of it.
+Signed-off-by: Sebastian Ene <sebastianene@google.com>
+Acked-by: Will Deacon <will@kernel.org>
+---
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-*** Changelog ***
-
-v3 -> this version:
-
-- moved the definition of PARTITION_INFO_GET_RETURN_COUNT_ONLY from
-  the driver code to the arm_ffa header and dropped the definition
-  from the last patch. 
-
-v2 -> v3:
-
-- dropped the "Map the hypervisor FF-A buffers on ffa init" patch
-- added ack & reviewed-by tags
-- don't release the ownership of the RX buffer if the flag from
- FFA_GET_PARTITION is (1)
-
-v1 -> v2:
-
-Split the patch that maps the ff-a buffers of ffa init and introduce
-"Move the ffa_to_linux definition to the ffa header".
-
-Thanks,
-
-Sebastian Ene (3):
-  KVM: arm64: Use the static initializer for the version lock
-  firmware: arm_ffa: Move the ffa_to_linux definition to the ffa header
-  KVM: arm64: Release the ownership of the hyp rx buffer to Trustzone
-
- arch/arm64/kvm/hyp/nvhe/ffa.c     | 12 +++++++-----
- drivers/firmware/arm_ffa/driver.c | 26 --------------------------
- include/linux/arm_ffa.h           | 27 +++++++++++++++++++++++++++
- 3 files changed, 34 insertions(+), 31 deletions(-)
-
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index e433dfab882a..6df6131f1107 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -69,7 +69,7 @@ static struct kvm_ffa_buffers hyp_buffers;
+ static struct kvm_ffa_buffers host_buffers;
+ static u32 hyp_ffa_version;
+ static bool has_version_negotiated;
+-static hyp_spinlock_t version_lock;
++static DEFINE_HYP_SPINLOCK(version_lock);
+ 
+ static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
+ {
+@@ -911,6 +911,5 @@ int hyp_ffa_init(void *pages)
+ 		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
+ 	};
+ 
+-	version_lock = __HYP_SPIN_LOCK_UNLOCKED;
+ 	return 0;
+ }
 -- 
 2.49.0.395.g12beb8f557-goog
 
