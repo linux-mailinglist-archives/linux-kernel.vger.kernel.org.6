@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-577661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F075CA71FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:19:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDD3A72039
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3233B8854
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137603BA003
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BB319DF9A;
-	Wed, 26 Mar 2025 20:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFE425E45D;
+	Wed, 26 Mar 2025 20:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbR3F7j2"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8J7or5B"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECDC217F36;
-	Wed, 26 Mar 2025 20:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832C82192E2;
+	Wed, 26 Mar 2025 20:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743020345; cv=none; b=GGZxwzkTcu4tFTY4EXTvtGfS2GNlB/e5c1CwT4fPbUTJOuy81rIhQd11Rw/+bg2NwRI2NqvXkLvGc6/oJqiOw0yyF/95cl1tUbblBlZX4NqpaJseqRq6WMII7+5AWm8RgEgA2gvqg5LsXB1R8EEoBK6oRfcHmbGHLGNMjqyxIPw=
+	t=1743022228; cv=none; b=ql6DmvcU8m17BdwL9Pu5eHYlHvi0oJNTNVW1G88xjVsoN9dJlJDgEfdrP4HlSqMhsPDhDP6kiTvpCtTS/mpWeT0gBd13juFHycEm1G2/SvZWlUlk9WPx7sCI+NPTw+OvBA51z1fdyyDGQgSyPTnCckoHtqhuKgPZZzcY/0G/mPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743020345; c=relaxed/simple;
-	bh=S185myDo2AMGn9S4RJqk3PaBowolTa8UZ4RJKBp7e/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/6+j0dnvp8zDNrE0JPcjUlL87Y+Q2YWaxF8n8uwDUv2NJgxbJu3xurhYV5xPqn3eFK34vMX6TdbAGX1RvzmNCOB3BN6KMEOxlN/23JGhQN3kp07Ik62THByzdzxAwWe+x6j5u4/KvdSXGOrVttO6FsULCyjzsGr5B2mwFRRGdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbR3F7j2; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1743022228; c=relaxed/simple;
+	bh=h3EYkjw7L9UGlc3Wubv0gpRSL0eQmUMaB71c0nEDWhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a+FJ4QAUk6zMXW4rl7UCpvLaO5HRmT66NP5gEAgS37NTEY3YFxuVVjyhyz+BBxrGzournkZkaQShp1tefnLrRq+rvybD9g62VN5EadurXQJ7vOGYRdMbQ1KOr1v90Q936yPBe7IdnlGIzfaVq11JtLaKOjKND/G2MSj7FrUm12A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8J7or5B; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so59071a91.1;
-        Wed, 26 Mar 2025 13:19:04 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2241053582dso8376855ad.1;
+        Wed, 26 Mar 2025 13:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743020343; x=1743625143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S185myDo2AMGn9S4RJqk3PaBowolTa8UZ4RJKBp7e/w=;
-        b=jbR3F7j2goKvXvTsCZ5exRal73N05eDnjfy4iZ7zqo+81nwast9UPItCPMQR6dY8p/
-         RASI7hz8DxmgMWXn35Q1Ut85OMI78bvQMOPgchRRrpfhUz9BnL/vlOwosv8wnkWPfxUR
-         iar0KIfVaJlMr11+qSYhIsHx9ELZiIYMCPkR8EeOk5rJWBVtKxfxApC8jCLWjPpu9oKz
-         5vAwpltQulb8eKp0ZLSzfjssjHFpq8fxSZpABZGbEddnoQjrSRdA6zUZqORfMSAVlz1Y
-         n8iaQSTApmZon2YMUgy3ZSR5x7Jm4qsrj+FXuPuKXcxtOF8ms5kuriJp/aHIihbMwQ2N
-         w/TA==
+        d=gmail.com; s=20230601; t=1743022227; x=1743627027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bP6P38XoUK0rcAsKbIKLNxYLayd1+Nc9zo4Ms/5SEFE=;
+        b=P8J7or5Bhg4EPKWqZIkhKTh+RgCbKEDdo5yzpvbSD77N3WCe1es6kMZsTkUDGpcbWm
+         nXibilrwHyfP+OYUl3d4REDmdeI7FZyp3xEYKmE0SJYp5kJgt8dFrByd7n/iKZ4g211K
+         ycntfpaAq21IkeKDvDi5PmWz4izgQ0+4TL2o/zXMLGENPv4k3S4z2FPDuoX4j2wY7GaW
+         xqA9AjWpB2opTJImTBlsKjnhQmEnsOKjvW1w49Z5qyIKf2QruHhEuN934NXA5oLL4C+t
+         b3zq8Rf7LVWeZXJlwx8S/qvdVwcEwm08jBChYjbMqbvenNHUarv8rLDX+X4JSt4BsNgX
+         C+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743020343; x=1743625143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S185myDo2AMGn9S4RJqk3PaBowolTa8UZ4RJKBp7e/w=;
-        b=MKwtLbrb5ayhWtMffjA0CAyoKpS/U+rGCibDBWvnY7pPpmO+U5jIEJTwakLlf16M94
-         iJQNOTz5gvThFz9nbyhLWisM9vtv/NriY8hZxaaffjvCjrTVHHK3pVj8yKTPrgGtZrGv
-         B/HTKkuN5q/LaEY4Jp7CoOr0X5CEtNGehWrascQuhGCUMsVCWOI8X8ljbAIR0+DuMDjp
-         OzyGU0KFus7Kk3I0HSLM+i7yRQqnV1tgOG+SxJLkgrxyRXWG+B/x/t7/gcS7dUo6ijHn
-         EUmSjiU5g40eBal81Qd4ZO6JxoFB1q5H0faNbbiQNoQfLCTae5Mzlz8XqzGuV6tjz3ZK
-         3eJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy/7nmCtS6DwKFQSrNtnE3mMFwmqUjWrG074+H8Teh1UAE7DAWyYhddjBeJB/uAv4+5tKPAqJNh3Ax34E=@vger.kernel.org, AJvYcCWpCgPYaK4UpC8AF3BU+VsnDzi1yrEMr4r0dSP4/VvSBiRCBz9rhD6GVpCs9e3GDwbE8nTdOCZySO1P2f8iyjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy54YWohSHIa+BsN59uci5NkEimbvhx0+AbxkWGG3dGW8R5O86H
-	MownN6wA0cey4GLL2MFTnS6hal7IsqxbFBlZZtbGt1KPzLKQTiE2boGsmqKrqYhIh0xFMoRVZlE
-	/TltoQXmvjOhhyzg/JY/9I/4teAE=
-X-Gm-Gg: ASbGncvnn2UTY71oPejMxc+wRHZm1TvNAwHK3ydan4ikX5H4+g2UKoQK8mfWOM7JYWw
-	d5RFU/xcJbUeIr98A7lwavdBsZBbL3Hp2nWxIes2UvUOEDAsBWOGm/GTbpaRSPtlpr+ThLZWd1h
-	bZiIb9xUPDRw+dGsGXE51OIV3Q
-X-Google-Smtp-Source: AGHT+IHooNIynvJ/u943r00EGtqP4V2TwxeklN98jKqPYPqS7Za6Xmz46LG4M8HzNRlfKabY+1aCpifJDwM5TkiPtdY=
-X-Received: by 2002:a17:90b:3849:b0:2ff:6bcf:5411 with SMTP id
- 98e67ed59e1d1-303b2111d26mr123943a91.1.1743020343400; Wed, 26 Mar 2025
- 13:19:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743022227; x=1743627027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bP6P38XoUK0rcAsKbIKLNxYLayd1+Nc9zo4Ms/5SEFE=;
+        b=nF+KeczH3SPuwG9yyiNqb1a/OY1pzqELFx7vnHoBIFI+9D0JJOx2uC6oRwj1I7Kz1E
+         qwQaPCoa0kkM4sBrSRvs6xhDGNTOYT4Xx2tSXjBieIxDJpB205Xmq0qbmtFAou9KvLbX
+         SnyX913q/39zGYjLk7jycPllwU7rxbUOJ5aTcJuCYEoSVNBDrrvEghtaQHKlPiA4TPR8
+         W/4wZTxXawep3L+1QNVKeIesDuxGFttxpVTA+nYXR6PfbF1EbbdwPnzZ6FWbFFJVgS8b
+         jOX0Mj006SlEMuJTn1VjTxaXGHtVacFRtAWMFohXwN9O9Yk2Q97OruLgyn2p+PNGNFwT
+         lLYg==
+X-Gm-Message-State: AOJu0Yyu3gzEr14RVf8Gj+s5+B454eAvj/pIu8GGUZ174TDRwyXBbxI4
+	mXkOyPPT+djqWFQAzMCmrysJyz5wt/+3fTXvJ9jI0trzPfxE8cC0yB44gDHjP4hDAg==
+X-Gm-Gg: ASbGncuUvQz+1QCsiuEQUWAxKmdA45cEjcyWqHizBkdTXxEY7NgTftwmNoaLXyBDimC
+	NDepsW+ZjCV0B+JVs5301tIBSOcPeY2WDThNFa5GwPuxTyJbM1M2zgwD5yqYDvLVgJttzAs4gWn
+	AK3v8IFrYK7eR6wESaJCQqnWE4f2oOawFwJ5XBHaPyrnPDHDVnIrEtTpk9ra/jJ+U19ViDx7nYQ
+	qy1+mqM2e1/cUSzmmVy/TrecJ3bRx9YYvDy2K/8i459SeWkIpYbdkDhwggYfVf/6wzDjbNNtkqX
+	sn+CuDI99wp20kXe3vgS59SqSUpzlEYCwipKpwrBOvTqfnhj9UDWAwz5Kn1aqJEnqzA=
+X-Google-Smtp-Source: AGHT+IFlu0ktIlK5C0YIvtzx4DrdXYfKxDAoyXP1J1wg91+68H9IPtUSEvVTlnjABJd7uNAwixBmQA==
+X-Received: by 2002:a17:903:19ef:b0:21f:7a8b:d675 with SMTP id d9443c01a7336-2280481cc28mr17439445ad.4.1743022226379;
+        Wed, 26 Mar 2025 13:50:26 -0700 (PDT)
+Received: from fedora.am.students.amrita.edu ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f397a2sm115291155ad.48.2025.03.26.13.50.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 13:50:26 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	marcelo.schmitt1@gmail.com,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH v2] iio: frequency: ad9832: Update bit manipulation macros to use FIELD_PREP and GENMASK
+Date: Thu, 27 Mar 2025 01:50:07 +0530
+Message-ID: <20250326204901.44337-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
-In-Reply-To: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 26 Mar 2025 21:18:49 +0100
-X-Gm-Features: AQ5f1Jr0Cr_g3Pyv5XL8DJRNCZ-jSVUqzmD7hSO9jXMUy3NigbrO3BofcVRIj6g
-Message-ID: <CANiq72n6X5gV2rGB=TEw0jPdiw7mT79bdEOXHP30j=mRk92_NQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Additional fixes for dma coherent allocator
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: a.hindborg@kernel.org, ojeda@kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, 
-	"open list:DMA MAPPING HELPERS DEVICE DRIVER API [RUST]" <rust-for-linux@vger.kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, 
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 9:13=E2=80=AFPM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
->
-> Additional fixups to improve the documentation and make the read/write
-> macros return Result as suggested by Andreas Hindborg as well as support
-> for reading and writing large blocks of data.
+Update AD9832_PHASE and RES_MASK to use FIELD_PREP and GENMASK for
+clean bitmask generation and improved maintainability.
 
-As far as I can tell, these seem improvements more than fixes -- so
-can they go through the normal process for the next cycle?
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ The previous patch would not apply cleanly as I was not working on a
+ clean branch
+ v1->v2:
+ Resolve previous patch application issues
+ 
+ drivers/staging/iio/frequency/ad9832.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..6e463488462a 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -59,7 +59,7 @@
+ #define AD9832_CMD_SLEEPRESCLR	0xC
+ 
+ #define AD9832_FREQ		BIT(11)
+-#define AD9832_PHASE(x)		(((x) & 3) << 9)
++#define AD9832_PHASE(x)	FIELD_PREP(GENMASK(10, 9), x)
+ #define AD9832_SYNC		BIT(13)
+ #define AD9832_SELSRC		BIT(12)
+ #define AD9832_SLEEP		BIT(13)
+@@ -69,7 +69,7 @@
+ #define ADD_SHIFT		8
+ #define AD9832_FREQ_BITS	32
+ #define AD9832_PHASE_BITS	12
+-#define RES_MASK(bits)		((1 << (bits)) - 1)
++#define RES_MASK(bits)	GENMASK((bits) - 1, 0)
+ 
+ /**
+  * struct ad9832_state - driver instance specific data
+-- 
+2.49.0
 
-Cheers,
-Miguel
 
