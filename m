@@ -1,220 +1,114 @@
-Return-Path: <linux-kernel+bounces-577073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A428A71802
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:03:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D684A717F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ACA176710
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2653BABAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101DA1E5B7D;
-	Wed, 26 Mar 2025 14:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABBC1F237E;
+	Wed, 26 Mar 2025 14:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+Bq1Igj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Mv2nYNW2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4B1B0435
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095861F1911;
+	Wed, 26 Mar 2025 14:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742997736; cv=none; b=Mlixqa8GYHydzrMQk7CB1+h1UCXgxjlbstzDYJdfI0BE/XHgBeP1/HvkbwNTHcKVYT1L3PzZtxq8vON903sQEwNzeezOGf7Xz59q0FVuoiSwwazzw+L0t+6NezMrqvWzqC1PdYSXNR0eT6lqAIKmhKJkilFlDA7DrAHdLUknFuQ=
+	t=1742997696; cv=none; b=efRFLN57ggQ79f4nyd1MhiZHhedN/lL1hteFxChqi5nkxS5Q/AxAaMXuuEoiCj5PRyLNcgMmAqNMXalzQzQOFTJl2vr9rSeQ43aH+08W/a7SPS5CvQhfTtfhnvEo03KyneYef/TuhupxSpQxZq513yscNo6LunZyiqq7nnx//KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742997736; c=relaxed/simple;
-	bh=ExKHiY1vfFVJz9ncN9p+ELlmMZ6mdwDNgLovj/LRhmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fFE9PtjLVpHXTA+1R8dF/T+TLnVsA0dv1APt6vmxl6BFhHmeHL8SmIyY31EaIZ1bBt9IXczSvsilYi9sCe2JraT8iRMbgxR1QRPoaRRTQdLkW1U4mWRcLxodPa32Zm/63bU015IXv4YZavH71rmyXjWGIiufwTjmTLfAxOMcRg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+Bq1Igj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742997733;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6A4QtKmG1cSlqlEKr2nCjS1PIqtKpWV2z+HY5iuQ8E=;
-	b=N+Bq1Igj2RcWVYONhz5wRWMUtvPZwr6AVxxICm+5JykXw6Pdil9ojIWzrD4VIU3krjYouD
-	Fsdie/MpOwIe6FWjYSIGnTpGrgfI6YK9alHdRtz92LQXd/YyvTca2l4YzbtSW4c51BOgQZ
-	oC/6VMSCge70ZYRgqKxmYon1epPUef4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-3LjeKo47P-6lk3kaIHLPug-1; Wed, 26 Mar 2025 10:02:12 -0400
-X-MC-Unique: 3LjeKo47P-6lk3kaIHLPug-1
-X-Mimecast-MFC-AGG-ID: 3LjeKo47P-6lk3kaIHLPug_1742997731
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3978ef9a284so2765774f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:02:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742997730; x=1743602530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G6A4QtKmG1cSlqlEKr2nCjS1PIqtKpWV2z+HY5iuQ8E=;
-        b=Y0RgkMT5SjH1YuuYj/fDWlSGk+9G0n/JP0HJpr7eQGBcLfDoTGma+Rp1cBd3BnlR/f
-         uogD9KXxZTHM8kSGaG7UwwsA71NweFgqtGqzdA4QsZAH+hGMZO7DjFVkvePhn4T9d46K
-         LKxhjXMoDDUGkmgoVQZVU4DL5vj+12vKF7QOm1t8zGpO1sYA8c2JKpOvZAdBoFx/H0a1
-         e1ge7u7zwtszGLiv70l2+XsOV4+ly2UGi8rbBitUX4qh/3PIvidOUyrCqICg858Uzr4t
-         9CMqpssXv3myw8iZLogE8w0uk2E9uK1zvdoJR/TQOIfhRH3DTBSEFj7zuFfmg3+KUenL
-         fzmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq1Ekz1ZOMuDWAYOgAOCmUB46J1f/Q6j5U8axaGEcpEUzpl+vAbGOmkYgHodaot60Gls4a9hi02XIabAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwQGRUqq1yTTLWxZw5rlHdrVgxnTJQXybU8epJ6FAQAvDYufsD
-	IWb/vVZ4ohA7DNl8ud6PSteohwey9ZLju1KRb4QOPp1kTz8QIsMwew5opOR00eE8mmrovrWbQFT
-	MOFV2qtmx2rR4hZ9QLy5Gp75mYnk/RFn6aTW7H15BHJxvEBWVIjoDX3dh3t820+yKVlbAmGymsi
-	cBeYPfsoIu0TEjwI1EIpfPBXoPZhkbzsoTycYpzX0lMc43/TY=
-X-Gm-Gg: ASbGncvE0FrkqamJVqsm7lSk/0gzyB2En73PBqSbpqYmBydX5ANNLD06expGVjf4jTh
-	3Ny+osuX+z6LLBtOeaAeP90C2IpJ9F93AIvoRiUTcKdx4muzI5oeTdat5JMCqwF93+wH3/eI=
-X-Received: by 2002:a05:6000:184e:b0:39a:c6c1:3408 with SMTP id ffacd0b85a97d-39ac6c13529mr6773887f8f.37.1742997730214;
-        Wed, 26 Mar 2025 07:02:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVqs4eXb7WYajBzH07dwOO7LIznq7DcBXdw3fZ7amxqvEjWOZDPtljFddcq4377XdEC6+XOg2IYsIt0Cbo6MQ=
-X-Received: by 2002:a05:6000:184e:b0:39a:c6c1:3408 with SMTP id
- ffacd0b85a97d-39ac6c13529mr6773793f8f.37.1742997729380; Wed, 26 Mar 2025
- 07:02:09 -0700 (PDT)
+	s=arc-20240116; t=1742997696; c=relaxed/simple;
+	bh=989IQiIJbUGeYCOqHQ5m99x2ck7xqLvAnyiQgY9BNRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfmpHWa2j9tOfNfRakNcXsVYUSx+9bfsDqls8fObhbQ5wbOyBhoWq7l8I7VsJRZ96gqQhmg1EOZaq24ff2H8IsmQCdBNIbS4Ziq8xhluIe3wVr4t5ac4QXNQwfFw8xTNY8/6v0t3s82S+bQDiGzjmA/KBInqDaqdL/mqchx50/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Mv2nYNW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048A1C4CEE5;
+	Wed, 26 Mar 2025 14:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742997695;
+	bh=989IQiIJbUGeYCOqHQ5m99x2ck7xqLvAnyiQgY9BNRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mv2nYNW25z6dw8rrxtKX25U1rB7auiKqNq4fNCUuAPJcq3g3f/FjnJYQXa5za21DR
+	 Edya9OzxY4KKd3cblmK3gelpjRx8MRpUy15jyegUrbAFBxBxEYVItG2kIxPwS2wfNu
+	 yrzn8VNtgOpaqvrJtwpEpXTLZ+74Lru7iGbRiR1M=
+Date: Wed, 26 Mar 2025 15:01:32 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Elodie Decerle <elodie.decerle@nokia.com>
+Cc: jacmet@sunsite.dk, jirislaby@kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jakub.lewalski@nokia.com
+Subject: Re: [PATCH v2] tty: serial: uartlite: register uart driver in init
+Message-ID: <2025032651-quote-kettle-6457@gregkh>
+References: <20250313205852.2870-1-elodie.decerle@nokia.com>
+ <20250326100504.1246-1-elodie.decerle@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324054333.1954-1-jasowang@redhat.com> <20250324060127.2358-5-jasowang@redhat.com>
-In-Reply-To: <20250324060127.2358-5-jasowang@redhat.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 26 Mar 2025 15:01:30 +0100
-X-Gm-Features: AQ5f1JpZuY-R1mOa9Psg6wH6oBtdE7eDiRjlK41MnQiXsLSO1qS2bJZXvZEj_3Q
-Message-ID: <CAJaqyWfzRDa5vn0nJiaPdy2=Qoi40jgUQbbAspm25zM7OfUyHg@mail.gmail.com>
-Subject: Re: [PATCH 17/19] virtio_ring: move next_avail_idx to vring_virtqueue
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326100504.1246-1-elodie.decerle@nokia.com>
 
-On Mon, Mar 24, 2025 at 7:01=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> This variable is used by packed virtqueue now, moving it to
-> vring_virtqueue to make it possible to be reused by split virtqueue
-> in-order implementation.
->
+On Wed, Mar 26, 2025 at 11:04:57AM +0100, Elodie Decerle wrote:
+> From: Jakub Lewalski <jakub.lewalski@nokia.com>
+> 
+> When two instances of uart devices are probing, a concurrency race can
+> occur. If one thread calls uart_register_driver function, which first
+> allocates and assigns memory to 'uart_state' member of uart_driver
+> structure, the other instance can bypass uart driver registration and
+> call ulite_assign. This calls uart_add_one_port, which expects the uart
+> driver to be fully initialized. This leads to a kernel panic due to a
+> null pointer dereference:
+> 
+> [    8.143581] BUG: kernel NULL pointer dereference, address: 00000000000002b8
+> [    8.156982] #PF: supervisor write access in kernel mode
+> [    8.156984] #PF: error_code(0x0002) - not-present page
+> [    8.156986] PGD 0 P4D 0
+> ...
+> [    8.180668] RIP: 0010:mutex_lock+0x19/0x30
+> [    8.188624] Call Trace:
+> [    8.188629]  ? __die_body.cold+0x1a/0x1f
+> [    8.195260]  ? page_fault_oops+0x15c/0x290
+> [    8.209183]  ? __irq_resolve_mapping+0x47/0x80
+> [    8.209187]  ? exc_page_fault+0x64/0x140
+> [    8.209190]  ? asm_exc_page_fault+0x22/0x30
+> [    8.209196]  ? mutex_lock+0x19/0x30
+> [    8.223116]  uart_add_one_port+0x60/0x440
+> [    8.223122]  ? proc_tty_register_driver+0x43/0x50
+> [    8.223126]  ? tty_register_driver+0x1ca/0x1e0
+> [    8.246250]  ulite_probe+0x357/0x4b0 [uartlite]
+> 
+> To prevent it, move uart driver registration in to init function. This
+> will ensure that uart_driver is always registered when probe function
+> is called.
+> 
+> Signed-off-by: Jakub Lewalski <jakub.lewalski@nokia.com>
+> Tested-by: Elodie Decerle <elodie.decerle@nokia.com>
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+If you forward on a patch from someone else, you also have to sign off
+on it.  Please read our documentation for what this means.
 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> 
+> Changes since v1:
+> - Remove mutex lock in uart_register_driver
+> - Move uart driver registration to init function (Greg's feedback)
+
+The changes stuff goes below the:
+
 > ---
->  drivers/virtio/virtio_ring.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index bd4faf04862c..a1a8cd931052 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -138,9 +138,6 @@ struct vring_virtqueue_packed {
->         /* Avail used flags. */
->         u16 avail_used_flags;
->
-> -       /* Index of the next avail descriptor. */
-> -       u16 next_avail_idx;
-> -
->         /*
->          * Last written value to driver->flags in
->          * guest byte order.
-> @@ -214,6 +211,9 @@ struct vring_virtqueue {
->          */
->         u16 last_used_idx;
->
-> +       /* Index of the next avail descriptor. */
-> +       u16 next_avail_idx;
-> +
->         /* Hint for event idx: already triggered no need to disable. */
->         bool event_triggered;
->
-> @@ -448,6 +448,7 @@ static void virtqueue_init(struct vring_virtqueue *vq=
-, u32 num)
->         else
->                 vq->last_used_idx =3D 0;
->
-> +       vq->next_avail_idx =3D 0;
->         vq->event_triggered =3D false;
->         vq->num_added =3D 0;
->
-> @@ -1350,7 +1351,7 @@ static int virtqueue_add_indirect_packed(struct vri=
-ng_virtqueue *vq,
->         u16 head, id;
->         dma_addr_t addr;
->
-> -       head =3D vq->packed.next_avail_idx;
-> +       head =3D vq->next_avail_idx;
->         desc =3D alloc_indirect_packed(total_sg, gfp);
->         if (!desc)
->                 return -ENOMEM;
-> @@ -1431,7 +1432,7 @@ static int virtqueue_add_indirect_packed(struct vri=
-ng_virtqueue *vq,
->                                 1 << VRING_PACKED_DESC_F_AVAIL |
->                                 1 << VRING_PACKED_DESC_F_USED;
->         }
-> -       vq->packed.next_avail_idx =3D n;
-> +       vq->next_avail_idx =3D n;
->         vq->free_head =3D vq->packed.desc_extra[id].next;
->
->         /* Store token and indirect buffer state. */
-> @@ -1501,7 +1502,7 @@ static inline int virtqueue_add_packed(struct vring=
-_virtqueue *vq,
->                 /* fall back on direct */
->         }
->
-> -       head =3D vq->packed.next_avail_idx;
-> +       head =3D vq->next_avail_idx;
->         avail_used_flags =3D vq->packed.avail_used_flags;
->
->         WARN_ON_ONCE(total_sg > vq->packed.vring.num && !vq->indirect);
-> @@ -1569,7 +1570,7 @@ static inline int virtqueue_add_packed(struct vring=
-_virtqueue *vq,
->         vq->vq.num_free -=3D descs_used;
->
->         /* Update free pointer */
-> -       vq->packed.next_avail_idx =3D i;
-> +       vq->next_avail_idx =3D i;
->         vq->free_head =3D curr;
->
->         /* Store token. */
-> @@ -1633,8 +1634,8 @@ static bool virtqueue_kick_prepare_packed(struct vr=
-ing_virtqueue *vq)
->          */
->         virtio_mb(vq->weak_barriers);
->
-> -       old =3D vq->packed.next_avail_idx - vq->num_added;
-> -       new =3D vq->packed.next_avail_idx;
-> +       old =3D vq->next_avail_idx - vq->num_added;
-> +       new =3D vq->next_avail_idx;
->         vq->num_added =3D 0;
->
->         snapshot.u32 =3D *(u32 *)vq->packed.vring.device;
-> @@ -2083,7 +2084,6 @@ static int vring_alloc_state_extra_packed(struct vr=
-ing_virtqueue_packed *vring_p
->  static void virtqueue_vring_init_packed(struct vring_virtqueue_packed *v=
-ring_packed,
->                                         bool callback)
->  {
-> -       vring_packed->next_avail_idx =3D 0;
->         vring_packed->avail_wrap_counter =3D 1;
->         vring_packed->event_flags_shadow =3D 0;
->         vring_packed->avail_used_flags =3D 1 << VRING_PACKED_DESC_F_AVAIL=
-;
-> @@ -2977,7 +2977,7 @@ u32 vring_notification_data(struct virtqueue *_vq)
->         u16 next;
->
->         if (vq->packed_ring)
-> -               next =3D (vq->packed.next_avail_idx &
-> +               next =3D (vq->next_avail_idx &
->                                 ~(-(1 << VRING_PACKED_EVENT_F_WRAP_CTR)))=
- |
->                         vq->packed.avail_wrap_counter <<
->                                 VRING_PACKED_EVENT_F_WRAP_CTR;
-> --
-> 2.42.0
->
 
+line.
+
+Again, our documentation should explain this.
+
+thanks,
+
+greg k-h
 
