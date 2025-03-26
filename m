@@ -1,129 +1,150 @@
-Return-Path: <linux-kernel+bounces-577536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDAA71E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:31:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2544FA71E6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0FE3B8CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EABF3BBE8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE2D254877;
-	Wed, 26 Mar 2025 18:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5A725335A;
+	Wed, 26 Mar 2025 18:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzWfP5i0"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TdgO+cMV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65EC253340;
-	Wed, 26 Mar 2025 18:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471F725333E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 18:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013652; cv=none; b=nfLK41IWmNGrdozxmNr35X/suwZh+X+ja4CHaKW6w16EbPvT9LPjyYBIuOlHHMaMx/MLMnWupkA+L93lJJcNQqI2FNzZL/z9tJektzrlzGeViVYrX7u5wdCcU140y5VJwZH8NWZi31FEig5TJL9I9QsIHh2lJdC1lDGDaOhLZNk=
+	t=1743013621; cv=none; b=eNDODIt1XQm6u88yHkD2m/42P69bGo6prqWL2PVXKVTJk+E1N2mh/otJ2k2BUwSkAEUDUzlUXkfaoDoKaG3reKHlrr9++MlZzHZGnoRkv3KjrIlzXJtifSSOaMlFGPlpXA5a+cfXx7tXD/pi3JVBJEWReE11IMipWDAxzENOlCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013652; c=relaxed/simple;
-	bh=WmQEkXsfznu8w+rBf6ZgS1QtNrnadeHs+aER+P43DfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JpEdXNv7vWjUnIweyIEzSOwq65/h5neZXeRSCOdrsiPZpSXaITuHmNOC5QqUkOpPj4wDXGF8RCcIEURVkAfO47CudT0Al+gVOqLJ0rRE5lTp6Sy5InXLSHq/jNzJI3qkx2HaJ+XGvXG0j+L0gpzqPPBATSTWGLBUqrblYxaBrkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzWfP5i0; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab78e6edb99so15270466b.2;
-        Wed, 26 Mar 2025 11:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743013649; x=1743618449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wwZ/kZVKA3ly+94BX9Iupd7sb0MCbfiMrJTL+cNfKIk=;
-        b=TzWfP5i0bGxBcueEf8oRLjHNjbdR+XMkxXB0lJa6wjvCSpW46Fk6wdyq/7DUnf1m0K
-         B37yRJlWv7b87wuvnsClNMuk3qiLiwqTnVVSvUWYD9iH3i31y7Gk19KmRtAx7EZOcl8S
-         vR2ycLStbGLNdb2CR/Dv5zakpL65cXUkxxgKlLJlBTA+ktBcfJ6ksEiKbEV28bCtJ2rX
-         pLl39zF/eC6gJCXaPIQ0ZnNwDV0YV7LHvPv4zUw8yPNbP8DAqHGGmzmEZanHV119ZQOa
-         BfsBo7tmEtf40mT6qh8mUthgvas/MmpElgNtFfNBSUnvqDTIQ35Kr3aFOiPr+LkjvFku
-         /TFQ==
+	s=arc-20240116; t=1743013621; c=relaxed/simple;
+	bh=rjqzotPitDbSi6AMoocqz7K3keGzhX35QvWXCskJ6fI=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WSc1TVTJ3xwKMnIaYMUeeQWM5AWuhI7H2W5mnJd0EEXALy0mo+wBPWuaazUveuiTu4Ca6JcH08JUEHMmKXGub3lP1LuwWt4uZ5LyIeEPlPJKWi5ZT5/YqS7npUHiQkorq2uYrG7f7Y4WkxFw91yFWhUc3B+rRAnto7hho+BTs5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TdgO+cMV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743013618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RD1tduM0JJrmq9tfzMhxIULme7KP22Adkm/XMP1vPHo=;
+	b=TdgO+cMVRPka4Zl/MpgbbGaVsWZPOQTcbbUwRSedIlrwSB6EdunYWWBy/gd+XaeRWgQoUR
+	Z4jpXfVEB+NHKOQr6NXaKNyFGq5dtH1hC9TOJOywJ2DKPpY6U4cQK7DjJ8uR7ksoiD/G6x
+	SchmIZFC8wfwBZ+tSSk6al2+18b5lGU=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-693-qUmfqAOaMLuVZG0-S0VZpQ-1; Wed, 26 Mar 2025 14:26:56 -0400
+X-MC-Unique: qUmfqAOaMLuVZG0-S0VZpQ-1
+X-Mimecast-MFC-AGG-ID: qUmfqAOaMLuVZG0-S0VZpQ_1743013616
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85dad58e80fso36029139f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:26:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743013649; x=1743618449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wwZ/kZVKA3ly+94BX9Iupd7sb0MCbfiMrJTL+cNfKIk=;
-        b=YudMKusVtUdxLNKkcIvOGJN1eFIUKeDJDviLqPMHYUHo57O5e7vuDGGS0ofHWKnjCe
-         ZbSWOH1eCFFPUgSgHxNaMQOEdjudz3FHGcPmqa+Fu2qeh1SUbIS8jelWlaQorB3HxH9p
-         9aXVCCfRKw9aBVGCF2EiYNox3ppgdBqS0QUAPdEnfUS7ob7PFmeu5QxKQ5unT2+6dhcs
-         4f1Qa8uG9mjQlbMnz7PRD/1iASN7tH5/pWi0Lp/pbkUeVz55XmL6c+WBVOOLszHbsnrp
-         jrbwGgxEgNzUH+WwFZjcngb6NWpyTXLycBOQDlVi1c/4Sk6o3UqDig3aE8Clp5mSRsL9
-         Sb6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDO1LXHRuMcHnwdg1wg3ZHBNENlUWhjVSNWh8uYtTNEKSwWnGE9B0GCl/QorZI1Ynf+XC+JLyqdht7J7UTILY=@vger.kernel.org, AJvYcCW99BqDojLkmFnpB7jUD8rC/Wt4K4qHQGY4yPQ1VLhGJMBvbcAyVpGvQ+DhFGvGzbClE/rbiANj@vger.kernel.org, AJvYcCWkO7nyvTnIetnJR35zG1p+oIm0FAFANAMK/2jZcpkg8gC6lBMrVHzAmtzEfFEz2qmTIO1ZmG0vsMQKujUl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHBngO7QoE2ypS8F+7a8feYpKE1i35qI31aNAegs8ncSVpC1ht
-	qDJT7lq4fvGu/4alP4gPrv2YjpS18mf0QNqAskVWCkJCorbN22cjvhoWAcFUjPlimZbnhw8hOPy
-	6AOpEHzrG0NP+jIoUN2a8+oUwK5I=
-X-Gm-Gg: ASbGncthx8P3IyLHU74jfe3cOjn7dhqYAz3TeM2mYI14cTejbUh1q0K3vcOCKi9tucc
-	rLDECk4Ji5kdeqxiyjyxgIRTD97YF9UKBokrOWkCfhDIJahESqrXu8PlcHTviRtqj73LTmR0nwl
-	yd5EArYoA7gZFVfiz+rCfStkiB7A==
-X-Google-Smtp-Source: AGHT+IHEdBI95BIvNnCvD45NxkwA9Jfkjd2N/HbrhhEJ2QD36+kiqZsHBQL6YYQBJvkZKUHnv2ISqLpkZVcqd7Q0+Sc=
-X-Received: by 2002:a17:907:94c5:b0:ac2:84db:5916 with SMTP id
- a640c23a62f3a-ac6faf0a6a9mr43494566b.31.1743013648829; Wed, 26 Mar 2025
- 11:27:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743013616; x=1743618416;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RD1tduM0JJrmq9tfzMhxIULme7KP22Adkm/XMP1vPHo=;
+        b=XG+aiEYGfExQfwxgOC2ZtB++wQ18kltFPqjvhenZDJgnf3C4F+9g9esOm5KYBLgqHq
+         exzBSatdfxLJYAAJjinTVjyADjHK1toUZ8doTp83ZYsQMUhICNKy+pKgiJG+gNjWGpOI
+         SEaJzEDuidAalXqGMkbzOlcYUnAeHWnZx+K/nv+OK1f4cAGB65XTysFOr1cp3X3BUDk7
+         ut8BgtpnXZYC3H8pq4qQPqFc1KLCC4jKmjNbnozAEtoYo2WGFm80h6LgNCTax9une2Wm
+         br4qzktlZTzRdYjedWq3ZJPYceFAhvrS+ioZbCv5B3q+qntYdQOr+QN8kZ93sZjpV1ab
+         zT2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPPYwuTotflNLzJDroLhMXsCYgt6w/QhVlNutsizzGvGTncTtG7hBlL4LncgjxoVo5N5cDx8zvPfX9hv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvW7+e+vBkgMt2RPe4gXoR4jS7+kWpsEZ6UKYSO4xibteQu6qi
+	eg/9/va0nTkOh5j0YeSC1ZppL5HZx3az/VxapI4s9rUEG9K/PfmmFu7TmEExNlVrxCgSVlSPMC9
+	t6pYkg68bBn+A0Sy9KwCc9cw6duu9es0JSARux+Cr8vrep0faHCRhYgNxeXtm1Q==
+X-Gm-Gg: ASbGncsrN/nxB1JKBgQTTW21C/XWl7G+GEA2vwHZ+gxr/R4o2beG5Fv13A1sh8Ukjxl
+	0d6nuqVPc/qJiZoRQ3G4bL5MbVBTXdpFPTACFkfALk4BLky+66pvdEMYn7dWowkPqoUWOkMN2IF
+	qsWT0nB3EXBdFZ0yqWtcFSfOkQu1GM3qrpyWK46MGM+kcLHGyJta4uNIPfEOwFh0ZlCSxU1fiab
+	sB3S5K4eKKrxWiZEk8bEpZ7iRzix/jyutxJuU69raZMxinlji0qys3gzSDo7hfLcIys0McNK6bM
+	0ab1VQ0nxbwnRWdEsgafREnUAjACcigmxlLSBx8MU0QJvI8R1EqGUkbPjSBSnA==
+X-Received: by 2002:a05:6602:3f08:b0:85d:a5d3:618c with SMTP id ca18e2360f4ac-85e821415d9mr99697239f.11.1743013615984;
+        Wed, 26 Mar 2025 11:26:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFa7giVwJxWHhd8d6z4Js/FPx25T/j6DcERtcIBtPbM3be5/ybdDEVBhZBGciMSfyOBbMrCpQ==
+X-Received: by 2002:a05:6602:3f08:b0:85d:a5d3:618c with SMTP id ca18e2360f4ac-85e821415d9mr99694639f.11.1743013615549;
+        Wed, 26 Mar 2025 11:26:55 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdb3b79sm2938719173.1.2025.03.26.11.26.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 11:26:55 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <5f02cf04-74bf-46e5-8104-a62d4aca2bfd@redhat.com>
+Date: Wed, 26 Mar 2025 14:26:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
- <20250326-string-add-wcslen-for-llvm-opt-v2-1-d864ab2cbfe4@kernel.org>
-In-Reply-To: <20250326-string-add-wcslen-for-llvm-opt-v2-1-d864ab2cbfe4@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 26 Mar 2025 20:26:51 +0200
-X-Gm-Features: AQ5f1JpKCzAXQfQrm4wlizX6k3LQpGAsnw7BZMrTEbEqg_iMhTRlQx6b_DF8dWw
-Message-ID: <CAHp75VfdNcQKCza0gYMg_hKAbZK_J3uSwZsoTS5-Bbt5_P5HPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] include: Move typedefs in nls.h to their own header
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking: lockdep: Decrease nr_unused_locks if lock unused
+ in zap_class()
+To: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+References: <20250326180831.510348-1-boqun.feng@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250326180831.510348-1-boqun.feng@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 26, 2025 at 7:19=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
+
+On 3/26/25 2:08 PM, Boqun Feng wrote:
+> Currently, when a lock class is allocated, nr_unused_locks will be
+> increased by 1, until it gets used: nr_unused_locks will be decreased by
+> 1 in mark_lock(). However, one scenario is missed: a lock class may be
+> zapped without even being used once. This could result into a situation
+> that nr_unused_locks != 0 but no unused lock class is active in the
+> system, and when `cat /proc/lockdep_stats`, a WARN_ON() will
+> be triggered in a CONFIG_DEBUG_LOCKDEP=y kernel:
 >
-> In order to allow commonly included headers such as string.h to access
-> typedefs such as wchar_t without running into issues with the rest of
-> the NLS library, refactor the typedefs out into their own header that
-> can be included in a much safer manner.
+> [...] DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused)
+> [...] WARNING: CPU: 41 PID: 1121 at kernel/locking/lockdep_proc.c:283 lockdep_stats_show+0xba9/0xbd0
+>
+> And as a result, lockdep will be disabled after this.
+>
+> Therefore, nr_unused_locks needs to be accounted correctly at
+> zap_class() time.
+>
+> Cc: stable@vger.kernel.org
+> Signee-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-...
+Typo: "Signee-off-by"?
 
-While the below is the original text, we can reduce churn for the
-future by doing the following change while at it (no need to recend,
-maybe Kees can amend this while applying):
+Other than that, LGTM
 
-> +/* Unicode has changed over the years.  Unicode code points no longer
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-/*
- * This is an incorrect comment style. Should be
- * like in this example.
- */
+> ---
+>   kernel/locking/lockdep.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index b15757e63626..686546d52337 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -6264,6 +6264,9 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
+>   		hlist_del_rcu(&class->hash_entry);
+>   		WRITE_ONCE(class->key, NULL);
+>   		WRITE_ONCE(class->name, NULL);
+> +		/* class allocated but not used, -1 in nr_unused_locks */
+> +		if (class->usage_mask == 0)
+> +			debug_atomic_dec(nr_unused_locks);
+>   		nr_lock_classes--;
+>   		__clear_bit(class - lock_classes, lock_classes_in_use);
+>   		if (class - lock_classes == max_lock_class_idx)
 
-> + * fit into 16 bits; as of Unicode 5 valid code points range from 0
-> + * to 0x10ffff (17 planes, where each plane holds 65536 code points).
-> + *
-> + * The original decision to represent Unicode characters as 16-bit
-> + * wchar_t values is now outdated.  But plane 0 still includes the
-> + * most commonly used characters, so we will retain it.  The newer
-> + * 32-bit unicode_t type can be used when it is necessary to
-> + * represent the full Unicode character set.
-> + */
-
-In either case it's fine and not a big deal,
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
---=20
-With Best Regards,
-Andy Shevchenko
 
