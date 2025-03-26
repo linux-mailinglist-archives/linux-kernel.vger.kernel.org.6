@@ -1,96 +1,81 @@
-Return-Path: <linux-kernel+bounces-577202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3CAA719C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C00A719CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DDD17730E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C2D17A062
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB41435968;
-	Wed, 26 Mar 2025 15:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077C4145B27;
+	Wed, 26 Mar 2025 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yd9ZfB9n"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZdKAIsiz"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBAB129A78
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D5BA48
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001282; cv=none; b=V6iFhoRpta2m5p/4yYLcsIg0ia1p9gZwokFCgtzca3bAkcO1notCdxXIKS29GiV6hwMBMvCm3l45WOkaHP2l2ZMjbm9TftIB1u3OC8GRh82q6MDAXyityrc3aPf7vRWHxR5Qdq+ZYfXz6CCWSECMOp3K/HcTCDxQ8+iutL70ZCo=
+	t=1743001303; cv=none; b=fbd3jZooshTOxh0ckyTOSytTuRFmpf/ck8OGBJQ1ohTDy2flHKLTXgr9RYuSzFc/GB345dtUAvBm/HJuAvfFZEnNMtK7KlrbbHqOb0PWR0mJYslZqHyrVvZJBlTDdyuRFW2vNrE0f+8xQgH/grrD9C16LfXhmEsP0LaYkAcjgTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001282; c=relaxed/simple;
-	bh=dEEHMCaZuBhSVR8548s7dYibu0O+KizI9ENpYjHaHN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aT2DQ7XM1md2pZOmw7vyxQoBj4DYaNxOtqdGkI6fZPjt0z/ZiKuuaO21W4UN8m8ZSfpEFc487x8/R/wOkeWy3lwGGQ/COkh+jPBnrrfgBBwSNrRBi3R54p6O+f7KnRmuWE+FsruKgxDVXNXHyg0W6IAwqimACDXSBXFYX+EA2rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yd9ZfB9n; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso68571855e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743001278; x=1743606078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gUwLKknfTenPDH0/Fy4kPfAbwbk8wFgm9qaIXqrjO4M=;
-        b=yd9ZfB9nTXF5wq5BzojMmTUBfYVcZPSydrXn7BZwepclNK+VO5sbw55NN/oYckfGps
-         FcftaAjLax/y/mPc667QZphb0UvPocLrCqBlaYAAuCs3gB/WwDd7ActX5PVi08vCbxyq
-         pRmOY+DuiPQSiZJIPT+xWUxbw3beMHrpzZaOZq3aLH9P20GHPG3ls4gqwag0gkw/m6ye
-         QP/Wq2bIhwBBgr48+bCmXWHxQgyKCRv4knNPwekULsHkWZieukrHL1IWGNED6KdWMzu/
-         GiuX8Iybqu6+aZMr7VsNQAoE54X3k9ggve472s06VagRgU3yvtzVP57vbMZiLtmeLjmp
-         dttQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743001278; x=1743606078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gUwLKknfTenPDH0/Fy4kPfAbwbk8wFgm9qaIXqrjO4M=;
-        b=qm7gvM3ERIRj3mHeAhelBus7ZLK96GGnHEFSTnoyfkS5Ij3TSY8iBdD8i1U3t+O/C7
-         nNSfLWGJTT/Noyk3sd/GmIDfhzCAFEdE5fGXPHa4+Faa95PQzIFr4503UvecGKmZGyKl
-         9i3+y6TwGRPK7tJk8+hOditURn+tchk/exbiMtm1O2uLMNpgN8sWEe3g4ycJjYpErz7h
-         eGQqIgh4TZWKW1eyDX1tUtcmaVbsW9a05fvkIE2+JOCJsBjWdvKQfgrTLGrBb/xsrnSh
-         mWinKisrjpRDgWXPfBk/ctdpuajdojQsMCFtxICMT0EP+Yaxfs3DwSjsauf9iWbh3Sl4
-         cVYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMNFAWvInWtu12J0+WmijumjvAVnJqwyEwAKwmO9Jfijv7OXRVmR35VZZOXfw59AJ7MOb/97aqVXOizh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrazTUWehn1fW1xO8j/ecIDpp5MN0L0kAv21iuu5GTMveFd/Pa
-	3y2fdkKMQkh4due86b/qLQcNwiudbtVvZUmsUtsxnvfZYPGA7K9yjjp99yonBNk=
-X-Gm-Gg: ASbGnct/xhX0jCqkeC3kWAQwdydYIsltKDUCa8xtJo6qnMPIkzRpo/8LoY0tBynPek0
-	kdTwdSTlQ0s+XWs417H03W8aXCI6WnUB/LG/bEVRZ1Cxo+iS35Lif8yrsqwDcnkGIiQ91kDAJmn
-	85WLvNbBBGA88dgBySidPKZP8IQQtYPLStbg+5DHEwbQ/F9jXiFZ+4j2B6//hKiwM09ldpd5tNM
-	ZYjWIE07C/ko7+A31nsSXwcai/wr2dWyRP2WHZjn24ErcIGHVopVW7owZY5dPdX4m2rd9EzTGdB
-	wbLK/M73qyAiHc25WuGOGul6BhazT/wp/RSAJScee1dllyQpIQOF/himF3VLEwg/rKIx1GRPGX5
-	HfdtfICbKtxIvBTcVNC6UEtr1
-X-Google-Smtp-Source: AGHT+IFwJbRy2F6SHfurVSyLZ4rU1yis69Di0l4fXOHSEYK7xg2ZdnkrHcG3ZwZ/nzU4Utk7RDBoaw==
-X-Received: by 2002:a5d:5f8b:0:b0:38f:231a:635e with SMTP id ffacd0b85a97d-3997f912722mr19224217f8f.25.1743001277560;
-        Wed, 26 Mar 2025 08:01:17 -0700 (PDT)
-Received: from inspiron14p-linux.ht.home (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3f81sm17408125f8f.35.2025.03.26.08.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 08:01:16 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: robh@kernel.org,
-	hdegoede@redhat.com,
-	mchehab@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	sakari.ailus@linux.intel.com,
-	hverkuil@xs4all.nl
-Cc: linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bod@kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH] media: dt-bindings: Add OmniVision OV02C10
-Date: Wed, 26 Mar 2025 15:01:14 +0000
-Message-ID: <20250326150114.71401-1-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250324171508.GA668235-robh@kernel.org>
-References: <20250324171508.GA668235-robh@kernel.org>
+	s=arc-20240116; t=1743001303; c=relaxed/simple;
+	bh=O76wFU1plWSkmdhoJgJqMscXb3dYt1MnIkBgvq0+lok=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=dWwFClCMOpLXWxbuXD7iXBhHeLnQqBBelmW2P3ji8KRvN3Mef44O09QHod2Ev9AbxuKQl1uMh7WbYBlMybwiY/89tMnjVnHESWgqIvf4LVUfiaDpGSrYdUi0qZzv/Vtr2W6146P0DxYdDStcKlE6IljQf8wzADjbr4KHrjaR0yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZdKAIsiz; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250326150137epoutp01e89068475be7ac34598785403a65c4ee~wYnIZ_6aM2560725607epoutp01j
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:01:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250326150137epoutp01e89068475be7ac34598785403a65c4ee~wYnIZ_6aM2560725607epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743001298;
+	bh=UBlH4A9rZcSc+ezo/kCacPWQ2jR/ev+s5zYEc/W0fZM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZdKAIsizDW3KUOzG48vvpyK0CkQvYlwN7ah4gZ5RM7pXN+HvY8nmAkcEm66i20U9F
+	 8aLKxWBpiDs5gDO0zm3jAnitL+HN9Bp7iaxXZtvP+sXa0DWkbTNOgkfcwCfyEb3rpR
+	 RN24LzE+IV+kBlEUm14Pn/8tICUYz37w3+kDOobo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20250326150137epcas1p3fd814f73b37d68502de471bffb8171b1~wYnIJuvu61295312953epcas1p3p;
+	Wed, 26 Mar 2025 15:01:37 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.225]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4ZN93j2WwTz4x9Pp; Wed, 26 Mar
+	2025 15:01:37 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	99.76.19624.1D614E76; Thu, 27 Mar 2025 00:01:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950~wYnHdjB0Z2192821928epcas1p3t;
+	Wed, 26 Mar 2025 15:01:36 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250326150136epsmtrp212708806960a1f480d3bff8bb220ba21~wYnHc6mmG2140821408epsmtrp2M;
+	Wed, 26 Mar 2025 15:01:36 +0000 (GMT)
+X-AuditID: b6c32a4c-079ff70000004ca8-c8-67e416d1c601
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	06.AB.08805.0D614E76; Thu, 27 Mar 2025 00:01:36 +0900 (KST)
+Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
+	[10.91.133.14]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250326150136epsmtip24d26b256780ee0e6374879b5d5e41afa~wYnHTuaGT2630826308epsmtip25;
+	Wed, 26 Mar 2025 15:01:36 +0000 (GMT)
+From: Sungjong Seo <sj1557.seo@samsung.com>
+To: linkinjeon@kernel.org, yuezhang.mo@sony.com
+Cc: sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cpgs@samsung.com, Sungjong Seo
+	<sj1557.seo@samsung.com>
+Subject: [PATCH] exfat: call bh_read in get_block only when necessary
+Date: Thu, 27 Mar 2025 00:01:16 +0900
+Message-Id: <20250326150116.3223792-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,137 +83,257 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCJsWRmVeSWpSXmKPExsWy7bCmge5FsSfpBs3LeC1eHtK0mDhtKbPF
+	nr0nWSwu75rDZrHl3xFWixcfNrBZXH/zkNWB3WPnrLvsHptWdbJ59G1ZxejRPmEns8fnTXIB
+	rFENjDaJRckZmWWpCql5yfkpmXnptkqhIW66FkoKGfnFJbZK0YaGRnqGBuZ6RkZGeqZGsVZG
+	pkoKeYm5qbZKFbpQvUoKRckFQLW5lcVAA3JS9aDiesWpeSkOWfmlIKfrFSfmFpfmpesl5+cq
+	KZQl5pQCjVDST/jGmHHjyV/2ghdGFWfurWVrYOxV62Lk5JAQMJFYcv4NexcjF4eQwB5Gib7t
+	y6GcT4wS887MYwKpEhL4xiixeW00TMe13otMEEV7GSWOHV7CAuG0M0l8P7SfBaSKTUBbYnnT
+	MuYuRg4OEQF9iZamKpAaZoGJjBLX3h1kBakRFnCVmLB4PpjNIqAq8bh9AjuIzStgK9Hx/gUz
+	xDZ5iZmXvkPFBSVOznwCNp8ZKN68dTYzyFAJgUvsEj+WvGWFaHCRmPT/DJQtLPHq+BZ2CFtK
+	4vO7vWwQDd2MEsc/vmOBSMxglFjS4QBh20s0tzazgVzNLKApsX6XPsQyPol3X3ugZvJKNGz8
+	DTVTUOL0tW6wJ0HiHW1CEGEVie8fdrLArL3y4yoThO0hcWJLIyskRGMlWqZOYJ/AqDALyWuz
+	kLw2C+GIBYzMqxilUguKc9NTkw0LDHXzUsuRI3oTIzjBavnsYPy+/q/eIUYmDsZDjBIczEoi
+	vMdYH6YL8aYkVlalFuXHF5XmpBYfYkwGBvhEZinR5Hxgis8riTc0M7O0sDQyMTQ2MzQkLGxi
+	aWBiZmRiYWxpbKYkznthW0u6kEB6YklqdmpqQWoRzBYmDk6pBqbVIv/L/p2VX++ptM9feiJ7
+	j/zBRU8elfb85Q98O6fI8/GFM9/27Tbrz+qq0L/ipnevn+nCjaVns/ly9qlHVHFVmKutyND4
+	lmgbfUGFYbeVocjp4mXmS4/1ezbM4n+io3xz2u7QlP+xSpZFYeuYZqxPaz43jeHYn69nqx49
+	T/6aIlYtwv5ikvBvJm+W9h/97xba2H7dVjj1n8T0aVsanZQ03/bf/ywzvaFrddh1ewm5w2ER
+	rzbylfxr7TDq+XZGKUksLKromupP+7dt8ydPkl8lWTvFtDfFdb1Lz75DWucfzUh6eKNHa552
+	WMAq1tV7ZVa9jdgk84PlXWC4hbHj7I7rMTPnzv76/4G3xt2CBX+VWIozEg21mIuKEwHxkeMR
+	ZwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvO4FsSfpBl8vmlu8PKRpMXHaUmaL
+	PXtPslhc3jWHzWLLvyOsFi8+bGCzuP7mIasDu8fOWXfZPTat6mTz6NuyitGjfcJOZo/Pm+QC
+	WKO4bFJSczLLUov07RK4Mm48+cte8MKo4sy9tWwNjL1qXYycHBICJhLXei8ydTFycQgJ7GaU
+	2HNlFlsXIwdQQkri4D5NCFNY4vDhYoiSViaJvi8vGEF62QS0JZY3LWMGsUUEDCU2LN7LDlLE
+	LDCVUeLLtV42kISwgKvEhMXzWUFsFgFVicftE9hBbF4BW4mO9y+YIY6Ql5h56TtUXFDi5Mwn
+	LCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREc
+	olpaOxj3rPqgd4iRiYPxEKMEB7OSCO8x1ofpQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5N
+	ERJITyxJzU5NLUgtgskycXBKNTAZMOtJvjF7uXbnXq1rSvUSXReNmJM2bBRRrL6QY3n76OMT
+	23atFfgVHVRfc631seXv7WnbsnsOVz0xn/x49ff9G5u2516f4NR7yCXXx+/ya567Hzx2Vv89
+	dX7aFLPPE89qfPuw9Phe/W+Xf+VwuHxWiZUvC53Jem8Liy5z2RXvvTcYVju275206mfZ1r/z
+	+FLbEqxymc6wL3pXwN8QtPtwkvP7y/+/rGyNOXEraY3LsU2xOnpSk4u7Z/Pf+SUvqFW9pFFr
+	T5mUUFv7y0ufvgfcvsIU28gg9+Ve2V4bV35mNZvdveE8i/wrXlYs+fsv5JU3v9XhNbzfddPO
+	z9n+5awLZ+6TsJg9mYpLnb+EPN6prcRSnJFoqMVcVJwIAJlY/qHAAgAA
+X-CMS-MailID: 20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950
+References: <CGME20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950@epcas1p3.samsung.com>
 
-Add bindings for OVO2C10 a two megapixel 1080p RGB sensor.
+With commit 11a347fb6cef ("exfat: change to get file size from DataLength"),
+exfat_get_block() can now handle valid_size. However, most partial
+unwritten blocks that could be mapped with other blocks are being
+inefficiently processed separately as individual blocks.
 
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Except for partial unwritten blocks that require independent processing,
+let's handle them simply as before.
+
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 ---
- .../bindings/media/i2c/ovti,ov02c10.yaml      | 115 ++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov02c10.yaml
+ fs/exfat/inode.c | 159 +++++++++++++++++++++++------------------------
+ 1 file changed, 77 insertions(+), 82 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov02c10.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov02c10.yaml
-new file mode 100644
-index 000000000000..8cd174075d52
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov02c10.yaml
-@@ -0,0 +1,115 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (c) 2025 Linaro Ltd.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/ovti,ov02c10.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index a23677de4544..b22c02d6000f 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -274,9 +274,11 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 	sector_t last_block;
+ 	sector_t phys = 0;
+ 	sector_t valid_blks;
++	loff_t i_size;
+ 
+ 	mutex_lock(&sbi->s_lock);
+-	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);
++	i_size = i_size_read(inode);
++	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size, sb);
+ 	if (iblock >= last_block && !create)
+ 		goto done;
+ 
+@@ -305,102 +307,95 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 	if (buffer_delay(bh_result))
+ 		clear_buffer_delay(bh_result);
+ 
+-	if (create) {
++	/*
++	 * In most cases, we just need to set bh_result to mapped, unmapped
++	 * or new status as follows:
++	 *  1. i_size == valid_size
++	 *  2. write case (create == 1)
++	 *  3. direct_read (!bh_result->b_folio)
++	 *     -> the unwritten part will be zeroed in exfat_direct_IO()
++	 *
++	 * Otherwise, in the case of buffered read, it is necessary to take
++	 * care the last nested block if valid_size is not equal to i_size.
++	 */
++	if (i_size == ei->valid_size || create || !bh_result->b_folio)
+ 		valid_blks = EXFAT_B_TO_BLK_ROUND_UP(ei->valid_size, sb);
++	else
++		valid_blks = EXFAT_B_TO_BLK(ei->valid_size, sb);
+ 
+-		if (iblock + max_blocks < valid_blks) {
+-			/* The range has been written, map it */
+-			goto done;
+-		} else if (iblock < valid_blks) {
+-			/*
+-			 * The range has been partially written,
+-			 * map the written part.
+-			 */
+-			max_blocks = valid_blks - iblock;
+-			goto done;
+-		}
++	/* The range has been fully written, map it */
++	if (iblock + max_blocks < valid_blks)
++		goto done;
+ 
+-		/* The area has not been written, map and mark as new. */
+-		set_buffer_new(bh_result);
++	/* The range has been partially written, map the written part */
++	if (iblock < valid_blks) {
++		max_blocks = valid_blks - iblock;
++		goto done;
++	}
+ 
++	/* The area has not been written, map and mark as new for create case */
++	if (create) {
++		set_buffer_new(bh_result);
+ 		ei->valid_size = EXFAT_BLK_TO_B(iblock + max_blocks, sb);
+ 		mark_inode_dirty(inode);
+-	} else {
+-		valid_blks = EXFAT_B_TO_BLK(ei->valid_size, sb);
++		goto done;
++	}
+ 
+-		if (iblock + max_blocks < valid_blks) {
+-			/* The range has been written, map it */
+-			goto done;
+-		} else if (iblock < valid_blks) {
+-			/*
+-			 * The area has been partially written,
+-			 * map the written part.
+-			 */
+-			max_blocks = valid_blks - iblock;
++	/*
++	 * The area has just one block partially written.
++	 * In that case, we should read and fill the unwritten part of
++	 * a block with zero.
++	 */
++	if (bh_result->b_folio && iblock == valid_blks &&
++	    (ei->valid_size & (sb->s_blocksize - 1))) {
++		loff_t size, pos;
++		void *addr;
 +
-+title: Omnivision OV02C10 CMOS Sensor
++		max_blocks = 1;
 +
-+maintainers:
-+  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
++		/*
++		 * No buffer_head is allocated.
++		 * (1) bmap: It's enough to set blocknr without I/O.
++		 * (2) read: The unwritten part should be filled with zero.
++		 *           If a folio does not have any buffers,
++		 *           let's returns -EAGAIN to fallback to
++		 *           block_read_full_folio() for per-bh IO.
++		 */
++		if (!folio_buffers(bh_result->b_folio)) {
++			err = -EAGAIN;
+ 			goto done;
+-		} else if (iblock == valid_blks &&
+-			   (ei->valid_size & (sb->s_blocksize - 1))) {
+-			/*
+-			 * The block has been partially written,
+-			 * zero the unwritten part and map the block.
+-			 */
+-			loff_t size, pos;
+-			void *addr;
+-
+-			max_blocks = 1;
+-
+-			/*
+-			 * For direct read, the unwritten part will be zeroed in
+-			 * exfat_direct_IO()
+-			 */
+-			if (!bh_result->b_folio)
+-				goto done;
+-
+-			/*
+-			 * No buffer_head is allocated.
+-			 * (1) bmap: It's enough to fill bh_result without I/O.
+-			 * (2) read: The unwritten part should be filled with 0
+-			 *           If a folio does not have any buffers,
+-			 *           let's returns -EAGAIN to fallback to
+-			 *           per-bh IO like block_read_full_folio().
+-			 */
+-			if (!folio_buffers(bh_result->b_folio)) {
+-				err = -EAGAIN;
+-				goto done;
+-			}
++		}
+ 
+-			pos = EXFAT_BLK_TO_B(iblock, sb);
+-			size = ei->valid_size - pos;
+-			addr = folio_address(bh_result->b_folio) +
+-			       offset_in_folio(bh_result->b_folio, pos);
++		pos = EXFAT_BLK_TO_B(iblock, sb);
++		size = ei->valid_size - pos;
++		addr = folio_address(bh_result->b_folio) +
++			offset_in_folio(bh_result->b_folio, pos);
+ 
+-			/* Check if bh->b_data points to proper addr in folio */
+-			if (bh_result->b_data != addr) {
+-				exfat_fs_error_ratelimit(sb,
++		/* Check if bh->b_data points to proper addr in folio */
++		if (bh_result->b_data != addr) {
++			exfat_fs_error_ratelimit(sb,
+ 					"b_data(%p) != folio_addr(%p)",
+ 					bh_result->b_data, addr);
+-				err = -EINVAL;
+-				goto done;
+-			}
+-
+-			/* Read a block */
+-			err = bh_read(bh_result, 0);
+-			if (err < 0)
+-				goto done;
++			err = -EINVAL;
++			goto done;
++		}
+ 
+-			/* Zero unwritten part of a block */
+-			memset(bh_result->b_data + size, 0,
+-			       bh_result->b_size - size);
++		/* Read a block */
++		err = bh_read(bh_result, 0);
++		if (err < 0)
++			goto done;
+ 
+-			err = 0;
+-		} else {
+-			/*
+-			 * The range has not been written, clear the mapped flag
+-			 * to only zero the cache and do not read from disk.
+-			 */
+-			clear_buffer_mapped(bh_result);
+-		}
++		/* Zero unwritten part of a block */
++		memset(bh_result->b_data + size, 0, bh_result->b_size - size);
++		err = 0;
++		goto done;
+ 	}
 +
-+description: |
-+  The Omnivision OV02C10 is a 2 megapixel, CMOS image sensor which supports:
-+  - Automatic black level calibration (ABLC)
-+  - Programmable controls for frame rate, mirror and flip, binning, cropping
-+    and windowing
-+  - Output formats 10-bit 4C RGB RAW, 10-bit Bayer RAW
-+  - 2-lane MIPI D-PHY TX @ 800 Mbps per lane
-+  - 1-lane MIPI D-PHY TX @ 1.5 Gbps per lane
-+  - Dynamic defect pixel cancellation
-+  - Standard SCCB command interface
-+
-+allOf:
-+  - $ref: /schemas/media/video-interface-devices.yaml#
-+
-+properties:
-+  compatible:
-+    const: ovti,ov02c10
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  avdd-supply:
-+    description: Analogue circuit voltage supply.
-+
-+  dovdd-supply:
-+    description: I/O circuit voltage supply.
-+
-+  dvdd-supply:
-+    description: Digital circuit voltage supply.
-+
-+  reset-gpios:
-+    description: Active low GPIO connected to XSHUTDOWN pad of the sensor.
-+
-+  port:
-+    $ref: /schemas/graph.yaml#/$defs/port-base
-+    additionalProperties: false
-+
-+    properties:
-+      endpoint:
-+        $ref: /schemas/media/video-interfaces.yaml#
-+        additionalProperties: false
-+
-+        properties:
-+          data-lanes:
-+            minItems: 1
-+            items:
-+              - const: 1
-+              - const: 2
-+          link-frequencies: true
-+          remote-endpoint: true
-+
-+        required:
-+          - data-lanes
-+          - link-frequencies
-+          - remote-endpoint
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - port
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ov02c10: camera@36 {
-+            compatible = "ovti,ov02c10";
-+            reg = <0x36>;
-+
-+            reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&cam_rgb_defaultt>;
-+
-+            clocks = <&ov02c10_clk>;
-+
-+            assigned-clocks = <&ov02c10_clk>;
-+            assigned-clock-parents = <&ov02c10_clk_parent>;
-+            assigned-clock-rates = <19200000>;
-+
-+            avdd-supply = <&vreg_l7b_2p8>;
-+            dvdd-supply = <&vreg_l7b_1p8>;
-+            dovdd-supply = <&vreg_l3m_1p8>;
-+
-+            port {
-+                ov02c10_ep: endpoint {
-+                    remote-endpoint = <&csiphy4_ep>;
-+                    data-lanes = <1 2>;
-+                    link-frequencies = /bits/ 64 <400000000>;
-+                };
-+            };
-+        };
-+    };
-+...
++	/*
++	 * The area has not been written, clear mapped for read/bmap cases.
++	 * If so, it will be filled with zero without reading from disk.
++	 */
++	clear_buffer_mapped(bh_result);
+ done:
+ 	bh_result->b_size = EXFAT_BLK_TO_B(max_blocks, sb);
+ 	if (err < 0)
 -- 
-2.49.0
+2.25.1
 
 
