@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-577616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FCCA71F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:48:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA4EA71F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBFA18973CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:45:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF2175363
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE7125949A;
-	Wed, 26 Mar 2025 19:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B545925BAB2;
+	Wed, 26 Mar 2025 19:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EWULYkf9"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qfumM5F3"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B6F25745A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8695E2580FF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018309; cv=none; b=XgIuvQ7Onn95GyaLMhOS01N8h0wS6Tzh65FYjj4aMJJ0Awck0kgO6an1WXxWUL6NJE1ObLcfSveZCuXLkibg/j82vGMIB8i6B5nTn41gKbHKQxEqUwSmX3GgsyuWlbNVMB0+gr6uDgvdKsIGmHH8AcNch+WZHvmIunDx41xth3s=
+	t=1743018311; cv=none; b=ij4kyMXuwhYfMMxVYeUq2bFQ/lC7VclI+QhdIzPtVvomP5ezX+D9JeemcaN3P/1lxCmzFxaaFseecECbjggqu5gkl8RRVD38os/iXZIn0Q/yJnPbZKKx3BbKoSGlRRwJ+mXvPZl3Fz/N5Z9Zdl/jNbHnrJouvw2ZbVBFsxMUSZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018309; c=relaxed/simple;
-	bh=UeVHYpmQSDO76eE41wf9EKaMRSdXPXbn7WRLWP2Qsn4=;
+	s=arc-20240116; t=1743018311; c=relaxed/simple;
+	bh=3K6yLvIkonK1mZsFWuMCKFfVT/bOP7TUxS9pNzKsNJE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ftv1mqtcrPgNJEJTilE3LUwcuES4wrnhQpvYPNykpU9YAwVb7egoZ74DwAnSB+xnaJgRu0g+h/2HqGm4LJ3luLS/2fhiv7r5ii1Py1RiCXEZpGCry83Pg1tmNnsogzb2Zu99LMGmIC1bSnYayXDLCAJO8tCcUYcV95/tICm7I54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EWULYkf9; arc=none smtp.client-ip=95.215.58.176
+	 MIME-Version; b=dyplXxxXJzmvGqF95oANVEakZX03ag3tqmiLhLnJJjekjsMFgxKLDNalC3KTTirnOGyz71zRlD6qPrNsUxLAq8GowxoTjsLL7rFc/Ko34dpwgNsXjBIsRz2yvrwKJL3zNoK9EZi3hduNXXqxXCcxJteXlXyyh7VUxleRkksaGZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qfumM5F3; arc=none smtp.client-ip=95.215.58.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743018305;
+	t=1743018307;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mC9adyeMRha61zAgAYp8mHu/RuLTfUqFd1dxgCKdmws=;
-	b=EWULYkf9OLzgzfxEi3t8FEHJOcvrOeq3/BlyQY9R4x4wibs58G0WVnj+hADDUkaYQQ31Tq
-	s2ezRVLKbGIpXO0zcZWtvVZUnD/QJ/+qIWyIg+SW0USxXDVbe3I2mJ3T6Xp+aszml2uXkq
-	gsDff4OZA2cdWISGnsPmVAbsSf6ZdUM=
+	bh=nzFYYv0ZerKKI50mE9D2vjgjMS3N0gQVxT4sNZcZOPU=;
+	b=qfumM5F3ZtYhcofwQ2T6BQtxf+Bg7cW7WKkbv8V1zhV92yxPgvapRxUg1opVFnawIXF95r
+	3asdpPvjvFWvjDF4qDDcNoz3BGmOIqej95SlSxfqvWNXIqmbKzs7VfXBEobLIwJ3Iv4u1T
+	YIo3l/8lXAzAyH10dRqWv6m12PZ5Nr4=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -53,9 +53,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [RFC PATCH 23/24] KVM: nSVM: Allocate a new ASID for nested guests
-Date: Wed, 26 Mar 2025 19:44:22 +0000
-Message-ID: <20250326194423.3717668-4-yosry.ahmed@linux.dev>
+Subject: [RFC PATCH 24/24] KVM: nSVM: Stop bombing the TLB on nested transitions
+Date: Wed, 26 Mar 2025 19:44:23 +0000
+Message-ID: <20250326194423.3717668-5-yosry.ahmed@linux.dev>
 In-Reply-To: <20250326194423.3717668-1-yosry.ahmed@linux.dev>
 References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
  <20250326194423.3717668-1-yosry.ahmed@linux.dev>
@@ -68,84 +68,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Now that nested TLB flushes are properly tracked, start allocating a
-separate ASID for nested guests. This allows dropping the unconditional
-TLB flushes on nested transitions and doing finer grained TLB flushing
-when necessary.
+Now that nested TLB flushes are properly tracked with a well-maintained
+separate ASID for L2 and proper handling of L1's TLB flush requests,
+drop the unconditional flushes and syncs on nested transitions.
 
+On a Milan machine, an L1 and L2 guests were booted, both with a single
+vCPU, and pinned to a single physical CPU to maximize TLB collisions. In
+this setup, the cpuid_rate microbenchmark [1] showed the following
+changes with this patch:
+
++--------+--------+-------------------+----------------------+
+| L0     | L1     | cpuid_rate (base) | cpuid_rate (patched) |
++========+========+===================+======================+
+| NPT    | NPT    | 256621            | 301113 (+17.3%)      |
+| NPT    | Shadow | 180017            | 203347 (+12.96%)     |
+| Shadow | Shadow | 177006            | 189150 (+6.86%)      |
++--------+--------+-------------------+----------------------+
+
+[1]https://lore.kernel.org/kvm/20231109180646.2963718-1-khorenko@virtuozzo.com/
+
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- arch/x86/kvm/svm/nested.c | 11 +++++++++--
- arch/x86/kvm/svm/svm.c    |  5 +++--
- arch/x86/kvm/svm/svm.h    |  3 +++
- 3 files changed, 15 insertions(+), 4 deletions(-)
+ arch/x86/kvm/svm/nested.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 544913461693c..0c887c91bd50d 100644
+index 0c887c91bd50d..1cc281a7b666c 100644
 --- a/arch/x86/kvm/svm/nested.c
 +++ b/arch/x86/kvm/svm/nested.c
-@@ -1204,6 +1204,7 @@ int svm_allocate_nested(struct vcpu_svm *svm)
- {
- 	struct kvm_svm *kvm_svm = to_kvm_svm(svm->vcpu.kvm);
- 	struct page *vmcb02_page;
-+	unsigned int asid;
- 
- 	if (svm->nested.initialized)
- 		return 0;
-@@ -1221,8 +1222,14 @@ int svm_allocate_nested(struct vcpu_svm *svm)
- 
- 	svm->nested.initialized = true;
- 
--	if (!kvm_svm->nested_asid)
--		kvm_svm->nested_asid = kvm_svm->asid;
-+	if (!kvm_svm->nested_asid) {
-+		asid = kvm_tlb_tags_alloc(&svm_asids);
-+		if (asid && !svm_register_asid(asid)) {
-+			kvm_tlb_tags_free(&svm_asids, asid);
-+			asid = 0;
-+		}
-+		kvm_svm->nested_asid = asid ?: fallback_asid;
-+	}
- 
- 	return 0;
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 4b95fd6b501e6..196f5bca57a0e 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -249,8 +249,8 @@ static unsigned long iopm_base;
- 
- DEFINE_PER_CPU(struct svm_cpu_data, svm_data);
- 
--static struct kvm_tlb_tags svm_asids;
--static unsigned int fallback_asid;
-+struct kvm_tlb_tags svm_asids;
-+unsigned int fallback_asid;
- 
- /*
-  * Only MSR_TSC_AUX is switched via the user return hook.  EFER is switched via
-@@ -5127,6 +5127,7 @@ static void svm_vm_destroy(struct kvm *kvm)
- 	avic_vm_destroy(kvm);
- 	sev_vm_destroy(kvm);
- 	kvm_tlb_tags_free(&svm_asids, kvm_svm->asid);
-+	kvm_tlb_tags_free(&svm_asids, kvm_svm->nested_asid);
+@@ -511,9 +511,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
+ 		svm->nested.last_asid = svm->nested.ctl.asid;
+ 		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
+ 	}
+-	/* TODO: optimize unconditional TLB flush/MMU sync */
+-	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
+-	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
  }
  
- static int svm_vm_init(struct kvm *kvm)
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 0c44133bc05ca..220d10d2b1a5c 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -630,6 +630,9 @@ static inline void svm_vmgexit_no_action(struct vcpu_svm *svm, u64 data)
+ /* See nested_svm_entry_tlb_flush() */
+@@ -525,9 +522,6 @@ static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
  
- extern bool dump_invalid_vmcb;
+ 	if (svm->nested.ctl.tlb_ctl == TLB_CONTROL_FLUSH_ALL_ASID)
+ 		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
+-
+-	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
+-	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
+ }
  
-+extern struct kvm_tlb_tags svm_asids;
-+extern unsigned int fallback_asid;
-+
- u32 svm_msrpm_offset(u32 msr);
- u32 *svm_vcpu_alloc_msrpm(void);
- void svm_vcpu_init_msrpm(struct kvm_vcpu *vcpu, u32 *msrpm);
+ /*
 -- 
 2.49.0.395.g12beb8f557-goog
 
