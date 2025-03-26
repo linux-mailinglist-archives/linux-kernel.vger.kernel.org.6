@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-576976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0954A716E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:46:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD65A716E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7E8170661
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C07188EFFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39151E51D;
-	Wed, 26 Mar 2025 12:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6F91DE2CC;
+	Wed, 26 Mar 2025 12:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n+R1pFPW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uuFW9Hg6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cd6+Jy4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D41433C8;
-	Wed, 26 Mar 2025 12:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337A91E51D;
+	Wed, 26 Mar 2025 12:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993204; cv=none; b=usP9JsWfGyHcopRtzqCTxandor1ISLkQJZkPT6dP4MHPLjz3sAW/Bwzf1S3E8PYCAuaPYyWLLFApuGVG+gln+V9XYkQLdP0Le1Q1KCUhA+oPTeBIxD0ih7dG2jGivA3LHcvMm5v49/lBG4NH87SMb0//VQFD/GjvYzZTsWjbJug=
+	t=1742993457; cv=none; b=Q2y091L+YrEB8xTve7eMkVjah1zWzRfYamnKelGW5Q7EZA450MTXlTRz5CgwoaE6HoV6RenOxBzny44+LGyfCcsY/01oqfcv94T9PkE/OUQG0gWlw86IdUaQQ4zr1lU2tlLdAQdXc3iyDeMplDo6M6yhcyO37Gb37WEBI9I+alE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993204; c=relaxed/simple;
-	bh=hpNe9bOmYhf6R3dZ28PTiRVSTJFU+MWIM2AaGCOu0EM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QoUrhsDiucBK1n8S4GRWlheKwo2rjzAcNLZwl6VcJJ1X0vKE1lomIp8K+C2dvdXkrUOuDEVv+KGQFQrgRTJELSfJ8GE7aFgK43WlrterO+wg0dhoAIPbxz5vfYcAQbx+FCWLy5qD/wbxpf5KLvc0BlQczSd73kYbQfwsFPVsz7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n+R1pFPW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uuFW9Hg6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742993200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dP4pKI9DdiAPAA1Qe115sjRa5UlaNblibaMOzmAshvg=;
-	b=n+R1pFPWz9k5ncKoLCDhAwRkDvuwXb/Y1ffN+p/T1xWjVsJ3kdu2IjvnQnkwSqufYpg0DF
-	NeBS/zI6LZx5r32u1viZHFL/riinRKvm4CuLI5Tn+9NsF+1OXn2XvpwO8QsRS/+nAMjXaJ
-	RPWRI2jP2M6TBQLZ9MrJ+Yygi+e1bsZMS30R3cq0QqIDvtsXXyCwwvHn35CZiVNR+gG4JN
-	AO+d19XCP2jp2LBgdalzqdu0TsxQh6Fmg3MxHwaPAqAaKZHSYKmSQbebJpVgu7duIihzKD
-	bTv/iWFO8Jyd8ZmyOadTtNmlmY6N4QUCX2JwNdlfVdTaqBdn300MgDjYYim3Xg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742993200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dP4pKI9DdiAPAA1Qe115sjRa5UlaNblibaMOzmAshvg=;
-	b=uuFW9Hg6GotTKz4G4HeII+TJyL0F9a12wiePIquBqioqtwID34dHlB3/bSPBp/p8tR7HtD
-	XByX1YIPFGJ3MuDQ==
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Roger Pau
- =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>,
- Daniel Gomez <da.gomez@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, Bjorn Helgaas
- <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] PCI/MSI: Handle the NOMASK flag correctly for all
- PCI/MSI backends
-In-Reply-To: <f56cc306-3c80-45ce-9955-f7fd36defa4e@suse.com>
-References: <20250320210741.GA1099701@bhelgaas>
- <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
- <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
- <Z-GbuiIYEdqVRsHj@macbook.local>
- <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
- <Z-Gv6TG9dwKI-fvz@macbook.local> <87y0wtzg0z.ffs@tglx>
- <87v7rxzct0.ffs@tglx> <87iknwyp2o.ffs@tglx>
- <f56cc306-3c80-45ce-9955-f7fd36defa4e@suse.com>
-Date: Wed, 26 Mar 2025 13:46:40 +0100
-Message-ID: <87frj0yn67.ffs@tglx>
+	s=arc-20240116; t=1742993457; c=relaxed/simple;
+	bh=VBTKj4iGbAXQgTEskqyOddUBrQIpyNW9hYgGpfIG2UA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WrzujmJE6N70DWXaBc/5kyoK9t0EYWCZjPelIsGoGc8Q3M1p4Qde98lxWtFVtLThev0zbWX0JtU1T7/MyJQLY95OHvqf11AaLyjR+ZB3THd/9Qt2gh4O901hr96CABrkOR//APgWKzXrR5DxR5oAXBzhir76GX8piPEqmlBec94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cd6+Jy4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9C6C4CEE2;
+	Wed, 26 Mar 2025 12:50:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742993454;
+	bh=VBTKj4iGbAXQgTEskqyOddUBrQIpyNW9hYgGpfIG2UA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cd6+Jy4QTjqFe8f7sBEtXXJ+9XUHbSk08etSoVy1RPTs0KGnK18bUz+h7bHoX6LO0
+	 p94MyJdKrZzHkMKFEVltgBw8whvZgVh+0w8tjSx0FsRisXRoAe1i6VYNH/q4RuiqCh
+	 nCDdbGH2zxG8ujZq45TiHuPbdxXqVpGKmLxVXKIzi+RfLxUpEleEojTb9GoHJarGNq
+	 jiECPbtqLzmEGfFbgirs8HwF5PzyC3EfFnSeZLwOjMEwJpBSvJyTdjN7/R7CFo+YVI
+	 jilwHKLkY7jV5Ksr5wU8pwiRAgrzv3+7WXXBfQnz1qEK0AEpCH7/zMm4soJevlBVcC
+	 EgyOmDcRG09Dw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1txQDg-000000001hP-0jIf;
+	Wed, 26 Mar 2025 13:50:56 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH] soc: qcom: pmic_glink: enable UCSI on sc8280xp
+Date: Wed, 26 Mar 2025 13:49:44 +0100
+Message-ID: <20250326124944.6338-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26 2025 at 13:09, J=C3=BCrgen Gro=C3=9F wrote:
-> On 26.03.25 13:05, Thomas Gleixner wrote:
->> The conversion of the XEN specific global variable pci_msi_ignore_mask t=
-o a
->> MSI domain flag, missed the facts that:
->>=20
->>      1) Legacy architectures do not provide a interrupt domain
->>      2) Parent MSI domains do not necessarily have a domain info attached
->>=20=20=20=20=20
->> Both cases result in an unconditional NULL pointer dereference.
->>=20
->> Cure this by using the existing pci_msi_domain_supports() helper, which
->> handles all possible cases correctly.
->>=20
->> Fixes: c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI do=
-main flag")
->> Reported-by: Daniel Gomez <da.gomez@kernel.org>
->> Reported-by: Borislav Petkov <bp@alien8.de>
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Tested-by: Borislav Petkov <bp@alien8.de>
->> Tested-by: Daniel Gomez <da.gomez@kernel.org>
->
-> As the patch introducing the problem went in via the Xen tree, should
-> this fix go in via the Xen tree, too?
+Commit ad3dd9592b2a ("soc: qcom: pmic_glink: disable UCSI on sc8280xp")
+disabled UCSI shortly after it had been enabled to fix a regression that
+was observed on the Lenovo ThinkPad X13s.
 
-I'll queue it up now and send Linus a pull request.
+Specifically, disconnecting an external display would trigger a system
+error and hypervisor reset but no one cared enough to track down the bug
+at the time.
+
+The same issue was recently observed on X Elite machines, and commit
+f47eba045e6c ("usb: typec: ucsi: Set orientation as none when connector
+is unplugged") worked around the underlying issue by setting the
+connector orientation to 'none' on disconnect events to avoid having the
+PHY driver crash the machine in one orientation.
+
+Enable UCSI support also on sc8280xp now that the DisplayPort disconnect
+crashes are gone.
+
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ drivers/soc/qcom/pmic_glink.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+index cde19cdfd3c7..0a6d325b195c 100644
+--- a/drivers/soc/qcom/pmic_glink.c
++++ b/drivers/soc/qcom/pmic_glink.c
+@@ -371,15 +371,11 @@ static void pmic_glink_remove(struct platform_device *pdev)
+ 	__pmic_glink = NULL;
+ }
+ 
+-static const unsigned long pmic_glink_sc8280xp_client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
+-							     BIT(PMIC_GLINK_CLIENT_ALTMODE);
+-
+ static const unsigned long pmic_glink_sm8450_client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
+ 							   BIT(PMIC_GLINK_CLIENT_ALTMODE) |
+ 							   BIT(PMIC_GLINK_CLIENT_UCSI);
+ 
+ static const struct of_device_id pmic_glink_of_match[] = {
+-	{ .compatible = "qcom,sc8280xp-pmic-glink", .data = &pmic_glink_sc8280xp_client_mask },
+ 	{ .compatible = "qcom,pmic-glink", .data = &pmic_glink_sm8450_client_mask },
+ 	{}
+ };
+-- 
+2.48.1
+
 
