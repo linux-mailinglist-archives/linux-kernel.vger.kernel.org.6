@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-576935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9B0A71639
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:08:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3CFA7163B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F51A3A67AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337B7188FABA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F8F1D6187;
-	Wed, 26 Mar 2025 12:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C45E1E1DE8;
+	Wed, 26 Mar 2025 12:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="XetSEJwK"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7mlnSxa"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9F615199A;
-	Wed, 26 Mar 2025 12:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4541DB548
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742990877; cv=none; b=EW2iXIEZFT3z3w/xI2GXI+brLHAGGITwzpwcft6nnXlHFNa+7rIepT0qrjRS/BxB8FxvLrvplRuvnawPGEanR/4vtew8qxfLB+pe7rUjbhtkM9nBpMW+aMiPiBR1mpZ6FPta/B1L+LB2pv+MM/WFbgMYJStrN2sSiIhH3t1fEMQ=
+	t=1742990887; cv=none; b=MzAI/A+qilJvUY3J0uHNJ69lUcymNVnxdmSc0/xKtFTwm2YCEUvW7WyUDTDz4S4SRldt07GpNVll62Yw0oD7ekqfyWbZ9hwTNzYG/T51IxPAwwoe5IwxAL6JgLj47SR4aPBKAt5lWdpsB3wYRcPmDKFMbYFFQX6VHhz7v3bmlvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742990877; c=relaxed/simple;
-	bh=8OSbZVtM5j6MneNBkaV9XQVyUAKvhcJWgDEHKK/CzWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=dXfaA6iOqSgfV1NVtlwusS7oQ7yTU+wKZTNi6JNHX7sWeaQyDftKeTpqDpcDyR7FSvnllt2bYwWfiPPsTr7g8SvbGlGIj6A+tt6QotuTgSBiSt0H7XXNr5FGlUhJEdc6tsmhI1+eI+BLSeO8oCxjMVPPAxOwIP60jKz1IjgAwZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=XetSEJwK; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-Message-ID: <c7f5f4cc-c187-4402-91dd-4d0096e396fa@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1742990863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qMK8XL/Cuy6xkH2qwigglqltgSMZZWnJn2HXl2OdYVE=;
-	b=XetSEJwKCnE9H0OfeGMp1axvzvmrQLYWnmO7GX1AjCn3I1boB3CMSdxFLjFh4RMUeWg7b9
-	F3IMIOaVSVrHCSGkLqCfJwzqDt5p/+xgDB5DVLzBZpL+WLZ6Ot22u/f4rPaaq0g7E+nKZX
-	s+E8rnJoR9r5R3XuDpLCjq4s8gzRLTs=
-Date: Wed, 26 Mar 2025 15:07:42 +0300
+	s=arc-20240116; t=1742990887; c=relaxed/simple;
+	bh=jjnSTG3I90Mn5Ca9Xyv++q9P6Z4yvrzjERBIMNIYWYg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DppvbJZWIwbWz1xi0zxxFHlt9PC3E0uTPagM1EBZT+NOopyMzRVXa6FaPbdzrEQE0kLjahtrEBhvL/IqmCiadXggt3dk1iHK+l26WUybOaa34bfS+awtf/KxvahwX6Sq23Z2ADEo8KRcp/xYKztuxDUwwchWj7STIUAl6nmDF0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7mlnSxa; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so12160847a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742990882; x=1743595682; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
+        b=b7mlnSxacG68Yn+Zs3UdGrkbG3EXspdbFsoFxpILRuE109HxFjaaUvjlDsZAPvZpxL
+         9yPtCF7AITdD3DEwz/V08f+7QVex/xwXrbN7mf5yIQRz2ILabI+EFPJ7ZXw+++XQpzVw
+         x0j4jVH4jxQQH0JwvRNf+NBEwvPd/hmGVNKs7NAjrgPNgjiGFOQf/FLpIb2GBl6wwbru
+         e+yEzpPdjaprSk8pYbGFAv84sAPlO1w3zplKw9RKD/UGQFoN6TtNWlEevvFBobitftDU
+         WcYW/O7/kmT9qr52UQvHyc2ELtssW7XNZCBSWTbFWkTm8K+Kc8i53BBZjyDsNBiEzlcp
+         g1JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742990882; x=1743595682;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
+        b=NdGDTmqUe2R3csDdiS4JegoA5bP6yqqOaVwdhk17y6K0Fub7hoItyI6Piw/ON/1+UD
+         gLaD+jWiULbnifPctX9ECSN5dKxaPtyqgaaJBwiqwCeXajpqaQfu4iUSFKBedYTZ6uEL
+         xIPIoP3yxbnqYZzVtMDCZcmirAWZ6D63MNaE/UcyYNnfljiYIRObccDdFGoeDtlH6NcI
+         U6Uj3cAfv1Mn91w3cCMsGJOwqJZ7Q6SBQcFZCb4C4LpCZUMg0/XHjw4UDl893oCZjGIC
+         0AWOifjPvbBxuYaNs4An9B7TOISDxTawihnDh6ZUfubNylnW5wUTz0hQ/Vvgn/APo/xS
+         Ibvg==
+X-Gm-Message-State: AOJu0YywZq8N4ZxAtOBI3+kxprY35P754uJFWN53Xerh1Ho//q3qzu8n
+	4F+cn9EUVsh1yngLz3MNNoWWGaXUNc+DRypAECqFU1CkyxOt+n1ThyolbL47eLM=
+X-Gm-Gg: ASbGncu/eS4VBP3/u0M6M+AvhEQM+KXQnbaC4meeXbwMR+K/zWaBb6UxaCmtEsgizMo
+	CvRIeBvG46yIoQYinEgKfp9wsxGXP1SkgA0C09Tp52fU5SKSllXQwNIz8xZbE8aED0okifVu5gq
+	slxGf6gANTHDBvGDfAtfitktXpxU8y2N9M+K2lBfRt0hwIM8knwSngltlCUZ2fOlwtEXgZr+bU6
+	18jt2vlmo0jR2PfPQT/u2eYg0lGqfliGYObmAJzv1GRD86FWMuv2R+CuTrV3yLKJzJs5xzqG/X5
+	GVD/MnFgWBQCIBOD0YvoBNSlXC4NsQ5IGLcTXsmmXyYo4MVTXOvgbDeDF93Aa7mflCvnRVIUp1z
+	to6m91IeUNE9i3iYrdLryIDFmttuxQXfQ60tM9Z8=
+X-Google-Smtp-Source: AGHT+IFpDQ47OkR0lnhRuhDWvB2zczsji7a4MYoKTE4Oj7Ls7vmFXhE9PL8k1vAEh0QTa7oPWlII7w==
+X-Received: by 2002:a17:907:9694:b0:ac4:5ff:cef6 with SMTP id a640c23a62f3a-ac405ffd0f5mr1438770566b.31.1742990881985;
+        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6ef561e4csm59334466b.119.2025.03.26.05.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 26 Mar 2025 12:08:00 +0000
+Subject: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
+ accessing ::hws[] in probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] asus-laptop: Fix an uninitialized variable
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250325095739.20310-1-arefev@swemel.ru>
- <88f06d15-0f98-2f24-7e68-eefb6434f108@linux.intel.com>
-Content-Language: en-US
-Cc: Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones"
- <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-From: Arefev <arefev@swemel.ru>
-In-Reply-To: <88f06d15-0f98-2f24-7e68-eefb6434f108@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACDu42cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMz3WKj3IJiQ0Pd0qTixDzdZEsDS3OLVPOkZAMTJaCegqLUtMwKsHn
+ RsbW1AHqshmBfAAAA
+X-Change-ID: 20250326-s2mps11-ubsan-c90978e7bc04
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-25.03.2025 14:18, Ilpo Järvinen пишет:
-> On Tue, 25 Mar 2025, Denis Arefev wrote:
->
->> The value returned by the acpi_evaluate_integer() function is not
->> checked, but the result is not always successful, so an uninitialized
->> 'val' variable may be used in calculations.
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>
->> Fixes: b23910c2194e ("asus-laptop: Pegatron Lucid accelerometer")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Denis Arefev <arefev@swemel.ru>
->> ---
->>   drivers/platform/x86/asus-laptop.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
->> index d460dd194f19..b74b7d0eb6c2 100644
->> --- a/drivers/platform/x86/asus-laptop.c
->> +++ b/drivers/platform/x86/asus-laptop.c
->> @@ -427,7 +427,7 @@ static int asus_pega_lucid_set(struct asus_laptop *asus, int unit, bool enable)
->>   static int pega_acc_axis(struct asus_laptop *asus, int curr, char *method)
->>   {
->>   	int i, delta;
->> -	unsigned long long val;
->> +	unsigned long long val = PEGA_ACC_CLAMP;
->>   	for (i = 0; i < PEGA_ACC_RETRIES; i++) {
->>   		acpi_evaluate_integer(asus->handle, method, NULL, &val);
-> Shouldn't you handle the error from acpi_evaluate_integer() properly
-> instead?
->
-Apparently, the developer realized that the output is very noisy and
-therefore created an algorithm that will surely return a good result.
+With UBSAN enabled, we're getting the following trace:
 
-I did not check the return value, because if acpi_evaluate_integer()
-cannot read the values of accelerometers, 'val' will remain
-uninitialized and will be used in further calculations.
+    UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
+    index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
+
+This is because commit f316cdff8d67 ("clk: Annotate struct
+clk_hw_onecell_data with __counted_by") annotated the hws member of
+that struct with __counted_by, which informs the bounds sanitizer about
+the number of elements in hws, so that it can warn when hws is accessed
+out of bounds.
+
+As noted in that change, the __counted_by member must be initialised
+with the number of elements before the first array access happens,
+otherwise there will be a warning from each access prior to the
+initialisation because the number of elements is zero. This occurs in
+s2mps11_clk_probe() due to ::num being assigned after ::hws access.
+
+Move the assignment to satisfy the requirement of assign-before-access.
+
+Cc: stable@vger.kernel.org
+Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __counted_by")
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/clk/clk-s2mps11.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 014db6386624071e173b5b940466301d2596400a..8ddf3a9a53dfd5bb52a05a3e02788a357ea77ad3 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -137,6 +137,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
++	clk_data->num = S2MPS11_CLKS_NUM;
++
+ 	switch (hwid) {
+ 	case S2MPS11X:
+ 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+@@ -186,7 +188,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 		clk_data->hws[i] = &s2mps11_clks[i].hw;
+ 	}
+ 
+-	clk_data->num = S2MPS11_CLKS_NUM;
+ 	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
+ 			       clk_data);
+ 
+
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250326-s2mps11-ubsan-c90978e7bc04
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
