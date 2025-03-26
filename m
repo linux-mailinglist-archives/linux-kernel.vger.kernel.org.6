@@ -1,235 +1,178 @@
-Return-Path: <linux-kernel+bounces-576447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7D0A70F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B47A70F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55AA3B9DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6263B7FD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392C016132F;
-	Wed, 26 Mar 2025 03:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ieucVopM"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4425D16A95B;
+	Wed, 26 Mar 2025 03:26:24 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2122.outbound.protection.outlook.com [40.107.215.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E162E403
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742959581; cv=none; b=C+77wGIJ5sRmGvFibW8pkmxF+B0UaXTx/kmR2qC+rgksh3lWyXtzOn4nNCNbaDBKmN3c/pc0c6053QGokD0rhjnbpiC4EaLcfTGKcStcrme1DpNCC9NH6xgQsPYBONJB7t9E3gVSoCeoWdoTXm582V1U+no6gCRYxNO6bbb5PuU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742959581; c=relaxed/simple;
-	bh=RfYEVpFV77vQUZcEiqLW/wGhxmNFc+8zk8y1nmVLwa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uyYREu7HB5peLEqQXm38yH1cGdoEoB5BSHPbKqlwvd27RpeXlS0EMC3uEvvLaPrOtCVn+OadORg3/cUeSKuvJwIm5NBUpIcpIur7RLT0tZmYKW4ZNDRNuhGhZvxOPwoe1xkLBOh02PGoWO2PrUigYIa83rTrqtjnsZdzqSgujG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ieucVopM; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-301e05b90caso9890164a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742959579; x=1743564379; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KfIZvsvXpyObm/MeDnvF7J2nbF4JP/x/sNoYgG6zOmE=;
-        b=ieucVopM2V82c5C33WJpIfTYJGd3371Jf5U/lqUycprkagMlSzPNQEdhbHY4JCNvQn
-         w1W5apfKOUv5s0E5d041sRdyXwq8jdjOzliZkjmKSwCeLe3mpJeAZcaj6/EjTVQHJAhe
-         AhZm2cwqRYVQVQIZkX65QhyPfxsvE6A9bFkYVBmwKebUxvhGbpph3Ph2Uag7Yd5e1Bub
-         clr3BuD7jXGwuMrMFihdpAkJHZU7FThC26/OgOlYfDdDEXGlkmRqb0IKZYeFYy1eCQWz
-         pbzFtjRFmZ1sihwVe4M5DyyshQy1UlxhFiZ6oZzHBjbugwmnY3C9fGkBk6DM15TxkZIn
-         jx4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742959579; x=1743564379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KfIZvsvXpyObm/MeDnvF7J2nbF4JP/x/sNoYgG6zOmE=;
-        b=ur5XItyKpViAYSUsjYciFfjxA+lDLI4RujrQuL9Styry10jKPMIXAjqcnLnR7Y2rK0
-         F0iUL3H2Ptpe5pDu3rH02AJAevPd6WyoGgXb1pMiKzBpER8XV0RgptRS0snRHQyzx4B6
-         5JxcMhs1y/HlGNmW35V1SAm/bBkjzlkoM6VOIvZtI3w8hb3BgPkpq3NqZgfzzEdaeX++
-         akuHBu1FxNBeYIzg+ETL7jzK8GiXamswA7NUQGKvzskBKkbHX3tkrT7oEdmbr0IXfqgE
-         gFxoB0kG371DROo4AcC/H55py+bU3ogPmoBYmvViV8tt0icg8iBJ5aneZN5hqTLQ1I0x
-         3tCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbYraKpstWt8xkkPQVGmy06DMI/n2c/WZN3+d3XiJ6qnCaHEH6hoxnRU4qYZTDqgUDr9moi1JfV5UbcDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE3VVtpQ/fLh2R94bTHyARZhpIjEhhOJVYo86J75G8nv5iWuXD
-	8/DtzCZ+nQxIwdJQHQOoPzM2dM/hdde7q9lqQ+JEWOFpWbhx75JmbfdwiDdAHVfyX5mnZ57Inea
-	ExrEHTKf1mv65w4KmoVFhjPE2M4feNbMIR0wx4Q==
-X-Gm-Gg: ASbGncuussj1tViwX5fCjdw0dIAbBIw2hBBO8KaEyKbwVAjTF0zB6sj36NSL1kgk4Ac
-	Twmjz+PgNesXv0OCWgdUIFlfTCmvrPLVL7F/HQtm9W8BBhz4M/AHXtzLvifgNP8lCjNcyvEd6El
-	UthYfLdbblVbjTpZbEqAJYUyh9FJXo48heCY/WE7k=
-X-Google-Smtp-Source: AGHT+IESJp7bMb71tkEwSEqLlTExKVrqQjhhbFW5v0UB8BFvfnFaTdUzEAIGCTPbNRUOBYf4WDIquQovAJzJJAsBfdo=
-X-Received: by 2002:a17:90b:540b:b0:2ff:52e1:c49f with SMTP id
- 98e67ed59e1d1-3030fef7845mr25635283a91.26.1742959578594; Tue, 25 Mar 2025
- 20:26:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB1413AA31;
+	Wed, 26 Mar 2025 03:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742959583; cv=fail; b=Fof41euY5xNOFBubevNBFXVzvASX/K3y2WRYiGCVUTSm8R4Pu5pwLM4nnlC6sTJIx3g/a0wrHueXCNbFyG36soiM+7Z9F8uSu8aQsKfGqCS//mkhGjYvjXSvaS4bvfj+n+di2hX1vF8YxWo+jAQslKUOZeorsa9XervrZE5afKI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742959583; c=relaxed/simple;
+	bh=rGzn7C2jGla3NVWasTkvdl4VVDnv8qRLlo27gwW4ObI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDyyvmRsIh7sJU5WOxUtk9Wq2lpoJNFmSBgmRvrTzv25GE5QfiKZpEDqF61JlosN+6P44neo/TPzkSlz8HUYJGNPi+0lJq09I3kYdxh4ZOxgaEArbXcJ819GcnfVyAkG0gvEGhFIHf1evhOtrDiMB4WBqde9dltV2pctx3bV0Us=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h66mnTAt+j98FeWgFAVIi1HR3sfW/WBG2X6gh+ijFBugUxLJbn3zeGppNs5dyMnvnoESK2OD61+z1jL9KfUrN3oZRTfWbAAXgvgfHVUjmZm8xN2Vxngi1mZEmp2S31U+E2IMyCVRCW+uL63u5lm0vqX7dWrvENOYig3pct9tM8H0pMQTlReffgWJqYoqHiqPRTJztos4rOIbU/FLxLxrdikzQRfZC3d+b4IjecPyRQiIz4hbwFY3/Wl34Qcr+KELy+uehaFeBIdJNdDkWIVQXnaXi+MEYxqm3c1XZAa/6Y/8xOLNG2/DMynmaiM55rMIaX5DU5zjHrm3cFsI6Ii9Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E+MThah22THcfh4c2unyZQPmilCjpS9EpCXxCIvT6NM=;
+ b=C/gr6wa09NAzHVrtSlzhGQhMfvJcZzCVNAC0P0ujHNA8eW8q8SdCQWhnxsTSvIVQ+suDCJvv3n193WgGt4dEER1MIEpv+cwbUMNbgTcva+qc4syCZRVs3jR2+8L5x/0xTjCmh2y/C/RQ0nWwcZKrfBSKU1rxGA06niS2eHmZaCuEslpJEMIZKysTrWRn3T2D2FrwEsz1djwXBPK6YI9tXk1HaQAL0jA5Rz2HmQclwcS1bX0u/+MEUSy2kORSG0cLJj4pcpoveAKW0zF/pshZEMuW5daE6DAcLFRmD4+JDrddXaL3REzxlpPi6Me2w6xLN3cwKapU0i5woK7KtrQKVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2PR06CA0003.apcprd06.prod.outlook.com (2603:1096:4:186::14)
+ by SEZPR06MB5144.apcprd06.prod.outlook.com (2603:1096:101:4f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.43; Wed, 26 Mar
+ 2025 03:26:16 +0000
+Received: from HK2PEPF00006FB1.apcprd02.prod.outlook.com
+ (2603:1096:4:186:cafe::d1) by SI2PR06CA0003.outlook.office365.com
+ (2603:1096:4:186::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Wed,
+ 26 Mar 2025 03:26:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ HK2PEPF00006FB1.mail.protection.outlook.com (10.167.8.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Wed, 26 Mar 2025 03:26:14 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 829B84160CA0;
+	Wed, 26 Mar 2025 11:26:13 +0800 (CST)
+Date: Wed, 26 Mar 2025 11:26:08 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl,
+	kajetan.puchalski@arm.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v5 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
+ support
+Message-ID: <Z-Nz0DU441Wwj1i4@nchen-desktop>
+References: <20250324062420.360289-1-peter.chen@cixtech.com>
+ <20250324062420.360289-6-peter.chen@cixtech.com>
+ <865xjxmlgl.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325144252.27403-1-luxu.kernel@bytedance.com> <9F043708-3BB6-46CF-BEC3-2636E9A388B7@jrtc27.com>
-In-Reply-To: <9F043708-3BB6-46CF-BEC3-2636E9A388B7@jrtc27.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Wed, 26 Mar 2025 11:26:07 +0800
-X-Gm-Features: AQ5f1Jo0368Hu_uIx_F-VQxmteASeA53lS4ajgOXrFsQ3icn84Q0MxG88EP36ck
-Message-ID: <CAPYmKFtAWNz7nCDDD7rjGeV2fRBgy5Kt6KR60pEyXAM=bb7r4g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] iommu: riscv: Split 8-byte accesses on 32
- bit I/O bus platform
-To: Jessica Clarke <jrtc27@jrtc27.com>
-Cc: tjeznach@rivosinc.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, alex@ghiti.fr, lihangjing@bytedance.com, 
-	xieyongji@bytedance.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <865xjxmlgl.wl-maz@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB1:EE_|SEZPR06MB5144:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2093e6ef-d8b5-43a8-24bc-08dd6c15f6d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?M4V0iulAgPYt8LfDPToN+NBTX2XMS+GMh/dnhUjr4TlEhlEhnqzIbdXx2OLx?=
+ =?us-ascii?Q?6LGsnS/itIeCMkETqbh9Q9SFsLBvDuSrlTgV6TbDxEAphRI+nZaVdCr7HK3G?=
+ =?us-ascii?Q?0M++Y5VaOTe6ZYqIQ5WFUUQOHA8oHw3dtaPMH6mAMGZ4fFNqBo6G/Ny+MK/5?=
+ =?us-ascii?Q?uqmaAHUsgsjc48jjR/W0yPuYPgZuNX8tjXXYFFuXgN36p2IcKbfsztX7Oyb0?=
+ =?us-ascii?Q?V3KJuu7OLC3/BXuMpvR2JWtIpRwG3bWoY7b5+/1RaJgaWm9sG0/HkPMrHkhJ?=
+ =?us-ascii?Q?fOGL3wp7sqEqKMp65DWggflilEWkTWNeydXviZhLugbIql9eWuPEbTCkfa0m?=
+ =?us-ascii?Q?2DtaRbR5UVMCqT95uYkm3xqMMoja6NHikazJo9WM6yN8ZaxUz0AWV/WOJa0/?=
+ =?us-ascii?Q?lojdWilxF9NlqVqbRiMq+oO/B2KMNMTU7+ekjO5NDy4+j+NPaZH14kbanlf4?=
+ =?us-ascii?Q?DBqvYwPnRMecwXMZjzC2wcCSck2jNB+85nMAuashG2XlecZ+ZbGKIhELEHBz?=
+ =?us-ascii?Q?lbFvNfUKvi1tzLUXRHBcARq9LRBC9XHSnI7mJcreGTtQbiO6iCggVIcDhZbE?=
+ =?us-ascii?Q?hlB8obVsLVWn41AhmZMqV3isgsfOT1qZoksRpH1yji7rkZVjE2AcJugI8cy9?=
+ =?us-ascii?Q?hpd01/qHSFhCOn97Iyw/Al5k3hW7S1FJ/IEZfcJVhw8zVkJRcHMmzX1q0Wkp?=
+ =?us-ascii?Q?YDv7TBXhveY9kEfTas/lZJ39EKt7dVKaEKeOuHXj/F8wGQtsSHcdtX92FsF/?=
+ =?us-ascii?Q?ltiYb9pLhqsZ2Bcc6KEFIZtdb5FYrnPp1Zhmk/6u5a4Rf2W5M6ZusnUTIWd4?=
+ =?us-ascii?Q?BIyfpWW2t1r/GqizDj2GSE6gIcCFiw3o9xzKs4hDNQKX8o7UacozF9cdo6g4?=
+ =?us-ascii?Q?jRM7C8UFtq6yWuuap9EuA3vUFSxi8On1ReFJD0NdEa1JWLD9uYbSiu8XCnEB?=
+ =?us-ascii?Q?ELzzMcSdWtU2FG0Uw1X8lR3g36yBDKIvOdIUssD2IA/G8sAZpAqwfkqh9gLe?=
+ =?us-ascii?Q?M3UDUdSMxsrCtxEVoGAKMkQVddHgpdDunIb6yn4g9vD/zWPg0Mmd6ot2TUQ1?=
+ =?us-ascii?Q?BqMKaFO2xrSoEvbhBP6bE5HB+LE5LUBWlT8tGLmFoF2zWZx/2LT/QzDqn+EN?=
+ =?us-ascii?Q?KP0BkH34UWXQNfkobLfj3q5ubUMFXYsR+eDXAe3+/er1cFopW/7mgp4i5Bsc?=
+ =?us-ascii?Q?FNGAd7X4azJ1tV14DtyrCg5FMBdZAEGvo2otc4YQLa8pbd+0Yb+CPb68UpjR?=
+ =?us-ascii?Q?foNCu49YUT/7ASAgt4dqmANJaDnXSN9vE4rmLzdwjbbC2o0Y9vkvukVK2X76?=
+ =?us-ascii?Q?rC7VSxri/MVOj1s2UTEf55cwW7QJGOUnfTplas8md9+0HrH5jeupp9rR20OA?=
+ =?us-ascii?Q?GiSjdglr7zwF2QfUpQgJrs7+X9EM9Avwr3FrOfwhQcJx0xZzOvJc/uqht0Th?=
+ =?us-ascii?Q?8qoI9gGZxjhl71MnrjUrXWE16mMlfrhWclOFHrpHoe9V13wKCaWXUA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7416014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 03:26:14.5083
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2093e6ef-d8b5-43a8-24bc-08dd6c15f6d0
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FB1.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5144
 
-Hi Jessica,
+On 25-03-25 10:52:10, Marc Zyngier wrote:
+> > +     timer {
+> > +             compatible = "arm,armv8-timer";
+> > +             interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
+> > +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW 0>,
+> > +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW 0>,
+> > +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW 0>,
+> > +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW 0>,
+> > +                          <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW 0>;
+> > +     };
+> > +};
+> 
+> I don't think there is anything wrong here, but it is also a pretty
+> useless DT. There isn't even a UART to interact with the machine and
+> find out whether it has actually booted.
+> 
 
-> Is such a platform conformant to the specification?
+UEFI uses the same UART, so we could see all kernel boot logs until
+switch to use kernel UART driver for printk. If you would like boot
+to the console at initramfs, just add uart node like patchset v1.
 
-We have talked about this before [1]. I think the IOMMU spec does not
-mandate the implementation of 8-byte access functionality. The related
-sentences are listed below:
+> I reckon this should be part of the initial DT, as this otherwise
+> serves little purpose.
+> 
 
-"The 8-byte IOMMU registers are defined in such a way that software
-can perform two individual 4-byte accesses, or hardware can perform
-two independent 4-byte transactions resulting from an 8-byte access,
-to the high and low halves of the register, in that order, as long as
-the register semantics, with regard to side-effects, are respected
-between the two software accesses, or two hardware transactions,
-respectively."
+Without this initial support, we can't add some base drivers, like
+mailbox. The dt_binding_check will report warnings/errors [1].
 
-"Registers that are 64-bit wide may be accessed using either a 32-bit
-or a 64-bit access."
+Full UART support depends on clock, clock control needs mailbox
+to talk with FW using SCMI protocol.
 
-> Either way, why is this a static build-time configuration choice rather t=
-han a dynamic run-time choice based on the FDT / ACPI tables / some other p=
-latform probing method?
+There is no any support for CIX SoC, so we had to add one small step by
+step.
 
-I did not find available field in RIMT table to describe it. So maybe
-adding a new config is faster.
+[1] https://lore.kernel.org/lkml/174290730775.1655008.14031380406017771195.robh@kernel.org/
 
-[1] https://www.uwsg.indiana.edu/hypermail/linux/kernel/2408.3/03968.html
+-- 
 
-Best Regards,
-
-Xu Lu
-
-On Wed, Mar 26, 2025 at 2:51=E2=80=AFAM Jessica Clarke <jrtc27@jrtc27.com> =
-wrote:
->
-> On 25 Mar 2025, at 14:42, Xu Lu <luxu.kernel@bytedance.com> wrote:
-> >
-> > Introduce a new configuration CONFIG_RISCV_IOMMU_32BIT to enable
-> > splitting 8-byte access into 4-byte transactions for hardware platform
-> > whose I/O bus limits access to 4-byte transfers.
-> >
-> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
->
-> Is such a platform conformant to the specification? Either way, why is
-> this a static build-time configuration choice rather than a dynamic
-> run-time choice based on the FDT / ACPI tables / some other platform
-> probing method?
->
-> Jess
->
-> > ---
-> > drivers/iommu/riscv/Kconfig |  9 +++++++++
-> > drivers/iommu/riscv/iommu.h | 28 +++++++++++++++++++++++-----
-> > 2 files changed, 32 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/iommu/riscv/Kconfig b/drivers/iommu/riscv/Kconfig
-> > index c071816f59a6..b7c9ea22d969 100644
-> > --- a/drivers/iommu/riscv/Kconfig
-> > +++ b/drivers/iommu/riscv/Kconfig
-> > @@ -18,3 +18,12 @@ config RISCV_IOMMU_PCI
-> > def_bool y if RISCV_IOMMU && PCI_MSI
-> > help
-> >  Support for the PCIe implementation of RISC-V IOMMU architecture.
-> > +
-> > +config RISCV_IOMMU_32BIT
-> > + bool "Support 4-Byte Accesses on RISC-V IOMMU Registers"
-> > + depends on RISCV_IOMMU
-> > + default n
-> > + help
-> > +  Support hardware platform whose I/O bus limits access to 4-byte
-> > +  transfers. When enabled, all accesses to IOMMU registers will be
-> > +  split into 4-byte accesses.
-> > diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
-> > index 46df79dd5495..0e3552a8142d 100644
-> > --- a/drivers/iommu/riscv/iommu.h
-> > +++ b/drivers/iommu/riscv/iommu.h
-> > @@ -14,6 +14,10 @@
-> > #include <linux/iommu.h>
-> > #include <linux/types.h>
-> > #include <linux/iopoll.h>
-> > +#ifdef CONFIG_RISCV_IOMMU_32BIT
-> > +#include <linux/io-64-nonatomic-hi-lo.h>
-> > +#include <linux/io-64-nonatomic-lo-hi.h>
-> > +#endif
-> >
-> > #include "iommu-bits.h"
-> >
-> > @@ -69,21 +73,35 @@ void riscv_iommu_disable(struct riscv_iommu_device =
-*iommu);
-> > #define riscv_iommu_readl(iommu, addr) \
-> > readl_relaxed((iommu)->reg + (addr))
-> >
-> > -#define riscv_iommu_readq(iommu, addr) \
-> > - readq_relaxed((iommu)->reg + (addr))
-> > -
-> > #define riscv_iommu_writel(iommu, addr, val) \
-> > writel_relaxed((val), (iommu)->reg + (addr))
-> >
-> > +#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > + readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, \
-> > +   delay_us, timeout_us)
-> > +
-> > +#ifndef CONFIG_RISCV_IOMMU_32BIT
-> > +#define riscv_iommu_readq(iommu, addr) \
-> > + readq_relaxed((iommu)->reg + (addr))
-> > +
-> > #define riscv_iommu_writeq(iommu, addr, val) \
-> > writeq_relaxed((val), (iommu)->reg + (addr))
-> >
-> > #define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, tim=
-eout_us) \
-> > readx_poll_timeout(readq_relaxed, (iommu)->reg + (addr), val, cond, \
-> >   delay_us, timeout_us)
-> > +#else /* CONFIG_RISCV_IOMMU_32BIT */
-> > +#define riscv_iommu_readq(iommu, addr) \
-> > + hi_lo_readq_relaxed((iommu)->reg + (addr))
-> >
-> > -#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > - readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, \
-> > +#define riscv_iommu_writeq(iommu, addr, val) \
-> > + ((addr =3D=3D RISCV_IOMMU_REG_IOHPMCYCLES) ? \
-> > + lo_hi_writeq_relaxed((val), (iommu)->reg + (addr)) : \
-> > + hi_lo_writeq_relaxed((val), (iommu)->reg + (addr)))
-> > +
-> > +#define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > + readx_poll_timeout(hi_lo_readq_relaxed, (iommu)->reg + (addr), val, c=
-ond, \
-> >   delay_us, timeout_us)
-> > +#endif /* CONFIG_RISCV_IOMMU_32BIT */
-> >
-> > #endif
-> > --
-> > 2.20.1
-> >
-> >
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
->
+Best regards,
+Peter
 
