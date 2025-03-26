@@ -1,137 +1,247 @@
-Return-Path: <linux-kernel+bounces-576971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90926A716D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:40:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D2BA716D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A99D47A5B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295DC16FC5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC3B1E1E10;
-	Wed, 26 Mar 2025 12:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPENa9Ws"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C321E1E1B;
+	Wed, 26 Mar 2025 12:42:53 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AB91E1DEC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1421E1DEC;
+	Wed, 26 Mar 2025 12:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742992823; cv=none; b=pXCDK7rl8ScHQXwR0Tqp3av6o35xlRhJJQTeqjsa0/rXaIl93w/pBkwuRL4gcHqyS/0SMkQice/r5D2je1QLmJUmzyT11+HD4UmnqkXxg+e8q0HjsZPIO2AxNsVl66Kg4rUwXse+xHCWLhIsog6xr1e64aTJcInKOhJ3ehhsxYM=
+	t=1742992972; cv=none; b=kLeumHLsuzH064FavB8o2m8n5Naz2LNLXvQaa6xCq1fNcICL9b2MY1fU/FXT56VRRdn2+SCl+l4+9jKmfXgKfflvGH1DeOlmM6BFlATxZEoZhw6U8+V+4W6BHJPggiC9JK6SaS7x6mX0po5MSM3zKIBhrn+0Xk3b7rP0imnqqBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742992823; c=relaxed/simple;
-	bh=EidWf1smEcccrMWZMH5+INfITris3Gt4B5G1RWuRqyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pK+TzNqGrayNBoVzqTW/NPkRe/UYWBZzJ/f0HFywnevt1+HpyH0wSerNmHyWybouopYMb5MSsAqNleX1kAUV1KN4Wo86zbCHPahRgTt4kKdg12l646wQh3/wWvksAqK6e0wl/4ULY6oZQ/wKjlJQGzvtYQyKqm3t3qblaT+aM7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPENa9Ws; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so76273566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742992820; x=1743597620; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=57GGOAaZN1XoYLh8BKnwS9BMIWEfDl/68HkmO3s4Tj4=;
-        b=JPENa9WsF4s6hGGEk3Gz1wOMe3mwLfwdr8/sFRWZ4zRs6hbKvyzQHIyo2ff4jzGYDw
-         jWVo784rIMD5XQEtuzwYFzgDZRTKdhTHPYwCeTruqwffO+Y44tSbpc8Ebxb4mK7cDVjA
-         3e21TE2l4MQN/BKkCCyKPfr8o72KjNv70cHwGJnMOCTdFxAh0RtK2FBWdWk+UMMd9sFy
-         bVJ9EGfFqfY/NNLPFak36QzTC1qlGqK8wejPD9/MCKfsEmpyUUvvODQzYAMFSvS7fBi7
-         ZwHMYmi9M28FzRIKf3w2tS0W/Hsi/t6PfCGh5eo9DGxjMEHQJcfYUh/FYPjBHghpvWiP
-         tMnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742992820; x=1743597620;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=57GGOAaZN1XoYLh8BKnwS9BMIWEfDl/68HkmO3s4Tj4=;
-        b=LwAkW8PvNTLjsscNeIoWOl1CX81CSbGwsabH+t7IbfSto+zRHd29zKI2F9kNygtImc
-         idlWsYtpmwAN1I42bed5iAAOkAxRvn5XN3y7MtKnUE5CCx/UWVO4wFz/c1SB1UUyLXIH
-         jovqWEVapiIsVfe8LAecbrE38wXpx/s86wzEW1tns+sn8SURG3280VkLMRIqReMH4fl6
-         X5iGhnrnVydCtVwlKwsivDh186HQ1ovDw7/LFuMdT5BFJ0xAdNfPoOn4AOj9P0Nb2fPn
-         ynr/UMfgn8Yhra0qpalIYGFrV/WIHxSDaaSbWEpdhv2kHCOyvyW5/GW8lWc9b9bMHe5j
-         /Wcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUk10vd+QHduQ3TYniiTzxWbhKUMEH7kSrKSHc2Kf7B+XaW3Vw0aQtlxEemUubhP33kHArXyRegRvUuvHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf+Cb8pnk6BHzGg/n6ccGiepfzgERSKmjTzvE1tQ3Bg9i0IT0j
-	VwF/0GWeUh8kmH/INYbR4NAmU3gKkzh7TlvLxOUKqJr/jW9ju9jE+sU1jEHQ
-X-Gm-Gg: ASbGncsgQN0sMfL8Ye00IwbEVhfvOE7UwQ8RtKfT6HD36miE15175Tei8KEk3XRtlua
-	AWY3qb1VpEB0+0P+q7OgGY+M11L9k6lOiiXvaJUjLbaoiwC01s2UXPthpAOWZq5CAbKzcfisAZo
-	rExbJ0CyqdF7lohqHznA1K0jzdfCWrGcM6G1HStysqGUOHsmQQFqaJ55iK4+b+dNe2Zb2ShBs5z
-	Hd86db9kAYYjJtHIAFowClFEjLnw3TQQTFKicLGFx/y9AbM+QOzjARAF/rkOR6QpC7sQwKkWG9Z
-	7EbjchcKZHrFwgJsVOF+pdJKcgyrnZLrlJjFO6DOlkKD6On/wg==
-X-Google-Smtp-Source: AGHT+IGYAScV+oczm6r/JGUZSx4iBrHklfsgOR7nh1Ox+2Mbys7FxPkGsbq+bEKXPKTG0i7XEVIsFQ==
-X-Received: by 2002:a17:907:7295:b0:ac6:dd5c:bdfc with SMTP id a640c23a62f3a-ac6dd5cec3cmr454680066b.50.1742992819282;
-        Wed, 26 Mar 2025 05:40:19 -0700 (PDT)
-Received: from HP-650 ([105.112.229.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6d28d26dcsm211942966b.60.2025.03.26.05.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 05:40:18 -0700 (PDT)
-Date: Wed, 26 Mar 2025 13:40:05 +0100
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	outreachy@lists.linux.dev, Julia Lawall <julia.lawall@inria.fr>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] staging: rtl8723bs: remove braces around single statements
-Message-ID: <Z+P1pfLSKpiRtpaF@HP-650>
+	s=arc-20240116; t=1742992972; c=relaxed/simple;
+	bh=9PLfRglBIRDWW4vWcZCofYESNHEJ70S3FZVGIXq2CMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YEEuLA0p0JYvU2CFT6ej8O2XAzSp/disQFXdIhqNIqBr114gW84rMTL1dXuslrJVv9gYjnET620SsiUuGCUQ26gkK3kWAmTByaT+1sC6qDM2S78f/IyxyymXQIFAKeBbROSeIXjKAKHpVSeT+IjON55/5o2OuUrLC9aQ+uiXyBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZN5th4xjjzvWpl;
+	Wed, 26 Mar 2025 20:38:36 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7D8251400F4;
+	Wed, 26 Mar 2025 20:42:33 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 26 Mar 2025 20:42:32 +0800
+Message-ID: <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+Date: Wed, 26 Mar 2025 20:42:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: <yangge1116@126.com>, <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <21cnbao@gmail.com>, <david@redhat.com>,
+	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
+	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-The code contains braces around single statements in the if blocks
-which are unnecessary according to the Linux kernel coding style.
+Hi,
 
-Remove the braces to improve readability and maintain consistency.
+We notiched a 12.3% performance regression for LibMicro pwrite testcase due to
+commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
 
-Reported by checkpatch:
+The testcase is executed as follows, and the file is tmpfs file.
+    pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
 
-WARNING: braces {} are not necessary for single statement blocks
+this testcase writes 1KB (only one page) to the tmpfs and repeats this step for many times. The Flame
+graph shows the performance regression comes from folio_mark_accessed() and workingset_activation().
 
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
-Changes since v2:
-	- Add more patch recipent
+folio_mark_accessed() is called for the same page for many times. Before this patch, each call will
+add the page to cpu_fbatches.activate. When the fbatch is full, the fbatch is drained and the page
+is promoted to active list. And then, folio_mark_accessed() does nothing in later calls.
 
-Changes since v1:
-	- Remove extra blank line
----
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+But after this patch, the folio clear lru flags after it is added to cpu_fbatches.activate. After then,
+folio_mark_accessed will never call folio_activate() again due to the page is without lru flag, and
+the fbatch will not be full and the folio will not be marked active, later folio_mark_accessed()
+calls will always call workingset_activation(), leading to performance regression.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index c60e179bb2e1..74a8fcf18e84 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -56,9 +56,8 @@ int _ips_leave(struct adapter *padapter)
- 		pwrpriv->ips_leave_cnts++;
- 
- 		result = rtw_ips_pwr_up(padapter);
--		if (result == _SUCCESS) {
-+		if (result == _SUCCESS)
- 			pwrpriv->rf_pwrstate = rf_on;
--		}
- 		pwrpriv->bips_processing = false;
- 
- 		pwrpriv->bkeepfwalive = false;
-@@ -549,9 +548,8 @@ void LeaveAllPowerSaveMode(struct adapter *Adapter)
- 
- 		LPS_Leave_check(Adapter);
- 	} else {
--		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off) {
-+		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off)
- 			ips_leave(Adapter);
--		}
- 	}
- }
- 
--- 
-2.34.1
+In addition, folio_mark_accessed() calls __lru_cache_activate_folio(). This function does as
+follow comments:
 
+/*
+	 * Search backwards on the optimistic assumption that the folio being
+	 * activated has just been added to this batch.
+*/
+
+However, after this patch, folio without lru flag may be in other fbatch too, such as cpu_fbatches.activate.
+
+在 2024/7/4 14:52, yangge1116@126.com 写道:
+> From: yangge <yangge1116@126.com>
+>
+> If a large number of CMA memory are configured in system (for example, the
+> CMA memory accounts for 50% of the system memory), starting a virtual
+> virtual machine with device passthrough, it will
+> call pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory.
+> Normally if a page is present and in CMA area, pin_user_pages_remote()
+> will migrate the page from CMA area to non-CMA area because of
+> FOLL_LONGTERM flag. But the current code will cause the migration failure
+> due to unexpected page refcounts, and eventually cause the virtual machine
+> fail to start.
+>
+> If a page is added in LRU batch, its refcount increases one, remove the
+> page from LRU batch decreases one. Page migration requires the page is not
+> referenced by others except page mapping. Before migrating a page, we
+> should try to drain the page from LRU batch in case the page is in it,
+> however, folio_test_lru() is not sufficient to tell whether the page is
+> in LRU batch or not, if the page is in LRU batch, the migration will fail.
+>
+> To solve the problem above, we modify the logic of adding to LRU batch.
+> Before adding a page to LRU batch, we clear the LRU flag of the page so
+> that we can check whether the page is in LRU batch by folio_test_lru(page).
+> It's quite valuable, because likely we don't want to blindly drain the LRU
+> batch simply because there is some unexpected reference on a page, as
+> described above.
+>
+> This change makes the LRU flag of a page invisible for longer, which
+> may impact some programs. For example, as long as a page is on a LRU
+> batch, we cannot isolate it, and we cannot check if it's an LRU page.
+> Further, a page can now only be on exactly one LRU batch. This doesn't
+> seem to matter much, because a new page is allocated from buddy and
+> added to the lru batch, or be isolated, it's LRU flag may also be
+> invisible for a long time.
+>
+> Fixes: 9a4e9f3b2d73 ("mm: update get_user_pages_longterm to migrate pages allocated from CMA region")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: yangge <yangge1116@126.com>
+> ---
+>   mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
+>   1 file changed, 31 insertions(+), 12 deletions(-)
+>
+> V4:
+>     Adjust commit message according to David's comments
+> V3:
+>     Add fixes tag
+> V2:
+>     Adjust code and commit message according to David's comments
+>
+> diff --git a/mm/swap.c b/mm/swap.c
+> index dc205bd..9caf6b0 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -211,10 +211,6 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
+>   	for (i = 0; i < folio_batch_count(fbatch); i++) {
+>   		struct folio *folio = fbatch->folios[i];
+>   
+> -		/* block memcg migration while the folio moves between lru */
+> -		if (move_fn != lru_add_fn && !folio_test_clear_lru(folio))
+> -			continue;
+> -
+>   		folio_lruvec_relock_irqsave(folio, &lruvec, &flags);
+>   		move_fn(lruvec, folio);
+>   
+> @@ -255,11 +251,16 @@ static void lru_move_tail_fn(struct lruvec *lruvec, struct folio *folio)
+>   void folio_rotate_reclaimable(struct folio *folio)
+>   {
+>   	if (!folio_test_locked(folio) && !folio_test_dirty(folio) &&
+> -	    !folio_test_unevictable(folio) && folio_test_lru(folio)) {
+> +	    !folio_test_unevictable(folio)) {
+>   		struct folio_batch *fbatch;
+>   		unsigned long flags;
+>   
+>   		folio_get(folio);
+> +		if (!folio_test_clear_lru(folio)) {
+> +			folio_put(folio);
+> +			return;
+> +		}
+> +
+>   		local_lock_irqsave(&lru_rotate.lock, flags);
+>   		fbatch = this_cpu_ptr(&lru_rotate.fbatch);
+>   		folio_batch_add_and_move(fbatch, folio, lru_move_tail_fn);
+> @@ -352,11 +353,15 @@ static void folio_activate_drain(int cpu)
+>   
+>   void folio_activate(struct folio *folio)
+>   {
+> -	if (folio_test_lru(folio) && !folio_test_active(folio) &&
+> -	    !folio_test_unevictable(folio)) {
+> +	if (!folio_test_active(folio) && !folio_test_unevictable(folio)) {
+>   		struct folio_batch *fbatch;
+>   
+>   		folio_get(folio);
+> +		if (!folio_test_clear_lru(folio)) {
+> +			folio_put(folio);
+> +			return;
+> +		}
+> +
+>   		local_lock(&cpu_fbatches.lock);
+>   		fbatch = this_cpu_ptr(&cpu_fbatches.activate);
+>   		folio_batch_add_and_move(fbatch, folio, folio_activate_fn);
+> @@ -700,6 +705,11 @@ void deactivate_file_folio(struct folio *folio)
+>   		return;
+>   
+>   	folio_get(folio);
+> +	if (!folio_test_clear_lru(folio)) {
+> +		folio_put(folio);
+> +		return;
+> +	}
+> +
+>   	local_lock(&cpu_fbatches.lock);
+>   	fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
+>   	folio_batch_add_and_move(fbatch, folio, lru_deactivate_file_fn);
+> @@ -716,11 +726,16 @@ void deactivate_file_folio(struct folio *folio)
+>    */
+>   void folio_deactivate(struct folio *folio)
+>   {
+> -	if (folio_test_lru(folio) && !folio_test_unevictable(folio) &&
+> -	    (folio_test_active(folio) || lru_gen_enabled())) {
+> +	if (!folio_test_unevictable(folio) && (folio_test_active(folio) ||
+> +	    lru_gen_enabled())) {
+>   		struct folio_batch *fbatch;
+>   
+>   		folio_get(folio);
+> +		if (!folio_test_clear_lru(folio)) {
+> +			folio_put(folio);
+> +			return;
+> +		}
+> +
+>   		local_lock(&cpu_fbatches.lock);
+>   		fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate);
+>   		folio_batch_add_and_move(fbatch, folio, lru_deactivate_fn);
+> @@ -737,12 +752,16 @@ void folio_deactivate(struct folio *folio)
+>    */
+>   void folio_mark_lazyfree(struct folio *folio)
+>   {
+> -	if (folio_test_lru(folio) && folio_test_anon(folio) &&
+> -	    folio_test_swapbacked(folio) && !folio_test_swapcache(folio) &&
+> -	    !folio_test_unevictable(folio)) {
+> +	if (folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+> +	    !folio_test_swapcache(folio) && !folio_test_unevictable(folio)) {
+>   		struct folio_batch *fbatch;
+>   
+>   		folio_get(folio);
+> +		if (!folio_test_clear_lru(folio)) {
+> +			folio_put(folio);
+> +			return;
+> +		}
+> +
+>   		local_lock(&cpu_fbatches.lock);
+>   		fbatch = this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
+>   		folio_batch_add_and_move(fbatch, folio, lru_lazyfree_fn);
 
