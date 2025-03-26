@@ -1,247 +1,151 @@
-Return-Path: <linux-kernel+bounces-577173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB8FA71994
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989DEA71997
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1261886E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9100E18891E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDF81E1E16;
-	Wed, 26 Mar 2025 14:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1211F3BB9;
+	Wed, 26 Mar 2025 14:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YvEEf/hk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NpJx9C0J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N0deEB+x";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NpJx9C0J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N0deEB+x"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3708B1E8349;
-	Wed, 26 Mar 2025 14:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1932A1F192E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000754; cv=none; b=tRXZEE30+5yk5rOE44MGbTk/DOxVMebzdJ/mqMNdHjoxKyJ9kyA1vFkHtgU7ENP6356jd8cNPe39mkH3O8XPtt0kPfPgWfAedd31m68RECTjFaryXK/u3UnPDBqywPgk+lXmwDzTY8dk8RqFnZ7nwoHHqaOfPTobYwbr/EwM/yc=
+	t=1743000755; cv=none; b=ukkdMzCNxdvTcwsSBpLPMkAURBs+GF1WJjl5RP0STCeaM9p9+izdpeeWZnp0hbEVxqlYYDmbjUWo7fwZ2p9sGGUmE38eOIaZtyo3ktzygLtg9B1STWXc7etYLdUb8XFZXCi2MW8pl2W6p2hdNEU3HQOaN5RNc0XR5YbQWRmajl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000754; c=relaxed/simple;
-	bh=kMWBFtvP0kEE/trvo0qGsOmq8xhchyKSw1YVss2QtLk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PdMEhNYKJZf16X0b15XhBEwd2G7Vdx/H3Aiugv2tuRnaOWiMG6BKmLiTzvjOq7M55ahbGFUSQ0+E+tBfo/rk1nOlRhx5/igbSYCDTBKQ4S14Q1D/vOT9zChv/gr29uMM2RCiZNs4WNOMWLDXvjSlQxepPeqkpU15ECD/Kx3k7ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YvEEf/hk; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743000753; x=1774536753;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kMWBFtvP0kEE/trvo0qGsOmq8xhchyKSw1YVss2QtLk=;
-  b=YvEEf/hk7OPwYSPoeBL39D0ZFQUfkn00k8f4PW1v4XQo71kzQiXhNiGh
-   PiygvvF9hmde1Gwe67blZtf5vwNwmsZY12hDLhduHgWSY2/VNM38JxQGA
-   CLXMVQvwV/y69ClRzw5cr6Ilk8jjojeplyNKMa4Kuz09+9oh0gET8TDZc
-   ywW1yqHqty2NkSEbqXcUoS04lurU+Mc55Py1+9RsMTZOc1YygFfSFwgpe
-   dLjQzfQdahxdmyCo89qMQxgkzJj6z5CvvliOFZBLD0iZxtKdWf0VL3w/C
-   WJ/xI4+vX6Ch6Z3rLyosJ1tP6mBw50gq9OwIpmG7KFWW//EKZQnSK06+s
-   A==;
-X-CSE-ConnectionGUID: ByqPfI5lQNiYyucK4Fx7gw==
-X-CSE-MsgGUID: HTWb3y2YTQWb/DpcSAoGDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44455139"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="44455139"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:52:32 -0700
-X-CSE-ConnectionGUID: /xCYhiUWTT+6GflWnlz/Pw==
-X-CSE-MsgGUID: I5/SSNZdRc6H47G3BpwTZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="124596406"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:52:26 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 26 Mar 2025 16:52:22 +0200 (EET)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v6 1/6] PCI/IOV: Restore VF resizable BAR state after
- reset
-In-Reply-To: <b10b559c-cb23-d21e-d6ee-e060eb0b6b5b@linux.intel.com>
-Message-ID: <f12b85eb-0dad-fa48-ffca-d052f41e0a28@linux.intel.com>
-References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-2-michal.winiarski@intel.com> <b10b559c-cb23-d21e-d6ee-e060eb0b6b5b@linux.intel.com>
+	s=arc-20240116; t=1743000755; c=relaxed/simple;
+	bh=oRQfEWTYZ08/oOm0K0ADbcTp+N32/kFThtFnAan3zDw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DYu6j8Kp2pYl9mUSzfRHfbCA/jZyMRMaFqQNddWRgNQNETMblAQILk0PtCavonkK7dM8LyMFH3KD1LNz4Vg3IZN0qv84ty8hzWYwA29UXu4E4nOpEMDfAQee97WuQ9cqv839Uhdywl2WV4z4fzF2X4N5Ms8kLyc7f8HWcEj3w+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NpJx9C0J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N0deEB+x; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NpJx9C0J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N0deEB+x; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3C9AE2118D;
+	Wed, 26 Mar 2025 14:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743000752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rxlJlxjV8vCzmndxFu0DV5OLDzz/TCyjVVPXeZeSLIg=;
+	b=NpJx9C0JZ6V3mm52BM8cied6rmghj232WOpri3JEJC/eiwrrsyYmboL+cPskjsIy9Ih4kM
+	P2rgpCcfT4uPflhJWWXMCmB4kTpsXXyqoK76MKpGp1L9Qy67jXAzQazft73R91ZI6gnFB1
+	OjwsZ8sguTCRzc/9YLcbumABjTh3zPc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743000752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rxlJlxjV8vCzmndxFu0DV5OLDzz/TCyjVVPXeZeSLIg=;
+	b=N0deEB+xX+1esDSDaDlR4tBPTSJ2GMDEm1K4FXjQj5iWe9II4zdDvfNDwKWGh+7HAWTocK
+	9bdoJmR+rEqZLvAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743000752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rxlJlxjV8vCzmndxFu0DV5OLDzz/TCyjVVPXeZeSLIg=;
+	b=NpJx9C0JZ6V3mm52BM8cied6rmghj232WOpri3JEJC/eiwrrsyYmboL+cPskjsIy9Ih4kM
+	P2rgpCcfT4uPflhJWWXMCmB4kTpsXXyqoK76MKpGp1L9Qy67jXAzQazft73R91ZI6gnFB1
+	OjwsZ8sguTCRzc/9YLcbumABjTh3zPc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743000752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rxlJlxjV8vCzmndxFu0DV5OLDzz/TCyjVVPXeZeSLIg=;
+	b=N0deEB+xX+1esDSDaDlR4tBPTSJ2GMDEm1K4FXjQj5iWe9II4zdDvfNDwKWGh+7HAWTocK
+	9bdoJmR+rEqZLvAQ==
+Date: Wed, 26 Mar 2025 15:52:32 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Petr Mladek <pmladek@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>, 
+    mingo@kernel.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+    dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+    mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org, 
+    jikos@kernel.org, joe.lawrence@redhat.com, linux-kernel@vger.kernel.org, 
+    live-patching@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+    Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
+ live-patching
+In-Reply-To: <20250326144212.GG25239@noisy.programming.kicks-ass.net>
+Message-ID: <alpine.LSU.2.21.2503261547000.4152@pobox.suse.cz>
+References: <20250324134909.GA14718@noisy.programming.kicks-ass.net> <Z-PNll7fJQzCDH35@pathway.suse.cz> <20250326103843.GB5880@noisy.programming.kicks-ass.net> <alpine.LSU.2.21.2503261534450.4152@pobox.suse.cz>
+ <20250326144212.GG25239@noisy.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-657385912-1743000742=:942"
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, 26 Mar 2025, Peter Zijlstra wrote:
 
---8323328-657385912-1743000742=:942
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> On Wed, Mar 26, 2025 at 03:37:50PM +0100, Miroslav Benes wrote:
+> 
+> > If I remember correctly, we had something like this in the old kGraft 
+> > implementation of the live patching (SUSE way). We exactly had a hook 
+> > somewhere in the kthread freezing code. This looks much cleaner and as far 
+> > as I know the fridge went through improvements recently.
+> 
+> Yeah, I rewrote it a while ago :-)
 
-On Wed, 26 Mar 2025, Ilpo J=C3=A4rvinen wrote:
+Right :)
+ 
+> > Peter, so that I understand it correctly... we would rely on all kthreads 
+> > becoming freezable eventually so that both suspend and livepatch benefit. 
+> > Is that what you meant by the above?
+> 
+> Well, IIRC (its been a while already) all kthreads should have a
+> FREEZABLE already. Things like suspend-to-idle don't hit the hotplug
+> path at all anymore and everything must freeze, otherwise they fail.
 
-> On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
->=20
-> > Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
-> > the system firmware or the PCI subsystem itself.
-> >=20
-> > Add the capability ID and restore it as a part of IOV state.
-> >
-> > See PCIe r4.0, sec 9.3.7.4.
->=20
-> Usually it's best o refer to latest gen doc, the section number seems to=
-=20
-> be the same also in r6.2.
+Good.
 
-Actually, it isn't. r6.2 9.3.7 does specify capability IDs so I though you=
-=20
-be refering to that section, but there's no 9.3.7.4 section at all.
+> I was more meaning the time-to-freeze; if some kthreads take a long time
+> to freeze/patch then this would want improving on both ends.
 
---
- i.
+Makes sense.
 
-> This didn't refer to spec section that specified VF Rebar ext capability
-> (7.8.7) though. I think it should and it would also be good to mention th=
-e=20
-> capability layout is the same as with the rebar cap.
->=20
-> > Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
-> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > ---
-> >  drivers/pci/iov.c             | 30 +++++++++++++++++++++++++++++-
-> >  drivers/pci/pci.h             |  1 +
-> >  include/uapi/linux/pci_regs.h |  1 +
-> >  3 files changed, 31 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> > index 121540f57d4bf..bf95387993cd5 100644
-> > --- a/drivers/pci/iov.c
-> > +++ b/drivers/pci/iov.c
-> > @@ -7,6 +7,7 @@
-> >   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
-> >   */
-> > =20
-> > +#include <linux/bitfield.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/export.h>
-> > @@ -830,6 +831,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
-> >  =09pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
-> >  =09if (pci_pcie_type(dev) =3D=3D PCI_EXP_TYPE_RC_END)
-> >  =09=09iov->link =3D PCI_DEVFN(PCI_SLOT(dev->devfn), iov->link);
-> > +=09iov->vf_rebar_cap =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_V=
-F_REBAR);
-> > =20
-> >  =09if (pdev)
-> >  =09=09iov->dev =3D pci_dev_get(pdev);
-> > @@ -868,6 +870,30 @@ static void sriov_release(struct pci_dev *dev)
-> >  =09dev->sriov =3D NULL;
-> >  }
-> > =20
-> > +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
-> > +{
-> > +=09unsigned int pos, nbars, i;
-> > +=09u32 ctrl;
-> > +
-> > +=09pos =3D dev->sriov->vf_rebar_cap;
-> > +=09if (!pos)
-> > +=09=09return;
-> > +
-> > +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> > +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-> > +
-> > +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
-> > +=09=09int bar_idx, size;
-> > +
-> > +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> > +=09=09bar_idx =3D FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
-> > +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
-> > +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
-> > +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-> > +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
->=20
-> I started to wonder if we'd still want to have the VF Rebar ones in=20
-> uapi/linux/pci_regs.h (despite the same capability layout):
->=20
-> /*
->  * PCI Resizable BAR and PCI VF Resizable BAR extended capabilities have=
-=20
->  * the same layout of fields.
->  */
-> #define PCI_VF_REBAR_CTRL=09=09PCI_REBAR_CTRL
-> #define PCI_VF_REBAR_CTRL_BAR_IDX=09PCI_REBAR_CTRL_BAR_IDX
-> etc.
->=20
-> as then it would be possible grep to pick up only the relevant lines.
->=20
-> I'd not duplicate _SHIFT defines though. FIELD_PREP/GET() in general does=
-=20
-> not need _SHIFT defines at all and they are just duplicated information.
->=20
-> > +=09}
-> > +}
-> > +
-> >  static void sriov_restore_state(struct pci_dev *dev)
-> >  {
-> >  =09int i;
-> > @@ -1027,8 +1053,10 @@ resource_size_t pci_sriov_resource_alignment(str=
-uct pci_dev *dev, int resno)
-> >   */
-> >  void pci_restore_iov_state(struct pci_dev *dev)
-> >  {
-> > -=09if (dev->is_physfn)
-> > +=09if (dev->is_physfn) {
-> > +=09=09sriov_restore_vf_rebar_state(dev);
-> >  =09=09sriov_restore_state(dev);
-> > +=09}
-> >  }
-> > =20
-> >  /**
-> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > index b81e99cd4b62a..adc54bb2c8b34 100644
-> > --- a/drivers/pci/pci.h
-> > +++ b/drivers/pci/pci.h
-> > @@ -482,6 +482,7 @@ struct pci_sriov {
-> >  =09u16=09=09subsystem_vendor; /* VF subsystem vendor */
-> >  =09u16=09=09subsystem_device; /* VF subsystem device */
-> >  =09resource_size_t=09barsz[PCI_SRIOV_NUM_BARS];=09/* VF BAR size */
-> > +=09u16=09=09vf_rebar_cap;=09/* VF Resizable BAR capability offset */
-> >  =09bool=09=09drivers_autoprobe; /* Auto probing of VFs by driver */
-> >  };
-> > =20
-> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_reg=
-s.h
-> > index ba326710f9c8b..bb2a334e50386 100644
-> > --- a/include/uapi/linux/pci_regs.h
-> > +++ b/include/uapi/linux/pci_regs.h
-> > @@ -745,6 +745,7 @@
-> >  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
-> >  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
-> >  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
-> > +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
-> >  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
-> >  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
-> >  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Manageme=
-nt */
->=20
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
->=20
->=20
---8323328-657385912-1743000742=:942--
+So I am all for the patch. See my comment elsewhere though.
+
+Miroslav
+
 
