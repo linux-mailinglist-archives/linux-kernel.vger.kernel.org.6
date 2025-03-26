@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-576724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA6DA713A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:26:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F297A713A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70ACF3BA91F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:24:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C127A52DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AE31AAE28;
-	Wed, 26 Mar 2025 09:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EECE1531C5;
+	Wed, 26 Mar 2025 09:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdRgcl9J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="E9DVlVR3"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F04DF59
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A1319F462
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981046; cv=none; b=RU0JAUUWjGlXlWd9phMVlkDZGqh1IiE3l9NC2GQDjQgF1Gp2uc34NW20mmo5fiPjQt1Bn6qyEYvsD+Tky6VnOVynpXgUvY/1BOH14MY9MJmgX/BRdcSSHh1DX9+bPVJF+z7yXRTZz66EcyHk81TdiWkrDptDxKj+TX5hNBhOe8I=
+	t=1742981118; cv=none; b=OtQA1UlJ9Q+Dc2AMEOUuOrQZ5y6euwLtKHzWBEHey6bH0FyBr+WMzFXhWAET+o8s6YOqKXBg2YoLYx843cnfYj/0dS+/oTk75cPG4iH39+QK1gSp19AdAl4TpPIcQAHgS1VuvnjUhvCbNYJ138kn6mENDYW7Xu7sMGkhv06qcxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981046; c=relaxed/simple;
-	bh=qf/sgisAQcKaZRDABaj+IQx31SpuvMLofAX/b03cC9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fXbpVE7dLTfKUgu8AyCFltMozKPSbpUlhs/0R+mA8heuwwvLZ8I5Is7uxuzUTOYoDO9agd8b9+cNMArIoHoEGUsGL0xS/jIitCKvfzj1h6Wsj74NWUSbB/8Ma5zMcm0etn4Yb9LRloqvL+RngB8xuwrkybLm7FFN+i7mfeMPjtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdRgcl9J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742981043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wQ6QhNnfLYXbZdIZx/vDMwupBr33SbF8nWAPHqeeQvg=;
-	b=bdRgcl9JP5dorwY5CPcy3VdaUEZOEVjwBSe3BXNa7Y1Hd//goSejdj3b3EK3a1Ey8LoVtg
-	bi4IXSguhkDn+K7gVJA2nNNWauD4/Ta63PvNEraMJmoMCJ7Hqe2HedHDYJ1KyiHe4F70iY
-	3xtpoqjhFe+/XWBVPZX6dHE4QLKwUSc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-299-uzBQJzlWMlaIOQ1BweZCWQ-1; Wed, 26 Mar 2025 05:24:01 -0400
-X-MC-Unique: uzBQJzlWMlaIOQ1BweZCWQ-1
-X-Mimecast-MFC-AGG-ID: uzBQJzlWMlaIOQ1BweZCWQ_1742981041
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac3e0c13278so534072766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:24:01 -0700 (PDT)
+	s=arc-20240116; t=1742981118; c=relaxed/simple;
+	bh=1cEyaF63q/x3VGPCgdsugifRXvRW4j5br3BkdE2QNIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIOsi70pvS2S3Y4gZQlKYdTaNWPHa+0bB7HlNEFbBfqLQDVD+5ux5Z0KIX+eZIl4cFWm/q60w5FOLH3Y2uXKR1nmGcKCg0iE1tik07ixErYZ1yLO7sj/RyTk9fxkW/zI6aJecsSC9/GCUxVCYhw046osDTPNQzTAQtnaxawUvVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=E9DVlVR3; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so10820304a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1742981115; x=1743585915; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1cEyaF63q/x3VGPCgdsugifRXvRW4j5br3BkdE2QNIM=;
+        b=E9DVlVR30wc8A7MqtD6FdhmRKf5WG7HH+cM3IgMzFPkW11DdzCk/yZi5RCW0C3GnU2
+         Anhxtw4wddppbTjNDDS94ZpA4c87IK7nroxIk/7oSom/fsWqbOu1ObZLMNL01RrKfuF2
+         zZABryYNXVnegKsDzNI6ivgeBIWNlFwH1/n/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742981040; x=1743585840;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQ6QhNnfLYXbZdIZx/vDMwupBr33SbF8nWAPHqeeQvg=;
-        b=uplsf9M1xwQG953XSiF/QzPwuVtorxlmQQ6Bada/MKYIsvbn9CmmQHsmmxwQ73k7Vv
-         JW0IVq2sTGQyjABMOHp6XMr7g+SkT+tppytUCfEstb6uxfOGvi6tsp1uJ67fJ7hYSaan
-         KeLEu4kz18XVRtLPEOupfZyKGGPbPcyjuVYzuebPX6G1s0n4QgVZouj6DGrFLREgp3e5
-         Cq5uHjMoByEmX/W3GeJCsqrkuImL2eYPqXPVoI08PmlWfoHxpho5S1JC5WHtq+dMdg6l
-         +GBLurhxCiU6Mg7qMzearCBLyznJ9q9LJKRQ+HcouyTMv7Fc7RcNVb2BJISb+NudM4s3
-         sOow==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQDg58CD8QZTlNUEgjMjlqiCUSqyLasBDRrykFsWMvBJQ2PIgNwM5HQc37pcl7jnhR2lxoNAZgn3cmiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeRG510gOspnu/mKZCIs1XYZqVyZeMpwvDF6t7HxXIN5NLFeeu
-	hH+UhUYBKeSXby4c1y/IVCvhTphpB1l0UP+OExXGd6+K22eu3nDubDHwcFmoaVQ2zlNmglqpFi0
-	mdrgN0FggurWthVDrNyOzv2c8hYFRTLjswRr4a7je/zfP+d63FbWxCHfVm9p9JQ==
-X-Gm-Gg: ASbGnctvX6VkG/CNCC4HK3b2qIEKSH9nltCkh1s4Dnb8hoPI0gT2sgNUrWdXp80NAm6
-	MsXEt28G3nPjVe1ip6zU4JoklOLdzz0Kx6SPoJqGqKHxbOAPFSk2xrHytinqv03ZCmvS6LXeCdY
-	7RYT3TZu+YzELfvmXDeBvfhNHaUaG+EZqGhDVC0aE2JqAq3XIlMMWKIRhJAiq6u7cEui+LD3dvp
-	z5EQyl9hufc6q2FpvIcA8BBULcrz3YgWFqcBtrf1N4vleya5WjluxdKvoJP5VbPuZsXBZZU4JL/
-	6kTLIBsnCGamZYcjSKPdnbKV9dm/YBkEkfm5MzIy1zb/MoGcm2iY7EVSrK0zFzq8eHV+rPJTqS3
-	qLln88S5Vj2FIuBmY5sSBGmYu49nfTHY2K261XsEmW29RLfHM2JXPM78D0JVyf6QpmA==
-X-Received: by 2002:a17:907:3d92:b0:ac6:ef94:3d9a with SMTP id a640c23a62f3a-ac6ef946332mr54918666b.4.1742981040471;
-        Wed, 26 Mar 2025 02:24:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgfGOSw/fuBqgO1O4PO8WqGxGVs32QYzEOSqRxo/94jTXehX2juoFoGt/m3XlXvnmLeU9OWQ==
-X-Received: by 2002:a17:907:3d92:b0:ac6:ef94:3d9a with SMTP id a640c23a62f3a-ac6ef946332mr54916466b.4.1742981039951;
-        Wed, 26 Mar 2025 02:23:59 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb658e4sm995169166b.87.2025.03.26.02.23.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 02:23:59 -0700 (PDT)
-Message-ID: <c487c00c-2900-42cf-b83b-08c5e1b866e1@redhat.com>
-Date: Wed, 26 Mar 2025 10:23:58 +0100
+        d=1e100.net; s=20230601; t=1742981115; x=1743585915;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1cEyaF63q/x3VGPCgdsugifRXvRW4j5br3BkdE2QNIM=;
+        b=E/HiagjgDb27vtHIDts24ur9f0bkyeZiprRQ9DpmEdesS5tilWiS7dchte5S4FPiaP
+         OtrzQkNo6i83OlWSI5GJJPfpCEGAIIJ+JtkNLkhQSjO0Yn9Fr+j3y3JCXp91NfP8F5fs
+         3ihdCL7IokBfr3sZ6lmmK8NJNNArSvc6oQY1cDO6+dEq67eu267IAvr8htKsP0AGgD78
+         nU3HE825YyjbdlSX3ePVfXcXem9JrC15SdikLpfTd8aUMZGn2syPwnqn81wWAaPl3/Th
+         bQvp6JRN1FCP8hliO0j32Qm4KQqsR0zaGqS8NV+90EAxYuuq+z+E6I7nx8dAfD+o5pDJ
+         zT5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXsO3qy7oMMVHc+Loft+P3dbqhLTyo8YTTl9/DTXRA/kZ3x6s60Cd4dlBbUHaE+ig56VqtpbttODuB8DkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLkeN++AMTmdIlUopR9eiOi3w4fedp8Zv+aPocKt+BXpgYmDif
+	L3SroMsYsooLSi9TV0q680qZykDnINHlvXjeL1/DK34OADuSrcOPGkWY7H2aBpw=
+X-Gm-Gg: ASbGnctI6WRESiJXYuG/9Vzj06LrckOdZu51TilXMJTl/rRXnfbxVEhGVr05H4NasQ/
+	I7+rt3CJ/2HrkeKXX6FafJBbKXkIQYM/wFKIuNK9fcUQd6eNyLHWFmxyouGyofwPLuLeJt3tEev
+	KXoJaT92jDQOE+Z6rV2e31jr/WNaowUrCB9D5/54N3Hxrret+r0+1jCFWVpy6b7W/9JHKbVEZPH
+	+mofjC41UZLu7cuoQnf80MJG1+Ps5LXAWr96355xSCT4Ay3A9wEDKkPXM76stQUbO1oQ/0b6bxi
+	PTmUm17pfxn8t8hNswLOPacS+piqH/xIfao5rxXiWVZ5th+STA==
+X-Google-Smtp-Source: AGHT+IGe+y82L5+gj9QzxBEdZHdajohPp3RW6/DSFWXrlV5r8AaiNFRvvNJjTG5Ejwz4trhnQT/f8Q==
+X-Received: by 2002:a17:907:d786:b0:ac2:7ec8:c31d with SMTP id a640c23a62f3a-ac3f210aa96mr1964769266b.17.1742981115065;
+        Wed, 26 Mar 2025 02:25:15 -0700 (PDT)
+Received: from localhost ([84.78.159.3])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac3ef93e17asm1003921866b.78.2025.03.26.02.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 02:25:14 -0700 (PDT)
+Date: Wed, 26 Mar 2025 10:25:13 +0100
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: 423b87d8-2ae3-48af-b368-657f1fbab88d@amd.com
+Cc: "Aithal, Srikanth" <sraithal@amd.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bhelgaas@google.com,
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+	linux-next@vger.kernel.org, Juergen Gross <jgross@suse.com>
+Subject: Re: [syzbot] [pci?] linux-next test error: general protection fault
+ in msix_capability_init
+Message-ID: <Z-PH-fYvtSF8v4Ae@macbook.local>
+References: <20250325223752.f5tjazbpbblgppyz@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Added support for a some new buttons in ideapad-laptop
- driver
-To: =?UTF-8?Q?Ga=C5=A1per_Nemgar?= <gasper.nemgar@gmail.com>,
- ikepanhc@gmail.com
-Cc: ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250326091632.23644-1-gasper.nemgar@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250326091632.23644-1-gasper.nemgar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250325223752.f5tjazbpbblgppyz@amd.com>
 
-Hi Gašper,
+On Tue, Mar 25, 2025 at 05:37:52PM -0500, Michael Roth wrote:
+> Also able to reproduce this trace on every boot with a basic KVM guest on an
+> EPYC Milan system using next-20250325 for both host/guest.
 
-On 26-Mar-25 10:16 AM, Gašper Nemgar wrote:
-> Added entries to unsuported wmi codes in ideapad_keymap[]
-> and one check in wmi_nofify() in order to get wmi code 0x13d to trigger platform_profile_cycle() but only if dytc exists.
-> 
-> Signed-off-by: Gašper Nemgar <gasper.nemgar@gmail.com>"
+Sorry for the breakage, there's a fix from Thomas at:
 
-Thank you for the new version.
+https://lore.kernel.org/xen-devel/87v7rxzct0.ffs@tglx/
 
-> ---
->  drivers/platform/x86/ideapad-laptop.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 30bd366d7..cd8c38dc8 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1308,6 +1308,16 @@ static const struct key_entry ideapad_keymap[] = {
->  	/* Specific to some newer models */
->  	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
->  	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
-> +	/* Star- (User Asignable Key) */
-> +	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
-> +	/* Eye */
-> +	{ KE_KEY,	0x45 | IDEAPAD_WMI_KEY, { KEY_PROG3 } },
-
-> +	/* Performance toggle also Fn+Q */
-> +	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
-
-The above 2 lines should be:
-
-	/* Performance toggle also Fn+Q, handled inside ideapad_wmi_notify() */
-	{ KE_IGNORE,	0x3d | IDEAPAD_WMI_KEY },
-
-otherwise this version looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-> +	/* shift + prtsc */
-> +	{ KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
-> +	{ KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE } },
-> +	{ KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
->  
->  	{ KE_END },
->  };
-> @@ -2094,6 +2104,14 @@ static void ideapad_wmi_notify(struct wmi_device *wdev, union acpi_object *data)
->  		dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
->  			data->integer.value);
->  
-> +		/* performance button triggered by  ...  */
-> +		if (data->integer.value == 0x3d) {
-> +			if (priv->dytc) {
-> +				platform_profile_cycle();
-> +				break;
-> +			}
-> +		}
-> +
->  		/* 0x02 FnLock, 0x03 Esc */
->  		if (data->integer.value == 0x02 || data->integer.value == 0x03)
->  			ideapad_fn_lock_led_notify(priv, data->integer.value == 0x02);
-
+Regards, Roger.
 
