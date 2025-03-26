@@ -1,120 +1,181 @@
-Return-Path: <linux-kernel+bounces-577249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BDDA71A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:35:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9C5A71A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF893A4517
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:32:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0765E7A71F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9395E1F3BB2;
-	Wed, 26 Mar 2025 15:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FCC1F4197;
+	Wed, 26 Mar 2025 15:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RriZcuFo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ED414A4C6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="h9CXDAO1"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8431F2369;
+	Wed, 26 Mar 2025 15:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003152; cv=none; b=m9IKb2y5d0G4U/8yCxX5I0D1+mfwdMCfI4lVPVva9kBuCvdkLl3D2xp/oweyXbVjY0rsxViXzYt1oPzNG8WPKg8qV5ejkAmxePvqsMyslbw43DGVwU74gzPS2Gkf3ydzWNi9Z31jFhyTVK4LfgIL8S/Xj3haSemac9A4AEcL8E0=
+	t=1743003176; cv=none; b=hUQXm4FDE3TSnkqysZJ6rmZR/N+xmxESqrZqGDOQeqyGSy3GJQvcTSh+3gZGTAscYdXDBtG5uKD7StB8stB+1scZf78j7uvOBdmpFSL2bv0L9+JeEsGT/nI/4f04dbYw/KnqhAT32w/vfgqgCX66hkKqrUx0Xm3vSchqE35Rt48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003152; c=relaxed/simple;
-	bh=SPxu0Io7cx5liXuAr8Xi+OAnanZNKgiFPCAgw/m0XBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aE5HQ0n/qIV8G3W47BqMOo5qIks4xi6YXWe2l00dHCMs8u38sGLghp/3pMa6vCNGzo8YNImqmzUn3IXZY6NNG7LICw+brJLos6Q3owLWMdXYtTqQuggZ0L7TOS9UTzvlY9Jt0m4HgKoVyA8bVt2uwq+3Q00ERMuY2zSIlSQ1jqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RriZcuFo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2593DC4CEE2;
-	Wed, 26 Mar 2025 15:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743003151;
-	bh=SPxu0Io7cx5liXuAr8Xi+OAnanZNKgiFPCAgw/m0XBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RriZcuFozA+6QY0rYZQajMOGCFMyzsBT1xUrHVw7tHBRWOhu+WqmKx15XlXLodKOt
-	 i3++BC6wcOmNRYZ2kf1sbJ3UgWQl4d6Wvxi0CN9NIXCtollhGB7urmdNqyAdQkAr+Z
-	 359fT6wBxBUldjuwdHtyVWtNUELDSUmyEHhuInCL/dKWik1wR0ClMfwSubZIAzYp4p
-	 2x8eoIpPOlRON/2fVGfAQnU/8nRaGqOqzPEdVrGKolvD9fwUz1GHSP6YpM+MsRiPsf
-	 dpvJk33x8erFxRgGLD2II05q4E0htyzvJrjL6VLwtNcSuiNh09sdW4STOLed+8UIUB
-	 huKnne7Z68ytg==
-Date: Wed, 26 Mar 2025 16:32:29 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 4/5] drm/panel: deprecate old-style panel allocation
-Message-ID: <20250326-deft-vegan-stoat-ff14ff@houat>
-References: <20250325-b4-panel-refcounting-v1-0-4e2bf5d19c5d@redhat.com>
- <20250325-b4-panel-refcounting-v1-4-4e2bf5d19c5d@redhat.com>
+	s=arc-20240116; t=1743003176; c=relaxed/simple;
+	bh=QfFKHtPjhnsVEIyS3XzuUBPioCudwzrqL/GSdI3aKa8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MrR3+R4CLs0PFi1jp19GbhXBjZyEif48CJhoGDk2avP0TCepY6sHjgKngSInTbbjmRLWH1VBUrd1zBuEKfEjQFDFluG+SROraYYlaasND8PED7opOLEfB3Y3UCD5JWsrOsTK6VKaaVwTciv45zDo+HKzvWrGCfQFSes9nk2sCa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=h9CXDAO1; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A914B210C320;
+	Wed, 26 Mar 2025 08:32:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A914B210C320
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1743003174;
+	bh=5dEhZXpJIQDYjKp44/xRbSpFUSHWMuuE2+/dnL6k/lU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h9CXDAO1ZrAH2QmyDPeZh9D575YKdAtnwcuvQxr+2h+cWYYQEZjW0lE1GdOfjm8h0
+	 WTL8D4VFuAxQbfVPl4CANyl7MImvzKVJrV1UkEJ6ZDQRtMcF1/oXVnUIM04GP/33qq
+	 SoTHHkrgirDlGx5JlRlVXulkrfzJWIihHsu4hJNE=
+Message-ID: <f8ccc874-e153-4b78-8159-9923dfa77fc3@linux.microsoft.com>
+Date: Wed, 26 Mar 2025 08:32:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5ozty4m4m7wvakqd"
-Content-Disposition: inline
-In-Reply-To: <20250325-b4-panel-refcounting-v1-4-4e2bf5d19c5d@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v6 10/11] ACPI: irq: Introduce
+ acpi_get_gsi_dispatcher()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, conor+dt@kernel.org, dan.carpenter@linaro.org,
+ dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
+ hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
+ kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
+ manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org,
+ mingo@redhat.com, oliver.upton@linux.dev, robh@kernel.org,
+ ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
+ tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+References: <20250315001931.631210-1-romank@linux.microsoft.com>
+ <20250315001931.631210-11-romank@linux.microsoft.com>
+ <CAJZ5v0g1bX_3zRUUf-=euuvhm1dPB6bjEXPH9O-kMGcZjRspcw@mail.gmail.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <CAJZ5v0g1bX_3zRUUf-=euuvhm1dPB6bjEXPH9O-kMGcZjRspcw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---5ozty4m4m7wvakqd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/5] drm/panel: deprecate old-style panel allocation
-MIME-Version: 1.0
 
-On Tue, Mar 25, 2025 at 01:24:11PM -0400, Anusha Srivatsa wrote:
-> Start moving to the new refcounted allocations using
-> the new API devm_drm_panel_alloc(). Deprecate any other
-> allocation.
->=20
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
->  drivers/gpu/drm/drm_panel.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index 11a0415bc61f59190ef5eb378d1583c493265e6a..5793011f4938a2d4fb9d84a70=
-0817bda317af305 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -74,8 +74,10 @@ EXPORT_SYMBOL(drm_panel_init);
->   * drm_panel_add - add a panel to the global registry
->   * @panel: panel to add
+On 3/26/2025 7:55 AM, Rafael J. Wysocki wrote:
+> On Sat, Mar 15, 2025 at 1:19 AM Roman Kisel <romank@linux.microsoft.com> wrote:
+[...]
+> 
+> This basically looks OK to me except for a couple of coding style
+> related nits below.
+> 
+
+Appreciate taking time to review this very much! Will squash the nits in
+the next version.
+
+>> ---
+>>   drivers/acpi/irq.c   | 15 +++++++++++++--
+>>   include/linux/acpi.h |  5 ++++-
+>>   2 files changed, 17 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
+>> index 1687483ff319..8eb09e45e5c5 100644
+>> --- a/drivers/acpi/irq.c
+>> +++ b/drivers/acpi/irq.c
+>> @@ -12,7 +12,7 @@
+>>
+>>   enum acpi_irq_model_id acpi_irq_model;
+>>
+>> -static struct fwnode_handle *(*acpi_get_gsi_domain_id)(u32 gsi);
+>> +static acpi_gsi_domain_disp_fn acpi_get_gsi_domain_id;
+>>   static u32 (*acpi_gsi_to_irq_fallback)(u32 gsi);
+>>
+>>   /**
+>> @@ -307,12 +307,23 @@ EXPORT_SYMBOL_GPL(acpi_irq_get);
+>>    *     for a given GSI
+>>    */
+>>   void __init acpi_set_irq_model(enum acpi_irq_model_id model,
+>> -                              struct fwnode_handle *(*fn)(u32))
+> 
+> Please retain the indentation here and analogously below.
+> 
+>> +       acpi_gsi_domain_disp_fn fn)
+>>   {
+>>          acpi_irq_model = model;
+>>          acpi_get_gsi_domain_id = fn;
+>>   }
+>>
+>> +/**
+>> + * acpi_get_gsi_dispatcher - Returns dispatcher function that
+>> + *                           computes the domain fwnode for a
+>> + *                           given GSI.
+>> + */
+> 
+> I would format this kerneldoc comment a bit differently:
+> 
+> /*
+>   * acpi_get_gsi_dispatcher() - Get the GSI dispatcher function
 >   *
-> - * Add a panel to the global registry so that it can be looked up by dis=
-play
-> - * drivers.
-> + * Add a panel to the global registry so that it can be looked
-> + * up by display drivers. The panel to be added must have been
-> + * allocated by devm_drm_panel_alloc(). Old-style allocation by
-> + * kzalloc(), devm_kzalloc() and similar is deprecated.
+>   * Return the dispatcher function that computes the domain fwnode for
+> a given GSI.
+>   */
+> 
+>> +acpi_gsi_domain_disp_fn acpi_get_gsi_dispatcher(void)
+>> +{
+>> +       return acpi_get_gsi_domain_id;
+>> +}
+>> +EXPORT_SYMBOL_GPL(acpi_get_gsi_dispatcher);
+>> +
+>>   /**
+>>    * acpi_set_gsi_to_irq_fallback - Register a GSI transfer
+>>    * callback to fallback to arch specified implementation.
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index 4e495b29c640..abc51288e867 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -336,8 +336,11 @@ int acpi_register_gsi (struct device *dev, u32 gsi, int triggering, int polarity
+>>   int acpi_gsi_to_irq (u32 gsi, unsigned int *irq);
+>>   int acpi_isa_irq_to_gsi (unsigned isa_irq, u32 *gsi);
+>>
+>> +typedef struct fwnode_handle *(*acpi_gsi_domain_disp_fn)(u32);
+>> +
+>>   void acpi_set_irq_model(enum acpi_irq_model_id model,
+>> -                       struct fwnode_handle *(*)(u32));
+>> +       acpi_gsi_domain_disp_fn fn);
+>> +acpi_gsi_domain_disp_fn acpi_get_gsi_dispatcher(void);
+>>   void acpi_set_gsi_to_irq_fallback(u32 (*)(u32));
+>>
+>>   struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
+>> --
+> 
+> With the above addressed, please feel free to add
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> to the patch and route it along with the rest of the series.
+> 
 
-It's not that it's deprecated, it's that it's unsafe. Since you already
-said that the allocation must be done through devm_drm_panel_alloc(),
-there's not much use to mention the old style stuff, I'd just drop the
-last sentence.
+Will do, thanks!
 
-Maxime
+> Thanks!
 
---5ozty4m4m7wvakqd
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Thank you,
+Roman
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+QeDAAKCRDj7w1vZxhR
-xXTHAQCc+DC/5rdeBP/uekSpO7skP6d+j8o6RjjWhw/KxNkDSwEApCzCZMZTIZ5e
-yLjpLaIpTIXpA3IMrUaV2mCS5wP5Hw0=
-=mCCS
------END PGP SIGNATURE-----
-
---5ozty4m4m7wvakqd--
 
