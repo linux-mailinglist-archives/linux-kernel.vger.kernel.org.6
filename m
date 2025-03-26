@@ -1,157 +1,121 @@
-Return-Path: <linux-kernel+bounces-577437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1F0A71D06
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:22:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9772AA71CB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428CE17B955
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169F7189562D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B259203710;
-	Wed, 26 Mar 2025 17:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE08C1F891C;
+	Wed, 26 Mar 2025 17:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="un2i0acs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qR2sTKIn"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAB5202C5D;
-	Wed, 26 Mar 2025 17:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E1B1F791C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743009582; cv=none; b=Ux1g5LfGgbJW8ePJos6Nb5OswxjeeHzb4+oZoQfVGq2DyBZcWBd1Bn4erejMuA+lZz9eAH0oNBKfn+hM1ak1rr4eWihQSkjCIDjaqQFNXLreKFb+K9pa3EgvCujYf+KAZ9D+oPQNpVg0vM6DxECxGWm8fDd92/btnM3w+sDyfrY=
+	t=1743009003; cv=none; b=m9xgPOuH1bIF5YdV9uXKj3CU9nA88bUGIv43NGNtdgLDvwGz858U7Zt5MILz3yiAFnBKAUZ9O2200nkND+ucUtj9MLDqJauR53mk4+4ENbQoKuW6cNpVhsGQhiMwE/94eTrXQvxOFMeMgTYd/iU48eTTPx1z+uwUHh5/iPjnaao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743009582; c=relaxed/simple;
-	bh=KTBrm4WbDj3jrDr3AvU95JjjtHXOiRQkBglBixZek4c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ih4mZ55pG76FXifjZRcPtVfKiet3aa054GDUM3tp1pToVImswGyVe7gUtVzUXVpW92y7fHDtRu7ufeI4vz6EwSi3EqLl08aPzXAjWDpEVIPH/txtwdJT9GpEZn5liUnHmAF+m8aWm7YJVp7i0A1FX0DMA2kA3IEWwQP9QBnEos4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=un2i0acs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AAA3C4CEE2;
-	Wed, 26 Mar 2025 17:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743009581;
-	bh=KTBrm4WbDj3jrDr3AvU95JjjtHXOiRQkBglBixZek4c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=un2i0acsg1hjYpObtYDIR1yN6uezD9ce40Kn3vxvjIE9aGWA47y8fRSxI4IFrXP0e
-	 EDGl/HSKrc7qLOeMgdcm6K6mY5W61SJwUdz6v8FNzE2yrLv7PlTZJfLfKlMpk/RUxu
-	 02lokKZBHA+oesOGar3aOmEBv5JDzsHajUNelW5invbE/UJdRw4moFS7t0P6qLFxa9
-	 QojoMEoMmItJrtQvgb9zct3lDMe1hG/mCrdKVEsSl04KcS/AAyfNHPu71OW7yz3iDl
-	 rqVn/VLNOkRhCJtkkWHenlR3zm7HLxoHs13Ph/VqRywa/c/Hp/Sp3hlLezqQvTJfvQ
-	 p9dBr+cKhbTPQ==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Wed, 26 Mar 2025 09:32:32 -0700
-Subject: [PATCH v2 2/2] lib/string.c: Add wcslen()
+	s=arc-20240116; t=1743009003; c=relaxed/simple;
+	bh=s9hN7Yb2FDLvip8w32MVrFLFzpBsY05WU4O19Z4Nkz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uBlTYjPJlDe5/Tpg9vDlWb9GmC16+I6JO+fU3cmt1QyAMekBxWeh96yHjr5UI4cHgES5Ga0sULL9sMP6dTOOHmAK/ClCstaRZVPvFQEDLEzieQIwtzBTLrZiXCUQ64iCbpkufri6heUhNaREQMrZlyrunmK7w8CHPGPM1OCuTUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qR2sTKIn; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso1025235e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743008999; x=1743613799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3wp2aYV7Lf882bB2x9wggl6yd0pKTlalba7I61amZfg=;
+        b=qR2sTKInVEi9i10XSbjDLQhiZptNt9O3zqFML/mYYTq1Y3P0ej4KsEuz/MohTYHfhJ
+         rDawGswDJzqWxEUbJ04IrukQcCaXCGP/2sS2TAIt8nzQv/pWx0/sk6pOHwIyiwVnVaBb
+         yMfuRnxBBQDRfePfYiAbKzC3ZpO7b7Jpd8Ulyn/Ae8uJ9DlJ6EJ8SxLqTh+jHKYAgZzj
+         pHgbSFvang9MRfiCH28KjqdVIz6Hbiu/Cx/bBk9dxRC5C7bFosZBo7+ATWbwFw7TdQ91
+         W7DIFVE1I35+b4oTy3ruB7/ZWuPgyy5ivcWhWnMZDEr9rzozejyBx1sIZPPAdryt+DBh
+         xx3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743008999; x=1743613799;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wp2aYV7Lf882bB2x9wggl6yd0pKTlalba7I61amZfg=;
+        b=ZctGfJnlMv/ZtphX3aSINQO1drClPl+TVKc0YHEHNyOJFls4iLvJ4bpeYBVXxkZHq5
+         qKqbyfjwwnvwS8hsBZmIqJ91FvSADzQUzgg0RH6lJjwSvmYA2+qal4axpJNMggIdraVY
+         tELrP8i0dtJOpvnHttpSQN7REB+jxaYc3jLodO5P63ydEKk8XaeUPuJ7D6Baf3s6CByo
+         q5qkkiTtVvumccENVnvSazuaRqJUN1Dc30knBcrMt/IUfho3BQyJ8HIxqxXBkdsF8O1d
+         8cbsqTHkJiMJgNNT3+hPEJ3SPMQfEFQ4/dsZY5PKXMBpIkIgbJ3Lqps+j9eiCfMu8VNB
+         4f2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2Y95gsfTo1Xqwwk22XAJqNSkPnxcbRUqyVnkZlVLj7R3mLxGyVD6ddhM2TMtCtXWDkC63xCqJ/c92fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQywlxUmux0ZjC3GgSocXSSHEfFu0M/MOp/sM1dNg3P8wfRQtD
+	HG0O3t0AA+4TrDYaHepduD1QNxnRop3QlcG0sbDiBFtcNqewgi0wBh84Z0xeLxE=
+X-Gm-Gg: ASbGncsefNw7l/raUSZyTVtKL0001yuq/2YXBeZbLlQL+znelcBkmfq2KSINmJCwXpC
+	I29hQqwDtNrUwHp2VoWDhJ8L6/B7gKtPBH9ZNuWWUOdSXUwV5VgAoQg8t0AV1OILGpexn8U1GR1
+	ifEiJgv4weAdfPqywaZiYdP7LaF0RPXjXhAS2q7sNAOP27wvkZmuVzEOr4qQ5RF29UKwaj5db/1
+	m75fX8oWrlftPNVJF0GwWme6vV5Spm1REiAnC8c6G8xUKHswHWIs0mnMNTKwZkAix2xiAd14OAa
+	49/72ECqjxs9yB31tMLQRR32VzE/nnmjjQn/dc01gSzEFUZ0szqc/2KKWJ86IyrSEpfegb7I7fG
+	t2PZHZSHQ5w==
+X-Google-Smtp-Source: AGHT+IEaYcMyM2J73jN2KiJCnMVfuWrigIIuNN4q+hixY4NKk9003rs6CwEym3avXQ9u768D6WfaBg==
+X-Received: by 2002:a05:600c:1549:b0:43d:2313:7b54 with SMTP id 5b1f17b1804b1-43d84f5dfa7mr2331165e9.3.1743008999500;
+        Wed, 26 Mar 2025 10:09:59 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dede2csm8298775e9.5.2025.03.26.10.09.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 10:09:59 -0700 (PDT)
+Message-ID: <0de575dc-5afb-40fb-be30-99906d0e493b@linaro.org>
+Date: Wed, 26 Mar 2025 17:09:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: dt-bindings: Add OmniVision OV02C10
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, robh@kernel.org,
+ hdegoede@redhat.com, mchehab@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bod@kernel.org
+References: <20250324171508.GA668235-robh@kernel.org>
+ <20250326150114.71401-1-bryan.odonoghue@linaro.org>
+ <W8_0Ch2J0PWJ5pKHojZjFbM8huvxWlaWajtl_uhQF3UszGH_O8WTRZdQxh_eHs2JzLOx7CCxx01UZDHPQqAyCA==@protonmail.internalid>
+ <1dd46a9e-e97d-415a-9e33-67ee234c4bac@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <1dd46a9e-e97d-415a-9e33-67ee234c4bac@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-string-add-wcslen-for-llvm-opt-v2-2-d864ab2cbfe4@kernel.org>
-References: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
-In-Reply-To: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Andy Shevchenko <andy@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
- stable@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3083; i=nathan@kernel.org;
- h=from:subject:message-id; bh=KTBrm4WbDj3jrDr3AvU95JjjtHXOiRQkBglBixZek4c=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOlPzFWVThj1n0lOqLQ/fu1pX21+WNfWUy6e5/a4xUdk/
- az/Ivyro5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAExEfgEjw9XCxco+M7W5an31
- bQ1ibD2MPqnbCaq6sD8ymXH7Cv/WGwx/5bu1K/tmviphUZ+spz3n7fec/MUR8x/XN5197XNh2s4
- 7bAA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-A recent optimization change in LLVM [1] aims to transform certain loop
-idioms into calls to strlen() or wcslen(). This change transforms the
-first while loop in UniStrcat() into a call to wcslen(), breaking the
-build when UniStrcat() gets inlined into alloc_path_with_tree_prefix():
+On 26/03/2025 15:40, Krzysztof Kozlowski wrote:
+> On 26/03/2025 16:01, Bryan O'Donoghue wrote:
+>> Add bindings for OVO2C10 a two megapixel 1080p RGB sensor.
+>>
+> You already sent this and got some review. What's more, it's exactly the
+> same as OV02E10, so just put it to that file.
+> 
+> Best regards,
+> Krzysztof
 
-  ld.lld: error: undefined symbol: wcslen
-  >>> referenced by nls_ucs2_utils.h:54 (fs/smb/client/../../nls/nls_ucs2_utils.h:54)
-  >>>               vmlinux.o:(alloc_path_with_tree_prefix)
-  >>> referenced by nls_ucs2_utils.h:54 (fs/smb/client/../../nls/nls_ucs2_utils.h:54)
-  >>>               vmlinux.o:(alloc_path_with_tree_prefix)
+They aren't exactly the same.
 
-The kernel does not build with '-ffreestanding' (which would avoid this
-transformation) because it does want libcall optimizations in general
-and turning on '-ffreestanding' disables the majority of them. While
-'-fno-builtin-wcslen' would be more targeted at the problem, it does not
-work with LTO.
+The i2c address of the sensors is different 0x10 for one and 0x36 the other.
 
-Add a basic wcslen() to avoid this linkage failure. While no
-architecture or FORTIFY_SOURCE overrides this, add it to string.c
-instead of string_helpers.c so that it is built with '-ffreestanding',
-otherwise the compiler might transform it into a call to itself.
+Also different data-rates for each chip.
 
-Cc: stable@vger.kernel.org
-Link: https://github.com/llvm/llvm-project/commit/9694844d7e36fd5e01011ab56b64f27b867aa72d [1]
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Seems simpler to me to have two separate files ?
+
 ---
- include/linux/string.h |  2 ++
- lib/string.c           | 11 +++++++++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 0403a4ca4c11..4a48f8eac301 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -7,6 +7,7 @@
- #include <linux/cleanup.h>	/* for DEFINE_FREE() */
- #include <linux/compiler.h>	/* for inline */
- #include <linux/types.h>	/* for size_t */
-+#include <linux/nls_types.h>	/* for wchar_t */
- #include <linux/stddef.h>	/* for NULL */
- #include <linux/err.h>		/* for ERR_PTR() */
- #include <linux/errno.h>	/* for E2BIG */
-@@ -203,6 +204,7 @@ extern __kernel_size_t strlen(const char *);
- #ifndef __HAVE_ARCH_STRNLEN
- extern __kernel_size_t strnlen(const char *,__kernel_size_t);
- #endif
-+extern __kernel_size_t wcslen(const wchar_t *s);
- #ifndef __HAVE_ARCH_STRPBRK
- extern char * strpbrk(const char *,const char *);
- #endif
-diff --git a/lib/string.c b/lib/string.c
-index eb4486ed40d2..2c6f8c8f4159 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -21,6 +21,7 @@
- #include <linux/errno.h>
- #include <linux/limits.h>
- #include <linux/linkage.h>
-+#include <linux/nls_types.h>
- #include <linux/stddef.h>
- #include <linux/string.h>
- #include <linux/types.h>
-@@ -429,6 +430,16 @@ size_t strnlen(const char *s, size_t count)
- EXPORT_SYMBOL(strnlen);
- #endif
- 
-+size_t wcslen(const wchar_t *s)
-+{
-+	const wchar_t *sc;
-+
-+	for (sc = s; *sc != '\0'; ++sc)
-+		/* nothing */;
-+	return sc - s;
-+}
-+EXPORT_SYMBOL(wcslen);
-+
- #ifndef __HAVE_ARCH_STRSPN
- /**
-  * strspn - Calculate the length of the initial substring of @s which only contain letters in @accept
-
--- 
-2.49.0
-
+bod
 
