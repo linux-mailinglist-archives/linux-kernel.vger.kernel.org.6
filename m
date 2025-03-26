@@ -1,185 +1,137 @@
-Return-Path: <linux-kernel+bounces-577163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E9FA7193E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:48:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E05BA7196B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089007A6319
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7773ADBB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4C31F3BB2;
-	Wed, 26 Mar 2025 14:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975B1F3B98;
+	Wed, 26 Mar 2025 14:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYXN9ZXj"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkytLo7f"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBF618EB0;
-	Wed, 26 Mar 2025 14:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994111DEFD7;
+	Wed, 26 Mar 2025 14:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000418; cv=none; b=s+ndm18scIOlGFCx2eTyXemOyVBIc28PJJlKyY+EX7+EASZ65p1W7jHMalbmquUGRTTFTBv+hkbdcDsbjuJelLIFOXf6M2PcWK+DJ4RezLg4HRIfnsiXonTswcPdIeiYFaAhu48xpNQwUMrK4xhkGaBm4bGxgwyltCSfFNxEFSc=
+	t=1743000456; cv=none; b=ra7MmSRgXtYyMK06pmAsKEznEeDrqVMD32RKbQQ1rB1hVTavMxICrTdsQU1Cgwdvmj7B6RScjJcK8AV7SXeF4q9QWo5iYNpI2fp6ZhMvy1rxTat13Je84lZX/20rqAvAmgCfGYOxrFPEQN+rMsaDqQEp2V5vmRnRtIRCtSwnKOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000418; c=relaxed/simple;
-	bh=MDabLycR3eVXHjW9aTAlVmTDW1NcgLcT6BbTcpxQhE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AUY06VxZd8cCDVE0Mnb+X4UfSadILtAm/jhmFjGECT6VEYG5UW99iheOGoWDN0aVp4S+MoMvqbpu1oXD+czk3Cyhu5rRd2sqilmZeASk5UZGgXoP3kvslRQIri0HBbVFBTF/vBj/BoWHkJXoRs9Jpdv/P760Apaz4XRFsfRHPX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYXN9ZXj; arc=none smtp.client-ip=209.85.166.177
+	s=arc-20240116; t=1743000456; c=relaxed/simple;
+	bh=nQHwaxjR8CO0tgJWL7PgM7ZESLA6hMbTYzDTbj02txM=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRj9UzPmCOBFucOxdxuVtcUAO1vnw09UijUWVst+GeDnwyWiLOPPILEtLGbRu58QFH3PQUBkA9DdCeSX0jbDPREiB9EZGV12BroYWmXQF6NID3m3C81CTTL74SKotvwtjYyv1JnpLj8BuJ7JnWPvuh7W8QlTh4Q27AsEO3hXTIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkytLo7f; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso26432335ab.1;
-        Wed, 26 Mar 2025 07:46:56 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso68331585e9.0;
+        Wed, 26 Mar 2025 07:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743000415; x=1743605215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yIzY6JuPtPbu1sd31VEp2X/O3x/UgKedEbGz6vT002k=;
-        b=JYXN9ZXjYplhuYwBq5nYLwduBEQj34MxftePDxokCU8EQxnFB+VrMcGY5srJ7u6v9U
-         VuoPFFnkOn8y8L0E5cCN9wAu2p+hcOHCNEwgvSQWhDaqkOw8N76DF6ALM7+61vEDs7bT
-         aDTmwxL8e215SnFxSnDZO7spEvJjQ65RTXLupdvJAJdt1XaP1E/NrsH9s+Cx2caP98bq
-         ArBSr9H+PQstpEICf5By+pz1ySZqHaNcLTEKehZU64jqBrdNI3wmDQjhkz8xm69Ip6F+
-         ib4MWpOGk/VcL/xp9LQijvhovbFqln4QoCKFS9RS93CyrwJUoR9oxl8m6A6WmvHIapiQ
-         YpBw==
+        d=gmail.com; s=20230601; t=1743000453; x=1743605253; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=39ME7p5eLaR1hcfbNt4XmwgZF3ncfkWZ8Hrmuut2Ejo=;
+        b=GkytLo7fVA19PPWH1XJcGJWaNmY0ENSwqSOlQYnJk+PFdfAlU0wqmzJVwNO/u5Exdm
+         8IHWERYtnQqB6jM8gtv4EcaQz8aH7MuDeja7KlxuPCjCa2N8Ucu01vP7v8jhq9dmo92V
+         wVhgwy667DWtx4z9zQN1Non1Uf4Hc3kIuwuVFPi82gsUuQwPxrodSXynZjnoPzBao1O5
+         VZ4CImBRiUsYaIy3u2RbgtF6RbNHCQqSXbymBZQhj56+p//1qNpT/EfSGQwwok5gX3vT
+         I3kGDk1ZelWVnuEjZwiDnaI3tYNpLwxa9UMFQyyo02EK4RzpaQU0EkOsUwE5oX2E0AmV
+         P80A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000415; x=1743605215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yIzY6JuPtPbu1sd31VEp2X/O3x/UgKedEbGz6vT002k=;
-        b=ftKRxQvQLMfPQ65EC4yVjqMo8mtTAxfgjl5+COEqtHJXs0wN8HwyFxMJ2O63CI7AFN
-         uuM9Os0dTjd646nI3Z5bu83fWLcd8ShPbXmmLxbr17dnHSQ0w6t00PJmA994jnU+KqDe
-         iiFOw00nbp3BzL8rqrIPog0HLv54HmX/jo9JrSXvSbWbpYjwKd7bTqfvKEPoRjA4QGtX
-         8jhTEiw+BB2OTK811fXD93REx5d4yJOAaS0WFlQt553i4m0eXSQXjwzHH6n6fsLBQFnY
-         HpW7etAI8UdPSo52mPkIn1gjNs65ChrO9/ZRWMr0icL1DOp/fXAqRR6PfhX0C2+F6s0I
-         ZIvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUD/jWIpnOkOHPESIt0VZUsnzLCNCMK12P8qlFB28aGbb45UgQzl8wIxziACxIstwVo84+ThA/JS4WpIE=@vger.kernel.org, AJvYcCWoDouDevyMwhUgFRgKhKW1uKrr0eAtDOKXsW1N6NThZYSVpBPBzssYxUmhr+jlc6lRoioDk2i9OYvSvBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySExPbnVZNifGt4mDrXVX+8HmbGR/FAsst3TJSI7PNLXanb72W
-	UQZsYc4z7IVPJVzGA7GCRAf4DjAymbDbH9cYouisjsFmAjvUn4QMjesftVdohIPNkyvYzHTdUlA
-	ZNNVlBqF6mQ2AMJcfi7Y69pbCzZk=
-X-Gm-Gg: ASbGncsHQhvuoxe8tC2YS3hOUewYnkZsd7hFCH8BrI1zbTLap457yu156LYN4ryq8q4
-	nMmh0c50y2uRwCfT5lEC8JhGT7rXhEECGOfNv/zqgASpYsRoMiMMYGS1QtIqVVSLgv9iF4qkZ3L
-	sZ82BHqwWRfh1VzlYjrLtiWi02fgl/fkwOcS/KC1wKd/xgSKGBtvScw7I=
-X-Google-Smtp-Source: AGHT+IH8ychrG0Yq2ngyD0ecOqCO0RE/LXSO0aLcakG9T0PKFMWXaArBnOsdvh7pxztVoJ5s0s/eUYqjpz4S8ZEnOmM=
-X-Received: by 2002:a05:6e02:260f:b0:3d3:ced4:db9b with SMTP id
- e9e14a558f8ab-3d5960bf801mr234679015ab.5.1743000415399; Wed, 26 Mar 2025
- 07:46:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743000453; x=1743605253;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=39ME7p5eLaR1hcfbNt4XmwgZF3ncfkWZ8Hrmuut2Ejo=;
+        b=TwsdB9BsJLM3H/4kbQaOr8Na1oBph2I7YWSPthU4thuLbi2FbXm6pKn3Y4A2L1wPtl
+         ITxMK3YXqnSa0JdJ53rM9z7kbwF4bTRWKsh7cP1qBantGLnMDTW9Z/Kz88ZSqh7PclCr
+         Mt2QaYfXLnrWsUH/NcozAN1+WoAHoAEzo3YVxix3bdaus3ZhvmuWgrqxaZ8rHdmKi5Oi
+         /lZNJutiXNs8bKhHp/Z+PWG0pBZrh/6tMkaOh/+1qV/T7BZkhBqVFrjmO4fAtRxhmLt1
+         cyGhqULPogFWDsZs5mlu2NyMRwC6rb9YF+G9pBnGz+k3NbgGVymgGq599OpOy1L++7cv
+         XkAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5VZD2+u1nKuBFJN5e93veSF3cT8HUE2YkGcTysWSHoPXZDBW1HnuojCfBqj1g38DdCrIytIIzp8A2@vger.kernel.org, AJvYcCUQp7I/vTuCJu6RBtkOz24j1OGuE8/9901GjaRdRE7XcBms/+MsRTcbAJ/Y6w64FVe57/21xmHBmKumFMdr@vger.kernel.org, AJvYcCUZQWWOLNHRf7SicsWNGZBFxqVQ57ggRZrsrAJVvqZbASjjui+GiYa4dN6a8pqQeU7o4cff16vS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoXqOEPE6sf3FubgfHIsQ5DtfHejhhnpP3lIqQP93vJ4NP1UyX
+	jwxZPW7yXqstfKCPJ47ivonDxhrf5W2BDkBhBbU5YP5GJup20jbI
+X-Gm-Gg: ASbGncu0KZaQvgYExGKrNnIawTm0P8pcqpspQSyqp3O02/ZxzCVqjPA43P9spH3SFeI
+	HOgasQwJtqkbsz6t0JIy4WDNf+OyOL+F/jLtrK91c2KHXZl4VgPKMXzJumJ8zWqTetA5R5Ulwrb
+	Vo41wPe/sgFBO671I6ddDWg3HYR4YacZP3HzzAhF1BCurqyC0g11rzIaXovyINWGcD8I5s0wBIv
+	SQSrdiV9WyQRR5h5LN7h/T8mi29ffldls7snwW8zxQkUlfiedGOLnMCP4y1V3h+eApU5Kq/mzJA
+	BODMHN//+oP66l9ZMwTRxxXj7DMnBcEugoPAqw2eHq/v+JY5AIsP+wcehQSMl8RYNTCjw4Ijhf9
+	9
+X-Google-Smtp-Source: AGHT+IEkprDARHohL99BkF+vUUKFTW3i4+MC+nQyhd1smUBMoa+9+btab3iJ8OvGIU508Uhu9eNAYg==
+X-Received: by 2002:a05:600c:1d02:b0:43d:77c5:9c09 with SMTP id 5b1f17b1804b1-43d77c5a08bmr37312175e9.24.1743000452479;
+        Wed, 26 Mar 2025 07:47:32 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b4ce9sm17218000f8f.53.2025.03.26.07.47.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 07:47:32 -0700 (PDT)
+Message-ID: <67e41384.5d0a0220.e4975.e9c3@mx.google.com>
+X-Google-Original-Message-ID: <Z-QTgbrYFES4bT6N@Ansuel-XPS.>
+Date: Wed, 26 Mar 2025 15:47:29 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
+ AS21xxx PHYs
+References: <20250326002404.25530-1-ansuelsmth@gmail.com>
+ <20250326002404.25530-3-ansuelsmth@gmail.com>
+ <Z-QG4w425UuYXZOX@shell.armlinux.org.uk>
+ <a3cddcf4-bdcc-49f4-9d72-309854895c7c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326143903.24380-1-robdclark@gmail.com> <342ee079-ee0e-470d-afd2-c2870115b489@amd.com>
-In-Reply-To: <342ee079-ee0e-470d-afd2-c2870115b489@amd.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 26 Mar 2025 07:46:43 -0700
-X-Gm-Features: AQ5f1Jot6jmzcgenF9qhrGVKGty_zzWylGXQwExIfmbDgtMjYHnUNBwSawcKJxY
-Message-ID: <CAF6AEGu2Ax+u3QmD2VADwh4A4s5TAmP5Lq4DcYYadKP4csH-=g@mail.gmail.com>
-Subject: Re: [PATCH] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>, 
-	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3cddcf4-bdcc-49f4-9d72-309854895c7c@lunn.ch>
 
-On Wed, Mar 26, 2025 at 7:41=E2=80=AFAM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
+On Wed, Mar 26, 2025 at 02:57:09PM +0100, Andrew Lunn wrote:
+> > In summary, I really don't like this approach - it feels too much of a
+> > hack, _and_ introduces the potential for drivers that makes use of this
+> > to get stuff really very wrong. In my opinion that's not a model that
+> > we should add to the kernel.
+> 
+> I agree.
+> 
+> > 
+> > I'll say again - why can't the PHY firmware be loaded by board firmware.
+> > You've been silent on my feedback on this point. Given that you're
+> > ignoring me... for this patch series...
+> 
+> And i still think using the match op is something that should be
+> investigated, alongside the bootloader loading firmware.
 >
-> Am 26.03.25 um 15:39 schrieb Rob Clark:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Add support for exporting a dma_fence fd for a specific point on a
-> > timeline.
->
-> Looks good on first glance. What's the userspace use case?
 
-Timeline syncobj support for vtest/vpipe[1][2].. since core
-virglrender and drm native ctx works in terms of fences (since in the
-VM case, everything is a fence below the guest kernel uabi), we need
-to be able to turn a point on a timeline back into a fence fd.  (Plus
-it seemed like an odd omission from the existing uabi.)
+The main problem (as said in the other answer) is that I feel match op
+won't solve the problem and doesn't seems the good place to do complex
+operation like OF and load firmware.
 
-BR,
--R
+But now that I think about it your idea was to define a match_phy_device
+for each PHY ID... The generic PHY ID is detected and firmware is loaded
+and the PHY ID is checked again?
 
-[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
-[2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/805
+That way any other call of match_phy_device for other PHY of the same
+family will found the FW loaded and check the ID?
 
->
-> Regards,
-> Christian.
->
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/gpu/drm/drm_syncobj.c | 8 ++++++--
-> >  include/uapi/drm/drm.h        | 2 ++
-> >  2 files changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncob=
-j.c
-> > index 4f2ab8a7b50f..eb7a2dd2e261 100644
-> > --- a/drivers/gpu/drm/drm_syncobj.c
-> > +++ b/drivers/gpu/drm/drm_syncobj.c
-> > @@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(struc=
-t drm_file *file_private,
-> >  }
-> >
-> >  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
-> > -                                     int handle, int *p_fd)
-> > +                                     int handle, u64 point, int *p_fd)
-> >  {
-> >       int ret;
-> >       struct dma_fence *fence;
-> > @@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct drm_=
-file *file_private,
-> >       if (fd < 0)
-> >               return fd;
-> >
-> > -     ret =3D drm_syncobj_find_fence(file_private, handle, 0, 0, &fence=
-);
-> > +     ret =3D drm_syncobj_find_fence(file_private, handle, point, 0, &f=
-ence);
-> >       if (ret)
-> >               goto err_put_fd;
-> >
-> > @@ -882,8 +882,12 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *=
-dev, void *data,
-> >
-> >       if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE=
-)
-> >               return drm_syncobj_export_sync_file(file_private, args->h=
-andle,
-> > +                                                 args->point,
-> >                                                   &args->fd);
-> >
-> > +     if (args->point)
-> > +             return -EINVAL;
-> > +
-> >       return drm_syncobj_handle_to_fd(file_private, args->handle,
-> >                                       &args->fd);
-> >  }
-> > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> > index 7fba37b94401..c71a8f4439f2 100644
-> > --- a/include/uapi/drm/drm.h
-> > +++ b/include/uapi/drm/drm.h
-> > @@ -912,6 +912,8 @@ struct drm_syncobj_handle {
-> >
-> >       __s32 fd;
-> >       __u32 pad;
-> > +
-> > +     __u64 point;
-> >  };
-> >
-> >  struct drm_syncobj_transfer {
->
+That might work but sound more like a trick than a solid implementation.
+
+-- 
+	Ansuel
 
