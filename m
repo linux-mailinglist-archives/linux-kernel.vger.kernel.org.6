@@ -1,112 +1,200 @@
-Return-Path: <linux-kernel+bounces-577674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4B6A72022
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:46:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EAAA72024
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33507A62D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE763B8DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFA725E833;
-	Wed, 26 Mar 2025 20:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E28C25E45D;
+	Wed, 26 Mar 2025 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TVgI0SUa"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5e2V9tM"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D96B25D91C;
-	Wed, 26 Mar 2025 20:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99461EA7F3;
+	Wed, 26 Mar 2025 20:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021986; cv=none; b=MFbio7fq77+g8/SXinEOp2uoL6l//5KUZTlBKycgpo3CuOHyDgpNqiZjNyaYjbh1zh8bWpJBdzEvbS4vEfcKsr/lVQiPkf4pSEqS8ZdFM6/Kt7AqSMPLGkuQLvMGAK7w+NagsT3BPet1REI4DyeZgUU5AMX2EShLtsWUHe6OA6Q=
+	t=1743022014; cv=none; b=myztkfqQJoyjNvR7WiF+P13RruwC7/Mmpy+qtsU/rybV/wIXGC1Kds0T0CnhHfzCv2rP2Cpxd8gTeGJiiRcjMiYbaDshGxuiyNazr5igu7Rw9M8dBkn7JdWB/biN1sOBQA8AZuwsYMh7pGn9xFvtqYFrYfMgSIjiaY/zkBMiOYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021986; c=relaxed/simple;
-	bh=uPIdZzvUZ3Cb3h6qpZvceuKU3wTY/PbfMb1Oq2SX1+w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bdt5bZ4EODshRqrT7OhsDRd7ZbaU1aZj814dVw+HepoALszi/z//kKCo2YWSwwyT/QHQ0U0RTW1TTa1fRnrkT6R1JLIMzLTySw+Lko79ZzvGUg2E7BZdyWm5Q2boMnZ77pTyn85JAOf49SJn/sG/PO8YnP45VavTphTD2yq8Mmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=TVgI0SUa; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743021983;
-	bh=uPIdZzvUZ3Cb3h6qpZvceuKU3wTY/PbfMb1Oq2SX1+w=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=TVgI0SUatr+ieXOlq2Tq8wVq5Imja7W68y0snp77lb6JLAOa8h1vGkm27d6PoaNjZ
-	 24eRS6U2T5W8ro53JTBOmT1tsdBkhxnkTh6hHYbOSHsr1dXoK5PemwPByzUSbQMmv7
-	 5B+HrNOxw/vNAo+BW4xB97FfhdOQUfEA/EtZPSvs=
-Received: from [172.20.0.78] (unknown [99.209.85.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 991041C001A;
-	Wed, 26 Mar 2025 16:46:22 -0400 (EDT)
-Message-ID: <5b02fcfedcd006d202d38e2ec16b477919264408.camel@HansenPartnership.com>
-Subject: Re: [GIT PULL] bcachefs for 6.15, v2...
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-mm@kvack.org,  tech-board-discuss@lists.linux.dev
-Date: Wed, 26 Mar 2025 16:46:21 -0400
-In-Reply-To: <wg47lanrvfqkqdospive4b3ymc5snuhqdygcle33q3cxudw3xl@rkllblbmre4v>
-References: 
-	<wg47lanrvfqkqdospive4b3ymc5snuhqdygcle33q3cxudw3xl@rkllblbmre4v>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743022014; c=relaxed/simple;
+	bh=XVvYprEkbjnr0JIrMIvTTJqMyViugTfS1DVRscCfwoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mVEExqt6T+PnF7w1GGfXslLyoXKf0LyI1zT3qwyXM3dERhydSoAcocf4/AwJZOUisKgEkQxby/txwXpnJNQtWB0gx89swNTtOEflKpoN3G4ZdZNFDuZe1HduZhVlhaF/RhRqTNSyZIgNel60E0R/zZVspqsfxYOxaJAD/NwdXXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5e2V9tM; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so929425ab.2;
+        Wed, 26 Mar 2025 13:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743022012; x=1743626812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5JhMoKQ5EpQ1pQUTEtH4nghhLWcwT/i5YVCywj3TCE4=;
+        b=d5e2V9tMEcmrPVq84rCbmwVXZK1bf2xG6xrCl2qHnr3obnVi0ekZNHLRZRNGmfRLdm
+         hoKth9laikV9bH8Tz5y+Ma8lLwrfHoIQ8LY+Z3jJUejCqrlwyBuh15M+yA0lR5ybcIy/
+         kt6MrBxvJeKVbDUn/LBLabEPN5qFgp7no25sPFJ4q7uu1IklnoTR0nAk+21y1kmvKNCu
+         7wqKmoe6UwGZW+ucf8O/vKL/3oMwDbQluxwTckUG9fA1nHownI/btuxYkKNrlvEPUuCQ
+         uWVbRx5r12uVhzbMLk7Kgk1n0mhcswhcAPia1ai4svhbtxoM1rdrvQtAdNMsFNx4nfYu
+         p85g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743022012; x=1743626812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5JhMoKQ5EpQ1pQUTEtH4nghhLWcwT/i5YVCywj3TCE4=;
+        b=F2eGP81H/j8wEHtpzvlVKdoD4vlQBaKoasJUDgSNQjjPjP/XPmVROxt25ZWReEEYMy
+         MbCyJsbMOlaAF8CjjtDcVcAAicQlutrwimtLn+EagLepPLDQjuciRPu8DVUl6YwTMssW
+         u9Q0rtTRbWmDWyA0i1IO1NYCUhNljtQAUZK10rvdUmk3LhBdG2bV30v50Abt0obmT2BT
+         IwFam7iZ+CFJV0Q8SLD9B8BHDDaVUyJq7YEj5WqfNwRklhJAaR3PniqUmKWY1bg6NYyZ
+         OkkatefdyhbB1bEIzQqrrsFH0/A1jhyQif7SoW322cChSowFyriF4GLHaTrT7FQUpsbV
+         FWMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMTQnmaJ9BtueMhjNyYQmBhL8W7Tnpc1PSmsKtg5wLxxtbaNJSM9gHPUz8U63/I/pE3/RGKMRzhp/Pg84=@vger.kernel.org, AJvYcCXbe1sYVmN4IK7FjVya946pO3Rkd33Kd5UD80Q21tVdmFf9JvlnNWrx4ITdhYbFbgnS60/61830ts8UwUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/708GuQXW6VVoJr5ISwTNu/PkJolOw39pwWA7U02xZh1YVUMT
+	QvhDRzONF+xuDBoEbxFhWw20RqbawTMyDzNkS1HtN/BH8D62woooTREgRot3JkBG6UTdeUUHerp
+	oOxTqRw68Vz64Mv7Dvx0cQ6sQ2+3sftWG
+X-Gm-Gg: ASbGncuH4IrrUngO3bRo+BGWVcJQEZSRLvsdToZOmwoH5Nc8+7+sz6u4du0kgrRjTO7
+	8BLiI2woDIvpcyiWw82U+mgW5wvOhk3eC/EHdz0eq9R/M4C1HZKY/au/QPZxPJ0MXRE4Jp9g4dd
+	8D19zAKriZtQGCyKkpXCxBvNs2u8yYbZGIvQ6y8hfKtABJt79UNe6U3X4mcffmB8BCKT8=
+X-Google-Smtp-Source: AGHT+IGLmmU7KJxynJ3JmzAzaYdjW5MSKvJRuKUzfOy/PXKBCJHqw2vGsRgic8SeuLTGlXrTd5GgP9KRL2pxFlwrF9Y=
+X-Received: by 2002:a05:6e02:1fe8:b0:3d0:bd5:b863 with SMTP id
+ e9e14a558f8ab-3d5cce27d98mr12686545ab.20.1743022011691; Wed, 26 Mar 2025
+ 13:46:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250326143903.24380-1-robdclark@gmail.com> <342ee079-ee0e-470d-afd2-c2870115b489@amd.com>
+ <CAF6AEGu2Ax+u3QmD2VADwh4A4s5TAmP5Lq4DcYYadKP4csH-=g@mail.gmail.com>
+In-Reply-To: <CAF6AEGu2Ax+u3QmD2VADwh4A4s5TAmP5Lq4DcYYadKP4csH-=g@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 26 Mar 2025 13:46:39 -0700
+X-Gm-Features: AQ5f1JrBlKDKgO0ATBxgVYhh5njSw5419j_VUVoZrjO0N4Ci8VzagRd6Vn0tpUY
+Message-ID: <CAF6AEGv-Zad2GF-=gDdYQdZGkJ_u+eyBFvTNK49m5+1ycaZu9Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: dri-devel@lists.freedesktop.org, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Rob Clark <robdclark@chromium.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>, 
+	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-03-24 at 14:56 -0400, Kent Overstreet wrote:
-> The following changes since commit
-> 1a2b74d0a2a46c219b25fdb0efcf9cd7f55cfe5e:
->=20
-> =C2=A0 bcachefs: fix build on 32 bit in get_random_u64_below() (2025-03-1=
-4
-> 19:45:54 -0400)
->=20
-> are available in the Git repository at:
->=20
-> =C2=A0 git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-24
->=20
-> for you to fetch changes up to
-> d8bdc8daac1d1b0a4efb1ecc69bef4eb4fc5e050:
->=20
-> =C2=A0 bcachefs: Kill unnecessary bch2_dev_usage_read() (2025-03-24
-> 09:50:37 -0400)
->=20
-> ----------------------------------------------------------------
-> bcachefs updates for 6.15
+On Wed, Mar 26, 2025 at 7:46=E2=80=AFAM Rob Clark <robdclark@gmail.com> wro=
+te:
+>
+> On Wed, Mar 26, 2025 at 7:41=E2=80=AFAM Christian K=C3=B6nig
+> <christian.koenig@amd.com> wrote:
+> >
+> > Am 26.03.25 um 15:39 schrieb Rob Clark:
+> > > From: Rob Clark <robdclark@chromium.org>
+> > >
+> > > Add support for exporting a dma_fence fd for a specific point on a
+> > > timeline.
+> >
+> > Looks good on first glance. What's the userspace use case?
+>
+> Timeline syncobj support for vtest/vpipe[1][2].. since core
+> virglrender and drm native ctx works in terms of fences (since in the
+> VM case, everything is a fence below the guest kernel uabi), we need
+> to be able to turn a point on a timeline back into a fence fd.  (Plus
+> it seemed like an odd omission from the existing uabi.)
+>
+> BR,
+> -R
+>
+> [1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
+> [2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/8=
+05
+>
+> >
+> > Regards,
+> > Christian.
+> >
+> > >
+> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > ---
+> > >  drivers/gpu/drm/drm_syncobj.c | 8 ++++++--
+> > >  include/uapi/drm/drm.h        | 2 ++
+> > >  2 files changed, 8 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_sync=
+obj.c
+> > > index 4f2ab8a7b50f..eb7a2dd2e261 100644
+> > > --- a/drivers/gpu/drm/drm_syncobj.c
+> > > +++ b/drivers/gpu/drm/drm_syncobj.c
+> > > @@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(str=
+uct drm_file *file_private,
+> > >  }
+> > >
+> > >  static int drm_syncobj_export_sync_file(struct drm_file *file_privat=
+e,
+> > > -                                     int handle, int *p_fd)
+> > > +                                     int handle, u64 point, int *p_f=
+d)
+> > >  {
+> > >       int ret;
+> > >       struct dma_fence *fence;
+> > > @@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct dr=
+m_file *file_private,
+> > >       if (fd < 0)
+> > >               return fd;
+> > >
+> > > -     ret =3D drm_syncobj_find_fence(file_private, handle, 0, 0, &fen=
+ce);
+> > > +     ret =3D drm_syncobj_find_fence(file_private, handle, point, 0, =
+&fence);
+> > >       if (ret)
+> > >               goto err_put_fd;
+> > >
+> > > @@ -882,8 +882,12 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device=
+ *dev, void *data,
+> > >
+> > >       if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FI=
+LE)
+> > >               return drm_syncobj_export_sync_file(file_private, args-=
+>handle,
+> > > +                                                 args->point,
+> > >                                                   &args->fd);
 
-I note that the controversial block changes that got NAK'd but which
-you tried to put into your first pull request are now removed from this
-v2 pull request, thanks.
+Hmm, maybe I should add DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE so
+that userspace gets a clean error on older kernels, rather than having
+the point param be silently ignored..
 
-I also thought it was time to state more formally what's been
-circulating around a few maintainers as shared knowledge: any tree you
-send a pull request for that includes changes outside of bcachefs won't
-be accepted by Linus.
+BR,
+-R
 
-Regards,
-
-James Bottomley
-
+> > >
+> > > +     if (args->point)
+> > > +             return -EINVAL;
+> > > +
+> > >       return drm_syncobj_handle_to_fd(file_private, args->handle,
+> > >                                       &args->fd);
+> > >  }
+> > > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > > index 7fba37b94401..c71a8f4439f2 100644
+> > > --- a/include/uapi/drm/drm.h
+> > > +++ b/include/uapi/drm/drm.h
+> > > @@ -912,6 +912,8 @@ struct drm_syncobj_handle {
+> > >
+> > >       __s32 fd;
+> > >       __u32 pad;
+> > > +
+> > > +     __u64 point;
+> > >  };
+> > >
+> > >  struct drm_syncobj_transfer {
+> >
 
