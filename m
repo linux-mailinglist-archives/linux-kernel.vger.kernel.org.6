@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-577431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB61A71CEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:19:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64469A71CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFFC3A3D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34C3188FAE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C41FC117;
-	Wed, 26 Mar 2025 17:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469531FECC3;
+	Wed, 26 Mar 2025 17:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WkaRsmdO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fhVsjeVi"
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F691F9A90
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C261FECA9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743009430; cv=none; b=YEFX/pWkNcH1ZXd82vlf+7cLWZ2q5t5brJAVJnAoYy+RXla2X5U7XdZhkSbsYnkGxb+ttJzMIKSvugtdVunsIvSJfPyVI/exdYD8H4QWoJx9v2xMd0eeQ4Sh//gTDkv7wapLYeVkj4/h5VvRdHL7aUV9H4je89fkj2ZhrYY4TxE=
+	t=1743009465; cv=none; b=Fnlaxn2eFmTJ4UwcprycYEjCkktk4fjZZ+ax3TjaZAEuKVWE3o7AOUupTZHZSfIqKGi2i6leCLVmdsKbpeZ6C5thgAsR0olphR799aKmwsUxOug66h0L8Fo+HJvAtfo3dxi2SdpH8hbmuK0bdwJDMVfGQ4dKo2QyLMuMVnkmgU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743009430; c=relaxed/simple;
-	bh=ULQll42SpXp13/9+pqAM5sMEpJ0dbiOa04Hrg2p6sXE=;
+	s=arc-20240116; t=1743009465; c=relaxed/simple;
+	bh=R+Y80Fl4D3XILmrZi78H6SULsEtuP/szZHrz0dbbl68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4t0td6kRHWwG3atDOYQjVSDorktlzKmEUDq6nGJvmM44ta4R63Zd0CX4ygWQDckWLNh6+FFvlvvAdsMu24BpTRLpt6k3fsr/nurWRFTZln2xIBs84hnWfdURyi30D9p4SP8uEbjYQh65/VmFTK+2hNd9cRhLcQx3Y4p1KWxJdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WkaRsmdO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QF1Tie006152
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:17:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=57VyLFaymf8F9QU36mtSjFzj
-	QMz+UO59TFULkEduc7g=; b=WkaRsmdOaVzXTCXblrwhQ7etqbA9GJ8a7O3AI+A9
-	N0aYAr1dPUV3QNo7t/pkbcW+NO+iEvGg/FhM9wvxzlzKbVGoaLdaOWu7Lus9tdWK
-	eeWnWdgTGREkjZkoH5mPlJs1uDrUOyPamsEQE1mLHUM0OzXHwjCbcktrPOpLn0KI
-	FSSHkY/5RPHbY9o1KMFMG19zZmEHRmsbOXHQbdQ0KJoxLe9vNpN/+/7n7qRP9ra+
-	CfXNNIR7+oMYjE8KbVScA1tOl8++kb1GHuf//T2T3RnP/3cSkNmNum80TBXHlhqa
-	FjGMwnYhOGsU9+vVp1znwKEYZ0IKzEzlto7Kl3IB4VCVRw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj24r8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:17:07 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3c8f8ab79so15608885a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:17:07 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=REXh2irOTaDigdIYZMTJCf5Rss+vxqYEE+HPn3uIl0idOUASsKou+eh5Wg7MgNCCHbYTMTHG9Z9FKnFb9LezM86FCbz6QDIcLv+aKN8XIlVD3VkecwqVW/0n2m24QD+hGXeWNghkxDU+rvT/vIImgt4G1EpYR63RY+Uxdzx+K1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fhVsjeVi; arc=none smtp.client-ip=209.85.214.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-22580c9ee0aso3229275ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1743009463; x=1743614263; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R+Y80Fl4D3XILmrZi78H6SULsEtuP/szZHrz0dbbl68=;
+        b=fhVsjeVibWxGja8i6E1jFRPaCSm4bGgFSNiUNeThA3L1bLPxDt80rWYj124SOQxXdE
+         +ZPeLsz/6iE7/Q582xjwt15CSyFyVC2+mNN3nzn0w5e0qh36hDRM8sH+NEdrMg7/+IYL
+         RuxmLAtfnfDc9c1TI9I5lap9ph4qnWSnloNypl/qcVPXrFH87Srx+ba7umPNF6TP+jv1
+         ZSL8bhfdQ7KCcoKb3JO2o2KVY2alk8oB/QbU0M9VFezOUmk931gRRvfYY96x0C4vYKSw
+         b4eoqOgNgTrwjkQ1Hj5c/O921TcarZjjQJZ+fmHK4oY7rKDxdba8gKFcKwphpBqxSHfm
+         +vAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743009427; x=1743614227;
+        d=1e100.net; s=20230601; t=1743009463; x=1743614263;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=57VyLFaymf8F9QU36mtSjFzjQMz+UO59TFULkEduc7g=;
-        b=ZOEU21D/Rc3bKlQRQhVJnFRU19Pa+TXDsvtp47C86BVQH+LWrto5ZCOfS+nDQvky6G
-         u96MzXz2H5RV2GY388tpHcQVry0uTY2/cBgtBs1AYByblJwipaPVPUnBQtUxl9Lv3p8O
-         hHpj+fbTTiG+ZHMCYQAnRDxOoeCwxAIxhPEZhQBDBwdMjjfX6rcwS/5dxxrP4i7H/blj
-         UCGnBRuXOf2XVU9VCQsfrFM4dRVFML2rORrq2bGQosHHiBK+YAkUTWbLcAj5YzCh454p
-         6h8lUXObYeNm2p08y1j9lYVh79g7+v+ozfSia+751IBftcbjriVkG/HrrQwGjKtj+Tl8
-         VCpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEkGDmDGPxqmy42TSkqt82+WesYGpcL4KmAJUq6KNHdLIeUUZ1Br3+nLxZdGAAdtBBB1ZY4kgn1Q3e/fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFgIE3i/q1K/MyxN3ZZJjq7DG7WHNITfPuT2gSLiGT6/nchufm
-	EuvuQ0kP2L+YHXfXz7ToVdcL1zcfxbJohU2Z1pe7rBJhC+AsRzco1is5rSyR6zFH9U+9I9mVn3U
-	oSCfZ8XcThrMHq0fkr4lPwMGn+W3CGine9NWHMbAWgC9rN858j2c9jmtf1YPRIik=
-X-Gm-Gg: ASbGnctbBvGMHk/R9HbbQFxdHB20fvcNabsP1hcpC5w6f6c0V7v+jiCSx42t6Weh6+x
-	BXXTD5rcUBtUujLOJURawbP/cYQs+WNanF95TLX9JY8aG41mAA6Dhvunvsc65Ej+mpOBL2nRpMg
-	MvOgiGy6qIU+gjqIl2htIcb2t86t7xc4bTX4xa9POHVYAl2+StJ5/78RgGwkaiJYrO108pmXv35
-	2lwerporKclvEI9EyTrULkaBr9wuau5hW2PFL4ae4P0ivXGVMp32X8A70QzKgTdeUVNVJsQzQgW
-	JV7hIFCYZaIEbXknLhy3BcHJ/gHczy+KeL9rdcDMKoxAhTYyEZKKxM7AnxOaiIzHjAdNAh9LvQD
-	cnAU=
-X-Received: by 2002:a05:620a:2483:b0:7c5:df79:f2f with SMTP id af79cd13be357-7c5ed9f2cd8mr77469085a.18.1743009426613;
-        Wed, 26 Mar 2025 10:17:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZVayB4qjwN0UyX1tnhJiLkSyjaqLbzhmrB0L0YbneGkZGXSc7GvgkWAaXLuLzkuqSASIp2Q==
-X-Received: by 2002:a05:620a:2483:b0:7c5:df79:f2f with SMTP id af79cd13be357-7c5ed9f2cd8mr77462885a.18.1743009426112;
-        Wed, 26 Mar 2025 10:17:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d8f4280sm21672611fa.73.2025.03.26.10.17.04
+        bh=R+Y80Fl4D3XILmrZi78H6SULsEtuP/szZHrz0dbbl68=;
+        b=fB/9Hj2L3rFXv2eJChgMvofm99qvtCBgKM4CUAMvieimJcdNvFj3TZztVDh0055gEh
+         JBpgR1MMyjlO8a3A1eQqNPHzrj8f8yuRyz2hHgUBix23QKLVjAYLMzIMXByvAHa1cVrh
+         j7l9tb+45Gk//QXvc1RPjhiavohYMdwZkR7103Nf7FaGcgZyjSVAeIdX/QOVYA/EAkqf
+         Xs/q3ESXMLiMxDfBYyllzvmjZmcpCL3orSvjFeBS3jl/Ub42a1YBSr+//lpnc26iQ5YG
+         PtRCMBiVqt07c0L5hk9myBJeF/GiO4ndx/ZYvTRCdoltiIbUCGreMhuod/MqiFpmGEZ2
+         D75A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNknSXwOu86adn69SHpCaSfRKuRa/O9GwaeQgkfX1xdUFiDWQGJic/YcRO+1V4gcY7W03tSRWZz243UDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOv+ZFH7Ax0tlvSgd2IJgczHvkvKilqSxdRTLwIMzK0A/aeB6k
+	uxX2YikCN4fSLtb1QqI/mYUv9PyI2Knvbw07cCl5TohTwz6f8x6lkypydq4rqHx7yq5ZAaG1em9
+	atS7lG3q4kGGrz+Zgxu4ixpAKQ8K8dhrY
+X-Gm-Gg: ASbGncv0ILh1gl5lF7ieZF+XBtGST/eA1N2C+hrtat0ye/lIDPSwAG/77IAPrE3eEgh
+	Krb5q19BLQ42qPdcKuIXFgKVQYo9Aogljb4rCfiVWYHfNVbC1NL19KHH/YLlHNAPIfHEdkbmcOW
+	DMj+PfdRCWq443BdVMQH9bNyESBPUC4EQTc48cSSm7MY/cstBe8TxG9tEwNmAJ1WJu4clil1VUg
+	cwtQ+TsrDcDyH3/sM0my8Mvnsj/CZqhrGJsLqJH5GtrpeQg1edIJctW5EuOM0XKYGoIz7Murlix
+	HcjPVEc3kK1FoZ26u/sZKhS+FzIpKirynyOdVj5IBaAsG5kKDA==
+X-Google-Smtp-Source: AGHT+IHLdUa435MD/UMv1YIUu9iHHEATcWU21t6cTQMIchpUDMRQTrioGjnCdfUWBnEqYE5PKTj4eW3k//Fg
+X-Received: by 2002:a17:902:d54e:b0:216:7926:8d69 with SMTP id d9443c01a7336-2280491ddd1mr4238145ad.47.1743009463263;
+        Wed, 26 Mar 2025 10:17:43 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-22780f16a79sm5510215ad.47.2025.03.26.10.17.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 10:17:05 -0700 (PDT)
-Date: Wed, 26 Mar 2025 19:17:03 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] drm/dp: fallback to maximum when PWM bit count is
- zero
-Message-ID: <jbowz36pz7es7koc3abi3maw6ytz4auuobhkmkqelvwavilqkr@gxgsdhao3skr>
-References: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org>
- <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-4-e9bc7c9d30cc@linaro.org>
- <2cfdf7f3-56a6-495e-83cf-1921a2e0ef8d@oss.qualcomm.com>
- <CACr-zFBFpqgHVRiH37ooeVJ4Jk1UA4AhP5J5L5yV8_CHBTG07g@mail.gmail.com>
+        Wed, 26 Mar 2025 10:17:43 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 925D3340199;
+	Wed, 26 Mar 2025 11:17:42 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id 85EBBE40158; Wed, 26 Mar 2025 11:17:42 -0600 (MDT)
+Date: Wed, 26 Mar 2025 11:17:42 -0600
+From: Uday Shankar <ushankar@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>, g@purestorage.com
+Cc: Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] selftests: ublk: kublk: ignore SIGCHLD
+Message-ID: <Z+Q2tiQfZmh9+eSM@dev-ushankar.dev.purestorage.com>
+References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
+ <20250325-ublk_timeout-v1-3-262f0121a7bd@purestorage.com>
+ <Z-NzLbW0nAIAUdIN@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,45 +96,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACr-zFBFpqgHVRiH37ooeVJ4Jk1UA4AhP5J5L5yV8_CHBTG07g@mail.gmail.com>
-X-Proofpoint-GUID: lxo9QQbm-cIiKkSPLkz6XknN-HaX4Fvd
-X-Proofpoint-ORIG-GUID: lxo9QQbm-cIiKkSPLkz6XknN-HaX4Fvd
-X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e43693 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=cpwuP4bK5o1WZ1zuufgA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_08,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260106
+In-Reply-To: <Z-NzLbW0nAIAUdIN@fedora>
 
-On Wed, Mar 26, 2025 at 03:08:30PM +0000, Christopher Obbard wrote:
-> Hi Dmitry,
-> 
-> On Tue, 25 Mar 2025 at 22:53, Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> >
-> > On 25/03/2025 21:21, Christopher Obbard wrote:
-> > > Some eDP devices report DP_EDP_PWMGEN_BIT_COUNT as 0, but still provide
-> > > valid non-zero MIN and MAX values. This patch reworks the logic to
-> > > fallback to the max value in such cases, ensuring correct backlight PWM
-> > > configuration even when the bit count value is not explicitly set.
-> >
-> > I don't think this matches the eDP standard. It tells to use MIN if
-> > BIT_COUNT is less than MIN, if I understand it correctly.
-> 
-> Thanks for your comment; that's a good point.
-> 
-> I need to re-read this section of the spec; but at least on this
-> hardware I printed the values of the registers and it seems like
-> MIN and MAX are the same, so I could switch the patch around to use
-> MIN in the next version.
+On Wed, Mar 26, 2025 at 11:23:25AM +0800, Ming Lei wrote:
+> BTW, the SIGCHLD signal is ignored by default
 
-SGTM.
+You're right, that's a good point, this change is actually a noop. I
+think I got confused during test development and the -EINTR probably
+came from something else. I see no issues when reverting this change in
+my tests now, so I will drop it.
 
--- 
-With best wishes
-Dmitry
 
