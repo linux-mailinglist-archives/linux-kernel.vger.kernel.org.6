@@ -1,158 +1,216 @@
-Return-Path: <linux-kernel+bounces-576939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4FFA71647
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:09:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4913AA7164C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA32D3B2B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CDB16BEC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565AE1E1DF9;
-	Wed, 26 Mar 2025 12:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7181ADFFB;
+	Wed, 26 Mar 2025 12:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cGAzs9Mq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/8F9qsy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C501DB933
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D849C1A2632
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742990979; cv=none; b=eLPAD9E9FdimCTqgzTyRrbVh6Kh2XwO2kzHXE1MsrqQPCgVIyKGxq3SimiFK79wW8Yel3nV4eM7kl7o3nL6qumqEPn+OgleQM+8DlK46MC+mvaEEPOBqmevt1rWP0rwgar4I4a85PNuz4Uneg5UHmoKiEttdjbOWZ3OPgnjOr94=
+	t=1742991048; cv=none; b=sHYBd+/7w1pVuZhVDI3v+/jiz9hdt9pkXU5NVfNQ0tyh8d8qGo5z2ENQhJMmYbqw3TGqtRJeTvveNvacIUyqtV68PSuiLSA4H7MB0MrIxaAkL2la2Tv6qrYL+ZdgQe6irQy9Q/pndTNLFlyKI0iOIF3A2Pz0dP99MkWhlwsHVFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742990979; c=relaxed/simple;
-	bh=Rn7DZzluTD2+MZZoYt3D0u5sryYqeFHqvQWAx2OGmqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E2n6W6LQ3ECEL2sjLdPF9dR4QdcYRv31n/36kwN71zjqnZkFqw0k+0rxecyQDrLpIGtVHuDF+T7mlGuHWhPB4R/XQ9Pl++7RTcPBUJQCXnJgTv9ADEk5GOa/ETClGolgL5GV7zLaLhUqG40tAjp4yy0v+1l2yacIz8lHM07IUVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cGAzs9Mq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742990976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDjBICGKa43kYHEOCFvDUYcy1IhXoeMUQwDGcLiaSWE=;
-	b=cGAzs9MqdHaNBxWQeJL0rKDam3ohrhknI/RrCigCFE6yiyFvLvfmcPKsU/+sw8YOVOeBlE
-	HAJ/KXBrlP2gyA5Xgb3tUMTtGHGWK3KlgD4vAZeliPyVIAqceJ/bj0zxbw3HRtw3Qnxr2Z
-	7gqMtv3fFnCs2pR0Q1lYZalV3CUgW2o=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-ttrQUBu9MESdf-Ob5eFoIQ-1; Wed, 26 Mar 2025 08:09:35 -0400
-X-MC-Unique: ttrQUBu9MESdf-Ob5eFoIQ-1
-X-Mimecast-MFC-AGG-ID: ttrQUBu9MESdf-Ob5eFoIQ_1742990975
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85b3827969dso676700539f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:09:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742990974; x=1743595774;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nDjBICGKa43kYHEOCFvDUYcy1IhXoeMUQwDGcLiaSWE=;
-        b=PKsfNzovV3yj8gBRQsetA4+iJh4QUBbqmwAfFRXnvo1BurJKEcUzonqxneFv0qX1Dy
-         5VKQNaDftFMbQRvC1EGZlUnOHq9khMbBavDcucuTn1SNQOf79SuCeggdeQem837rh8kV
-         icwjijWcQbFCFu3SeL9JueAvRrCXdCnobjQo6paNb+UDF/koqQXJ3wp9ObvN8AGRVCG7
-         yYF5xwSc9ozJ2DV5O00t7q2Szz5EWCs6l7uak5IMXe4k/sydIO0SbC+Qu22P8BPHmQ1D
-         BGUevkVOJTjSW1j4UlubDlw1RCDrJLpVAWlkhLNZ+GQrBmYF2FaxdA3NKKe8VY8Mr+Uo
-         G5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuupHuQ/g6xWN2bR4YxqsTIQF5JEnGa2LQyueQJyU6WYonG6uG1uaMIa8be9fCL5E6w8CWDKdQaZsSGIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr3Rd6kYqNlbhnJSXxyyDuzqJXsxDcmibEnRCkxmeNNRlJ0AdF
-	cM7PZKYtufifsB5biZQzkXShyH3IWEfPfvroq1oGazJ1/2cQ6jMZlyDpDP8Eg5RSGfeuf47HnCI
-	UfYQR6WrTxRb0g1k0cfZL6wD+vvad2OvDp02fHG/oUTamP2XdGebZACwndz5EbOp+EIL/TcH2TB
-	evg9QSfJs86+LlRg1PVXg6fasuEw6EODSuJU8a
-X-Gm-Gg: ASbGncv6d/TzpR+nRbX4cvWCydjcQQVQo+FqO/y7JOXcIokLtYOTDt/kMEWzTOADf/s
-	K0XvHM7qj7AxWRxFqs5ekE0B7nfWMj2xyRrybse7o1tcBDaGoW+Qf92rmdNXQ6JStCHGvNOifgg
-	==
-X-Received: by 2002:a05:6e02:3a0c:b0:3d4:6f37:372c with SMTP id e9e14a558f8ab-3d5960e2419mr225832565ab.7.1742990974558;
-        Wed, 26 Mar 2025 05:09:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOuyfQGVOhYyFSi3hsb9kc2zJRzczpD7XPzwNdnwVuHyYQPBafKpH087OtVwDsIyzVWltmG166ADE4aJfipJU=
-X-Received: by 2002:a05:6e02:3a0c:b0:3d4:6f37:372c with SMTP id
- e9e14a558f8ab-3d5960e2419mr225831915ab.7.1742990973998; Wed, 26 Mar 2025
- 05:09:33 -0700 (PDT)
+	s=arc-20240116; t=1742991048; c=relaxed/simple;
+	bh=4ZIa5R+hLRKNLLa+f5ExAc1PekNs6AAe+hmDktSX6fY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LdFcZ4tWFKnS9FaJI1FHV+otXvNDNbHX1QsC9Llit1fNGx7WO+vsQZY9CAGc+AFdr2Wd4/dhwK1xtYi4SN2//1jqvxlLkSc17RxC2Tw2K8+vnphjjuc20dY5UB5nU6St3hPGdSTet6I4J1xRLUU7WQ/LL5RUsU08V/30y5hqu/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/8F9qsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D32C4CEEA;
+	Wed, 26 Mar 2025 12:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742991048;
+	bh=4ZIa5R+hLRKNLLa+f5ExAc1PekNs6AAe+hmDktSX6fY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Y/8F9qsykijVDCBysLKBo/2uRXwbgP4qAo5atqcTLs88ubalJCvnk3mAQa41fPUUb
+	 CVN+sC/Sakb6dDSOmqXyM7Dml4uwkjCCrQjjSP2ywOHSd1keJCLLQ4wLZJS21oIMIZ
+	 tu7QedmFr8Ou9irWGEWDJ6vBAOITGE1BaM4qJiU6MvCpndqRmENH2s06Fy0yf5MHGA
+	 OLx5FAfdRzLlE4HL2LwCFFes+e8pAAoDUQTkSb85qmwzYs83DuQC+hzJUu8MwKcdzJ
+	 mfHniUHpEHuj55dgL0VrLaYTWtPWABd+QBQ9IPiYohZDe6g3vl/PjBequN2plVupEb
+	 zs+bxNFHLRecA==
+Message-ID: <8a72691e-28ef-4b6b-a855-62fd6c2743dc@kernel.org>
+Date: Wed, 26 Mar 2025 20:10:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-12-changyuanl@google.com> <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
- <Z+JT7kx+sfPqfWFA@MiWiFi-R3L-srv> <CALu+AoQj+mHECTvbuK8CpUTmOYgx6n2oMFm5kQXtSigL+5Ks2w@mail.gmail.com>
- <CALu+AoRdfjNcjweq_ipxCC6UGBzM-a5ma417RBr-C3EQ=Em9OQ@mail.gmail.com> <Z-Pk9Bnr0lDVopKj@kernel.org>
-In-Reply-To: <Z-Pk9Bnr0lDVopKj@kernel.org>
-From: Dave Young <dyoung@redhat.com>
-Date: Wed, 26 Mar 2025 20:09:55 +0800
-X-Gm-Features: AQ5f1JrnxWyTc7ruwIDaX1fnmt0FdUmOV-OtIvcwHa3Skex-wO_kM_31tXed_lg
-Message-ID: <CALu+AoS9=KttzqgR+xi11jur5eX7dBwUfOoueHoOss3eFn+Hkw@mail.gmail.com>
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org, 
-	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org, 
-	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, 
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com, 
-	dave.hansen@linux.intel.com, dwmw2@infradead.org, ebiederm@xmission.com, 
-	mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, krzk@kernel.org, 
-	mark.rutland@arm.com, pbonzini@redhat.com, pasha.tatashin@soleen.com, 
-	hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org, 
-	robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ daehojeong@google.com, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Subject: Re: [RFC PATCH] f2fs: remove some redundant flow about
+ FI_ATOMIC_DIRTIED
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <1742978761-16264-1-git-send-email-zhiguo.niu@unisoc.com>
+ <e4fb11ea-a97b-4ba0-aa28-f6f93e5a6134@kernel.org>
+ <CAHJ8P3JWABsntymD3u5=0YR7=0it5x0PP49S4ftwBEjC1UreOA@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3JWABsntymD3u5=0YR7=0it5x0PP49S4ftwBEjC1UreOA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Mar 2025 at 19:34, Mike Rapoport <rppt@kernel.org> wrote:
->
-> Hi Dave,
->
-> On Wed, Mar 26, 2025 at 05:17:16PM +0800, Dave Young wrote:
-> > On Tue, 25 Mar 2025 at 16:36, Dave Young <dyoung@redhat.com> wrote:
-> > >
-> > > > >
-> > > > > Have you tested kdump?  In my mind there are two issues,  one is with
-> > > > > CMA enabled, it could cause kdump crashkernel memory reservation
-> > > > > failures more often due to the fragmented low memory.  Secondly,  in
-> > > >
-> > > > kho scracth memorys are reserved much later than crashkernel, we may not
-> > > > need to worry about it.
-> > > > ====================
-> > > > start_kernel()
-> > > >   ......
-> > > >   -->setup_arch(&command_line);
-> > > >      -->arch_reserve_crashkernel();
-> > > >   ......
-> > > >   -->mm_core_init();
-> > > >      -->kho_memory_init();
-> > > >
-> > > > > kdump kernel dump the crazy scratch memory in vmcore is not very
-> > > > > meaningful.  Otherwise I suspect this is not tested under kdump.  If
-> > > > > so please disable this option for kdump.
-> > >
-> > > Ok,  it is fine if this is the case, thanks Baoquan for clearing this worry.
-> > >
-> > > But the other concerns are still need to address, eg. KHO use cases
-> > > are not good for kdump.
-> > > There could be more to think about.
-> > > eg. the issues talked in thread:
-> > > https://lore.kernel.org/lkml/Z7dc9Cd8KX3b_brB@dwarf.suse.cz/T/
-> >
-> > Rethink about this,  other than previous concerns.  Transferring the
-> > old kernel state to kdump kernel makes no sense since the old state is
-> > not stable as the kernel has crashed.
->
-> KHO won't be active for kdump case. The KHO segments are only added to
-> kexec_image and never to kexec_crash_image.
+On 3/26/25 18:51, Zhiguo Niu wrote:
+> Chao Yu <chao@kernel.org> 于2025年3月26日周三 17:26写道：
+>>
+>> On 3/26/25 16:46, Zhiguo Niu wrote:
+>>> Commit fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
+>>> adds the processing of FI_ATOMIC_DIRTIED in the following two positions,
+>>> [1]
+>>> f2fs_commit_atomic_write
+>>>  - __f2fs_commit_atomic_write
+>>>   - sbi->committed_atomic_block += fi->atomic_write_cnt;
+>>>   - set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+>>>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>>>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>>>   -    f2fs_mark_inode_dirty_sync(inode, true);
+>>>   - }
+>>> [2]
+>>> f2fs_abort_atomic_write
+>>>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>>>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>>>   -    f2fs_mark_inode_dirty_sync(inode, true);
+>>>   - }
+>>>
+>>> but [1] seems to be redundant:
+>>> The atomic file flag FI_ATOMIC_FILE is still set here, so f2fs_mark_inode_dirty_sync
+>>> still does not set the dirty state to vfs. If FI_ATOMIC_DIRTIED was originally set
+>>> when atomic file is committing, then FI_ATOMIC_DIRTIED is just cleared here, and
+>>> then do the repeating action of setting FI_ATOMIC_DIRTIED?
+>>> So is it enough to do this only in [2]?
+>>
+>> Hi Zhiguo,
+>>
+>> I checked the code again, finally, I got this, could you please take
+>> a look?
+>>
+>> Ping Daeho as well.
+>>
+>> Subject: [PATCH] f2fs: fix to set atomic write status more clear
+>>
+>> 1. After we start atomic write in a database file, before committing
+>> all data, we'd better not set inode w/ vfs dirty status to avoid
+>> redundant updates, instead, we only set inode w/ atomic dirty status.
+>>
+>> 2. After we commit all data, before committing metadata, we need to
+>> clear atomic dirty status, and set vfs dirty status to allow vfs flush
+>> dirty inode.
+>>
+> Hi Chao,
+> these looks more clear.
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>  fs/f2fs/inode.c   |  4 +++-
+>>  fs/f2fs/segment.c | 10 ++++++----
+>>  fs/f2fs/super.c   |  4 +++-
+>>  3 files changed, 12 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 5c8634eaef7b..f5991e8751b9 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -34,7 +34,9 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+>>         if (f2fs_inode_dirtied(inode, sync))
+>>                 return;
+>>
+>> -       if (f2fs_is_atomic_file(inode))
+>> +       /* only atomic file w/ FI_ATOMIC_COMMITTED can be set vfs dirty */
+>> +       if (f2fs_is_atomic_file(inode) &&
+>> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
+>>                 return;
+>>
+>>         mark_inode_dirty_sync(inode);
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index dc360b4b0569..28659a71891a 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -376,10 +376,12 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+>>         } else {
+>>                 sbi->committed_atomic_block += fi->atomic_write_cnt;
+>>                 set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+>> -               if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>> -                       clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>> -                       f2fs_mark_inode_dirty_sync(inode, true);
+>> -               }
+>> +
+>> +               f2fs_bug_on(sbi, !is_inode_flag_set(inode, FI_ATOMIC_DIRTIED));
+> but FI_ATOMIC_DIRTIED may  not be set when atomic file is committing?
+> thanks!
 
-Good to know, thanks!
+inc_valid_block_count() will set FI_ATOMIC_DIRTIED for inode at least?
 
->
-> --
-> Sincerely yours,
-> Mike.
->
+- __f2fs_commit_atomic_write
+ - __replace_atomic_write_block
+  - inc_valid_block_count
+   - f2fs_i_blocks_write
+    - f2fs_mark_inode_dirty_sync
+
+Thanks,
+
+>> +
+>> +               /* clear atomic dirty status and set vfs dirty status */
+>> +               clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>> +               f2fs_mark_inode_dirty_sync(inode, true);
+>>         }
+>>
+>>         __complete_revoke_list(inode, &revoke_list, ret ? true : false);
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 9a42a1323f42..a5cc9f6ee16a 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1532,7 +1532,9 @@ int f2fs_inode_dirtied(struct inode *inode, bool sync)
+>>         }
+>>         spin_unlock(&sbi->inode_lock[DIRTY_META]);
+>>
+>> -       if (!ret && f2fs_is_atomic_file(inode))
+>> +       /* if atomic write is not committed, set inode w/ atomic dirty */
+>> +       if (!ret && f2fs_is_atomic_file(inode) &&
+>> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
+>>                 set_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>>
+>>         return ret;
+>> --
+>> 2.48.1
+>>
+>>
+>>>
+>>> Cc: Daeho Jeong <daehojeong@google.com>
+>>> Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
+>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>>> ---
+>>>  fs/f2fs/segment.c | 4 ----
+>>>  1 file changed, 4 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 396ef71..d4ea3af 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -376,10 +376,6 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+>>>       } else {
+>>>               sbi->committed_atomic_block += fi->atomic_write_cnt;
+>>>               set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+>>> -             if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>>> -                     clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>>> -                     f2fs_mark_inode_dirty_sync(inode, true);
+>>> -             }
+>>>       }
+>>>
+>>>       __complete_revoke_list(inode, &revoke_list, ret ? true : false);
+>>
 
 
