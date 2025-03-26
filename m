@@ -1,174 +1,115 @@
-Return-Path: <linux-kernel+bounces-577300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E4AA71B18
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:51:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FB2A71B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7976E1709D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538A73B4116
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74B21F4276;
-	Wed, 26 Mar 2025 15:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562191F4284;
+	Wed, 26 Mar 2025 15:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FAQvHtDI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJUHSdQ5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8202B3A1BA
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634771F192E;
+	Wed, 26 Mar 2025 15:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004310; cv=none; b=dJGVbCGoVU2+3utQH1DqhR2Sc7vCulkVZHWCG8gVEWSCqaNyxXVhH8vT2QIc7DJlh9Srr1WDR8e+soWSqkrVgdmrJqQgDCYd3NzEmXd/jB0pIYZhHHOFmW4TIfhtrr/RjFJ6fstJZq4F9/F+mm1clXLEvTSCM2zh3C9l1UtK5rI=
+	t=1743004326; cv=none; b=uEpkA7BcIOULQwoXypHZAC6S2Kst+u37qmO4qC/kbCOJBXggdRKLsPzeTtkcPxQwenBUKOJNfqFOdgbB8xCHMIkm0rfBoJlsGfWzHXT9yZ+H2fGZoRlyfpva82lu57c/nIdsmOKiZWMIQ48OUIPR72XoBjsroxkzq75HzLivFrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743004310; c=relaxed/simple;
-	bh=WDTgACKfbFOAULZ00BSFWmKYsHzNYTrM9EPoZ8yADMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx8o75IwILMAqrz8uEYrB54YEjx0HbtUH72sbBo/haxSpupuIpGS9VvSg3u8/7t/c5yFCY/XrwijYgwebrk7NlQNfVImHRKEZpdHYOqTxPsXDGZUHJncNYFmDpy+MbR0GbZs3zvTdjz2fDQJze2GMtQwSkzAJprWcPRBro3rq+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FAQvHtDI; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743004308; x=1774540308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WDTgACKfbFOAULZ00BSFWmKYsHzNYTrM9EPoZ8yADMU=;
-  b=FAQvHtDITl1+1PGwmkL8K/D4DQ7FCTkAlhKYKu218NqFaL+N+9lN9hcu
-   sV9ml5xFDbYS8Yd360SeIPCbtwmNPdhTZo+Yk1KIN2BO9Cr7sf+49jnUz
-   EVwfYGA5DnQjahOcr8PmBt2XX3c5WdGIBwyBTk7BaVXkTMNCwRaNmf+aX
-   iYqw/853zhis+sTLDOrLk+Paqni1tX0NUgCe9JNq+GIQglOWwDlPvN7sL
-   Co250xX8cFYxePfcwU44ZnQ9G5Fhts1ISwC4ekvjTT1jHrQvsEL9My/QA
-   JMkgJpL8onsl9/SBBDltl3R6+hl0uZKYbmjz/XuVV9JX1I5Oybyu9U0zy
-   w==;
-X-CSE-ConnectionGUID: 7MGdNLS6RkWxoQ6wWlvDDQ==
-X-CSE-MsgGUID: rLNuL4MaQp6JvskKs6535w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44188254"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="44188254"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:51:48 -0700
-X-CSE-ConnectionGUID: LS0XVK0wRUKBR+t1osMCeA==
-X-CSE-MsgGUID: b1QK+8PmQXC8SugrBN4iNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="124550670"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:51:46 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1txT2d-000000067f4-1as0;
-	Wed, 26 Mar 2025 17:51:43 +0200
-Date: Wed, 26 Mar 2025 17:51:43 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Oded Gabbay <ogabbay@kernel.org>,
-	"Avizrat, Yaron" <yaron.avizrat@intel.com>,
-	"Elbaz, Koby" <koby.elbaz@intel.com>,
-	"Sinyuk, Konstantin" <konstantin.sinyuk@intel.com>
-Subject: Re: [PATCH v3 1/1] accel/habanalabs: Switch to use %ptTs
-Message-ID: <Z-Qij4C8DSmS0Mq-@smile.fi.intel.com>
-References: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
- <Z-PM8oBtTPzqv-S2@smile.fi.intel.com>
- <87zfh86rqi.fsf@intel.com>
+	s=arc-20240116; t=1743004326; c=relaxed/simple;
+	bh=3usZOAbnVHLeoNs5mBoiAoWAvIhvqu9KzdrKYHwy5ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D/banMpsd8sMGko4oz0KXyt5TJlW7XxOxSWt6dVek33erBE8KKDO/RrwDJesppv51wjVRb1Fg6ad4DoaETlxqvj0MVuEmolsjsJ27lmcw675W7am4c1ZA+hVP7MvFoXxJeabs7evQatF8HQkX2qmpLYgY+D4y/+fCCBjCcgP0i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJUHSdQ5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223fb0f619dso852705ad.1;
+        Wed, 26 Mar 2025 08:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743004324; x=1743609124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DdI3T8Ok7IQ4l7knnga+WV3FdTZHD60Sol3JxkMqBnA=;
+        b=QJUHSdQ50tjVRgn44xbsQgwFFPJegfAaXKFstfGcc9F96Oc9eFpQotNXS0MsI4kSSK
+         aip3JNOOFKoZMH405bmgTSh/Ky5KauTy9n8nBEECNom5UJW59O2Wf+8sNQcxO+gj4Izi
+         AiDWe6VVe2XtZSdZ+OdaDSiBYra+bVrak/C25o62glGYvNwyFXnPIe2yU5DGSwLPALDz
+         pqccykbBk+LXTWqwfxsczLzikjwg2FjGpTFMou1uukb7zPywwfw6snonLgBcD5p5ZiPz
+         u9LSF4S0ekD6naTuqB13ns8KLQ03b5MU/EuwKq2N2TAoZ+dtToMLmDtJ+zSd/nbw0HD7
+         O+XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743004324; x=1743609124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DdI3T8Ok7IQ4l7knnga+WV3FdTZHD60Sol3JxkMqBnA=;
+        b=hbAscsFyL6rmWwsk13/8n4gkjBIh2JptcbgChwHNUJcNGAfClwchUe3tgHo+6Bhtwj
+         //GTgMFIR7XpUOG/aRaHiEJX9+ILZVndiCvnFHfPd72VfSZJL1e5nF2GkURGSMhMzXml
+         KrBgR+tcfD9NGO1oXMJNm8TLICm9PrD5rCkGpFS1J4SDSiZSVyS9jnHa86YsgIBVk6RA
+         EHcLAJe1Ej0Ng/bns2VaNHYeA2x51V646DywSzF2RIueQtyDpKL0+4xUN/mbKu8PI92I
+         mc9Z0PEtGcLdx7M+IUReqIeTL20AFC9MCXD/HTwXwGdAGnPE1yohK5leYxKg391i0hPi
+         J3hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtCdwgwZoKxFqsILqNcHR+UlRWfDE1xiGDf8FcOkf3zUheVVs7A3x8Dz9HRTt7MvPxqzSrsUAElv2j2uwCV/Y=@vger.kernel.org, AJvYcCWPR2kfGBdHWZW6aAwSrVnUITTE8Rh17n2ZZsfURpJpM+sETYA7e1PgOVrW0qGuZ6t+tmJ9FAWtwU3rWDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ7IBKCNlqh0FFA8NcBd2+HDGQkgA3NOpBNh0jC+ac+TgQyHOR
+	ZIk0oUnQSXFoyRFS6mmYnu2lLiDAqIt8tGydRePWekJNmi6CXCr2
+X-Gm-Gg: ASbGncs3RqHgVwaW0j7VtXJbF5v7Hdb8RcF6VYL1aUESG5XR6H0ajVdhcVFmUJaHF0s
+	04SllJJnAyS6WA4gud4veGcCUfmL6cUO8IsA3isrBnVxkWTcE5CfxezsKC82lT2ehe3lirJ/J02
+	b6UQi1pwwaWMsDWC3uFR1fZVhwiWIQzr41Kh7/6EyXNJ8pNGd8mkqZumE1LKD5vSBuu4K+eawxs
+	Qy2oBX94kzQ7ypzNfKwPMxBVEXbZqcHqtfsXPImoo/emx0yIx7JoBegizXNtqDNRyVf68I9sHdc
+	fBfeg08hMBG9PR89/HYz8/swuHOHLjyJ7gG1m9sF1mek
+X-Google-Smtp-Source: AGHT+IGBjdhWXohagh8cql7g4AaCRhBTm9LnLpJP7tH9k0cnHUBz47MG/2XEVNfI2+iyHgtpuQfa9w==
+X-Received: by 2002:a05:6a20:3d20:b0:1f3:4427:74ae with SMTP id adf61e73a8af0-1fea2e9f6a0mr445863637.25.1743004324397;
+        Wed, 26 Mar 2025 08:52:04 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739061543aasm12314579b3a.126.2025.03.26.08.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 08:52:03 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Christian Lamparter <chunkeey@googlemail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>
+Subject: [PATCH] wifi: carl9170: micro-optimize carl9170_tx_shift_bm()
+Date: Wed, 26 Mar 2025 11:51:58 -0400
+Message-ID: <20250326155200.39895-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zfh86rqi.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 11:55:33AM +0200, Jani Nikula wrote:
-> On Wed, 26 Mar 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > +Cc: Jani (sorry, forgot to add you in the first place).
-> >
-> > Do you think it's applicable now?
-> 
-> Cc: Yaron, Koby, and Konstantin who are supposed to be the new
-> maintainers for accel/habanalabs.
+The function calls bitmap_empty() just before find_first_bit(). Both
+functions are O(N). Because find_first_bit() returns >= nbits in case of
+empty bitmap, the bitmap_empty() test may be avoided.
 
-Thank you!
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+---
+ drivers/net/wireless/ath/carl9170/tx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> > On Wed, Mar 05, 2025 at 01:00:25PM +0200, Andy Shevchenko wrote:
-> >> Use %ptTs instead of open-coded variant to print contents of time64_t type
-> >> in human readable form.
-> >> 
-> >> This changes N/A output to 1970-01-01 00:00:00 for zero timestamps,
-> >> but it's used only in the dev_err() output and won't break anything.
-> >> 
-> >> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >> ---
-> >> 
-> >> v3: explained the difference for N/A cases (Jani)
-> >> v2: fixed the parameters to be the pointers
-> >> 
-> >>  drivers/accel/habanalabs/common/device.c | 25 +++---------------------
-> >>  1 file changed, 3 insertions(+), 22 deletions(-)
-> >> 
-> >> diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
-> >> index 68eebed3b050..80fa08bf57bd 100644
-> >> --- a/drivers/accel/habanalabs/common/device.c
-> >> +++ b/drivers/accel/habanalabs/common/device.c
-> >> @@ -1066,28 +1066,11 @@ static bool is_pci_link_healthy(struct hl_device *hdev)
-> >>  	return (device_id == hdev->pdev->device);
-> >>  }
-> >>  
-> >> -static void stringify_time_of_last_heartbeat(struct hl_device *hdev, char *time_str, size_t size,
-> >> -						bool is_pq_hb)
-> >> -{
-> >> -	time64_t seconds = is_pq_hb ? hdev->heartbeat_debug_info.last_pq_heartbeat_ts
-> >> -					: hdev->heartbeat_debug_info.last_eq_heartbeat_ts;
-> >> -	struct tm tm;
-> >> -
-> >> -	if (!seconds)
-> >> -		return;
-> >> -
-> >> -	time64_to_tm(seconds, 0, &tm);
-> >> -
-> >> -	snprintf(time_str, size, "%ld-%02d-%02d %02d:%02d:%02d (UTC)",
-> >> -		tm.tm_year + 1900, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-> >> -}
-> >> -
-> >>  static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
-> >>  {
-> >>  	struct eq_heartbeat_debug_info *heartbeat_debug_info = &hdev->heartbeat_debug_info;
-> >>  	u32 cpu_q_id = heartbeat_debug_info->cpu_queue_id, pq_pi_mask = (HL_QUEUE_LENGTH << 1) - 1;
-> >>  	struct asic_fixed_properties *prop = &hdev->asic_prop;
-> >> -	char pq_time_str[64] = "N/A", eq_time_str[64] = "N/A";
-> >>  
-> >>  	if (!prop->cpucp_info.eq_health_check_supported)
-> >>  		return true;
-> >> @@ -1095,17 +1078,15 @@ static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
-> >>  	if (!hdev->eq_heartbeat_received) {
-> >>  		dev_err(hdev->dev, "EQ heartbeat event was not received!\n");
-> >>  
-> >> -		stringify_time_of_last_heartbeat(hdev, pq_time_str, sizeof(pq_time_str), true);
-> >> -		stringify_time_of_last_heartbeat(hdev, eq_time_str, sizeof(eq_time_str), false);
-> >>  		dev_err(hdev->dev,
-> >> -			"EQ: {CI %u, HB counter %u, last HB time: %s}, PQ: {PI: %u, CI: %u (%u), last HB time: %s}\n",
-> >> +			"EQ: {CI %u, HB counter %u, last HB time: %ptTs}, PQ: {PI: %u, CI: %u (%u), last HB time: %ptTs}\n",
-> >>  			hdev->event_queue.ci,
-> >>  			heartbeat_debug_info->heartbeat_event_counter,
-> >> -			eq_time_str,
-> >> +			&hdev->heartbeat_debug_info.last_eq_heartbeat_ts,
-> >>  			hdev->kernel_queues[cpu_q_id].pi,
-> >>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci),
-> >>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci) & pq_pi_mask,
-> >> -			pq_time_str);
-> >> +			&hdev->heartbeat_debug_info.last_pq_heartbeat_ts);
-> >>  
-> >>  		hl_eq_dump(hdev, &hdev->event_queue);
-
+diff --git a/drivers/net/wireless/ath/carl9170/tx.c b/drivers/net/wireless/ath/carl9170/tx.c
+index 0226c31a6cae..b7717f9e1e9b 100644
+--- a/drivers/net/wireless/ath/carl9170/tx.c
++++ b/drivers/net/wireless/ath/carl9170/tx.c
+@@ -366,8 +366,7 @@ static void carl9170_tx_shift_bm(struct ar9170 *ar,
+ 	if (WARN_ON_ONCE(off >= CARL9170_BAW_BITS))
+ 		return;
+ 
+-	if (!bitmap_empty(tid_info->bitmap, off))
+-		off = find_first_bit(tid_info->bitmap, off);
++	off = min(off, find_first_bit(tid_info->bitmap, off));
+ 
+ 	tid_info->bsn += off;
+ 	tid_info->bsn &= 0x0fff;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
