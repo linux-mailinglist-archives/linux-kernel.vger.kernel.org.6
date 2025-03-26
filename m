@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-577470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B541A71D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7945AA71DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B1E18875E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE641886F02
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72323E331;
-	Wed, 26 Mar 2025 17:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF06C24EF74;
+	Wed, 26 Mar 2025 18:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fexh2oru"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NfQXfFxN"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF623E25D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C112624EF7D;
+	Wed, 26 Mar 2025 18:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010910; cv=none; b=S812GRo2tr+5TtesVKAoO+ipxq4Hb9jA9UAudtmPoUGllP6iZ8dPT+BnFfQnmEf091LTvjbrwIbFuKbcgReZyfUVPGYTepawygTLsnWrpJ8JqeX2JYcDeNKdpb+DFe3HYkzYSPaNcCTXeU/gtYBDyLrcdX8oY64YRqbtCiiBPRc=
+	t=1743012407; cv=none; b=ramQvHYWrllfkizPlmq77VDd40wu9mX9Y1yGlQxAv+fB0A8E16FyrR8gAzxi/RawHyIpal5RHrsInIdITWKEWm1uexXDOY/PpX+3qwrOCuZgjoDwOkINcQa1wbw4uu8Vj1lnZpZmSK41nwOPSftoQ/UhVrMZ6UwA9IJ4huEWjhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010910; c=relaxed/simple;
-	bh=VbMAnTpopdjLkmZXesRjVC8mZ8m6kPoSqNU934M0L50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+xWRN8K7Rw3dHQ928xWm8xvAUbUUK5OZtQ+wAj6LAiSf7eZt6QxSiYRo+E7FupEXWIZd/FO99YppTyfvRdWlkboKboevF2V62yCrCYlOPkPkIgjyDvN3FioTZUYQ7d4NWuvxH1VEWDn1dSpnQtG7abF1ADqyTSMBCT6d5KQ/Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fexh2oru; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QFMHkg028951
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=AtUnXSz/pPSjd1StFFw///pe
-	5D57Ql36lWJoHWVv3Fg=; b=Fexh2oruYqA7AuiHnh2DEl9WXCEYdshYebDWjZlc
-	JGNFGWH5RHBhLhbjlQw/2B9zVe90qF3/7SCwNH67i4/Pr0glrp8WrUils6l08CMq
-	5RouYJWoF6vaRSWO2odAH2W7iPx0PxJEv4sOPcl/psulIyAU6+o1Jp1yjapiPr1L
-	KwkhCvR+ykjSReuDroCi5U5OmaemfZgZScRN01peHqUTVvGS5iBelFE5gOkQRzc9
-	khDybEE2Ju7HQykeZVdshjfPwV3XkJjcemmh11uDcgQ2me7XnO7OeO2QgM7svRT0
-	uCxlWmmwFe2GER1K0LgQBdPGeilrUGE0/eYqiMO5dUq5bA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ktencntr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:41:47 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0a3ff7e81so20906185a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:41:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743010907; x=1743615707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AtUnXSz/pPSjd1StFFw///pe5D57Ql36lWJoHWVv3Fg=;
-        b=LnDTdHvD66G9nwHvYZPYHOr3YC6Fv6YDtSKSRtR5Ou+xhcyC6WhRyZuCkJfEoouxi6
-         fCU+yzAt1gqGbylx8kJCFSjygnoOioGccvA74AX4gQb4qpSvGGbnxhUS9hjKrCqBLJSK
-         fxBEzjplbqaRilJ4BcWiRPFqEfj0g/HXa7OMd0WrfzAwfwgleg+Lu8TBMMed3rITxyjV
-         OI0G/CGadUslc0rhGoHFuPINBRFLS7IV0Cv4K/gdiGkbZN7k9my6zaFgleQKKsY7mzk2
-         IXGvLsao/zlGrTdmWSzBsAENxHg0Kue70BiCvqtDmzIsDp4i5ETkwiGvJoD0iT8a2GpQ
-         RC2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVu7X0hcrDU+uvTeW7SkNfxtnYodI/3/Mk8qHU7AbfsDu+Lc/VrQnvnCcYx05maPu3WUjexv1JVml3Spx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6+HpBl3k6EhL4vV/A7ZyMavyeuaxJbnrd4Wa53Zq0xjsXmQkJ
-	jXJOoflz5FgGLWqD1gpcUXIFPBkzgeR3CVbwy0rCPyFxhricd6sylRwI1GxqBJR43Wyl6gL6+bB
-	M8s40+XmU4cbofyzXY9fnoXlim3tERxunLD3uoFq+i26fbnr7LCQ9rypyQ4H5FZw=
-X-Gm-Gg: ASbGncvrXPpuPFS/kxXso4rXH1Lhwv2vxpvDqbUcHd5Wbz+YXcGyLXc9OPmsY0xqEKQ
-	THrokTFHjqVCI893rgSaoE3ccxt2ORfCt4fxJs8KOofCbzchP9dOPIZP9NDy8ZimM1dXk11yIFk
-	t66E+/+31+Zxt+7gpLp9RuZE6IaQZPYmLicPwfblmu9K5jhoeWUi3zMhAH063fVF/nqDVPrxBf2
-	Ncka27G/unyLPptU2ziAlSBo55hcqM2J6ArEHwCscWx6ijeuhp+fkn6AZamGnV+nI827vqJa1Lo
-	j4t1ulad4C3+PMNckUtro1OC6Qp+12deUKn1ZYwE2EcG8TSj6hMc1f4nJGZrN1COipsAg8yC3mo
-	LNc0=
-X-Received: by 2002:a05:620a:17a9:b0:7c3:c111:8c3d with SMTP id af79cd13be357-7c5eda91760mr82460585a.49.1743010906949;
-        Wed, 26 Mar 2025 10:41:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuqcfnhkzb0FRV+B6Fzo8Va+R5lmfJZjN21TrvUtVriwmR9+t0F3bAporcIBSfQDBEa+GQUw==
-X-Received: by 2002:a05:620a:17a9:b0:7c3:c111:8c3d with SMTP id af79cd13be357-7c5eda91760mr82455185a.49.1743010906411;
-        Wed, 26 Mar 2025 10:41:46 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7e0ebbsm22090901fa.34.2025.03.26.10.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 10:41:45 -0700 (PDT)
-Date: Wed, 26 Mar 2025 19:41:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 5/7] interconnect: qcom: sa8775p: Add dynamic icc
- node id support
-Message-ID: <bpjjnvw4mkjieidi7ooukt7f3bgxig5ezyuhp4tjmufr77eoel@bwj75fjd3mxs>
-References: <20250324183203.30127-1-quic_rlaggysh@quicinc.com>
- <20250324183203.30127-6-quic_rlaggysh@quicinc.com>
+	s=arc-20240116; t=1743012407; c=relaxed/simple;
+	bh=MSSjAmLOkE9JyRhSQ5swPcfZ2dZeTxEf9ibc8TYM/38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dqee0Dow7LgDf6Hf+f/iB2qwV0ZSPAUZLMppuQqhwP5JDDLJ3m5BZDLqtoidsdDEzcnmOBNoLXWRrMMz9HpD1Vil/z3C+2x1PDV0ggnrCARn0BIE4sfdv62CkyvelTiczKoF2UnS1Jbqt+uDKdXeVFtbAlpwD8nq259ZQ/R0tBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NfQXfFxN; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1743010976;
+	bh=qN/Fi4R0Hpw1uQbJbeIB3oDRZ/puUHLgAA+ehJo29ls=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=NfQXfFxNl6auTeIMXTu42E302BnDcOrce7X+9NFSopxRy9LD7P4Op9yskIy/QYQeI
+	 lCSMVnb02Qkx+dgA1JEn5cm7nrVzuajIKaHmaDSPkjDufrWxbWQf46KAMJfISSfHl9
+	 4+OREgFguC2cqW6vMrbQp91Up6lvCGtMeAzKspxE=
+X-QQ-mid: bizesmtpip4t1743010928txj9agk
+X-QQ-Originating-IP: 9+IYxNSIzCojtcRcEE9Uzk+rNAnv9SS9KlFz7C1pX2s=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 27 Mar 2025 01:42:06 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10032576578829145953
+EX-QQ-RecipientCnt: 11
+From: WangYuli <wangyuli@uniontech.com>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	samitolvanen@google.com,
+	petr.pavlu@suse.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] kbuild: deb-pkg: Add libdw-dev:native to Build-Depends-Arch
+Date: Thu, 27 Mar 2025 01:41:55 +0800
+Message-ID: <39FF69551D01924F+20250326174156.390126-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324183203.30127-6-quic_rlaggysh@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=TuvmhCXh c=1 sm=1 tr=0 ts=67e43c5b cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=oKCiNua1F0BOgjzGbBIA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: k73HTQLKiditnqwIFsS6Qbah0rAtaQom
-X-Proofpoint-ORIG-GUID: k73HTQLKiditnqwIFsS6Qbah0rAtaQom
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_08,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=818
- malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- suspectscore=0 adultscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
- mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260109
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NyA5aDdnpEEQLQ2HjA0XclJH7PX82FiC8bIdkcS+J7O0yXuQuAaRk1Yd
+	lgz8myf7WDKaw2Zg6hS9oK+mRuJN/CMO1dYVDci0PnSNVxqu87GkxzENScTytmwgiFXyMNw
+	bTSEaAH4skJDeds0XXHTAeBRVSXOtVmhBw/2kZrRSAiYF7dqVgCND+TiVKsF8Su3zmbhZQx
+	9DxacdXGtXjLxClQ5fyEt+YxqbS2uvBYkpEFrjahPZJc2S02S4F8UwJfGS/ZzayQvDX+6Ci
+	9zTPdv2L1hv9WZOTwreraWGD2dgbqts7pwtmXa1fNYV+SdT6qIHabq5q7D8euRzoEmkJ+PA
+	K6bA+mBSbF4L9gQnaGWvUOQ3tiZCKXepga58kod0CQCpipE6xJYkxbj6YsdScnr+a66qX19
+	mht8Y7mIC4uJ+aPBLj/xGXyO2vMUH/W+Z+uvUI7JVCCR/40otiR8JY44sWHV17ZwiNzF70E
+	tdivZ20yHus430G2ZRBgzEZoPAjTMmziDmg/mHVqAg6NqN+jOskEiX1CUnKdUDIr3BLi278
+	BfZD+vaohPd1RmaoCLJfE/bKvGqOJiAQCIFnCWIzUIHkuePf5qaYqcjzEZOMREGUr+0uyRN
+	RSS6FmP2+Tefu3G03O3uXskaEl8NcoWrMmJhXWXsinM3URE3BFiYIlSOD+bnU+v2pnURrL/
+	1XrmgE4ZqRUyYSPXExDmTq2wuBy1LWH3/PVYJt2+LSRuMEc+aUzOQhC9Sa7OjCjVCWPSOgF
+	RWntBicPhfFQlme3ssEjNDejcsmUmox803Cu9wTQVDrH/TYhR0ufJSTlG8DvaJxSG2QGXK9
+	DLTB/rohzqvi0YKZ3/vAeLmXwHsoRDzzqAOIGzCg15Gi6XDuPHrg7yw+TkKKBgHgdyRVC3g
+	Yns9Icvi8WB+pxStZS7Fid5kVTwoXM4sK/qKtPbZ+Sv3hrn28+JwNP2jG3nNrXgCFuZXOCW
+	SarMG+wbuJ95OsQTJAOEbJX8Vu89OgE0wMSve46W912Kb8/vDeKV5MYwE+ZxQiRA8JCO6h8
+	3HWXhUN6M0gbCrwpbaiJ4Z5u+fLLx8oiA9dNO1QmDrDQSYgpPU
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Mar 24, 2025 at 06:32:01PM +0000, Raviteja Laggyshetty wrote:
-> To facilitate dynamic id allocation, discard the static IDs
-> from node data and set alloc_dyn_id in descriptor structure
-> to indicate dynamic ID allocation. Update the topology to use
-> node pointers for links instead of static IDs and forward declare
-> the node pointer to avoid undefined references.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> ---
->  drivers/interconnect/qcom/sa8775p.c | 952 ++++++++++------------------
->  1 file changed, 347 insertions(+), 605 deletions(-)
-> 
+The dwarf.h header, which is included by
+scripts/gendwarfksyms/gendwarfksyms.h, resides within the libdw-dev
+package.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This portion of the code is compiled under the condition that
+CONFIG_GENDWARFKSYMS is enabled.
 
+Consequently, add libdw-dev to Build-Depends-Arch to prevent
+unforeseen compilation failures.
+
+Fix follow possible error:
+  In file included from scripts/gendwarfksyms/cache.c:6:
+  scripts/gendwarfksyms/gendwarfksyms.h:6:10: fatal error: 'dwarf.h' file not found
+      6 | #iIn file included from nscripts/gendwarfksyms/symbols.cc:lude6 :
+  <dwarf.hscripts/gendwarfksyms/gendwarfksyms.h>:6
+  :      10| :          ^~~~~~~~~
+  fatal error: 'dwarf.h' file not found
+    6 | #include <dwarf.h>
+      |          ^~~~~~~~~
+
+Fixes: f28568841ae0 ("tools: Add gendwarfksyms")
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ scripts/package/mkdebian | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index 0178000197fe..25edee97fff7 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -209,7 +209,7 @@ Rules-Requires-Root: no
+ Build-Depends: debhelper-compat (= 12)
+ Build-Depends-Arch: bc, bison, flex,
+  gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
+- kmod, libelf-dev:native,
++ kmod, libdw-dev:native, libelf-dev:native,
+  libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
+  python3:native, rsync
+ Homepage: https://www.kernel.org/
 -- 
-With best wishes
-Dmitry
+2.49.0
+
 
