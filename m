@@ -1,176 +1,238 @@
-Return-Path: <linux-kernel+bounces-577308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0950FA71B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0334FA71B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59F91889BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:58:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DE318853EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB77C1F5828;
-	Wed, 26 Mar 2025 15:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC60F1F4CB7;
+	Wed, 26 Mar 2025 15:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="mhcQplaK"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNw5vBUN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D271DB933;
-	Wed, 26 Mar 2025 15:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195091F472E;
+	Wed, 26 Mar 2025 15:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004698; cv=none; b=oXHWIvU6mIqYodL8SkyJv8ZZXQ0j8izVu6J0Aq2v77B7xAT0Te6OW1p8YwUUwi5U2QEhkZn/04+UvIFuuRVsVukM2THJ1W0/tVeEw8xm5aL3lMHSHtGpb2WajBgKW9pCVjucPCX/EUUO9+E4bwjAataVOCHzbOC4vz9ogxRlFn0=
+	t=1743004713; cv=none; b=Lv4XnsMDQKBJpW8vmgTpIZNA1Nznf61/PvqJLRAZuezMUq63TfYhhmKwwC8NABu6NC9VKADUtYW2xCAxNnqJd2VcOUH7sTFbica1U5/oYkmJGDmDR/aLt9PVAZb7FZiB3M53WonQIyxqFV5fdarXbg54zfVGFz7qR2uDs1BlJh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743004698; c=relaxed/simple;
-	bh=2eBx4HsvGGOFaHFMvl/hMWCfdxQEahMw997e09FKn74=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bgzSXkZfy5xGnf70XUksS3hc+8K7lP73UHoTsHIblRTazaMk/Z6HJxFfedIctw01aN55N7CevNYKgMkq+tkm0gjWh7g88GhPikpoanSX25T+Lfb1ZITHCXsOcN3CLUeXyLnoDy8NtKmzvCTKGF0XjkNhpyTNxF2LNZQb2o+EMWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=mhcQplaK; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 1689CC003AD0;
-	Wed, 26 Mar 2025 08:58:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 1689CC003AD0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1743004695;
-	bh=2eBx4HsvGGOFaHFMvl/hMWCfdxQEahMw997e09FKn74=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mhcQplaK5Gm0nI0gpFCKLKJPSilrBGSIYAkZXQo2t52KGgzedOTNDzpO5W9wC5EnS
-	 S6DVK6UwSuuIo9WrJtj8kp2t+IKaW/haP7TU/qtruPoGB9kVZWfLuhiM5pmqGMAill
-	 Rdq8LGRP7c1c36IVzLVfxNnX3Hz6PNp6/583mmMw=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 7C81C4002F44;
-	Wed, 26 Mar 2025 11:58:12 -0400 (EDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: stable@vger.kernel.org
-Cc: Ilya Maximets <i.maximets@ovn.org>,
-	Friedrich Weber <f.weber@proxmox.com>,
-	Aaron Conole <aconole@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Carlos Soto <carlos.soto@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Breno Leitao <leitao@debian.org>,
-	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Yan Zhai <yan@cloudflare.com>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	Joe Stringer <joestringer@nicira.com>,
-	Andy Zhou <azhou@nicira.com>,
-	Justin Pettit <jpettit@nicira.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Luca Czesla <luca.czesla@mail.schwarz>,
-	Simon Horman <simon.horman@corigine.com>,
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-	linux-kernel@vger.kernel.org (open list),
-	dev@openvswitch.org (open list:OPENVSWITCH),
-	bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools))
-Subject: [PATCH stable 5.4 v3 2/2] openvswitch: fix lockup on tx to unregistering netdev with carrier
-Date: Wed, 26 Mar 2025 08:58:00 -0700
-Message-Id: <20250326155800.4133904-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250326155800.4133904-1-florian.fainelli@broadcom.com>
-References: <20250326155800.4133904-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1743004713; c=relaxed/simple;
+	bh=9m9MReJ7JJiilrI+wNCXRHg87GEezlJxw8QAA1k6d3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzIpXjPsk4sgRkHcFcg1aCe5HbAdiaULngyBGiA8OGuCAmi6ACxlcw8Emd/jsX/c1nX6vZmHx4yFwyXbfL+qsXWzJo/aIcJQ2WfuxYE2sxwcqo/uC4PTj4zxX55EFGLthxlPkZx/hlyF7/C16tzPhOpFy6eZU+mv8nUSx4AGZ8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNw5vBUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B53BC4CEE2;
+	Wed, 26 Mar 2025 15:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743004712;
+	bh=9m9MReJ7JJiilrI+wNCXRHg87GEezlJxw8QAA1k6d3g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNw5vBUNulOOnb7EWs1jDQByEuTMcL1NnpfdZftLTaEPlMwZGVfO8wsYB3yoI2djX
+	 gyZbY/RASyhK2nkkmyAu5DwOVz0aSjxSVj4iG4raR6INcUQwxf/WpdVUb8ZT+z1Xux
+	 m4/YpIcd9+vGh5LyyvvyPTotZY7ehi4iPPRykir/tINJiDJ0X/ILRU/ItpsJ/+zjif
+	 E3sFg8u4ER4HMx6kzD95eKY2F/vPj98NXd819B6JaN8lXIar9q91cuECVDKnG26ltR
+	 8Dft+ou6o78s2lgLwjIZiuZab7wNZqS3nbPHv2LhO+DjC+J+53qLYHiN4gcqZpzpi7
+	 5JjzLSOWqL+IQ==
+Date: Wed, 26 Mar 2025 17:58:28 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sumit Garg <sumit.garg@kernel.org>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	linux-integrity@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
+Message-ID: <Z-QkGUenPAMid63l@kernel.org>
+References: <20250320152433.144083-1-sgarzare@redhat.com>
+ <20250320152433.144083-3-sgarzare@redhat.com>
+ <Z-I86tWMcD6b_YeM@sumit-X1>
+ <Z-Pu4FhcntnKii61@kernel.org>
+ <Z+QQWe/upJuVpU8r@ziepe.ca>
+ <Z-QV5y1JGBDpsPuH@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="tV7JfXtZF8fCdQbj"
+Content-Disposition: inline
+In-Reply-To: <Z-QV5y1JGBDpsPuH@kernel.org>
 
-From: Ilya Maximets <i.maximets@ovn.org>
 
-[ Upstream commit 47e55e4b410f7d552e43011baa5be1aab4093990 ]
+--tV7JfXtZF8fCdQbj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit in a fixes tag attempted to fix the issue in the following
-sequence of calls:
+On Wed, Mar 26, 2025 at 04:57:47PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Mar 26, 2025 at 11:34:01AM -0300, Jason Gunthorpe wrote:
+> > On Wed, Mar 26, 2025 at 02:11:12PM +0200, Jarkko Sakkinen wrote:
+> > 
+> > > Generally speaking I don't see enough value in complicating
+> > > callback interface. It's better to handle complications in
+> > > the leaves (i.e. dictatorship of majority ;-) ).
+> > 
+> > That is very much not the way most driver subsystems view the
+> > world. We want to pull logical things into the core code and remove
+> > them from drivers to make the drivers simpler and more robust.
+> > 
+> > The amount of really dumb driver boiler plate that this series
+> > obviously removes is exactly the sort of stuff we should be fixing by
+> > improving the core code.
+> > 
+> > The callback interface was never really sanely designed, it was just
+> > built around the idea of pulling the timout processing into the core
+> > code for TIS hardware. It should be revised to properly match these
+> > new HW types that don't have this kind of timeout mechanism.
+> 
+> Both TIS and CRB, which are TCG standards and they span to many
+> different types of drivers and busses. I don't have the figures but
+> probably they cover vast majority of the hardware.
+> 
+> We are talking about 39 lines of reduced complexity at the cost
+> of complicating branching at the top level. I doubt that there
+> is either any throughput or latency issues.
+> 
+> What is measurable benefit? The rationale is way way too abstract
+> for me to cope, sorry.
 
-    do_output
-    -> ovs_vport_send
-       -> dev_queue_xmit
-          -> __dev_queue_xmit
-             -> netdev_core_pick_tx
-                -> skb_tx_hash
+E.g., here's how you can get rid of extra cruft in tpm_ftpm_tee w/o
+any new callbacks.
 
-When device is unregistering, the 'dev->real_num_tx_queues' goes to
-zero and the 'while (unlikely(hash >= qcount))' loop inside the
-'skb_tx_hash' becomes infinite, locking up the core forever.
+BR, Jarkko
 
-But unfortunately, checking just the carrier status is not enough to
-fix the issue, because some devices may still be in unregistering
-state while reporting carrier status OK.
+--tV7JfXtZF8fCdQbj
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-tpm-Make-chip-status-cancel-req_canceled-opt.patch"
 
-One example of such device is a net/dummy.  It sets carrier ON
-on start, but it doesn't implement .ndo_stop to set the carrier off.
-And it makes sense, because dummy doesn't really have a carrier.
-Therefore, while this device is unregistering, it's still easy to hit
-the infinite loop in the skb_tx_hash() from the OVS datapath.  There
-might be other drivers that do the same, but dummy by itself is
-important for the OVS ecosystem, because it is frequently used as a
-packet sink for tcpdump while debugging OVS deployments.  And when the
-issue is hit, the only way to recover is to reboot.
+From 1125e80ea274a5ec5d5dba32bfce716ce62c5e4a Mon Sep 17 00:00:00 2001
+From: Jarkko Sakkinen <jarkko@kernel.org>
+Date: Wed, 26 Mar 2025 17:55:49 +0200
+Subject: [PATCH] tpm: Make chip->{status,cancel,req_canceled} opt
 
-Fix that by also checking if the device is running.  The running
-state is handled by the net core during unregistering, so it covers
-unregistering case better, and we don't really need to send packets
-to devices that are not running anyway.
+tpm_ftpm_tee does not require chip->status, chip->cancel and
+chip->req_canceled. Make them optional.
 
-While only checking the running state might be enough, the carrier
-check is preserved.  The running and the carrier states seem disjoined
-throughout the code and different drivers.  And other core functions
-like __dev_direct_xmit() check both before attempting to transmit
-a packet.  So, it seems safer to check both flags in OVS as well.
-
-Fixes: 066b86787fa3 ("net: openvswitch: fix race on port output")
-Reported-by: Friedrich Weber <f.weber@proxmox.com>
-Closes: https://mail.openvswitch.org/pipermail/ovs-discuss/2025-January/053423.html
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
-Tested-by: Friedrich Weber <f.weber@proxmox.com>
-Reviewed-by: Aaron Conole <aconole@redhat.com>
-Link: https://patch.msgid.link/20250109122225.4034688-1-i.maximets@ovn.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Carlos Soto <carlos.soto@broadcom.com>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- net/openvswitch/actions.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm-interface.c | 31 ++++++++++++++++++++++++++++---
+ drivers/char/tpm/tpm_ftpm_tee.c  | 18 ------------------
+ 2 files changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index aec20faadfcc..815a55fa7356 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -920,7 +920,9 @@ static void do_output(struct datapath *dp, struct sk_buff *skb, int out_port,
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index f62f7871edbd..10ba47a882d8 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -58,6 +58,30 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
++static void tpm_chip_cancel(struct tpm_chip *chip)
++{
++	if (!chip->ops->cancel)
++		return;
++
++	chip->ops->cancel(chip);
++}
++
++static u8 tpm_chip_status(struct tpm_chip *chip)
++{
++	if (!chip->ops->status)
++		return 0;
++
++	return chip->ops->status(chip);
++}
++
++static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
++{
++	if (!chip->ops->req_canceled)
++		return false;
++
++	return chip->ops->req_canceled(chip, status);
++}
++
+ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
  {
- 	struct vport *vport = ovs_vport_rcu(dp, out_port);
+ 	struct tpm_header *header = buf;
+@@ -65,6 +89,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 	ssize_t len = 0;
+ 	u32 count, ordinal;
+ 	unsigned long stop;
++	u8 status;
  
--	if (likely(vport && netif_carrier_ok(vport->dev))) {
-+	if (likely(vport &&
-+		   netif_running(vport->dev) &&
-+		   netif_carrier_ok(vport->dev))) {
- 		u16 mru = OVS_CB(skb)->mru;
- 		u32 cutlen = OVS_CB(skb)->cutlen;
+ 	if (bufsiz < TPM_HEADER_SIZE)
+ 		return -EINVAL;
+@@ -104,12 +129,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
  
+ 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+ 	do {
+-		u8 status = chip->ops->status(chip);
++		status = tpm_chip_status(chip);
+ 		if ((status & chip->ops->req_complete_mask) ==
+ 		    chip->ops->req_complete_val)
+ 			goto out_recv;
+ 
+-		if (chip->ops->req_canceled(chip, status)) {
++		if (tpm_chip_req_canceled(chip, status)) {
+ 			dev_err(&chip->dev, "Operation Canceled\n");
+ 			return -ECANCELED;
+ 		}
+@@ -118,7 +143,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 		rmb();
+ 	} while (time_before(jiffies, stop));
+ 
+-	chip->ops->cancel(chip);
++	tpm_chip_cancel(chip);
+ 	dev_err(&chip->dev, "Operation Timed out\n");
+ 	return -ETIME;
+ 
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index 8d9209dfc384..3732f3623537 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -164,30 +164,12 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	return 0;
+ }
+ 
+-static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
+-{
+-	/* not supported */
+-}
+-
+-static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
+-{
+-	return 0;
+-}
+-
+-static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status)
+-{
+-	return false;
+-}
+-
+ static const struct tpm_class_ops ftpm_tee_tpm_ops = {
+ 	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.recv = ftpm_tee_tpm_op_recv,
+ 	.send = ftpm_tee_tpm_op_send,
+-	.cancel = ftpm_tee_tpm_op_cancel,
+-	.status = ftpm_tee_tpm_op_status,
+ 	.req_complete_mask = 0,
+ 	.req_complete_val = 0,
+-	.req_canceled = ftpm_tee_tpm_req_canceled,
+ };
+ 
+ /*
 -- 
-2.34.1
+2.39.5
 
+
+--tV7JfXtZF8fCdQbj--
 
