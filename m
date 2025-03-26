@@ -1,215 +1,149 @@
-Return-Path: <linux-kernel+bounces-576536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E30A710A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:35:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5319A710A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60553188ED43
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D8D174DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCD3190678;
-	Wed, 26 Mar 2025 06:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33376199FAF;
+	Wed, 26 Mar 2025 06:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OY3XEinK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pTYtWRcR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OY3XEinK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pTYtWRcR"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqWCSEWg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248963CB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B49F15381A;
+	Wed, 26 Mar 2025 06:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742970846; cv=none; b=ln15GN6mfTXPVut1jBLfpK8FWuZcsZi9UTHHRsNNfNLQZT7Oqqudw8GhgbDjgD8xjH6gIVwm7vJkzmqn8SpdetH7dhMZ3frRm9i64tE+kSFAjlzTfwqfAE6OQMwGa49WjRXH3xb4f5XFD5iMrNgAOJgOX2acgfh+sU0/LDm/kZE=
+	t=1742970889; cv=none; b=rc9ipidDLJ1K1tCNBOxyi5M37nQpYbh/5+j+1GkaeCQWxePYK0PHuWwQ//gg2tjT8jWGVylJbhEy8VO+Kfaqi6H0EZLukBNvI9PtQWPYDPmYNHxAzij0dDfTnR0GGTtZQBn9FGUFUjY/eclfJEPZR49LUu1VWNB6CJV6ZoxavaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742970846; c=relaxed/simple;
-	bh=9zav64XBELO2rxde9ChRMOgvN7iEcgi6P6AKIhj053w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XycViB2KMcitux4g8D8K9dLLelh8bsAdTevtQSIDc70a/fHuSR0f81m4C4Lx0O0hjToviMTLK9nMOehrAs+x8Szl0zcx9A0xU8Ni5cPtHPQp7ThYu+rOg4mojr3E5Mc4T8SAC+mCmB0mGP8dxJ5cSbv3+mTZ7KM7Sr2uGSB1qtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OY3XEinK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pTYtWRcR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OY3XEinK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pTYtWRcR; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DB4E1F391;
-	Wed, 26 Mar 2025 06:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742970842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5lO1CvYevwJtjnVdy0mhrufgFCHw/Q2ueX7SBARC9Q=;
-	b=OY3XEinKpcqWlhZfhtPF/6lM3PB8am70iBadM2cQ8vCPZuJaFjo7KTunaDQZN0RqYVd/Gz
-	Lke09/wvEGRMpC96XvDbAZA2OZHwtuqeLluhU6zIgLx+d1DrW7xKyMMzv+ASGr1gmGX3t6
-	FVsYmz1Ns+sKnhLemxZnHGJWOT0MoU0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742970842;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5lO1CvYevwJtjnVdy0mhrufgFCHw/Q2ueX7SBARC9Q=;
-	b=pTYtWRcReO9YbuCwOnwydnHFpTXHTddIpH6wiRHriaZ8d+2Yaelua4lMx45XPXeiPX0P3n
-	EHLa7adWN53XvHCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742970842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5lO1CvYevwJtjnVdy0mhrufgFCHw/Q2ueX7SBARC9Q=;
-	b=OY3XEinKpcqWlhZfhtPF/6lM3PB8am70iBadM2cQ8vCPZuJaFjo7KTunaDQZN0RqYVd/Gz
-	Lke09/wvEGRMpC96XvDbAZA2OZHwtuqeLluhU6zIgLx+d1DrW7xKyMMzv+ASGr1gmGX3t6
-	FVsYmz1Ns+sKnhLemxZnHGJWOT0MoU0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742970842;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5lO1CvYevwJtjnVdy0mhrufgFCHw/Q2ueX7SBARC9Q=;
-	b=pTYtWRcReO9YbuCwOnwydnHFpTXHTddIpH6wiRHriaZ8d+2Yaelua4lMx45XPXeiPX0P3n
-	EHLa7adWN53XvHCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA58D13927;
-	Wed, 26 Mar 2025 06:34:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Gp39M9mf42cyLwAAD6G6ig
-	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 06:34:01 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Nicolai Stange <nstange@suse.de>,  Mimi Zohar <zohar@linux.ibm.com>,
-  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
-  Jarkko Sakkinen <jarkko@kernel.org>,  linux-integrity@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
-In-Reply-To: <300575957cee207c4191b8bc70219d13d467fdd7.camel@HansenPartnership.com>
-	(James Bottomley's message of "Sun, 23 Mar 2025 13:25:15 -0400")
-References: <20250323140911.226137-1-nstange@suse.de>
-	<20250323140911.226137-11-nstange@suse.de>
-	<300575957cee207c4191b8bc70219d13d467fdd7.camel@HansenPartnership.com>
-Date: Wed, 26 Mar 2025 07:34:01 +0100
-Message-ID: <87ecyks3l2.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1742970889; c=relaxed/simple;
+	bh=2MGPnAtzDlcfNFkgrjhcbs+PSZK/71xFqiqfm4ICurw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N1BwKyi41vq1bPoormQrP6RfW1WVndmK57FDr+17ZZ+F/MUx/p7rjhG3S8tCxsdTW+QOY8yMe9sUqX+ODXpLBlHsi4BVKiW1lcTtFMt1MKvdEzI+lB3LMkgDb++lOneohVJXnX82tGXPvClW90H2mIniMavmF/sE5YKdh6+usR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqWCSEWg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E46EC4CEFD;
+	Wed, 26 Mar 2025 06:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742970888;
+	bh=2MGPnAtzDlcfNFkgrjhcbs+PSZK/71xFqiqfm4ICurw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oqWCSEWgqSzuZihIGSGxBq/NFjOUhZjOlwZMMZY+/2ybNPO86h100+06K+NuCc9Mt
+	 WYnoiWB1I5d60B7CRE6XuosOocePqX6eDdBEP/8SE+DYlhSfcxkLZF9LrlQ68Y4veL
+	 H8xWmZsln8RTeTMzlPXP6pl8crUOBBsMQcncsHm3UJYg5K3kU3IXi4FH/Qc4qv2wOO
+	 yEJnquI42uVFFeIsvvRh3GMWQ+sFTb7U/WMNtlSVXjGbMeRckEm9GTcI5P7A0b/Ro3
+	 nMSrwoZKByN/PZoX2e4Jn/Y5mLcclU97Oe6eskkQTsOcmnMnijIJvWokjpBxxC2uqF
+	 n5hVyTRxxXDfw==
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3913d45a148so5217717f8f.3;
+        Tue, 25 Mar 2025 23:34:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0Z8fFKCF0vRhplQweEWYJYb4VDCWeUT4Bm1nCypoBk/n/uxsih6rHY58p6FeUcq+Wry1k9YuiK8p1@vger.kernel.org, AJvYcCU4GAChg4xxzAN3U6zdOKIqvtxfwHDLeuD2G5iqstMAIST5NKH7KjJxH5D7n8szeHjoA9LEIoZYfkCwTD+G@vger.kernel.org, AJvYcCUFkl+fLz2Ty4CUosoSsnoduEM8NcjlVOBB+wGeVVmhTCeluHI1NGAUhGT93dGFpJMBhk0kncI9ONob2JmU3K3D0g==@vger.kernel.org, AJvYcCULDFP2m8ArapfMbFHal25WKy2OQVT9dJFZNasejpHyPNDdlsIs1MfY6E262dno7+4xhui7b5SlOUfwGyyFk5b1@vger.kernel.org, AJvYcCUUsJfP0jLy3Jsw7aPbOSO8BKLtCSp+frnkq1Zls74YGFbVK6DtCKcjZNkFxTvGvDf5GObi5jPz/0EN@vger.kernel.org, AJvYcCUXr2P3qruuhJlosLngrSNHmvD70TBKJ6pnDElYTRlILCHOlPsQMooFdVGO2HAxQno3vDd8NzUmw3O/cuA=@vger.kernel.org, AJvYcCUZj9Pcy+b/+sBQHNmT0l0jL2Qw7x5GePbmuQH5lvxOggSGbmLq2ac+ILT5GNh/RW0fgUi5DkgxyoCUCA==@vger.kernel.org, AJvYcCUdyhsoB72OG79gi1NoOaqP78cOx+RMBeV0OLOvNFYEY5F3t33sbho+EKNBRc+LJ0xVKy6rEaX2P/XtYSk=@vger.kernel.org, AJvYcCUv+aZYOjNJCQBrjBYu2lhDf6McfFEOyLeTxcqAZLVC7XBo3afNbKcgvseKWbNSZMPihiT1+KKpw3zrWXI=@vger.kernel.org, AJvYcCV3puId
+ FA0KYAx327zBT/qFJcQ2dbJ7yxWunHB4vyO8kYVhtxsM42JSRNPrHb6ncDmiu83N@vger.kernel.org, AJvYcCVKvsdgscn4uqo6A/K28+75ZkFcH53m5a3RN7f9ysrXqDH155/YZuaO1ixmgv1ZO6RUNbKT/B0Y@vger.kernel.org, AJvYcCVguDGFLvtm/rcALP/PZ5+JqxAGWr/Z5FFnnkGQXwQeBRYpwVLDdyTK7ntwruahdlxwkzY=@vger.kernel.org, AJvYcCWCMyj1EvsfYGiSabQwTiT7uvTmasRiKXCDGdJ2HG6KIxn8nCMbQpW791eGMWH3g4iCnnbtk/yOM+SOTDVpKiWugrAb@vger.kernel.org, AJvYcCWEqtQIvpooCRV44g/lVmuuKDjUO/tE0l1IZGYe8b77mdtTRqrYT6msUdpnF7Me4UTdHrHSIdyuJ8LXmw==@vger.kernel.org, AJvYcCWPx+zO84CE/K6pV+HY5Ri9Z0F2AqInOdTtFBqiosG9yGtbL1jRWZ/EHQi0aUtXXcjsYQDBDokXAPltC3V2fg==@vger.kernel.org, AJvYcCWn0O9iCTJ9d/OvkKxW/Eh1PkNijLdm9bnrMSApgfS+yDT9xod9Du3vVK80Z6CoznHnPh+0d77p1rvpLsyw@vger.kernel.org, AJvYcCXmzcG79gR7jXjdwHfzZVXx+XUq+ZcO5IQljshTRFINu9zIzWvy0NnPErfx8A5/+Uv4wq8V5bpZVytIugLs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsRDEZMjBSsppymsMoksIPjPv0rlVGrfIct04Ab/4Ug7QBY8St
+	bIVe21apUi5Bk6svytNeUK5qMJ0xgJJsi2cTcTkn0+HZojxoRXUcbw0No1yyLbGjddk7HqdRzne
+	kxb/9eVlCS6QwWzfVxO2b1dJrd08=
+X-Google-Smtp-Source: AGHT+IGIApydo9VgmdhIDcmOnmG1sSv1FEEmzeINRVbJ26tbvLOq+REJlE+tfl+WofDYebAF8b+RY6kbO+n3ISps8p8=
+X-Received: by 2002:a5d:47c6:0:b0:38d:d371:e04d with SMTP id
+ ffacd0b85a97d-3997f937cd7mr16526330f8f.34.1742970886849; Tue, 25 Mar 2025
+ 23:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250325121624.523258-1-guoren@kernel.org> <20250325121624.523258-2-guoren@kernel.org>
+ <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Wed, 26 Mar 2025 14:34:32 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRZyAAgrM1RMrTi7Zi+Vx_VBnM1=CWwZZtLy+uHZ=vZpw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpGXhmRPDvCQOc_Kwk_PFeqm824JtKAYEkQji0TkGjMeyznsoqjkxAkPig
+Message-ID: <CAJF2gTRZyAAgrM1RMrTi7Zi+Vx_VBnM1=CWwZZtLy+uHZ=vZpw@mail.gmail.com>
+Subject: Re: [RFC PATCH V3 01/43] rv64ilp32_abi: uapi: Reuse lp64 ABI interface
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, anup@brainfault.org, atishp@atishpatra.org, 
+	oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, will@kernel.org, 
+	mark.rutland@arm.com, brauner@kernel.org, akpm@linux-foundation.org, 
+	rostedt@goodmis.org, edumazet@google.com, unicorn_wang@outlook.com, 
+	inochiama@outlook.com, gaohan@iscas.ac.cn, shihua@iscas.ac.cn, 
+	jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
+	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
+	dsterba@suse.com, mingo@redhat.com, peterz@infradead.org, 
+	boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, 
+	leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com, 
+	samuel.holland@sifive.com, yongxuan.wang@sifive.com, 
+	luxu.kernel@bytedance.com, david@redhat.com, ruanjinjie@huawei.com, 
+	cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn, 
+	ardb@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
+	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Score: -0.60
-X-Spamd-Result: default: False [-0.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	INVALID_MSGID(1.70)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,linux.ibm.com,huawei.com,gmail.com,oracle.com,kernel.org,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
-
-> On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
->> PCR reads aren't currently authenticated even with
->> CONFIG_TCG_TPM2_HMAC=3Dy yet.
+On Wed, Mar 26, 2025 at 4:41=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> The reason being TPM2_PCR_Read can only support an audit session, so it
-> has even more overhead than the usual HMAC session for something you
-> don't care about and because no-one relies on plain reads anyway,
-> relying entities use quotes.
+> On Tue, 25 Mar 2025 at 05:17, <guoren@kernel.org> wrote:
+> >
+> > The rv64ilp32 abi kernel accommodates the lp64 abi userspace and
+> > leverages the lp64 abi Linux interface. Hence, unify the
+> > BITS_PER_LONG =3D 32 memory layout to match BITS_PER_LONG =3D 64.
 >
->> It is probably desirable though, as e.g. IMA does some PCR reads to
->> form the cumulative boot digest subsequently extended into PCR 10 (an
->> operation which *is* authenticated).
+> No.
 >
-> Could you elaborate on what security properties this adds?  I can't see
-> any form of attack that could be done by altering the boot aggregate:
-> either the relying party cares, in which case it will quote the boot
-> log and arrive at its own value, or it doesn't, in which case the value
-> in the log is superfluous.
-
-Thanks a lot for the explanation, it makes a lot of sense now. The above
-was assumption based, along the lines of "the boot_aggregate gets
-measured into the IMA PCR, therefore committing to its value must serve
-some purpose and the extended value should probably be genuine".
-
-I would like to make it clear that my main motivation for this patch
-wasn't about the IMA-measured boot_aggregate integrity, but more about
-not getting blamed for (silently) breaking the null_key auth based
-protection guarantees provided for IMA's PCR extends with the last patch
-in this series (which would skip some extends conditioned on what's
-previously been read). FWIW, it's been agreed upon to split this series
-in batches, with the first one extending to up to [9/13] only, so this
-patch here wouldn't be part of that.
-
->> +		/*
->> +		 * Exclusivity is not needed, but set in the
->> response.
->> +		 * Set it here too, so that the HMAC verification
->> +		 * won't fail.
->> +		 */
->> +		tpm_buf_append_hmac_session(chip, &buf,
->> TPM2_SA_AUDIT
->> +					    |
->> TPM2_SA_AUDIT_EXCLUSIVE,
->> +					    NULL, 0);
+> This isn't happening.
 >
-> Exclusivity here requires no other command be unaudited between the
-> session starting and now.  That means that with the lazy flush scheme
-> you have a reasonable chance of this being violated and triggering an
-> error on the command.
-
-Noted, I didn't realize there's a lazy flushing scheme in place.
-
-Thanks!
-
-Nicolai
+> You can't do crazy things in the RISC-V code and then expect the rest
+> of the kernel to just go "ok, we'll do crazy things".
+>
+> We're not doing crazy __riscv_xlen hackery with random structures
+> containing 64-bit values that the kernel then only looks at the low 32
+> bits. That's wrong on *so* many levels.
+>
+> I'm willing to say "big-endian is dead", but I'm not willing to accept
+> this kind of crazy hackery.
+>
+> Not today, not ever.
+>
+> If you want to run a ilp32 kernel on 64-bit hardware (and support
+> 64-bit ABI just in a 32-bit virtual memory size), I would suggest you
+>
+>  (a) treat the kernel as natively 32-bit (obviously you can then tell
+> the compiler to use the rv64 instructions, which I presume you're
+> already doing - I didn't look)
+I used CONFIG_32BIT in v1 and v2, but I've abandoned them because,
+based on CONFIG_64BIT, I gain more functionality by inheriting the
+lp64-abi kernel. I want the full functionality of the CONFIG_64BIT
+Linux kernel, which can be equivalent, used interchangeably, and
+seamlessly.
 
 >
-> Additionally, the response will only have the exclusive flag set if the
-> above condition (no other unaudited command since session start) is
-> true, which it might not be.  The problem you're having is that
-> tpm2_auth_check_hmac_response() uses the command session flags to
-> calculate the rpHash, which is a useful short cut because for non-audit
-> sessions they're always the same.  If you want to use audit sessions,
-> you have to teach it to dig the response session flags out of the
-> header and use them instead.
+>  (b) look at making the compat stuff do the conversion the "wrong way".
 >
+> And btw, that (b) implies *not* just ignoring the high bits. If
+> user-space gives 64-bit pointer, you don't just treat it as a 32-bit
+> one by dropping the high bits. You add some logic to convert it to an
+> invalid pointer so that user space gets -EFAULT.
+Thanks for the advice. I'm looking at how to make the compat stuff.
 
 --=20
-SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
-rnberg, Germany
-GF: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG N=C3=BCrnberg)
+Best Regards
+ Guo Ren
 
