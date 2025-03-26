@@ -1,89 +1,76 @@
-Return-Path: <linux-kernel+bounces-576918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB856A715F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:41:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0783DA715FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59023BE4DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97AA13B02F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A831DE3B5;
-	Wed, 26 Mar 2025 11:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4108D1DDC1E;
+	Wed, 26 Mar 2025 11:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl8NgmRK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPPylndl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC1A1DD539;
-	Wed, 26 Mar 2025 11:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B2E1DD539;
+	Wed, 26 Mar 2025 11:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989234; cv=none; b=brNBLkRz4nvc14SdpVf/yn75Rnjt1C6u3I8TP72cBr9Pap3NYjqslTA5dTfyGGl5sOXj5nxdLFNz4ibevIyVsnhlP+yBh0Jazkn/Iu16Nd9BPH7aEEU8U+7uNW8X/lbEmjLT7unhe/oGdl9vkMQZ9t0THRoomabha9nikOijbuU=
+	t=1742989356; cv=none; b=lCBf3RTOV8PtOfXb1VvhgaicuTOze4HxQCyCl6cAbK1UACn6a39KeaxY/ny4b2JL7fo4qDnNmVWT6ytGa7R5lE8ySZdvygsEJaOt42Ex1Ry6M+78EY7DUUmcONjm9z0Vign3tp+hOvVJyOPhcpZgDUPj/hdP+nNmZEHZSQWq4nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989234; c=relaxed/simple;
-	bh=S4Y5Lp9S60CEFrO0+Skg6aj4t8NQylWLvEAiP2Hr4hA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gxpxe9tSClMSO8zBMd1RrtfjRL3RzEI2J+Ede5t8KNgY9VmhBI7oinf9eQwAIoC2Ui76qBi0X8oTkHmqVTqkbh3Bj+NDVVjy3+GE6t9MXhjNXWOv/Aaftm237Xp61kLc1DTjmnG40kKUU7AI/5m1UhOemcuFm2mjzGJBbpWn9nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl8NgmRK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC01C4CEE2;
-	Wed, 26 Mar 2025 11:40:33 +0000 (UTC)
+	s=arc-20240116; t=1742989356; c=relaxed/simple;
+	bh=v7ZMOO35vU/6iDB7/2yQJPgyi3G0An8BkvlxvSgQTZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEVKj0ekmKnt4SCfV6pPN8H+B+G+7BvvkR6sGxap1t78lVmjZadMT3555XAqWdTf/ka/39yn9T0GUvn8JGCABoADW6+3Uj1SmAtOun4/m9wcH3u+7lKzgbDydqELra6SdfdXTj6XJrATMCkSXl3gEgHJj6GMHR0krqEoutTkxto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPPylndl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B400FC4CEE2;
+	Wed, 26 Mar 2025 11:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742989234;
-	bh=S4Y5Lp9S60CEFrO0+Skg6aj4t8NQylWLvEAiP2Hr4hA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tl8NgmRKuvPwdQPlOzI7hW11C6rkbyHIycr825TLIo5pfATVTMK5fH9v8knXlYJi9
-	 XYVLLQPGqH6mPw967lyZcAb7QhyialB5dxu8DsjpZZyo8sZk1h6NDoa5uFH46SXS4s
-	 wSYZTouMwpAU2PoK3ZAINJL2yblcK7S2tE68eARjQ0tsQ5wUGaVd+7q6E59FZGIEGO
-	 RBQGLFNczdj7+YZ3VXYqLFiKMtwe9WbNwwjApzQTm4Ejb5YwSUwJo1/teKgLKFTo1V
-	 2m01QUaLd5lb/hl3JNireEJaGdpxhfdUlZcKXLXxgpkSbhps7GkCFsYhsMaRXSLzar
-	 Bzfa/pDGNq+mg==
-Date: Wed, 26 Mar 2025 04:40:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Cc: Ahmed Naseef <naseefkm@gmail.com>, asmadeus@codewreck.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, oneukum@suse.com, pabeni@redhat.com
-Subject: Re: [PATCH] net: usb: usbnet: restore usb%d name exception for
- local mac addresses
-Message-ID: <20250326044032.7d85c359@kernel.org>
-In-Reply-To: <Z-PmScfnrMXqBL_z@atmark-techno.com>
-References: <20241203130457.904325-1-asmadeus@codewreck.org>
-	<20250326072726.1138-1-naseefkm@gmail.com>
-	<20250326041158.630cfdf7@kernel.org>
-	<Z-PmScfnrMXqBL_z@atmark-techno.com>
+	s=k20201202; t=1742989356;
+	bh=v7ZMOO35vU/6iDB7/2yQJPgyi3G0An8BkvlxvSgQTZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fPPylndlVuEOOtsg+EFcIJOe5PBDJWrL6fLi5/Qisxgk/P/0J67tyFdPgzQH30NOz
+	 g8XAjtn1p9dYj8qEUaKF40fpFM6WDs0S7dOes1G5MrDTrFMFUpXfZSlUkXT78bVrRQ
+	 5IfudNeyC8ynw3hXjW9+SEA+B9ykFreE+1g8aV2wuTJBEXD+sDZrACxgsrspg5Vv6/
+	 l5bt9ynaSIgGx+ySvkl9ccplrBEW23gAy1UZGBNqRpdknyqvY7xr9pPscH1iwWEz2z
+	 LNvS3fswNpTtOOKljWo8D4Wd4F7yRG/TS+bOx8o1OhpTQLxmk8a+tm9HVzP5BmjXca
+	 uL1e8MJyvKUAg==
+Date: Wed, 26 Mar 2025 04:42:34 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: jack@suse.cz, hch@infradead.org, James.Bottomley@hansenpartnership.com,
+	david@fromorbit.com, rafael@kernel.org, djwong@kernel.org,
+	pavel@kernel.org, song@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	gost.dev@samsung.com, amir73il@gmail.com
+Subject: Re: [RFC 0/6] fs: automatic kernel fs freeze / thaw
+Message-ID: <Z-PoKps9bY-dZ2pU@bombadil.infradead.org>
+References: <20250326112220.1988619-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326112220.1988619-1-mcgrof@kernel.org>
 
-On Wed, 26 Mar 2025 20:34:33 +0900 Dominique Martinet wrote:
-> Jakub Kicinski wrote on Wed, Mar 26, 2025 at 04:11:58AM -0700:
-> > On Wed, 26 Mar 2025 11:27:26 +0400 Ahmed Naseef wrote:  
-> > > I hope this feedback helps in reconsidering the patch for mainline inclusion.    
-> > 
-> > It needs to be reposted to be reconsidered, FWIW  
-> 
-> I just reposted it here after this reminder:
-> https://lkml.kernel.org/r/20250326-usbnet_rename-v2-1-57eb21fcff26@atmark-techno.com
+On Wed, Mar 26, 2025 at 04:22:14AM -0700, Luis Chamberlain wrote:
+> I did a quick boot test with this on my laptop and suspend doesn't work,
+> its not clear if this was an artifact of me trying this on linux-next or
+> what, I can try without my patches on next to see if next actually
+> suspends without them. And so, we gotta figure out if there's something
+> stupid still to fix, or something broken with these changes I overlooked
+> on the rebase.
 
-Thanks!
+next-20250321 has suspend broken, so it was not my patches which broke
+suspend. So we need baseline first on a kernel revision where it is not
+broken.
 
-> I've just remembered the timing might not be great though with the merge
-> window that just started, and now I'm (re)reading through
-> Documentation/procss/maintainer-netdev.rst I pobably should have added
-> net-next? to the subject... If it weren't closed.
-> 
-> I'll re-repost for net-next after -rc1, unless something happens to the
-> patch earlier.
-
-It's in a gray zone between a fix and an improvement, we can take it
-via net at this stage.
+  Luis
 
