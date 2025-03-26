@@ -1,274 +1,228 @@
-Return-Path: <linux-kernel+bounces-577191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CFFA719A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:03:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F77A719AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A8117CA09
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332273A9196
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A001F418F;
-	Wed, 26 Mar 2025 14:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0B71F4E5B;
+	Wed, 26 Mar 2025 14:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="hDR8W7Vc"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F419E1F418C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000990; cv=none; b=u3Aag77xVhMY2Y6T+GoefsU/Fo08DXtEOfdmBXjy9gCHQt3/WshC6sSkBFpA0sKPrie99QUZ+s5+mPvGs+zss9BIEhEWXaC1B1iZEmkIg0RqHYCCW7r4ybTWQTIZnq8wOctJbJlKEpLcCf8P5KzPnQWt5VglcnyojQZJJQpJfZc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000990; c=relaxed/simple;
-	bh=YEtFk1JQFtsBcNa4csbscW/Ycl71wUDecYWJHRWWilY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eGw0aD9S5xgaMcT2bMkRC/HrB0UKLTSAInkY03HorseIsN3VT+n2mM5S90+4yciel5xGqH3kLTIyguGJLlcFyR6D4jIdCDSFMztws8GiMu2bn+FGTs1ZPOpWbiwp9WAgjYS86Tga/Ay0XTC4V/CGwLD1jXAoUDQQpHQdr0WLXbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=hDR8W7Vc; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmjyCflb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id A3B2946D92;
-	Wed, 26 Mar 2025 15:56:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1743000986;
-	bh=YEtFk1JQFtsBcNa4csbscW/Ycl71wUDecYWJHRWWilY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hDR8W7VcSgpyhNM83m9wxIrQsuWMrX04gQtAYflldIfIAw4VlJiZ4te4q9FEk5xpg
-	 fEDoiSqa3M/5wwVkF3u50V7t8vOatIbo24/KrGdTLHFuE1jC4Z3P6hX9C30N48NkXy
-	 JFgyNqmvRaVktF/KHybgmGOzPko/Jb8K73p1072f/4yhjDx3pGvKtgzr5iLkJhn6Zq
-	 pQT2pr55dYEYgBuLKz+DBlNNGUyvT1exeuW8dizBdZK/fM/Xp3MZnBn7WgOoMOFj53
-	 YkbOtRO/hWdYjM7aQFOlrnruHRwZzEDF0Jn2rLWRiVKpDqCzf2ZuGiCyuauyN+O3CF
-	 9Y1mJcE08jmTw==
-Date: Wed, 26 Mar 2025 15:56:25 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: [git pull] IOMMU Updates for Linux v6.15
-Message-ID: <Z-QVmVGmFhromIEy@8bytes.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5941F418C;
+	Wed, 26 Mar 2025 14:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743001020; cv=none; b=f248sew1VfVKGI8b52OZ4WgAWcqAFQjSNVoboS+tsZ+HLmVrLEzgMeh3stj5BEVJTzRgM4zxUDeaRW5Sm/ia5TjH3wud04ZB2izOWSYS4bu0JUMxVNPDDPRVgrzRsgsOhbxvh90ZgHyMN14Qje+BiWXz1VOa2Js4Rcxc2XQ1o+w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743001020; c=relaxed/simple;
+	bh=nF2RjFGpG3A65aMAwOnP1USwdp3nJlYReQNJqbqS1So=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lzk5amsCppmKa+TWqwjqDn20XuOxYf4B6moxRGF1A3CcBTVx/8hn2ZwxIOdBdU7P+XlX6v4TR0r00dpN5UCm6NoPik8N6BTvRJoER7b2OzCfdqpe3TiITpxuagzCWQrlRnFE9V15so1CROzGUHES3pYENjpWyuetUIIDQsz91ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmjyCflb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE3CC4AF0D;
+	Wed, 26 Mar 2025 14:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743001020;
+	bh=nF2RjFGpG3A65aMAwOnP1USwdp3nJlYReQNJqbqS1So=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MmjyCflb+tTlR5MBkQj7dY08iImGGcSdOex2tnRAjv2CwuMydzr+6g+T89hlPyD4T
+	 5lbqYAQY1q4vepYMT/XhJU+lTrqvOgrZmGzGiXtajU4A5oznmqySeZjpuJNR3Q7W/c
+	 2U2gPiGrsFJGXTzlXGKjjC+KX+QA+4YZli8XjIS5v2cXZbLXcPzwTzo/J8qoXDy1wh
+	 6b6w6zSoOQkpRQzMmVs/tly8J3rqdTwfv4skjGW1/KON/IPTMCNxxYNslK00Qlfofy
+	 yGqZAwmI5DoSHSLJz/HeXZfPLBCZzh63fOnqGNF6MKW+cs1HkhqnyVq4TVMetHf2m7
+	 ON5jKJk2k7NaA==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3fea67e64caso4127299b6e.2;
+        Wed, 26 Mar 2025 07:56:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUFQ3IKFkWX9FZbuRA+HWh64MYUMhe6TayEp3Q2WWpyCCCLXd6EJj60WtnFa25d6WxcCrk42h0iz6n7hw==@vger.kernel.org, AJvYcCUsxRevZ+ejpNRUMy8NhazkUQQXgTbXLpePYVqN7gBQZcLdYSKpv01VAmfNnkOQJrcSy5w5Af5CCEhnXw==@vger.kernel.org, AJvYcCVChEJmJTZdTJ5OqfnG2PSewBsm9pmt29xQwaHLQ5G/uTjisE7MM/sLi6wO5qZfra97q3sB4rkUYaWKPoz8@vger.kernel.org, AJvYcCVwp3RZp3ZC+bDwG/eZ94WvUEoDzWYWPYXMblauArX6n+OBt5zT2D66pxyeCHwAiU31Ul2z3SADhQCD@vger.kernel.org, AJvYcCX0cwsyE9ey5CeM7lrkerbPazwYOvn+jmjQpwlbx/6jCg1KnqAG46mr0qIHv/enPRbqucV/ertV7AdXcYde@vger.kernel.org, AJvYcCX7AfwD7WMflOS5l5KkmtgMbEOvlbP6hz1Rgj2v11KbDUuq23ACWVXRAWmbE4B9OUJWU4eDJmu/PyRx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeqkWVbRKpeXJOZCXonAVpF5J+j+a2yN6Pl+ibY/uMpqRAT4Vu
+	SuTCwdau/GXFOhzZZ9+ZGTpKFPDHPerpPFWWr2USjpqDsVyY9ymmRfE0axbSObFfVcRm++aQKPP
+	xUOCSBnEapwrrYSbJz7xdi6D2jOU=
+X-Google-Smtp-Source: AGHT+IGmSAoh/NM65izkDPKUI1Bx1s1CpYOoqqHj8rwk1HayiQb7/ZTrzCWxEZIlAbPgY/gZ5IPT5mW0vY7TUSaamgg=
+X-Received: by 2002:a05:6808:2116:b0:3f9:a187:1f5d with SMTP id
+ 5614622812f47-3febf79cf75mr13184095b6e.35.1743001019176; Wed, 26 Mar 2025
+ 07:56:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20250315001931.631210-1-romank@linux.microsoft.com> <20250315001931.631210-12-romank@linux.microsoft.com>
+In-Reply-To: <20250315001931.631210-12-romank@linux.microsoft.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Mar 2025 15:56:48 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
+X-Gm-Features: AQ5f1JraBPSxwGSJAA4KKJZ156j5w2j0joAJRL4jrFqS_Vv7qLwxEV_YVE1Rcsc
+Message-ID: <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v6 11/11] PCI: hv: Get vPCI MSI IRQ domain
+ from DeviceTree
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
+	conor+dt@kernel.org, dan.carpenter@linaro.org, dave.hansen@linux.intel.com, 
+	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com, 
+	joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, 
+	lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, 
+	mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com, 
+	oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
+	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
+	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
+	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
+	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
+	sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Sat, Mar 15, 2025 at 1:19=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
+.com> wrote:
+>
+> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
+> arm64. It won't be able to do that in the VTL mode where only DeviceTree
+> can be used.
+>
+> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
+> case, too.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 73 ++++++++++++++++++++++++++---
+>  1 file changed, 67 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller=
+/pci-hyperv.c
+> index 6084b38bdda1..cbff19e8a07c 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -50,6 +50,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/acpi.h>
+>  #include <linux/sizes.h>
+> +#include <linux/of_irq.h>
+>  #include <asm/mshyperv.h>
+>
+>  /*
+> @@ -817,9 +818,17 @@ static int hv_pci_vec_irq_gic_domain_alloc(struct ir=
+q_domain *domain,
+>         int ret;
+>
+>         fwspec.fwnode =3D domain->parent->fwnode;
+> -       fwspec.param_count =3D 2;
+> -       fwspec.param[0] =3D hwirq;
+> -       fwspec.param[1] =3D IRQ_TYPE_EDGE_RISING;
+> +       if (is_of_node(fwspec.fwnode)) {
+> +               /* SPI lines for OF translations start at offset 32 */
+> +               fwspec.param_count =3D 3;
+> +               fwspec.param[0] =3D 0;
+> +               fwspec.param[1] =3D hwirq - 32;
+> +               fwspec.param[2] =3D IRQ_TYPE_EDGE_RISING;
+> +       } else {
+> +               fwspec.param_count =3D 2;
+> +               fwspec.param[0] =3D hwirq;
+> +               fwspec.param[1] =3D IRQ_TYPE_EDGE_RISING;
+> +       }
+>
+>         ret =3D irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
+>         if (ret)
+> @@ -887,10 +896,47 @@ static const struct irq_domain_ops hv_pci_domain_op=
+s =3D {
+>         .activate =3D hv_pci_vec_irq_domain_activate,
+>  };
+>
+> +#ifdef CONFIG_OF
+> +
+> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
+> +{
+> +       struct device_node *parent;
+> +       struct irq_domain *domain;
+> +
+> +       parent =3D of_irq_find_parent(hv_get_vmbus_root_device()->of_node=
+);
+> +       if (!parent)
+> +               return NULL;
+> +       domain =3D irq_find_host(parent);
+> +       of_node_put(parent);
+> +
+> +       return domain;
+> +}
+> +
+> +#endif
+> +
+> +#ifdef CONFIG_ACPI
+> +
+> +static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
+> +{
+> +       struct irq_domain *domain;
+> +       acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
+> +
+> +       if (acpi_irq_model !=3D ACPI_IRQ_MODEL_GIC)
+> +               return NULL;
+> +       gsi_domain_disp_fn =3D acpi_get_gsi_dispatcher();
+> +       if (!gsi_domain_disp_fn)
+> +               return NULL;
+> +       return irq_find_matching_fwnode(gsi_domain_disp_fn(0),
+> +                                    DOMAIN_BUS_ANY);
+> +}
+> +
+> +#endif
+> +
+>  static int hv_pci_irqchip_init(void)
+>  {
+>         static struct hv_pci_chip_data *chip_data;
+>         struct fwnode_handle *fn =3D NULL;
+> +       struct irq_domain *irq_domain_parent =3D NULL;
+>         int ret =3D -ENOMEM;
+>
+>         chip_data =3D kzalloc(sizeof(*chip_data), GFP_KERNEL);
+> @@ -907,9 +953,24 @@ static int hv_pci_irqchip_init(void)
+>          * way to ensure that all the corresponding devices are also gone=
+ and
+>          * no interrupts will be generated.
+>          */
+> -       hv_msi_gic_irq_domain =3D acpi_irq_create_hierarchy(0, HV_PCI_MSI=
+_SPI_NR,
+> -                                                         fn, &hv_pci_dom=
+ain_ops,
+> -                                                         chip_data);
+> +#ifdef CONFIG_ACPI
+> +       if (!acpi_disabled)
+> +               irq_domain_parent =3D hv_pci_acpi_irq_domain_parent();
+> +#endif
+> +#if defined(CONFIG_OF)
 
-The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
+Why don't you do
 
-  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+#ifdef CONFIG_OF
 
-are available in the Git repository at:
+here for consistency?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.15
-
-for you to fetch changes up to 22df63a23a9e53d06ff2c67f863e9ce1640b73cb:
-
-  Merge branches 'apple/dart', 'arm/smmu/updates', 'arm/smmu/bindings', 'rockchip', 's390', 'core', 'intel/vt-d' and 'amd/amd-vi' into next (2025-03-20 09:11:09 +0100)
-
-----------------------------------------------------------------
-IOMMU Updates for Linux v6.15
-
-Including:
-
-	- Core: IOMMUFD dependencies from Jason:
-	  - Change the iommufd fault handle into an always present hwpt handle in
-	    the domain
-	  - Give iommufd its own SW_MSI implementation along with some IRQ layer
-	    rework
-	  - Improvements to the handle attach API
-
-	- Core: Fixes for probe-issues from Robin
-
-	- Intel VT-d changes:
-	  - Checking for SVA support in domain allocation and attach paths
-	  - Move PCI ATS and PRI configuration into probe paths
-	  - Fix a pentential hang on reboot -f
-	  - Miscellaneous cleanups
-
-	- AMD-Vi changes:
-	  - Support for up to 2k IRQs per PCI device function
-	  - Set of smaller fixes
-
-	- ARM-SMMU changes:
-	  - SMMUv2 devicetree binding updates for Qualcomm implementations
-	    (QCS8300 GPU and MSM8937)
-	  - Clean up SMMUv2 runtime PM implementation to help with wider rework of
-	    pm_runtime_put_autosuspend()
-
-	- Rockchip driver changes:
-	  - Driver adjustments for recent DT probing changes
-
-	- S390 IOMMU changes:
-	  - Support for IOMMU passthrough
-
-	- Apple Dart changes:
-	  - Driver adjustments to meet ISP device requirements
-	  - Null-ptr deref fix
-	  - Disable subpage protection for DART 1
-
-----------------------------------------------------------------
-Asahi Lina (1):
-      iommu/io-pgtable-dart: Only set subpage protection disable for DART 1
-
-Barnabás Czémán (1):
-      dt-bindings: iommu: qcom,iommu: Add MSM8937 IOMMU to SMMUv1 compatibles
-
-Hector Martin (2):
-      iommu: apple-dart: Increase MAX_DARTS_PER_DEVICE to 3
-      iommu: apple-dart: Allow mismatched bypass support
-
-Jason Gunthorpe (7):
-      genirq/msi: Store the IOMMU IOVA directly in msi_desc instead of iommu_cookie
-      genirq/msi: Refactor iommu_dma_compose_msi_msg()
-      iommu: Make iommu_dma_prepare_msi() into a generic operation
-      irqchip: Have CONFIG_IRQ_MSI_IOMMU be selected by irqchips that need it
-      iommufd: Implement sw_msi support natively
-      iommu/vt-d: Use virt_to_phys()
-      iommu/vt-d: Check if SVA is supported when attaching the SVA domain
-
-Joerg Roedel (2):
-      Merge tag 'for-joerg' of git://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd into core
-      Merge branches 'apple/dart', 'arm/smmu/updates', 'arm/smmu/bindings', 'rockchip', 's390', 'core', 'intel/vt-d' and 'amd/amd-vi' into next
-
-Kishon Vijay Abraham I (1):
-      iommu/amd: Enable support for up to 2K interrupts per function
-
-Lu Baolu (4):
-      iommu/vt-d: Move scalable mode ATS enablement to probe path
-      iommu/vt-d: Move PRI enablement in probe path
-      iommu/vt-d: Cleanup intel_context_flush_present()
-      iommu/vt-d: Fix possible circular locking dependency
-
-Matthew Rosato (4):
-      s390/pci: check for relaxed translation capability
-      s390/pci: store DMA offset in bus_dma_region
-      iommu/s390: handle IOAT registration based on domain
-      iommu/s390: implement iommu passthrough via identity domain
-
-Nicolin Chen (3):
-      iommufd: Make attach_handle generic than fault specific
-      iommufd/fault: Remove iommufd_fault_domain_attach/detach/replace_dev()
-      iommu: Turn fault_data to iommufd private pointer
-
-Pranjal Shrivastava (1):
-      iommu/arm-smmu: Set rpm auto_suspend once during probe
-
-Pratyush Brahma (1):
-      dt-bindings: arm-smmu: Document QCS8300 GPU SMMU
-
-Qasim Ijaz (1):
-      iommu: apple-dart: fix potential null pointer deref
-
-Robin Murphy (11):
-      iommu/dma: Remove redundant locking
-      iommu: Unexport iommu_fwspec_free()
-      iommu: Handle race with default domain setup
-      iommu: Resolve ops in iommu_init_device()
-      iommu: Keep dev->iommu state consistent
-      iommu: Get DT/ACPI parsing into the proper probe path
-      iommu: Don't warn prematurely about dodgy probes
-      iommu/mediatek-v1: Support COMPILE_TEST
-      iommu/rockchip: Allocate per-device data sensibly
-      iommu/rockchip: Register in a sensible order
-      iommu/rockchip: Retire global dma_dev workaround
-
-Sairaj Kodilkar (3):
-      iommu/amd: Introduce generic function to set multibit feature value
-      iommu/amd: Replace slab cache allocator with page allocator
-      iommu/amd: Rename DTE_INTTABLEN* and MAX_IRQS_PER_TABLE macro
-
-Sean Christopherson (2):
-      iommu/vt-d: Put IRTE back into posted MSI mode if vCPU posting is disabled
-      iommu/vt-d: Don't clobber posted vCPU IRTE when host IRQ affinity changes
-
-Vasant Hegde (7):
-      iommu/amd: Log IOMMU control register in event log path
-      iommu/amd: Remove unused variable
-      iommu/amd/pgtbl_v2: Improve error handling
-      iommu/amd: Remove outdated comment
-      iommu/amd: Fix header file
-      iommu/amd: Remove unused forward declaration
-      iommu/amd: Consolidate protection domain free code
-
-Yi Liu (4):
-      iommu: Make @handle mandatory in iommu_{attach|replace}_group_handle()
-      iommu: Drop iommu_group_replace_domain()
-      iommu: Store either domain or handle in group->pasid_array
-      iommu: Swap the order of setting group->pasid_array and calling attach op of iommu drivers
-
-Yunhui Cui (1):
-      iommu/vt-d: Fix system hang on reboot -f
-
- .../devicetree/bindings/iommu/arm,smmu.yaml        |   3 +-
- .../devicetree/bindings/iommu/qcom,iommu.yaml      |   1 +
- arch/s390/include/asm/pci.h                        |   4 +-
- arch/s390/include/asm/pci_clp.h                    |   4 +-
- arch/s390/kvm/pci.c                                |  17 +-
- arch/s390/pci/pci.c                                |  35 +--
- arch/s390/pci/pci_bus.c                            |  25 ++
- arch/s390/pci/pci_clp.c                            |   1 +
- arch/s390/pci/pci_sysfs.c                          |  11 +-
- drivers/acpi/arm64/dma.c                           |   5 +
- drivers/acpi/scan.c                                |   7 -
- drivers/amba/bus.c                                 |   3 +-
- drivers/base/platform.c                            |   3 +-
- drivers/bus/fsl-mc/fsl-mc-bus.c                    |   3 +-
- drivers/cdx/cdx.c                                  |   3 +-
- drivers/iommu/Kconfig                              |   4 +-
- drivers/iommu/amd/amd_iommu.h                      |   8 +-
- drivers/iommu/amd/amd_iommu_types.h                |  30 +--
- drivers/iommu/amd/init.c                           |  65 ++---
- drivers/iommu/amd/io_pgtable.c                     |   7 -
- drivers/iommu/amd/io_pgtable_v2.c                  |   2 +-
- drivers/iommu/amd/iommu.c                          |  91 ++++---
- drivers/iommu/amd/pasid.c                          |   2 +-
- drivers/iommu/apple-dart.c                         |  22 +-
- drivers/iommu/arm/arm-smmu/arm-smmu.c              |  11 +-
- drivers/iommu/dma-iommu.c                          |  82 ++-----
- drivers/iommu/intel/iommu.c                        | 239 +++++++-----------
- drivers/iommu/intel/iommu.h                        |  28 +--
- drivers/iommu/intel/irq_remapping.c                |  42 ++--
- drivers/iommu/intel/pasid.c                        |  43 +---
- drivers/iommu/intel/prq.c                          |   2 +-
- drivers/iommu/intel/svm.c                          |  43 ++++
- drivers/iommu/io-pgtable-dart.c                    |   2 +-
- drivers/iommu/iommu-priv.h                         |   5 +-
- drivers/iommu/iommu.c                              | 220 +++++++++++------
- drivers/iommu/iommufd/device.c                     | 266 +++++++++++++++++++--
- drivers/iommu/iommufd/fault.c                      | 130 +---------
- drivers/iommu/iommufd/hw_pagetable.c               |   5 +-
- drivers/iommu/iommufd/iommufd_private.h            |  64 ++---
- drivers/iommu/iommufd/main.c                       |   9 +
- drivers/iommu/mtk_iommu_v1.c                       |  25 +-
- drivers/iommu/of_iommu.c                           |  13 +-
- drivers/iommu/rockchip-iommu.c                     |  61 ++---
- drivers/iommu/s390-iommu.c                         | 138 +++++++++--
- drivers/iommu/tegra-smmu.c                         |   1 -
- drivers/irqchip/Kconfig                            |   4 +
- drivers/irqchip/irq-gic-v2m.c                      |   5 +-
- drivers/irqchip/irq-gic-v3-its.c                   |  13 +-
- drivers/irqchip/irq-gic-v3-mbi.c                   |  12 +-
- drivers/irqchip/irq-ls-scfg-msi.c                  |   5 +-
- drivers/of/device.c                                |   7 +-
- drivers/pci/pci-driver.c                           |   3 +-
- include/linux/iommu.h                              |  61 ++---
- include/linux/msi.h                                |  55 +++--
- kernel/irq/Kconfig                                 |   1 +
- 55 files changed, 1091 insertions(+), 860 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
+> +       if (!irq_domain_parent)
+> +               irq_domain_parent =3D hv_pci_of_irq_domain_parent();
+> +#endif
+> +       if (!irq_domain_parent) {
+> +               WARN_ONCE(1, "Invalid firmware configuration for VMBus in=
+terrupts\n");
+> +               ret =3D -EINVAL;
+> +               goto free_chip;
+> +       }
+> +
+> +       hv_msi_gic_irq_domain =3D irq_domain_create_hierarchy(
+> +               irq_domain_parent, 0, HV_PCI_MSI_SPI_NR,
+> +               fn, &hv_pci_domain_ops,
+> +               chip_data);
+>
+>         if (!hv_msi_gic_irq_domain) {
+>                 pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domai=
+n\n");
+> --
 
