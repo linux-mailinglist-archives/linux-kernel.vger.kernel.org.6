@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-576596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9953A71194
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D83DCA71196
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B163A188EEF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B7C188EF72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E519E7F9;
-	Wed, 26 Mar 2025 07:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6395319DF62;
+	Wed, 26 Mar 2025 07:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdrZpt62"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D81519D898;
-	Wed, 26 Mar 2025 07:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eOjxRJHB"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F20A55
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742974953; cv=none; b=IWkz0CGSyk5EJNSLbytqcyQvjReBPpYBMxXBnaXGFG3B4+MC7VZsVeZDqofF2HLlK2vrAdbSECxNdrrO8pkKlMcfa5SEQ6TYYak8piZos3MtZmi9dPi03DGoxPFcHhnL2Bi1xF9ZyOgJ1SIKrdPlZHgb/kknSY5M3hz6vhey37c=
+	t=1742975051; cv=none; b=WjayO2Su4KHDNuwbzB0QFyzgdTokJ3JIfJZodQ4bk6DPUQM1ouaqGzI+PQv9fDmGLLc6vuwuRJ4bs9djQ8O+FX1gwO0kgRqPa/SHFJGLiuFtdVsNp7E5BhbhpylpU3XbY86Wyt7XyZBv1Re1O+CpAim9tQYBoe6WwHvazMMfx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742974953; c=relaxed/simple;
-	bh=a39+hOyOBrLWeBos3bRjt0r0Ck9szc7SKc42ebq5PoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmaNVkDnI2GO7YklIFqBMo4y1PBBXm1ovRVv5iJvk9v/Is8E39irvG9AKMRlVhnPN6ZJYGZqAR5pZowBV92FMvkgBMKLMwPtS6mNwemJ0UhxWAegbnYaQanQEjZVMySRBKGxL7rZBihLFZlHUYvG7s4LBpcGo78t3x/RuOSuiYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdrZpt62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA28C4CEEE;
-	Wed, 26 Mar 2025 07:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742974953;
-	bh=a39+hOyOBrLWeBos3bRjt0r0Ck9szc7SKc42ebq5PoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DdrZpt62vmxatBvcF50WRZeLjwuQK1aCe+C+9urExeiH7vWpYuv3xjFQhRVwqCJZ9
-	 2tB9Tzh6sAT32Ci3dDhsNnw712zwSeNykTqNKk1Oe3h/8g93cDKodhXJNGqsxUqVab
-	 2ZqsXrtQZS2q0dXn8bv97v+YxDr2omeekzpP5ae4qIlxOeEHBF8D1xVyDbqNyVt5RI
-	 qsTN95w3I8ikx95q04nmkARoHRdhsCQdVl/IMcKPUUD9SWpmaT7ZoToKmQz3RB0FpB
-	 envgh04m+n3QXDp3LrIQEkPOg9JL8F5z8486HhayWmu1Ywj2Ptv8tWX9llX7kKFjnk
-	 oO1uaXSHQCDAw==
-Date: Wed, 26 Mar 2025 08:42:27 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH] bug: Add the condition string to the
- CONFIG_DEBUG_BUGVERBOSE=y output
-Message-ID: <Z-Ov478wdBKpqtmA@gmail.com>
-References: <20250317104257.3496611-2-mingo@kernel.org>
- <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
- <20250324115955.GF14944@noisy.programming.kicks-ass.net>
- <Z-J5UEFwM3gh6VXR@gmail.com>
- <Z-KRD3ODxT9f8Yjw@gmail.com>
- <20250325123625.GM36322@noisy.programming.kicks-ass.net>
- <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
- <Z-MxULQtc--KoKMW@gmail.com>
- <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
+	s=arc-20240116; t=1742975051; c=relaxed/simple;
+	bh=/yoi60wu1frvpRXlNIDUf/GRlnb+EATV0oTKPY/DQco=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T4h1mSDUMGGhHgMEMSLsdKfmB2ClEQV0IT0VHKl3lF0qgIGyGzuV6/rJaQCpcNl8JXvmoLIEi9f/ogdUEPW9y6iOSoUEmXJVjp65nRiknl1ksrsZ16JpfuxHny2+YfcvaMIoBZxsYvg/o6skkr8VMD3nESpjYnexaxyhZDlgwXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eOjxRJHB; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=FJJ67
+	N9FHAiQs2a7zhLhPnTvU6+WgrcFiIDSKAkPwkU=; b=eOjxRJHByJO3xr39X+Yms
+	6XT59RivHBe6TLJfwnyq9NpCPowtJuA6+V3+eRpfJyh5HQZd2+RK60isSCBVClif
+	vgPN8SeyoH9N7+rWjz/WNZMhvH0Jpw09rqpSHTm6zjIQneNDACBRajTh0XCbkgNU
+	Et8aOaK+BMDbDlKsHa65sA=
+Received: from WIN-S4QB3VCT165.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgAn52I8sONnWri_Aw--.3696S4;
+	Wed, 26 Mar 2025 15:43:59 +0800 (CST)
+From: Debin Zhu <mowenroot@163.com>
+To: paul@paul-moore.com
+Cc: linux-kernel@vger.kernel.org,
+	Debin Zhu <mowenroot@163.com>,
+	Bitao Ouyang <1985755126@qq.com>
+Subject: [PATCH] netlabel: Fix NULL pointer exception caused by CALIPSO on IPv4 sockets
+Date: Wed, 26 Mar 2025 15:43:55 +0800
+Message-Id: <20250326074355.24016-1-mowenroot@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgAn52I8sONnWri_Aw--.3696S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFy3Ar4xCF18Cw4xtry7ZFb_yoW8tF13pF
+	9rGwsxZw18AFWxurs3WFWkury3Kr18K3Wxur9Fya1UAryUGry8Kay0kF1SyFWayrZrKF4a
+	qrnaq3W5K34DAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_E_NQUUUUU=
+X-CM-SenderInfo: pprzv0hurr3qqrwthudrp/1tbiXwAclGfjrDNqggAAsk
 
+Added IPv6 socket checks in `calipso_sock_getattr`, `calipso_sock_setattr`,
+and `calipso_sock_delattr` functions.
+Return `-EAFNOSUPPORT` error code if the socket is not of the IPv6 type.
+This fix prevents the IPv6 datagram code from 
+incorrectly calling the IPv4 datagram code,
+thereby avoiding a NULL pointer exception.
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Signed-off-by: Debin Zhu <mowenroot@163.com>
+Signed-off-by: Bitao Ouyang <1985755126@qq.com>
+---
+ net/ipv6/calipso.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-> On Tue, 25 Mar 2025 at 15:42, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > So something like the patch below?
-> > [...]
-> > After:
-> >
-> >   WARNING: CPU: 0 PID: 0 at [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
-> >                             ^^^^^^^^^^^^^^^
-> 
-> Hmm. Is that the prettiest output ever? No. But it does seem workable,
-> and the patch is simple.
-> 
-> And I think the added condition string is useful, in that I often end
-> up looking up warnings that other people report and where the line
-> numbers have changed enough that it's not immediately obvious exactly
-> which warning it is. Not only does it disambiguate which warning it
-> is, it would probably often would obviate having to look it up
-> entirely because the warning message is now more useful.
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index dbcea9fee..ef55e4176 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -1072,8 +1072,13 @@ static int calipso_sock_getattr(struct sock *sk,
+ 	struct ipv6_opt_hdr *hop;
+ 	int opt_len, len, ret_val = -ENOMSG, offset;
+ 	unsigned char *opt;
+-	struct ipv6_txoptions *txopts = txopt_get(inet6_sk(sk));
+-
++	struct ipv6_pinfo *pinfo = inet6_sk(sk);
++	struct ipv6_txoptions *txopts;
++	/* Prevent IPv6 datagram code from calling IPv4 datagram code, causing pinet6 to be NULL  */
++	if (!pinfo)
++		return -EAFNOSUPPORT;
++
++	txopts = txopt_get(pinfo);
+ 	if (!txopts || !txopts->hopopt)
+ 		goto done;
 
-Yeah, that exactly was the original motivation for SCHED_WARN_ON(): 
-core kernel code often gets backported on and changed by distributions, 
-so line numbers are fuzzy and with large functions it's sometimes 
-unclear exactly where the warning originated from.
+@@ -1125,8 +1130,13 @@ static int calipso_sock_setattr(struct sock *sk,
+ {
+ 	int ret_val;
+ 	struct ipv6_opt_hdr *old, *new;
+-	struct ipv6_txoptions *txopts = txopt_get(inet6_sk(sk));
+-
++	struct ipv6_pinfo *pinfo = inet6_sk(sk);
++	struct ipv6_txoptions *txopts;
++	/* Prevent IPv6 datagram code from calling IPv4 datagram code, causing pinet6 to be NULL  */
++	if (!pinfo)
++		return -EAFNOSUPPORT;
++
++	txopts = txopt_get(pinfo);
+ 	old = NULL;
+ 	if (txopts)
+ 		old = txopts->hopopt;
+@@ -1153,8 +1163,13 @@ static int calipso_sock_setattr(struct sock *sk,
+ static void calipso_sock_delattr(struct sock *sk)
+ {
+ 	struct ipv6_opt_hdr *new_hop;
+-	struct ipv6_txoptions *txopts = txopt_get(inet6_sk(sk));
+-
++	struct ipv6_pinfo *pinfo = inet6_sk(sk);
++	struct ipv6_txoptions *txopts;
++	/* Prevent IPv6 datagram code from calling IPv4 datagram code, causing pinet6 to be NULL  */
++	if (!pinfo)
++		return -EAFNOSUPPORT;
++
++	txopts = txopt_get(pinfo);
+ 	if (!txopts || !txopts->hopopt)
+ 		goto done;
 
-> So I think I like it. Let's see how it works in practice.
-> 
-> (I actually think the "CPU: 0 PID: 0" is likely the least useful part 
-> of that warning string, and maybe *that* should be moved away and 
-> make things a bit more legible, but I think that discussion might as 
-> well be part of that "Let's see how it works")
+--
+2.34.1
 
-Okay!
-
-The CPU and PID part is particularly useless, given that it's repeated 
-in the splat a few lines later:
-
-  ------------[ cut here ]------------^M
-  WARNING: CPU: 0 PID: 0 at [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-01616-g94d7af2844aa #4 PREEMPT(undef)
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-  RIP: 0010:sched_init+0x20/0x410
-
-So I'll just remove it, which will turn this into:
-
-  WARNING: [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
-
-Which is actually pretty nicely formatted IMHO and orders the 
-information by expected entropy: most constant, most valuable 
-information comes first.
-
-BTW., there's also another option we still have open: by using a unique 
-character separator that isn't 0 we could split up the single string 
-into cond_str and FILE_str parts, and leave formatting to 
-architectures. But I don't think it's needed if we get rid of the "CPU: 
-PID:" noise though.
-
-	Ingo
 
