@@ -1,267 +1,124 @@
-Return-Path: <linux-kernel+bounces-576587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C1EA71171
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:31:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516D3A71173
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7861747C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB03188981E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC24199FB0;
-	Wed, 26 Mar 2025 07:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C23B19CC28;
+	Wed, 26 Mar 2025 07:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VIljvMZA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HfH92niy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DJ5+gQy8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B308F13AA2A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30719189BAC;
+	Wed, 26 Mar 2025 07:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742974307; cv=none; b=I88vlKVBk6dcCLhdkNjhsrR18T3nMOsXS2oNi+GbAfoWJSERVqoxcJCN5c7JxlTB7a4IKzvi+xj1/GdWDRzyzkNj6K36TRY0yBXZ3CnDs3VlEM0XGohrRA2qJxnVW2unXCYzWnKA9Jo4rShekZK7sd81Shxn010GTglQOjl85Ko=
+	t=1742974320; cv=none; b=b8apPPpxmuStdZE6De+9HNARqT11M1+yRIfn2Nh/qU7WKpfjDRPfVoJGMY/SBdTsQc/G5SKKqsjgTRfY67jnwDZ4k511jCidTwMVz3mVdoGQ7ZCsiFp88nMZYj1aZN+XAjivH2HCS01whMPiG/k736szw5nolYFe+4GeV9tHjBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742974307; c=relaxed/simple;
-	bh=U/ix21jM9DUFTm6EMFGrUBD3KSofxsSAbOoQuucde7Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BNqWLChoayW/Mmgt03PjHSwGJdoJmCqa++rgc8QFiqDDqdvtujV+mjleILrkYi85VDscpQLKYY+4i5TxDbBptyCkaGthgsSIv+UfWIIpGHQ/joOvokyvUmpftgSpkihshZUOm5UGJzW7gK/+IjnBiq9zrt9cXW1uhgXEZXqgNzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VIljvMZA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742974304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1742974320; c=relaxed/simple;
+	bh=ZUyp9CN4hWSvNhvE43tBDf8XGU/txuDZnZD1KBf+XEA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=lytwaPZWO+jhKUfKv8zrtmYIefEkxb9Se41iqtBq85ePb9U4s63JzCIoBihEILU1yOdUF3SRLD3LMFbR00WkdIOEUQ4dboMGqNBOghbx5g6RbKKkjXIqOqlrKETZoScb5+6RgIUFhSuih/MNjPY5OVHzTBMxAcDm/gC+Sfy9VmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HfH92niy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DJ5+gQy8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Mar 2025 07:31:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742974316;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U/ix21jM9DUFTm6EMFGrUBD3KSofxsSAbOoQuucde7Y=;
-	b=VIljvMZASt4uN7qpd12sz1R67nIOYNrOzg9sM/Y5BIvelD4SeMeuzx3gJ5bT/jp46UitbL
-	B1fWc1++R7z0+QCzxFD5jc0DRPPPvMFlAUxuk6JiB55Tm6CG4k59UBxPxseXx/BqI8h92f
-	XjwfdOhyLYj9yQa0OHdo5Gf7VU3VlvY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-ciga4ZBoNKy_l5t9MKALBA-1; Wed, 26 Mar 2025 03:31:43 -0400
-X-MC-Unique: ciga4ZBoNKy_l5t9MKALBA-1
-X-Mimecast-MFC-AGG-ID: ciga4ZBoNKy_l5t9MKALBA_1742974302
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf327e9a2so51923615e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:31:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742974302; x=1743579102;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/ix21jM9DUFTm6EMFGrUBD3KSofxsSAbOoQuucde7Y=;
-        b=IkfPfBhUvEcpe1aldD71Xk+elcGuAVyGyE95AbjbVQ02CZ7PY9IfJyvhRtF2LhU8z1
-         fSwsbPUFhrs/6ZlwzQZRxqtQxUSksqdozsleLKWSwbYEAVdEa0KHjNzPtUtNOrfXgEQB
-         CklW3rJvRwGz2p59KBWNQuxClrLpVHS5tcnhT4lG4xP1MrMA1xHxSIHBT4ZRAHAj5Fh9
-         fZh8xWSb5ZaASTyq3brNMbyIff53ogN55Wlx7cvyyuxMdkFYiqwdkkrtmvivOLooL1AN
-         SDk6/P0sPJ9NiPWyWcVSPrU3r+oDv91CkjU7Kmra7kJ4IkXhemmbQgD6ITwwuFFf0kFJ
-         aoaA==
-X-Gm-Message-State: AOJu0YxjoZFlqHlXghQj5UE/gAvygxB+tua61o7wUnb0fwagvbTybiir
-	+gzYD9OiiuVdiXHLiXkQYxpk5rh/uLkKyXtltOX2ckG4jGjbQJXosE3+X6IKuRp50sWWaRMxzut
-	lAwlW/pms+2GfajdQSK8G9fY2o0S3F+v0rRGMy6XJLWtaat9tYjgb8+DCIUCxee24XRE6crjMrW
-	mMJg0DUd3a2wDGz8EiZriWyLcENvZAgR5u02PTfca0aDlfOzh2ZQ==
-X-Gm-Gg: ASbGncvMsFde/VuJW4SH/NuRhF/t5rNcACwev+GELYKEfqB8xA3oZHiyiz9JJJxeR/X
-	PvWHg7GK2D74LNAQG6benz57SguG6K6wfrvgB9wZ2fTFjNm9F/a2ZVWto7sYmVOxtyHMk8qg8E1
-	9Tf/Cq66uGVG1qAs6Yco5KgI2DgmSxcQv0Ad2uVqFuukFHflWg3vq9rCcFWkQTyjkwjrzefhOSB
-	KTiwmRdGHje+2k3ksoS3WXKby2rJwhkiR2dctCIwV99RIbWQ4woT6chEgtRaO62qziFtAImDNS0
-	R+QWcfJ9959GdFC3WkKMmGcNqzQxCE5J+H9JvPnj2g==
-X-Received: by 2002:a05:600c:3110:b0:439:9e13:2dd7 with SMTP id 5b1f17b1804b1-43d509e42bemr163708895e9.2.1742974301563;
-        Wed, 26 Mar 2025 00:31:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoHVhTC9AXxsZi58B/glRUfe9MKODsU3521LBPXk7lnfqN2vv0w9lqV2Uk734u8EIp2pRz+g==
-X-Received: by 2002:a05:600c:3110:b0:439:9e13:2dd7 with SMTP id 5b1f17b1804b1-43d509e42bemr163708455e9.2.1742974300953;
-        Wed, 26 Mar 2025 00:31:40 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6651sm16027541f8f.75.2025.03.26.00.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 00:31:40 -0700 (PDT)
-Message-ID: <b0b6e10b8651ed59051e426c187ed64b785c4b8c.camel@redhat.com>
-Subject: Re: [PATCH v12 0/3] sched: Restructure task_mm_cid_work for
- predictability
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
- Ingo Molnar <mingo@redhat.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney"
-	 <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>
-Date: Wed, 26 Mar 2025 08:31:38 +0100
-In-Reply-To: <20250311062849.72083-1-gmonaco@redhat.com>
-References: <20250311062849.72083-1-gmonaco@redhat.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	 in-reply-to:in-reply-to:references:references;
+	bh=T/CgGRWQzD7W0+UFUzB+3N7/CvTBPElGdAC0ocRIqg4=;
+	b=HfH92niyx06xkIEx1DWHV9nh0Q6jULIB18mFVnfT5rIbDn1lH8MFYQ9vEzPVwufAo87DPw
+	maslH53vm+Uk42DMqE04ireMq4bm45AsnPTb5qs1/c0AMUvZmSQzbIukakZ5e69hilwUPA
+	y4Q4tEwzFkRFiUg9lTdqAZpK6zj+PeGaT+WbFtq2zudJJZR4nAXdpXLxGAFUu5L1JaJnHP
+	Tht1Y9elK0njoxOHOCfjWWeSqGPHmDT1052UqdNoSwQ7DTq5JppJzB9E3FC4U040cf+8Es
+	Nc2U1bPWN3oQxAdui1VTbDzhVVzcn4mUH52L03xW0giUz/+SPiOQAIFUF8/KLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742974316;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T/CgGRWQzD7W0+UFUzB+3N7/CvTBPElGdAC0ocRIqg4=;
+	b=DJ5+gQy8X5G2fv6B669yacrEH8L9sefj/IotrJuaTga9czeG4Op16YcZ+bU+CO6Vq4n/hV
+	/ARSwHRQ/dphRbBA==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] objtool: Fix NULL printf() '%s' argument in
+ builtin-check.c:save_argv()
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
+References:
+ <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <174297431194.14745.4198914327730875327.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-03-11 at 07:28 +0100, Gabriele Monaco wrote:
-> This patchset moves the task_mm_cid_work to a preemptible and
-> migratable
-> context. This reduces the impact of this work to the scheduling
-> latency
-> of real time tasks.
-> The change makes the recurrence of the task a bit more predictable.
->=20
+The following commit has been merged into the objtool/urgent branch of tip:
 
-The series was review and, in my opinion, is ready for inclusion.
-Peter, Ingo, can we merge it?
+Commit-ID:     89721c2ca8aec6f45166acf61ae32f64f2f1d2db
+Gitweb:        https://git.kernel.org/tip/89721c2ca8aec6f45166acf61ae32f64f2f1d2db
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Tue, 25 Mar 2025 18:30:37 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 26 Mar 2025 08:24:59 +01:00
 
-Thanks,
-Gabriele
+objtool: Fix NULL printf() '%s' argument in builtin-check.c:save_argv()
 
-> The behaviour causing latency was introduced in commit 223baf9d17f2
-> ("sched: Fix performance regression introduced by mm_cid") which
-> introduced a task work tied to the scheduler tick.
-> That approach presents two possible issues:
-> * the task work runs before returning to user and causes, in fact, a
-> =C2=A0 scheduling latency (with order of magnitude significant in
-> PREEMPT_RT)
-> * periodic tasks with short runtime are less likely to run during the
-> =C2=A0 tick, hence they might not run the task work at all
->=20
-> Patch 1 add support for prev_sum_exec_runtime to the RT, deadline and
-> sched_ext classes as it is supported by fair, this is required to
-> avoid
-> calling rseq_preempt on tick if the runtime is below a threshold.
->=20
-> Patch 2 contains the main changes, removing the task_work on the
-> scheduler tick and using a work_struct scheduled more reliably during
-> __rseq_handle_notify_resume.
->=20
-> Patch 3 adds a selftest to validate the functionality of the
-> task_mm_cid_work (i.e. to compact the mm_cids).
->=20
-> Changes since V11:
-> * Remove variable to make mm_cid_needs_scan more compact
-> * All patches reviewed
->=20
-> Changes since V10:
-> * Fix compilation errors with RSEQ and/or MM_CID disabled
->=20
-> Changes since V9:
-> * Simplify and move checks from task_queue_mm_cid to its call site
->=20
-> Changes since V8 [1]:
-> * Add support for prev_sum_exec_runtime to RT, deadline and sched_ext
-> * Avoid rseq_preempt on ticks unless executing for more than 100ms
-> * Queue the work on the unbound workqueue
->=20
-> Changes since V7:
-> * Schedule mm_cid compaction and update at every tick too
-> * mmgrab before scheduling the work
->=20
-> Changes since V6 [2]:
-> * Switch to a simple work_struct instead of a delayed work
-> * Schedule the work_struct in __rseq_handle_notify_resume
-> * Asynchronously disable the work but make sure mm is there while we
-> run
-> * Remove first patch as merged independently
-> * Fix commit tag for test
->=20
-> Changes since V5:
-> * Punctuation
->=20
-> Changes since V4 [3]:
-> * Fixes on the selftest
-> =C2=A0=C2=A0=C2=A0 * Polished memory allocation and cleanup
-> =C2=A0=C2=A0=C2=A0 * Handle the test failure in main
->=20
-> Changes since V3 [4]:
-> * Fixes on the selftest
-> =C2=A0=C2=A0=C2=A0 * Minor style issues in comments and indentation
-> =C2=A0=C2=A0=C2=A0 * Use of perror where possible
-> =C2=A0=C2=A0=C2=A0 * Add a barrier to align threads execution
-> =C2=A0=C2=A0=C2=A0 * Improve test failure and error handling
->=20
-> Changes since V2 [5]:
-> * Change the order of the patches
-> * Merge patches changing the main delayed_work logic
-> * Improved self-test to spawn 1 less thread and use the main one
-> instead
->=20
-> Changes since V1 [6]:
-> * Re-arm the delayed_work at each invocation
-> * Cancel the work synchronously at mmdrop
-> * Remove next scan fields and completely rely on the delayed_work
-> * Shrink mm_cid allocation with nr thread/affinity (Mathieu
-> Desnoyers)
-> * Add self test
->=20
-> [1] -
-> https://lore.kernel.org/lkml/20250220102639.141314-1-gmonaco@redhat.com
-> [2] -
-> https://lore.kernel.org/lkml/20250210153253.460471-1-gmonaco@redhat.com
-> [3] -
-> https://lore.kernel.org/lkml/20250113074231.61638-4-gmonaco@redhat.com
-> [4] -
-> https://lore.kernel.org/lkml/20241216130909.240042-1-gmonaco@redhat.com
-> [5] -
-> https://lore.kernel.org/lkml/20241213095407.271357-1-gmonaco@redhat.com
-> [6] -
-> https://lore.kernel.org/lkml/20241205083110.180134-2-gmonaco@redhat.com
->=20
-> To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> To: Peter Zijlstra <peterz@infradead.org>
-> To: Ingo Molnar <mingo@redhat.org>
-> To: Paul E. McKenney <paulmck@kernel.org>
-> To: Shuah Khan <shuah@kernel.org>
->=20
-> Gabriele Monaco (3):
-> =C2=A0 sched: Add prev_sum_exec_runtime support for RT, DL and SCX classe=
-s
-> =C2=A0 sched: Move task_mm_cid_work to mm work_struct
-> =C2=A0 selftests/rseq: Add test for mm_cid compaction
->=20
-> =C2=A0include/linux/mm_types.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 17 ++
-> =C2=A0include/linux/rseq.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 ++
-> =C2=A0include/linux/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 +-
-> =C2=A0kernel/rseq.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 2 +
-> =C2=A0kernel/sched/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 43 ++--
-> =C2=A0kernel/sched/deadline.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0kernel/sched/ext.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0kernel/sched/rt.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0kernel/sched/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 -
-> =C2=A0tools/testing/selftests/rseq/.gitignore=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0tools/testing/selftests/rseq/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> =C2=A0.../selftests/rseq/mm_cid_compaction_test.c=C2=A0=C2=A0 | 200
-> ++++++++++++++++++
-> =C2=A012 files changed, 258 insertions(+), 32 deletions(-)
-> =C2=A0create mode 100644
-> tools/testing/selftests/rseq/mm_cid_compaction_test.c
->=20
->=20
-> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+It's probably not the best idea to pass a string pointer to printf()
+right after confirming said pointer is NULL.  Fix the typo and use
+argv[i] instead.
 
+Fixes: c5995abe1547 ("objtool: Improve error handling")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Link: https://lore.kernel.org/r/a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
+---
+ tools/objtool/builtin-check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index 2bdff91..e364ab6 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
+ 	for (int i = 0; i < argc; i++) {
+ 		orig_argv[i] = strdup(argv[i]);
+ 		if (!orig_argv[i]) {
+-			WARN_GLIBC("strdup(%s)", orig_argv[i]);
++			WARN_GLIBC("strdup(%s)", argv[i]);
+ 			exit(1);
+ 		}
+ 	};
 
