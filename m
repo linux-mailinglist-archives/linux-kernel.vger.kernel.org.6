@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-576975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2BEA716E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:46:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0954A716E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54469188A208
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7E8170661
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048001B983F;
-	Wed, 26 Mar 2025 12:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39151E51D;
+	Wed, 26 Mar 2025 12:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6kuzXi9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n+R1pFPW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uuFW9Hg6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64E2433C8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D41433C8;
+	Wed, 26 Mar 2025 12:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993198; cv=none; b=ndXB7W3VM0aDo6OUgebyMRAMvEQsdRDL/c91JbPWMSx4GA3Dk+b7FfOZe1wyZZKn9sGUiQVaxVObRePEy4FKo+13dfWXe0OToocd/97lPqUi1VATMEL3dSgZZCY508noFlvh6oCDjeh95MBDn7DOZEqIY+NETdyAucKuhBboh5c=
+	t=1742993204; cv=none; b=usP9JsWfGyHcopRtzqCTxandor1ISLkQJZkPT6dP4MHPLjz3sAW/Bwzf1S3E8PYCAuaPYyWLLFApuGVG+gln+V9XYkQLdP0Le1Q1KCUhA+oPTeBIxD0ih7dG2jGivA3LHcvMm5v49/lBG4NH87SMb0//VQFD/GjvYzZTsWjbJug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993198; c=relaxed/simple;
-	bh=5wK7E07iRV1w8nsbK4WWm7B+/2pX2jiV7X5MntOmbPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDsZdFcLQE83wo2pApeOPL+boOnm/KbMU9EDzUv9NE0YHiN3V/5iTwYlMKfHbT22d5UT1BKRPzBasxkLZKjUQUlIrcbzhxhUK1bXrJt2Xq6Ksc0NcR0XkJ/iMAJuDIcuuCOxaOyHlMl05CS8p5uONVU3l2G5vQzSz+WUOx1Eui0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6kuzXi9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742993195;
+	s=arc-20240116; t=1742993204; c=relaxed/simple;
+	bh=hpNe9bOmYhf6R3dZ28PTiRVSTJFU+MWIM2AaGCOu0EM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QoUrhsDiucBK1n8S4GRWlheKwo2rjzAcNLZwl6VcJJ1X0vKE1lomIp8K+C2dvdXkrUOuDEVv+KGQFQrgRTJELSfJ8GE7aFgK43WlrterO+wg0dhoAIPbxz5vfYcAQbx+FCWLy5qD/wbxpf5KLvc0BlQczSd73kYbQfwsFPVsz7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n+R1pFPW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uuFW9Hg6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742993200;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=s77PIgFRT3AtQ1+X+1bT16Z9Vl7GBWDfTOwmyThXt4c=;
-	b=D6kuzXi9HCrUqMKgClISlTNptuKqwJEgORwsusbZBPH4ksR/FH/BcPDv5zupOBLrE3Mid6
-	bZKON2KnPOkcVQ+eoMveFBgrFIjAcni6AjWK9AF363SvH9QhKyxUsAv3YCXf2VgQ0xPuVP
-	FyYGGZiE8Q5hYYNfUvOsdArwYV5OcWg=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-448-1gytYCixPzqqqj2K-Xpq0Q-1; Wed, 26 Mar 2025 08:46:33 -0400
-X-MC-Unique: 1gytYCixPzqqqj2K-Xpq0Q-1
-X-Mimecast-MFC-AGG-ID: 1gytYCixPzqqqj2K-Xpq0Q_1742993193
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4775d202ae6so40652911cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:46:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742993193; x=1743597993;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=s77PIgFRT3AtQ1+X+1bT16Z9Vl7GBWDfTOwmyThXt4c=;
-        b=GTcHW2J3LyI9t64npezKMuJLMCfGaNRMdv98ssRglIO41Zco+myBfGkB+8e1+VSDRS
-         LmdpEw/tai5GfHEseCYpgpGis/HRWdmM6fzJWNVFiTPAbNAt69XqcPHEHjmhFzlxeAvr
-         pUzzwXG5APuLy9e8gPW56iZLzWaJg7LuwY2ubXVcI4x/6Upd/SL0ghPGVo/Stj/KKgDV
-         sAcs36bchcZy+uc+KSPrDpY5m64i1wbTOcGEs7dxZcd2oESfdE1PjfljUic+WjbJKV4X
-         HTaT/8oQ6F7nBGfu9zhjeYqzPI7K4Irf6g2wqTvCN0b4b/RZHZGIuXmxHacNHzPvcKid
-         6Qvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNRsxrnxtjddDMn0YKE0CB1ThjuFxzWGZn7Re7u9dajC3JfwAKkh9NQs+iOVRSTlbfl5/MWMWmeDrt1sE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFM7UFI8C31cG6AhpNKkYj5307DXocNYaLgZ90SKq9P3nJH2gk
-	FjL3t6f590fIcFXaRsfZGL6C/6fv03MHQzBE3sEm6oY6hZLs1o7xDceKJt32lrctZ+t210ebjHC
-	TAKmqj82ud+oCTmtRepx3tWnA0vL9G6aOL4Ooi0pivPOBLPok1BpMK4l4L0GsQA==
-X-Gm-Gg: ASbGnctmXv2LcQOxz5m/5OsPL9TQlycLfY4txhgZ2KWcys6joZyy2VSK42knGJ21ci5
-	2E/nKIEIlhYxz+x501/pKc7VozMHQzXNX3vpYI83S4p0mGU1UbU9J06I6lvLJEQR2M3asl2XQCx
-	Drv4FkCPNZ356YHDJeKqQBYm9hkA9VtDhRiK+u6hUCBT3JYKHtdIkCkFf3TXH1unEhRO6QZTqIh
-	cKxnK/gp+gxnFCLh3wLu2rPG8fKBJUCgJjXR5GKCsygntDKvwJt71pwJFWW2wXYcfgsP1dba9Ct
-	U8rCpV7M/IEm
-X-Received: by 2002:a05:622a:8c8:b0:476:a713:f792 with SMTP id d75a77b69052e-4771de76b37mr393709841cf.49.1742993193084;
-        Wed, 26 Mar 2025 05:46:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzkqpqjEwPUTEAvDnO0P+5L0dcnCmpDb5RpBr8CRpdw+f+sjDwy6OQgYyXF4UGIgJUyGBQKQ==
-X-Received: by 2002:a05:622a:8c8:b0:476:a713:f792 with SMTP id d75a77b69052e-4771de76b37mr393709461cf.49.1742993192666;
-        Wed, 26 Mar 2025 05:46:32 -0700 (PDT)
-Received: from [172.20.3.205] ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d51fec4sm71024641cf.52.2025.03.26.05.46.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 05:46:32 -0700 (PDT)
-Message-ID: <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
-Date: Wed, 26 Mar 2025 13:46:31 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=dP4pKI9DdiAPAA1Qe115sjRa5UlaNblibaMOzmAshvg=;
+	b=n+R1pFPWz9k5ncKoLCDhAwRkDvuwXb/Y1ffN+p/T1xWjVsJ3kdu2IjvnQnkwSqufYpg0DF
+	NeBS/zI6LZx5r32u1viZHFL/riinRKvm4CuLI5Tn+9NsF+1OXn2XvpwO8QsRS/+nAMjXaJ
+	RPWRI2jP2M6TBQLZ9MrJ+Yygi+e1bsZMS30R3cq0QqIDvtsXXyCwwvHn35CZiVNR+gG4JN
+	AO+d19XCP2jp2LBgdalzqdu0TsxQh6Fmg3MxHwaPAqAaKZHSYKmSQbebJpVgu7duIihzKD
+	bTv/iWFO8Jyd8ZmyOadTtNmlmY6N4QUCX2JwNdlfVdTaqBdn300MgDjYYim3Xg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742993200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dP4pKI9DdiAPAA1Qe115sjRa5UlaNblibaMOzmAshvg=;
+	b=uuFW9Hg6GotTKz4G4HeII+TJyL0F9a12wiePIquBqioqtwID34dHlB3/bSPBp/p8tR7HtD
+	XByX1YIPFGJ3MuDQ==
+To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Roger Pau
+ =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>,
+ Daniel Gomez <da.gomez@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] PCI/MSI: Handle the NOMASK flag correctly for all
+ PCI/MSI backends
+In-Reply-To: <f56cc306-3c80-45ce-9955-f7fd36defa4e@suse.com>
+References: <20250320210741.GA1099701@bhelgaas>
+ <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
+ <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
+ <Z-GbuiIYEdqVRsHj@macbook.local>
+ <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
+ <Z-Gv6TG9dwKI-fvz@macbook.local> <87y0wtzg0z.ffs@tglx>
+ <87v7rxzct0.ffs@tglx> <87iknwyp2o.ffs@tglx>
+ <f56cc306-3c80-45ce-9955-f7fd36defa4e@suse.com>
+Date: Wed, 26 Mar 2025 13:46:40 +0100
+Message-ID: <87frj0yn67.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Jinjiang Tu <tujinjiang@huawei.com>, yangge1116@126.com,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
- aneesh.kumar@linux.ibm.com, liuzixing@hygon.cn,
- Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
- <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 26.03.25 13:42, Jinjiang Tu wrote:
-> Hi,
-> 
+On Wed, Mar 26 2025 at 13:09, J=C3=BCrgen Gro=C3=9F wrote:
+> On 26.03.25 13:05, Thomas Gleixner wrote:
+>> The conversion of the XEN specific global variable pci_msi_ignore_mask t=
+o a
+>> MSI domain flag, missed the facts that:
+>>=20
+>>      1) Legacy architectures do not provide a interrupt domain
+>>      2) Parent MSI domains do not necessarily have a domain info attached
+>>=20=20=20=20=20
+>> Both cases result in an unconditional NULL pointer dereference.
+>>=20
+>> Cure this by using the existing pci_msi_domain_supports() helper, which
+>> handles all possible cases correctly.
+>>=20
+>> Fixes: c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI do=
+main flag")
+>> Reported-by: Daniel Gomez <da.gomez@kernel.org>
+>> Reported-by: Borislav Petkov <bp@alien8.de>
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Tested-by: Borislav Petkov <bp@alien8.de>
+>> Tested-by: Daniel Gomez <da.gomez@kernel.org>
+>
+> As the patch introducing the problem went in via the Xen tree, should
+> this fix go in via the Xen tree, too?
 
-Hi!
-
-> We notiched a 12.3% performance regression for LibMicro pwrite testcase due to
-> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
-> 
-> The testcase is executed as follows, and the file is tmpfs file.
->      pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
-
-Do we know how much that reflects real workloads? (IOW, how much should 
-we care)
-
-> 
-> this testcase writes 1KB (only one page) to the tmpfs and repeats this step for many times. The Flame
-> graph shows the performance regression comes from folio_mark_accessed() and workingset_activation().
-> 
-> folio_mark_accessed() is called for the same page for many times. Before this patch, each call will
-> add the page to cpu_fbatches.activate. When the fbatch is full, the fbatch is drained and the page
-> is promoted to active list. And then, folio_mark_accessed() does nothing in later calls.
-> 
-> But after this patch, the folio clear lru flags after it is added to cpu_fbatches.activate. After then,
-> folio_mark_accessed will never call folio_activate() again due to the page is without lru flag, and
-> the fbatch will not be full and the folio will not be marked active, later folio_mark_accessed()
-> calls will always call workingset_activation(), leading to performance regression.
-
-Would there be a good place to drain the LRU to effectively get that 
-processed? (we can always try draining if the LRU flag is not set)
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+I'll queue it up now and send Linus a pull request.
 
