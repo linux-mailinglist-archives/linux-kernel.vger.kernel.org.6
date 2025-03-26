@@ -1,151 +1,89 @@
-Return-Path: <linux-kernel+bounces-576375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCF5A70E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:28:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7FEA70E6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06FE171076
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:28:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1267A4019
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5F8381C4;
-	Wed, 26 Mar 2025 01:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B331F94A;
+	Wed, 26 Mar 2025 01:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tLUtXFWw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZb/op7r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C842904;
-	Wed, 26 Mar 2025 01:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D028E8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742952496; cv=none; b=eJVa1p8ZAQTeCDH3wpxTYNhNtn6Rz2niLJ06y7enIe0DhVedINY8BguOldhW52d44wRxp8L3/DcK8y3wsVymy6ywULyOf/QI9+C0Km7zFzTtREdnQ2SLXDpuvC6Ldo0L7v0PLFVogdw8ktidninOm5WI7qyzkvRzEVXKOtZN4XM=
+	t=1742952660; cv=none; b=g9aJRBx+qz4hnR77czLw2/WS/M4DoIKIGhDlBquC8lUlPKKrJtiU9b7+vUTljTZ0+CKuU9C6D/JOEO7dZ2HRG9PYhh9XN3WOZStFTD/WZlE/u18VTdffh4UZhqXH25uwY//UtrXYI6wtnyHu5x0ivT96j4UWuaGT4MdgfKmxQiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742952496; c=relaxed/simple;
-	bh=0AqDNe5MxHvBV7lxZS9uwfiCI6hiFLHRa9Aq9ghHSXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BPS50e7PibvOablVY/Sdjl+XJLCMDfoBpL3b9a8ri9je1336lyO7n9UeEJ8AgAZoF6NuGC4lKMeHKVzu0B144dpDjOqsg/1w654ezEpaypSRQpTzIQVp7f0XQ2dSBjpppVXBgja4xC4uHIrix+aDDzYq7KUvWwLCW55piyctWIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tLUtXFWw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742952490;
-	bh=/8xkPYqrPfa2ne0xHIRWWU5lDUAwK50AV7WWwWgUGC4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tLUtXFWwDDgOk8srWfywEPUs5FDNMKdZVH2xYOAirSdxj62zhl5GFoPIrmsoHyxov
-	 CbT+r2sa8KhsdkjY4LuhxhUyPORPzjJFBPJqsaa6+JEpHyLiEjpk4qWLZfTTp1JnsB
-	 XXylUirt15/8BCn1K2EFc9GQMxDYO46YtUrxydJzeuSKmDtmZvL9xKl4UUHilD9m8N
-	 vLEHsIhvswFpI3jKDNjN14IB4KYjRifAgRttYf6gSVOyuxTPEHcnACBVNawB0HA4Ie
-	 fVL5NkV5LcLMGKOBQzQeSQkx1W4JnLWz6Ekt7Kyq8nkUM8jK05IQgSg6Z5KzwgZI2s
-	 uyC74Np/UBBqw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMq161g05z4x43;
-	Wed, 26 Mar 2025 12:28:10 +1100 (AEDT)
-Date: Wed, 26 Mar 2025 12:28:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Joel Granados <joel.granados@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the s390 tree
-Message-ID: <20250326122809.045478fc@canb.auug.org.au>
-In-Reply-To: <20250319155410.3cdf01cb@canb.auug.org.au>
-References: <20250319155410.3cdf01cb@canb.auug.org.au>
+	s=arc-20240116; t=1742952660; c=relaxed/simple;
+	bh=5gHcAuTQrQAksQjRD53/tJhS2YvQTnGQBoKv1ZxbKtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q55A+N1WPt9LROg3D0kQ5eCIktOP/tZovHNmRANJecGo2uuRBOO3srho/6UqofF0+B1q0vKoMGpzLd4rAPiERv05mW1kGezsGPNElMy/k30OtJqu3q/bZdbUXA7VT8/Iui3UYuaoC/aEgt+y2uTxlegoJzbimJOrBCX+6UmAya0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZb/op7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F84AC4CEE4;
+	Wed, 26 Mar 2025 01:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742952659;
+	bh=5gHcAuTQrQAksQjRD53/tJhS2YvQTnGQBoKv1ZxbKtc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iZb/op7rvCWqB+BDOtjzmAJVdKM+MFCc/ACrLvy+IJ1v/PiW1QBhO5N8Debc1p5sX
+	 +tcMltZXEJXF4KSDHd6uuEaRogEyIyyNtZqiewSVwudBsdCKigul3CSYEz5ggltwhX
+	 DOcnU/AtdRAo08SlDIT7l1D5u4+PNgt5uO3GL+D+H94iB5oAO+zkjI1h//9M3rTbyP
+	 G1mNbJkD/NYaSO1PIoqj4M/7+gMLStRM4d6b/4n7HULc5i9DqUiER6Gu92+YPQ34G8
+	 f9CcCfzboqQHrx99ytKpY3GG9xeWW59f6Rj4wHVKoy3zVbG1QZT2uKt9T0++7CIW3q
+	 gp5AipQgr+p5g==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] objtool: Fix NULL printf() '%s' argument
+Date: Tue, 25 Mar 2025 18:30:37 -0700
+Message-ID: <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QvuC=EzlNTKQnr3l=ASwyZw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/QvuC=EzlNTKQnr3l=ASwyZw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+It's probably not the best idea to pass a string pointer to printf()
+right after confirming said pointer is NULL.  Fix the typo and use
+argv[i] instead.
 
-Hi all,
+Fixes: c5995abe1547 ("objtool: Improve error handling")
+Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ tools/objtool/builtin-check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, 19 Mar 2025 15:54:10 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the tip tree got a conflict in:
->=20
->   kernel/sysctl.c
->=20
-> between commit:
->=20
->   20de8f8d3178 ("s390: Move s390 sysctls into their own file under arch/s=
-390")
->=20
-> from the s390 tree and commit:
->=20
->   c305a4e98378 ("x86: Move sysctls into arch/x86")
->=20
-> from the tip tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc kernel/sysctl.c
-> index 6c70fb3b2376,4ebe6136b08d..000000000000
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@@ -1888,15 -1843,15 +1834,6 @@@ static const struct ctl_table kern_tabl
->   		.proc_handler	=3D proc_dointvec,
->   	},
->   #endif
-> - #if	defined(CONFIG_ACPI_SLEEP) && defined(CONFIG_X86)
->  -#if defined(CONFIG_S390) && defined(CONFIG_SMP)
-> --	{
-> - 		.procname	=3D "acpi_video_flags",
-> - 		.data		=3D &acpi_realmode_flags,
-> - 		.maxlen		=3D sizeof (unsigned long),
->  -		.procname	=3D "spin_retry",
->  -		.data		=3D &spin_retry,
->  -		.maxlen		=3D sizeof (int),
-> --		.mode		=3D 0644,
-> - 		.proc_handler	=3D proc_doulongvec_minmax,
->  -		.proc_handler	=3D proc_dointvec,
-> --	},
-> --#endif
->   #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
->   	{
->   		.procname	=3D "ignore-unaligned-usertrap",
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index 2bdff910430e..e364ab6345d3 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
+ 	for (int i = 0; i < argc; i++) {
+ 		orig_argv[i] = strdup(argv[i]);
+ 		if (!orig_argv[i]) {
+-			WARN_GLIBC("strdup(%s)", orig_argv[i]);
++			WARN_GLIBC("strdup(%s)", argv[i]);
+ 			exit(1);
+ 		}
+ 	};
+-- 
+2.48.1
 
-This is now a conflict between the s390 tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QvuC=EzlNTKQnr3l=ASwyZw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjWCkACgkQAVBC80lX
-0GwokQgAmgnin0ASGgIMT/NiM5AQVkskZqJKdyK+/ZjzsazAXC2LFkUODDzPU1FX
-vBXGUBtlnLduiTsf+1dOQ964E13HovaloexfY1KIVWsaeKZu89aYiCY/p9D39hyb
-DGUtvFViTq5lAcq/zp8lQGpKPvetcMLSwU29zVfP7yjOAQZVP9e6Ikyr2tZ8IENq
-Q/W49WFMV/DItdcyb7suvkpKkp/V7WeFtOw/8IPfTF3L4XRe2dYgGoyDgp1cd47r
-CoocCLCy7xLi0NmBaQCXhDwL5J4DFvlPssssWV5g/4zz5+b9+w25oHq/uCzv4vmI
-GktZ+6d3VHLFi8hJbZum8QU5r/5Rcg==
-=3BGd
------END PGP SIGNATURE-----
-
---Sig_/QvuC=EzlNTKQnr3l=ASwyZw--
 
