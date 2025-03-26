@@ -1,165 +1,187 @@
-Return-Path: <linux-kernel+bounces-577171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5095AA71985
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:58:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98967A71978
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2557A1887E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4193A8D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9B01F30CC;
-	Wed, 26 Mar 2025 14:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67E41F2C5F;
+	Wed, 26 Mar 2025 14:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FBC4+J9T"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="czJXluoG"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2045.outbound.protection.outlook.com [40.107.100.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A621EEA36
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000662; cv=none; b=ijWjT8KHe8xjzYMlcTrvlJH+bMaPmtr5heoviY4uaQG8S8WeHwmJ6105i5x0IHKWsDs7cdb4IjIcjruAXZzkiIlSqvedVb/bH1dni2SrKeUG5BZPlb/hm2eQK9inupCP9yZaw623hrTiSw6U+H3hbsiUc4q/rxkc0483mkM54uk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000662; c=relaxed/simple;
-	bh=9+Wn4o4ZfYJnddu7wbT6vlJ4Zo7wtpFNww/i7dKFarQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l61MbV30yZPNWhPwxOZnW28l40or5Qlr+0th9o3BRctd1gIItx1XSmapsnwFvlsUEvINFih9V/vdpXl+RoMS0951lg4fVLEy7mzxljd2+wMtU4quk6pCrX5AVvcONnkBAHm7jR/nhWOUJtkvfxOedoR5ySisS4mJXAvmsOKLQcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FBC4+J9T; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e643f235a34so4915754276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1743000658; x=1743605458; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TryVD5CFfRquqiR5s54SHld1/iLLK9/M4gETsJY9Nk8=;
-        b=FBC4+J9TkwdRmbz0JgNv0uMP5iCC4kRGQLw8UgJ+DnDn/H1Z47dYNbJXhsK5Py4TqE
-         w2wHc+uJKE4K5Kf/8kFmdaztrVEQRdExq41pQ9tmUBiwPah0aB7FX2eF77m3d2bkUBv0
-         ncdNYRJfEhL7X5haNMA6hUedxoaggM/2szY7+nLn4kNFaCeQUnWtzfNVpVKgQ8YUlDBj
-         aAV9Pjee3DGCUq40ywSittvxVuppoCiA7dr0X4vd1f2K9NYG3IZXQ83auywIAcQnUXlv
-         zhlOIoD7R0mgueLOnekOaNXnwU8xtFYVFXNW/Ffp3Y3SVlOkMaAIN/coiL4OCGGNGvrE
-         rxUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000658; x=1743605458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TryVD5CFfRquqiR5s54SHld1/iLLK9/M4gETsJY9Nk8=;
-        b=MBXgfZJwlPCvdVMTeyddOSoE+MLMgKvjaKSc9elOLQK1dxF4CxP7NXHGir8R4td64p
-         vSwgKSx29hY1IQMP7uE/1v/Z/abe3r+C039FHqxCrJ7sEPT3oMgWL//Q2U+YZilVrdrp
-         +sFG2Brmf1YOrBasGMWixFow+0qD7OaNppDA4DGORTg1jSE1IOgXWZZ1WozpiT5Wwegj
-         BhdvWKFOOolf7WsoZ4e3goHz0MKW2FLTuPg7O5sIeegU4CPlasgCavYMDPMRVhe7MPPU
-         5/+KsbuvJHjnlBJvkBXgz55aRhxnOe50G4DXhQNzklArWgwSjwLbSLJIuDV6T70FfJSR
-         uYNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUndxAe6ogOda74RzRI0uwy/bL2zl87tND7/OS89zGeREl2ebcsXxkFGCULI9LO3Pb6VxCEgcUGJb3eDHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxGPTG5jHaQXpipthBgz9YpJiWqdiPlxszpXbwGQ7oUSmQTHHJ
-	PsOd8TsysF5pDKWsesZJyfdG+7fZoYt33ygUKlfJ7Gx0TNj4ACo+clqILonZrxbV1v6+YC/zkMX
-	aPKys4QoDCXqTtUs+2Pw7tTq9UknlAu3iwP6h
-X-Gm-Gg: ASbGncuHLXOBXvRqdqn4VhncCIcS9Y54GzUPvxe/X+sSEabhmCf0BlRLBgCkHM4WZEd
-	jPdrdQGBv1Qu5DskyYinOrl9ABuAQ/QXK2G4P175fOHSEMfiy6h7G5nxI5qhR1tng9H+GwC5FKs
-	2Z9gI6znLSel09wnst6c3SPqR7Rw==
-X-Google-Smtp-Source: AGHT+IFcPaBFchl6GGXsFrbA3a18D06/oSA6/keB9qsRXz06Jix3SOEcuau74uHQbJqSgkjYgJHwTzGjP8JA6S9LCdk=
-X-Received: by 2002:a05:6902:1b0a:b0:e66:8fa5:622e with SMTP id
- 3f1490d57ef6-e66a4d29f57mr27836094276.5.1743000658423; Wed, 26 Mar 2025
- 07:50:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812791DED5F;
+	Wed, 26 Mar 2025 14:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743000706; cv=fail; b=JI8RwINeCZziG5Ap/r6SsA5DdhXxqPQF+XkRMzYHHSDOim7wndXEczndkKeWuD3YpKnYU3Cw1fxyR1hx1q5mSgd464+LPbxb9zOJtI5/Z2k6Uqy+EmkPWpweWn90m/SwQzNoHn5Q7bDwsBus6h8rg7Q7JV4aLH7k35b3YgxAK3g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743000706; c=relaxed/simple;
+	bh=lKJYS3yqbijytUjk9kx/KiLnGF3suEEaQtEIWdMfCqM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kJqoHLkWUIU0W2Mw0xtuEs7RpVOBGmRZuPFzkOlVcyrmZdGjTBsTGuomqEkOjVmUU3e5TRQmAeZAYgSWo7vWiCk1ed0GGFR5nC1a5g3PZEd7V+sxHTfymWID0nFsNhaWyDQamW6xHVo7Hj5kGWsjJt2mUUDirVupK3SDk2ccmcQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=czJXluoG; arc=fail smtp.client-ip=40.107.100.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hAVNlrmTC7YsHxSPZ2gqQNTaI9GXRibwy5ELAPwOJydnfcn8uMHy2xNnE3eFN/mliDBWBpjLYxu84l6uYrcaiGAx4AYopHLG9pPRduwUpMtX5EeeDfmc542LGygGx7iF9r0WK2GGy5myJT9KrIn18hg8cXRblhZC20N1zXDf9JZFc8Mj8upeiNVJDvrzyapIqmV4lIX/XfQYt55nQdPlyla8IGB/XuAOUbPRLXoxn3xMR7T7w6lIxw0VhpdxXmsEIFXfOWWgxMVMrgK+N5tkDzqYX+x3iGQwPt9D2kCWHr7xtcv/A5S23MzukfKy90NrhezlHIV6cjlBDcPR6vvNyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ny/skl1M4u8Zad6jVHcSfa61Xg88+FJTh4cHVDrCRys=;
+ b=RwZflJrqBwVmXrdaR7oDZTfpdAwHwUeVAewrORxLC8vcjv3NXOfdC99sVVcHgRdt8ShOsEeXf0T7TAx3YvWXDNIrpoiW/LAsLE6qxxUZYxTEuIf4T/JgKFG9S3nUMb45JcbWCWDNEQ7KhgKMhpgVKozTee3dbns0WyBL9ga6QwicnSqfYDGUppZjDTXAM7rOQvgpb4H6IEYfyAaxXh4SPGFhDMyrvEY1N/82kiPhvJtoq68Gm7jIXxxO+v7iPQvf+jZ7HC4EvDKw2D/4iOM56g0oRkCXl/6cXiMZNKxRBxGMmYJk4Ct93BbgSOWJc8VFJ4fMzVQYm5AdeKNZPk/F7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gondor.apana.org.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ny/skl1M4u8Zad6jVHcSfa61Xg88+FJTh4cHVDrCRys=;
+ b=czJXluoGe8lTAy9MjRTsoPJq5Qetfjp90HeKC47Y6AXH2xxLR+HXIsvTJktN3ZeJ+Z7r//wYmwnujZKXB0X1fayB01qMQeUPmS9AOoLvuzroZytLheNuNEQC+6NHBOhuHK2qA1PVWRKpz3kqp30cN9XbtyuFHt/1Ju0dK+Y4noRChRLDJdLbosn98QcopnFhb2ajt0xlKGnqH2PwmWZfSXCMJj5lbu5lneKtyaC7vAmj+UZQxc5yDsbrJbC5s6LNO6KJ0jfzkkeoL+HYmVXVS8n2Ui6ObCzUEepYhC5WXEsIMee8RI0yTunRs5e4o6exFoFhEm2BXehoyTVJdNpxTg==
+Received: from SJ0PR03CA0199.namprd03.prod.outlook.com (2603:10b6:a03:2ef::24)
+ by SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
+ 2025 14:51:41 +0000
+Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
+ (2603:10b6:a03:2ef:cafe::8e) by SJ0PR03CA0199.outlook.office365.com
+ (2603:10b6:a03:2ef::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Wed,
+ 26 Mar 2025 14:51:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Wed, 26 Mar 2025 14:51:40 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Mar
+ 2025 07:51:21 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Mar
+ 2025 07:51:21 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Wed, 26 Mar 2025 07:51:18 -0700
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Akhil R <akhilrajeev@nvidia.com>
+Subject: [PATCH] crypto: tegra: Fix IV usage for AES ECB
+Date: Wed, 26 Mar 2025 20:21:10 +0530
+Message-ID: <20250326145111.57991-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326103819.93387-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20250326103819.93387-1-cgoettsche@seltendoof.de>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 26 Mar 2025 10:50:47 -0400
-X-Gm-Features: AQ5f1JrV3Av0wV5o_U_aKmUG8HQHcRrvdTic1WTTG_JyJ2opcOPJaHy12pmnt2I
-Message-ID: <CAHC9VhRUzr2XpfP5XJpXLxEhYoFvtee8OgEwvib1x7+H7B68Qg@mail.gmail.com>
-Subject: Re: [RFC PATCH] selinux: rename io_uring permission to match syscall
-To: cgzones@googlemail.com
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, =?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
-	"Kipp N. Davis" <kippndavis.work@gmx.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Jens Axboe <axboe@kernel.dk>, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|SA0PR12MB4349:EE_
+X-MS-Office365-Filtering-Correlation-Id: 670e3566-eda7-4f7b-5828-08dd6c75b7a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q97W1XbWpiOtuUV6caYkfy1ri/2DWUcPwnve3PkhszuAAL+2Q2RZEfbTgU0j?=
+ =?us-ascii?Q?wP80cxe0Nf8oMHhNZb/l613K0oIjLyGK7cwnCFktkFm7McQgJCVxu5gP4R28?=
+ =?us-ascii?Q?yiSkPbhhj5r8qyxyw7WP/lxDKzaadyhweTUwgIWKUvVFI8Bz2zqLJaPxT5ve?=
+ =?us-ascii?Q?4ultMZZGdR2XZ58HCCMriz0wdTFbA3GIZMs39TiEJOZAZ7u+qY0gp99/MsIL?=
+ =?us-ascii?Q?fIe04l1fpUMUXp26MN13CrDPxHEi4hsEq+ytHZo4rPaG+fsjpu1t+qbk0vvi?=
+ =?us-ascii?Q?JEJbJhz1UjAw7h7RM+owmOzxVZjRUtSsypIdteVkm1Uvszidf3l/1Eb/nG/h?=
+ =?us-ascii?Q?o5MIQ1FcNhVN1iltAIUJR6RtkoL/nGQtMuY8Iqwbbjw/YITq1Uy98BpDptzX?=
+ =?us-ascii?Q?Kn3cGD4tmcdsAAkFizMM1ppKVsfY+s0k/tRqa36bnwmAF1qRpwbqC207mJlR?=
+ =?us-ascii?Q?yT8zJT3ThPTjpjNNbAs3ITKXRb1LD25I9+D3Ma4/ee4ic2sKiXiUqaX1MNkT?=
+ =?us-ascii?Q?CV1pUVt9rzmC/C0M4BA4uD/NBsOqYpIhY8JsB1xYN2p63lkrOzJz9XwSw4P+?=
+ =?us-ascii?Q?bxM+WKMwNGchl1q3dtKT+PgGTCaii+wSu50cE9Bop+XKOQs/3GY8tSnruQWn?=
+ =?us-ascii?Q?PvN1gnYp2OWD27DY8gT3WULpMlDWJOo92NPWKPpToq3dhlp0zzwR6XxAurlN?=
+ =?us-ascii?Q?ZUHyG51C+M5ozNJQjSvMgVRO548aXbTvmUEvdngv5dliAek4RYh7ESyHqAqJ?=
+ =?us-ascii?Q?XyY7XEs9YXjY5hXyCeyzTtBjCpF1GHKe06pLWxWRbEVZgwsEXwX7S2A80kUI?=
+ =?us-ascii?Q?sEWEJd/47MZ0ocbFx1G+Sqfjr71hjFCfkkGEKnFZhL3cMUxpd16y1fORDNxn?=
+ =?us-ascii?Q?F80ybPJcnK2TCpn4ee8riEvHRb7vch14bgq0jUWSssYZK4JYQDBD+VDdaQ2n?=
+ =?us-ascii?Q?HnHaDPO76VZPqUAhzB4YnUM77eMLEVdAeRcppKaW7jsdAfKPYUWjNAmXUz3+?=
+ =?us-ascii?Q?MzXQYV9Qb0qrLlHStJGrNT3a120AFiCB1MU3bIUP2imo0ILNs5XteNi4SfoK?=
+ =?us-ascii?Q?3ft+q7Cxm5Rt46DxThFdavFzRCYLzVaNlbgEgb98BynW22UxEY3WTYhFF7s9?=
+ =?us-ascii?Q?TM6E74F3DftFX3FeLhO1h7RXj4S8+4jE4MvV5wEcOILHbYLWhhpzAPhosSzv?=
+ =?us-ascii?Q?yNbagkxwghrHEG5L2CpHUBWuGqDLcV0nm1qop1WMNgaKCbXovXasUqVVq8tH?=
+ =?us-ascii?Q?0zb7jivNHEbtoYNSMUsItInbmQWtgEybn3VF0S5yM/MI1Jg+IxGoq/E25QUi?=
+ =?us-ascii?Q?QGIKVzI55BRVv9kARalVC9g/bo7BooU+MSbVilR0pRUydZaePLHmCMwQVXsd?=
+ =?us-ascii?Q?sxFjktKZN0vB32EX8mts8fp9YrbeE7IzjppN1BO1VGBArB/V8O3XA5i/9et3?=
+ =?us-ascii?Q?HLXfFeQNN9EyDIOFYQ5RKFJxVevfxpJwY/6VSqwWDazyk72TVaFC4VuTBFjD?=
+ =?us-ascii?Q?46I6g5zXQYIQ9cc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 14:51:40.3137
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 670e3566-eda7-4f7b-5828-08dd6c75b7a3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D1.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4349
 
-On Wed, Mar 26, 2025 at 6:38=E2=80=AFAM Christian G=C3=B6ttsche
-<cgoettsche@seltendoof.de> wrote:
->
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> Commit c6ad9fdbd44b ("io_uring,lsm,selinux: add LSM hooks for
-> io_uring_setup()") introduced the LSM hook `uring_allowed` and
-> implemented it in SELinux via a new `io_uring` class permission
-> `allowed`.  Rename the permission to `setup` since most permission verbs
-> are named after the corresponding syscall ...
+Modifying the crypto_request turns out to be not the right way to handle
+the stale value issue with the IV. Though the IV is not used for AES ECB,
+it eventually get used in algorithms like LRW in the next step after
+AES ECB encryption/decryption. Setting req->iv to NULL breaks the
+implementation of such algorithms. Hence modify only the local reqctx
+to check for IV.
 
-Some permissions are named after a syscall, but there are also a
-number that are not.  I believe "allowed" is the right choice here as
-it better reflects the intent of the permission.
+Fixes: bde558220866 ("crypto: tegra - Set IV to NULL explicitly for AES ECB")
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+---
+ drivers/crypto/tegra/tegra-se-aes.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-As an aside, the original draft of this patch was sent to the lists
-back in late December and the final revision was merged in early
-February before going up to Linus a few days ago.  While I maintain
-that "allowed" is the better choice, the proper time to raise your
-concerns would have been during the past few months, not now.
+diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
+index ca9d0cca1f74..0e07d0523291 100644
+--- a/drivers/crypto/tegra/tegra-se-aes.c
++++ b/drivers/crypto/tegra/tegra-se-aes.c
+@@ -269,7 +269,7 @@ static int tegra_aes_do_one_req(struct crypto_engine *engine, void *areq)
+ 	unsigned int cmdlen, key1_id, key2_id;
+ 	int ret;
+ 
+-	rctx->iv = (u32 *)req->iv;
++	rctx->iv = (ctx->alg == SE_ALG_ECB) ? NULL : (u32 *)req->iv;
+ 	rctx->len = req->cryptlen;
+ 	key1_id = ctx->key1_id;
+ 	key2_id = ctx->key2_id;
+@@ -498,9 +498,6 @@ static int tegra_aes_crypt(struct skcipher_request *req, bool encrypt)
+ 	if (!req->cryptlen)
+ 		return 0;
+ 
+-	if (ctx->alg == SE_ALG_ECB)
+-		req->iv = NULL;
+-
+ 	rctx->encrypt = encrypt;
+ 
+ 	return crypto_transfer_skcipher_request_to_engine(ctx->se->engine, req);
+-- 
+2.43.2
 
-> ... in this case
-> io_uring_setup(2), and avoid confusing policy rules with an allow
-> keyword and an allowed permission.
->
-> Fixes: c6ad9fdbd44b ("io_uring,lsm,selinux: add LSM hooks for io_uring_se=
-tup()")
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
-> Note: this patch targets torvalds/master
-> ---
->  security/selinux/hooks.c            | 2 +-
->  security/selinux/include/classmap.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 7150c953fec3..bcc66dea8bdc 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -7188,7 +7188,7 @@ static int selinux_uring_allowed(void)
->  {
->         u32 sid =3D current_sid();
->
-> -       return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__ALLOWE=
-D,
-> +       return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__SETUP,
->                             NULL);
->  }
->  #endif /* CONFIG_IO_URING */
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
-de/classmap.h
-> index 04a9b480885e..49fb584f2056 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -179,7 +179,7 @@ const struct security_class_mapping secclass_map[] =
-=3D {
->         { "perf_event",
->           { "open", "cpu", "kernel", "tracepoint", "read", "write", NULL =
-} },
->         { "anon_inode", { COMMON_FILE_PERMS, NULL } },
-> -       { "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NUL=
-L } },
-> +       { "io_uring", { "override_creds", "sqpoll", "cmd", "setup", NULL =
-} },
->         { "user_namespace", { "create", NULL } },
->         /* last one */ { NULL, {} }
->  };
-> --
-> 2.49.0
-
---=20
-paul-moore.com
 
