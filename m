@@ -1,514 +1,165 @@
-Return-Path: <linux-kernel+bounces-577457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB61A71D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:36:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABDEA71D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6868C176552
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00533B396F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD4923C8A9;
-	Wed, 26 Mar 2025 17:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A723BCFD;
+	Wed, 26 Mar 2025 17:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="arDpxXX2"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iaf4Gejf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C97821767B;
-	Wed, 26 Mar 2025 17:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309D523A560
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010471; cv=none; b=DpD0glZI/k2VDvQv2EYsDJoCVO8/fscT+XNPT3YwFidhb6JrG+8MSpE8CNCCAsCowWr5MRsdUW8C9szv3WNsQBUWeMIzLQb52ruOx4RgrzjPeYZ1HGR0mRfUq7VkQ6pq0J2pKU+X34/ZL0lY80yOEfkal0eB2EaseJIlfLJpmx8=
+	t=1743010448; cv=none; b=Syx3yljQY+qi2s7RHImdB+uL31dgIa2w4pH/bSDHoerMkaJz/dPTcDbNN+UpssX1CXLTW2hjZxw6bCs3lbe8hKj6OW/v0NaO34PyMlLCwhvVwF9D4glmyXdQmnrWDjVBX4m+YujXYy7kT1qF7OzVT5z5qASu+l0APBPoImH47X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010471; c=relaxed/simple;
-	bh=IVMKgayk/wm1ZTUoIFqiZ1irK5MDlnkRKXQmO/1F6pc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qrgOfCqoq3p97+ye9ryjxTHdvZqvhsSFh+d80IOQwC64+P4fNFli/vHcEOxsbZik0OmbeH953NEyJkG9IisRH0zSXL5A5012IGXB/MVXvMyQeXGXklWnzgtKdpSgzieWl5O377WkwMSzW4KJT/16kX+QzotcI+yhOsAarm6wqNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=arDpxXX2; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1CFCE101CA7F1;
-	Wed, 26 Mar 2025 18:34:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1743010466; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qJTpC5sAhsfwgi4VUrQhS89cZHgib6KieAtnayphjY8=;
-	b=arDpxXX2gK1beIIYcB/7ptMVLO6s0Gr6S4rMnA5Iiq+KSyqMU0l760UmMtNPsCSRipy5cu
-	JS2RFZF08JXfP+EeveXmqHx/Djaaenq4Vt8xzCNi4sLZ5oAVoC/ysW+CovtSwa6pF6/Bf0
-	0/o6NsxS7PPEvSVL+Vj2x29crj01IgLjzA8brnzAJW8VK5Q+JgjGcH7hED2Uh44ayRHKgD
-	15OCy6hSQhHnNILSN6VgOTl8FtJsprdP2Jy4zrNyk+xBLPIbvhVGWD+0JnM53QSFE52IBR
-	LXINR0YakdwQwMX+CfBEKjaIOy6GPkUAhGPrOjLTfLc5shrzPh9A3qyMFIVa5w==
-From: Lukasz Majewski <lukma@denx.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH 2/2] ARM: dts: mxs: Add support for second revision of the XEA board (imx287)
-Date: Wed, 26 Mar 2025 18:34:00 +0100
-Message-Id: <20250326173400.2697684-2-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250326173400.2697684-1-lukma@denx.de>
-References: <20250326173400.2697684-1-lukma@denx.de>
+	s=arc-20240116; t=1743010448; c=relaxed/simple;
+	bh=TshgAFtyv5Gr+4/wXY0hrRMqxkHhiwNlwhq5rWwU3Tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4ELraDi2uJDkWH+iaUyLdGJJOw1XIfh9FuCKvAq5dj0nIi8kgZFs9XhhsTeBKCWbueBczivoPCVFhjyVp7eY7eJuV8QGLBnt3d+SPLtwDv9WccZTMjUres5fwEpFyWOrjprHA3zYDyw/q8a4v/ASs4RWYugVuBHh3DMY4Y0hrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iaf4Gejf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QF1Tk6006152
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:34:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0dPgSCIRGo94m6zrHPu6fd9s
+	lXLX2m3rPOIFR+j5fAs=; b=iaf4GejfTDQUzZkBdycMOSBp1SM5r6Yc59mDIJc8
+	uKeSm1lMokXp/VQdRH2USGI6OZXjv6Fv5PmUUwl+j1heP1O9ftMdYbvIHXjPLuOI
+	E/DUSJLcc5QTXC95lYMh8l6HbpGY6Bj4DrE2okNrFXG7HwMWmHcy8rcfoN2KAvz8
+	kO7W6DHNMHJBy5YxYyIfqI9l71UEfMPzdGTK3lTtX0o5tt1IoXfAJqF/c0X5DYCW
+	j7QqNhcrOWFxOBxGAPOait/aMuXCREfYGq61Rzq33J1WZnhi7QdGurkwQExXfOEZ
+	ssd3+s7H1cyv2kF5Go2hzeRNpSMg59ita5OmX77nvVR6qg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj262t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:34:05 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c543ab40d3so18225985a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:34:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743010445; x=1743615245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0dPgSCIRGo94m6zrHPu6fd9slXLX2m3rPOIFR+j5fAs=;
+        b=N8KuEGpeQw5ebDbGjFfdrh1Dhpmi3ro46Yi8TXEsnjwT4x4hRjOpz/WDvzFJwB3Vl+
+         5lXc4yqdF76Prp9pq12ReVcoB8uF2DhfS/257gFkYtXVX2ajQ7/affvFDUQYmyDxvlfW
+         L9G+A+2ucuKSOTnvhIPAi+yrHoXBVqnyGu2WKoVHZIOXQ1yHMdnTIzSKOK9IejsoHzpl
+         8BHLuhdC1QrSxpKSrXuD1CciNQYA/kJq1aVP3evOYRDc3o9Bt1UQPVFic0fgboaGR+Lt
+         1o2mr28J0zvCpiRjUh94P/XZd7NncbGGLCIs872Uq96j0WJ+Q/h4khR/qr1tyBIYqBsr
+         TkHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdw4A7Rh6CKMmqBLofbr3iBakxrzt6DP6JY3Qbc3wk+98idpf02mFmFRsuSJ3ujcNpGwPheZu+lFlbptE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzotxfwgIpdwJfpUBmDBrILGhCkDv7PPjS1y/MUeSL4kR/FBph3
+	HO/hXcKi7u+u82U5q1XT1xoQkF6nel9Mb4t9hAe66D5OqI0/AkCQujQAhcjBH5jpihAQgCIvPdd
+	DL5Kmg5oxCNTLyAkhm94HO3BSB8+M3bOHwNfWARKEnynZPgnra2gIi09E3T3Bw00=
+X-Gm-Gg: ASbGncsplNTJVpULKPJewyeTQB9l3xZvcYHCpg+k6U6jZ7+kNu3KJmdM6Wet0ZR74X2
+	QZWetTXuW6UKkhRdazUrRjXRTi2JUR1aZ9Tsp4PFbzkfQInwi61mlMrLBaHKF0esDyipDKMHGlz
+	4ilpGTvQLlknvI/oQEMT/DuP3bjXU5IaFiacl7r1T8KIzxmm3MkZ3UEAMJK+Z5V+VT2TG5VPek0
+	lPnvT6Bb7rfMoTxidPyEtKTAhQcuT6aahlfRpEONbNY4ZYnh3+ZusAbh0A6EjjQlfJUaMmLQ0yN
+	+HVoXQ8wYzDpvCdiOZMsxTO4sCoseOfxuJQApI3MbnHnbdbVN+kkh6KcFO1NePt2vD3L+FzWGj3
+	9XHU=
+X-Received: by 2002:a05:620a:254e:b0:7c5:9731:3c7b with SMTP id af79cd13be357-7c5eda64e74mr103976085a.36.1743010444975;
+        Wed, 26 Mar 2025 10:34:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIW4iWtJXJZ4BR3cmnmQ77b7rUp5cXZSrlIpZZ7FtHJRSk3jk1K4yfBMbabN1sqPi7i+rOyw==
+X-Received: by 2002:a05:620a:254e:b0:7c5:9731:3c7b with SMTP id af79cd13be357-7c5eda64e74mr103967885a.36.1743010444340;
+        Wed, 26 Mar 2025 10:34:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad650826fsm1896825e87.167.2025.03.26.10.34.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 10:34:02 -0700 (PDT)
+Date: Wed, 26 Mar 2025 19:34:00 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
+Message-ID: <tlwqz7qfdunrpsbjhk3kl3tz6zbkthv737pjvnphbz73zdqaph@7xcimtpeplbv>
+References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
+X-Proofpoint-GUID: x_CYIUBlM-8XLaAigDUINnUEnzXbxPD8
+X-Proofpoint-ORIG-GUID: x_CYIUBlM-8XLaAigDUINnUEnzXbxPD8
+X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e43a8d cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=XIGxjvZd5PgJVFysyh4A:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_08,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=900
+ malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260107
 
-Up till now the XEA had only single revision supported in Linux kernel.
+On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
+> The initial QCE node change is reverted by the following patch 
+> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
+> because of the build warning,
+> 
+>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+>     ...
+>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+> 
+> Add the QCE node back that fix the warnings.
+> 
+> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 23049cc58896..b0d77b109305 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
+>  				 <&apps_smmu 0x481 0x00>;
+>  		};
+>  
+> +		crypto: crypto@1dfa000 {
+> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
+> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
+> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
+> +			dma-names = "rx", "tx";
+> +			iommus = <&apps_smmu 0x480 0x00>,
+> +				 <&apps_smmu 0x481 0x00>;
+> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
+> +					 &mc_virt SLAVE_EBI1 0>;
 
-As some in-HW adjustments were made - it has been required to extend
-the support with second version.
+QCOM_ICC_TAG_ALWAYS
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- arch/arm/boot/dts/nxp/mxs/Makefile        |   3 +-
- arch/arm/boot/dts/nxp/mxs/imx28-xea-1.dts |  29 ++++
- arch/arm/boot/dts/nxp/mxs/imx28-xea-2.dts |  66 ++++++++
- arch/arm/boot/dts/nxp/mxs/imx28-xea.dts   | 100 -----------
- arch/arm/boot/dts/nxp/mxs/imx28-xea.dtsi  | 191 ++++++++++++++++++++++
- 5 files changed, 288 insertions(+), 101 deletions(-)
- create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-xea-1.dts
- create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-xea-2.dts
- delete mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-xea.dts
- create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-xea.dtsi
+> +			interconnect-names = "memory";
+> +		};
+> +
+>  		stm: stm@4002000 {
+>  			compatible = "arm,coresight-stm", "arm,primecell";
+>  			reg = <0x0 0x4002000 0x0 0x1000>,
+> -- 
+> 2.34.1
+> 
 
-diff --git a/arch/arm/boot/dts/nxp/mxs/Makefile b/arch/arm/boot/dts/nxp/mxs/Makefile
-index 96dd31ea19ba..de4cafd820c2 100644
---- a/arch/arm/boot/dts/nxp/mxs/Makefile
-+++ b/arch/arm/boot/dts/nxp/mxs/Makefile
-@@ -31,4 +31,5 @@ dtb-$(CONFIG_ARCH_MXS) += \
- 	imx28-sps1.dtb \
- 	imx28-ts4600.dtb \
- 	imx28-tx28.dtb \
--	imx28-xea.dtb
-+	imx28-xea-1.dtb \
-+	imx28-xea-2.dtb
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-xea-1.dts b/arch/arm/boot/dts/nxp/mxs/imx28-xea-1.dts
-new file mode 100644
-index 000000000000..a56c9930752a
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28-xea-1.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2025
-+ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-+ */
-+
-+/dts-v1/;
-+#include "imx28-xea.dtsi"
-+
-+/ {
-+	model = "XEA v1";
-+};
-+
-+&pinctrl {
-+	pinctrl-0 = <&hog_pins_a &hog_pins_tiva &hog_pins_rev1>;
-+
-+	hog_pins_rev1: hog@3 {
-+		reg = <3>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_SSP1_SCK__GPIO_2_12
-+			MX28_PAD_SSP1_SCK__GPIO_2_12
-+			MX28_PAD_SSP2_SS1__GPIO_2_20
-+			MX28_PAD_SSP2_SS2__GPIO_2_21
-+		>;
-+		fsl,drive-strength = <MXS_DRIVE_4mA>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_DISABLE>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-xea-2.dts b/arch/arm/boot/dts/nxp/mxs/imx28-xea-2.dts
-new file mode 100644
-index 000000000000..498905def9c1
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28-xea-2.dts
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2025
-+ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-+ */
-+
-+/dts-v1/;
-+#include "imx28-xea.dtsi"
-+
-+/ {
-+	model = "XEA v2";
-+};
-+
-+&pinctrl {
-+	pinctrl-0 = <&hog_pins_a &hog_pins_tiva &hog_pins_rev1>;
-+
-+	hog_pins_rev1: hog@3 {
-+		reg = <3>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_SAIF0_LRCLK__GPIO_3_21
-+		>;
-+		fsl,drive-strength = <MXS_DRIVE_4mA>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_DISABLE>;
-+	};
-+
-+	spi1_pins_a: spi1@0 {
-+		reg = <0>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_SSP1_SCK__SSP1_SCK
-+			MX28_PAD_SSP1_CMD__SSP1_CMD
-+			MX28_PAD_SSP1_DATA0__SSP1_D0
-+			MX28_PAD_SSP1_DATA3__GPIO_2_15
-+		>;
-+		fsl,drive-strength = <MXS_DRIVE_8mA>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_ENABLE>;
-+	};
-+};
-+
-+&ssp1 {
-+	compatible = "fsl,imx28-spi";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi1_pins_a>;
-+	status = "okay";
-+
-+	spidev0@0 {
-+		compatible = "lwn,btt";
-+		spi-max-frequency = <100000000>;
-+		reg = <0>;
-+	};
-+
-+	spidev2@2 {
-+		compatible = "lwn,btt";
-+		spi-max-frequency = <100000000>;
-+		reg = <2>;
-+	};
-+};
-+
-+&ssp3 {
-+	spidev1@1 {
-+		compatible = "lwn,btt";
-+		spi-max-frequency = <100000000>;
-+		reg = <1>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts b/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts
-deleted file mode 100644
-index 6c5e6856648a..000000000000
---- a/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts
-+++ /dev/null
-@@ -1,100 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
--/*
-- * Copyright 2021
-- * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-- */
--
--/dts-v1/;
--#include "imx28-lwe.dtsi"
--
--/ {
--	model = "Liebherr XEA board";
--	compatible = "lwn,imx28-xea", "fsl,imx28";
--};
--
--&can0 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&can1_pins_a>;
--	status = "okay";
--};
--
--&i2c1 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&i2c1_pins_b>;
--	status = "okay";
--};
--
--&pinctrl {
--	pinctrl-names = "default";
--	pinctrl-0 = <&hog_pins_a &hog_pins_tiva>;
--
--	hog_pins_a: hog@0 {
--		reg = <0>;
--		fsl,pinmux-ids = <
--			MX28_PAD_GPMI_D00__GPIO_0_0
--			MX28_PAD_GPMI_D02__GPIO_0_2
--			MX28_PAD_GPMI_D05__GPIO_0_5
--			MX28_PAD_GPMI_CE1N__GPIO_0_17
--			MX28_PAD_GPMI_RDY0__GPIO_0_20
--			MX28_PAD_GPMI_RDY1__GPIO_0_21
--			MX28_PAD_GPMI_RDY2__GPIO_0_22
--			MX28_PAD_GPMI_RDN__GPIO_0_24
--			MX28_PAD_GPMI_CLE__GPIO_0_27
--			MX28_PAD_LCD_VSYNC__GPIO_1_28
--			MX28_PAD_SSP1_SCK__GPIO_2_12
--			MX28_PAD_SSP1_CMD__GPIO_2_13
--			MX28_PAD_SSP2_SS1__GPIO_2_20
--			MX28_PAD_SSP2_SS2__GPIO_2_21
--			MX28_PAD_LCD_D00__GPIO_1_0
--			MX28_PAD_LCD_D01__GPIO_1_1
--			MX28_PAD_LCD_D02__GPIO_1_2
--			MX28_PAD_LCD_D03__GPIO_1_3
--			MX28_PAD_LCD_D04__GPIO_1_4
--			MX28_PAD_LCD_D05__GPIO_1_5
--			MX28_PAD_LCD_D06__GPIO_1_6
--		>;
--		fsl,drive-strength = <MXS_DRIVE_4mA>;
--		fsl,voltage = <MXS_VOLTAGE_HIGH>;
--		fsl,pull-up = <MXS_PULL_DISABLE>;
--	};
--
--	hog_pins_tiva: hog@1 {
--		reg = <1>;
--		fsl,pinmux-ids = <
--			MX28_PAD_GPMI_RDY3__GPIO_0_23
--			MX28_PAD_GPMI_WRN__GPIO_0_25
--		>;
--		fsl,voltage = <MXS_VOLTAGE_HIGH>;
--		fsl,pull-up = <MXS_PULL_DISABLE>;
--	};
--
--	hog_pins_coding: hog@2 {
--		reg = <2>;
--		fsl,pinmux-ids = <
--			MX28_PAD_GPMI_D01__GPIO_0_1
--			MX28_PAD_GPMI_D03__GPIO_0_3
--			MX28_PAD_GPMI_D04__GPIO_0_4
--			MX28_PAD_GPMI_D06__GPIO_0_6
--			MX28_PAD_GPMI_D07__GPIO_0_7
--		>;
--		fsl,voltage = <MXS_VOLTAGE_HIGH>;
--		fsl,pull-up = <MXS_PULL_DISABLE>;
--	};
--};
--
--&reg_fec_3v3 {
--	gpio = <&gpio0 0 0>;
--};
--
--&reg_usb_5v {
--	gpio = <&gpio0 2 0>;
--};
--
--&spi2_pins_a {
--	fsl,pinmux-ids = <
--		MX28_PAD_SSP2_SCK__SSP2_SCK
--		MX28_PAD_SSP2_MOSI__SSP2_CMD
--		MX28_PAD_SSP2_MISO__SSP2_D0
--		MX28_PAD_SSP2_SS0__GPIO_2_19
--	>;
--};
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-xea.dtsi b/arch/arm/boot/dts/nxp/mxs/imx28-xea.dtsi
-new file mode 100644
-index 000000000000..adbdc3871045
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28-xea.dtsi
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2025
-+ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "imx28-lwe.dtsi"
-+
-+/ {
-+	compatible = "lwn,imx28-xea", "fsl,imx28";
-+
-+	reg_standby: regulator-standby {
-+		compatible = "regulator-fixed";
-+		gpio = <&gpio0 20 GPIO_ACTIVE_LOW>;
-+		regulator-name = "enable-standby";
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&can1_pins_a>;
-+	xceiver-supply = <&reg_usb_5v>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins_b>;
-+	status = "okay";
-+};
-+
-+&eth_switch {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mac0_pins_a>, <&mac1_pins_a>;
-+	phy-supply = <&reg_fec_3v3>;
-+	phy-reset-duration = <25>;
-+	phy-reset-post-delay = <10>;
-+	status = "okay";
-+
-+	ethernet-ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		mtip_port1: port@1 {
-+			reg = <1>;
-+			label = "lan0";
-+			local-mac-address = [ 00 00 00 00 00 00 ];
-+			phy-mode = "rmii";
-+			phy-handle = <&ethphy0>;
-+		};
-+
-+		mtip_port2: port@2 {
-+			reg = <2>;
-+			label = "lan1";
-+			local-mac-address = [ 00 00 00 00 00 00 ];
-+			phy-mode = "rmii";
-+			phy-handle = <&ethphy1>;
-+		};
-+	};
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@0 {
-+			reg = <0>;
-+			smsc,disable-energy-detect;
-+			/* Both PHYs (i.e. 0,1) have the same, single GPIO, */
-+			/* line to handle both, their interrupts (AND'ed) */
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-+		};
-+
-+		ethphy1: ethernet-phy@1 {
-+			reg = <1>;
-+			smsc,disable-energy-detect;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-+		};
-+	};
-+};
-+
-+&mac0 {
-+	phy-mode = "rmii";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mac0_pins_a>;
-+	phy-supply = <&reg_fec_3v3>;
-+	phy-reset-duration = <100>;
-+	local-mac-address = [ 00 11 B8 00 BF 8A ];
-+	status = "okay";
-+};
-+
-+&mac1 {
-+	phy-mode = "rmii";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mac1_pins_a>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hog_pins_a &hog_pins_tiva>;
-+
-+	hog_pins_a: hog@0 {
-+		reg = <0>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_GPMI_D00__GPIO_0_0
-+			MX28_PAD_GPMI_D02__GPIO_0_2
-+			MX28_PAD_GPMI_D05__GPIO_0_5
-+			MX28_PAD_GPMI_CE1N__GPIO_0_17
-+			MX28_PAD_GPMI_RDY0__GPIO_0_20
-+			MX28_PAD_GPMI_RDY1__GPIO_0_21
-+			MX28_PAD_GPMI_RDY2__GPIO_0_22
-+			MX28_PAD_GPMI_RDN__GPIO_0_24
-+			MX28_PAD_GPMI_CLE__GPIO_0_27
-+			MX28_PAD_LCD_VSYNC__GPIO_1_28
-+			MX28_PAD_LCD_D00__GPIO_1_0
-+			MX28_PAD_LCD_D01__GPIO_1_1
-+			MX28_PAD_LCD_D02__GPIO_1_2
-+			MX28_PAD_LCD_D03__GPIO_1_3
-+			MX28_PAD_LCD_D04__GPIO_1_4
-+			MX28_PAD_LCD_D05__GPIO_1_5
-+			MX28_PAD_LCD_D06__GPIO_1_6
-+			MX28_PAD_LCD_D15__GPIO_1_15
-+			MX28_PAD_LCD_D16__GPIO_1_16
-+			MX28_PAD_LCD_D17__GPIO_1_17
-+			MX28_PAD_LCD_D18__GPIO_1_18
-+		>;
-+		fsl,drive-strength = <MXS_DRIVE_4mA>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_DISABLE>;
-+	};
-+
-+	hog_pins_tiva: hog@1 {
-+		reg = <1>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_GPMI_RDY3__GPIO_0_23
-+			MX28_PAD_GPMI_WRN__GPIO_0_25
-+		>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_DISABLE>;
-+	};
-+
-+	hog_pins_coding: hog@2 {
-+		reg = <2>;
-+		fsl,pinmux-ids = <
-+			MX28_PAD_GPMI_D01__GPIO_0_1
-+			MX28_PAD_GPMI_D03__GPIO_0_3
-+			MX28_PAD_GPMI_D04__GPIO_0_4
-+			MX28_PAD_GPMI_D06__GPIO_0_6
-+			MX28_PAD_GPMI_D07__GPIO_0_7
-+		>;
-+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+		fsl,pull-up = <MXS_PULL_DISABLE>;
-+	};
-+};
-+
-+&reg_fec_3v3 {
-+	gpio = <&gpio0 0 0>;
-+};
-+
-+&reg_usb_5v {
-+	gpio = <&gpio0 2 0>;
-+};
-+
-+&ssp2 {
-+	spidev1@1 {
-+		compatible = "lwn,btt";
-+		spi-max-frequency = <100000000>;
-+		reg = <1>;
-+	};
-+
-+	spidev2@2 {
-+		compatible = "lwn,btt";
-+		spi-max-frequency = <100000000>;
-+		reg = <2>;
-+	};
-+};
-+
-+&spi2_pins_a {
-+	fsl,pinmux-ids = <
-+		MX28_PAD_SSP2_SCK__SSP2_SCK
-+		MX28_PAD_SSP2_MOSI__SSP2_CMD
-+		MX28_PAD_SSP2_MISO__SSP2_D0
-+		MX28_PAD_SSP2_SS0__GPIO_2_19
-+	>;
-+};
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
