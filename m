@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-577030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A2BA7177E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:27:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C341A71781
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276F6179E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1E61884FFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B99D1EB5F4;
-	Wed, 26 Mar 2025 13:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001741EA7E2;
+	Wed, 26 Mar 2025 13:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ODkgmpkj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="DkizeIwa"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920B81EB5DD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0981E1E0E;
+	Wed, 26 Mar 2025 13:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742995544; cv=none; b=UCP1UtX1ZwI6AGUQk2+qMZjiDiZ90m58W56lmco2jRktgCYD2GvlPJHtbcXtbgm5UQylmPNQzXm3ZqY2sVn+IYNAtcn88kKp8N1m/vvq9sKoQeZmS+KQFKXIBEY/02N2fCQ70+AmOka5WO8s16k9s9OLG0+2vV7kPNnT7bqFblE=
+	t=1742995591; cv=none; b=Dl7fVQA3LKfNU/jsjT49p8l0Zj/BAnXJLXsMrgtolBQX1UFQxCcuM3hyfnGtLw3yIeMeGLXkE378zDzlIWtFgImHQy5NAFKxfbYvYURiUH0LiRJoV09AIlyhtMk84rX7EcPQDXh+2te70tfepM4KW0U+7AeLmOMsSEEMu6PtTb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742995544; c=relaxed/simple;
-	bh=Ec0Xu4PjqUjd3h3Ibtjw0z8jjglSCJ/HQleUwNbwRrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FjzZHAkmzlzRuJJnq9jhK/YrjcbdEyDpjXiS77Fd6jET0ezfMSj7Dws57SxDQtHEXZ7InmXSZAm8xNuGQbcOG+O9u/OGSilryqr6LznBR9FWpRnuASYOfROzmFISctW1Z0ZKIXkMz9OkOovQhB+mwz8xO6o+N5/yYAawIEYTkd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ODkgmpkj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73Ec9009017
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:25:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Mn+Gs2SyQz1iQ9gjKD3hboP/p+jh4/gpnc6d4YClDFI=; b=ODkgmpkjWML3lzo/
-	B/vFlkL016Pi7Js5wrT//WRkX5MlqM3zEGJ7Uu3JJ73ipuV4+OLJypWd7kOgj8uX
-	1ulgPLFlj4Ukfa4MfAMwOuGLXKbd/G+QBLTeDw2RkCYY/PULTpFboiwVs9piE1Qv
-	lDAOGlFAxEk51GIlj5HkQQcqpgW05/QSAnK24Uzcl6TCz8HKXRjq5lfWKMC9pJjw
-	LMSSY/pl+vhX/WH2f8ujDuQQdcq0ivMfJprO6Oyjpma6PzlraW8irvBRsfhnBO+H
-	igIWXfaU9zGCDQoVq+9hAol8hVwPwRSlbpijwqhlb4mLsrJYA2oNMuq7DIVPTQmS
-	9KJU/g==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd4n3mm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:25:39 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c545ac340aso127261585a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742995538; x=1743600338;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mn+Gs2SyQz1iQ9gjKD3hboP/p+jh4/gpnc6d4YClDFI=;
-        b=EtmnFuUGNuxmfVYrNrhcxvLozTenRGNODbB1CP2CPd9DWAP1uZTl2xARJjrQpzBLcH
-         CA2Opd9HW8Pz3WQyg8vw45nyDZZBWRanJUHaBDlwi/mvVehfWVvmFWAENdDzFVn58Swu
-         BsCL4isqR6UoR5mryp50rmAxA03GqawBIrQSy9a3+6N2C80pHTFW7IM58TWZUn/A3DH5
-         +jPET9p0Kl4YlsxYbDO/Kg9z6Cae9oX0VhFh4z0TU7EaBGd8tiPRMAtGsvqtAStOppaw
-         84I7cQ8K0FXn87eb6aPEI0uVaU+YgS3Pw0m7A0u4W3Ou+UMWXMjWzu30RiVIBalzqwch
-         VZ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNhFzVA3aoNWog53fOHlsNZoa49a9EtMmVdc0G76GofjmFNxcIVKSt0rW/oECUsrRSkiZTx+A1oknqDAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIY5ZMJsnKKuubhuCl9mghkBTzaqPDU36VbaL1WjK6FIZQTKNb
-	mTsjLXOxLbUd+Hqb4J3aClIdR/b95MdBh/oY+c0J2UT+aqlG2pdQJuYa1aQbSew58dhsTEqaIBd
-	+yHL+mR1LROFUKWKYWZ+efAmy7Hg00dsc6PKT1gzLUNvJ449wjq4JG9qWIudSnAg=
-X-Gm-Gg: ASbGncvDtbf9UTq4dyGIPbIwXuqCm2aWn+RDg6f7vqLfxwW1p2HB2GFjPkWjI7obgTD
-	BsEaZF6VJRiSKuwjJtDtLw0opL64PYfj+RKcY3ZkTkq/mh3hFmPgA+qljiF2P3LufyZKtzcwCH+
-	mW/thK5fMg/bPG3SCs4Gq7x8ZkpAvlvX7Bcpj4BcLObcpSBSHIi5C4oOC48ssFTBs3mPOMQxsvR
-	XoM6ZTdyHVvmxSsh1MujMdWHoMTZ6gYQHUFifPvZ0Tjf2av3qV4PWmdCChB1btbfA+WSSjTmDLE
-	rrY349+qhe+Ct+S/ZRg6UwmPlgsh7yS4HVn0/7POdFnxvSkyxHD3LEpwRfhNcu6EAApYbQ==
-X-Received: by 2002:a05:620a:31a5:b0:7c3:d1b9:e667 with SMTP id af79cd13be357-7c5ba1845a9mr1263113085a.5.1742995538124;
-        Wed, 26 Mar 2025 06:25:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFP6KqkuwA9cDhKcWVVuPPt8YQPIOz8vB2xkumwy0+ixdBejLE2t0tCRCxjlesEThechUVNkQ==
-X-Received: by 2002:a05:620a:31a5:b0:7c3:d1b9:e667 with SMTP id af79cd13be357-7c5ba1845a9mr1263111385a.5.1742995537640;
-        Wed, 26 Mar 2025 06:25:37 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef21a99asm1033442566b.0.2025.03.26.06.25.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 06:25:37 -0700 (PDT)
-Message-ID: <776fcb22-260e-4c60-81dc-9632d76a85dd@oss.qualcomm.com>
-Date: Wed, 26 Mar 2025 14:25:35 +0100
+	s=arc-20240116; t=1742995591; c=relaxed/simple;
+	bh=e4WPJLy4WLWqR1uxlbOhTXxyF9pIISMdopBY4cREdnU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fet1enHNRYvhtt/fNcKX9iSoedSn7qxZaJ1S8R37c2YWcjTfqfZmRYMsvnU15ICtuk/KRjA4F2T7z2n+9RCP1nqu5GlXrhNbvNPMdPHFPVHtRI4ldOUzNDRR9cwAOqHHslTw/PwrzBRfXeDsAmHSrO6Lf8Fm657/4/6W2BNS0aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=DkizeIwa; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QD6M06023412;
+	Wed, 26 Mar 2025 09:26:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=QIqEc
+	y1I/zozxpW/KJvAzrS1AD5Zlf7UtNIh5CGaGBw=; b=DkizeIwaQCmKpV6esP9y7
+	zFmMYgzC37ryz8D9dW8AtX4HsnLfSL2aDFgu/YByLmzeNhZ80F9tIWRsEXBf7Fz+
+	jLPV2iuKo4Q/YBsMYqQsBlTCuLwmWDa1NLZzdajJhlK80ivWKXA/vJBj9kx6nAjG
+	yiQooB/BIcJrp1+hn4eSaCCTCwD/h4wIT9HlVEPRIpwfs/OelpG9CPQNCItpwI/Q
+	ePdvzdnlFvLZ0nrCRSQSxa/oCVUyS/e4J79dr7w4PbZyfqwKOlIJGWRIV2O8fnHI
+	2vHO/BLBuBpjPpJoIMHcsIhT8HmhAfnS3OSJuMnc1VwdA898HuEe/4ndC7PuEO8D
+	w==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45krwh768x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 09:26:12 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52QDQBUF043251
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Mar 2025 09:26:11 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 26 Mar 2025 09:26:11 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 26 Mar 2025 09:26:11 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 26 Mar 2025 09:26:11 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52QDPwqO007595;
+	Wed, 26 Mar 2025 09:26:01 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <corbet@lwn.net>, <dlechner@baylibre.com>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v3 4/4] Documentation: iio: ad4000: Describe offload support
+Date: Wed, 26 Mar 2025 10:25:57 -0300
+Message-ID: <92b7db8eddce5b11476352405ed7695107ba7745.1742992305.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1742992305.git.marcelo.schmitt@analog.com>
+References: <cover.1742992305.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: pmic_glink: enable UCSI on sc8280xp
-To: Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250326124944.6338-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250326124944.6338-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: BUCBLzPjbVRhLYlunRpB9ELTC0rozrv2
-X-Proofpoint-GUID: BUCBLzPjbVRhLYlunRpB9ELTC0rozrv2
-X-Authority-Analysis: v=2.4 cv=QLZoRhLL c=1 sm=1 tr=0 ts=67e40053 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=R4_Tb_Y2wpFPbI5QzzAA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: MoW91kgA5apYGZGc_Wz7L-ZCjARooGXc
+X-Proofpoint-ORIG-GUID: MoW91kgA5apYGZGc_Wz7L-ZCjARooGXc
+X-Authority-Analysis: v=2.4 cv=IuAecK/g c=1 sm=1 tr=0 ts=67e40074 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=Vs1iUdzkB0EA:10 a=wI1k2SEZAAAA:8 a=gAnH3GRIAAAA:8 a=zhJGIpXlanaEhhhmQREA:9 a=6HWbV-4b7c7AdzY24d_u:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260081
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 priorityscore=1501
+ phishscore=0 spamscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260082
 
-On 3/26/25 1:49 PM, Johan Hovold wrote:
-> Commit ad3dd9592b2a ("soc: qcom: pmic_glink: disable UCSI on sc8280xp")
-> disabled UCSI shortly after it had been enabled to fix a regression that
-> was observed on the Lenovo ThinkPad X13s.
-> 
-> Specifically, disconnecting an external display would trigger a system
-> error and hypervisor reset but no one cared enough to track down the bug
-> at the time.
-> 
-> The same issue was recently observed on X Elite machines, and commit
-> f47eba045e6c ("usb: typec: ucsi: Set orientation as none when connector
-> is unplugged") worked around the underlying issue by setting the
-> connector orientation to 'none' on disconnect events to avoid having the
-> PHY driver crash the machine in one orientation.
-> 
-> Enable UCSI support also on sc8280xp now that the DisplayPort disconnect
-> crashes are gone.
-> 
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+When SPI offloading is supported, the IIO device provides different sysfs
+interfaces to allow using the adjusting the sample rate. Document SPI
+offload support for AD4000 and similar devices.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ Documentation/iio/ad4000.rst | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Konrad
+diff --git a/Documentation/iio/ad4000.rst b/Documentation/iio/ad4000.rst
+index 468d30dc9214..e490f9604b94 100644
+--- a/Documentation/iio/ad4000.rst
++++ b/Documentation/iio/ad4000.rst
+@@ -191,3 +191,25 @@ Typical voltage channel attributes of a differential AD4000 series device:
+ +-------------------------------------------+------------------------------------------+
+ | ``in_voltage0-voltage1_scale_available``  | Toggles input span compression           |
+ +-------------------------------------------+------------------------------------------+
++
++SPI offload support
++-------------------
++
++To be able to achieve the maximum sample rate, the driver can be used with the
++`AXI SPI Engine`_ to provide SPI offload support.
++
++.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.html
++
++When set for SPI offload support, the IIO device will provide different
++interfaces.
++
++* Either ``in_voltage0_sampling_frequency`` or
++  ``in_voltage0-voltage1_sampling_frequency`` file is provided to allow setting
++  the sample rate.
++* IIO trigger device is not provided (no ``trigger`` directory).
++* ``timestamp`` channel is not provided.
++
++Also, because the ADC output has a one sample latency (delay) when the device is
++wired in "3-wire" mode and only one transfer per sample is done when using SPI
++offloading, the first data sample in the buffer is not valid because it contains
++the output of an earlier conversion result.
+-- 
+2.47.2
+
 
