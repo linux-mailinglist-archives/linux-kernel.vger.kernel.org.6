@@ -1,57 +1,71 @@
-Return-Path: <linux-kernel+bounces-576416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC45A70EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50321A70EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295B9178568
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C6317946D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714A913B7B3;
-	Wed, 26 Mar 2025 02:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DDD12F5A5;
+	Wed, 26 Mar 2025 02:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CDFEaSEH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ei61GXJ5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6EC219E8;
-	Wed, 26 Mar 2025 02:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9F84A2B;
+	Wed, 26 Mar 2025 02:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742955703; cv=none; b=rYIBoXJqjUK/ivIJG+HDev/dcrtUMtkUVa4OoumLpMwERSNDgvI7RqrldhDdaP3xDr6HDR1hg361WZ9alD9W2jZ16iZ6p2N4m9b3yHaanvSQN0a4079rkDLmZuA0BVA1H2ycAZpaWq0Q6tSCC4LXs+p4xKtoTmCoMs71Gc5tCDc=
+	t=1742955382; cv=none; b=IUafFqhy6ETv8DwX2JrNTtL1rgXf5DkqmaiHL7Et2UtDDs2bT7enAOS0CRfY90s6xL7eLeBqxTwDhW6SnDYHqF7+cboqWZD1XIjt0LjM2t4f5UoDpsIjoE51W7o5NMcK8uSBFwFbyYugbnf9f7uyTwtKFk+Rx9R8V7G5V+/A5Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742955703; c=relaxed/simple;
-	bh=Yh8rlxXRyZgDoKsncyXyipOwpty/cNbiRvKnJv4GXXA=;
+	s=arc-20240116; t=1742955382; c=relaxed/simple;
+	bh=Hq7XG4Ykfz7pEmUszbpTbvVQ/ZwNlA8FtyoeBb3Cd4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Me7lLsiK2RgtHuZrcDuERZBqcDIh45npDZWRO1TF7IiIitdoGO7e4y+o0OPkf78AeS/kX2Uy7w91Jnxw+GcSnTjJo0H1Mxuh5Ii7BhT4Zcnidk9Vflb0eVVdK/oBhWoRA14kimmI/lPrMrg6nQG5FSzsQ7bGxHYnbjObv0q4lV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CDFEaSEH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=H08voiyKqqmyqNnphcsyTXypKbCInKHul7dZLjLLGnI=; b=CDFEaSEHfoykny86NYKQKHmn5G
-	6WlxxkyLfovT6voel/lbboxcFnShvFmicZGU+i3BeaIwk+0EvREUPdYpRak50XMQE5wionOMtmxw0
-	IDDHfnb5InpdJ3oTTcO/HphPiAJIMg/Qzk8deokCg7sFFbfYHSPssaxIwU4/XJSwKq2Uy7vJOC/Bv
-	0X8ZiU4YaEXzROuulQSwCklU2Yvtf0zMDumCk1ruQU4w+O8rteYZ9BYWgT3yZgeSIfQ85ypPv2tWe
-	LO3dXeTLon6UzJBDCTPIQH6p0KoDEq5q6f4V/g3eHHDDUfpDrAbL0RzUaypIgzGigu0P9vZPFvm1e
-	lm3D9R0w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txGIF-0000000GLJh-2fck;
-	Wed, 26 Mar 2025 02:15:51 +0000
-Date: Wed, 26 Mar 2025 02:14:59 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] Allow file-backed or shared device private pages
-Message-ID: <Z-NjI8DO6bvWphO3@casper.infradead.org>
-References: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
- <Z9e7Vye7OHSbEEx_@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6UUH+gMm54d20VlRHybtErSeXGM6XLO77HlSORG+8FjOj9pUdGXMP54T/RfiXD8ktWMQtlsFRyxQIc34AILUM0C/0AXqLlvJJ0P7aoHBKHNinze4Q0H1ntoD+bbhaX4TE8whoivznZgZH+wOXU/w3BpUPBXcIc+8de+KITdWkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ei61GXJ5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3DgIwOhvzwGCeEhq7w7K6EzcRsAPUrRix3z5aztq7PA=; b=ei61GXJ5g4QDUz1q+tLEaiU3fd
+	Islgyr3cOrnAP/NDRu6CPg/GDVmrjgBaifqsPZfTqoZDekbKJYLbrDZ+ESRxguhzUhf+oty2XHHdj
+	s2EPoqE7o3aw3p8HZm8+yyUHV84g3fuE2NLb4EtEdmI7/F+pgdnzZbxAhjd3100/WxQCiYcNp5zH+
+	d0phKyIVHl+VP1CyE2bH6vUJ1uEIr9Qrd0CRLsaBGwbLfwV4XIb6SWN+VhEa6kvzdcAdvDpNj+42X
+	1qH2+rJsZC4W3HE7k3iZ/L/wg5qArHm4BdEK4G6+GhDWXQcHEdp7i3/Bg7cSSuQs5phc0LAcREYBe
+	BH2K7Vgg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1txGJO-00AAcQ-1o;
+	Wed, 26 Mar 2025 10:16:11 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Mar 2025 10:16:10 +0800
+Date: Wed, 26 Mar 2025 10:16:10 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [GIT PULL] Crypto Update for 6.15
+Message-ID: <Z-NjarWmWSmQ97K0@gondor.apana.org.au>
+References: <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
+ <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+ <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
+ <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
+ <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
+ <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
+ <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
+ <20250325152541.GA1661@sol.localdomain>
+ <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,30 +74,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9e7Vye7OHSbEEx_@infradead.org>
+In-Reply-To: <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
 
-On Sun, Mar 16, 2025 at 11:04:07PM -0700, Christoph Hellwig wrote:
-> On Sun, Mar 16, 2025 at 03:29:23PM +1100, Alistair Popple wrote:
-> > This series lifts that restriction by allowing ZONE_DEVICE private pages to
-> > exist in the pagecache.
+On Wed, Mar 26, 2025 at 09:49:14AM +0800, Herbert Xu wrote:
+>
+> Let's see how your version is so much better:
 > 
-> You'd better provide a really good argument for why we'd even want
-> to do that.  So far this cover letter fails to do that.
+> https://lore.kernel.org/all/20250212154718.44255-6-ebiggers@kernel.org/
 
-Alistair and I discussed this during his session at LSFMM today.
-Here's what I think we agreed to.
+BTW, I absolutely hate how the fs/block layer uses work queues
+for everything.  It's been used as an argument for async being
+unnecessary because you can always wait for completion since
+you're in a work queue.
 
-The use case is a file containing a potentially very large data set.
-Some phases of processing that data set are best done on the GPU, other
-phases on the CPU.  We agreed that shared writable mmap was not actually
-needed (it might need to be supported for correctness, but it's not a
-performance requirement).
+But this is exactly the wrong way to do asynchronous completion.
+In fact, now that async support has been removed because of
+religious opposition to ahash, we now end up with the worst of
+both worlds where hashing is punted off to a work queue where
+it is simply executed on the CPU:
 
-So, there's no need to put DEVICE_PRIVATE pages in the page cache.
-Instead the GPU will take a copy of the page(s).  We agreed that there
-will have to be some indication (probably a folio flag?) that the GPU has
-or may have a copy of (some of) the folio so that it can be invalidated
-if the page is removed due to truncation / eviction.
+/**
+ * fsverity_enqueue_verify_work() - enqueue work on the fs-verity workqueue
+ * @work: the work to enqueue
+ *
+ * Enqueue verification work for asynchronous processing.
+ */
+void fsverity_enqueue_verify_work(struct work_struct *work)
+{
+        queue_work(fsverity_read_workqueue, work);
+}
 
-Alistair, let me know if that's not what you think we agreed to ;-)
+The correct way to do async offload is to do it conditionally:
+
+	ret = submit_request(rq);
+	if (unlikely(needs_async(ret))) {
+		allocate for async path with fallback to sync
+		processing in case of OOM
+		return;
+	}
+
+	execute normal synchronous path
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
