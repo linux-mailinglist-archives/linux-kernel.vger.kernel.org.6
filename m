@@ -1,137 +1,161 @@
-Return-Path: <linux-kernel+bounces-576419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EEEA70F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37151A70F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1DB3AA636
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:27:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8A73A9F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5774A145FE0;
-	Wed, 26 Mar 2025 02:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A2F13C9A3;
+	Wed, 26 Mar 2025 02:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kX65erbQ"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIvUmsZ0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E376DDD2;
-	Wed, 26 Mar 2025 02:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E073440C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742956038; cv=none; b=G32R9pQCUxT+baH+0eoh+yKM7baZQMcInO2sRN37RgGCp0+C8JwO49qGj1q+QOEUmVgynN/0JvxHJFYZ78Ipsw6J9LePUkYJUdLUVqZtpLXfPfztqlja9tqelVII1CxXZoK++a/5TXZCc+QI/2pJP7KOkeFxW/A7pWw8FIzH56U=
+	t=1742956101; cv=none; b=ZePNlm24014PkniWEf8AdnxT4ZiS+APJmzXL17nbqZbyvDB/uP+5FEtYcJaxFMij6Du2VyqnhIRX1REeXXlCaHIpJBsPx60uWqqfccX2rn+lS8bgyG3hConuFgw0ZJ7OB73G2S411kzCrvfgyoX0NImbt41l0fqYzqBghFk7IpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742956038; c=relaxed/simple;
-	bh=OsYNUD0JrMVznUm/0Sb5u3pWCXxEM1pl+4CcCbQaFiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X8P7jNj9E+zdAsqerKXOLMHmqIuaEv2QSyAAIfolplBcMYgACVPEHtnNivux6CYP/P/Gr9UJYoDNn9FeZvnKiGj/Lb60ZOBRMsZDlxjfvMjD7IyYmsMvn/q/yUgeGg7KOQap/bdKTVgq8IGCNUtIEd923JCK/xl5jR60oIe4YBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kX65erbQ; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e643f0933afso367469276.1;
-        Tue, 25 Mar 2025 19:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742956035; x=1743560835; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OesivztSSmkVg2MxyN65puUzbiFCHezJeeQ4VZITXsY=;
-        b=kX65erbQXqftn9bmSQ0V2U+Thy7k8x6FvwyTzj/WlvrmeMWo8+MH3WJvSkE4o7/5aM
-         KOFD/54aTcoDHzP0B2qQpTnoKDKkoyX6788R1XOf75H8/tI42/L/fn4GXanySGB2guv/
-         j2H085P51F51nENq6o1RjlAKuIfucsMDxhq28oY0xIay2p+w5q31QgWmDoz2hU3iFbYE
-         TQTMhXdPyPSSyxpJjnhFyLBb72svObql9FbnlmfsKqARIbqXkaiJwznGSTCG60EID4MF
-         j2cq8r4xfZ29jB7caItS9GedAaiYaFvwSAiDuw+fc1sMH+b1dxwwYVY63lzEmkE9fCtl
-         0ICA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742956035; x=1743560835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OesivztSSmkVg2MxyN65puUzbiFCHezJeeQ4VZITXsY=;
-        b=fl96/+LpywN9od0uPYHQ2RZEof49IKngJcAT2idGLs47OUzWz72Fy2+1pgnAnUMHrk
-         U2FNJwIH4vMeIOTixesDcO0CTGOrD14XJVbbIKEK2zPTpDfK0Xh1PMKk4AWZgcuXA9iX
-         9pzdN3nb5zDHP3U7TWHohYvCuhfb33b0uqir41Ni8o7gVQCHZ5ydhKG95NfGilvxhuAZ
-         fhFJbGTWeChHCx1+nuutXOqTlxzocKMtEUGUk0PuWq/MVK3clNmdOJWvTEpzS4BYAJkS
-         B2Np5TnjcKiAjnJK4aU925L+8o/wAWDX1xerdRGk+sOSnyzCZO+AJGOzN6FZTCH9a2PZ
-         OWyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeS9pCMIWCkrmUz3TFbX8J/r1zBYshScWcfTU01LyrofRpu/N0DcjEFAfgi2Zvvq/5Bd+bwhaqfVw=@vger.kernel.org, AJvYcCUoQBamja1IacMCxp9AUplv52XviJ34+iZVgG9lepj6vs5SOJ2jSOgqU6MGtlq25EFYJvl0JLgLM7Sjsw==@vger.kernel.org, AJvYcCVMwd25H24b9FhjV6Y3jnwGF1TmhrHesNwlEH31vQ1p7iw/Lakqi4Z2Q7OYVkqZd0YFY96oclC97W3MG/0=@vger.kernel.org, AJvYcCWjeYGiNb6kEJ2+a9bvMB0pMMDBcHXlT4uwDozPOhN4yhfYZzVoMDP/6zEstgzTEpZE1++HdfhY8n/Z@vger.kernel.org, AJvYcCX7k/SaUWdzk2oClIX4o+Xy3/jviWuY5itVhmYdoIi/AtGJWukvg4jVCQ1IIcISXQGbjQF+oWJ20li4ROn2@vger.kernel.org, AJvYcCXIrCO9VsvuCnLq4NpsWA75rY86vLrumQR0pULaO8WEq0RwPZb8u2fasehpZaadvV/jjiOF/q7XcaoDuFOCMRY=@vger.kernel.org, AJvYcCXIrSd6DAROQQw+9B/yXk6w1pJ8JAM5FIkKGmCouaF+bsYd0dho1zJKDUARTTBaORAxXxgz93GWcSE3@vger.kernel.org, AJvYcCXnMuIAVPLwj9X8SidlXImJZYH4HZNyCztrblFeFcRqR0fUx50H9BQ/jX22Ir6HA9IqDbP4XbdI@vger.kernel.org, AJvYcCXzcbBhGg8BMSuiGdbOEk5WLVAp9Kz23iHnCU8n7ZElsht+8OzPZ0Ty5zlHQNHPWF1cPr6+4LC3hPXy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsgzCnkDgSpRQhnA0N8emajIn88McgzWPRx5asz/z/DLCg6i+H
-	d4T5INjuHeYFL7+q2A2LNuzzBGaARxuYpR55gOZBwItX1fyzMXKgMtszieRvkCSd09IpuRYiCDe
-	4sN7FD/128FyKaH+F93453BH/l8o=
-X-Gm-Gg: ASbGncvs+0/v+FWzSNl1nYVbWV9lr1cjMcrTN9xaD1h8ZDg5cxLo4pLLs7wEhJAHqA3
-	9tM2C3tH1F5bqoWN7Y7jnUO2x+MHmPpMNKD+qzv8HeoeryUL2ty8y7h/BHCydtCQSjKn+bQK010
-	ovjztIfO7YzjUzQLoZNrIuzJ/VcSfZw2NGFhR1TeaQSUq2MzBU01jmNMiM8Ccv8yP/bxoz1N0=
-X-Google-Smtp-Source: AGHT+IE3Snfm2qHqVOKFt4OK9x43NDDK7USUND1kRLvFUR9KKrSRB3y9vtkk0LE7kTF3W/i9pdHGSCQ/R7I9CXHX7nk=
-X-Received: by 2002:a05:6902:124b:b0:e66:a274:7fff with SMTP id
- 3f1490d57ef6-e692eeb669bmr2931469276.21.1742956034774; Tue, 25 Mar 2025
- 19:27:14 -0700 (PDT)
+	s=arc-20240116; t=1742956101; c=relaxed/simple;
+	bh=S8f/6L6RJsMu2ZDf3XzJdIwUzr4pV//GmElet+hzG2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNrQIwct5axZf4TcywISwCR6aUoiSZKAVGEcuhhmRw0jHbmWXblGVXdLkR6Iy0aYsbUsCIlSwjpBVgauhtbKkb5/FOq5oYg9nPSo5R8kuG0lXVCEldF92Ibu9SIYdFP66pFhxBuXGeUx03/eRsTXCyxTXJ3vodaoxMZ6VGHW4jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIvUmsZ0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742956097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hpwLopG/y4QsEDTE7uR/BjKfEYIxvRxD91VY/RN0u38=;
+	b=BIvUmsZ0iGJ6F5886KiwRV/CNHahmxka7rv+msfXEtZ8tde6fZQPTko/lVLcymY6XpSEkj
+	P5d8Ui1uMdmvnaOROIUCU8YIZDtu4N3ATi8gIZaQ+qsYXLvlA0vHW419V2StPq78MqyohI
+	AdcEbHr9WJXF2ZtWCQcadWoVx7ITsSI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-BU-CW3qUPCm4PVw89ZN9DA-1; Tue,
+ 25 Mar 2025 22:28:14 -0400
+X-MC-Unique: BU-CW3qUPCm4PVw89ZN9DA-1
+X-Mimecast-MFC-AGG-ID: BU-CW3qUPCm4PVw89ZN9DA_1742956092
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3628196D2CC;
+	Wed, 26 Mar 2025 02:28:10 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.203])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13EF21801A69;
+	Wed, 26 Mar 2025 02:28:07 +0000 (UTC)
+Date: Wed, 26 Mar 2025 10:27:58 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
+ execute
+Message-ID: <Z+NmLtn0vojVYJ3H@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-7-chenste@linux.microsoft.com>
+ <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
+ <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+ <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+ <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-5-a0282524688@gmail.com> <20250227-spicy-grebe-of-dignity-68c847-mkl@pengutronix.de>
- <CAOoeyxWSsy0Q0Y7iJE8-DZM5Yvcdto8mncFkM8X4BvVMEgfUiQ@mail.gmail.com> <20250317-cuttlefish-of-simple-champagne-ee666c-mkl@pengutronix.de>
-In-Reply-To: <20250317-cuttlefish-of-simple-champagne-ee666c-mkl@pengutronix.de>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 26 Mar 2025 10:27:03 +0800
-X-Gm-Features: AQ5f1Jp--uItuyd7OBONJJlx1w09CC-5QpS4AdX0orjyk40ENkleiPptvRU1DIc
-Message-ID: <CAOoeyxXSC3rjeB0g5BtHKvKy-Y9Dszd5X9WuHeBeH1bk39d_Eg@mail.gmail.com>
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2025=E5=B9=B43=E6=9C=8817=
-=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=885:21=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> > > > +     priv->can.clock.freq =3D can_clk;
-> > > > +     priv->can.bittiming_const =3D &nct6694_can_bittiming_nominal_=
-const;
-> > > > +     priv->can.data_bittiming_const =3D &nct6694_can_bittiming_dat=
-a_const;
-> > > > +     priv->can.do_set_mode =3D nct6694_can_set_mode;
-> > > > +     priv->can.do_get_berr_counter =3D nct6694_can_get_berr_counte=
-r;
-> > > > +     priv->can.ctrlmode_supported =3D CAN_CTRLMODE_LOOPBACK |
-> > > > +             CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_BERR_REPORTING=
- |
-> > > > +             CAN_CTRLMODE_FD | CAN_CTRLMODE_FD_NON_ISO;
-> > >
-> > > Does your device run in CAN-FD mode all the time? If so, please use
-> > > can_set_static_ctrlmode() to set it after priv->can.ctrlmode_supporte=
-d
-> > > and remove CAN_CTRLMODE_FD from ctrlmode_supported.
-> > >
-> >
-> > Our device is designed to allow users to dynamically switch between
-> > Classical CAN and CAN-FD mode via ip link set ... fd on/off.
-> > Therefore, CAN_CTRLMODE_FD needs to remain in ctrlmode_supported, and
-> > can_set_static_ctrlmode() is not suitable in this case.
-> > Please let me know if you have any concerns about this approach.
->
-> Where do you evaluate if the user has configured CAN_CTRLMODE_FD or not?
->
+On 03/25/25 at 03:27pm, steven chen wrote:
+> On 3/24/2025 4:00 AM, Baoquan He wrote:
+> > On 03/21/25 at 09:23am, steven chen wrote:
+> > > On 3/19/2025 7:06 PM, Baoquan He wrote:
+> > > > On 03/17/25 at 06:04pm, steven chen wrote:
+> > > > ...snip...
+> > > > > ---
+> > > > >    kernel/kexec_file.c                | 10 ++++++
+> > > > >    security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
+> > > > >    2 files changed, 40 insertions(+), 21 deletions(-)
+> > > > > 
+> > > > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > > > index 606132253c79..ab449b43aaee 100644
+> > > > > --- a/kernel/kexec_file.c
+> > > > > +++ b/kernel/kexec_file.c
+> > > > > @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
+> > > > >    }
+> > > > >    #endif
+> > > > > +static void kimage_file_post_load(struct kimage *image)
+> > > > > +{
+> > > > > +#ifdef CONFIG_IMA_KEXEC
+> > > > > +	ima_kexec_post_load(image);
+> > > > > +#endif
+> > > > > +}
+> > > > > +
+> > > > >    /*
+> > > > >     * In file mode list of segments is prepared by kernel. Copy relevant
+> > > > >     * data from user space, do error checking, prepare segment list
+> > > > > @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+> > > > >    	kimage_terminate(image);
+> > > > > +	if (!(flags & KEXEC_FILE_ON_CRASH))
+> > > > > +		kimage_file_post_load(image);
+> > > > machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
+> > > > we should use it to do things post load, but not introducing another
+> > > > kimage_file_post_load().
+> > > Hi Baoquan,
+> > > 
+> > > Could you give me more detail about this?
+> > I mean machine_kexec_post_load() is the place where post load operations
+> > are done, including kexec_load and kexec_file_load. There's no need to
+> > specifically introduce a kimage_file_post_load() to do post load
+> > operaton for kexec_file_load.
+> 
+> Hi Baoquan,
+> 
+> Updating the machine_kexec_post_load() API to carry flags would indeed
+> require changes to multiple files. This approach involves the condition
+> check if (!(flags & KEXEC_FILE_ON_CRASH)) and ensuring that the flags are
+> properly passed and handled across the relevant file
+> 
+> if just adding a API kimage_file_post_load() here, it is much easy and
+> clean, right?
 
-Sorry, I was previously confused about our device's control mode. I
-will use can_set_static_ctrlmode() to set CAN_FD mode in the next
-patch.
+Hmm, it's easier, while maybe not good. We should not repeatedly
+introduce similar things into codes. Here, it's similar as
+what kexec_apply_relocations() and arch_kexec_apply_relocations() are
+doing. 
 
+int machine_kexec_post_load(struct kimage *image) 
+{
+#ifdef CONFIG_IMA_KEXEC
+        ima_kexec_post_load(image);
+#endif
+	return arch_machine_kexec_post_load();
+}
 
-Thanks,
-Ming
+Then a generic arch_machine_kexec_post_load(struct kimage *image)
+{return 0;} version, and a arm64 specific version. 
+
+Is it OK to you?
+
 
