@@ -1,209 +1,227 @@
-Return-Path: <linux-kernel+bounces-577081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D907A71825
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE14A71835
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92B31891FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2335A189AAED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459AF1F0E5B;
-	Wed, 26 Mar 2025 14:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA911EA7F3;
+	Wed, 26 Mar 2025 14:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXBzmOFU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NbJCwTwh"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9282918EB0;
-	Wed, 26 Mar 2025 14:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B651E51EC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998173; cv=none; b=Lv4CZz1f0Boty050vk+LzngbJfHXJ9kQODKDuvhJ6VP4tlId10+DVh4fqXeYbRJ9g7R1rMP1qBUis1QnfosQkakcMsasOivJOluqxGsHIO83c+dO72Nr/UchA0cYRmtCK/6Ltr+zF8xIt1OyBA50xi18mDQBZ09PZjiEb0cNYJU=
+	t=1742998518; cv=none; b=AhQd6nDT7cFsCD5jLCofSRZeYWDHTQwomhZvMbhZk2p4EzQTphHL3JFERXefM2hXP28+9ZfWB9BVoLh5spzxvmqEEH/CGITKqQ6c9UjuF+Uuh88eF6cmMVUnPPxC8Ks2T2BmT0/Znu+xSEJqwFAi2NdafQ8UOvPk9s1g/TimAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998173; c=relaxed/simple;
-	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEtJbUgpRChcHUc8EebtktiLqW7PMjaSHgXkKVI7RDY8IUVV2aLjWPxU0fmr9Ef/J15hNQtghlvUs+JXrhhAx6MnLnJngSMo1FcV8xAgNVZN9uqNRNTEPMa4dHJ+EviHv0FPa8kxl9d4oalmsgdkdhvoPDFw6SnzjG8qWdgsc0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXBzmOFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7301C4CEE2;
-	Wed, 26 Mar 2025 14:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742998173;
-	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BXBzmOFUR3LEoBqvb4sSfmlEaTxaSZjaMhi68DJCV0IX0NCxCH8QstXwUY0pQ6kjr
-	 P/Fw2CeJ87thzb+X+1z7JH+IH5qnxbKb3lCPO5CcVn5f/Tz5Vy/RpNIm/DkKZs1sF4
-	 wa7mEc+Jx6JegU+CmQ88tEp8SLQ3dUQgEEfga0ORbTL3M4rMGz3zkmtaHhVYrT08ET
-	 zXSVHjQC5U3RoKVv4mhHbIvbzX5XJ6g0iIFov+Ugw75W2kbE+t6b4G2VtJpm7lh58b
-	 13IYrXCle8F9A+EXghbWtbIqg6iMauisWdg+Gw2+TOir3L57JesT6aQLbVKnqRAsHe
-	 I2uQ0SjxySMzA==
-Date: Wed, 26 Mar 2025 15:09:30 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Cc: jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, song@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Subject: Re: [RFC 3/6] fs: add automatic kernel fs freeze / thaw and remove
- kthread freezing
-Message-ID: <20250326-hochnehmen-hiebe-99baf5409aa2@brauner>
-References: <20250326112220.1988619-1-mcgrof@kernel.org>
- <20250326112220.1988619-4-mcgrof@kernel.org>
- <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
+	s=arc-20240116; t=1742998518; c=relaxed/simple;
+	bh=IqTeGFLyHBBNW8YPueDOnwUjBToOaDQ9KfO6ITNgP00=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=G7w/5+LMMIG7kFxzSkeCi89moXVGRXbsAxJi+WHdejSBMvr36BKAANzjAsOmInRIYLIHi6VauUb1/rbGHJXYXUIdvUqbHharOlU8ueam7oFRLCnfTUha03mSMYmsNkk54y5ntw0L/xUMNHEfe1s2IQ+o9NuuO+xb4WlrYZHXr2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NbJCwTwh; arc=none smtp.client-ip=43.163.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1742998187; bh=IqTeGFLyHBBNW8YPueDOnwUjBToOaDQ9KfO6ITNgP00=;
+	h=From:To:Cc:Subject:Date;
+	b=NbJCwTwhHNaKnfnHtXDgRFHsDB32fTmi/xCLvpYlDVGY4T0dctj03wR8+uQaDvDZr
+	 22EXGRAyEDhd1alQTk+40dDIUayMe6JWqOps6a7/82flJvzByYkBP4cW850D2PYHEM
+	 WhAH0cK3EVqqnAebeXZKYasOetAFmklhynLENAmI=
+X-QQ-FEAT: oHWrrGTW1dCGJEu1CuC8+nIWkvSYK6n9
+X-QQ-SSF: 00000000000000F0000000000000
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-XMAILINFO: NSJPTvnisrLjfK1zQ9xfrvFOzmwczunsnPudjfZLa3m603iptk9oihQfMBZ/8T
+	 dx5wwEIbdms8lTY9FyoDOcWCBw9eEnrgrotGsRtqXJlTkd7BD784hwDUrGG3eMLYmo4cX1HMlGrSj
+	 2yme7wwB0k3wXm41mczWxuGF/6UzamsDYra94bDgS8oAIPaAAUolkyBSXal3KOWCxoQRPvDP4/Exz
+	 MMSkxfjlLCyShkU/DQdOTW12Xh9zxf0YQIFlLLlmAmu1v8bY0eTjGFPNMa/UJB3hIjyXha0NmhTTR
+	 IkutdCzh2FTgRzsFJ3q0VUfiGKUExJkLemKdi/MzT7NVqTqkPAPrDZbbqaDWR3RbvrO2T0eW0EMBI
+	 BN6loWzvc7SGmQSFo5i5aV4dretT2j+HdlEL8NSeVmxfwBpFza5Z5otnUT4rS/XyQvcDsMFkJaPEc
+	 X1gSDWDGSRaNV2N4PDnp+TLKznG6NDJLFzng205F0oDzpEmdRZSVCtWIzFYzBTya2Qg/5/sPZEMQl
+	 E/sv1p8JVIeOZp8bY1VOYNxFC0vJRuoXpegGqMQ+QLRBgdaL4KHmozjhZ/eLFEvCqV7zyLmMRm/Bj
+	 fyUytsp8ih+naM8gTrntuLySarRfgNl99tfpZe5B/NAFGg55OCNcu6eSiX/Lun6uH1+9mEhhIFhEo
+	 Iltt2eDrRj7wnJ1xlmpJWWTbZnpQc+h0+MnvJ038todcrziIounfXPR5+bHSL6BMNxUvrk46Qf7vP
+	 ZXb+LwIWoCZeUIUwFEBRzlVQAsGTOt+zbXrwGJPt/wkau7ZAxdRzbPZRczvLH/ZKYbmE70MjJNal3
+	 1xzrmadcz7f/4U9Wpm/clu8Sm/3+w8Tg2nEQ7CEqJM69PJGdMghAxmNiHpJOK77z3FcjYu7gQVqTC
+	 Ly1ZcsPTDTeGyx15LI5A65PTpPUSlNejRqPe81zGcPYw23Kl1R53TbD+VLZ4z5DAGjfjQzXgomrYt
+	 QOsJgMaiHS5QAe5hOsW9bBzTVAxaJkL5wfTM4wgA==
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-STYLE: 
+X-QQ-mid: webmail284t1742998186t9931401
+From: "=?ISO-8859-1?B?ZmZoZ2Z2?=" <xnxc22xnxc22@qq.com>
+To: "=?ISO-8859-1?B?dml0YWx5Lndvb2w=?=" <vitaly.wool@konsulko.com>, "=?ISO-8859-1?B?bGlubWlhb2hl?=" <linmiaohe@huawei.com>, "=?ISO-8859-1?B?YWtwbQ==?=" <akpm@linux-foundation.org>
+Cc: "=?ISO-8859-1?B?bGludXgtbW0=?=" <linux-mm@kvack.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+Subject: Linux6.14-rc5 BUG: spinlock bad magic in z3fold_zpool_free
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="ISO-8859-1"
+Content-Transfer-Encoding: base64
+Date: Wed, 26 Mar 2025 10:09:46 -0400
+X-Priority: 3
+Message-ID: <tencent_2C3830CD73C3B917ECA59895C90CB43BF009@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
 
-On Wed, Mar 26, 2025 at 07:53:10AM -0400, James Bottomley wrote:
-> On Wed, 2025-03-26 at 04:22 -0700, Luis Chamberlain wrote:
-> > Add support to automatically handle freezing and thawing filesystems
-> > during the kernel's suspend/resume cycle.
-> > 
-> > This is needed so that we properly really stop IO in flight without
-> > races after userspace has been frozen. Without this we rely on
-> > kthread freezing and its semantics are loose and error prone.
-> > For instance, even though a kthread may use try_to_freeze() and end
-> > up being frozen we have no way of being sure that everything that
-> > has been spawned asynchronously from it (such as timers) have also
-> > been stopped as well.
-> > 
-> > A long term advantage of also adding filesystem freeze / thawing
-> > supporting during suspend / hibernation is that long term we may
-> > be able to eventually drop the kernel's thread freezing completely
-> > as it was originally added to stop disk IO in flight as we hibernate
-> > or suspend.
-> > 
-> > This does not remove the superfluous freezer calls on all
-> > filesystems.
-> > Each filesystem must remove all the kthread freezer stuff and peg
-> > the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
-> > flag.
-> > 
-> > Subsequent patches remove the kthread freezer usage from each
-> > filesystem, one at a time to make all this work bisectable.
-> > Once all filesystems remove the usage of the kthread freezer we
-> > can remove the FS_AUTOFREEZE flag.
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  fs/super.c             | 50
-> > ++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/fs.h     | 14 ++++++++++++
-> >  kernel/power/process.c | 15 ++++++++++++-
-> >  3 files changed, 78 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 9995546cf159..7428f0b2251c 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -2279,3 +2279,53 @@ int sb_init_dio_done_wq(struct super_block
-> > *sb)
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
-> > +
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static bool super_should_freeze(struct super_block *sb)
-> > +{
-> > +	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
-> > +		return false;
-> > +	/*
-> > +	 * We don't freeze virtual filesystems, we skip those
-> > filesystems with
-> > +	 * no backing device.
-> > +	 */
-> > +	if (sb->s_bdi == &noop_backing_dev_info)
-> > +		return false;
-> 
-> 
-> This logic won't work for me because efivarfs is a pseudofilesystem and
-> will have a noop bdi (or simply a null s_bdev, which is easier to check
-> for).  I was thinking of allowing freeze/thaw to continue for a s_bdev
-> == NULL filesystem if it provided a freeze or thaw callback, which will
-> cover efivarfs.
+SGVsbG8sIEkgZm91bmQgYSBidWcgdGl0bGVkICIgQlVHOiBzcGlubG9jayBiYWQgbWFnaWMg
+aW4gejNmb2xkX3pwb29sX2ZyZWUgICAiIHdpdGggbW9kaWZpZWQgc3l6a2FsbGVyIGluIHRo
+ZSBMaW51eDYuMTQtcmM1LgpJZiB5b3UgZml4IHRoaXMgaXNzdWUsIHBsZWFzZSBhZGQgdGhl
+IGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDogIFJlcG9ydGVkLWJ5OiBKaWFuemhvdSBa
+aGFvIDx4bnhjMjJ4bnhjMjJAcXEuY29tPiwgICAgeGluZ3dlaSBsZWUgPHhyaXZlbmRlbGw3
+QGdtYWlsLmNvbT4sIFpoaXpodW8gVGFuZyA8c3RyZm9yZXhjdHp6Y2hhbmdlQGZveG1haWwu
+Y29tPgoKSSB1c2UgdGhlIHNhbWUga2VybmVsIGFzIHN5emJvdCBpbnN0YW5jZSB1cHN0cmVh
+bTogN2ViMTcyMTQzZDU1MDhiNGRhNDY4ZWQ1OWVlODU3YzZlNWUwMWRhNgprZXJuZWwgY29u
+ZmlnOiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS90ZXh0P3RhZz1LZXJuZWxDb25m
+aWcmYW1wO3g9ZGE0YjA0YWU3OThiN2VmNgpjb21waWxlcjogZ2NjIHZlcnNpb24gMTEuNC4w
+Ci0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCiBUSVRMRTogICAgIEJVRzogc3BpbmxvY2sgYmFkIG1hZ2ljIGluIHoz
+Zm9sZF96cG9vbF9mcmVlCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpCVUc6IHNwaW5sb2NrIGJhZCBtYWdpYyBv
+biBDUFUjMCwgc3l6LWV4ZWN1dG9yLzE2OTA3CiBsb2NrOiAweGZmZmY4ODgwNWE5ZGUwMTAs
+IC5tYWdpYzogMDAwMDAwMDAsIC5vd25lcjogPG5vbmU+Ly0xLCAub3duZXJfY3B1OiAwCkNQ
+VTogMCBVSUQ6IDAgUElEOiAxNjkwNyBDb21tOiBzeXotZXhlY3V0b3IgTm90IHRhaW50ZWQg
+Ni4xNC4wLXJjNS1kaXJ0eSAjMTcKSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAo
+aTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xNS4wLTEgMDQvMDEvMjAxNApDYWxsIFRy
+YWNlOgogPHRhc2s+CiBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo5NCBbaW5saW5l
+XQogZHVtcF9zdGFja19sdmwrMHgxODAvMHgxYjAgbGliL2R1bXBfc3RhY2suYzoxMjAKIHNw
+aW5fYnVnIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6NzggW2lubGluZV0KIGRl
+YnVnX3NwaW5fdW5sb2NrIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6MTAwIFtp
+bmxpbmVdCiBkb19yYXdfc3Bpbl91bmxvY2srMHgyMDEvMHgyNzAga2VybmVsL2xvY2tpbmcv
+c3BpbmxvY2tfZGVidWcuYzoxNDEKIF9fcmF3X3NwaW5fdW5sb2NrIGluY2x1ZGUvbGludXgv
+c3BpbmxvY2tfYXBpX3NtcC5oOjE0MiBbaW5saW5lXQogX3Jhd19zcGluX3VubG9jaysweDFl
+LzB4NTAga2VybmVsL2xvY2tpbmcvc3BpbmxvY2suYzoxODYKIHNwaW5fdW5sb2NrIGluY2x1
+ZGUvbGludXgvc3BpbmxvY2suaDozOTEgW2lubGluZV0KIHozZm9sZF9wYWdlX3VubG9jayBt
+bS96M2ZvbGQuYzoyMzUgW2lubGluZV0KIGdldF96M2ZvbGRfaGVhZGVyIG1tL3ozZm9sZC5j
+OjI2MCBbaW5saW5lXQogZ2V0X3ozZm9sZF9oZWFkZXIgbW0vejNmb2xkLmM6MjM5IFtpbmxp
+bmVdCiB6M2ZvbGRfZnJlZSBtbS96M2ZvbGQuYzoxMTAwIFtpbmxpbmVdCiB6M2ZvbGRfenBv
+b2xfZnJlZSsweDZmLzB4ZTQwIG1tL3ozZm9sZC5jOjEzOTIKIHpzd2FwX2VudHJ5X2ZyZWUr
+MHgyMzUvMHhhODAgbW0venN3YXAuYzo4MDYKIHpzd2FwX2ludmFsaWRhdGUrMHgxMWYvMHgx
+OTAgbW0venN3YXAuYzoxNjgyCiBzd2FwX3JhbmdlX2ZyZWUgbW0vc3dhcGZpbGUuYzoxMTMz
+IFtpbmxpbmVdCiBzd2FwX2VudHJ5X3JhbmdlX2ZyZWUrMHgzMGEvMHg4MzAgbW0vc3dhcGZp
+bGUuYzoxNTEyCiBfX3N3YXBfZW50cnlfZnJlZSBtbS9zd2FwZmlsZS5jOjE0NDAgW2lubGlu
+ZV0KIF9fc3dhcF9lbnRyaWVzX2ZyZWUgbW0vc3dhcGZpbGUuYzoxNDc4IFtpbmxpbmVdCiBm
+cmVlX3N3YXBfYW5kX2NhY2hlX25yKzB4NWI5LzB4YmEwIG1tL3N3YXBmaWxlLmM6MTc5Nwog
+emFwX25vbnByZXNlbnRfcHRlcyBtbS9tZW1vcnkuYzoxNjM2IFtpbmxpbmVdCiBkb196YXBf
+cHRlX3JhbmdlIG1tL21lbW9yeS5jOjE3MDIgW2lubGluZV0KIHphcF9wdGVfcmFuZ2UgbW0v
+bWVtb3J5LmM6MTc0MiBbaW5saW5lXQogemFwX3BtZF9yYW5nZSBtbS9tZW1vcnkuYzoxODM0
+IFtpbmxpbmVdCiB6YXBfcHVkX3JhbmdlIG1tL21lbW9yeS5jOjE4NjMgW2lubGluZV0KIHph
+cF9wNGRfcmFuZ2UgbW0vbWVtb3J5LmM6MTg4NCBbaW5saW5lXQogdW5tYXBfcGFnZV9yYW5n
+ZSsweDEyMGMvMHg0YWYwIG1tL21lbW9yeS5jOjE5MDUKIHVubWFwX3NpbmdsZV92bWErMHgx
+OWEvMHgyYjAgbW0vbWVtb3J5LmM6MTk1MQogdW5tYXBfdm1hcysweDFmZS8weDQ1MCBtbS9t
+ZW1vcnkuYzoxOTk1CiBleGl0X21tYXArMHgxYjQvMHhiZjAgbW0vbW1hcC5jOjEyODQKIF9f
+bW1wdXQga2VybmVsL2ZvcmsuYzoxMzU2IFtpbmxpbmVdCiBtbXB1dCsweDE3OC8weDQ1MCBr
+ZXJuZWwvZm9yay5jOjEzNzgKIGV4aXRfbW0ga2VybmVsL2V4aXQuYzo1NzAgW2lubGluZV0K
+IGRvX2V4aXQrMHg5NGIvMHgzMDgwIGtlcm5lbC9leGl0LmM6OTI1CiBkb19ncm91cF9leGl0
+KzB4ZDMvMHgyYTAga2VybmVsL2V4aXQuYzoxMDg3CiBnZXRfc2lnbmFsKzB4MjYxZi8weDI3
+OTAga2VybmVsL3NpZ25hbC5jOjMwMzYKIGFyY2hfZG9fc2lnbmFsX29yX3Jlc3RhcnQrMHg4
+MS8weDhiMCBhcmNoL3g4Ni9rZXJuZWwvc2lnbmFsLmM6MzM3CiBleGl0X3RvX3VzZXJfbW9k
+ZV9sb29wIGtlcm5lbC9lbnRyeS9jb21tb24uYzoxMTEgW2lubGluZV0KIGV4aXRfdG9fdXNl
+cl9tb2RlX3ByZXBhcmUgaW5jbHVkZS9saW51eC9lbnRyeS1jb21tb24uaDozMjkgW2lubGlu
+ZV0KIF9fc3lzY2FsbF9leGl0X3RvX3VzZXJfbW9kZV93b3JrIGtlcm5lbC9lbnRyeS9jb21t
+b24uYzoyMDcgW2lubGluZV0KIHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHgyMjgvMHgy
+YTAga2VybmVsL2VudHJ5L2NvbW1vbi5jOjIxOAogZG9fc3lzY2FsbF82NCsweGRjLzB4MjUw
+IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjg5CiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3
+ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmNWJmN2I5Zjg2YQpDb2RlOiBVbmFibGUg
+dG8gYWNjZXNzIG9wY29kZSBieXRlcyBhdCAweDdmNWJmN2I5Zjg0MC4KUlNQOiAwMDJiOjAw
+MDA3ZmZjZWMwOGZkMDggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAwMDAw
+MDAzZApSQVg6IGZmZmZmZmZmZmZmZmZlMDAgUkJYOiAwMDAwMDAwMDAwMDA0MjNhIFJDWDog
+MDAwMDdmNWJmN2I5Zjg2YQpSRFg6IDAwMDAwMDAwNDAwMDAwMDAgUlNJOiAwMDAwN2ZmY2Vj
+MDhmZDE0IFJESTogMDAwMDAwMDBmZmZmZmZmZgpSQlA6IDAwMDA3ZmZjZWMwOGZkMTQgUjA4
+OiAwMDAwMDAwMDAwMDA0MjNhIFIwOTogMDAwMDAwMDA4MDAwMDAwMApSMTA6IDAwMDAwMDAw
+MDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAwYwpS
+MTM6IDAwMDAwMDAwMDAwMDAwMDMgUjE0OiAwMDAwN2Y1YmY3YzRlODgxIFIxNTogMDAwMDAw
+MDAwMDAwMDAwMgogPC90YXNrPgotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0t
+LS0KcHZxc3BpbmxvY2s6IGxvY2sgMHhmZmZmODg4MDVhOWRlMDEwIGhhcyBjb3JydXB0ZWQg
+dmFsdWUgMHgwIQpXQVJOSU5HOiBDUFU6IDAgUElEOiAxNjkwNyBhdCBrZXJuZWwvbG9ja2lu
+Zy9xc3BpbmxvY2tfcGFyYXZpcnQuaDo1MDQgX19wdl9xdWV1ZWRfc3Bpbl91bmxvY2tfc2xv
+d3BhdGgrMHgyMzgvMHgzNDAga2VybmVsL2xvY2tpbmcvcXNwaW5sb2NrX3BhcmF2aXJ0Lmg6
+NTA0Ck1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDAgVUlEOiAwIFBJRDogMTY5MDcgQ29tbTog
+c3l6LWV4ZWN1dG9yIE5vdCB0YWludGVkIDYuMTQuMC1yYzUtZGlydHkgIzE3CkhhcmR3YXJl
+IG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9TIDEu
+MTUuMC0xIDA0LzAxLzIwMTQKUklQOiAwMDEwOl9fcHZfcXVldWVkX3NwaW5fdW5sb2NrX3Ns
+b3dwYXRoKzB4MjM4LzB4MzQwIGtlcm5lbC9sb2NraW5nL3FzcGlubG9ja19wYXJhdmlydC5o
+OjUwNApDb2RlOiAwMiA0YyA4OSBlMCA4MyBlMCAwNyA4MyBjMCAwMyAzOCBkMCA3YyAwOCA4
+NCBkMiAwZiA4NSA4YSAwMCAwMCAwMCA0MSA4YiAxNCAyNCA0YyA4OSBlNiA0OCBjNyBjNyAw
+MCA1MiA2ZCA4YiBlOCA4OSAwNyAxZSBmNiA5MCAmbHQ7MGYmZ3Q7IDBiIDkwIDkwIGU5IDY0
+IGZmIGZmIGZmIDkwIDBmIDBiIGU4IGY3IGZiIGMxIGY2IGU5IDFlIGZmIGZmIGZmClJTUDog
+MDAxODpmZmZmYzkwMDA2NWNmMjYwIEVGTEFHUzogMDAwMTAyODYKUkFYOiAwMDAwMDAwMDAw
+MDAwMDAwIFJCWDogZmZmZjg4ODAyYWZhNzE4OCBSQ1g6IGZmZmZmZmZmODE3OWVjN2EKUkRY
+OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZjg4ODAyMDU1ODAwMCBSREk6IDAwMDAwMDAw
+MDAwMDAwMDIKUkJQOiBmZmZmODg4MDVhOWRlMDEwIFIwODogZmZmZmZiZmZmMWMwYjgwMCBS
+MDk6IGZmZmZlZDEwMDU3MDUxODIKUjEwOiBmZmZmZWQxMDA1NzA1MTgxIFIxMTogZmZmZjg4
+ODAyYjgyOGMwYiBSMTI6IGZmZmY4ODgwNWE5ZGUwMTAKUjEzOiBmZmZmODg4MDVhOWRlMDIw
+IFIxNDogZmZmZjg4ODA1YTlkZTAxMCBSMTU6IGZmZmZlYTAwMDE2YTc3YTgKRlM6ICAwMDAw
+MDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgwMmI4MDAwMDAoMDAwMCkga25sR1M6MDAw
+MDAwMDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
+MDgwMDUwMDMzCkNSMjogMDAwMDU1NWY3Y2FhNGZlMCBDUjM6IDAwMDAwMDAwNGY1YjQwMDAg
+Q1I0OiAwMDAwMDAwMDAwNzUyZWYwCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAw
+MDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwCkRSMzogMDAwMDAwMDAwMDAwMDAw
+MCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwClBLUlU6IDgw
+MDAwMDAwCkNhbGwgVHJhY2U6CiA8dGFzaz4KIF9fcmF3X2NhbGxlZV9zYXZlX19fcHZfcXVl
+dWVkX3NwaW5fdW5sb2NrX3Nsb3dwYXRoKzB4MTUvMHgzMAogLnNsb3dwYXRoKzB4OS8weDE4
+CiBwdl9xdWV1ZWRfc3Bpbl91bmxvY2sgYXJjaC94ODYvaW5jbHVkZS9hc20vcGFyYXZpcnQu
+aDo1ODIgW2lubGluZV0KIHF1ZXVlZF9zcGluX3VubG9jayBhcmNoL3g4Ni9pbmNsdWRlL2Fz
+bS9xc3BpbmxvY2suaDo1NyBbaW5saW5lXQogZG9fcmF3X3NwaW5fdW5sb2NrKzB4MTc0LzB4
+MjcwIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6MTQyCiBfX3Jhd19zcGluX3Vu
+bG9jayBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrX2FwaV9zbXAuaDoxNDIgW2lubGluZV0KIF9y
+YXdfc3Bpbl91bmxvY2srMHgxZS8weDUwIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrLmM6MTg2
+CiBzcGluX3VubG9jayBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6MzkxIFtpbmxpbmVdCiB6
+M2ZvbGRfcGFnZV91bmxvY2sgbW0vejNmb2xkLmM6MjM1IFtpbmxpbmVdCiBnZXRfejNmb2xk
+X2hlYWRlciBtbS96M2ZvbGQuYzoyNjAgW2lubGluZV0KIGdldF96M2ZvbGRfaGVhZGVyIG1t
+L3ozZm9sZC5jOjIzOSBbaW5saW5lXQogejNmb2xkX2ZyZWUgbW0vejNmb2xkLmM6MTEwMCBb
+aW5saW5lXQogejNmb2xkX3pwb29sX2ZyZWUrMHg2Zi8weGU0MCBtbS96M2ZvbGQuYzoxMzky
+CiB6c3dhcF9lbnRyeV9mcmVlKzB4MjM1LzB4YTgwIG1tL3pzd2FwLmM6ODA2CiB6c3dhcF9p
+bnZhbGlkYXRlKzB4MTFmLzB4MTkwIG1tL3pzd2FwLmM6MTY4Mgogc3dhcF9yYW5nZV9mcmVl
+IG1tL3N3YXBmaWxlLmM6MTEzMyBbaW5saW5lXQogc3dhcF9lbnRyeV9yYW5nZV9mcmVlKzB4
+MzBhLzB4ODMwIG1tL3N3YXBmaWxlLmM6MTUxMgogX19zd2FwX2VudHJ5X2ZyZWUgbW0vc3dh
+cGZpbGUuYzoxNDQwIFtpbmxpbmVdCiBfX3N3YXBfZW50cmllc19mcmVlIG1tL3N3YXBmaWxl
+LmM6MTQ3OCBbaW5saW5lXQogZnJlZV9zd2FwX2FuZF9jYWNoZV9ucisweDViOS8weGJhMCBt
+bS9zd2FwZmlsZS5jOjE3OTcKIHphcF9ub25wcmVzZW50X3B0ZXMgbW0vbWVtb3J5LmM6MTYz
+NiBbaW5saW5lXQogZG9femFwX3B0ZV9yYW5nZSBtbS9tZW1vcnkuYzoxNzAyIFtpbmxpbmVd
+CiB6YXBfcHRlX3JhbmdlIG1tL21lbW9yeS5jOjE3NDIgW2lubGluZV0KIHphcF9wbWRfcmFu
+Z2UgbW0vbWVtb3J5LmM6MTgzNCBbaW5saW5lXQogemFwX3B1ZF9yYW5nZSBtbS9tZW1vcnku
+YzoxODYzIFtpbmxpbmVdCiB6YXBfcDRkX3JhbmdlIG1tL21lbW9yeS5jOjE4ODQgW2lubGlu
+ZV0KIHVubWFwX3BhZ2VfcmFuZ2UrMHgxMjBjLzB4NGFmMCBtbS9tZW1vcnkuYzoxOTA1CiB1
+bm1hcF9zaW5nbGVfdm1hKzB4MTlhLzB4MmIwIG1tL21lbW9yeS5jOjE5NTEKIHVubWFwX3Zt
+YXMrMHgxZmUvMHg0NTAgbW0vbWVtb3J5LmM6MTk5NQogZXhpdF9tbWFwKzB4MWI0LzB4YmYw
+IG1tL21tYXAuYzoxMjg0CiBfX21tcHV0IGtlcm5lbC9mb3JrLmM6MTM1NiBbaW5saW5lXQog
+bW1wdXQrMHgxNzgvMHg0NTAga2VybmVsL2ZvcmsuYzoxMzc4CiBleGl0X21tIGtlcm5lbC9l
+eGl0LmM6NTcwIFtpbmxpbmVdCiBkb19leGl0KzB4OTRiLzB4MzA4MCBrZXJuZWwvZXhpdC5j
+OjkyNQogZG9fZ3JvdXBfZXhpdCsweGQzLzB4MmEwIGtlcm5lbC9leGl0LmM6MTA4NwogZ2V0
+X3NpZ25hbCsweDI2MWYvMHgyNzkwIGtlcm5lbC9zaWduYWwuYzozMDM2CiBhcmNoX2RvX3Np
+Z25hbF9vcl9yZXN0YXJ0KzB4ODEvMHg4YjAgYXJjaC94ODYva2VybmVsL3NpZ25hbC5jOjMz
+NwogZXhpdF90b191c2VyX21vZGVfbG9vcCBrZXJuZWwvZW50cnkvY29tbW9uLmM6MTExIFtp
+bmxpbmVdCiBleGl0X3RvX3VzZXJfbW9kZV9wcmVwYXJlIGluY2x1ZGUvbGludXgvZW50cnkt
+Y29tbW9uLmg6MzI5IFtpbmxpbmVdCiBfX3N5c2NhbGxfZXhpdF90b191c2VyX21vZGVfd29y
+ayBrZXJuZWwvZW50cnkvY29tbW9uLmM6MjA3IFtpbmxpbmVdCiBzeXNjYWxsX2V4aXRfdG9f
+dXNlcl9tb2RlKzB4MjI4LzB4MmEwIGtlcm5lbC9lbnRyeS9jb21tb24uYzoyMTgKIGRvX3N5
+c2NhbGxfNjQrMHhkYy8weDI1MCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo4OQogZW50cnlf
+U1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzcvMHg3ZgpSSVA6IDAwMzM6MHg3ZjViZjdi
+OWY4NmEKQ29kZTogVW5hYmxlIHRvIGFjY2VzcyBvcGNvZGUgYnl0ZXMgYXQgMHg3ZjViZjdi
+OWY4NDAuClJTUDogMDAyYjowMDAwN2ZmY2VjMDhmZDA4IEVGTEFHUzogMDAwMDAyNDYgT1JJ
+R19SQVg6IDAwMDAwMDAwMDAwMDAwM2QKUkFYOiBmZmZmZmZmZmZmZmZmZTAwIFJCWDogMDAw
+MDAwMDAwMDAwNDIzYSBSQ1g6IDAwMDA3ZjViZjdiOWY4NmEKUkRYOiAwMDAwMDAwMDQwMDAw
+MDAwIFJTSTogMDAwMDdmZmNlYzA4ZmQxNCBSREk6IDAwMDAwMDAwZmZmZmZmZmYKUkJQOiAw
+MDAwN2ZmY2VjMDhmZDE0IFIwODogMDAwMDAwMDAwMDAwNDIzYSBSMDk6IDAwMDAwMDAwODAw
+MDAwMDAKUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6
+IDAwMDAwMDAwMDAwMDAwMGMKUjEzOiAwMDAwMDAwMDAwMDAwMDAzIFIxNDogMDAwMDdmNWJm
+N2M0ZTg4MSBSMTU6IDAwMDAwMDAwMDAwMDAwMDIKIDwvdGFzaz4KCj09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoK
+CgoKSSBob3BlIGl0IGhlbHBzLgpCZXN0IHJlZ2FyZHMKSmlhbnpob3UgWmhhbzwvbm9uZT48
+L3N0cmZvcmV4Y3R6emNoYW5nZUBmb3htYWlsLmNvbT48L3hyaXZlbmRlbGw3QGdtYWlsLmNv
+bT48L3hueGMyMnhueGMyMkBxcS5jb20+
 
-Filesystem freezing isn't dependent on backing devices. I'm not sure
-where that impression comes from. The FS_AUTOFREEZE shouldn't be
-necessary once all filesystems have been fixed up (which I guess this is
-about). The logic should just be similar to what we do for the freeze
-ioctl.
-
-IOW, we skip filesystems without any freeze method. That excludes any fs
-that isn't prepared to be frozen:
-
-The easiest way is very likely to give efivarfs a ->freeze_super() and
-->thaw_super() method since it likely doesn't all of the fanciness that
-freeze_super() adds.
-
-Then we have two approaches:
-
-(1) Change the iterator to take a reference while holding the super_lock() and
-    then calling a helper to freeze the fs.
-(2) Pass the information that s_umount is held down to the freeze methods.
-
-For example (2) would be something like:
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index be3ad155ec9f..7ad515ad6934 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2272,6 +2272,7 @@ enum freeze_holder {
-        FREEZE_HOLDER_KERNEL    = (1U << 0),
-        FREEZE_HOLDER_USERSPACE = (1U << 1),
-        FREEZE_MAY_NEST         = (1U << 2),
-+       FREEZE_SUPER_LOCKED     = (1U << 3),
- };
-
- struct super_operations {
-
-static int freeze_super_locked(struct file *filp)
-{
-	/* If filesystem doesn't support freeze feature, return. */
-	if (sb->s_op->freeze_fs == NULL && sb->s_op->freeze_super == NULL)
-		return 0;
-
-	if (sb->s_op->freeze_super)
-		return sb->s_op->freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
-	return freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
-}
-
-Why do you care about efivarfs taking part in system suspend though?
-
-> 
-> > +
-> > +	return true;
-> > +}
-> > +
-> > +int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
-> > +{
-> > +	int error = 0;
-> > +
-> > +	if (!super_should_freeze(sb))
-> > +		goto out;
-> > +
-> > +	pr_info("%s (%s): freezing\n", sb->s_type->name, sb->s_id);
-> > +
-> > +	error = freeze_super(sb, false);
-> 
-> This is actually not wholly correct now.  If the fs provides a sb-
-> >freeze() method, you should use that instead of freeze_super() ... see
-> how fs_bdev_freeze() is doing it.
-
-> 
-> Additionally, the first thing freeze_super() does is take the
-> superblock lock exclusively.  Since you've already taken it exclusively
-> in your iterate super, how does this not deadlock?
-
-It will deadlock.
 
