@@ -1,200 +1,227 @@
-Return-Path: <linux-kernel+bounces-576912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1A8A715E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:37:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0862A715EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B8188EED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D0317109C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666011DDC0D;
-	Wed, 26 Mar 2025 11:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E9E1DDA3E;
+	Wed, 26 Mar 2025 11:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aadnlcle"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4DTD7Y4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D531DC9A8;
-	Wed, 26 Mar 2025 11:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989066; cv=fail; b=qQZS7Xfb8qmSKela+RjAq6XLwNFn68RUwsszatz5V/xISh209dalVT1Hzwj5gATgd4mOB+IRuy0KoPP/7upMb8NhQ0y8hz1C2OY5GmrGzaRHMGUGlbLOFb1DV1jO2YVx4EQyGBSO3EE0N/8iIrzU8fPMZD24lhPIQHlghcqw99E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989066; c=relaxed/simple;
-	bh=WSdca+p089Yrp9XYmWyMEeBFwBBgL/spJKpfnQjveQQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VgUFIGVPaZjr061vfatqDivK9g3c5y3Dy9Ypl/6sGmZZeSkvRIuU68ObShNZNHBC48gLvIOfv4ftJc7dXRWzxv0aQt7mjpsErUXz/PVX2LzoDjMDxykQ4X9Fk0D4Zar2PQvY/SSo41KffXjBR9LoZxr7Qw3BVylItxr26989IJk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aadnlcle; arc=fail smtp.client-ip=40.107.92.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DbxchlAncjJtHicpFlOL4uK/kWa7F4pfbdTgKJVA24rMi/qkNwGUAOUxaQz7qkfewXSgz9SvDRSduV82DfJU6l/F9L//cfh2fzMosp4Z7JiVi/CKFDqoyBw5OojRtf8z2MkSL4KJqiEtiDIDZPOErn/uJs93i8o4H0hDx0JTm/GYjBM6Odlprc69ASfa/juZ9ez2VNL9z4OkfnrLCOQmC3FKabpAufpUSr9dQskJgBcaKIFKeQtm3CXXAY9SpmlNtGVr0iR6A45Qs8xGGXBV+EDJ+5t+9hJsI7ZfsalY8KSzfEuXqfG4pTQpsUz4xfvW9k1vJpNG1GwppD85PIYygQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aJLiPXkOVFfRboqmTGr+OemzQK93tG0l1uRxwySse50=;
- b=NwnyiC6SOTwHLeT1nQyUlhC2lY5vGZq4H0NK5Mjfw7XJClNYoY9WVEsrDZOFrozvGNDQTt9H3Y9MFfSsoFNCWvqEXX8EIAMZns1qd0fMUiDLG6171NMmrng1tjeAsjiZupzqmLuhNG1kgNtbSI5BYKz+ZFwlI54pVzHZkq5DhsjI5NtjZelrNYLpo/lBrDVLlNHI3682iZpBk1cmX/6Lsk4geFw4J7ssFwqPJHvoHLWWiddMag1qPBHdTFA0sp6tfEhML6WM0oErEWoHJ8mC6p1nM18PM2F8DYJF/4tj6AZgGkpg1kX1msSuZwQOAvW9SnI7pdtUeOuU+JYQcnVd8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aJLiPXkOVFfRboqmTGr+OemzQK93tG0l1uRxwySse50=;
- b=aadnlcleXbbCL77z344eW0wTwdRLW+4XAti6IwoYOBabS8My+Keb4/kwZTvftvnFbyi2UhKu+ldieUqCEjqdJAaXJRNX8QFt2at5N7OTS6unQGZ7eygSEH3JQP/QlGIM4qqQLqaAN3lTnFJ5hr+bDmV3Lcml4xEbzAeuqTiNA4I=
-Received: from DS2PEPF00004551.namprd21.prod.outlook.com
- (2603:10b6:f:fc00::517) by PH8PR12MB6937.namprd12.prod.outlook.com
- (2603:10b6:510:1bc::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 11:37:38 +0000
-Received: from CY4PEPF0000EE3E.namprd03.prod.outlook.com
- (2603:10b6:92f::1004:0:12) by DS2PEPF00004551.outlook.office365.com
- (2603:10b6:f:fc00::517) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.9 via Frontend Transport; Wed,
- 26 Mar 2025 11:37:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3E.mail.protection.outlook.com (10.167.242.16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 26 Mar 2025 11:37:37 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
- 2025 06:37:36 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
- 2025 06:37:35 -0500
-Received: from xhdakumarma40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 26 Mar 2025 06:37:33 -0500
-From: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <git@amd.com>, <amitrkcian2002@gmail.com>,
-	Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Subject: [PATCH] spi: dt-bindings: cdns,qspi-nor: Update minItems/maxItems of resets for Cadence OSPI controller
-Date: Wed, 26 Mar 2025 17:07:31 +0530
-Message-ID: <20250326113731.1657593-1-amit.kumar-mahapatra@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88F1B4139
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742989140; cv=none; b=NNfrTMKDO+mz4ZcHwh1U1A/Q0DDF6JhNVVRgYGCtlhQzdH2+pstNl1b4xqnbNy1yn62VDISCSjpGsJuncdAw6kliiu50zfJ1Nq/AvvR6tOdJZbXVmIdurScMI3CTtOapB0gpreL3UosI7ZeIPkXlBQ4YtdAvAes0sQZwpvmXTAY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742989140; c=relaxed/simple;
+	bh=XnplYuVML4RH+JsPqgWSH/ztbX4Jjen6uimGimavSLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NmrZtGHOsngBDW84E5UeCaa3fQ0eDqGeb7k7JF99JgWA/CEX5sUEfGabYvIkeqScPKwco1ZcaOCnWanPmva4DdrBZDbmZtZzUZIf9HZvtKj7ZgLacfZGZ3zaVf+v1lJZW72zXpYuS0Hipt3i8emIN8ivjINMbako4CX7x/1HavQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H4DTD7Y4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742989136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L1TSW2IN1ookhorbSOR1YQnOJVtR5fBLnVFeapHcNk0=;
+	b=H4DTD7Y4G7MksAOaN6TvHWQPsS8WHq0tmi3PfbvZ6ORtC+Kh8M+tPaIuxNtnOBTNLGPzvw
+	YpFf+G6XEM4CzO/f89idHSUOmlcs8C5qIvPpCXJDVBFLZidtLDm2LDVdWvbMLA/aZcEmi0
+	Zp5No1kstw+QNOIQd43FNwQTnzNN3eM=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-g3zaVbH8Mi6wugCOFy1Pfw-1; Wed, 26 Mar 2025 07:38:54 -0400
+X-MC-Unique: g3zaVbH8Mi6wugCOFy1Pfw-1
+X-Mimecast-MFC-AGG-ID: g3zaVbH8Mi6wugCOFy1Pfw_1742989133
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5d9e4d33f04so5517061a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:38:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742989133; x=1743593933;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1TSW2IN1ookhorbSOR1YQnOJVtR5fBLnVFeapHcNk0=;
+        b=rnUyQT8lVhKbkjKIQARyuQgyMfoofDMiUP4bXPu0yHhqEVhwjbPS3h4musCSOWOdpD
+         CIitYEsMoijriAd7f0cuBHTPIcDk7zmSuAxB8WjNGa7Q/fpfYH/Aq4arLx5iPPyvJZMi
+         EsuvbuvEpbAcbpKGMK91ytR+opEnb/Ch/nOFeYSI/Tg0ZR55jS4/cm68PJ+NqDmQRm7K
+         z5gHmikkpJYOszn/U4duDrs+FRszWK2A/O06+6ZuKHg2oQP3WU7YY0eO1WZpyb1ACSHz
+         WlRon6AHAs3xLjjwDBADQPoA2v5Wdg575NYWtD64IEEUthiUKSvTI18/tRY0EVvmYHWT
+         7b1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcQoUw681wJ3k763vSGpd4GyG99E4LQS2r+HVZmA7tdoX7H5sk7UY6apHx/ayrnsJLwDR5z2OF8BHMyQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy19A3PZBrf8hf72tsTN3+gvHeZNtQKES1pnTOjB3MM0gmgFejP
+	MgYFzVhw7M0oeuTPeuGXbVj9hgXFO0Sv1J7jjvggtXYh/2fdt1pnMkmOw7jLEn8FaaPpHpsF8z3
+	Puw6Raseqq/lsA2hnYZ3e5tSE16jqUyITED/TPDcuzEhYn+95/3Lk142BCTsxeA==
+X-Gm-Gg: ASbGncusdwTPtPtapvOLhOa2s2SK5qZCMTh8staqO7bpsZds1Hh4J7BKjEtuVDpy92W
+	6tGwXvO395iKqgWCTTUXAxAXUfFFO/R6/hL7vzLsEctyxpevTazdLy6J3vbjirrz3jynWhFc05w
+	iw41jmijaYLk2pwW2O6xYhQURiFoJpqHP7iv6LTPYskaGsbV38Mcu3pnqODIpzenFM06dMjkXyW
+	gqMB7DaWDM2Gzj+gLdextv3PVs1qmu0MD6p1Hc1j84cRK6PB1lseqB7BZdToDGvaK8edvBRjB8h
+	EANic/InRv2867/DbJAgqD1OS1Jfv/kkk6xxuXDoh7gKMLJrT9uSBG/a25uidFClJrbUhb+HXrV
+	KZt8rn3rZ8I1h5/xAjqdg4RIQT5mLb35JCiIbTO8xZ9adbbrLdyj8dd5qVEOTn5MxAg==
+X-Received: by 2002:a05:6402:1d4a:b0:5e8:bced:9ee5 with SMTP id 4fb4d7f45d1cf-5ebcd4677eemr17580333a12.18.1742989132654;
+        Wed, 26 Mar 2025 04:38:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4LIDH0+/cfzodfLAMwdwoMvesHVwPnzapymDBeoYaycgFvHYk1U8+6k//KJH9mqcFoMsF6w==
+X-Received: by 2002:a05:6402:1d4a:b0:5e8:bced:9ee5 with SMTP id 4fb4d7f45d1cf-5ebcd4677eemr17580314a12.18.1742989132088;
+        Wed, 26 Mar 2025 04:38:52 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfb049csm9457044a12.42.2025.03.26.04.38.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 04:38:51 -0700 (PDT)
+Message-ID: <b7a9585e-d02d-4a73-b294-ee78eade3ffa@redhat.com>
+Date: Wed, 26 Mar 2025 12:38:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: amit.kumar-mahapatra@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3E:EE_|PH8PR12MB6937:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e71723d-5a77-4a6c-7bf3-08dd6c5a9bf3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?blCAOHDzqDAYy3iWJSAdLhy2oyTfrjr9SaSep7G4kWN8eZyRg8NpfF2K2JMD?=
- =?us-ascii?Q?hxLq9MQiv/tqN1+vSp3wq8UUUiVi/zPd1c9H01pcis55Th3UXD59Ei5NtLQm?=
- =?us-ascii?Q?W2AjPSWkYBFaG7BE7iODQRDEyRND6NiTpfN76aR0eAm/8OjOtLSMspzkePOm?=
- =?us-ascii?Q?dXF6pD8Hrh/Irc3mhxyMDJfwQEYkCjPARccyFFi6ubaq3nLSyNb/RHgUj9DD?=
- =?us-ascii?Q?APnRn/n38VMqpZMygybDaYbOTxdRh92+NMgVlD+YowDz8a/D8oLdfET0p5PS?=
- =?us-ascii?Q?ufhDrjpfqMWU21ClgHSLXtUp6hcQanqOh7cQ3PDf5tPv7VVHfDk2kArT2j+c?=
- =?us-ascii?Q?PCOBKGXasYPDn6reA+oJnJniJRGw68FN7l8vQWSql+xJkLjgjwBamRzR5VM2?=
- =?us-ascii?Q?5Tf2m5FhkYkGEk4o3p0r44HdTviBOgK4pxfHoQUy1a3uWbeeRP0UtcwM/nh+?=
- =?us-ascii?Q?zMK0j4f5W11rlv4p85N/zmZeGklDBI3lvhwO2yBrlp0KQctaTrnEP8Wudg2g?=
- =?us-ascii?Q?ZxfXHkdwhFVSt3hcE3svHa0l1orReLYQFPAh5lKIqUAlH8NO+VA2OTkckZ5w?=
- =?us-ascii?Q?z0Q9YMofdZLMTYo73MDg8ZaRyRAFoGrZf6SNg7NJl9qyU/pDtqELY6JUD9lm?=
- =?us-ascii?Q?1+TOGy7Y38SH5sTGYBDZIKhKmG6qDXD1BZlvNHUS/DFgC7fzzrf1vDwsHVbZ?=
- =?us-ascii?Q?cL3OObOGwAvs5V51AHj105WYGkqzAA/qz+puuqyR7IEHkL0M4VzcGxW+4BFg?=
- =?us-ascii?Q?ii14cuwnwvardM0kq/Ri/TaXzMdtZU4SK9N5O9eZJ5DvSFvJOD/E/l5bs3Mj?=
- =?us-ascii?Q?enDmqd0reb+km/bWAbSFlH2jzxr4fY9WWivzydXtvhA8CY6n95b6DKdkLPat?=
- =?us-ascii?Q?xHZCpn+tc3bNaXkNUocIupxlPQNOSicYf7cPqTYUvx+q1cvKtveDbdi1V3D4?=
- =?us-ascii?Q?njSlYznU8Q0qW43U/EYWuC4GSwgtM3nLZsSZXbRLJ80dmps1R+xzQisbpZ0S?=
- =?us-ascii?Q?EBHDB7B9HzoROerqxVvSopnu/I2xi70Dj5m1YW18vg8KsO1CNG3j7bP2pjOr?=
- =?us-ascii?Q?jtDr1mxh1x+KX/xi7eq73vKf9HIIdo0Taix3BXIo9x81835B2KkB1yhg018q?=
- =?us-ascii?Q?c6SyWg8+LQsuPsPuKQFOdSQq3tgdyFWkZ1MjMOU3+v55t8uVeC44LG2FLl9D?=
- =?us-ascii?Q?PtyeiVe3MG9oskIjHdSnut6naoSlBmgXlK4kmlwrf+jCDkXRzzrXoRm8en+L?=
- =?us-ascii?Q?PnbtnSg2uJr1lu02SUbL6g0A1lhKZsFkqFGxkA3Q1HjzXFi+Zu5YhW02eXo2?=
- =?us-ascii?Q?no0NjgNFddKtrv0Hd650S46LsRr1eAomGYrsWEdrOjXVDJ9O7hpdMe5Ukoao?=
- =?us-ascii?Q?d1VTQ37mdCj/nVGTVNFpT9qKlK4RxdUsdCE/4OHnc2bsZc/u2bV7AW35Kkox?=
- =?us-ascii?Q?lvafnCZ3L0mJvtXzQVCrh4Bv7qYBUNiBO+L/1GmSM1X5msUmrkxDdNtE6r4K?=
- =?us-ascii?Q?d7Q/A/vrvg+4yyw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 11:37:37.4197
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e71723d-5a77-4a6c-7bf3-08dd6c5a9bf3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6937
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv5] platform/x86: asus-wmi: Add quirk for ASUS Vivobook S14
+To: Kevin Robert Stravers <kevin@stravers.net>, linux-kernel@vger.kernel.org
+Cc: Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones"
+ <luke@ljones.dev>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+ "open list:ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS"
+ <platform-driver-x86@vger.kernel.org>
+References: <20250326113157.2341184-1-kevin@stravers.net>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250326113157.2341184-1-kevin@stravers.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Cadence Octal SPI (OSPI) controller on AMD Versal SoCs requires only
-one reset entry. To reflect this, the maxItems for "resets" and
-"reset-names" has been set to 1 for AMD Versal SoCs, and the minItems for
-these properties has also been updated to 1. Additionally, these properties
-have been added to the required property list for Versal SoCs.
+Hi Kevin,
 
-Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
----
-BRANCH: mtd/next
----
- .../devicetree/bindings/spi/cdns,qspi-nor.yaml     | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+On 26-Mar-25 12:31 PM, Kevin Robert Stravers wrote:
+> The ASUS Vivobook S14 will have wifi disabled on boot as well as
+> resumption from suspend if the asus-wmi driver invokes rfkill functions.
+> 
+> This patch disables asus-wmi's rfkill usage to prevent the wifi card
+> from being software disabled.
 
-diff --git a/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml b/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
-index d48ecd6cd5ad..cc94c59280a1 100644
---- a/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
-+++ b/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
-@@ -17,8 +17,18 @@ allOf:
-           contains:
-             const: xlnx,versal-ospi-1.0
-     then:
-+      properties:
-+        resets:
-+          maxItems: 1
-+
-+        reset-names:
-+          maxItems: 1
-+          items:
-+            enum: [ qspi ]
-       required:
-         - power-domains
-+        - resets
-+        - reset-names
-   - if:
-       properties:
-         compatible:
-@@ -132,11 +142,11 @@ properties:
-     maxItems: 1
- 
-   resets:
--    minItems: 2
-+    minItems: 1
-     maxItems: 3
- 
-   reset-names:
--    minItems: 2
-+    minItems: 1
-     maxItems: 3
-     items:
-       enum: [ qspi, qspi-ocp, rstc_ref ]
--- 
-2.34.1
+Your patch is still missing a Signed-off-by line in the commit-message.
+We can only accept patches with a Signed-off-by line in the commit-message
+like this:
+
+Signed-off-by: Your Real Name <email@your.domain>
+
+By adding this line you indicate that you are the author of the code and
+are submitting it under the existing license for the file which you are
+modifying (typically GPL-2.0) or that you have permission from the author
+to submit it under this license. See:
+
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+
+Please resend your patch with a valid Signed-off-by added.
+
+Unrelated to the S-o-b problem I wonder if you've tried setting
+asus_nb_wmi.wapf=4 on the kernel commandline instead of adding
+a new mechanism to disable rfkill support all together, see:
+
+/*
+ * WAPF defines the behavior of the Fn+Fx wlan key
+ * The significance of values is yet to be found, but
+ * most of the time:
+ * Bit | Bluetooth | WLAN
+ *  0  | Hardware  | Hardware
+ *  1  | Hardware  | Software
+ *  4  | Software  | Software
+ */
+static int wapf = -1;
+module_param(wapf, uint, 0444);
+MODULE_PARM_DESC(wapf, "WAPF value");
+
+This would still require a quirk to do this automatically
+on your model, but it would avoid the need to add a new
+type of quirk.
+
+Regards,
+
+Hans
+
+> ---
+>  drivers/platform/x86/asus-nb-wmi.c | 13 +++++++++++++
+>  drivers/platform/x86/asus-wmi.c    |  5 +++++
+>  drivers/platform/x86/asus-wmi.h    |  1 +
+>  3 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+> index 3f8b2a324efd..1e6fb9308560 100644
+> --- a/drivers/platform/x86/asus-nb-wmi.c
+> +++ b/drivers/platform/x86/asus-nb-wmi.c
+> @@ -150,6 +150,10 @@ static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
+>  	.ignore_key_wlan = true,
+>  };
+>  
+> +static struct quirk_entry quirk_asus_vivobook_s14 = {
+> +	.skip_rfkill = true,
+> +};
+> +
+>  static int dmi_matched(const struct dmi_system_id *dmi)
+>  {
+>  	pr_info("Identified laptop model '%s'\n", dmi->ident);
+> @@ -530,6 +534,15 @@ static const struct dmi_system_id asus_quirks[] = {
+>  		},
+>  		.driver_data = &quirk_asus_zenbook_duo_kbd,
+>  	},
+> +	{
+> +		.callback = dmi_matched,
+> +		.ident = "ASUS VivoBook S14",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "S5406SA"),
+> +		},
+> +		.driver_data = &quirk_asus_vivobook_s14,
+> +	},
+>  	{},
+>  };
+>  
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 38ef778e8c19..42e58a28c3e2 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -2138,6 +2138,8 @@ static int asus_new_rfkill(struct asus_wmi *asus,
+>  
+>  static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
+>  {
+> +	if (asus->driver->quirks->skip_rfkill)
+> +		return;
+>  	if (asus->driver->wlan_ctrl_by_user && ashs_present())
+>  		return;
+>  
+> @@ -2188,6 +2190,9 @@ static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
+>  
+>  static int asus_wmi_rfkill_init(struct asus_wmi *asus)
+>  {
+> +	if (asus->driver->quirks->skip_rfkill)
+> +		return 0;
+> +
+>  	int result = 0;
+>  
+>  	mutex_init(&asus->hotplug_lock);
+> diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
+> index 018dfde4025e..3692de24e326 100644
+> --- a/drivers/platform/x86/asus-wmi.h
+> +++ b/drivers/platform/x86/asus-wmi.h
+> @@ -41,6 +41,7 @@ struct quirk_entry {
+>  	bool wmi_ignore_fan;
+>  	bool filter_i8042_e1_extended_codes;
+>  	bool ignore_key_wlan;
+> +	bool skip_rfkill;
+>  	enum asus_wmi_tablet_switch_mode tablet_switch_mode;
+>  	int wapf;
+>  	/*
 
 
