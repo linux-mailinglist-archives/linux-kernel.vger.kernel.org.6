@@ -1,176 +1,119 @@
-Return-Path: <linux-kernel+bounces-577613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EA6A71F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:48:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3CEA71F6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494EF3B64AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8925F17286F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60832561B3;
-	Wed, 26 Mar 2025 19:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6C0253331;
+	Wed, 26 Mar 2025 19:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UT3WLwHu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iOINO0mI"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A51zops7"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A602F24C676;
-	Wed, 26 Mar 2025 19:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A22217F36
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018248; cv=none; b=udrENRW9zz5T9pPyK7vAZGJbe4oDilSMJCuOcB7A44avyeSekXtfJli3LHxKEwVOXZOC6jBmFUm9wNARAmhgG/qehBB7P4DfTUo+p7XxM3RHDqd7vUV+alQIlheiaUvsmRvI1Lx49efwL4tlPWBzkas19tM5BTe/qf4UEBVRTEo=
+	t=1743018222; cv=none; b=aRWrS33GcdJE4H4EtGGaM0u83DMfSF8lL8Hqev+Kzn4hX75LMeXTVcAzeSSY0rkHG1hqB8Zw+bKrUJDVPfuypqx84vgTA+QDBIDCxM90zDlqOINBVIgU0GCR8tYLL2SlKtRxbiy059sA5OGSn/avC1faqh8jtI7HG2OcJxdGUsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018248; c=relaxed/simple;
-	bh=1zxp2JuUA4SoDWupkMfGgw89XKTQK0YYH4Zgo6ukpTA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=kftkV/QettKczyC6GsAp8vwf+6ltOQWQM1905tkeM/Y5ZAg763s0PxQlC7FC4QLeJftURm89oqMg/FOaafoLIus79U75iZ24opT7mDCJC7A01x5E3bLwHhC6TXvfilENBcVRuYTLhh38OA9q8iTB7R16Tf7a2CaD+rZKv71bvro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UT3WLwHu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iOINO0mI; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B92271140114;
-	Wed, 26 Mar 2025 15:44:04 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Wed, 26 Mar 2025 15:44:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1743018244; x=1743104644; bh=3B
-	m37zrfytA9X0z64bKtWgE5xF7qOkcmjrE7cIKq4Ic=; b=UT3WLwHuQ4zO/l7HL7
-	mpLvPA5inrnRi6CiRK1kbyAv8iYoo36IXEnZfCnb0CHIcsGGd4Z/b/C5DZLaK7To
-	iH1SEUW+8JU5lJv0HvA85vuhXhTpgAhWcEujfUiTh0gE/DQIYXPvlbkIdHVfvfcf
-	Rg/3pFQQYfFw8pEdNoKuDoAfjUkcza01jy1Bctsj4JEeBqumg5HZfJ3jfC6om3zE
-	9TKIpkg773kaMrhnt0MMMW7iZHFphLdBPwt5I1XOS/Cjd0w+Ig+wYZw8sHmVgHiZ
-	OLFAeV+tBLYIDGEdC+OotQpD28Jzy3MLLE4+QiVDN1sIlhxkY440kYNUO2KPe0bJ
-	BDAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1743018244; x=1743104644; bh=3Bm37zrfytA9X0z64bKtWgE5xF7q
-	OkcmjrE7cIKq4Ic=; b=iOINO0mIM9RRAi7zjek2lg7mhlBvjBbDZH6mKbfu8xZY
-	omml4VdjlxSBXhTO6j0QhIqTnz+YcKyKqDLOcYybC2/3Wf1JTVGqXPsv42/du0rG
-	p0f0T4HfbakgNzGxHAUyDBXgT7cSmrCe3gFLKhKp6+wH9ZUX+UrV7tUR6CGEM01F
-	8eF3qaGusqp8XC0atx9SK7PJBWWlETc7lONB3kVXPsLty5zhr6O35tpreKFupxbj
-	VH9ClbLB+6NMR07Eu7nB+5LM+xHNYbp9c3p5hh4Qudr8G1owtWjFY8rLt1Vte2D2
-	rimHpQvf6oyHrzDIjNYjH2OtT2pb4d489/esnzcUxA==
-X-ME-Sender: <xms:BFnkZ3j921VnGC1yrnpG8vL22xupYMdJVt8k64K5N69wNiyswUyJWw>
-    <xme:BFnkZ0DY-jZagIPfq95Qa9wLEeAk0ngQSav29hCxUsPUkZoIuBPzAfqYg_Ncpncz9
-    U5NyfhzAof8nRVTBiY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeigedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkffutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepudelieegkeevueegtedtjedttdelgeehhfdvhfeu
-    heethfduleffuddvueelveetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:BFnkZ3Hrd5muDsWKP7KqcnGC1Tx_8o1Ut2hXgTwX97pxTa0Kpo2aeA>
-    <xmx:BFnkZ0QxpmSTH6WKS1m7PswQJumsjJKS4nS9mwfLYpbcEl1OrfrKYA>
-    <xmx:BFnkZ0zW-cnWrrSFwye9wRb8pFH7KBBsyNeezJ86_r54OQLErrinHw>
-    <xmx:BFnkZ64i32xTSlL2g3Zku-5siRbCb3JZmQCYFGBaceeJtr0J7azkiQ>
-    <xmx:BFnkZ__gFB-BuRFfL6dkeR-gD5uGbOxrwdVyszy4NNpJiGDj1SyjZ-SL>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 569CF2220073; Wed, 26 Mar 2025 15:44:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743018222; c=relaxed/simple;
+	bh=jiGUwXF4jKW3xbrGjLbfRJER+dO1uYrn53H54TDcNpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=my1t2TBSm7kbx/rqV1Z6NWwSF5Jo6citdijqTJzI6jLa5EUjzAfD2TSHk3OQ6JEQQIQSD8f13H74G0L5PEvb+pHaP3X//5q7Gi1LfgpNxNHCPOUM3rYEB1wAYPk1maZhbVTzv2Rsi1HkODKQIADNUEoXJmMGCSEdOgUo0rn7cTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A51zops7; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8f94c2698so916126d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743018220; x=1743623020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+rAJnZwsZb7mGPDIXjLDMJaxK1LCpW7JHjR3DY1RGnU=;
+        b=A51zops7pQ7rPnOL2zyTt3jT0QQ8Kx2CvkAMK/XJQWdm0lCF07X2HYGQIo3AsumLq2
+         /tklVDFFyUaIe8bXYmiAN2Gw4j5K6jP2tGzZx8m4+KwywZwHGzC9TKWuRokD3V+2sj1U
+         6AV+2swjJW0abJ6cd2iyj2BafPqcQQ4GH5SzWtRGmC879YPLiHnwUPWivGJaYI2vqjao
+         M2FNTW7YmwSWJuDXMN22yfodDEG3rh6+Gd9X7ReHFEtN41vvtO3Rv15Q+3rqQBd+AHYQ
+         O5H3IJ/MtUzhNdawOSmwVH59qA1q6vKTMEDaa6RU2HYaLaVXnvWhNiEpW8WY9qml2Dvc
+         H1uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743018220; x=1743623020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+rAJnZwsZb7mGPDIXjLDMJaxK1LCpW7JHjR3DY1RGnU=;
+        b=VwZU3o7GF4IG4YvqExxZ60shppRprHTSTxbOEtC8mxgeYBimHJhceT9G4269et6Hci
+         JBPF8uaxfq+hILtZVWTD5otbcncOSozwJHXt+UzM3A6ap8qv1u2UumRnpbJMNkIphcvg
+         J9c2NZj+5N8cx6mwSSjX+evNJY6ORnaIjMxc73FgdEcZLrT5Yk0COa+fgaFLXSB6rKPC
+         u4JInSxrJjXf9r2TZvmRq0o/YqzVmWPiDsGHRDFOPF0gCR8glouyn2aCL3U36s4TU/Sx
+         Sp2ieq8S3y/ya96e2M1xKzdNydC8qL3YUo8G34Dh8DB8wNde+GBHBiqj04q/Go5wIC+K
+         WOqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUC19gitSQpkxLdwXmaEdCj25ExLfRR3awhBG/pZ3gaUrcZJuDz7q37xhH7b14XHhcP9xW9p9VseE42op8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7Mb6EL8tOVfaHn+k2iiVCb0FBPL4RWLwfWZze5h550xmJckzK
+	pLx383K8fHpwLJJysBHJHCyhiSXxCc0jQ8n5e0wMbgB8vDai+luOGrP3PRoU8zN+IozasjU4HII
+	Jr36y7Jbj0cAARjPuHbRfOYbHVuY=
+X-Gm-Gg: ASbGncvmK5V8nemqEeqPc9o6DZTHghqeTaQ23wdsL+gBu05z0SBo4YwioY3JXGDRL1i
+	Ht4chZxPDWocukR/7TxOmXbRY8t+7f6SZeiAOdKhJ75yaBRt1Ji2mOPpHdRAeBDFXNhBJPJJoqA
+	9wLXummEsid8JpFnmaGORmbNCi
+X-Google-Smtp-Source: AGHT+IFx4BHh+7k57pV1IO7HJG/9YO1INsBS9KA9AYwDRL4XjQGlSuQ8U09WiopwmrGJ0LtzI4DSAZylVangziUWRdE=
+X-Received: by 2002:a05:6214:1d04:b0:6e8:8e10:424d with SMTP id
+ 6a1803df08f44-6ed2395e92emr10090536d6.41.1743018219414; Wed, 26 Mar 2025
+ 12:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Mar 2025 20:43:17 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <31097083-a444-4bd1-8722-d8b7c4b7a43a@app.fastmail.com>
-Subject: [GIT PULL] asm-generic changes for 6.15
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <tencent_2C3830CD73C3B917ECA59895C90CB43BF009@qq.com> <CAKEwX=N98tC5Tq+XYLgAP4MDUBAO01ceE4e+mrk9i3YniL2Vkw@mail.gmail.com>
+In-Reply-To: <CAKEwX=N98tC5Tq+XYLgAP4MDUBAO01ceE4e+mrk9i3YniL2Vkw@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 26 Mar 2025 15:43:28 -0400
+X-Gm-Features: AQ5f1JpVyOQSMRIQ6FS-EzhkbRB3pXiaalELf8V-_Y0ZZZMSDxIlLI7kDWjopvQ
+Message-ID: <CAKEwX=NbpaQcq_awoPKmAuPWL=D4C2W7o_9D3J_SuDFvtbo9Ag@mail.gmail.com>
+Subject: Re: Linux6.14-rc5 BUG: spinlock bad magic in z3fold_zpool_free
+To: ffhgfv <xnxc22xnxc22@qq.com>
+Cc: "vitaly.wool" <vitaly.wool@konsulko.com>, linmiaohe <linmiaohe@huawei.com>, 
+	akpm <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+On Wed, Mar 26, 2025 at 10:32=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrot=
+e:
+>
+> On Wed, Mar 26, 2025 at 10:11=E2=80=AFAM ffhgfv <xnxc22xnxc22@qq.com> wro=
+te:
+> >
+> > Hello, I found a bug titled " BUG: spinlock bad magic in z3fold_zpool_f=
+ree   " with modified syzkaller in the Linux6.14-rc5.
+> > If you fix this issue, please add the following tag to the commit:  Rep=
+orted-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>,    xingwei lee <xrivendell7@=
+gmail.com>, Zhizhuo Tang <strforexctzzchange@foxmail.com>
+>
+> Please stop using z3fold :) We already removed it upstream.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+To clarify a little bit - we've found that z3fold is buggy (for a very
+long time), and does not outperform zsmalloc in many of the workloads
+we test on (both microbenchmark and real production workloads). We've
+deprecated it since 6.12:
 
-are available in the Git repository at:
+https://github.com/torvalds/linux/commit/7a2369b74abf76cd3e54c45b30f6addb49=
+7f831b
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-6.15
+and will remove it altogether:
 
-for you to fetch changes up to ece69af2ede103e190ffdfccd9f9ec850606ab5e:
+https://lore.kernel.org/all/20250129180633.3501650-1-yosry.ahmed@linux.dev/
 
-  rwonce: handle KCSAN like KASAN in read_word_at_a_time() (2025-03-25 17:50:38 +0100)
-
-----------------------------------------------------------------
-asm-generic changes for 6.15
-
-This is mainly set of cleanups of asm-generic/io.h, resolving problems
-with inconsistent semantics of ioread64/iowrite64 that were causing
-runtime and build issues.
-
-The "GENERIC_IOMAP" version that switches between inb()/outb() and
-readb()/writeb() style accessors is now only used on architectures that
-have PC-style ISA devices that are not memory mapped (x86, uml, m68k-q40
-and powerpc-powernv), while alpha and parisc use a more complicated
-variant and everything else just maps the ioread interfaces to plan MMIO
-(readb/writeb etc).
-
-In addition there are two small changes from Raag Jadav to simplify
-the asm-generic/io.h indirect inclusions and from Jann Horn to fix
-a corner case with read_word_at_a_time.
-
-----------------------------------------------------------------
-Arnd Bergmann (10):
-      asm-generic/io.h: rework split ioread64/iowrite64 helpers
-      alpha: stop using asm-generic/iomap.h
-      sh: remove duplicate ioread/iowrite helpers
-      parisc: stop using asm-generic/iomap.h
-      powerpc: asm/io.h: remove split ioread64/iowrite64 helpers
-      mips: drop GENERIC_IOMAP wrapper
-      m68k/nommu: stop using GENERIC_IOMAP
-      mips: fix PCI_IOBASE definition
-      mips: export pci_iounmap()
-      m68k: coldfire: select PCI_IOMAP for PCI
-
-Jann Horn (1):
-      rwonce: handle KCSAN like KASAN in read_word_at_a_time()
-
-Raag Jadav (2):
-      drm/draw: include missing headers
-      io.h: drop unused headers
-
- arch/alpha/include/asm/io.h                    |  31 ++---
- arch/m68k/Kconfig                              |   3 +-
- arch/m68k/include/asm/io_no.h                  |   4 -
- arch/mips/Kconfig                              |   2 +-
- arch/mips/include/asm/io.h                     |  25 ++--
- arch/mips/include/asm/mach-loongson64/spaces.h |   5 +-
- arch/mips/include/asm/mach-ralink/spaces.h     |   2 +-
- arch/mips/lib/iomap-pci.c                      |  10 ++
- arch/mips/loongson64/init.c                    |   4 +-
- arch/parisc/include/asm/io.h                   |  36 ++++--
- arch/powerpc/include/asm/io.h                  |  48 --------
- arch/sh/include/asm/io.h                       |  30 +----
- arch/sh/kernel/Makefile                        |   3 -
- arch/sh/kernel/iomap.c                         | 162 -------------------------
- arch/sh/kernel/ioport.c                        |   5 -
- arch/sh/lib/io.c                               |   4 +-
- drivers/gpu/drm/drm_draw.c                     |   2 +
- drivers/sh/clk/cpg.c                           |  25 ++--
- include/asm-generic/iomap.h                    |  36 ++----
- include/asm-generic/rwonce.h                   |   7 +-
- include/linux/io-64-nonatomic-hi-lo.h          |  16 +++
- include/linux/io-64-nonatomic-lo-hi.h          |  16 +++
- include/linux/io.h                             |   3 -
- lib/iomap.c                                    |  40 +++---
- 24 files changed, 163 insertions(+), 356 deletions(-)
- delete mode 100644 arch/sh/kernel/iomap.c
+Perhaps Vitaly can fix the issue for stability's sake (or in case
+there is a reason why you MUST use z3fold)? But I strongly recommend
+you experiment with zsmalloc :)
 
