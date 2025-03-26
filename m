@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-577670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BE2A72015
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:42:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBEF7A72018
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D22A16562D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5354C16A023
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B84C2561C4;
-	Wed, 26 Mar 2025 20:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3288F25D8FB;
+	Wed, 26 Mar 2025 20:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LUwhr+UJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="EG0wEoF/"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71ED2194C75
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0353818C00B;
+	Wed, 26 Mar 2025 20:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021742; cv=none; b=pWzkEg2pIt1F1vbXX43d734boFYhM/56CurdfF19rG5J4aKpPJG6scU4JRS7mwEpGL+khCC6ohq2l28azYBCzUyO42k7ne1tKoZ31TcJ68Rs45ClL6HZIy+zcazBnvKN7wg3e9JIDl6nALbWREydfQEJHU09rO3vxcMVNYOi43w=
+	t=1743021872; cv=none; b=b5ysKCHlpAyi+L0Gs0I9+L7bkyf+L64B8yEni/ZdB36BcYzT/kbSb/4jgL/hHvTZDW72pXDESEgyDJ2alUKAzwCjqiTcmwcyEoZiuRB0c5DOH5c9iFGbwlbgQ2SoYY51YdEaxpjkH1g3QhRnyxIJCbYhv7zM3aBx6hU4aqtmSoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021742; c=relaxed/simple;
-	bh=kqpj3gBdFSTu78yKcSfuMiCpqKZs5nij5O3DNADXxh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COhnJglQRzyi1DK3F9vdJzVirpRZnCSmfnR5xWOKxplcgVz9vAnbyRIZbSZLGRtI0zkLIABxg1s0WdgfW4ve9swtSBD0xRpUcG2++A/eIHXewjJnS54CSLdxBdhaeUJQ6rHvcu2AcYeblnS7frofFSumF0y9q6nRLoTaSq5pynY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LUwhr+UJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=1cW/s3bKLJZVIlsHJQj5vb5bjFdwBji7A9G+nvosjl0=; b=LUwhr+UJ1OJTnrWYYpBJ6yQNFy
-	meaQi2IQEFcDrOwjK3jMqFlkyOciWgKE6apKePLIYz01qKS80KxOhKhTc0BzEVtPZgj8Dyq6WRg17
-	vcPYu/gCj9YglOUvVIhcP+4onthdQ6w6Kz4IUKazp6j6yEZMMwGIWt+OxRcY6iGABA5aKXgo2kxYN
-	ajy3jpVj/UNk+6Kp45bJKrmJ8/aef8N/PM7AdkzaSYurfeHTKYDMwvAF5sMFVA6PYhaiYZpQ0sltV
-	mDGTUEgBbflB5AchTc306FFV/zGnFK3tYHsH93odO3ROCuPHbUtMbHnW2MYK/V2QcdhH2nM7MqTRo
-	k9/Znhew==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txXZj-00000008D3Z-2VOJ;
-	Wed, 26 Mar 2025 20:42:11 +0000
-Date: Wed, 26 Mar 2025 20:42:11 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: ffhgfv <xnxc22xnxc22@qq.com>, "vitaly.wool" <vitaly.wool@konsulko.com>,
-	linmiaohe <linmiaohe@huawei.com>, akpm <akpm@linux-foundation.org>,
-	linux-mm <linux-mm@kvack.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux6.14-rc5 BUG: spinlock bad magic in z3fold_zpool_free
-Message-ID: <Z-Rmo_xx_btMKO99@casper.infradead.org>
-References: <tencent_2C3830CD73C3B917ECA59895C90CB43BF009@qq.com>
- <CAKEwX=N98tC5Tq+XYLgAP4MDUBAO01ceE4e+mrk9i3YniL2Vkw@mail.gmail.com>
- <CAKEwX=NbpaQcq_awoPKmAuPWL=D4C2W7o_9D3J_SuDFvtbo9Ag@mail.gmail.com>
+	s=arc-20240116; t=1743021872; c=relaxed/simple;
+	bh=g//N0IrGfLT13tbIdvSmMzlmGx9e3qigUl8AcPpeR50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aawW6dtkKORVHVfyNsJpQYcQ9G8ITSAmM3n+B9+riehC6AcP6L/XXj7kVkyL433+sGwXDcj3ehTeGIF1ZhSgyk0NGphytsFzrJdyYT0W1qKOqTXNsKtSXfoEJmsax0nO1qZ2WURhnBzK1f3le01JDi6mE/v/g5bwMexnXlKiQj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=EG0wEoF/; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso1836725e9.0;
+        Wed, 26 Mar 2025 13:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1743021869; x=1743626669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BzroiA3DdY1mmxM19Ga6jmT6lbdk6d02D0Ys+Q3T2kM=;
+        b=EG0wEoF/85H4hS53wNSoNdWGSfFtn7MPzhJ4HZzv+lazjr2peQW9O27g7CnqyUTzLT
+         zMuLiR2qXY8PtcDwHSFFl6YGT6APGcHTp4U/KlwPab9dqHblgo4JbYFrYO3HL8B941bg
+         rKrQ0m5KjnPVTGvP3cco+I32BiLG3elqt0QSZe9t9xV5fPUZG5MacGMrMX8GzbSoeErR
+         jP+CUYsjKdy58oWpFBB0HEt71cTwFJBby9v5tCmgQWSFI1TZbjKG9wl8YDpLZljLe0uK
+         bQtm7YaCjPazG+G7uf/dUuvFF6/8HXJVNDo2d0IBiuLBjl2fWXJeKdRU4noL5vVvZ19p
+         iykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743021869; x=1743626669;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzroiA3DdY1mmxM19Ga6jmT6lbdk6d02D0Ys+Q3T2kM=;
+        b=RaSK7JltudBmB5xpfBaI+8jhJ4Gyvi+6F3XcwkJ98u01HJK4nXoCuwca+r11P28ciM
+         1tLWSoxbhf/7M5b3xQ6IbS7Q+FNE4w//dULErfFDRevX/SuWlbIEi/5X4iGBqOhF3Ogf
+         7OCV4hHZo7iPjjHGFGdZgCAYbsPAg5stzimI+HPVlDV6hQPFN8Otnd4i7mb2R/NfJKMV
+         xvZSPUKcH8lptdjV6zzH4QHi6/d5EfdfnnK7wVOPeZAjjMskSpcvUR1xRWogJ7Bc6l1I
+         ZzgKMP4QzCm7Zn0CjDxU240nRomIcJPKHR5z0Yntjam8oij2emnRGjCVNn8OBXFR1pdl
+         usnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUi7OvZbOD4d104TfdSl7cwH5JV3Z4bWKC9t6meDsEiKLrGSasUH55ict2wqfDX6bnumJRbUEy2@vger.kernel.org, AJvYcCXrfX0YJDdyZLzdwlJ8D+uS5N8I9ZrkSVc+zjVs3lvWqJQU3JbeQNuyxPOS4Nb/+E3zI1dPlC27srDxB4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe68CB83qnhDctZAMMlIUdohWX26B4+qYkXNUTzVB/W3xbJdaD
+	HTr0txnRHBA/sNi42bo7fLI7fUDxUG9sXoHI9rgKZGC8nVEg3j0=
+X-Gm-Gg: ASbGncsl1pBnn1kbM9bMUGdBYtQK7QGOYHs6LDA4/vEOYMDevhd3TTM2INE3O1OeGGE
+	bHNss/AOcp7uOMvk/Cfj7LEBHtTcg3i2gSQx72QaYhaJk/msbJ0bTvjbyrPdHA93hyeroc2oyUN
+	RPJcVar9QTkvLabDPQCXg8/rwCQ/GMdNpZ3uNXWwOBHKnLdATD+1sewcFTuFaeEAa0KXzDzO/m3
+	/7opkeWUMRK5mG3r8JDDkv8q8g4iPlP33OABBe2Pv+6mx+i1CeUEyFEX003mwJEItXTvZ3+81VX
+	jvK5GPcxtSv68IJT2afj9ivCFiOEHepZeKasa76rW+UQItw13s6AqaiD0A1xzkrEa68QJa50p8s
+	8LrbK7EW8WNKPaah2U0B4
+X-Google-Smtp-Source: AGHT+IFIn/5O+GJWIEYHRBcJK/SGhnNc1/rveGzy77iS8kfb/uPpf0KJWaUAcFjw4m7l+ZGWiB3cbA==
+X-Received: by 2002:a05:600c:1f94:b0:43d:5264:3cf0 with SMTP id 5b1f17b1804b1-43d77643432mr55561185e9.11.1743021869132;
+        Wed, 26 Mar 2025 13:44:29 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057a21.dip0.t-ipconnect.de. [91.5.122.33])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3b4bsm17650135f8f.25.2025.03.26.13.44.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 13:44:28 -0700 (PDT)
+Message-ID: <58a1ccf9-2da4-4fb3-9310-78eb2d4ccb3f@googlemail.com>
+Date: Wed, 26 Mar 2025 21:44:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 00/76] 6.6.85-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250326154346.820929475@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250326154346.820929475@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKEwX=NbpaQcq_awoPKmAuPWL=D4C2W7o_9D3J_SuDFvtbo9Ag@mail.gmail.com>
 
-On Wed, Mar 26, 2025 at 03:43:28PM -0400, Nhat Pham wrote:
-> On Wed, Mar 26, 2025 at 10:32 AM Nhat Pham <nphamcs@gmail.com> wrote:
-> > On Wed, Mar 26, 2025 at 10:11 AM ffhgfv <xnxc22xnxc22@qq.com> wrote:
-> > >
-> > > Hello, I found a bug titled " BUG: spinlock bad magic in z3fold_zpool_free   " with modified syzkaller in the Linux6.14-rc5.
-> > > If you fix this issue, please add the following tag to the commit:  Reported-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>,    xingwei lee <xrivendell7@gmail.com>, Zhizhuo Tang <strforexctzzchange@foxmail.com>
-> >
-> > Please stop using z3fold :) We already removed it upstream.
-> 
-> To clarify a little bit - we've found that z3fold is buggy (for a very
-> long time), and does not outperform zsmalloc in many of the workloads
-> we test on (both microbenchmark and real production workloads). We've
-> deprecated it since 6.12:
-> 
-> https://github.com/torvalds/linux/commit/7a2369b74abf76cd3e54c45b30f6addb497f831b
-> 
-> and will remove it altogether:
-> 
-> https://lore.kernel.org/all/20250129180633.3501650-1-yosry.ahmed@linux.dev/
-> 
-> Perhaps Vitaly can fix the issue for stability's sake (or in case
-> there is a reason why you MUST use z3fold)? But I strongly recommend
-> you experiment with zsmalloc :)
+Am 26.03.2025 um 16:44 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.85 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-This group are syzkaller kiddies.  They have no understanding of what
-they're testing; they're just running their fuzzer and sending emails.
-They don't care what's useful, so there's a lot of noise from unmaintained
-filesystems and so on.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
