@@ -1,241 +1,157 @@
-Return-Path: <linux-kernel+bounces-577391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B90A71C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:55:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74ABA71C76
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDB4840B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:53:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402A616C848
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2131E8343;
-	Wed, 26 Mar 2025 16:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F4F1F790F;
+	Wed, 26 Mar 2025 16:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcewaUdw"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9Sv6mC/"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918A327456;
-	Wed, 26 Mar 2025 16:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7811547E7;
+	Wed, 26 Mar 2025 16:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007814; cv=none; b=V4aghV+Lu5VdJNx81tfQxpT+xJEvUHPBCEXd07/6rJ1CM3b7of7JdcF0qeNjlGW1wUH91/l9cKlsmLl+7tmsgTZLgC1DO7qvoM57yQn0mh+wIpggIlsphM9vN0EQ5hPpKb42dZ9aVZw/9dacOAr3AAJKcRLxRhkTJV+hbHooFAA=
+	t=1743007865; cv=none; b=GhYVvJRuDQHS04Gx1birLqYFRwz8LVy8lpUdi9ffLUmtYAO+XD/Uv1lUVTw7SZmyIKHr5KEGsy1PIgOJyJqJFvNafnD4dIodC/JSxw0pjpAa0LMtnpXFLPKwAxnZGonya2cIq5MTl9viafx+0+SHevCtirwRmXEyMI2GyThzUho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007814; c=relaxed/simple;
-	bh=etAZqQaYWkqjzASZ23KNQtAEL0J4RY8rLP3GIsBFF9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTjrQCgADNnw+y8FYfdY0KIefLzv2waLtwVTdId+hpFtmvq6aWKy4gvNqpDPp/yeLnxAZGif/x8rvj8sfi13G2bYldGshHZpI00T+hMdfKfJFFlbfUxjPU1Epxi3kC/YjZvsISw521RDPXPoQ1Ug5bjmDSYDZ/SBnktoPq+aoZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcewaUdw; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1743007865; c=relaxed/simple;
+	bh=yJBMyf3jsU21PG1wISC2E/kXWeLiiqnAY/jasoecG3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yhtp+lEfbpq4hX4ZJlGG58Gs4C7TdLJ8lFl04kwfRNvV9M3uXQOhEl3sBEiDizZUyK/eqfjUWYmK6cpxKBYjp6QqH537v8IzUJzBGWRa4qbKyOrS80PT3OVvpwdJjprC/k50JKsLgVmkE9wfXpI46cV39oQpMv/vPPGbIwy7Qs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9Sv6mC/; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so395395e9.1;
-        Wed, 26 Mar 2025 09:50:12 -0700 (PDT)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72c14235af3so60137a34.3;
+        Wed, 26 Mar 2025 09:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743007811; x=1743612611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cT3szQVg53z3x7cQIma2mQu5F2nUuvb/9P0dqPLOAJE=;
-        b=NcewaUdwxmcgTG8tmSdapvZJT/PyTvXGOEotM+Fori5kFMQMEThxJTxUDSrTHOJuM3
-         uyAePSrC9eUOzRuhMdbLxYM6CQkjcNOY6DpAxm2LA6Jb4i6v0Iyjl29tEVZ3BS2/NIH6
-         jVJpKutV0vYpQAlp8ZOEP39HkpIQgU5Nyh1LMJdXOIsJJh3DyMvR6C0Vx1qitXrrNzRE
-         muNzbJ+s04hrwYajfHHHx9RTb/pRJAvuwNsw1ZRgeC06xK+18Q69/6ZtrgurXsN4zuRo
-         UQYG83JACq4lJAShV4odONj1uwLq096WJCi3g1UT/GTTymltOQEDydpKoTAxyWOBHlJY
-         J4Tw==
+        d=gmail.com; s=20230601; t=1743007862; x=1743612662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOAe8NppTWO9zoq1DW68RBKYaN9LktVjoWLJBt0YsMY=;
+        b=m9Sv6mC/vMg5WVK9OQNmQO2vKjoS9kvriK2dyxadlpIIdWdyeAfM/Pm8RsAhwrPYyX
+         ATbG/4qmsL7qFigKIdca2uUgE9arVbujX/Xe9mb/TpWzHwoXuGgx62dJKOpwU/dJi7Rd
+         Ybaqi6QthZixLD2yrkW7Nnd76F5uoLbVri6g9tLq43lXIjGhIbX6pfPmCkVs8To71guI
+         jOArz1DBchPMk55gHTOPz01R1Zow/3+zkbHjLaRarsSzK0oMaJfkLA3HC9qxW4CkGwEW
+         +18IoLKZCe96nW55P10G8A52Aya69jj0RK1nNmgB5lLYX7ToAMJafJdWS4n4jJFsLZmB
+         e+Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743007811; x=1743612611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1743007862; x=1743612662;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cT3szQVg53z3x7cQIma2mQu5F2nUuvb/9P0dqPLOAJE=;
-        b=EL/LEF+gJ7TM6mIHGq8y1+qQxvphulL7W/L3d5OtuaM3xjJJgyrqo8d/uBaam8V0OK
-         0X+keVbGVkAo+Stg1BHQpyfjDkfkEtEkaB8BQcIR5AeVN0+FbUNx0h3EZcND7yCnIEv5
-         fFPuEAI60icemExIc31oRJQxfQ5RVsZjSxEkiG4vPdBk5x2a2qYVgBm6h7lMlHjxRKSp
-         MPCwlPQVWHqLSNqRr2B+cNEJlwX54yUSCtxvHlBqOA2YBtU5OlwIlZxCorpnoPmfMuPT
-         pV1HqEJhAfdvQHL5rE02k20wiHkjKyIZevOLw8gsOmpHx4XWJxtBOYV0LBEKBDdEx6AR
-         6eqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDuVRBfOiHz8HsbcGik7rP0oE4Utet9x/YCkgTDoK+hV1OEdihv4QsuPinvyU7roO81Ps9oRBwpJ2yMitC8j8=@vger.kernel.org, AJvYcCXitYdUmALRq33hHdk4yKPt1/6OiIVIPUZXK+0TopQCGzp2hrrk/7m8Pe37a5qqmDWB5hU8PvKmiQAW2mY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqYzM+Y6bs+ff7IJ54yX+Towri5FyI+E41qR1AbMh6ZsRp406m
-	XRVm3tFAuxwpk5fijOWmdNWhqj1UpvnsoVBDDZycchkr5pXfz9r3
-X-Gm-Gg: ASbGncv9gTmQAuBOCrKMuJnTALnPbA6clVy1NRbsM5llrt4CdhJkcDrkQCcXq2GmG8s
-	JaF1y4GselfPPmZ+dqJAMAqQp8tKVY79vfdjBdKfYPXykkG/6j12oPBPrsNBazcdW0yqYv8DM/7
-	tOFZVSt4Ffqk/AL94CiSH3CziLqDhafOUICb0Ibauz2qauHzw0byiKQ2XxKuzaTK1cAaoDPDhn3
-	ymjNuEl9G0i4gGwoOz+2ZJqSDFBigdcP9+OjeiST1/+fQN/SEBjx6pz0p5VaDNAWsZ60d6+/iGh
-	nvkxAgjGsgh5qJQU0vnwelt+K3GVUhaO9fT25KDFA4PsyHr+fGoUXzlmCACG7CQG/hR460q4WZ0
-	WCIzaqerT
-X-Google-Smtp-Source: AGHT+IH6NiB8XIrU1ijLe9eO4y2/TzJx8mk5rBdRofVLqr5lrS8RdsoCsaeLeYoC3Nj3VNUNQ/fRuw==
-X-Received: by 2002:a05:600c:3506:b0:439:9434:4f3b with SMTP id 5b1f17b1804b1-43d8471df17mr5184255e9.8.1743007810338;
-        Wed, 26 Mar 2025 09:50:10 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedd1dsm8026015e9.8.2025.03.26.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 09:50:09 -0700 (PDT)
-Date: Wed, 26 Mar 2025 16:50:08 +0000
-From: Stafford Horne <shorne@gmail.com>
-To: Sahil Siddiq <icegambit91@gmail.com>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-	sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] openrisc: Refactor struct cpuinfo_or1k to reduce
- duplication
-Message-ID: <Z-QwQNmWPIRyVyPg@antec>
-References: <20250323195544.152948-1-sahilcdq@proton.me>
- <20250323195544.152948-2-sahilcdq@proton.me>
+        bh=hOAe8NppTWO9zoq1DW68RBKYaN9LktVjoWLJBt0YsMY=;
+        b=h1B/OxafShBkYt0AlWm0rNlcO6hLNH0vR8JfM3h6Upp01wc6cpPIVBSdDxijjvjJJw
+         /TVEUnPUntWcXwkr/s4YwghQaEwi8qEuZF804gn3tsqMCg/qg9y7YdG5ZD8WdYJQQeLb
+         tKr5nXart1aM8rWAmBTZx66Usx+k8n6ooQblGshu4cH0ymwV9jzPsBWhAVnN4uwrlX1k
+         H3MJMte0D/nWxfWcuHQLp0dJCz5W7xAfAd612KJwjjk2R+VKvKlkGXg5Bn+zi451XVbq
+         k4/T9RBOXmSuwJYJ3PHtutFmQ6uTMj7dp1kUYdgZJRkA4P4dHeVva7SUnk6tM8sLTcvT
+         61hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJVIt6sl7ASgGeCBUG3pcAQnnOFMqElVlm5dt62dVdooO5rcy7aLGn00pwF7bLGyp0Fdtlbb8@vger.kernel.org, AJvYcCWc5vYbsTOOuHhUeb+6ZklfwZfpVXXKZl8mXN/kXb0KnNuOAAc0FvaiDRzdRFL5E/kdioTGaZx3aP63rqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYLHXY79NWBEUVICGVrUYGtEogjl0ZwuHUPLCS+mrpUMxG5c7V
+	GIo19jzjiP48ERE4SuZ00dvOMaDODRUwDzSg1fMqL8HGMtpQ8H6L
+X-Gm-Gg: ASbGncueJKKJwwUFWGMbPYosx9ClW+EWUz6n+mXjRuwEQezs6m0N/bXRZhaCXOl7fTU
+	Dkt2sztSGp8/XDx/jLxvqatr9o4+2/AMafMa5CcqKdbdRXC7iDLR7bC+CgyRrs03LN/kbArogv7
+	L5/ReRhWWTELIgvA/473WmaIUvSIvSmvXiWpWGKXGYBdbP7rZevrVbnMdoI8YieCR2u34ecYLqt
+	LvsDsGQ78+kb1qNjw76GXYE3YtzSQbJIpy8h0k/6A0vNqey4LutN12RIxaXwXeuq8tWGiKJ0gjR
+	Ph2y9/+CwFdRFPcSUVRF3j4sDzNCWv20W8PsxwlgXJ14ccHTLH3aXZycR7wqpPCD+naJC8/z
+X-Google-Smtp-Source: AGHT+IFPKRWGLiBcjrjLsFURZF/SukMW6XJTZFRG9r2eH7jQ8Q4+akVlRgnN9pArBCca7rRFg93qDg==
+X-Received: by 2002:a05:6870:2889:b0:29e:65ed:5c70 with SMTP id 586e51a60fabf-2c84819f69dmr161676fac.30.1743007862339;
+        Wed, 26 Mar 2025 09:51:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77ecd79casm3145272fac.26.2025.03.26.09.51.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 09:51:01 -0700 (PDT)
+Message-ID: <8acfab35-35cb-4865-89a5-da41b1122b01@gmail.com>
+Date: Wed, 26 Mar 2025 09:50:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323195544.152948-2-sahilcdq@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/76] 6.6.85-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250326154346.820929475@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250326154346.820929475@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 01:25:42AM +0530, Sahil Siddiq wrote:
-> The "cpuinfo_or1k" structure currently has identical data members for
-> different cache components.
+On 3/26/25 08:44, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.85 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Remove these fields out of struct cpuinfo_or1k and into its own struct.
-> This reduces duplication while keeping cpuinfo_or1k extensible so more
-> cache descriptors can be added in the future.
+> Responses should be made by Fri, 28 Mar 2025 15:43:33 +0000.
+> Anything received after that time might be too late.
 > 
-> Also add a new field "sets" to the new structure.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
+> thanks,
+> 
+> greg k-h
 
-This looks ok to me.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> ---
-> Changes from v1/v2 -> v3:
-> - arch/openrisc/kernel/setup.c:
->   (print_cpuinfo):
->   1. Cascade changes made to struct cpuinfo_or1k.
->   2. These lines are ultimately shifted to the new file created in
->      patch #3.
->   (setup_cpuinfo): Likewise.
->   (show_cpuinfo): Likewise.
-> 
->  arch/openrisc/include/asm/cpuinfo.h | 16 +++++-----
->  arch/openrisc/kernel/setup.c        | 45 ++++++++++++++---------------
->  2 files changed, 31 insertions(+), 30 deletions(-)
-> 
-> diff --git a/arch/openrisc/include/asm/cpuinfo.h b/arch/openrisc/include/asm/cpuinfo.h
-> index 5e4744153d0e..82f5d4c06314 100644
-> --- a/arch/openrisc/include/asm/cpuinfo.h
-> +++ b/arch/openrisc/include/asm/cpuinfo.h
-> @@ -15,16 +15,18 @@
->  #ifndef __ASM_OPENRISC_CPUINFO_H
->  #define __ASM_OPENRISC_CPUINFO_H
->  
-> +struct cache_desc {
-> +	u32 size;
-> +	u32 sets;
-> +	u32 block_size;
-> +	u32 ways;
-> +};
-> +
->  struct cpuinfo_or1k {
->  	u32 clock_frequency;
->  
-> -	u32 icache_size;
-> -	u32 icache_block_size;
-> -	u32 icache_ways;
-> -
-> -	u32 dcache_size;
-> -	u32 dcache_block_size;
-> -	u32 dcache_ways;
-> +	struct cache_desc icache;
-> +	struct cache_desc dcache;
->  
->  	u16 coreid;
->  };
-> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
-> index be56eaafc8b9..66207cd7bb9e 100644
-> --- a/arch/openrisc/kernel/setup.c
-> +++ b/arch/openrisc/kernel/setup.c
-> @@ -115,16 +115,16 @@ static void print_cpuinfo(void)
->  
->  	if (upr & SPR_UPR_DCP)
->  		printk(KERN_INFO
-> -		       "-- dcache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> -		       cpuinfo->dcache_size, cpuinfo->dcache_block_size,
-> -		       cpuinfo->dcache_ways);
-> +		       "-- dcache: %4d bytes total, %2d bytes/line, %d set(s), %d way(s)\n",
-> +		       cpuinfo->dcache.size, cpuinfo->dcache.block_size,
-> +		       cpuinfo->dcache.sets, cpuinfo->dcache.ways);
->  	else
->  		printk(KERN_INFO "-- dcache disabled\n");
->  	if (upr & SPR_UPR_ICP)
->  		printk(KERN_INFO
-> -		       "-- icache: %4d bytes total, %2d bytes/line, %d way(s)\n",
-> -		       cpuinfo->icache_size, cpuinfo->icache_block_size,
-> -		       cpuinfo->icache_ways);
-> +		       "-- icache: %4d bytes total, %2d bytes/line, %d set(s), %d way(s)\n",
-> +		       cpuinfo->icache.size, cpuinfo->icache.block_size,
-> +		       cpuinfo->icache.sets, cpuinfo->icache.ways);
->  	else
->  		printk(KERN_INFO "-- icache disabled\n");
->  
-> @@ -156,7 +156,6 @@ void __init setup_cpuinfo(void)
->  {
->  	struct device_node *cpu;
->  	unsigned long iccfgr, dccfgr;
-> -	unsigned long cache_set_size;
->  	int cpu_id = smp_processor_id();
->  	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[cpu_id];
->  
-> @@ -165,18 +164,18 @@ void __init setup_cpuinfo(void)
->  		panic("Couldn't find CPU%d in device tree...\n", cpu_id);
->  
->  	iccfgr = mfspr(SPR_ICCFGR);
-> -	cpuinfo->icache_ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
-> -	cache_set_size = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
-> -	cpuinfo->icache_block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
-> -	cpuinfo->icache_size =
-> -	    cache_set_size * cpuinfo->icache_ways * cpuinfo->icache_block_size;
-> +	cpuinfo->icache.ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
-> +	cpuinfo->icache.sets = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
-> +	cpuinfo->icache.block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
-> +	cpuinfo->icache.size =
-> +	    cpuinfo->icache.sets * cpuinfo->icache.ways * cpuinfo->icache.block_size;
->  
->  	dccfgr = mfspr(SPR_DCCFGR);
-> -	cpuinfo->dcache_ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
-> -	cache_set_size = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
-> -	cpuinfo->dcache_block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
-> -	cpuinfo->dcache_size =
-> -	    cache_set_size * cpuinfo->dcache_ways * cpuinfo->dcache_block_size;
-> +	cpuinfo->dcache.ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
-> +	cpuinfo->dcache.sets = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
-> +	cpuinfo->dcache.block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
-> +	cpuinfo->dcache.size =
-> +	    cpuinfo->dcache.sets * cpuinfo->dcache.ways * cpuinfo->dcache.block_size;
->  
->  	if (of_property_read_u32(cpu, "clock-frequency",
->  				 &cpuinfo->clock_frequency)) {
-> @@ -320,14 +319,14 @@ static int show_cpuinfo(struct seq_file *m, void *v)
->  		seq_printf(m, "revision\t\t: %d\n", vr & SPR_VR_REV);
->  	}
->  	seq_printf(m, "frequency\t\t: %ld\n", loops_per_jiffy * HZ);
-> -	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache_size);
-> +	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache.size);
->  	seq_printf(m, "dcache block size\t: %d bytes\n",
-> -		   cpuinfo->dcache_block_size);
-> -	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache_ways);
-> -	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache_size);
-> +		   cpuinfo->dcache.block_size);
-> +	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache.ways);
-> +	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache.size);
->  	seq_printf(m, "icache block size\t: %d bytes\n",
-> -		   cpuinfo->icache_block_size);
-> -	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache_ways);
-> +		   cpuinfo->icache.block_size);
-> +	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache.ways);
->  	seq_printf(m, "immu\t\t\t: %d entries, %lu ways\n",
->  		   1 << ((mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTS) >> 2),
->  		   1 + (mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTW));
-> -- 
-> 2.48.1
-> 
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
