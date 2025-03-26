@@ -1,180 +1,264 @@
-Return-Path: <linux-kernel+bounces-577161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D4DA7195A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FF7A7195F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C60717CB2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E27D17CFA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B81F3BB2;
-	Wed, 26 Mar 2025 14:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3E11F1303;
+	Wed, 26 Mar 2025 14:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9msC/zI"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AmcP9Hd+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B685C1F1913
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4B81DEFD7;
+	Wed, 26 Mar 2025 14:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000298; cv=none; b=YglYRg2ruQP4VG7L6PWoOU4ChvG/HNkowkp5rr6a0pfqC/EYnGowvLMCvF0WtspZc6kk8g6gbIq0aFIxMws935dP/OA7pe0O7CTV2D48zMbtAZDkGdIXqFMR+Ggyvb/SrgcsKpV7HrKSbeoPzjcZW035NSLsCB/lSxw35CoBY70=
+	t=1743000392; cv=none; b=ak88rf3K2amU5n6eGKzzdZJSn/WPQX4lCLABW3COaeNEBZP0SyQbeIawLKvD8FK4dv3n8LpNbiJYVFlE/C9SzERFjobo3YoOK1PgbWbU5AiocDnoE2Pd/uLwrjQVsHfQ6m7+mMHB3nERhzU+m7DKsbDlcSoiEvdVVUu5J+2mPDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000298; c=relaxed/simple;
-	bh=Ghh84CGkR/FCVSnBNgUctPE3F7pU59Z+NKgjxNQtNFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I++PO3fd6UoGEE2jheY6QtrBqtHh6GKrH9jAOYDAOaLyYV7cwI4WAK6BSdpFpJZYubIO/0ApMRZj6pleqWO81CShCNwWQ6z+hGvRjc6R/AuL9RlJrXS0+AD4U2+kXTxG2Tms+emWfGUCgZA+ssKp5M+nMwSjgVQr1jPY2PVuej4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9msC/zI; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso36604915e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743000295; x=1743605095; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=REtKXp4hi6sgBm+AS7b2V8Aev3l8C+kzOBfn08oN45c=;
-        b=U9msC/zIskuQNMsHcYGTDYInxitcUJA9R4/QZKz/+ihpsfVh+GEYzj6KnQkz5gbqqs
-         6hwVdlAGgNnhprSdTSVHz6LxhYeNk+6I2zU1a14/NVmVB+1JHS0U0+rULSfl/HcMwgcx
-         cF93zqKJYZwW9WwHH/j36G0Pq90OyCpYRJmq5nwnBU6QpgccaihPpzieCr8vZ2D/GH/k
-         /QICkcCKDYkzKi7gnujGksr+w366pTqDkXUold4VWJiAmwxfdmcnNf3fmxVAG200P67W
-         oEePc7huY88cDS/Sr8zv89/9cK9HzDUP7asAktnp3+fAvOSlvwL//6nfOGznua+Br/Ow
-         GEqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000295; x=1743605095;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=REtKXp4hi6sgBm+AS7b2V8Aev3l8C+kzOBfn08oN45c=;
-        b=wB0UYMdHCVkrBp0LUe6HUII98a7QGUwBxNjiTu82hHcgKRVbL8DduZZVxtFuvyHHrj
-         6cZOEeUGo7T5RR9BoCy9cV5ks4mwZUKvmFUVLqmTGK/2/XxKeyPo6cPKFqOf1+TfCQVv
-         k6fGQpjUccjJiMJCNfHX9VFPJ/4PGKIdeHXWlA2BZgzisqytUWFypj6trfEUsUN7dLGy
-         MwrGfQY9X5wEqdDJUiesgOR0LCWR7zX/HAh9lLLlzGoWl3d7zEluWGh2R3QPcJE19ODv
-         nNz0HYiBkYFsbbpIkUqx0A2gt3pREGYjn1yQj9n4tEP9Xo2agcXuBt7gDUEJsIdUg5HA
-         FpLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdTD0vSnEEX8rEQuPJz3sYii4Jy22t1w7PhZlq4esGpt7ZVg3QXM1q9BzH5JuoN5q0dlF3LKiliy86vww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV0tzYstdLZy0SwTWBPBN7EstOQAk21/6TpuZ80qqyUhJ5eM6S
-	U+yT3dfPrb8ws6dEeeGkP/0A+aSO0zLM2P0Yf2pm5ySPSOLb7kXjJLBHhCUwiro=
-X-Gm-Gg: ASbGncskmUeyonD61wjUmqAUKnPkNlg9iib2FU0UiWOGLQ2lz1R3OGs0ur3LEInETgQ
-	3hrE1f0q8hDvDYDPjwUy7GHbvgNSwiYjJLW4YIPHFHIcRcWNBlbzHnxFb+9BV+rtLx41V1kB42b
-	NvIQd11/ifH2QpD1uNB+SrPoqinXJY/KXMJjeDrZydTscNv8TxeEC08pYjPZjvuBjFY+1JJ1iNQ
-	Engfb+164uY1IuFMpLw6RSGOcFYL1RqC8kPWjsvu2CkObFqU3pxjAMVJ9NXsrmLDR44h0qvcmsB
-	mhjdog1Ydw8xsOIP2pVe+L57hKA6PRwTRMarWRd14wp869Y/25WKtJVwzodvsCN8fw==
-X-Google-Smtp-Source: AGHT+IHDOuf6KYAidi0f/+wH2oPjsGxXXLqRAgkCOSMQfLCi0UZThvqs+OxaqR5hMnEF4EQhlhmaOQ==
-X-Received: by 2002:a05:600c:45cf:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-43d508715e4mr191868365e9.0.1743000294919;
-        Wed, 26 Mar 2025 07:44:54 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedd03sm4190975e9.3.2025.03.26.07.44.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 07:44:54 -0700 (PDT)
-Message-ID: <be8e5758-8f85-4476-b6c0-4400c8151cbe@linaro.org>
-Date: Wed, 26 Mar 2025 14:44:52 +0000
+	s=arc-20240116; t=1743000392; c=relaxed/simple;
+	bh=Cc7wktbOWDJBZ+sIqX0WmKXii8fobhHZDsEO0msqRKU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KO4C4zP9g4xILpIgycKHsr8sfzkjhGQnnNIVc5M/ZVSQr5gdCv0jLS5guj8v+ZxsDRnaWEPCFRNg1dQDW4bsTyir+OGiFOZohcGfsLZgq08A4VdMQUqZUMdX6BdlkR5zWGfBWsAqzIyFYiRMDvKtqD8A4q9EzRfe3Ye84dWONaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AmcP9Hd+; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743000390; x=1774536390;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Cc7wktbOWDJBZ+sIqX0WmKXii8fobhHZDsEO0msqRKU=;
+  b=AmcP9Hd+FjaGYJ1uRGhpBmZ+sulEcU0uzSkItEeok5GS0NkCzuMLBu/4
+   UV7TBSK5/iqtvTbec+WVbwoEtbdc7gz9J55h5POhNN2F6AVJW98SLvz4w
+   aHD/sNYm5G0l1l6Az1+VZUfK3oz49h1FZJZpD8J7ha1jDv6f/xYN+JKp9
+   InSllFMDQQr5cbmtgqrlm6oCs8a1dLtRqwBFrx6yOwOnGe8gEgKFeN1oo
+   P5zFBGWthbvI3DoCARDB5e+6WhkNG+yAOpEm7DkLWZFLYrlSub80Vl1aP
+   FF2EkzYC3QtWjWNToAp5pP0Gd5kJZAEezjLxbngjEzR8WuSrknJgwPuyq
+   Q==;
+X-CSE-ConnectionGUID: TfmwU6AfQkm3yk1Cn3vmyg==
+X-CSE-MsgGUID: Nnn2h0xYQkKPLNDXEwnhjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="31898297"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="31898297"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:46:29 -0700
+X-CSE-ConnectionGUID: s+ipq+BcQTq9kbQs3QqtxQ==
+X-CSE-MsgGUID: LBm8mf+MSyyjbS37H75K2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="124759051"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:46:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 26 Mar 2025 16:46:19 +0200 (EET)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v6 2/6] PCI: Add a helper to convert between VF BAR number
+ and IOV resource
+In-Reply-To: <20250320110854.3866284-3-michal.winiarski@intel.com>
+Message-ID: <fd94c15d-7fcc-c9db-8af0-868c15bc34a3@linux.intel.com>
+References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-3-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mtd: spi-nor: use rdid-dummy-ncycles DT property
-To: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Takahiro Kuwano <tkuw584924@gmail.com>,
- Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bacem Daassi <Bacem.Daassi@infineon.com>,
- Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
- Mark Brown <broonie@kernel.org>
-References: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
- <20250319-snor-rdid-dummy-ncycles-v1-2-fbf64e4c226a@infineon.com>
- <20250319233024.GA2625856-robh@kernel.org>
- <a3818477-5a67-43ad-8961-88fa02916968@linaro.org>
- <CAL_JsqKtz5+R1kjEzjo6bVicOX2c=UauC0_STAF0T02rSDqO+w@mail.gmail.com>
- <50de19f7-2021-433e-b8f8-d928ed7d5d57@linaro.org>
- <D8LSAUU0358V.2H1D7QXB9WBOF@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <D8LSAUU0358V.2H1D7QXB9WBOF@kernel.org>
+Content-Type: multipart/mixed; boundary="8323328-1096444980-1743000379=:942"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1096444980-1743000379=:942
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hi, Michael,
+On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
 
-Sorry, I somehow missed your replies.
+> There are multiple places where conversions between IOV resources and
+> corresponding VF BAR numbers are done.
+>=20
+> Extract the logic to pci_resource_num_from_vf_bar() and
+> pci_resource_num_to_vf_bar() helpers.
+>=20
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> ---
+>  drivers/pci/iov.c       | 22 ++++++++++++----------
+>  drivers/pci/pci.h       | 19 +++++++++++++++++++
+>  drivers/pci/setup-bus.c |  3 ++-
+>  3 files changed, 33 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index bf95387993cd5..985ea11339c45 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -151,7 +151,7 @@ resource_size_t pci_iov_resource_size(struct pci_dev =
+*dev, int resno)
+>  =09if (!dev->is_physfn)
+>  =09=09return 0;
+> =20
+> -=09return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
+> +=09return dev->sriov->barsz[pci_resource_num_to_vf_bar(resno)];
+>  }
+> =20
+>  static void pci_read_vf_config_common(struct pci_dev *virtfn)
+> @@ -322,12 +322,13 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+>  =09virtfn->multifunction =3D 0;
+> =20
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> -=09=09res =3D &dev->resource[i + PCI_IOV_RESOURCES];
+> +=09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
+>  =09=09if (!res->parent)
+>  =09=09=09continue;
+>  =09=09virtfn->resource[i].name =3D pci_name(virtfn);
+>  =09=09virtfn->resource[i].flags =3D res->flags;
+> -=09=09size =3D pci_iov_resource_size(dev, i + PCI_IOV_RESOURCES);
+> +=09=09size =3D pci_iov_resource_size(dev,
+> +=09=09=09=09=09     pci_resource_num_from_vf_bar(i));
+>  =09=09resource_set_range(&virtfn->resource[i],
+>  =09=09=09=09   res->start + size * id, size);
+>  =09=09rc =3D request_resource(res, &virtfn->resource[i]);
+> @@ -624,8 +625,8 @@ static int sriov_enable(struct pci_dev *dev, int nr_v=
+irtfn)
+> =20
+>  =09nres =3D 0;
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> -=09=09bars |=3D (1 << (i + PCI_IOV_RESOURCES));
+> -=09=09res =3D &dev->resource[i + PCI_IOV_RESOURCES];
+> +=09=09bars |=3D (1 << pci_resource_num_from_vf_bar(i));
+> +=09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
+>  =09=09if (res->parent)
+>  =09=09=09nres++;
+>  =09}
+> @@ -791,8 +792,9 @@ static int sriov_init(struct pci_dev *dev, int pos)
+> =20
+>  =09nres =3D 0;
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> -=09=09res =3D &dev->resource[i + PCI_IOV_RESOURCES];
+> -=09=09res_name =3D pci_resource_name(dev, i + PCI_IOV_RESOURCES);
+> +=09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
+> +=09=09res_name =3D pci_resource_name(dev,
+> +=09=09=09=09=09     pci_resource_num_from_vf_bar(i));
 
-On 3/21/25 8:00 AM, Michael Walle wrote:
+All these get easier to read if you add (same comment for the cases=20
+above):
 
-cut
+=09=09int idx =3D pci_resource_num_from_vf_bar(i);
 
->>>> The
->>>> problem that I see with that is that we no longer bind against the
->>>> generic jedec,spi-nor compatible, so people need to update their DT in
->>>> case they use/plug-in a different flash on their board.
->>>
->>> This chip is clearly *not* compatible with a generic chip.
->>
->> I think it is compatible. The chip defines the SFDP (serial flash
->> discoverable parameters) tables. At probe time we parse those tables and
->> initialize the flash based on them.
-> 
-> I disagree. It's not compatible with "jedec,spi-nor", which is
-> defined as
-> 
+> =20
+>  =09=09/*
+>  =09=09 * If it is already FIXED, don't change it, something
+> @@ -851,7 +853,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+>  =09dev->is_physfn =3D 0;
+>  failed:
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> -=09=09res =3D &dev->resource[i + PCI_IOV_RESOURCES];
+> +=09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
+>  =09=09res->flags =3D 0;
+>  =09}
+> =20
+> @@ -913,7 +915,7 @@ static void sriov_restore_state(struct pci_dev *dev)
+>  =09pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, ctrl);
+> =20
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++)
+> -=09=09pci_update_resource(dev, i + PCI_IOV_RESOURCES);
+> +=09=09pci_update_resource(dev, pci_resource_num_from_vf_bar(i));
+> =20
+>  =09pci_write_config_dword(dev, iov->pos + PCI_SRIOV_SYS_PGSIZE, iov->pgs=
+z);
+>  =09pci_iov_set_numvfs(dev, iov->num_VFs);
+> @@ -979,7 +981,7 @@ void pci_iov_update_resource(struct pci_dev *dev, int=
+ resno)
+>  {
+>  =09struct pci_sriov *iov =3D dev->is_physfn ? dev->sriov : NULL;
+>  =09struct resource *res =3D pci_resource_n(dev, resno);
+> -=09int vf_bar =3D resno - PCI_IOV_RESOURCES;
+> +=09int vf_bar =3D pci_resource_num_to_vf_bar(resno);
+>  =09struct pci_bus_region region;
+>  =09u16 cmd;
+>  =09u32 new;
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index adc54bb2c8b34..f44840ee3c327 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -693,6 +693,15 @@ static inline bool pci_resource_is_iov(int resno)
+>  {
+>  =09return resno >=3D PCI_IOV_RESOURCES && resno <=3D PCI_IOV_RESOURCE_EN=
+D;
+>  }
+> +static inline int pci_resource_num_from_vf_bar(int resno)
+> +{
+> +=09return resno + PCI_IOV_RESOURCES;
+> +}
+> +
+> +static inline int pci_resource_num_to_vf_bar(int resno)
+> +{
+> +=09return resno - PCI_IOV_RESOURCES;
+> +}
+>  extern const struct attribute_group sriov_pf_dev_attr_group;
+>  extern const struct attribute_group sriov_vf_dev_attr_group;
+>  #else
+> @@ -717,6 +726,16 @@ static inline bool pci_resource_is_iov(int resno)
+>  {
+>  =09return false;
+>  }
+> +static inline int pci_resource_num_from_vf_bar(int resno)
+> +{
+> +=09WARN_ON_ONCE(1);
+> +=09return -ENODEV;
+> +}
+> +static inline int pci_resource_num_to_vf_bar(int resno)
+> +{
+> +=09WARN_ON_ONCE(1);
+> +=09return -ENODEV;
+> +}
+>  #endif /* CONFIG_PCI_IOV */
+> =20
+>  #ifdef CONFIG_PCIE_TPH
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 54d6f4fa3ce16..55e91ba1e74a2 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1885,7 +1885,8 @@ static int iov_resources_unassigned(struct pci_dev =
+*dev, void *data)
+>  =09bool *unassigned =3D data;
+> =20
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> -=09=09struct resource *r =3D &dev->resource[i + PCI_IOV_RESOURCES];
+> +=09=09struct resource *r =3D
+> +=09=09=09&dev->resource[pci_resource_num_from_vf_bar(i)];
 
-cut
+I'd add int idx here as well.
 
-> 
-> See my first reply, on how to possibly fix this mess (new
-> compatible if accepted, just use RDSFDP sequence which is backed by
-> the standard and do some fingerprinting).
->
+>  =09=09struct pci_bus_region region;
+> =20
+>  =09=09/* Not assigned or rejected by kernel? */
+>=20
 
-this won't work unless there's a unique parameter or ID in the sfdp or
-vendors tables, which I doubt. Takahiro to confirm.
+--=20
+ i.
 
-> FWIW, a new (or rather different) compatible is needed because we
-> cannot distinguish between random data returned during the dummy
-> cycles and a proper manufacturer id. So there is no way we could fix
-> this in the core itself.
-
-Yes, I agree, new compatible it is then.
-
-cut
-
->> I think the property vs compatible decision resumes at whether we
->> consider that the dummy cycles requirement for Read ID is/will be
->> generic or not.
-> 
-> It is not generic. Because it will break autodetection. And that is
-> the whole purpose of this. Adding that property means, we can just
-> autodetect flashes within this 'group'. And personally, I think this
-> is a bad precedent.
-> 
-
-yes, I agree.
-
->> I noticed that with higher frequencies or protocol modes (e.g, octal
->> DTR), flashes tend to require more dummy cycles. I think with time,
->> we'll have more flashes with such requirement. Takahiro can jump in and
->> tell if it's already the case with IFX.
-> 
-> But hopefully not with RDID. Again this doesn't play nice with other
-> flashes (or all flashes for now). Instead of adding random delay
-> cycles one should rather define a max clock speed for this opcode.
-
-This could work, yes. But not for this flash. Or maybe encourage vendors
-to either contribute and enlarge the SFDP database or define their own
-vendor tables for all the flash properties that are not covered yet.
-It's strange how Block Protection is not yet covered by SFDP after all
-these years.
-
-Thanks,
-ta
+--8323328-1096444980-1743000379=:942--
 
