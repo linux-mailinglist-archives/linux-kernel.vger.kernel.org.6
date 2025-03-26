@@ -1,69 +1,59 @@
-Return-Path: <linux-kernel+bounces-577327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A05A71B92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE3A71B98
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D8C189ABBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:13:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF80B1898A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46361F540F;
-	Wed, 26 Mar 2025 16:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530B415CD55;
+	Wed, 26 Mar 2025 16:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ThQ78nL8"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjLPK6hE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978B81DB933;
-	Wed, 26 Mar 2025 16:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B454C1F4C9F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743005601; cv=none; b=X92R+DcENJIfgM2g8yE7YgcjoMVycRF2vkaClhzcbrcieS1GzZbBtwTicRLnc1hBQPNYCxi2JZw7L4nnSA+XqBMDMMl6V5FzLK9J+JZvjM5fLAckkJSKoGQppYzixGvIfM9Ac7GhyuNXK/UgZGJOdwRpnfhteg5ygEN7tawWse4=
+	t=1743005703; cv=none; b=D1c2OIhaKeTpmCtCehPgRA+W2pkQLvAbquViHO0Qp5Sd8v7vNJAOfIkI31F4z8MKPk/dy+zI6jShM0IPWdGZzEFlVsi0pA39l85lNaDG8vnQ/4RzrTwGWm5UBPCC30rPTBEgUez8e8K7GpfsQMvell9FNSus5w9EP7o5aCmwr9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743005601; c=relaxed/simple;
-	bh=RS9rjV+oD4AQLsNqBufHGiDuQ/N96iUxTlgYBfA1elE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JvRsY/Wj+ehcSAbF5zHXfts+Q5XUVjCIok2PvfpCwnKBSVVZxNNsxLw7qxTU6F7FN127Q4IOgvoxWqLUIjLKz8UufjpbdWOm/RvkBdF3VLyCOqtIkgwgrWRpo+XNrLNpPwHZXNt/MWNfJRk6HI/Jo2MjErElZKqkA1jh4/nrdmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ThQ78nL8; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 4B75EC001B;
-	Wed, 26 Mar 2025 19:13:07 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 4B75EC001B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1743005587; bh=K3OdXdhmP3j0/JrBtArhPTsRcZ9ars3xQ/jtxHeTYyk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ThQ78nL884SDUKaXYETHgvOxEYNvA/3/QgcEsBhbnF+EmbhxAZBNofKbgvkBRs0zF
-	 qp130g/FXRKiyHWCOIJUahzm+sGVvPC5WkOVamHXNqGJDQiQ4SQGx6stYQv/X7RrlN
-	 IBxEIO70OctzNLlXa2FNnV0lLYiFJm3sEeK3gZiprj8N7XEoPUPuALnjVq0fAw6zWH
-	 TUU4atxbG7r+PV8zeNTDbbUzNFMqwPUNo8k2qX9YGB/oKGtTKPVyFvpzPCrPUvhmdG
-	 zKYR4CEWgqQhoy4O4h4A39iYADzFkIzcpX44XDUmMrSa7GpqExu9dMvO/nsojVTZpR
-	 d3hkAiyfb24mQ==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Wed, 26 Mar 2025 19:13:07 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (5.1.51.21) by mmail-p-exch01.mt.ru
- (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Wed, 26 Mar
- 2025 19:13:05 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] net: dsa: felix: check felix_cpu_port_for_conduit() for failure
-Date: Wed, 26 Mar 2025 21:12:45 +0500
-Message-ID: <20250326161251.7233-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1743005703; c=relaxed/simple;
+	bh=vOKAizh5/MPDvANmNq5cDN8/kNrC8LI+3gM0Y2qPuAE=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Dupy4fcC1IdfrsnT7nIYyfLgHDUocgPCjXvMzTa6nAXvu9Ap9ldFw6uSLJ6ybwBWEHi439d1PU35gzInEi+DTpdf+Qf+9hc+48lHQDGxPs7/Ee7H6SzjimKWUqTnU1OUNkDhmOSblgPLkW/29ThNAvt82hZ/+oOhHp/ZxLXVF9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjLPK6hE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2379C4CEE2;
+	Wed, 26 Mar 2025 16:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743005703;
+	bh=vOKAizh5/MPDvANmNq5cDN8/kNrC8LI+3gM0Y2qPuAE=;
+	h=From:To:Subject:Date:From;
+	b=ZjLPK6hE1mQMJ6Ld2J8jqVj8cyWzqOTAmKKeso0S7mNrKCsk8ukyaRXNiSSgm1nEe
+	 16Tx1c80UJt7R6woxbEOvEuY3sfTVXHGcOFj4C0iDvZmZhO/5D6j7qhKrCFsrtLVaY
+	 bchDTQC+uAaBIv+DN7Qv7r/YEzCiuykhyuKHJ0LuWje45faMVcI1Bs0GKWqZTOgzo3
+	 XY6UIfovwKYYjrRA9EdTx5DFMhnuy8X6YqxD0LLuoku1KanU0s/nXHR+yl+Xy3vuol
+	 N9dyyZFsXG9PFBj2K0/Y/2W5hMLf0fcwxJ29T91TAVguyQtq6CJ+fKoW5z72R9r3xn
+	 yNrJ7YLUrNUEQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Simon Wunderlich <sw@simonwunderlich.de>,
+	Alex Elder <elder@kernel.org>,
+	Antonio Quartulli <antonio@openvpn.net>,
+	Kees Cook <kees@kernel.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Mathieu Othacehe <othacehe@gnu.org>,
+	Leonard Crestez <cdleonard@gmail.com>
+Subject: [PATCH] mailmap: Update my emails
+Date: Wed, 26 Mar 2025 18:14:52 +0200
+Message-Id: <20250326161454.122270-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,82 +61,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192128 [Mar 26 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/26 10:13:00 #27825781
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-felix_cpu_port_for_conduit() can return a negative value in case of failure
-and then it will be used as a port index causing buffer underflow. This can
-happen if a bonding interface in 802.1Q mode has no ports. This is unlikely
-to happen because the underlying driver handles IFF_TEAM, IFF_MASTER,
-IFF_BONDING bits and ports populating correctly, it is still better to
-check this for correctness if somehow it fails.
+@parity.io was never used in anything. Replace with my current
+work email.
 
-Check if cpu_port is non-negative before using it as an index.
-Errors from change_conduit() are already handled and no additional changes
-are required.
-
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/net/dsa/ocelot/felix.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ .mailmap | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-index 0a4e682a55ef..1495f8e21f90 100644
---- a/drivers/net/dsa/ocelot/felix.c
-+++ b/drivers/net/dsa/ocelot/felix.c
-@@ -523,6 +523,7 @@ static int felix_tag_npi_change_conduit(struct dsa_switch *ds, int port,
- {
- 	struct dsa_port *dp = dsa_to_port(ds, port), *other_dp;
- 	struct ocelot *ocelot = ds->priv;
-+	int cpu;
- 
- 	if (netif_is_lag_master(conduit)) {
- 		NL_SET_ERR_MSG_MOD(extack,
-@@ -546,7 +547,12 @@ static int felix_tag_npi_change_conduit(struct dsa_switch *ds, int port,
- 	}
- 
- 	felix_npi_port_deinit(ocelot, ocelot->npi);
--	felix_npi_port_init(ocelot, felix_cpu_port_for_conduit(ds, conduit));
-+	cpu = felix_cpu_port_for_conduit(ds, conduit);
-+	if (cpu < 0) {
-+		dev_err(ds->dev, "Cpu port for conduit not found\n");
-+		return -EINVAL;
-+	}
-+	felix_npi_port_init(ocelot, cpu);
- 
- 	return 0;
- }
-@@ -658,6 +664,11 @@ static int felix_tag_8021q_change_conduit(struct dsa_switch *ds, int port,
- 	int cpu = felix_cpu_port_for_conduit(ds, conduit);
- 	struct ocelot *ocelot = ds->priv;
- 
-+	if (cpu < 0) {
-+		dev_err(ds->dev, "Cpu port for conduit not found\n");
-+		return -EINVAL;
-+	}
-+
- 	ocelot_port_unassign_dsa_8021q_cpu(ocelot, port);
- 	ocelot_port_assign_dsa_8021q_cpu(ocelot, port, cpu);
- 
+diff --git a/.mailmap b/.mailmap
+index 05a3889ae2d3..7d00c6c25901 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -304,7 +304,7 @@ Jan Glauber <jan.glauber@gmail.com> <jglauber@cavium.com>
+ Jan Kuliga <jtkuliga.kdev@gmail.com> <jankul@alatek.krakow.pl>
+ Jarkko Sakkinen <jarkko@kernel.org> <jarkko.sakkinen@linux.intel.com>
+ Jarkko Sakkinen <jarkko@kernel.org> <jarkko@profian.com>
+-Jarkko Sakkinen <jarkko@kernel.org> <jarkko.sakkinen@parity.io>
++Jarkko Sakkinen <jarkko@kernel.org> <jarkko.sakkinen@opinsys.com>
+ Jason Gunthorpe <jgg@ziepe.ca> <jgg@mellanox.com>
+ Jason Gunthorpe <jgg@ziepe.ca> <jgg@nvidia.com>
+ Jason Gunthorpe <jgg@ziepe.ca> <jgunthorpe@obsidianresearch.com>
 -- 
-2.48.1
+2.39.5
 
 
