@@ -1,216 +1,212 @@
-Return-Path: <linux-kernel+bounces-576828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15ABA714CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:28:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF0DA714E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4221516EA9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D407188B2F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401631B4251;
-	Wed, 26 Mar 2025 10:28:12 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEDF191461;
-	Wed, 26 Mar 2025 10:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0891B4242;
+	Wed, 26 Mar 2025 10:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwwvLKUp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BD81B3925
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984891; cv=none; b=Zbv2y5oGAUarPqnpub8JBurMgdVYd5/6mxReW6cD8M1oML3Mnx21S7Fwd3SrkHiJwlY/jxPfPsBPfONJxW73J/f4TwRbgV+iBOY71xRlkFCocjOywFCsWeFAqasZkyblLhnIeQIsCTi41CQGJxKGMffkaj1miHOQImvr/VJ+Azc=
+	t=1742984971; cv=none; b=bTs30pJZIrb5W5a0GRwhq38rXu3b4QtLUzVyxcYW68EXXfJ5rkAaGHjz3deF+jJqgkevfc6O15M9k06qgAVpxMw4XGcuC8fPkmctH5lZ2FXhJ+DlCk/L4N9U4tsYsDoOKUBrhlkppdA/GAedVZNNbDqUsUAHLNPQgJhaT5T6gzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984891; c=relaxed/simple;
-	bh=BQ+RCQroniN8Gs4KUOSyIz68iYPmSvAwuWQ0g/bg6x0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KD/qiJKtL7X6LX9tJ1wS43rWyG54nTWaQ4KQ0D/Bn8CmGuhnntWmwWw4gx7PMUabpL26F9tIHRmtSoPYk5Y8acR9W34kZ80g0bWPGlqkdus8QgYmJjg5z8VnZsYxCZpX13ZhA+/ItZEXhI1wkduC8sBz9CpGJDfgOVGo7l227UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 4yRLzn7tTCunCWnpSjpHEg==
-X-CSE-MsgGUID: u40O+HspSB6HLClGfoz4Hw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Mar 2025 19:28:06 +0900
-Received: from [10.226.94.2] (unknown [10.226.94.2])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EB1DF424103D;
-	Wed, 26 Mar 2025 19:28:03 +0900 (JST)
-Message-ID: <d2d09918-5555-47a7-8b82-f88e9ff022d7@bp.renesas.com>
-Date: Wed, 26 Mar 2025 10:28:01 +0000
+	s=arc-20240116; t=1742984971; c=relaxed/simple;
+	bh=b0P3KJW9X1+XeNKelGauo3Nuu0cynmRBgPZXZ+9Ac2w=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cDzoYfocPzDv79f5a/GX+PhcI/oL2KcwmcCacFJMdmmWP2Ud9MnvabEiJkvvRohbXsjLnIeRoRK2K/8nqZTnzo15Sf+OnowY3P1gAoVv0fwuQ8S/s8u3kdyzBIslcS7POMUVIAEm83iQf6jN4APDlUwnYLljSqAzOaIDR8ACIP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwwvLKUp; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742984969; x=1774520969;
+  h=date:from:to:cc:subject:message-id;
+  bh=b0P3KJW9X1+XeNKelGauo3Nuu0cynmRBgPZXZ+9Ac2w=;
+  b=BwwvLKUp1Ckxz5cNYpUD7sPhVEryy/8bRwG0x5/nITCt5HCIywtkRwav
+   gjQEHHydYA4vJiXgSBZBISAxWd4PhDBZ1R6qXipLlk+2eqesVl88nOO+3
+   4Mvy5b1cb9ZNsxl6tiumm9YBbbsl2oj0J6cemOHTrO4WIACcW+5X2OeH3
+   +rW7RJvf87lhyuOivPbjcCxSp3pSrZitmrFyAkMLHZqHichvmQ4pujcYW
+   NPsuWzSu1Zbm8gV5zZU1YmoplgprfpMiUc/zMuWzCOqGB/oEhstKvLEoh
+   VddFhrUkTOBGZQrNcxrRqJigcO5go+nueIgIEl+zIuAtgXe4snY4iunjg
+   g==;
+X-CSE-ConnectionGUID: iazqIJEXRhm5a0QJ6BPkeQ==
+X-CSE-MsgGUID: QTwF7MxuSZW2Q+EjVHAo+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="54924934"
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="54924934"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:29:29 -0700
+X-CSE-ConnectionGUID: Qi293O95T26zhJzIIcerYQ==
+X-CSE-MsgGUID: gh/ekebfTz+OMA9ZfcJp7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="155611511"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 26 Mar 2025 03:29:27 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txO0j-0005eR-0y;
+	Wed, 26 Mar 2025 10:29:25 +0000
+Date: Wed, 26 Mar 2025 18:29:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cpu] BUILD SUCCESS
+ 0dd09e215a391805130338688586805fe8bf2b32
+Message-ID: <202503261815.YMQET00t-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/13] dt-bindings: clock: Add cpg for the Renesas
- RZ/T2H SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
- geert@linux-m68k.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
- <20250325160904.2688858-3-thierry.bultel.yh@bp.renesas.com>
- <20250326-enigmatic-cuscus-of-enhancement-410130@krzk-bin>
-Content-Language: en-GB
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20250326-enigmatic-cuscus-of-enhancement-410130@krzk-bin>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------UM2wLDiSoAOiEvwXIjdeLEJP"
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------UM2wLDiSoAOiEvwXIjdeLEJP
-Content-Type: multipart/mixed; boundary="------------Aj96iPSh1N0A0O7GX10xCQuL";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
- geert@linux-m68k.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <d2d09918-5555-47a7-8b82-f88e9ff022d7@bp.renesas.com>
-Subject: Re: [PATCH v5 02/13] dt-bindings: clock: Add cpg for the Renesas
- RZ/T2H SoC
-References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
- <20250325160904.2688858-3-thierry.bultel.yh@bp.renesas.com>
- <20250326-enigmatic-cuscus-of-enhancement-410130@krzk-bin>
-In-Reply-To: <20250326-enigmatic-cuscus-of-enhancement-410130@krzk-bin>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
+branch HEAD: 0dd09e215a391805130338688586805fe8bf2b32  x86/cacheinfo: Apply maintainer-tip coding style fixes
 
---------------Aj96iPSh1N0A0O7GX10xCQuL
-Content-Type: multipart/mixed; boundary="------------bVwkNm3YyFrnF17NTE9h5pKF"
+elapsed time: 1450m
 
---------------bVwkNm3YyFrnF17NTE9h5pKF
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+configs tested: 120
+configs skipped: 3
 
-On 26/03/2025 07:49, Krzysztof Kozlowski wrote:
-> On Tue, Mar 25, 2025 at 05:08:50PM +0100, Thierry Bultel wrote:
->> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) bin=
-ding.
->>
->> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
->> ---
->> Changes v4->v5:
->>   - Set reg minItems and maxItems defaults at top level
->> Changes v3->v4:
->>   - Handle maxItems and clocks names properly in schema.=20
->=20
->=20
-> Can you start using b4 or send patchsets in standard way? No links to
-> previous versions in changelog and b4 diff does not work:
->=20
-> b4 diff '20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com'
-> Grabbing thread from lore.kernel.org/all/20250325160904.2688858-1-thier=
-ry.bultel.yh@bp.renesas.com/t.mbox.gz
-> Checking for older revisions
-> Grabbing search results from lore.kernel.org
->   Added from v4: 14 patches
-> ---
-> Analyzing 140 messages in the thread
-> Preparing fake-am for v4: dt-bindings: soc: Add Renesas RZ/T2H (R9A09G0=
-77) SoC
-> ERROR: Could not fake-am version v4
-> ---
-> Could not create fake-am range for lower series v4
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Hi Krzysztof,
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              alldefconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250325    gcc-14.2.0
+arc                   randconfig-002-20250325    gcc-13.3.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                         mv78xx0_defconfig    clang-19
+arm                   randconfig-001-20250325    gcc-5.5.0
+arm                   randconfig-002-20250325    gcc-5.5.0
+arm                   randconfig-003-20250325    gcc-5.5.0
+arm                   randconfig-004-20250325    clang-21
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250325    gcc-9.5.0
+arm64                 randconfig-002-20250325    clang-18
+arm64                 randconfig-003-20250325    gcc-7.5.0
+arm64                 randconfig-004-20250325    clang-20
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250325    gcc-13.3.0
+csky                  randconfig-002-20250325    gcc-14.2.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250325    clang-16
+hexagon               randconfig-002-20250325    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250325    gcc-12
+i386        buildonly-randconfig-002-20250325    clang-20
+i386        buildonly-randconfig-003-20250325    gcc-12
+i386        buildonly-randconfig-004-20250325    clang-20
+i386        buildonly-randconfig-005-20250325    gcc-12
+i386        buildonly-randconfig-006-20250325    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250325    gcc-14.2.0
+loongarch             randconfig-002-20250325    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                           ip27_defconfig    gcc-14.2.0
+mips                       rbtx49xx_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250325    gcc-7.5.0
+nios2                 randconfig-002-20250325    gcc-9.3.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20250325    gcc-12.4.0
+parisc                randconfig-002-20250325    gcc-12.4.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-21
+powerpc               randconfig-001-20250325    clang-21
+powerpc               randconfig-002-20250325    clang-21
+powerpc               randconfig-003-20250325    gcc-9.3.0
+powerpc64             randconfig-001-20250325    clang-15
+powerpc64             randconfig-002-20250325    clang-21
+powerpc64             randconfig-003-20250325    gcc-9.3.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-21
+riscv                 randconfig-001-20250325    gcc-9.3.0
+riscv                 randconfig-002-20250325    gcc-14.2.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-15
+s390                  randconfig-001-20250325    clang-18
+s390                  randconfig-002-20250325    clang-15
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                            migor_defconfig    gcc-14.2.0
+sh                    randconfig-001-20250325    gcc-5.5.0
+sh                    randconfig-002-20250325    gcc-11.5.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250325    gcc-8.5.0
+sparc                 randconfig-002-20250325    gcc-6.5.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250325    gcc-8.5.0
+sparc64               randconfig-002-20250325    gcc-10.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250325    clang-21
+um                    randconfig-002-20250325    clang-21
+um                           x86_64_defconfig    clang-15
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250325    gcc-12
+x86_64      buildonly-randconfig-002-20250325    clang-20
+x86_64      buildonly-randconfig-003-20250325    gcc-12
+x86_64      buildonly-randconfig-004-20250325    gcc-12
+x86_64      buildonly-randconfig-005-20250325    clang-20
+x86_64      buildonly-randconfig-006-20250325    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250325    gcc-8.5.0
+xtensa                randconfig-002-20250325    gcc-8.5.0
 
-The above b4 command works for me. Which b4 version are you using and
-which base tree do you have checked out?
-
-FYI, this series now applies cleanly on top of tty-next as Geert's
-patch [1] has been integrated.
-
-[1]: https://lore.kernel.org/linux-renesas-soc/11c2eab45d48211e75d8b8202c=
-ce60400880fe55.1741114989.git.geert+renesas@glider.be/T/#u
-
-Thanks,
-
---=20
-Paul Barker
---------------bVwkNm3YyFrnF17NTE9h5pKF
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------bVwkNm3YyFrnF17NTE9h5pKF--
-
---------------Aj96iPSh1N0A0O7GX10xCQuL--
-
---------------UM2wLDiSoAOiEvwXIjdeLEJP
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ+PWsQUDAAAAAAAKCRDbaV4Vf/JGvdey
-AQDfiAJ8CgqUXQ4GyeQ5Y9jP3hLVXfATQlkuc8bRq+cvMQEA3AbLsUg6gMXZoH55IOK40i2EKWJK
-iQ8YSEguFbn08gg=
-=oUeY
------END PGP SIGNATURE-----
-
---------------UM2wLDiSoAOiEvwXIjdeLEJP--
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
