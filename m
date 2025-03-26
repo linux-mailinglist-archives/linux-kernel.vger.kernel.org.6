@@ -1,199 +1,342 @@
-Return-Path: <linux-kernel+bounces-577060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD7FA717D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17826A717D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC5816D33A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80795173390
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF80D1F03E6;
-	Wed, 26 Mar 2025 13:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2917F1F03E6;
+	Wed, 26 Mar 2025 13:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F2G1EAew"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="l52CYGqi"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDB11E1DE0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD0D189919;
+	Wed, 26 Mar 2025 13:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742997222; cv=none; b=drwtjBUjA1533lNAb6Dg7WCtnvUbnS0i4VKsF3rMYkj1b75WJRVrigOh84AK8OKleGYtgEqPAhGhhqMu2OHSnuoViVKE4Fo3FdYALgriq0pnzdCE+Ww8YXTkXuDd8eQaoYj3F9+E7v5CFQo6Y9OGNHhtYcwdLNShDVqD2tXaRNU=
+	t=1742997237; cv=none; b=hO9A0ujndsZxzdyc7vz72UBT71R9NlDkhhLvgJq9CbbE88Z7XEJGQ9T6nDJKSiOpbmB9u9bp7TC6U3w/T6YcnkSHRhu8fTegDpxtuvbsh839e9m2til6cZDStciDFBEORHg0tY9SfQGG3qAQq/x33wRWcd6X+baKi/b2Ck0RhVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742997222; c=relaxed/simple;
-	bh=9L4xyxr7xMH9Dp2nmEgv5JEeMQO/tlZYPdy5nK9XB7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctA6/e03NE6FMeZQPhrGUHXLYHENPQgNKarIYvTOX8FwVy8ZmxC8l3l8TnxntWUyOoo+HnwEfrCK9JWiQEVp4EfhfymAt2I9lvK3peX5xoUID8MZKdYxzHaSnwNrqJQXhqsoX+UDTICRfh+//FEYE/DU969b/LlUEJDab/ZGfmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F2G1EAew; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73AgY024585
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:53:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7BA33c04zG/s0Ltuw12G0cx/mbnPEXUJh7lFeBxmokg=; b=F2G1EAewDGFCeXUe
-	zYCYQ4MFvBNdSbLz1+sxBAGV1Fvb2D74YEjtBVRXVpwdp6tyIRuQnKsH6TYxzohh
-	7TXFcPtpeO6L6mYN4m0w2u02BTvLU8ItT5nMlPL2JSdKkRkZHaIP/TTCn1afVpxF
-	avNnVqgowFb+IXIag40RSd8wdJScS0y8OL6bYfG224bGRqICLwQhHsuWGthOu/Ev
-	dSWFmo+a6Wj1r1O8sDdGsRIaQOqug6H7a88MuBWjOwKnQJ5462hsaMFpsacHjWs/
-	6NQHt9LW0vCgMYQUdeigzDw6gBEkFLPfihAqa2PGV9iUrS0Qyt5TqCWUPuuR7Ati
-	BnmhvQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd353v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:53:39 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5af539464so225566685a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:53:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742997218; x=1743602018;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BA33c04zG/s0Ltuw12G0cx/mbnPEXUJh7lFeBxmokg=;
-        b=ZDlfpHFjnwiGGHImXR1ifflLqiQjWNIYYfa3VqqNukL9SoUGpEOA8XkYd9x2VITdEJ
-         dHxsLkyTYeoGHjGjhp1jlWhGjIjCirEoqkTURApHX/Mn1yMoAu4Vjq+rMtOoTb1Vor2U
-         t1UdGVOd17xs8egrx+lQDb7vsOGo2fmo5kMANCx5ifqzD5rPaGjqkmdJgH+fDdbWBV3Q
-         QtXID36VVI5yC7kKwx3laqq+E3KIlkrKRR6YEu+AJVKKgajn/ttOAd3YAvKFpnsbMGOD
-         AXqpjgUNeai8Lwh138wpA7opFy49LIB3aTHtndz6qIeUp3ng9G6yvuL+Phlpv/SWDKHF
-         jsNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWAS2CzJDVF/9biTHXetbuiNgulKB4lM7pAXmLQfjp59iXGTlch4tHYLfw6puIuqXqMIviKIyG2VyfSBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7vQXXC5fcG11yGR0dwJgbQnkrCBVYChN+oVRLRn6sqT6y+CxU
-	bKvlDhfjyDeVYLhhF9cIKOGCOA2MuzGd82bty3tur7Yz5VjznJiCqV2Ob1wnlOZegZOSM/4TJs8
-	jOHcYQjy1CNuzf5YEFITE1vxO9ZU6E+sH4uV6ea/bgp15P89vIXaSrWuNL6+rrew=
-X-Gm-Gg: ASbGncsl7dMk23EP/1u8Mxnw58O0IJhtV+YE2K/OKgRT1YoGZWnpf+k1g3hzRRRQmc5
-	qAlNWs121l7eJFM93miZ6iTECZTbhV5fvzUjroELsURZlSX/5XU1T5Rt85p4XBcJj/1xRzGn2f0
-	DDy3v885p+//u1a+/xEa+UQyLVCDsdQxLVlAMg5Rm6FQCMxWSMu/J+77XF/ER5Shu9gykWpwsoL
-	D6PQEQy/26EhcLOsDH9jvAWvjYD7GkBA07bJjT0LRYWO1ZHab69+TMemCqgSJoYnpf+j7+vsmD+
-	pAHiFIfnIYvoXGLeBigpWkjOwlMpi9XtTZZj9mR+2MbKxBCkOqak/XTTQPTFmWCQXhY5BA==
-X-Received: by 2002:ac8:5894:0:b0:474:bc4a:edc8 with SMTP id d75a77b69052e-4775121d71dmr35379731cf.0.1742997218280;
-        Wed, 26 Mar 2025 06:53:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHebjyONIhZv+DeY46JivB3zqnPTztA+Se1h9eQ9cmVWaA0E0xMl/fWl7R8P3vHJk6AzYv29A==
-X-Received: by 2002:ac8:5894:0:b0:474:bc4a:edc8 with SMTP id d75a77b69052e-4775121d71dmr35379341cf.0.1742997217624;
-        Wed, 26 Mar 2025 06:53:37 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c6f47sm9303266a12.52.2025.03.26.06.53.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 06:53:36 -0700 (PDT)
-Message-ID: <5895ecc9-68c0-4ea2-b351-c48ed7a593a9@oss.qualcomm.com>
-Date: Wed, 26 Mar 2025 14:53:33 +0100
+	s=arc-20240116; t=1742997237; c=relaxed/simple;
+	bh=Qbao9YeXZxdgK01PyrVgIBjBv1VDrobFPWDfuEd9Egs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXqYkBB7OTyir/aypt5SRMR63nLLLc2oxhGRVdGQvMaW2MeLidee0J+1lNw7g8vhRu+5AYRFzptzOA+UkxPdQRSDJG+Sq/i6kYqN3MrmApGf5g2pftGq/mvYB0+HsWH2EGf1O87auXXRxJwSV+4tspoIjFErhYZCtD8Fg52VC8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=l52CYGqi; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2kEtzjhjCfVdaJ2ri8dRDBHYx8JUUX5N2JgqZFWwsKA=; b=l52CYGqiaLnwsvnNWnn02MQg3r
+	AifLm520J6XGDam490Bwmtir7Sd4YUtpGU/+U9BJONo+8oz5H83ykXcndZLdA89gtRbDSjq3vl+y3
+	vi8+uPgI57q4+QEZGRm15REnq/lE37vNY2FfergrBIo5rm/83dmqeMhEAighVosn4WDvPyZPlH9aV
+	abpwjvsVxWU79fDSjZgvyJC6RilQXTea5QWvTXQ2pginnrsCIGaAs4oZw56KaQj5VzZvH/EySe6Y1
+	3B9geYI5Uf0MDAogssbdqJMzeH1XmwW5p8xphabFLxJXdL1I0seZz/yZw2dGA+fRAHz1TpOt6VvuQ
+	GMldUXMg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39450)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1txRCR-00066l-24;
+	Wed, 26 Mar 2025 13:53:43 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1txRCO-0004QQ-0W;
+	Wed, 26 Mar 2025 13:53:40 +0000
+Date: Wed, 26 Mar 2025 13:53:39 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
+ AS21xxx PHYs
+Message-ID: <Z-QG4w425UuYXZOX@shell.armlinux.org.uk>
+References: <20250326002404.25530-1-ansuelsmth@gmail.com>
+ <20250326002404.25530-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] phy: qcom: Add M31 based eUSB2 PHY driver
-To: Wesley Cheng <quic_wcheng@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
- <20250304-sm8750_usb_master-v2-6-a698a2e68e06@quicinc.com>
- <69fa7f33-e957-4dac-93dc-6fd40167873c@oss.qualcomm.com>
- <1956a94e-b231-4458-a1c1-6d9f158da669@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <1956a94e-b231-4458-a1c1-6d9f158da669@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: mSCx1ue6DYEYXP6LKOEzMb4ZSH5kWlF3
-X-Proofpoint-ORIG-GUID: mSCx1ue6DYEYXP6LKOEzMb4ZSH5kWlF3
-X-Authority-Analysis: v=2.4 cv=P646hjAu c=1 sm=1 tr=0 ts=67e406e3 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=O-TZl5gO0o4KVnlI8YMA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260084
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326002404.25530-3-ansuelsmth@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 3/19/25 8:03 PM, Wesley Cheng wrote:
-> Hi Konrad,
-> 
-> On 3/11/2025 4:19 AM, Konrad Dybcio wrote:
->> On 3/4/25 10:56 PM, Melody Olvera wrote:
->>> From: Wesley Cheng <quic_wcheng@quicinc.com>
->>>
->>> SM8750 utilizes an eUSB2 PHY from M31.  Add the initialization
->>> sequences to bring it out of reset and into an operational state.  This
->>> differs to the M31 USB driver, in that the M31 eUSB2 driver will
->>> require a connection to an eUSB2 repeater.  This PHY driver will handle
->>> the initialization of the associated eUSB2 repeater when required.
->>>
->>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->>> ---
->>
->> [...]
->>
->>> +static int msm_m31_eusb2_write_readback(void __iomem *base, u32 offset,
->>> +					const u32 mask, u32 val)
->>> +{
->>> +	u32 write_val;
->>> +	u32 tmp;
->>> +
->>> +	tmp = readl_relaxed(base + offset);
->>> +	tmp &= ~mask;
->>> +	write_val = tmp | val;
->>> +
->>> +	writel_relaxed(write_val, base + offset);
->>> +
->>> +	tmp = readl_relaxed(base + offset);
->>> +	tmp &= mask;
->>> +
->>> +	if (tmp != val) {
->>> +		pr_err("write: %x to offset: %x FAILED\n", val, offset);
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	return 0;
->>
->> Is there a reason we need to read back every write?
->>
->> Does this have to do with some funny write buffering?
->>
-> 
-> Probably because its just a form of write synchronization, since we're
-> using the relaxed variants.  If desired I can switch to just using writel
-> and remove the readback.
+On Wed, Mar 26, 2025 at 01:23:58AM +0100, Christian Marangi wrote:
+> +static int aeon_ipc_send_cmd(struct phy_device *phydev, u32 cmd,
+> +			     u16 *ret_sts)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	bool curr_parity;
+> +	int ret;
+> +
+> +	/* The IPC sync by using a single parity bit.
+> +	 * Each CMD have alternately this bit set or clear
+> +	 * to understand correct flow and packet order.
+> +	 */
+> +	curr_parity = priv->parity_status;
+> +	if (priv->parity_status)
+> +		cmd |= AEON_IPC_CMD_PARITY;
+> +
+> +	/* Always update parity for next packet */
+> +	priv->parity_status = !priv->parity_status;
+> +
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_CMD, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for packet to be processed */
+> +	usleep_range(AEON_IPC_DELAY, AEON_IPC_DELAY + 5000);
+> +
+> +	/* With no ret_sts, ignore waiting for packet completion
+> +	 * (ipc parity bit sync)
+> +	 */
+> +	if (!ret_sts)
+> +		return 0;
+> +
+> +	ret = aeon_ipcs_wait_cmd(phydev, curr_parity);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_STS);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*ret_sts = ret;
+> +	if ((*ret_sts & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_SUCCESS)
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_ipc_send_msg(struct phy_device *phydev, u16 opcode,
+> +			     u16 *data, unsigned int data_len, u16 *ret_sts)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	u32 cmd;
+> +	int ret;
+> +	int i;
+> +
+> +	/* IPC have a max of 8 register to transfer data,
+> +	 * make sure we never exceed this.
+> +	 */
+> +	if (data_len > AEON_IPC_DATA_MAX)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	for (i = 0; i < data_len / sizeof(u16); i++)
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i),
+> +			      data[i]);
+> +
+> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, data_len) |
+> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, opcode);
+> +	ret = aeon_ipc_send_cmd(phydev, cmd, ret_sts);
+> +	if (ret)
+> +		phydev_err(phydev, "failed to send ipc msg for %x: %d\n", opcode, ret);
+> +
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int aeon_ipc_rcv_msg(struct phy_device *phydev, u16 ret_sts,
+> +			    u16 *data)
+> +{
+> +	unsigned int size = FIELD_GET(AEON_IPC_STS_SIZE, ret_sts);
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	int ret;
+> +	int i;
+> +
+> +	if ((ret_sts & AEON_IPC_STS_STATUS) == AEON_IPC_STS_STATUS_ERROR)
+> +		return -EINVAL;
+> +
+> +	/* Prevent IPC from stack smashing the kernel */
+> +	if (size > AEON_IPC_DATA_MAX)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	for (i = 0; i < DIV_ROUND_UP(size, sizeof(u16)); i++) {
+> +		ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i));
+> +		if (ret < 0) {
+> +			size = ret;
+> +			goto out;
+> +		}
+> +
+> +		data[i] = ret;
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	return size;
+> +}
+> +
+> +/* Logic to sync parity bit with IPC.
+> + * We send 2 NOP cmd with same partity and we wait for IPC
+> + * to handle the packet only for the second one. This way
+> + * we make sure we are sync for every next cmd.
+> + */
+> +static int aeon_ipc_sync_parity(struct phy_device *phydev)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	u16 ret_sts;
+> +	u32 cmd;
+> +	int ret;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	/* Send NOP with no parity */
+> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, 0) |
+> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, IPC_CMD_NOOP);
+> +	aeon_ipc_send_cmd(phydev, cmd, NULL);
+> +
+> +	/* Reset packet parity */
+> +	priv->parity_status = false;
+> +
+> +	/* Send second NOP with no parity */
+> +	ret = aeon_ipc_send_cmd(phydev, cmd, &ret_sts);
+> +
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	/* We expect to return -EFAULT */
+> +	if (ret != -EFAULT)
+> +		return ret;
+> +
+> +	if ((ret_sts & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_READY)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_ipc_get_fw_version(struct phy_device *phydev)
+> +{
+> +	u16 ret_data[8], data[1];
+> +	u16 ret_sts;
+> +	int ret;
+> +
+> +	data[0] = IPC_INFO_VERSION;
+> +	ret = aeon_ipc_send_msg(phydev, IPC_CMD_INFO, data, sizeof(data),
+> +				&ret_sts);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_rcv_msg(phydev, ret_sts, ret_data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	phydev_info(phydev, "Firmware Version: %s\n", (char *)ret_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_dpc_ra_enable(struct phy_device *phydev)
+> +{
+> +	u16 data[2];
+> +	u16 ret_sts;
+> +
+> +	data[0] = IPC_CFG_PARAM_DIRECT;
+> +	data[1] = IPC_CFG_PARAM_DIRECT_DPC_RA;
+> +
+> +	return aeon_ipc_send_msg(phydev, IPC_CMD_CFG_PARAM, data,
+> +				 sizeof(data), &ret_sts);
+> +}
+> +
+> +static int as21xxx_probe(struct phy_device *phydev)
+> +{
+> +	struct as21xxx_priv *priv;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(&phydev->mdio.dev,
+> +			    sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +	phydev->priv = priv;
+> +
+> +	ret = devm_mutex_init(&phydev->mdio.dev,
+> +			      &priv->ipc_lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_firmware_load(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_sync_parity(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, VEND1_PTP_CLK,
+> +			       VEND1_PTP_CLK_EN);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_dpc_ra_enable(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_get_fw_version(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	phydev->needs_reregister = true;
+> +
+> +	return 0;
+> +}
 
-non-relaxed variants are defined something like:
+This probe function allocates devres resources that wil lbe freed when
+it returns through the unbinding in patch 1. This is a recipe for
+confusion - struct as21xxx_priv must never be used from any of the
+"real" driver.
 
+I would suggest:
 
-writel(foo) {
-	writel_relaxed(foo);
-	wmb();
-}
+1. document that devres resources will not be preserved when
+   phydev->needs_reregister is set true.
 
-with readbacks enforcing much stronger ordering (via a data/address
-dependency) than a barrier, i.e. if you write to an address and read back the
-register, the write must have arrived at the destination hardware (which is
-not a given otherwise, see:
+2. rename struct as21xxx_priv to struct as21xxx_fw_load_priv to make
+   it clear that it's for firmware loading.
 
-2f8cf2c3f3e3 ("clk: qcom: reset: Ensure write completion on reset de/assertion")
+3. use a prefix that uniquely identifies those functions that can only
+   be called with this structure populated.
 
-Konrad
+4. set phydev->priv to NULL at the end of this probe function to ensure
+   no one dereferences the free'd pointer in a "real" driver, which
+   could lead to use-after-free errors.
+
+In summary, I really don't like this approach - it feels too much of a
+hack, _and_ introduces the potential for drivers that makes use of this
+to get stuff really very wrong. In my opinion that's not a model that
+we should add to the kernel.
+
+I'll say again - why can't the PHY firmware be loaded by board firmware.
+You've been silent on my feedback on this point. Given that you're
+ignoring me... for this patch series...
+
+Hard NAK.
+
+until you start responding to my review comments.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
