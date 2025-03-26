@@ -1,259 +1,142 @@
-Return-Path: <linux-kernel+bounces-577575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035F8A71F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:21:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884E6A71F26
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87983AFE92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48BB7A35ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C4253F00;
-	Wed, 26 Mar 2025 19:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEEA253B68;
+	Wed, 26 Mar 2025 19:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPtQBPVy"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="MonWK9k/"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D1415990C;
-	Wed, 26 Mar 2025 19:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0661253340;
+	Wed, 26 Mar 2025 19:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743016894; cv=none; b=hm0CXlK3m7ePFvcjyvPbPx3PLZRn6Juz9UGuewMeaMrLBLNC8qi0FW0BL6SSfWDveTmX/FIO0hsriQkLO3e/9ywRt8soDCtFKpwufZ02rSVBy8ntkXEjFxjwjt6+6rqhoano0xyCbVbb3+gQUHf3WSpUkvOHBkut2LO9LTkg4Ck=
+	t=1743017293; cv=none; b=Vyv+yj/tXgTqihm4S8U+qplUwl891VWQiXR7XYk+z8um9vKwnCpYN/vjj83RltFrOaGJhO6P9JIfU3Q7DTQPiJkJAwRwK3xYVy78ftr980yAby/SHg48pOx3YhHBngNIP58SP816bAmA7XgyzkSTNM/j1kaKupfAN25FzZCOKWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743016894; c=relaxed/simple;
-	bh=9SujrNYMLA/XAMHXQB+2rCkk6Yg1jBiNU3xCW6K3B9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UDmAEKU5pQsps3V28PieeooHO+Njbmfiz63OPRc/3b4lk4RXO4Bsv2lI9txXnqAgHkhKkl5w8+qHvWx6YXWKg9bkkyEyuWyPm8BM/AiCW7WzOTUfpap9V629D6xZxTOD3KcVB3ZWCiI1dwruGfuYDdU0nyavcC883K50ekWyUCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPtQBPVy; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5240b014f47so100640e0c.1;
-        Wed, 26 Mar 2025 12:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743016891; x=1743621691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=64vjjGgKkyej47wZkg9Q8gzWkXdomxA9oEZPcwE0Oo0=;
-        b=ZPtQBPVyyDWXoYnU9uFhHV+QqhPn8GIaTVlFnZrw0Gkjfs1uEwK3V4y8JJo1LKZrJw
-         zSWqdauIyJTTivBFnVsKLYc1LDpO/VJYSPhpbpBW3f0MeY0vIl+rzCi90w1DTsWkrel0
-         WK5BARvBjzGEHU+ZbP4/GpFVWgM8OWDE+2X6T7NEVorBIicJAK+ebpKbPv8EPM7lzX2D
-         a9QChfoaTa7mYCLJnd7PbpUc+lddhCw6DErbqR1LSwoslQ1kQXpAbDC9RlPVyRzrGCc0
-         GHMfdaKqPLlPpNYYbnGFs7Va0fKTmu+NVIrka/BsPe5gF8HfzgQiiidL8BWi6buMmrmD
-         mDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743016891; x=1743621691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=64vjjGgKkyej47wZkg9Q8gzWkXdomxA9oEZPcwE0Oo0=;
-        b=WiqJKThFJczmooXs2SU/emJf+mtDhuQoN6LHz3WqK/1vBFfHMrlUe7Nww378RYH5rt
-         iDxHItyYVcTMBXXAQAi9QNt2EvKf2WuDwdE0Ltmbjw4LyMIo2miuVqD3ZQfTTi/vwLdR
-         HSDlLGveoe7r5S7SElX/ol5bVO1dl+iZQ+3PMiBngRUup2IFY8YBSC5haV6IvZCul2dg
-         y9bgKYHAO5W3fAxksCqkOppZtXZyAeuWyxYpEQY3dAegLvZlWIzWW2WLpclsVBzVgoBv
-         tL5a8lfQoyKDTO1BwsotNoxFfz9n7uCGAvWLP5JbcFKqgW/AKuzjAz02gAg0nkG7VM2q
-         517g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNFBGKlBuG7YBWYKUhsYnP0yfhUSUF3HfccUNXdeu9L6DRfM1w+cJi9D+3B0k4XHfcacHL8+0AXWpnew==@vger.kernel.org, AJvYcCUy4tlNwHhRH1ska91YonaTkEwYdUoA8V9oHU0bmYWA3/SR5/KunjS7e48eHKYVq7+vXs0rQhW9T2PWfFGF68sHwMQ=@vger.kernel.org, AJvYcCWZmden09U1k3WzZaKVOaSvjizRI6bDghfZdbfJ/fOQnpVX+fvORy//yqORbT7GQ9/yLnnTSY53ThxH+cJN@vger.kernel.org, AJvYcCWg7OR5AwjEWOsJpUkwoeCIq7euOMade+KnT2ingrICZgAZ/qS6CPApL6r0YkemkP2AyK6Nehl8mTJyNaJo@vger.kernel.org, AJvYcCX1J9ziV9C49Bw4jZGmWnkgBHCK6QnvMh0L+pOc9T2qjzPqwhyNgEt+dJ9Qdg5XQNPCUUYYAPg/oOPt@vger.kernel.org, AJvYcCXaqQlayKgOr6A7+EDvjZX0t38KvvJYmw1rHuJP+qSkubFKxXGjB4DP1KH5aSATEfUBntffhNhHK8pI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU4yK/Te9qwyNXsD1x1Y6S7yJyCrdEf8eN1CrMfPkTU/jBl63i
-	ImRjpiv2jLwgkSwlEmQrJSHzMxHyuJ7ydk0//tHCzVhFLALUoH1LjT3C8YTuHhTcvWttNKD6mom
-	rnYxEIDtLMsCqu/+sfuI6cn/yacc=
-X-Gm-Gg: ASbGncsXAFiucXKdHzOnjugnL7DW/HEZtcvAv17PF/UIzbS8igZBPlsmARuOogOuKsK
-	FnWmhxEi44gB7zDMDYbF6zreWGMq7HCb2y4BX7fSnGUZATXR73BFE9l3Scrg6zzaDHcqw4DXANc
-	73Dw9BzDU7HboJGzATBz1YsrnaW/Luv8ql41oelv0=
-X-Google-Smtp-Source: AGHT+IEMDUu/kTsNu1CbItYSDxUZeO1gxYDQkWcrekLYRRg2eqkHhtGCeqXHHIbGy6v6eIHaPx/Rv/onzgSKYSV/BuA=
-X-Received: by 2002:a05:6122:660c:b0:50b:e9a5:cd7b with SMTP id
- 71dfb90a1353d-52600a8ada4mr1173468e0c.9.1743016890983; Wed, 26 Mar 2025
- 12:21:30 -0700 (PDT)
+	s=arc-20240116; t=1743017293; c=relaxed/simple;
+	bh=qPuud6hQtUOpq0TI0kySy61SAsgR3IbvzwnPgGwUfOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dT0FCIuvbuhmPZeuKmps9O8xr47fpIR0eTPJW2BrXCYsXXaQ+/3+iHjTRa6TlLvvELslE5uPMeGqaW70535n8W3hS/ki8sf5Pq1S7VSQ6ihK1jGNDhdgBY4IRcfjkujDH61r7VOVaPegcdhD6ANHLSO7izTM6Me8QFh2Yvka3XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=MonWK9k/; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1743017282; x=1743622082; i=christian@heusel.eu;
+	bh=cC0SZP7Q4aEIS3+NUzVkYwY2u4HQnTUh3X+v+jKFAgQ=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MonWK9k/1PAumiE9Z2jZeDQa10q4Am54K5UXjqinvtCWYGuo1Vzx2fCMKGIwitoS
+	 HWCPM2oS1xpeVSpyBUElzSuH76oEVXdCgka0YdrHfYBkZTfRrK9uyFM4XD7w4xTFY
+	 qg2Sqn/mZ0bYETN5TnUYmacl3eUPrxEUQPiDOVQmM/EGOGeejWe00Q99E1jt9BjGL
+	 FFgqG0vnez/0BwCpTqYqXlCwDi9rgar3SPvB1RP2RelFn1l/RzpFLefjo6Kz/fVjl
+	 aZK6DI8gnX+ZFx0Uk1+hhnecJBTlET4f9qViblTKfjDBJEpZbXr2lZ8xeFTfUFyWP
+	 w0PKFl3rgfgI1q67Fg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([80.187.64.202]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M8xsm-1u1M4k3Nqw-00Fyj0; Wed, 26 Mar 2025 20:21:36 +0100
+Date: Wed, 26 Mar 2025 20:21:34 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
+Message-ID: <f2b079f7-d666-48c1-bfc9-0155dcc9b4a5@heusel.eu>
+References: <20250325122149.058346343@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <174301523991.2716417.14351851624098585706.robh@kernel.org>
-In-Reply-To: <174301523991.2716417.14351851624098585706.robh@kernel.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 26 Mar 2025 19:21:03 +0000
-X-Gm-Features: AQ5f1Jp6yjmSyKSnpYoXWKYVnLBzGIWh9gTSXr8OSv020P_GOH986D8KqbvLGlA
-Message-ID: <CA+V-a8tBGdAFoUW1Dt2wZTeQBcVts-CGc9DgC24uvtFSfoUFeA@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Add support for Renesas RZ/V2N SoC and EVK
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-serial@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Conor Dooley <conor+dt@kernel.org>, 
-	Will Deacon <will@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qrugcju3lf3vwyjc"
+Content-Disposition: inline
+In-Reply-To: <20250325122149.058346343@linuxfoundation.org>
+X-Provags-ID: V03:K1:HpQe7Dut4b0aICmrtZlF2dG1x9jQ8/S/5haSr79leaLIkettg+9
+ eI2bfciN7c2GW7ds+YwYouBbaS/4jGgagQSwKGuTCyBtF1+AwGxQDNW36oIlWDcA70uJwI9
+ WFypvTi22lwsD9heSsYU01BRQfOE1e5MxVFrSwSK4hh0RbJCQIiMIuWt6t/SalEWdLOq56O
+ Q5+3RdYZI+4VOvPuRNRXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:W9n4chH9dQc=;Bn0KuvoPImKhPVdunsFnOE9+VmO
+ UdaXA3sqHyXooaKge5snmAF6QxJaM4WuKYhWMBfI8HSHnphghQSttiY8Szh6n+KWabMPQMGt5
+ 7MjdbAztV8N2fWGuCSI/EOHpdpO/NThekqcHT1jlb5Ks95/iI+td8wKoOgTk/eOukVVpL4UCy
+ PgsHpKz9ShYl23A17lVpsDO8+E9D1Yngg1r3bXiPXhrsNFTWSXBNYAgrzyYVqaMsA93A9uTyP
+ ElcBbvmMDXgHwQF0usb3Qhq18nKUyNsAiiPDIiZOyg3lQ6CBhRDlZ2hyZBTy/sgmhQjUFGuPT
+ z9z9gSc6JSDcKFmNv/R7Kuj/+3wvssw3K8gnSDYfWpLtBcHE14JOebHRSBP2XUP5posKKIS+T
+ Yza5qnmnaQM96o9QWLZJAT/UWUqnG8D/M3MztPQg3EEYa4Y4ZVDXtRiIkTlHtvCN6VxZ5wiS4
+ apdNh/5yBeQCoUPyzs4E/r+14HR+0OZpMsYsTPdRFuCPHxWSTSI1P3IPqILyU9aYzCHEcuu6N
+ gGWrdLIbqmo7v/SSW7mRKIEGXmMBH0VuUY5aSSX5c5X6EgirXlj8ySnDw2lOz7dUyxoiFLqoy
+ 3PHPOyz+HEFfTO4RSD3v/NOgYOGxzzi80WXb/2bTUnu6CQ/JwxdkNjG9J+0mxU5wtLTqOmWqu
+ MJBaQoKz3ZQnN7P3clsAux2VEuujzdpEV2LoUYORu3mKx3H3KoY2WghWThiaYNS1b4SScqMGW
+ QY2T79uZVCquNgcMkxFFfj8RQWDz126XniYDxNJpW+4WmU5ADaJoC+LmhiDHiD1TfnlGEBeDR
+ t1Dk7QX/a7mtcS7FeulHEhn8IFr5ZNSFUIWvqCr3135bUCvA0BRN9wCffakQfmW3n6g5kSm+v
+ WlvGmkKjuOj3V2fTpO6Tqi1oCu1z3YbGta51ttxEwG0z6p0vJxvd8UzsLcvQiTW1XtO2QCkHi
+ 4yQ3HVoMf8bN9oXRwS17KtpKbBjM6sfVRYhEBUJirtosQ79AXpTMyAN+gZEUHATufcJQ5LYn+
+ ao4u/bsR2ZGUuZVvESgPEXXTKJcZjib9vw/M5ez8cUCcq5gpZFYqs5tFLAZBUCwndxZWoSsoQ
+ 2pXpvOeNcIYWrSO2Fx9kJS7b3b+gICv4s4jEja+ldNuTmOiDghCo5wo3Qfc4NWA6FDMtqvtnY
+ MYCA/Dt+wyj203z+/gwXeFYfy4ccawX7dYiK4wxF9gcPG7jDN1UXNhFR77tADO5OAkhK53lro
+ oXEjc+u74lUBZ3KPGVMy7EsvT5/ciOAIfbfTZrT+OLObdqQ1h1pJitCyk8JBBGN26Tlo5PNVB
+ wuirkJ5Zy3vKGeDHcAiFBa711XfGlJzhTakTTiDybUx7DhKm0hPqlV/LFbcAOWWxpP1L7ZLUz
+ H52ttxLXR8zb1vv0qkrXdk4QUryP0RjarxEKg=
+
+
+--qrugcju3lf3vwyjc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
+MIME-Version: 1.0
 
-Hi Rob,
+On 25/03/25 08:20AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.9 release.
+> There are 119 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
+> Anything received after that time might be too late.
 
-On Wed, Mar 26, 2025 at 7:11=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
->
-> On Wed, 26 Mar 2025 14:39:30 +0000, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > This patch series adds initial support for the Renesas RZ/V2N (R9A09G05=
-6)
-> > SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
-> > microprocessor (MPU) designed for power-efficient AI inference and
-> > real-time vision processing. It features Renesas' proprietary AI
-> > accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
-> > it ideal for applications such as Driver Monitoring Systems (DMS),
-> > industrial monitoring cameras, and mobile robots.
-> >
-> > Key features of the RZ/V2N SoC:
-> >   Processing Power:
-> >     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computin=
-g
-> >     - Single Arm Cortex-M33 core at 200MHz for real-time processing
-> >     - 1.5MB on-chip SRAM for fast data access
-> >     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
-> >
-> >   AI and Vision Processing:
-> >     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
-> >     - Arm Mali-C55 ISP (optional) for image signal processing
-> >     - Dual MIPI CSI-2 camera interfaces for multi-camera support
-> >
-> >   High-Speed Interfaces:
-> >     - PCIe Gen3 (2-lane) 1ch for external device expansion
-> >     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
-> >     - USB 2.0 (Host/Function) 1ch for legacy connectivity
-> >     - Gigabit Ethernet (2 channels) for network communication
-> >
-> >   Industrial and Automotive Features:
-> >     - 6x CAN FD channels for automotive and industrial networking
-> >     - 24-channel ADC for sensor data acquisition
-> >
-> > LINK: https://tinyurl.com/renesas-rz-v2n-soc
-> >
-> > The series introduces:
-> > - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pi=
-nctrl).
-> > - RZ/V2N SoC identification support.
-> > - Clock and pinctrl driver updates for RZ/V2N.
-> > - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
-> > - Enabling RZ/V2N SoC support in `arm64 defconfig`.
-> >
-> > These patches have been tested on the RZ/V2N EVK with v6.14,
-> > logs can be found here https://pastebin.com/8i3jgVby
-> >
-> > Cheers,
-> > Prabhakar
-> >
-> > Lad Prabhakar (15):
-> >   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants
-> >   dt-bindings: soc: renesas: Document RZ/V2N EVK board
-> >   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
-> >   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
-> >   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
-> >   dt-bindings: serial: renesas: Document RZ/V2N SCIF
-> >   dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
-> >   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
-> >   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part numbe=
-r
-> >   clk: renesas: rzv2h: Add support for RZ/V2N SoC
-> >   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
-> >   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
-> >   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
-> >   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
-> >   arm64: defconfig: Enable Renesas RZ/V2N SoC
-> >
-> >  .../bindings/clock/renesas,rzv2h-cpg.yaml     |   5 +-
-> >  .../devicetree/bindings/mmc/renesas,sdhi.yaml |   4 +-
-> >  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +
-> >  .../bindings/serial/renesas,scif.yaml         |   1 +
-> >  .../soc/renesas/renesas,r9a09g057-sys.yaml    |   1 +
-> >  .../bindings/soc/renesas/renesas.yaml         |  15 +
-> >  arch/arm64/boot/dts/renesas/Makefile          |   2 +
-> >  arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 264 ++++++++++++++++++
-> >  .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 115 ++++++++
-> >  arch/arm64/configs/defconfig                  |   1 +
-> >  drivers/clk/renesas/Kconfig                   |   5 +
-> >  drivers/clk/renesas/Makefile                  |   1 +
-> >  drivers/clk/renesas/r9a09g056-cpg.c           | 152 ++++++++++
-> >  drivers/clk/renesas/rzv2h-cpg.c               |  18 +-
-> >  drivers/clk/renesas/rzv2h-cpg.h               |   1 +
-> >  drivers/pinctrl/renesas/Kconfig               |   1 +
-> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  36 ++-
-> >  drivers/soc/renesas/Kconfig                   |  10 +
-> >  drivers/soc/renesas/Makefile                  |   1 +
-> >  drivers/soc/renesas/r9a09g056-sys.c           | 107 +++++++
-> >  drivers/soc/renesas/rz-sysc.c                 |   3 +
-> >  drivers/soc/renesas/rz-sysc.h                 |   1 +
-> >  .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  24 ++
-> >  .../pinctrl/renesas,r9a09g056-pinctrl.h       |  30 ++
-> >  24 files changed, 790 insertions(+), 10 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-> >  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.=
-dts
-> >  create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
-> >  create mode 100644 drivers/soc/renesas/r9a09g056-sys.c
-> >  create mode 100644 include/dt-bindings/clock/renesas,r9a09g056-cpg.h
-> >  create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g056-pinct=
-rl.h
-> >
-> > --
-> > 2.49.0
-> >
-> >
-> >
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> This patch series was applied (using b4) to base:
->  Base: attempting to guess base-commit...
->  Base: tags/next-20250326 (best guess, 15/18 blobs matched)
->
-> If this is not the correct base, please add 'base-commit' tag
-> (or use b4 which does this automatically)
->
-> New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/renesas=
-/' for 20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com:
->
-> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000:=
- 'interrupt-controller' is a required property
->         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
-g2l-pinctrl.yaml#
-> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000:=
- '#interrupt-cells' is a required property
->         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
-g2l-pinctrl.yaml#
->
->
-As mentioned in patch 13/15 [0] the above warnings are expected this
-is because as part of the initial support, the ICU has not been added
-yet. The interrupt-related properties will be added to the pinctrl
-node along with ICU support.
+Tested-by: Christian Heusel <christian@heusel.eu>
 
-[0] https://lore.kernel.org/all/20250326143945.82142-14-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com/
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
+Steam Deck (LCD variant) aswell as a Framework Desktop.
 
-Cheers,
-Prabhakar
+--qrugcju3lf3vwyjc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmfkU74ACgkQwEfU8yi1
+JYXu9g//R27iUOFq4JnHuIVIxt0JYN/uwQZwLB+hUTkCU00fal/OOKai9pRfG1HM
+mZRj2nC+e5spYiQ4104WsLP1ZvwRqPTNZ6nzzGTW65F3ejZADNoJbBUA1C2yr9r0
+R7nwQ3Cz0Vfi15JeSHnj5rSo2+OPf1hV6U6uJgk+7cF/vKiVkBw3VIWqEyPO5o1W
+/zBQCTrmnIp8ksqWaR1wevSYuaC781d64RCaBHyfoRw/wuKdw/qCwmFut6knqx49
+Rlr+5NSjz3eeWlK77zD5KBMTIzBdJLhlmylZn2IJoPx5lSPpIxVRfZdbXBodECSB
+iRBaDqnQ83Kw9+U3sRae1zRwTHcDYAygSw9R3Ghjrbl9oLQ8Plc91RdMv5qsGGe8
+4Ne+hdybWh9HvT2eeU0JP8UF1q24JqaDzQzJYWx0QSgItnG3Hrt9gv3AoyHzvCJg
+sWvz3VSNnQ5HeYfjs7dppozgGFuGVpbitqIS4TPnIrm+jpGyOqt/LGM8FG1p3qKL
+cqyFnv/LStdhtUrSFNLeeKlkHseIcgMzLmOHQ4LSog+TCMTR1PPghjc4G6Bu5/06
+9HigW7KXcc4aQiQamKhR7HXlFTWHXmFytjCrZm6k78c/MyapvBqiAt4F3/3bEkC/
+29Aimt0mPaFiNSKx6nmYE06urulqztt7J638Ja8h17WioT/uB4k=
+=Fnl+
+-----END PGP SIGNATURE-----
+
+--qrugcju3lf3vwyjc--
 
