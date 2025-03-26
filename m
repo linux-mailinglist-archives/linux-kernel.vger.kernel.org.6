@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-576560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7EDA71114
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:07:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D85A71115
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1381710B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F941720C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D635199EAD;
-	Wed, 26 Mar 2025 07:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979D119CC28;
+	Wed, 26 Mar 2025 07:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAdnDQzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="hS11gAWa"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6465819755B;
-	Wed, 26 Mar 2025 07:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230ED195B1A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972821; cv=none; b=lsWexe/VkfGi0nF3NwbBVt7i7CfXfHYSq9Aa89LfitBLQQMSL+TStyvfNG89OCuk+N5TQQXjNW25uHpF0K6XXYHqID1PsMP1crRqdN6h8B7EM+hi75GGhN7qXw4HLUw4el7bt0G3y9K5zEEB57LcLL1UjBhahcONkYsx00dlzEI=
+	t=1742972823; cv=none; b=IhfW3ZRFK9gGvlsVQ/rXJ262hmQDzsah0j7jplSyy8vMmM9DhlmgEq57hclmspDHLYgPvrFPGYNaNSoLRbuaf97VgUH4OfPHoBhlncJLvTxJLeqZTQDfpvQ1tGlFW949CC760QGx3LoYFoxvCqxZF7bv+5YzeTlNajJ+74I/rHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972821; c=relaxed/simple;
-	bh=DQSksbNd3/Q+zlJhSPULUC+Oc8sDej4F0+fpwmMZY5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gbFgEwrW4PUNsEvXws4v9lzhT0ugj5cDbDjrZZtRYScl4jEGcMM6DLpUW3QtFVAT9LC0AIvuk7/UkvfQJZMj7moS6QITSePchaVzmGPBybzB8l2Sni+AR7wB61BRZCBI1BaYTwDb+U0tjOhJB+dxwxBQDjCkSYvttzT0YR9ofcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAdnDQzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1333EC4CEE2;
-	Wed, 26 Mar 2025 07:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742972821;
-	bh=DQSksbNd3/Q+zlJhSPULUC+Oc8sDej4F0+fpwmMZY5A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FAdnDQztQFuGxvzDnWpD143+KfMigy4Qxwucp80zqMNK5oer+yZm4SFxjX6IyP7dZ
-	 fLKHcvBbleyNWKKGkf9b8tOfI9MEakpcW3jJvTzTi2FqyZjjyowzTy+9sTHcfJuyCS
-	 sv9xcVXAErpDw6CilKm12Y8D3jzqbrWX36xmMtQFM0RUNeFXQKRWKm/WPFYS1KrwtR
-	 Qkpqb2ZLLsKILNZy6O34mEQuhg/kS0cbPmCcnQNqySunJvyDBHN+jDcZH9z+EY7Djf
-	 njtyTCiPbGyTfa14sPHm6mDRByFrxf5B2cw/q2zLQ0vaqWaCpk2MVAsB58ao5f99xh
-	 kzG7XZB64lxiw==
-Message-ID: <dff94c54-2bb8-4eea-b8bf-deacd6197007@kernel.org>
-Date: Wed, 26 Mar 2025 08:06:49 +0100
+	s=arc-20240116; t=1742972823; c=relaxed/simple;
+	bh=43wDT1wis9+uXBD5diH2XwPs8DcYKUXCAE571UDtSUE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BrzeW71DJsE8HorhfUApp102YyFVLRhzjPmTeyxFZAsgx88Zeb3rRNXjTQFMotv+5xGHMgizDoRfLr78pg1/CrKKh7T/GanA9Y//fRvrArnB6zuVILoM2ujDqTWzDWzp07GGBJ8wHt/ZvatMOXFWJTj06jCnL7CBZ5rKajJdeo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=hS11gAWa; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ydj8XjXk7OtlDAEPWNWByX3+n+1MkIvRWl+Tl/yKavU=;
+  b=hS11gAWaixvYKpOp7RNEzXAue8Au60KWNyTSCkQre/GXe8XOGgeDSIJz
+   7PE4IEm5TFSoK2K/xbWO4iwAs+E1mnj+fKqxiRMSY2Iu1h+KjitQwOZhI
+   7Cs56UnQfno/SDFHSa2Fu2BMBaMv3g2YoR5RxWXpcyIVE+Q1nVprKFDFY
+   o=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
+   d="scan'208";a="214775295"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:06:52 +0100
+Date: Wed, 26 Mar 2025 08:06:52 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Erick Karanja <karanja99erick@gmail.com>
+cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
+    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: rtl8723bs: Rename variables v2
+In-Reply-To: <20250326064647.8380-1-karanja99erick@gmail.com>
+Message-ID: <alpine.DEB.2.22.394.2503260805440.3488@hadrien>
+References: <20250326064647.8380-1-karanja99erick@gmail.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/34] mfd: sec: slightly rework runtime platform data
- allocation
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-9-d08943702707@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250323-s2mpg10-v1-9-d08943702707@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 23/03/2025 23:39, André Draszik wrote:
-> As a preparation for adding support for Samsung's S2MPG10, which is
-> connected via SPEEDY / ACPM rather than I2C, we're going to split out
-> (move) all I2C-specific driver code into its own kernel module, and
-> create a (common) core transport-agnostic kernel module.
-> 
-> Transport drivers will have to do device tree parsing, and the core
-> driver will allocate its own additional memory as needed.
-> 
-> In preparation for that change, separate out runtime platform data
-> allocation from device tree parsing.
-> 
-> Having this change will create less churn in the upcoming split of the
-> transport-specific parts.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+On Wed, 26 Mar 2025, Erick Karanja wrote:
+
+> Rename the variable `mediaStatus` to `media_status` and variable
+> `lpsVal` to `lps_val` to adhere to Linux kernel coding
+> standards by using snake_case instead of CamelCase.
+>
+> changes in v2:
+>   reverted double blank line changes committed earier ensuring
+>   my patch contains uniform changes.
+
+This v2 information belongsbelow the ---.  It's not meaningful to people
+who look at the gi log in the future, because they don't see the previous
+version of the patch.  The part below the --- isdiscarded when the patch
+is applied.
+
+julia
+
+>
+> Fixes checkpatch.pl warning:
+> 	CHECK: Avoid CamelCase: <mediaStatus>
+> 	CHECK: Avoid CamelCase: <lpsVal>
+>
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_btcoex.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> index d54095f50113..f4b19ef7b341 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> @@ -8,14 +8,14 @@
+>  #include <rtw_btcoex.h>
+>  #include <hal_btcoex.h>
+>
+> -void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
+> +void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
+>  {
+> -	if ((mediaStatus == RT_MEDIA_CONNECT)
+> +	if ((media_status == RT_MEDIA_CONNECT)
+>  		&& (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
+>  		rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
+>  	}
+>
+> -	hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
+> +	hal_btcoex_MediaStatusNotify(padapter, media_status);
+>  }
+>
+>  void rtw_btcoex_HaltNotify(struct adapter *padapter)
+> @@ -52,14 +52,14 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
+>  void rtw_btcoex_LPS_Enter(struct adapter *padapter)
+>  {
+>  	struct pwrctrl_priv *pwrpriv;
+> -	u8 lpsVal;
+> +	u8 lps_val;
+>
+>
+>  	pwrpriv = adapter_to_pwrctl(padapter);
+>
+>  	pwrpriv->bpower_saving = true;
+> -	lpsVal = hal_btcoex_LpsVal(padapter);
+> -	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
+> +	lps_val = hal_btcoex_LpsVal(padapter);
+> +	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
+>  }
+>
+>  void rtw_btcoex_LPS_Leave(struct adapter *padapter)
+> --
+> 2.43.0
+>
+>
+>
 
