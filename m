@@ -1,109 +1,167 @@
-Return-Path: <linux-kernel+bounces-577509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66068A71E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:08:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478D3A71E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A39A189492B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A22E7A3BA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EF24EF9A;
-	Wed, 26 Mar 2025 18:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13CA24FC09;
+	Wed, 26 Mar 2025 18:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tIAaVPrl"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV/XYyP3"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E623E324;
-	Wed, 26 Mar 2025 18:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC28A24EF97;
+	Wed, 26 Mar 2025 18:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743012505; cv=none; b=GuEEbJGRkIjTQT0RqsNB8Z7Fp2V0yoMaeCMI2UtsX/NdjQn7Az+VQ+WgE0QGa3th66owpLwXnD0/H4GxkQvk5Z9EYk3TrH7FT1UO+ph1cgxhLzgjEsKaGJGBa0nUEzYnjhbFYTDcw/mcCLq3doUWMRFTiYgrEjUzrceu6GdyNJo=
+	t=1743012527; cv=none; b=WANsyt3vQViOf9iCfmIvoC/KBPA1SMdlyzoJPn15zTnJnGeHwzePgWnmIQbk5jLI9Pfa6FuPSp39/t8FMLyH05hEEfbRvDmpTI6bW3wzeQVQvIKpOleGIH3/Bk1vj/mSdWSqxXqXvBgAUmAht8YRbyNkURZz7xjixfJz1nWQo4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743012505; c=relaxed/simple;
-	bh=VUWIUj2hfkXI+Qy0S+bOeux5uwuJCkBDwdfH5H5+a04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fF3sPpWgG8T/FhlqPCi5vVQvqZjZebGf3tZjiEZ0wtfbYiaEfb/u9AnEnu78pa6Ot0eYPOyB74c/klI48FAC/0S1ARK8KbVCaHaWeq0PfsVMbGb/S2fub5O8W96wpOu1lO6GezPJhSriGlvOHWk1o3JySxL6EF5ftxcYvfkcXuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tIAaVPrl; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=W9NKf/8mTYUYfIRNEyzd9z7p8OnoYdqWiENexZcINQs=; b=tIAaVPrlQIYxF6Z16HmkxlO/zN
-	MaqTLGdwwrT2x1RDu/stzwNSmKYIVGWk30woItxKAlJwr0+SAxQPqT2H0NlPsNZ4DNQXcm/jboLPH
-	0DDitU52H/T04+xuGboip2+QSFHJhcz52keptJ5h8ASfrhiUvuu1C0OEVTcpAzDfS4gqA2hg48vcY
-	xnwh9+F9DuSSDViL/8GV2DKoWjDqQFw8IMGt02IwdE/3SYlW5aTmmC+ABAhIzxAvD/mZ8EHxs8vbb
-	JUtqFeELrOxuL72kYV9FhZNewMcGuQkyUHuo8PBg7NcEokKr13ADUO7Kx26NC4/ddTSSoW/yh3s81
-	R9OsymiQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33370)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1txVAi-0006RH-0w;
-	Wed, 26 Mar 2025 18:08:12 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1txVAg-0004c9-0c;
-	Wed, 26 Mar 2025 18:08:10 +0000
-Date: Wed, 26 Mar 2025 18:08:09 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
- AS21xxx PHYs
-Message-ID: <Z-RCiWzRWbv7RlHJ@shell.armlinux.org.uk>
-References: <20250326002404.25530-1-ansuelsmth@gmail.com>
- <20250326002404.25530-3-ansuelsmth@gmail.com>
- <dfa78876-d4a6-4226-b3d4-dbf112e001ee@lunn.ch>
+	s=arc-20240116; t=1743012527; c=relaxed/simple;
+	bh=6mLDKvGM1mGH3tA7f9jvwsDAJY9XbgV3Ql/pnbhvIAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rm7BdsMwuD1CDu9y9xoS99v65vZjzi2J/JnQRujw/v9oCfluWkXLJgJSKgete9YI0TTkoDzlMiAWG4fg974UL2ACk/Uk1IzPbY7m6E6FNktIplXbg2T4Fd0wSe0skpUTqRRfY6zsSgLufpZdaZSkkyjmjdD2DK8l2HKLeKNClc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV/XYyP3; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4775ce8a4b0so2389851cf.1;
+        Wed, 26 Mar 2025 11:08:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743012524; x=1743617324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aol4s/GyhsDfj9Ax/+3S97UHILyRN8WTp6xA7nHsuco=;
+        b=mV/XYyP3W8XSBmlgrP4QxvKxPaCTfp90NAn9fv49s6vif+gRKuIJHbfOznS06VfjKu
+         6HXKZD/ljNynTMvLxTLV40lXWk5TQ+oJCL1oI/ArcR2q7EOVEAnjGKl37c0prfOWXYqA
+         AG3RYUnXGIgQcPzoY5BHfjSejmXuoYUr4oRH/9sloNu6w8rLkI4lzUKJi2vRWjZCno5n
+         UiRKF0TlEwpSR7MKodau7jkqzMipA3CqxSr2Shqf55+pNoK9Xyge9Cuhmjzt2ZB7Mz8v
+         2Q8WlB9kUY2n6hGWl0G8AUOSBouu7S+VY1RIUNzLkwoPwxRdi/6zIn2owno96zjjuFyo
+         OCXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743012524; x=1743617324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aol4s/GyhsDfj9Ax/+3S97UHILyRN8WTp6xA7nHsuco=;
+        b=iXHp2vJ1Ii9w7ulsAzlR0+HqR4i6Cth/vZac/Ob0/WtYs+/vyBpb2f4LZAzc+NKOsI
+         LeucF05/IrgccXU7yEj8nTdSEF1/63P3LZAKYNTYz3Le+FTRJVrtLUStoSWZUBfyp5l2
+         liAzvDbu6OaFK0VXAOMttcsLXHLgMe6q2QleYbbRdvbZGGPbUld/K+yw3LkRM1ZYDyQr
+         grlxZbfmTP7miIxl8icjvXg0ALprq5kjV/e6ErAKzCDnAudP5QEVHu7GRM3gNUG4tbdn
+         VEBTIIe+qGpi4AahMf07/RAdW75tTEZK3ygW2OTN0PZxsuMraG+xOOqgz0d7uQZoC6uK
+         i5ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgwVV+GSPOQ8LK2xmLHyPBNP01/n7GtYgUCqeolwqgdZDtdEAwO2cMLIgs13ZxbOBkdnPZZQ/L@vger.kernel.org, AJvYcCWzyj7iSum5EqoItRTSAOZmYBqRzRCZH8+7CEc/14KGJRla2x+SmiuQ3cIt8nMcU93bfsU1c6Q/MMtgroQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7z4gXsQ/pJ2ETS4goAtrKIl7T8pLYbKX65eIEWjD/+P930E9a
+	7qVTUfUJk06amhGzPUY8FPF0m+8uIIjpc7lfzZNRv32tv9VSbgxv
+X-Gm-Gg: ASbGnctV8IZkNnPlllK++B2LXlGJ1Q39DD+h426FFKBobLtR2qbq2+ZW5b7xB/g7x7t
+	luJQvBsBQjB986T7jFwqJg2WZ02mXuGDv5gzZE14gQO9A3snOrpeqBUst4t2cb3kbkByXfcbJOr
+	mc9bettvTKUTdxPc3wUFG/8yBBoTh7Bj6Zy/+PEgcSFV3cz6lmot5klFtwc8ul3GCqvXbTgCG2S
+	PRnvaL5MlXDGdZvYdFWcrsnAyn31DJ2OZUPt5xD+qiv0I9r12CB8k6TVJshrSsmDLnUDjdyXgFt
+	e8txhc+/B+nw0459HtK9JwLOnEqK4T9b3SMdibf+pkUEQhsLTwvBXYujIOWkCho7xNDSN/7aiMo
+	OtnG7Pt6rGA5U2AE2lPAmyYoKO8gOSycFpwA=
+X-Google-Smtp-Source: AGHT+IGQWY6oGXechStf8Ff1eNrAo42/G1GgJhoFwPQaN2dqpd7tbJQsyW5WH5wvgSS+feE4itE+Fg==
+X-Received: by 2002:a05:622a:2489:b0:476:8e88:6632 with SMTP id d75a77b69052e-4776e12b519mr9366391cf.29.1743012524247;
+        Wed, 26 Mar 2025 11:08:44 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d191ea6sm76300381cf.45.2025.03.26.11.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 11:08:43 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 5E7CA1200043;
+	Wed, 26 Mar 2025 14:08:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 26 Mar 2025 14:08:43 -0400
+X-ME-Sender: <xms:q0LkZ6mYHIz-j6sdPij8B6AR_cmGyqKxsQZs5UQacs1RjdlabrE2Vg>
+    <xme:q0LkZx3yFuvJ5aHhmH_pH1qb_dZBxPpdH3PVU-UDr9fsYXz1SlUhp5ZQ0LT8w4SPp
+    upQsvxvPPxnSo978w>
+X-ME-Received: <xmr:q0LkZ4p8ZwbOI0lycmE_BMlsn5AxGzQtZI-Gr7wtWAUvqZh8XrSb5SYSV5M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeivdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefgteffhfehjeegtdduieffudetfeehgfegudej
+    udfhieefgfeigfevueduleduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepmhhinhhgoheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihi
+    lhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrth
+    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprh
+    gtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehmihhnghhosehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:q0LkZ-luD3QAMLrjuHd8JCGy1PRh78N_Ntvq7nLEV1wPyH2sfRv3Yw>
+    <xmx:q0LkZ41TR9E50ebn5bFiT5A0HBr2dk9rI1NXciMKNUFSxTADwBDS2w>
+    <xmx:q0LkZ1vdUf3zBNeujR_CiGxeT2fRpyZv5GpSYLTjX9wPevfDiq4nTg>
+    <xmx:q0LkZ0WTPNV0Temz5Z_jfc4Gamz8CtcIPwNNDuN1z_n5dIyCeK12aw>
+    <xmx:q0LkZz1_Z9m7PJfdk9zwkiyYAj9V74y4OPD3OFGRgOctvdiHxIsLTM5K>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Mar 2025 14:08:42 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	stable@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] locking: lockdep: Decrease nr_unused_locks if lock unused in zap_class()
+Date: Wed, 26 Mar 2025 11:08:30 -0700
+Message-ID: <20250326180831.510348-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dfa78876-d4a6-4226-b3d4-dbf112e001ee@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 03:56:15PM +0100, Andrew Lunn wrote:
-> After the firmware download, the phylib core will still have the wrong
-> ID values. So you cannot use PHY_ID_MATCH_EXACT(PHY_ID_AS21011JB1).
-> But what you can do is have a .match_phy_device function. It will get
-> called, and it can read the real ID from the device, and perform a
-> match. If it does not match return -ENODEV, and the core will try the
-> next entry.
+Currently, when a lock class is allocated, nr_unused_locks will be
+increased by 1, until it gets used: nr_unused_locks will be decreased by
+1 in mark_lock(). However, one scenario is missed: a lock class may be
+zapped without even being used once. This could result into a situation
+that nr_unused_locks != 0 but no unused lock class is active in the
+system, and when `cat /proc/lockdep_stats`, a WARN_ON() will
+be triggered in a CONFIG_DEBUG_LOCKDEP=y kernel:
 
-Before it returns -ENODEV, it could re-read the ID values and fill
-them into struct phy_device. This would allow phylib's matching to
-work.
+[...] DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused)
+[...] WARNING: CPU: 41 PID: 1121 at kernel/locking/lockdep_proc.c:283 lockdep_stats_show+0xba9/0xbd0
 
-> You either need N match_phy_device functions, one per ID value, or you
-> can make use of the .driver_data in phy_driver, and place the matching
-> data there.
+And as a result, lockdep will be disabled after this.
 
-An alternative would be to change the match_phy_device() method to
-pass the phy_driver, which would allow a single match_phy_device
-function to match the new hardware ID values against the PHY IDs in
-the phy_driver without needing to modify the IDs in phy_device.
+Therefore, nr_unused_locks needs to be accounted correctly at
+zap_class() time.
 
+Cc: stable@vger.kernel.org
+Signee-off-by: Boqun Feng <boqun.feng@gmail.com>
+---
+ kernel/locking/lockdep.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index b15757e63626..686546d52337 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -6264,6 +6264,9 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
+ 		hlist_del_rcu(&class->hash_entry);
+ 		WRITE_ONCE(class->key, NULL);
+ 		WRITE_ONCE(class->name, NULL);
++		/* class allocated but not used, -1 in nr_unused_locks */
++		if (class->usage_mask == 0)
++			debug_atomic_dec(nr_unused_locks);
+ 		nr_lock_classes--;
+ 		__clear_bit(class - lock_classes, lock_classes_in_use);
+ 		if (class - lock_classes == max_lock_class_idx)
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.47.1
+
 
