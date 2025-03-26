@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-577357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC93A71C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:41:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00B0A71C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4481F16C993
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C213F1898A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647201F63EA;
-	Wed, 26 Mar 2025 16:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB9C1F463C;
+	Wed, 26 Mar 2025 16:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QueM3WxM"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="gStzZ2jW"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39F11F5826;
-	Wed, 26 Mar 2025 16:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79CF1F416D;
+	Wed, 26 Mar 2025 16:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007285; cv=none; b=H2cvO8e2twNxQ6IfCTUVJ/wadnkGMq212t8FG37FJSqY7q7l45cBvHzTYFlgSnWIMd8f6rSq3ZDarXJ22LjgGrJ/I+vWryOp73pz5Oq0VFgoCcS4kDqqdWwfD01NrdXTG+ogKL8Jmz7JwGHTn7fC9rMrKMYrxdacVIwLdn6xWVE=
+	t=1743007354; cv=none; b=AFvHEn91eBwHYiwApsn8q1yDyVCCX0kBvuDGcCe0NMnhNhN1F0Kmwp6m+tQPHYR5dzdzDfw07dTDVOjZUm3FFOVbyIcUy3WyDIeGxxeGoK3/3Sssxsejuu8Nhf4uvg+MHR379lxdqDxB44x23IIiBnjYMys+j6zTsPwC+3wXtN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007285; c=relaxed/simple;
-	bh=h1SSXkhpaIa9qGv4AoL4kqDanrlppQQlPT7T/o7sIyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pu2VqxZVPoH58f6LYgklpH11DDMIXoBXhJ7mj3LY21AgWWkS42ZHGi2G5cB/YuHsXAJMyjxS80RH8x/vpLuErk5i0yDwacU+NqgeCI1fQD4cLMPjyYwbRLD8MG5Lq3MIluonDKCzf0jVFBorVPAq+/LbE82xrOxYfXmnI3FSZMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QueM3WxM; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Mar 2025 12:41:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743007281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hco6mMfwDr5aakc5//G6CzI/fYtn1OWzv5mJRPvr/Eo=;
-	b=QueM3WxMhVpz2CkQTGzwvctgl7F3r2HdXt1jazr4AaO/dVr4i8PcEpC4PeqLSCrEbJ4TLz
-	CLiJtqQDvdOHm6bJX4QuAoQfRFGe/JUBGGov5dAw+H1ozaU9TesJkzbW+WwGZvmQeTNWaK
-	hBbzEY95bbgXAQONQ3litlAyS1hSfV0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Alan Huang <mmpgouride@gmail.com>
-Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>, 
-	Roxana Nicolescu <nicolescu.roxana@protonmail.com>, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] bcachefs: replace deprecated strncpy() with strscpy()
-Message-ID: <rl77wgelda45zddkutitervzkxd4iip4mxoheglxinqizf4owm@zmub5beyi6x3>
-References: <20250326094449.16473-1-nicolescu.roxana@protonmail.com>
- <5F3AB2BC-43DA-47A6-A07A-72540B327D11@gmail.com>
- <bmjvipermsvb454mdh5zmlmw4gv4oub5fgh4eowedlit75gqei@3or3va3e52ce>
- <MnHJR6KH9EcCqnLtdxKf3XYBSQQbvXWJafG28O2C2itnS_eETVFoDMfVvFva3dkLMZ-LPRWUhG2g_5HBY_lPZkWOYW2aOg_T4YWTrzXmVZ0=@protonmail.com>
- <wdagx2vwyv7s2t2tcndwmambwdhmoitvhmnzcopdl3xkfq6ct2@evmzpxnuhi4e>
- <CAPZ5DTF+Q_-10xF915wF3b3aUm5jqZepqoyivF+G4S6ONf_PcQ@mail.gmail.com>
- <vfszytfd66lqj54nmkymhnrdjodylb7l3alxblzixnlzv7kxom@4dji3xuvmknj>
- <A4568396-D1E1-4D93-851B-FA9CF9804E10@gmail.com>
+	s=arc-20240116; t=1743007354; c=relaxed/simple;
+	bh=X2DxkO3Z0ZiZDUVuslfUvsTVKz2yIhEjymSgEAgeaLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=olH5cRwnlPmJpFO6OAD3cOntBloEngKRRl2OK4vh2slJnD5G0wCDwbRCZgbET8oy+iWqqz7Ngv/axp2cY4CFsQHdy09daoKDNtTDV2YDVWn/gTl28d4zCQzO6VHBCgpsZFTe4zkJxhh/7s+exam7S7sElmC03jxQd7E2qDkrBGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=gStzZ2jW; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB251102EBA43;
+	Wed, 26 Mar 2025 17:42:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743007350; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=hbMcfALOKLAN5Mw8Wpa0WVyi0wWl2REb7L9X3HcdnTo=;
+	b=gStzZ2jWmk/ps9fxv0Xdm24uIRj7EOfQSWtMlG4q2HLsqIK2ipKvs4dCZOhcH48Xz4Akop
+	wZht0GqxbGAcTqflnmDst9lZMj4ssC+c2h4TNql7nk7YcZ/g4BBXJjwaohk9tmc6drgS+F
+	r4/yQYYfRaDnaO4pAVJ5cpB7FzGj2svJUqjW7jS8fjIi4cuuXmXqkrHJfZWtssJLItZJyV
+	avTkPNmh8A0BO7pSa1z7n2zU9IT2S1QWERGrsiTv4TapRXaN4oZ3QuOMMtvEDv0FvRdwhL
+	bQ0nrWYofK1SRcIpEz10neiS94keFeipxh4K1y6+oo/qyBJZ3xJ64JpgNTnF1A==
+Date: Wed, 26 Mar 2025 17:42:28 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: spidev: Add compatible for LWE's btt device
+Message-ID: <20250326174228.14dfdf8c@wsk>
+In-Reply-To: <5661510e-3aea-4c07-88d6-2c3efccadb37@sirena.org.uk>
+References: <20250221155644.1168860-1-lukma@denx.de>
+	<5661510e-3aea-4c07-88d6-2c3efccadb37@sirena.org.uk>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <A4568396-D1E1-4D93-851B-FA9CF9804E10@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/TbvFq.HIl7AIxb9_22=7h/N";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Mar 27, 2025 at 12:36:25AM +0800, Alan Huang wrote:
-> On Mar 27, 2025, at 00:17, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > 
-> > On Wed, Mar 26, 2025 at 09:19:06PM +0530, Bharadwaj Raju wrote:
-> >> On Wed, Mar 26, 2025 at 8:22 PM Kent Overstreet
-> >> <kent.overstreet@linux.dev> wrote:
-> >>> Or better, a new helper: when we're copying to a fixed size buffer we
-> >>> really want to zero out the rest of the buffer - we don't just want a
-> >>> single terminating nul.
-> >> 
-> >> I believe strscpy_pad does this?
-> >> 
-> >> https://docs.kernel.org/core-api/kernel-api.html#c.strscpy_pad
-> > 
-> > almost, we don't want the 'required nul termination'; that's a
-> > requirement at least for disk labels where we need to preserve existing
-> > behaviour
-> 
-> memcpy_and_pad :)
+--Sig_/TbvFq.HIl7AIxb9_22=7h/N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll take that patch :)
+Hi Mark,
+
+> On Fri, Feb 21, 2025 at 04:56:44PM +0100, Lukasz Majewski wrote:
+> > The Liebherr's BTT devices are using spidev to communicate via
+> > SPI to monitoring devices. Extend compatibles to allow proper
+> > DTS description. =20
+>=20
+> This is fine but we need a bindings document update too
+> (trivial-devices.yaml should be fine I think).
+
+I've just resend the update for trival-devices.yaml.
+https://lore.kernel.org/linux-devicetree/20250326140930.2587775-1-lukma@den=
+x.de/T/#u
+
+Hopefully you can pull it soon.
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/TbvFq.HIl7AIxb9_22=7h/N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfkLnQACgkQAR8vZIA0
+zr25kQf/cOf4hhdmDPZdvK50au5ouoJer5+qchALJYHNbPPJiz2SOnTORGBTMIin
+asIWsLFA/0khJ998ok64v5e8TRqulltQxLAgZjf858QPpC3T0KXrBuXg+oGADSik
+8Ioqs5dqKB/1hUCfu1sTxqUgS7sYjYCmEhjZnJEyklCtreyRwxjHpqhrvwBz7WOZ
+u1wzMvNa0e+6Juqqh24QbkWC3/j8RsrMnU4r9FS3l6FukeCpBP/oqJm14u56KQOH
+a1LQmVwsMm5yDNOjSFHmDCgV7Na/kXMBexLUaQ7idw2mcQudkd1/8l4I0OrTzoqD
+0DgzwaYgtG8dFvgr4EehPu+BFvwdbA==
+=umD7
+-----END PGP SIGNATURE-----
+
+--Sig_/TbvFq.HIl7AIxb9_22=7h/N--
 
