@@ -1,122 +1,185 @@
-Return-Path: <linux-kernel+bounces-577164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CB1A71941
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:48:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E9FA7193E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2617A71D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089007A6319
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809791F4190;
-	Wed, 26 Mar 2025 14:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4C31F3BB2;
+	Wed, 26 Mar 2025 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="FRBgU1Ca"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYXN9ZXj"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC8E1F417A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000424; cv=pass; b=jewhM6TMGLMRia1A5taxQsA1RFV6yOfrYQjn41qBjFsrzQ5Ku7nH40D8S5lIU1HFrW3+axa77a6Cx/MRgafI6Rm/UVKU4NMmnvpZKpkREFr0LbxWIQohyZjQasrJB82GQnR5Lae1CoUxc/vCr8Q7ugQ08EEkhan5lQVnzyySoj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000424; c=relaxed/simple;
-	bh=BBJJp7brECBnD5Lxk7Yxy9YoxzxJ98QGVJjxIODinM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZltsyLNxE/G67SAo5YxLuWxC2LpE73/nijiz3Uxq152PGG5SVboTXGVCNpTihA14MbAZ9eJT5q3ohV8ARoL7BXjxRXy9UPnUtmHrv3wBokvoxvx+5YAmj23lvz1CrQaXR4LZLyD7IXoUOqgIxYXdM0YJMjFNT8MHmIxa1saZEgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=FRBgU1Ca; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743000395; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ghZpvDPIx2W4upA6AWCap5qOIs4idAM13yP3crLjPK1kCGyX2UJsyd9lFx/f6AMnnt2tkoE2DiU6/PTe8WcItH3rrwD+Is/HnEV3FIp6+OnARNFrVL2ohvYpgAmvEXSmDabJ0IEqRa02hHBPQZt4ExvLrhRxLffgoKqAZpno+9k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743000395; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UM0Ih6VqtqbtAFJFS/WtVT4fHB3Sai9RsrTsE09plNk=; 
-	b=j3l79jGiCQLmzYVr5krK0FMQ6XM/5RAfgg+eXUMKqxZnnYAub2idfsBCh7+9aI6Zmf/4mBDIl8yONUd6D0Acv+GMM7nBe8VhkDeQYVeRA0/mvqOkyiY8rcphOtp+3ok6M38fTnEkZyiE8lf3ylBZWIrqRsHY/ES73+dR1AOXAL8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743000395;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=UM0Ih6VqtqbtAFJFS/WtVT4fHB3Sai9RsrTsE09plNk=;
-	b=FRBgU1CaK7Zy+0AL4OpfnUwHAm0RT6VgaukKrE+DxzjT0N4Z8l31PZOqcu9xvnoi
-	lqD6OfIi1E/V9wE1Vv0YqA0Bw0f5KrYdHb3hUKghbxaVwXn95E5oVERxepoabadpyRe
-	jQRRrD+44BzBr63ne0py+i6WAr7KzC/8V99oju4o=
-Received: by mx.zohomail.com with SMTPS id 1743000392935887.9682124854454;
-	Wed, 26 Mar 2025 07:46:32 -0700 (PDT)
-Message-ID: <85470439-3c03-4787-be91-b6b680a5aca5@collabora.com>
-Date: Wed, 26 Mar 2025 17:46:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBF618EB0;
+	Wed, 26 Mar 2025 14:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743000418; cv=none; b=s+ndm18scIOlGFCx2eTyXemOyVBIc28PJJlKyY+EX7+EASZ65p1W7jHMalbmquUGRTTFTBv+hkbdcDsbjuJelLIFOXf6M2PcWK+DJ4RezLg4HRIfnsiXonTswcPdIeiYFaAhu48xpNQwUMrK4xhkGaBm4bGxgwyltCSfFNxEFSc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743000418; c=relaxed/simple;
+	bh=MDabLycR3eVXHjW9aTAlVmTDW1NcgLcT6BbTcpxQhE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUY06VxZd8cCDVE0Mnb+X4UfSadILtAm/jhmFjGECT6VEYG5UW99iheOGoWDN0aVp4S+MoMvqbpu1oXD+czk3Cyhu5rRd2sqilmZeASk5UZGgXoP3kvslRQIri0HBbVFBTF/vBj/BoWHkJXoRs9Jpdv/P760Apaz4XRFsfRHPX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYXN9ZXj; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso26432335ab.1;
+        Wed, 26 Mar 2025 07:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743000415; x=1743605215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yIzY6JuPtPbu1sd31VEp2X/O3x/UgKedEbGz6vT002k=;
+        b=JYXN9ZXjYplhuYwBq5nYLwduBEQj34MxftePDxokCU8EQxnFB+VrMcGY5srJ7u6v9U
+         VuoPFFnkOn8y8L0E5cCN9wAu2p+hcOHCNEwgvSQWhDaqkOw8N76DF6ALM7+61vEDs7bT
+         aDTmwxL8e215SnFxSnDZO7spEvJjQ65RTXLupdvJAJdt1XaP1E/NrsH9s+Cx2caP98bq
+         ArBSr9H+PQstpEICf5By+pz1ySZqHaNcLTEKehZU64jqBrdNI3wmDQjhkz8xm69Ip6F+
+         ib4MWpOGk/VcL/xp9LQijvhovbFqln4QoCKFS9RS93CyrwJUoR9oxl8m6A6WmvHIapiQ
+         YpBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743000415; x=1743605215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yIzY6JuPtPbu1sd31VEp2X/O3x/UgKedEbGz6vT002k=;
+        b=ftKRxQvQLMfPQ65EC4yVjqMo8mtTAxfgjl5+COEqtHJXs0wN8HwyFxMJ2O63CI7AFN
+         uuM9Os0dTjd646nI3Z5bu83fWLcd8ShPbXmmLxbr17dnHSQ0w6t00PJmA994jnU+KqDe
+         iiFOw00nbp3BzL8rqrIPog0HLv54HmX/jo9JrSXvSbWbpYjwKd7bTqfvKEPoRjA4QGtX
+         8jhTEiw+BB2OTK811fXD93REx5d4yJOAaS0WFlQt553i4m0eXSQXjwzHH6n6fsLBQFnY
+         HpW7etAI8UdPSo52mPkIn1gjNs65ChrO9/ZRWMr0icL1DOp/fXAqRR6PfhX0C2+F6s0I
+         ZIvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUD/jWIpnOkOHPESIt0VZUsnzLCNCMK12P8qlFB28aGbb45UgQzl8wIxziACxIstwVo84+ThA/JS4WpIE=@vger.kernel.org, AJvYcCWoDouDevyMwhUgFRgKhKW1uKrr0eAtDOKXsW1N6NThZYSVpBPBzssYxUmhr+jlc6lRoioDk2i9OYvSvBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySExPbnVZNifGt4mDrXVX+8HmbGR/FAsst3TJSI7PNLXanb72W
+	UQZsYc4z7IVPJVzGA7GCRAf4DjAymbDbH9cYouisjsFmAjvUn4QMjesftVdohIPNkyvYzHTdUlA
+	ZNNVlBqF6mQ2AMJcfi7Y69pbCzZk=
+X-Gm-Gg: ASbGncsHQhvuoxe8tC2YS3hOUewYnkZsd7hFCH8BrI1zbTLap457yu156LYN4ryq8q4
+	nMmh0c50y2uRwCfT5lEC8JhGT7rXhEECGOfNv/zqgASpYsRoMiMMYGS1QtIqVVSLgv9iF4qkZ3L
+	sZ82BHqwWRfh1VzlYjrLtiWi02fgl/fkwOcS/KC1wKd/xgSKGBtvScw7I=
+X-Google-Smtp-Source: AGHT+IH8ychrG0Yq2ngyD0ecOqCO0RE/LXSO0aLcakG9T0PKFMWXaArBnOsdvh7pxztVoJ5s0s/eUYqjpz4S8ZEnOmM=
+X-Received: by 2002:a05:6e02:260f:b0:3d3:ced4:db9b with SMTP id
+ e9e14a558f8ab-3d5960bf801mr234679015ab.5.1743000415399; Wed, 26 Mar 2025
+ 07:46:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] virtio-gpu api: add blob userptr resource
-To: "Huang, Honglei1" <Honglei1.Huang@amd.com>,
- Demi Marie Obenour <demiobenour@gmail.com>, David Airlie
- <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
- Huang Rui <ray.huang@amd.com>
-Cc: dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250228053650.393646-1-honglei1.huang@amd.com>
- <20250228053650.393646-2-honglei1.huang@amd.com>
- <cd9f85a5-0d99-4007-bba2-d792ac9d84da@gmail.com>
- <c2d1334f-6f5a-493f-bbf0-3e92789f128a@amd.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <c2d1334f-6f5a-493f-bbf0-3e92789f128a@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20250326143903.24380-1-robdclark@gmail.com> <342ee079-ee0e-470d-afd2-c2870115b489@amd.com>
+In-Reply-To: <342ee079-ee0e-470d-afd2-c2870115b489@amd.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 26 Mar 2025 07:46:43 -0700
+X-Gm-Features: AQ5f1Jot6jmzcgenF9qhrGVKGty_zzWylGXQwExIfmbDgtMjYHnUNBwSawcKJxY
+Message-ID: <CAF6AEGu2Ax+u3QmD2VADwh4A4s5TAmP5Lq4DcYYadKP4csH-=g@mail.gmail.com>
+Subject: Re: [PATCH] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: dri-devel@lists.freedesktop.org, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Rob Clark <robdclark@chromium.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>, 
+	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/25 13:51, Huang, Honglei1 wrote:
-> 
-> On 2025/3/1 5:21, Demi Marie Obenour wrote:
->> On 2/28/25 12:36 AM, Honglei Huang wrote:
->>> From: Honglei Huang <Honglei1.Huang@amd.com>
->>>
->>> Add a new resource for blob resource, called userptr, used for let
->>> host access guest user space memory, to acquire buffer based userptr
->>> feature in virtio GPU.
->>>
->>> - The capset VIRTIO_GPU_CAPSET_HSAKMT used for context init,
->>> in this series patches only HSAKMT context can use the userptr
->>> feature. HSAKMT is a GPU compute library in HSA stack, like
->>> the role libdrm in mesa stack.
->>
->> Userptr should not be limited to HSMKMT contexts.  Userptr can
->> accelerate shm buffers by avoiding a copy from guest to host, and
->> it can be implemented using grant tables on Xen.
-> 
-> Yes, I totally agree userptr can accelerate shm buffers, but I currently
-> don't know if there are any other projects working on similar features,
-> or if maintainers have any opinions or better ways to implement them, so
-> I temporarily limit this feature to HSAKMT context only.
-> 
-> I am waiting for everyone's opinions, please provide your thoughts.
+On Wed, Mar 26, 2025 at 7:41=E2=80=AFAM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 26.03.25 um 15:39 schrieb Rob Clark:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Add support for exporting a dma_fence fd for a specific point on a
+> > timeline.
+>
+> Looks good on first glance. What's the userspace use case?
 
-USERPTR should be relevant for anything Vulkan-related, like Venus and
-native contexts. I expect that this new feature will work universally
-good for all context types.
+Timeline syncobj support for vtest/vpipe[1][2].. since core
+virglrender and drm native ctx works in terms of fences (since in the
+VM case, everything is a fence below the guest kernel uabi), we need
+to be able to turn a point on a timeline back into a fence fd.  (Plus
+it seemed like an odd omission from the existing uabi.)
 
-In order to merge USERPTR support upstream, we at least will need to
-prototype the guest USERPTR in one of native context driver to know that
-it works. You'll need to post the whole set of host/guest USERPTR
-patches including QEMU and etc, not just the kernel patches.
+BR,
+-R
 
--- 
-Best regards,
-Dmitry
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
+[2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/805
+
+>
+> Regards,
+> Christian.
+>
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  drivers/gpu/drm/drm_syncobj.c | 8 ++++++--
+> >  include/uapi/drm/drm.h        | 2 ++
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncob=
+j.c
+> > index 4f2ab8a7b50f..eb7a2dd2e261 100644
+> > --- a/drivers/gpu/drm/drm_syncobj.c
+> > +++ b/drivers/gpu/drm/drm_syncobj.c
+> > @@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(struc=
+t drm_file *file_private,
+> >  }
+> >
+> >  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+> > -                                     int handle, int *p_fd)
+> > +                                     int handle, u64 point, int *p_fd)
+> >  {
+> >       int ret;
+> >       struct dma_fence *fence;
+> > @@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct drm_=
+file *file_private,
+> >       if (fd < 0)
+> >               return fd;
+> >
+> > -     ret =3D drm_syncobj_find_fence(file_private, handle, 0, 0, &fence=
+);
+> > +     ret =3D drm_syncobj_find_fence(file_private, handle, point, 0, &f=
+ence);
+> >       if (ret)
+> >               goto err_put_fd;
+> >
+> > @@ -882,8 +882,12 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *=
+dev, void *data,
+> >
+> >       if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE=
+)
+> >               return drm_syncobj_export_sync_file(file_private, args->h=
+andle,
+> > +                                                 args->point,
+> >                                                   &args->fd);
+> >
+> > +     if (args->point)
+> > +             return -EINVAL;
+> > +
+> >       return drm_syncobj_handle_to_fd(file_private, args->handle,
+> >                                       &args->fd);
+> >  }
+> > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > index 7fba37b94401..c71a8f4439f2 100644
+> > --- a/include/uapi/drm/drm.h
+> > +++ b/include/uapi/drm/drm.h
+> > @@ -912,6 +912,8 @@ struct drm_syncobj_handle {
+> >
+> >       __s32 fd;
+> >       __u32 pad;
+> > +
+> > +     __u64 point;
+> >  };
+> >
+> >  struct drm_syncobj_transfer {
+>
 
