@@ -1,104 +1,176 @@
-Return-Path: <linux-kernel+bounces-577399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141BEA71C8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:58:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53136A71C9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F603A59D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C24188A368
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B041F7580;
-	Wed, 26 Mar 2025 16:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1781F1F8728;
+	Wed, 26 Mar 2025 16:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJmHmHqV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTwCmj+L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD11F95C;
-	Wed, 26 Mar 2025 16:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCB51F63D9;
+	Wed, 26 Mar 2025 16:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743008250; cv=none; b=eZi+gCL8AwtV5h7z1B+2SGznPNv42dYPEW7+Wv0r+tqCBubSx+tTE5NQ+FcLabefaGZ9VYqSERapdMe54o/Ao+dhDsEq/O/hpEUb+qNxFMwu5CphvcCzrVQB6x5swZVy3GJrNjGBZqpvpvnBrWRuWugvn/I5ekmrYe3tHw26YrI=
+	t=1743008338; cv=none; b=ecrcABoNt129D12xJ8IQ+5QZtE8DTQmvc+sCnBwc6WAsa1E8E22jU376oDPHV7ynupucXpvJH5nNSppoznWVCgkqYfkNUgcsTKav/5v7joKle4jQ2UChPDGeBwO7pkPf5pM4TiYDMRSTZFexLOLMFs2xVTH2ISI+RqQqokugO7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743008250; c=relaxed/simple;
-	bh=doUGU7qVE0nBslUip4rBHGXcaNRqYNLVIEXEA4QLHQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tedSUquQGt/fWLzJ5dHxesXQPNjseXa3O6h1Hniu5qafCepZUvj0zttb/VCtrp4wMQGDRXFwy/GB8It+PpgHlKMy4Mqp2MTQGuSXYdwf0y8yF6h/YulNoCVNxWJDffuw9RIPcaFjy1+y7FCERPj0LkWuQLZco76wT41ogi2rzwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJmHmHqV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBE67C4CEE2;
-	Wed, 26 Mar 2025 16:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743008249;
-	bh=doUGU7qVE0nBslUip4rBHGXcaNRqYNLVIEXEA4QLHQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=UJmHmHqVI3uYPPPWwZz7PXpzmD9dQ/ucfsM7V7xxc5q13C8Rwio5uuH4TjbFn8O2M
-	 G4Z2l0eXdzlB5lfeG+bNdnWMgXiMC7Odzgy2vYwgjRtJ6W7hH0NWJQ18YFdPsq46yj
-	 WbWr4eusBPxPD6uHupuMQDorBHriEtOuHZV0AOPPeAXGdoi20pHFI8qmdsv+MXy8MA
-	 MfbRdz+dCsni9WuPBZtxDHgsmPfVueqlUKrPKficvchGgIhZ2OqTug4P/h4Xn9jxwz
-	 hu520cCH7UoblQQeZ1dmNORLokqOLHmBjl+5gVTs5apTbK7vt8a0O6x24SL4Y7cwkZ
-	 nsqwOY0X9SrUQ==
-Date: Wed, 26 Mar 2025 11:57:28 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yibo Dong <dong100@mucse.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add MUCSE vendor ID to pci_ids.h
-Message-ID: <20250326165728.GA1339144@bhelgaas>
+	s=arc-20240116; t=1743008338; c=relaxed/simple;
+	bh=OuIz4Jg6i7CakVInfPmi7/abG++Kmf7R832y4abxKOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FN9XFKhEXfqnurhQOLGHIOHh/wMr2MxMTv9fC0JXPpE+uLWuIK3UY7OvxkSNlSlxMKOaxPpaSJEp1aLFSBXgmyqlfq9GzexjIkGNKSy7s9ouXwmWZuXWvyJqdNueXd/IUNKSSyVZH3/gLha86rxspcbDsLhwZjksbuOdqhaLQC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTwCmj+L; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743008337; x=1774544337;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=OuIz4Jg6i7CakVInfPmi7/abG++Kmf7R832y4abxKOE=;
+  b=DTwCmj+LB8EA6rcVlWuw+PxqjfmAdSzl8MWxunZup4glxcKva8Ff4ueK
+   sW3RTJV9KbT05QwtVsN7UO7OOSG3AzfGyv+rYKh9EsNXKu+gxMi2Zrgsq
+   ALqNYjBSMgZVBI6pgP6ZmHxmc3tAUHel5D3FQEJcCAjLfJJ+sI8SIJNzU
+   ncQvJSU5Z/KAWBIxzGF+Ss4zLKb9G+aSH4P85EhZKgxqmo3gYdbM8VO7/
+   ydCD6Mc+BCi0aIiydnXeHgG6/kzIzq0Bi1qSVmmOvW9/gilnHAXbBhqen
+   lse3jhdUsSJjTVoxk6yvXpyA4tsNRbTbnFNKGsMct9DaGe8ppEBFC07Yg
+   g==;
+X-CSE-ConnectionGUID: vVA6ewDVSrer+Poiq/Fxsg==
+X-CSE-MsgGUID: Jk5dJn73RdWP1Xku5j9cng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48099223"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="asc'?scan'208";a="48099223"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:58:56 -0700
+X-CSE-ConnectionGUID: JOqCaMpBTWehkD2RN5TRww==
+X-CSE-MsgGUID: Sq2hGyLTSd6VxBe86QmLIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="asc'?scan'208";a="162041434"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.239])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:58:53 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Robert Richter <rrichter@amd.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, ming.li@zohomail.com,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject:
+ Re: [PATCH 4/4 v3] cxl/test: Simulate an x86 Low Memory Hole for tests
+Date: Wed, 26 Mar 2025 17:58:50 +0100
+Message-ID: <7393617.eO5KgaWL5Y@fdefranc-mobl3>
+In-Reply-To: <Z91CgQjzXzKWNXPX@rric.localdomain>
+References:
+ <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+ <20250314113708.759808-5-fabio.m.de.francesco@linux.intel.com>
+ <Z91CgQjzXzKWNXPX@rric.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325065718.333301-1-dong100@mucse.com>
+Content-Type: multipart/signed; boundary="nextPart3115698.kHrqEjB74n";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Tue, Mar 25, 2025 at 02:57:18PM +0800, Yibo Dong wrote:
-> Add MUCSE as a vendor ID (0x8848) for PCI devices so we can use
-> the macro for future drivers.
-> 
-> Signed-off-by: Yibo Dong <dong100@mucse.com>
+--nextPart3115698.kHrqEjB74n
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Robert Richter <rrichter@amd.com>
+Date: Wed, 26 Mar 2025 17:58:41 +0100
+Message-ID: <7393617.eO5KgaWL5Y@fdefranc-mobl3>
+In-Reply-To: <Z91CgQjzXzKWNXPX@rric.localdomain>
+MIME-Version: 1.0
 
-Please post this in the series where you add the future drivers.
+On Friday, March 21, 2025 11:42:09=E2=80=AFAM Central European Standard Tim=
+e Robert Richter wrote:
+> On 14.03.25 12:36:33, Fabio M. De Francesco wrote:
+> > Simulate an x86 Low Memory Hole for the CXL tests by changing the first
+> > mock CFMWS range size to 768MB and the CXL Endpoint Decoder HPA range s=
+izes
+> > to 1GB.
+> >=20
+> > Since the auto-created region of cxl-test uses mock_cfmws[0], whose ran=
+ge
+> > base address is typically different from the one published by the BIOS =
+on
+> > real hardware, the driver would fail to create and attach CXL Regions if
+> > it was run on the mock environment created by cxl-tests.
+> >=20
+> > Therefore, save the mock_cfmsw[0] range base_hpa and reuse it to match =
+CXL
+> > Root Decoders and Regions with Endpoint Decoders when the driver is run=
+ on
+> > mock devices.
+> >=20
+> > Since the auto-created region of cxl-test uses mock_cfmws[0], the
+> > LMH path in the CXL Driver will be exercised every time the cxl-test
+> > module is loaded. Executing unit test: cxl-topology.sh, confirms the
+> > region created successfully with a LMH.
+> >=20
+> > Cc: Alison Schofield <alison.schofield@intel.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
+com>
+> > ---
+> >  drivers/cxl/core/lmh.c               | 35 ++++++++++++++++++++++++----
+> >  drivers/cxl/core/lmh.h               |  2 ++
+>=20
+> Can you take a look to move all those changes to testing/? This
+> indicates the interface of your mock functions need improvement.
+>=20
+> -Robert
+>=20
+> >  tools/testing/cxl/cxl_core_exports.c |  2 ++
+> >  tools/testing/cxl/test/cxl.c         | 10 ++++++++
+> >  4 files changed, 45 insertions(+), 4 deletions(-)
+>=20
+Your comment is not very detailed but I think you are suggesting to=20
+override the lmh functions in testing. If that is the case, I don't think=20
+that any function which is exported from and also called by cxl-core=20
+can be override by testing with the strong/weak mechanism.=20
 
-We don't add new things to pci_ids.h unless they are actually used by
-more than one driver because it complicates life for people who
-backport things (there's a note at the top of the file about this).
+But I'm not an expert of linker related topics and not even sure that I=20
+understood what you suggested.
 
-> ---
->  include/linux/pci_ids.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index de5deb1a0118..f1b4c61c6d3c 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -3143,6 +3143,8 @@
->  #define PCI_VENDOR_ID_SCALEMP		0x8686
->  #define PCI_DEVICE_ID_SCALEMP_VSMP_CTL	0x1010
->  
-> +#define PCI_VENDOR_ID_MUCSE		0x8848
+Would you please elaborate more?
 
-https://pcisig.com/membership/member-companies?combine=8848 says this
-Vendor ID belongs to:
+Thanks,
 
-  Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd
+=46abio
 
-I suppose "MUCSE" connects with that somehow.
+--nextPart3115698.kHrqEjB74n
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-It's nice if people can connect PCI_VENDOR_ID_MUCSE with a name used
-in marketing the product.  Maybe "MUCSE" is the name under which
-Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd markets
-products?
+-----BEGIN PGP SIGNATURE-----
 
->  #define PCI_VENDOR_ID_COMPUTONE		0x8e0e
->  #define PCI_DEVICE_ID_COMPUTONE_PG	0x0302
->  #define PCI_SUBVENDOR_ID_COMPUTONE	0x8e0e
-> -- 
-> 2.25.1
-> 
+iQEzBAABCAAdFiEEPKnol7Erd70tN+Lb50DaXiQpiWEFAmfkMkEACgkQ50DaXiQp
+iWGkNwgAqf+xwby9iyxUYBHsjmCpty4vJGS1+37phCDCKD/0T62qIwGPFyQvysLV
+6/W1DOj/hPSXgVpOgQdwOF1b8BdGuHdgh7Z4HyLq7gjd1IpRHhEiuJuxRTE85KfH
+dqYw+xZckadPLJByvCiDF04uB4Kl+ETJYpXS6Yds2p1zYi+WNLnqPHyacHCLr04v
+fIYEXRU7pArY7xQCoPHN/yQsFxiC5bZbhMRH5VeISIXwsydwI9GsQTugQIHyrhCy
+Ti007N5jVb6m5SiU/0I3WVxTtG900Qw9hj4H+4i3IeUPIarCEZ/bIfTiQwshI1At
+ozmSD0wc58cyMkNm//OP/PoNa05uNA==
+=WH8O
+-----END PGP SIGNATURE-----
+
+--nextPart3115698.kHrqEjB74n--
+
+
+
 
