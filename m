@@ -1,141 +1,158 @@
-Return-Path: <linux-kernel+bounces-576574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBC5A71147
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE23DA7114A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F39C17480D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655A518982F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB9319DF62;
-	Wed, 26 Mar 2025 07:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6Ib7FJu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A73519CD13;
+	Wed, 26 Mar 2025 07:23:22 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EDF42069;
-	Wed, 26 Mar 2025 07:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA76199938;
+	Wed, 26 Mar 2025 07:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742973787; cv=none; b=px1wCrifjRQ6aM7i/Ora4XzDjOvGpoK0XMyqbRbuHrNskwMg1Dirb2IkEn/UTjaXvQ6T+eOtVNo6LRvFWTF1kB2Nqd2b3qchJ+84QV+ZVMB0eEcwvmwhqggckmYl0wpCYGJH3njt03gz6oDjj3EUA//x8hDUmaJ63khXII6Whx0=
+	t=1742973802; cv=none; b=Om1gluZaGeUaD2HHXc4Mm/egwuYhVhatPFveZgrJbOvxgAAC2HsTsgZhGNyhHxEGWhGuVrGvo5dX0s2Udso3zSu/5MevId3xWdKbtZSxcKt4LR9vLcYK21QdThwbWz7EJR6E1IcrXB08MABbZJF/GVk2N0TgCVyScVNwL+feAGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742973787; c=relaxed/simple;
-	bh=6YYFYtjsWtXOaM2Q6Jcc8YNOzkMzmfxZ7Zy6XLOb9nI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcP8U9Y5ThjlftPIiP6ES0vTu6+2RKVin448r1/SoMlUiKoJPxqFtXvEof8q5iUKWS/E2z7qoJGegfbSs6ADYzjvMhVCvKeTlIvRj3uWihoAB1pfp3uqJjSmti/YuL0G9jrEzs979IFUCf13uuGAeIcn1jjZOMJqqLsEido+V+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6Ib7FJu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D33C4CEE9;
-	Wed, 26 Mar 2025 07:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742973786;
-	bh=6YYFYtjsWtXOaM2Q6Jcc8YNOzkMzmfxZ7Zy6XLOb9nI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r6Ib7FJu56h4SjoGGeNCbU/MDwtfuH42DSESAEQsPHQ5TYUBfoE0nevA5MRFk7rHc
-	 FqnLhH3rvfB2EZSp/AlkhJyzb7JZKPD7fyNVxiA24s66WgHBco+Er6PN4ofkiZmVkx
-	 dU0poETTab1GZMJVF91x6HoSS253b+pEA3kKSyvX4SLh96CFohKbTxxeI/yu2IDugY
-	 ogmptjMPd3jvNL8Fl/x/s6zmYM33BE/7chYmiruE+17Z1Y/Ftip30kECqNKMPMoRnk
-	 pXNW2b8uTbUTsUobMwmRrpuudz90ZbFsX1WdysqIEHIS7PzQGKmfolP01qdzyAh7HZ
-	 Zl/U/Hg9Cvq7g==
-Message-ID: <25eb9c47-96ba-4037-b320-af16e0226f4c@kernel.org>
-Date: Wed, 26 Mar 2025 08:22:55 +0100
+	s=arc-20240116; t=1742973802; c=relaxed/simple;
+	bh=GA8ThzYUBI9F96U1+AKgbnlvRrC+E6gr96wL8Jnjar0=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=PBlyDC5jYt+WRodiq5ioH7oNXOtBhN9c3VtSa70cIyVV0ebHiyIbzeGFGJZspWCN6PKrRGkcI8RVruqxcfCicQRjLdukgmZ4e8oZDdYs1BH07eoSh+Bg3DKXxayUOisXtJBjnA8VWp2hlp4SbsUlCORofsdj26X9BZCzC4PLz0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZMytm6ZnLz8R045;
+	Wed, 26 Mar 2025 15:23:12 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 52Q7Mskl062561;
+	Wed, 26 Mar 2025 15:22:54 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 26 Mar 2025 15:22:57 +0800 (CST)
+Date: Wed, 26 Mar 2025 15:22:57 +0800 (CST)
+X-Zmail-TransId: 2afa67e3ab51745-aa1af
+X-Mailer: Zmail v1.0
+Message-ID: <202503261522574184L3W31Wv9IlTfjF1W9Eh8@zte.com.cn>
+In-Reply-To: <20250325102805210eUc7-ji7GineR0TUNA9Nn@zte.com.cn>
+References: 20250325102805210eUc7-ji7GineR0TUNA9Nn@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/34] mfd: sec: add support for S2MPG10 PMIC
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-12-d08943702707@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250323-s2mpg10-v1-12-d08943702707@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <xie.ludan@zte.com.cn>, <davem@davemloft.net>, <horms@kernel.org>
+Cc: <gerhard@engleder-embedded.com>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <xie.ludan@zte.com.cn>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0IHYyXSBuZXQ6IGF0bTogdXNlIHN5c2ZzX2VtaXQoKS9zeXNmc19lbWl0X2F0KCkgaW5zdGVhZCBvZiBzY25wcmludGYoKS4=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 52Q7Mskl062561
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67E3AB60.003/4ZMytm6ZnLz8R045
 
-On 23/03/2025 23:39, André Draszik wrote:
-> Add support for Samsung's S2MPG10 PMIC, which is a Power Management IC
-> for mobile applications with buck converters, various LDOs, power
-> meters, RTC, clock outputs, and additional GPIOs interfaces.
-> 
-> Contrary to existing Samsung S2M series PMICs supported, communication
-> is not via I2C, but via the Samsung ACPM firmware.
-> 
-> This commit adds the core driver.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> Checkpatch suggests to update MAINTAINERS, but the new file is covered
-> already due to using a wildcard.
-> ---
+>From: XieLudan <xie.ludan@zte.com.cn>
+>
+>Follow the advice in Documentation/filesystems/sysfs.rst:
+>show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+>the value to be returned to user space.
+>
+>Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+>---
+>v2:
+>    - adapting the alignment of argument lines
+> net/atm/atm_sysfs.c | 24 +++++++++++-------------
+> 1 file changed, 11 insertions(+), 13 deletions(-)
+>
+>diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
+>index 54e7fb1a4ee5..726398fa848e 100644
+>--- a/net/atm/atm_sysfs.c
+>+++ b/net/atm/atm_sysfs.c
+>@@ -16,7 +16,7 @@ static ssize_t type_show(struct device *cdev,
+> {
+> 	struct atm_dev *adev = to_atm_dev(cdev);
+>
+>-	return scnprintf(buf, PAGE_SIZE, "%s\n", adev->type);
+>+	return sysfs_emit(buf, "%s\n", adev->type);
+> }
+>
 
-I did a quick look and seems fine, but I suspect small rework when PMIC
-becames child of ACPM, so full review later.
+Generally LGTM. Thanks.
 
-Best regards,
-Krzysztof
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+
+> static ssize_t address_show(struct device *cdev,
+>@@ -24,7 +24,7 @@ static ssize_t address_show(struct device *cdev,
+> {
+> 	struct atm_dev *adev = to_atm_dev(cdev);
+>
+>-	return scnprintf(buf, PAGE_SIZE, "%pM\n", adev->esi);
+>+	return sysfs_emit(buf, "%pM\n", adev->esi);
+> }
+>
+> static ssize_t atmaddress_show(struct device *cdev,
+>@@ -37,13 +37,12 @@ static ssize_t atmaddress_show(struct device *cdev,
+>
+> 	spin_lock_irqsave(&adev->lock, flags);
+> 	list_for_each_entry(aaddr, &adev->local, entry) {
+>-		count += scnprintf(buf + count, PAGE_SIZE - count,
+>-				   "%1phN.%2phN.%10phN.%6phN.%1phN\n",
+>-				   &aaddr->addr.sas_addr.prv[0],
+>-				   &aaddr->addr.sas_addr.prv[1],
+>-				   &aaddr->addr.sas_addr.prv[3],
+>-				   &aaddr->addr.sas_addr.prv[13],
+>-				   &aaddr->addr.sas_addr.prv[19]);
+>+		count += sysfs_emit_at(buf, count, "%1phN.%2phN.%10phN.%6phN.%1phN\n",
+>+				       &aaddr->addr.sas_addr.prv[0],
+>+				       &aaddr->addr.sas_addr.prv[1],
+>+				       &aaddr->addr.sas_addr.prv[3],
+>+				       &aaddr->addr.sas_addr.prv[13],
+>+				       &aaddr->addr.sas_addr.prv[19]);
+> 	}
+> 	spin_unlock_irqrestore(&adev->lock, flags);
+>
+>@@ -55,7 +54,7 @@ static ssize_t atmindex_show(struct device *cdev,
+> {
+> 	struct atm_dev *adev = to_atm_dev(cdev);
+>
+>-	return scnprintf(buf, PAGE_SIZE, "%d\n", adev->number);
+>+	return sysfs_emit(buf, "%d\n", adev->number);
+> }
+>
+> static ssize_t carrier_show(struct device *cdev,
+>@@ -63,8 +62,7 @@ static ssize_t carrier_show(struct device *cdev,
+> {
+> 	struct atm_dev *adev = to_atm_dev(cdev);
+>
+>-	return scnprintf(buf, PAGE_SIZE, "%d\n",
+>-			 adev->signal == ATM_PHY_SIG_LOST ? 0 : 1);
+>+	return sysfs_emit(buf, "%d\n", adev->signal == ATM_PHY_SIG_LOST ? 0 : 1);
+> }
+>
+> static ssize_t link_rate_show(struct device *cdev,
+>@@ -87,7 +85,7 @@ static ssize_t link_rate_show(struct device *cdev,
+> 	default:
+> 		link_rate = adev->link_rate * 8 * 53;
+> 	}
+>-	return scnprintf(buf, PAGE_SIZE, "%d\n", link_rate);
+>+	return sysfs_emit(buf, "%d\n", link_rate);
+> }
+>
+> static DEVICE_ATTR_RO(address);
+>-- 
+>2.25.1
 
