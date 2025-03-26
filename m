@@ -1,304 +1,889 @@
-Return-Path: <linux-kernel+bounces-576489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC62EA70FEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:37:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE78A70FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435D71788F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10279189EDC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBBC15C15F;
-	Wed, 26 Mar 2025 04:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E8317B50A;
+	Wed, 26 Mar 2025 04:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="knZAzupi"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTQaas8N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678FB4A05
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742963854; cv=fail; b=lMaoAhbdPYKvc4jgYQhwU4dza9X/4sVBBCvKl272idzawB1p3Y0WhPRhI1HVvdue3Lo3jogr/h/pHkY+0cyhMFkbuOGJV5EVlXSkz+VayNblxLXUzeYacDjkavQnGaDjnydmT2lKYtX44I2gFb176ZTM5nHQb3Ol8vjQ31Go3H0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742963854; c=relaxed/simple;
-	bh=gEKoG6NEFnO6m2QYBp31o8G3AJnWCDa13cMI1ibBS4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uIIRuyrAHkNSGs5mnfXz2T0PBR9HkneqdrU9e5CmV959eMICkIvqa4qMvzoz36QkLOONsJYfA3JQiLxilpv7jn48Z9RW6erUCoPbQRkrbw535u60j9gsSIgEfQcceHv8Od9e9KoIuGMmh2ZyN6uUaP7Q2u9qhUCXkii6XHHjDWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=knZAzupi; arc=fail smtp.client-ip=40.107.92.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c5YOYFXSRsmTjJVZ51CITVqG84WB7DQHqh4Nvv0QZfC1P9erQlF+yDMRxYfxce4Z+IL+ShRsAd1Pq4l/szDLmDeO4m9BpAOOqkmu/wN5ZqtuPqRFi+3xI9xkdM8Rseo8YvGzW9BPJNOdaFjFRulvruMT9neSpdUSQ72AYodBBFAWQEjcbN7zpqxVdMNX4gJorUNIHJXC9LMcq2dBl3QobwAdTLZ2BGA1LT0ZjLa9J7bj4XUaJ93poONrNr9K+AoSyQkHEKuoE3PGk/E12s4J85wHCFvfX/cRokwy/vt0Rs1jOr7dhV6+Fn7+bgy1picJCN6XRMZj3fkUyHOl1jQ/1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bMK/3OzTxLjfJ24992giqaJfJoxZGTWWrON2hyVlwBk=;
- b=lBBfLZmk63DRhUcZ3Kmlo0826Q8vmywD1vN8ACsme4uUo9bfI3Ch3eZq0VVOZ89CUEiavGqLHrIgrc/Jd4jpfaeEpyJErrOHTeyXLX4VccwdPEZLgxFTQnL7mUdz6IV/y0TGuTq9jEouuGFLeZxPP2n4DmPJeCFkJQ/fUJqT6RosoXxuUSeS/te42rtUZuFZ326O19fJpzAvuZhkfSCRxrzHU3+QPcpf4cH+oYAvQSOGFxEx1QaksgLqzzggLXIwIlj7q6VNLOFCrYCk71sz1zBTV5082LbUA1ZRIriKCbfUjecuV2Ibl/K0kpo655Bl67uX2rcInZuc3S3UYlLUeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bMK/3OzTxLjfJ24992giqaJfJoxZGTWWrON2hyVlwBk=;
- b=knZAzupiwyOsT27WqH1H127DPLFivyPpooLGFZ6/NeUk3NK0ayB0Fq5iZUeJ0cF72xh9MrdRXLeLW1uZxFIpYXA4YgvbF2VI7SFHa73r6mZzk3C2G+31/KthhEGhvoMNDj3dYbZhqHh6+C5EyozUzLE3UWXQzPBZEl3BP1WJCi0=
-Received: from DM6PR06CA0102.namprd06.prod.outlook.com (2603:10b6:5:336::35)
- by IA0PR12MB8279.namprd12.prod.outlook.com (2603:10b6:208:40c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 04:37:28 +0000
-Received: from CY4PEPF0000EE3F.namprd03.prod.outlook.com
- (2603:10b6:5:336:cafe::24) by DM6PR06CA0102.outlook.office365.com
- (2603:10b6:5:336::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Wed,
- 26 Mar 2025 04:37:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3F.mail.protection.outlook.com (10.167.242.17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 26 Mar 2025 04:37:27 +0000
-Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
- 2025 23:37:22 -0500
-Message-ID: <d19cc24f-32a4-4d10-a51c-466476616e7d@amd.com>
-Date: Wed, 26 Mar 2025 10:07:20 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B14A05;
+	Wed, 26 Mar 2025 04:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742964003; cv=none; b=WMAv1WsH+ugIvig3BvBrOtrWA4T8o4DbuZgICTGV1w+SDzM5IXle4EyJB/yTxyOtI341+K+SXb9qzBDEae62pfUvLWeAJB/AEvgltzTWHgLLwMuDUN69ny2O/VOiNqcx8Pa2oCKIW3yg6XYFVi/KGQSIExemHRd8URCOwDxjTMs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742964003; c=relaxed/simple;
+	bh=ts5xUpvVLQTaQuO4hyng9iwGLhUFBufskRkb2U5P1QE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvsCloEyIyIYKFDhArg2FSamz3jNivHNeiAZpAQuevyndPh6tDUORCR+Fcyem/ZNhnDqwQJXLn9CMqB77g1P88ZNLJ8+lQnRd+KzJBncv5Zj+fW5j7jfmH13uF1hYdSxeIEjGP19IqPJxFLm4jQlBgGwjcGo+2jMOSY3b7RtwzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTQaas8N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CD0C4CEE2;
+	Wed, 26 Mar 2025 04:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742964002;
+	bh=ts5xUpvVLQTaQuO4hyng9iwGLhUFBufskRkb2U5P1QE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CTQaas8NM52goDCHLyOYdQIUcHnfSotruHW64ighm9zmGc6ZBzCsCO4+gj5vreztZ
+	 HdZCGjUBKoXe3fcDB/KxJZyaCTf3mR37W1WR0sNYNAylCVwZbEUNBHM0UwdlZSAYVU
+	 A4RwaZ8NJQWzu011FHpixUDo8RsuLq4M5Rsn06T4pdTKtkUziTmyHQjON4mV/4aIng
+	 2O929UbiJUvRtoT3q/ai96a2EBUhJ5g8OlXswnH3ubzHoB5ONKk6eJxZZdGV74naUB
+	 jIWU6jiyDk+jDxnWewQZr6UTWEidaQ0B/SSihVmIFJvLefZr9D1UAUs6DTeFZeUs/l
+	 jl8pbKMyi01Kw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v4 1/2] perf trace: Implement syscall summary in BPF
+Date: Tue, 25 Mar 2025 21:40:00 -0700
+Message-ID: <20250326044001.3503432-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/uclamp: Align uclamp and util_est and call
- before freq update
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-CC: Xuewen Yan <xuewen.yan@unisoc.com>, <dietmar.eggemann@arm.com>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <hongyan.xia2@arm.com>,
-	<qyousef@layalina.io>, <ke.wang@unisoc.com>, <di.shen@unisoc.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20250325014733.18405-1-xuewen.yan@unisoc.com>
- <03344e80-4ed2-41f1-9d2b-f7ed2e201eba@amd.com>
- <CAB8ipk_1=U_HgVQrfQ4VRUDrcHJBQd2LJ9aXh8PG6E-Z4_xS+g@mail.gmail.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CAB8ipk_1=U_HgVQrfQ4VRUDrcHJBQd2LJ9aXh8PG6E-Z4_xS+g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3F:EE_|IA0PR12MB8279:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba642a69-9f29-44e6-6cba-08dd6c1fe9bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|376014|1800799024|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YjU1MndmdlZva3RpSlBnSVVSZndiM09XajJ0MElPVnE5VVVUV1VsbkJ0Rysy?=
- =?utf-8?B?M205UC9XUTJrMTdlYy9KbDdwYXA4bjF6VER3S3lONmNVb2hPRWV4ZExrWmU3?=
- =?utf-8?B?ZGxaS0NtenR1NFJHVnBKVFg2clVtdzlKQWR4am44ekxXbkFRdm11ZlFiOGdO?=
- =?utf-8?B?ZlRUaWlMbm1qbjQ2bGI1d0xwQ0V6QVBIbndpdjBreHowL3FyN0pKeGVxeWpB?=
- =?utf-8?B?WWU3NExrRHVRa1JkZ2Z6QjFwV2o1cWNFM2hWQTJqZEZwVDFxY2xZR01vZGZN?=
- =?utf-8?B?OTl2WUl1R0NzR2ZmaEtoc2EzYkFqS09EaDVmbW9vR296MW11M1dHRWgzZVoz?=
- =?utf-8?B?TXhVWnFMOEsrbEZvekFxS1pNM0twTENSeFF5UHoxUVpNOVFXVGlGOUNUYnNK?=
- =?utf-8?B?TWFvTnJ6bjlvU0U5WFFkZldVejFFMzAwQzBROXVrNUd0ZEh2VFozbm5DaW00?=
- =?utf-8?B?MkJIc0ZLei84TzI4a283eWhmQnlIWkRyK1Vzd2YxL1VGVVRPUlRKMFMyZHU1?=
- =?utf-8?B?dGdnQXJ5ZVc5d3A0Zzd6QXVodTJJb0IvRDludm5rRUFjUWxJN2hTTXlSUjR3?=
- =?utf-8?B?S1RZdzRwcTJ2S2Qyd3ptR1NTRXV3Nm8wNk9jYVA0REZkOExPVkV2ZitFZHZT?=
- =?utf-8?B?VFR6VmJDRnNvNTNISGxLTDdNM01wK3hCMHVzQ1FwQXRtcG9SZGpmbWMrajZ0?=
- =?utf-8?B?dEFNczh4QUlSeTRkS0hRRkpsRVl5ejl0Ykl0cGxreDFSdGROelBySVhuMGRj?=
- =?utf-8?B?SnBNb1kzQUJvazZwSldkdHhkOVloQ1BLQVZ4L2FES0tOeWpYU3Z3dHFhS29m?=
- =?utf-8?B?MWhTOE1XaVVsTnF4WVgzSWR0WjRINUxEMGZEdi9wN2FwNS81dGFRV0xpM1Na?=
- =?utf-8?B?T282Y3lrNFVMa3ZwcHFjUVNvWld0K0wvdGgwb2E2RExnOVJpeTF1NzVHbWpp?=
- =?utf-8?B?bUx2ZHgrWGN4K1VTZVJSeUEzWVNEendUNm9hazI0OVFjS1I0eXpiVEFaSW5R?=
- =?utf-8?B?dXFwY05vRmhBN3JFTk5FSTlJWjRpYU1NU3lEU3ZsQWxqWC83cXFieUNFeHdG?=
- =?utf-8?B?VEVzL0w2QlJ6Vm5oUkJZNm9YVWFiLy8zRm5LTnR2Q0NYZklqZkdaMU9qVlBw?=
- =?utf-8?B?aGQzTWdncEVCRHdZVjlBalpFd0JjbUFkU2xMS3dMd1RDNUxRMktZcUR3cVhT?=
- =?utf-8?B?bnBadDBndHcrTjJhQXNPTjBiOFVpTFJscWNtNnpxWk5ZQjlvbmdsY2t2TzE5?=
- =?utf-8?B?UVJuYmcvWWlKblgyaGExWTJuSVJCbXhBVmxzb0xCYW5GRHVWOVBRUDdXUTN5?=
- =?utf-8?B?SGlrY2s4R2FzMW8xMDhZbTcvNmt6cnZjbm9xUmR1eXJrNzRTZzFvaUplaC9K?=
- =?utf-8?B?b0lndmJYSGthNTFiYklGNFZWR3p1UGtpVmZWWmpkTzBRWUZzUEpxZFBLZVlm?=
- =?utf-8?B?UXQ5UkJxajhJZStKeUlML0ZxNFZqWXpzODZULzBQS3VreklIdFRFa0tXMENV?=
- =?utf-8?B?SGZEczY2dklYOTBKaFk3OEVmSU14Zm0xYTEwZWN6TWROVTRra0kwZVZqeE9E?=
- =?utf-8?B?QUd0eFY2enRLSk9Fek9TMVRjcTFSMVN2M0JKK3A4VWVLNStHSmE4aFNEenRS?=
- =?utf-8?B?NFdsbi85VHRVN3pxYVVaeXBqVW1vMWJPZXNjdDRxa21xS0Z5enpRdW1Gcmd5?=
- =?utf-8?B?alZuUDcxem1EZkwxcHg0dGUwcGZBamZCYktUeHA3azF3cXBLYWw5S1hMQ2h5?=
- =?utf-8?B?bGppTnN1Y1VTR21tY08yVE1xOGZHZGkxa0UvWTk0TUNBc242MXdMMkRrV0lJ?=
- =?utf-8?B?MnYrb013M3NmRFprU0NDY2Q2VmxQNzFNbFd0QmdqV2dWN0VqTFVlLzNZOGpt?=
- =?utf-8?B?T2txR2NaY2dqTUo1ekM1VWU3NklHeUwvaVZmOGNvZ3hwNG9OVm85YmxLSGZv?=
- =?utf-8?Q?4sNUCfUMUP4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 04:37:27.6207
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba642a69-9f29-44e6-6cba-08dd6c1fe9bd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8279
 
-Hello Xuewen,
+When -s/--summary option is used, it doesn't need (augmented) arguments
+of syscalls.  Let's skip the augmentation and load another small BPF
+program to collect the statistics in the kernel instead of copying the
+data to the ring-buffer to calculate the stats in userspace.  This will
+be much more light-weight than the existing approach and remove any lost
+events.
 
-On 3/26/2025 8:27 AM, Xuewen Yan wrote:
-> Hi Prateek,
-> 
-> On Wed, Mar 26, 2025 at 12:54 AM K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->>
->> Hello Xuewen,
->>
->> On 3/25/2025 7:17 AM, Xuewen Yan wrote:
->>> When task's uclamp is set, we hope that the CPU frequency
->>> can increase as quickly as possible when the task is enqueued.
->>> Because the cpu frequency updating happens during the enqueue_task(),
->>> so the rq's uclamp needs to be updated before the task is enqueued,
->>> just like util_est.
+Let's add a new option --bpf-summary to control this behavior.  I cannot
+make it default because there's no way to get e_machine in the BPF which
+is needed for detecting different ABIs like 32-bit compat mode.
 
-I thought the frequency ramp up / ramp down was a problem with
-delayed tasks being requeued.
+No functional changes intended except for no more LOST events. :)
 
->>> So, aline the uclamp and util_est and call before freq update.
->>>
->>> For sched-delayed tasks, the rq uclamp/util_est should only be updated
->>> when they are enqueued upon being awakened.
->>> So simply the logic of util_est's enqueue/dequeue check.
->>>
->>> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+  $ sudo ./perf trace -as --summary-mode=total --bpf-summary sleep 1
 
-[..snip..]
+   Summary of events:
 
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index c798d2795243..c92fee07fb7b 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -6930,7 +6930,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->>>         * Let's add the task's estimated utilization to the cfs_rq's
->>>         * estimated utilization, before we update schedutil.
->>>         */
->>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
->>> +     if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
->>>                util_est_enqueue(&rq->cfs, p);
->>
->> Wouldn't this do a util_est_{dequeue,enqueue}() for a save restore
->> operation too of a non-delayed task? Is that desired?
-> 
-> For delayed-task, its util_est should dequeue/enqueue only for its
-> sleeping and waking up,
-> For the save restore operation, there is no need to enqueue it,
-> because it is not woken up.
-> So the condition of enqueue actually is:
-> if (!p->se.sched_delayed || (p->se.sched_delayed && (flags & ENQUEUE_DELAYED)))
-> And, this is equal to :
-> if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
-> 
-> More details here:
-> https://lore.kernel.org/all/84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com/T/#ma2505e90489316eb354390b42dee9d053f6fd1e9
-> 
+   total, 6194 events
 
-Ah! Correct! I got my "&&"s and "||"s confused. Sorry about that.
+     syscall            calls  errors  total       min       avg       max       stddev
+                                       (msec)    (msec)    (msec)    (msec)        (%)
+     --------------- --------  ------ -------- --------- --------- ---------     ------
+     epoll_wait           561      0  4530.843     0.000     8.076   520.941     18.75%
+     futex                693     45  4317.231     0.000     6.230   500.077     21.98%
+     poll                 300      0  1040.109     0.000     3.467   120.928     17.02%
+     clock_nanosleep        1      0  1000.172  1000.172  1000.172  1000.172      0.00%
+     ppoll                360      0   872.386     0.001     2.423   253.275     41.91%
+     epoll_pwait           14      0   384.349     0.001    27.453   380.002     98.79%
+     pselect6              14      0   108.130     7.198     7.724     8.206      0.85%
+     nanosleep             39      0    43.378     0.069     1.112    10.084     44.23%
+     ...
 
->>
->> On a larger note ...
->>
->> An enqueue of a delayed task will call requeue_delayed_entity() which
->> will only enqueue p->se on its cfs_rq and do an update_load_avg() for
->> that cfs_rq alone.
->>
->> With cgroups enabled, this cfs_rq might not be the root cfs_rq and
->> cfs_rq_util_change() will not call cpufreq_update_util() leaving the
->> CPU running at the older frequency despite the updated uclamp
->> constraints.
->>
->> If think cfs_rq_util_change() should be called for the root cfs_rq
->> when a task is delayed or when it is re-enqueued to re-evaluate
->> the uclamp constraints.
-> 
-> I think you're referring to a different issue with the delayed-task's
-> util_ets/uclamp.
-> This issue is unrelated to util-est and uclamp, because even without
-> these two features, the problem you're mentioning still exists.
-> Specifically, if the delayed-task is not the root CFS task, the CPU
-> frequency might not be updated in time when the delayed-task is
-> enqueued.
-> Maybe we could add the update_load_avg() in clear_delayed to solve the issue?
-
-I thought something like:
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a0c4cd26ee07..007b0bb91529 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5473,6 +5473,9 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-  		if (sched_feat(DELAY_DEQUEUE) && delay &&
-  		    !entity_eligible(cfs_rq, se)) {
-  			update_load_avg(cfs_rq, se, 0);
-+			/* Reevaluate frequency since uclamp may have changed */
-+			if (cfs_rq != rq->cfs)
-+				cfs_rq_util_change(rq->cfs, 0);
-  			set_delayed(se);
-  			return false;
-  		}
-@@ -6916,6 +6919,9 @@ requeue_delayed_entity(struct sched_entity *se)
-  	}
-  
-  	update_load_avg(cfs_rq, se, 0);
-+	/* Reevaluate frequency since uclamp may have changed */
-+	if (cfs_rq != rq->cfs)
-+		cfs_rq_util_change(rq->cfs, 0);
-  	clear_delayed(se);
-  }
-  
+Cc: Howard Chu <howardchu95@gmail.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
+v4)
+ * fix segfault on -S  (Howard)
+ * correct some comments  (Howard)
 
-to ensure that schedutil knows about any changes in the uclamp
-constraints at the first dequeue, at reenqueue.
+v3)
+ * support -S/--with-summary option too  (Howard)
+ * make it work only with -a/--all-cpus  (Howard)
+ * fix stddev calculation  (Howard)
+ * add some comments about syscall_data  (Howard)
 
-> 
-> -->8--
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index a0c4cd26ee07..c75d50dab86b 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5435,6 +5435,7 @@ static void clear_delayed(struct sched_entity *se)
->          for_each_sched_entity(se) {
->                  struct cfs_rq *cfs_rq = cfs_rq_of(se);
-> 
-> +               update_load_avg(cfs_rq, se, UPDATE_TG);
+v2)
+ * Rebased on top of Ian's e_machine changes
+ * add --bpf-summary option
+ * support per-thread summary
+ * add stddev calculation  (Howard)
 
-For finish_delayed_dequeue_entity() calling into clear_delayed(),
-UPDATE_TG would be done already in dequeue_entity().
+ tools/perf/Documentation/perf-trace.txt       |   6 +
+ tools/perf/Makefile.perf                      |   2 +-
+ tools/perf/builtin-trace.c                    |  54 ++-
+ tools/perf/util/Build                         |   1 +
+ tools/perf/util/bpf-trace-summary.c           | 347 ++++++++++++++++++
+ .../perf/util/bpf_skel/syscall_summary.bpf.c  | 118 ++++++
+ tools/perf/util/bpf_skel/syscall_summary.h    |  25 ++
+ tools/perf/util/trace.h                       |  37 ++
+ 8 files changed, 577 insertions(+), 13 deletions(-)
+ create mode 100644 tools/perf/util/bpf-trace-summary.c
+ create mode 100644 tools/perf/util/bpf_skel/syscall_summary.bpf.c
+ create mode 100644 tools/perf/util/bpf_skel/syscall_summary.h
+ create mode 100644 tools/perf/util/trace.h
 
-For requeue, I believe the motivation to skip UPDATE_TG was for
-the entity to compete with its original weight to be picked off
-later.
-
->                  cfs_rq->h_nr_runnable++;
->                  if (cfs_rq_throttled(cfs_rq))
->                          break;
-> 
-> ---
-> 
-> BR
-> xuewen
-
+diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+index 887dc37773d0f4d6..a8a0d8c33438fef7 100644
+--- a/tools/perf/Documentation/perf-trace.txt
++++ b/tools/perf/Documentation/perf-trace.txt
+@@ -251,6 +251,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+ 	pretty-printing serves as a fallback to hand-crafted pretty printers, as the latter can
+ 	better pretty-print integer flags and struct pointers.
+ 
++--bpf-summary::
++	Collect system call statistics in BPF.  This is only for live mode and
++	works well with -s/--summary option where no argument information is
++	required.
++
++
+ PAGEFAULTS
+ ----------
+ 
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index d335151736eda370..4c5d093542409f88 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -1216,7 +1216,7 @@ SKELETONS += $(SKEL_OUT)/bperf_leader.skel.h $(SKEL_OUT)/bperf_follower.skel.h
+ SKELETONS += $(SKEL_OUT)/bperf_cgroup.skel.h $(SKEL_OUT)/func_latency.skel.h
+ SKELETONS += $(SKEL_OUT)/off_cpu.skel.h $(SKEL_OUT)/lock_contention.skel.h
+ SKELETONS += $(SKEL_OUT)/kwork_trace.skel.h $(SKEL_OUT)/sample_filter.skel.h
+-SKELETONS += $(SKEL_OUT)/kwork_top.skel.h
++SKELETONS += $(SKEL_OUT)/kwork_top.skel.h $(SKEL_OUT)/syscall_summary.skel.h
+ SKELETONS += $(SKEL_OUT)/bench_uprobe.skel.h
+ SKELETONS += $(SKEL_OUT)/augmented_raw_syscalls.skel.h
+ 
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index b9bdab52f5801c3a..3d0c0076884d34cb 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -55,6 +55,7 @@
+ #include "util/thread_map.h"
+ #include "util/stat.h"
+ #include "util/tool.h"
++#include "util/trace.h"
+ #include "util/util.h"
+ #include "trace/beauty/beauty.h"
+ #include "trace-event.h"
+@@ -141,12 +142,6 @@ struct syscall_fmt {
+ 	bool	   hexret;
+ };
+ 
+-enum summary_mode {
+-	SUMMARY__NONE = 0,
+-	SUMMARY__BY_TOTAL,
+-	SUMMARY__BY_THREAD,
+-};
+-
+ struct trace {
+ 	struct perf_tool	tool;
+ 	struct {
+@@ -205,7 +200,7 @@ struct trace {
+ 	} stats;
+ 	unsigned int		max_stack;
+ 	unsigned int		min_stack;
+-	enum summary_mode	summary_mode;
++	enum trace_summary_mode	summary_mode;
+ 	int			raw_augmented_syscalls_args_size;
+ 	bool			raw_augmented_syscalls;
+ 	bool			fd_path_disabled;
+@@ -234,6 +229,7 @@ struct trace {
+ 	bool			force;
+ 	bool			vfs_getname;
+ 	bool			force_btf;
++	bool			summary_bpf;
+ 	int			trace_pgfaults;
+ 	char			*perfconfig_events;
+ 	struct {
+@@ -2608,6 +2604,9 @@ static void thread__update_stats(struct thread *thread, struct thread_trace *ttr
+ 	struct syscall_stats *stats = NULL;
+ 	u64 duration = 0;
+ 
++	if (trace->summary_bpf)
++		return;
++
+ 	if (trace->summary_mode == SUMMARY__BY_TOTAL)
+ 		syscall_stats = trace->syscall_stats;
+ 
+@@ -4371,6 +4370,14 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 
+ 	trace->live = true;
+ 
++	if (trace->summary_bpf) {
++		if (trace_prepare_bpf_summary(trace->summary_mode) < 0)
++			goto out_delete_evlist;
++
++		if (trace->summary_only)
++			goto create_maps;
++	}
++
+ 	if (!trace->raw_augmented_syscalls) {
+ 		if (trace->trace_syscalls && trace__add_syscall_newtp(trace))
+ 			goto out_error_raw_syscalls;
+@@ -4429,6 +4436,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 	if (trace->cgroup)
+ 		evlist__set_default_cgroup(trace->evlist, trace->cgroup);
+ 
++create_maps:
+ 	err = evlist__create_maps(evlist, &trace->opts.target);
+ 	if (err < 0) {
+ 		fprintf(trace->output, "Problems parsing the target to trace, check your options!\n");
+@@ -4441,7 +4449,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		goto out_delete_evlist;
+ 	}
+ 
+-	if (trace->summary_mode == SUMMARY__BY_TOTAL) {
++	if (trace->summary_mode == SUMMARY__BY_TOTAL && !trace->summary_bpf) {
+ 		trace->syscall_stats = alloc_syscall_stats();
+ 		if (trace->syscall_stats == NULL)
+ 			goto out_delete_evlist;
+@@ -4529,9 +4537,11 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 	if (err < 0)
+ 		goto out_error_apply_filters;
+ 
+-	err = evlist__mmap(evlist, trace->opts.mmap_pages);
+-	if (err < 0)
+-		goto out_error_mmap;
++	if (!trace->summary_only || !trace->summary_bpf) {
++		err = evlist__mmap(evlist, trace->opts.mmap_pages);
++		if (err < 0)
++			goto out_error_mmap;
++	}
+ 
+ 	if (!target__none(&trace->opts.target) && !trace->opts.target.initial_delay)
+ 		evlist__enable(evlist);
+@@ -4544,6 +4554,9 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		evlist__enable(evlist);
+ 	}
+ 
++	if (trace->summary_bpf)
++		trace_start_bpf_summary();
++
+ 	trace->multiple_threads = perf_thread_map__pid(evlist->core.threads, 0) == -1 ||
+ 		perf_thread_map__nr(evlist->core.threads) > 1 ||
+ 		evlist__first(evlist)->core.attr.inherit;
+@@ -4611,12 +4624,17 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 
+ 	evlist__disable(evlist);
+ 
++	if (trace->summary_bpf)
++		trace_end_bpf_summary();
++
+ 	if (trace->sort_events)
+ 		ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
+ 
+ 	if (!err) {
+ 		if (trace->summary) {
+-			if (trace->summary_mode == SUMMARY__BY_TOTAL)
++			if (trace->summary_bpf)
++				trace_print_bpf_summary(trace->output);
++			else if (trace->summary_mode == SUMMARY__BY_TOTAL)
+ 				trace__fprintf_total_summary(trace, trace->output);
+ 			else
+ 				trace__fprintf_thread_summary(trace, trace->output);
+@@ -4632,6 +4650,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 	}
+ 
+ out_delete_evlist:
++	trace_cleanup_bpf_summary();
+ 	delete_syscall_stats(trace->syscall_stats);
+ 	trace__symbols__exit(trace);
+ 	evlist__free_syscall_tp_fields(evlist);
+@@ -5467,6 +5486,7 @@ int cmd_trace(int argc, const char **argv)
+ 		     "start"),
+ 	OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump general pretty printer"
+ 		       "to customized ones"),
++	OPT_BOOLEAN(0, "bpf-summary", &trace.summary_bpf, "Summary syscall stats in BPF"),
+ 	OPTS_EVSWITCH(&trace.evswitch),
+ 	OPT_END()
+ 	};
+@@ -5558,6 +5578,16 @@ int cmd_trace(int argc, const char **argv)
+ 		goto skip_augmentation;
+ 	}
+ 
++	if (trace.summary_bpf) {
++		if (!trace.opts.target.system_wide) {
++			/* TODO: Add filters in the BPF to support other targets. */
++			pr_err("Error: --bpf-summary only works for system-wide mode.\n");
++			goto out;
++		}
++		if (trace.summary_only)
++			goto skip_augmentation;
++	}
++
+ 	trace.skel = augmented_raw_syscalls_bpf__open();
+ 	if (!trace.skel) {
+ 		pr_debug("Failed to open augmented syscalls BPF skeleton");
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 946bce6628f37eb6..4311cf154d05304c 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -171,6 +171,7 @@ perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf_off_cpu.o
+ perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter.o
+ perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter-flex.o
+ perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter-bison.o
++perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-trace-summary.o
+ perf-util-$(CONFIG_PERF_BPF_SKEL) += btf.o
+ 
+ ifeq ($(CONFIG_LIBTRACEEVENT),y)
+diff --git a/tools/perf/util/bpf-trace-summary.c b/tools/perf/util/bpf-trace-summary.c
+new file mode 100644
+index 0000000000000000..114d8d9ed9b2d3f3
+--- /dev/null
++++ b/tools/perf/util/bpf-trace-summary.c
+@@ -0,0 +1,347 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <inttypes.h>
++#include <math.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "dwarf-regs.h" /* for EM_HOST */
++#include "syscalltbl.h"
++#include "util/hashmap.h"
++#include "util/trace.h"
++#include "util/util.h"
++#include <bpf/bpf.h>
++#include <linux/time64.h>
++#include <tools/libc_compat.h> /* reallocarray */
++
++#include "bpf_skel/syscall_summary.h"
++#include "bpf_skel/syscall_summary.skel.h"
++
++
++static struct syscall_summary_bpf *skel;
++
++int trace_prepare_bpf_summary(enum trace_summary_mode mode)
++{
++	skel = syscall_summary_bpf__open();
++	if (skel == NULL) {
++		fprintf(stderr, "failed to open syscall summary bpf skeleton\n");
++		return -1;
++	}
++
++	if (mode == SUMMARY__BY_THREAD)
++		skel->rodata->aggr_mode = SYSCALL_AGGR_THREAD;
++	else
++		skel->rodata->aggr_mode = SYSCALL_AGGR_CPU;
++
++	if (syscall_summary_bpf__load(skel) < 0) {
++		fprintf(stderr, "failed to load syscall summary bpf skeleton\n");
++		return -1;
++	}
++
++	if (syscall_summary_bpf__attach(skel) < 0) {
++		fprintf(stderr, "failed to attach syscall summary bpf skeleton\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++void trace_start_bpf_summary(void)
++{
++	skel->bss->enabled = 1;
++}
++
++void trace_end_bpf_summary(void)
++{
++	skel->bss->enabled = 0;
++}
++
++struct syscall_node {
++	int syscall_nr;
++	struct syscall_stats stats;
++};
++
++static double rel_stddev(struct syscall_stats *stat)
++{
++	double variance, average;
++
++	if (stat->count < 2)
++		return 0;
++
++	average = (double)stat->total_time / stat->count;
++
++	variance = stat->squared_sum;
++	variance -= (stat->total_time * stat->total_time) / stat->count;
++	variance /= stat->count - 1;
++
++	return 100 * sqrt(variance / stat->count) / average;
++}
++
++/*
++ * The syscall_data is to maintain syscall stats ordered by total time.
++ * It supports different summary modes like per-thread or global.
++ *
++ * For per-thread stats, it uses two-level data strurcture -
++ * syscall_data is keyed by TID and has an array of nodes which
++ * represents each syscall for the thread.
++ *
++ * For global stats, it's still two-level technically but we don't need
++ * per-cpu analysis so it's keyed by the syscall number to combine stats
++ * from different CPUs.  And syscall_data always has a syscall_node so
++ * it can effectively work as flat hierarchy.
++ */
++struct syscall_data {
++	int key; /* tid if AGGR_THREAD, syscall-nr if AGGR_CPU */
++	int nr_events;
++	int nr_nodes;
++	u64 total_time;
++	struct syscall_node *nodes;
++};
++
++static int datacmp(const void *a, const void *b)
++{
++	const struct syscall_data * const *sa = a;
++	const struct syscall_data * const *sb = b;
++
++	return (*sa)->total_time > (*sb)->total_time ? -1 : 1;
++}
++
++static int nodecmp(const void *a, const void *b)
++{
++	const struct syscall_node *na = a;
++	const struct syscall_node *nb = b;
++
++	return na->stats.total_time > nb->stats.total_time ? -1 : 1;
++}
++
++static size_t sc_node_hash(long key, void *ctx __maybe_unused)
++{
++	return key;
++}
++
++static bool sc_node_equal(long key1, long key2, void *ctx __maybe_unused)
++{
++	return key1 == key2;
++}
++
++static int print_common_stats(struct syscall_data *data, FILE *fp)
++{
++	int printed = 0;
++
++	for (int i = 0; i < data->nr_nodes; i++) {
++		struct syscall_node *node = &data->nodes[i];
++		struct syscall_stats *stat = &node->stats;
++		double total = (double)(stat->total_time) / NSEC_PER_MSEC;
++		double min = (double)(stat->min_time) / NSEC_PER_MSEC;
++		double max = (double)(stat->max_time) / NSEC_PER_MSEC;
++		double avg = total / stat->count;
++		const char *name;
++
++		/* TODO: support other ABIs */
++		name = syscalltbl__name(EM_HOST, node->syscall_nr);
++		if (name)
++			printed += fprintf(fp, "   %-15s", name);
++		else
++			printed += fprintf(fp, "   syscall:%-7d", node->syscall_nr);
++
++		printed += fprintf(fp, " %8u %6u %9.3f %9.3f %9.3f %9.3f %9.2f%%\n",
++				   stat->count, stat->error, total, min, avg, max,
++				   rel_stddev(stat));
++	}
++	return printed;
++}
++
++static int update_thread_stats(struct hashmap *hash, struct syscall_key *map_key,
++			       struct syscall_stats *map_data)
++{
++	struct syscall_data *data;
++	struct syscall_node *nodes;
++
++	if (!hashmap__find(hash, map_key->cpu_or_tid, &data)) {
++		data = zalloc(sizeof(*data));
++		if (data == NULL)
++			return -ENOMEM;
++
++		data->key = map_key->cpu_or_tid;
++		if (hashmap__add(hash, data->key, data) < 0) {
++			free(data);
++			return -ENOMEM;
++		}
++	}
++
++	/* update thread total stats */
++	data->nr_events += map_data->count;
++	data->total_time += map_data->total_time;
++
++	nodes = reallocarray(data->nodes, data->nr_nodes + 1, sizeof(*nodes));
++	if (nodes == NULL)
++		return -ENOMEM;
++
++	data->nodes = nodes;
++	nodes = &data->nodes[data->nr_nodes++];
++	nodes->syscall_nr = map_key->nr;
++
++	/* each thread has an entry for each syscall, just use the stat */
++	memcpy(&nodes->stats, map_data, sizeof(*map_data));
++	return 0;
++}
++
++static int print_thread_stat(struct syscall_data *data, FILE *fp)
++{
++	int printed = 0;
++
++	qsort(data->nodes, data->nr_nodes, sizeof(*data->nodes), nodecmp);
++
++	printed += fprintf(fp, " thread (%d), ", data->key);
++	printed += fprintf(fp, "%d events\n\n", data->nr_events);
++
++	printed += fprintf(fp, "   syscall            calls  errors  total       min       avg       max       stddev\n");
++	printed += fprintf(fp, "                                     (msec)    (msec)    (msec)    (msec)        (%%)\n");
++	printed += fprintf(fp, "   --------------- --------  ------ -------- --------- --------- ---------     ------\n");
++
++	printed += print_common_stats(data, fp);
++	printed += fprintf(fp, "\n\n");
++
++	return printed;
++}
++
++static int print_thread_stats(struct syscall_data **data, int nr_data, FILE *fp)
++{
++	int printed = 0;
++
++	for (int i = 0; i < nr_data; i++)
++		printed += print_thread_stat(data[i], fp);
++
++	return printed;
++}
++
++static int update_total_stats(struct hashmap *hash, struct syscall_key *map_key,
++			      struct syscall_stats *map_data)
++{
++	struct syscall_data *data;
++	struct syscall_stats *stat;
++
++	if (!hashmap__find(hash, map_key->nr, &data)) {
++		data = zalloc(sizeof(*data));
++		if (data == NULL)
++			return -ENOMEM;
++
++		data->nodes = zalloc(sizeof(*data->nodes));
++		if (data->nodes == NULL) {
++			free(data);
++			return -ENOMEM;
++		}
++
++		data->nr_nodes = 1;
++		data->key = map_key->nr;
++		data->nodes->syscall_nr = data->key;
++
++		if (hashmap__add(hash, data->key, data) < 0) {
++			free(data->nodes);
++			free(data);
++			return -ENOMEM;
++		}
++	}
++
++	/* update total stats for this syscall */
++	data->nr_events += map_data->count;
++	data->total_time += map_data->total_time;
++
++	/* This is sum of the same syscall from different CPUs */
++	stat = &data->nodes->stats;
++
++	stat->total_time += map_data->total_time;
++	stat->squared_sum += map_data->squared_sum;
++	stat->count += map_data->count;
++	stat->error += map_data->error;
++
++	if (stat->max_time < map_data->max_time)
++		stat->max_time = map_data->max_time;
++	if (stat->min_time > map_data->min_time || stat->min_time == 0)
++		stat->min_time = map_data->min_time;
++
++	return 0;
++}
++
++static int print_total_stats(struct syscall_data **data, int nr_data, FILE *fp)
++{
++	int printed = 0;
++	int nr_events = 0;
++
++	for (int i = 0; i < nr_data; i++)
++		nr_events += data[i]->nr_events;
++
++	printed += fprintf(fp, " total, %d events\n\n", nr_events);
++
++	printed += fprintf(fp, "   syscall            calls  errors  total       min       avg       max       stddev\n");
++	printed += fprintf(fp, "                                     (msec)    (msec)    (msec)    (msec)        (%%)\n");
++	printed += fprintf(fp, "   --------------- --------  ------ -------- --------- --------- ---------     ------\n");
++
++	for (int i = 0; i < nr_data; i++)
++		printed += print_common_stats(data[i], fp);
++
++	printed += fprintf(fp, "\n\n");
++	return printed;
++}
++
++int trace_print_bpf_summary(FILE *fp)
++{
++	struct bpf_map *map = skel->maps.syscall_stats_map;
++	struct syscall_key *prev_key, key;
++	struct syscall_data **data = NULL;
++	struct hashmap schash;
++	struct hashmap_entry *entry;
++	int nr_data = 0;
++	int printed = 0;
++	int i;
++	size_t bkt;
++
++	hashmap__init(&schash, sc_node_hash, sc_node_equal, /*ctx=*/NULL);
++
++	printed = fprintf(fp, "\n Summary of events:\n\n");
++
++	/* get stats from the bpf map */
++	prev_key = NULL;
++	while (!bpf_map__get_next_key(map, prev_key, &key, sizeof(key))) {
++		struct syscall_stats stat;
++
++		if (!bpf_map__lookup_elem(map, &key, sizeof(key), &stat, sizeof(stat), 0)) {
++			if (skel->rodata->aggr_mode == SYSCALL_AGGR_THREAD)
++				update_thread_stats(&schash, &key, &stat);
++			else
++				update_total_stats(&schash, &key, &stat);
++		}
++
++		prev_key = &key;
++	}
++
++	nr_data = hashmap__size(&schash);
++	data = calloc(nr_data, sizeof(*data));
++	if (data == NULL)
++		goto out;
++
++	i = 0;
++	hashmap__for_each_entry(&schash, entry, bkt)
++		data[i++] = entry->pvalue;
++
++	qsort(data, nr_data, sizeof(*data), datacmp);
++
++	if (skel->rodata->aggr_mode == SYSCALL_AGGR_THREAD)
++		printed += print_thread_stats(data, nr_data, fp);
++	else
++		printed += print_total_stats(data, nr_data, fp);
++
++	for (i = 0; i < nr_data && data; i++) {
++		free(data[i]->nodes);
++		free(data[i]);
++	}
++	free(data);
++
++out:
++	hashmap__clear(&schash);
++	return printed;
++}
++
++void trace_cleanup_bpf_summary(void)
++{
++	syscall_summary_bpf__destroy(skel);
++}
+diff --git a/tools/perf/util/bpf_skel/syscall_summary.bpf.c b/tools/perf/util/bpf_skel/syscall_summary.bpf.c
+new file mode 100644
+index 0000000000000000..b25f53b3c1351392
+--- /dev/null
++++ b/tools/perf/util/bpf_skel/syscall_summary.bpf.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Trace raw_syscalls tracepoints to collect system call statistics.
++ */
++
++#include "vmlinux.h"
++#include "syscall_summary.h"
++
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++/* This is to calculate a delta between sys-enter and sys-exit for each thread */
++struct syscall_trace {
++	int nr; /* syscall number is only available at sys-enter */
++	int unused;
++	u64 timestamp;
++};
++
++#define MAX_ENTRIES	(128 * 1024)
++
++struct syscall_trace_map {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__type(key, int); /* tid */
++	__type(value, struct syscall_trace);
++	__uint(max_entries, MAX_ENTRIES);
++} syscall_trace_map SEC(".maps");
++
++struct syscall_stats_map {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__type(key, struct syscall_key);
++	__type(value, struct syscall_stats);
++	__uint(max_entries, MAX_ENTRIES);
++} syscall_stats_map SEC(".maps");
++
++int enabled; /* controlled from userspace */
++
++const volatile enum syscall_aggr_mode aggr_mode;
++
++static void update_stats(int cpu_or_tid, int nr, s64 duration, long ret)
++{
++	struct syscall_key key = { .cpu_or_tid = cpu_or_tid, .nr = nr, };
++	struct syscall_stats *stats;
++
++	stats = bpf_map_lookup_elem(&syscall_stats_map, &key);
++	if (stats == NULL) {
++		struct syscall_stats zero = {};
++
++		bpf_map_update_elem(&syscall_stats_map, &key, &zero, BPF_NOEXIST);
++		stats = bpf_map_lookup_elem(&syscall_stats_map, &key);
++		if (stats == NULL)
++			return;
++	}
++
++	__sync_fetch_and_add(&stats->count, 1);
++	if (ret < 0)
++		__sync_fetch_and_add(&stats->error, 1);
++
++	if (duration > 0) {
++		__sync_fetch_and_add(&stats->total_time, duration);
++		__sync_fetch_and_add(&stats->squared_sum, duration * duration);
++		if (stats->max_time < duration)
++			stats->max_time = duration;
++		if (stats->min_time > duration || stats->min_time == 0)
++			stats->min_time = duration;
++	}
++
++	return;
++}
++
++SEC("tp_btf/sys_enter")
++int sys_enter(u64 *ctx)
++{
++	int tid;
++	struct syscall_trace st;
++
++	if (!enabled)
++		return 0;
++
++	st.nr = ctx[1]; /* syscall number */
++	st.unused = 0;
++	st.timestamp = bpf_ktime_get_ns();
++
++	tid = bpf_get_current_pid_tgid();
++	bpf_map_update_elem(&syscall_trace_map, &tid, &st, BPF_ANY);
++
++	return 0;
++}
++
++SEC("tp_btf/sys_exit")
++int sys_exit(u64 *ctx)
++{
++	int tid;
++	int key;
++	long ret = ctx[1]; /* return value of the syscall */
++	struct syscall_trace *st;
++	s64 delta;
++
++	if (!enabled)
++		return 0;
++
++	tid = bpf_get_current_pid_tgid();
++	st = bpf_map_lookup_elem(&syscall_trace_map, &tid);
++	if (st == NULL)
++		return 0;
++
++	if (aggr_mode == SYSCALL_AGGR_THREAD)
++		key = tid;
++	else
++		key = bpf_get_smp_processor_id();
++
++	delta = bpf_ktime_get_ns() - st->timestamp;
++	update_stats(key, st->nr, delta, ret);
++
++	bpf_map_delete_elem(&syscall_trace_map, &tid);
++	return 0;
++}
++
++char _license[] SEC("license") = "GPL";
+diff --git a/tools/perf/util/bpf_skel/syscall_summary.h b/tools/perf/util/bpf_skel/syscall_summary.h
+new file mode 100644
+index 0000000000000000..17f9ecba657088aa
+--- /dev/null
++++ b/tools/perf/util/bpf_skel/syscall_summary.h
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/* Data structures shared between BPF and tools. */
++#ifndef UTIL_BPF_SKEL_SYSCALL_SUMMARY_H
++#define UTIL_BPF_SKEL_SYSCALL_SUMMARY_H
++
++enum syscall_aggr_mode {
++	SYSCALL_AGGR_THREAD,
++	SYSCALL_AGGR_CPU,
++};
++
++struct syscall_key {
++	int cpu_or_tid;
++	int nr;
++};
++
++struct syscall_stats {
++	u64 total_time;
++	u64 squared_sum;
++	u64 max_time;
++	u64 min_time;
++	u32 count;
++	u32 error;
++};
++
++#endif /* UTIL_BPF_SKEL_SYSCALL_SUMMARY_H */
+diff --git a/tools/perf/util/trace.h b/tools/perf/util/trace.h
+new file mode 100644
+index 0000000000000000..ef8361ed12c4edc1
+--- /dev/null
++++ b/tools/perf/util/trace.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef UTIL_TRACE_H
++#define UTIL_TRACE_H
++
++#include <stdio.h>  /* for FILE */
++
++enum trace_summary_mode {
++	SUMMARY__NONE = 0,
++	SUMMARY__BY_TOTAL,
++	SUMMARY__BY_THREAD,
++};
++
++#ifdef HAVE_BPF_SKEL
++
++int trace_prepare_bpf_summary(enum trace_summary_mode mode);
++void trace_start_bpf_summary(void);
++void trace_end_bpf_summary(void);
++int trace_print_bpf_summary(FILE *fp);
++void trace_cleanup_bpf_summary(void);
++
++#else /* !HAVE_BPF_SKEL */
++
++static inline int trace_prepare_bpf_summary(enum trace_summary_mode mode __maybe_unused)
++{
++	return -1;
++}
++static inline void trace_start_bpf_summary(void) {}
++static inline void trace_end_bpf_summary(void) {}
++static inline int trace_print_bpf_summary(FILE *fp __maybe_unused)
++{
++	return 0;
++}
++static inline void trace_cleanup_bpf_summary(void) {}
++
++#endif /* HAVE_BPF_SKEL */
++
++#endif /* UTIL_TRACE_H */
 -- 
-Thanks and Regards,
-Prateek
+2.49.0.395.g12beb8f557-goog
 
 
