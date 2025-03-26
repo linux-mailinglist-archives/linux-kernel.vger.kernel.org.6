@@ -1,245 +1,143 @@
-Return-Path: <linux-kernel+bounces-577132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBADA718B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:39:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B840A718E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766823B73DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B43F3BB05E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406201F1913;
-	Wed, 26 Mar 2025 14:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6AF1F37B8;
+	Wed, 26 Mar 2025 14:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NPkstlEl"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2068.outbound.protection.outlook.com [40.107.20.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5N0hj2m"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5F34778E;
-	Wed, 26 Mar 2025 14:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999989; cv=fail; b=dm3QUPx4d3gECgifBrF7rocCPrzzhk5sFTm8Is4KQ4LNy1KquaA/7rHOzfnmUvxu/pFQ6m047xhd5J1Drldb+sLsw/rsjsQt1aWmXXxs/OEPUQxiZS2/LiT0Crg1TYWEJzyuD6VVMVjPvPJJiujujIqX0+s7q8CHiCfkQ9uDRMQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999989; c=relaxed/simple;
-	bh=pRJ/zQ02eVznR/jWzUQ+JKD/PMG/rv9YRlGW7K6cZug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QSH74Qpg4PT2cCUcCvCAkEVdNEDFVB9Io70L1aNLrFIt6hsBuJe+j93ibigwQX/I6Udlc/mVPys40ajFVI+4hyXTsPc8iI1++v1D/sVldI73mrsrWS9S+3JdPWbbKBQw57byg+tZbdX5IUVaACq911hdDattIp4ogElMlhF5ruE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NPkstlEl; arc=fail smtp.client-ip=40.107.20.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WF36hAIhIW5TDyyV9Z1iUitpKlMBWlZc0l2dg6da6RCvmuIjnhi3K24g0l0SJgBRdKJN5GKQyVyyx3nvxFQKQCSNIKl9SWVx8Bc67eX/cFghjg92P6M5XAc7TQM/7vj6mebWG1I8etCsrUa4HPhfOLZQuZU1qgk0poojQwt8/y/wlZEYlnRF7kTndv8WOPfEAZRqUC3w9XaN7gfBb83hXyvShpidBVOZd3RkqiZ0Uz6+8vSv8dxpHDlwH1nkPkN592yYfC/EUKc/SsTwcy5jM7W3xEN4PVwN5rWLx/i6nwMsqAFz7x0O1daN11NGfdl2pS4VwzuSkxnM4zC/14g3XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qDKjwgUBD50F8tSje2h+m7/fTZNTOb3U7tE1cCgVink=;
- b=Xnp6YwtKzil1P+eVWkh5AW4gNctsOB9KUJidnIor2o6HDzQ0Yq77FqVMqERcR23K8II2j4owEbDCjOcRJqkDxTJfsWwUYp40PY7s5qykeR4tcgQSc3np7vJsP03TZ6NKzcBNNShtoidOxjKPK3JdFqky3mL9o0D7aqTOzcqkXMkZ4Z+vjMHYpyxMRM2U73jrsTT9m+qcamh8SkXAmexb2oueaI7OgqZ0n68xP3kZOVqMggfMo1R9hfSaEStDQpgptsvSqIv6uOtAz9Q6OQVy0jCz0AwjtSUyjZtVFfFU6PES+DqlhzzxrZpI9V4KigZTr58JilcD+k81uQDiZJRATw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qDKjwgUBD50F8tSje2h+m7/fTZNTOb3U7tE1cCgVink=;
- b=NPkstlEl71TOH7hsTZIOv3LUun9M5i2YWUuqkTWzTP9GrB9MHecfh+2KxVdR3dOW3ODEEGUt7kXzalMHKwbggCaxKyWlDfiUcJ3oY+L/2f3JqqFFss+4+iZuOSrvTzk4usQtsOFp/w+JiYbJFSmCIqmTkwKlUCieT/1ijYGkf3zC5tnQ46RmHNCsIZOPGaDGcXnkNCLLOqfL1A2FBb+eTWc0A33/R2XLVSHObTamo9amtJ5/4ky9HQdt82tWA8+T7V94nyzdki/liGnecS9mQOtQcNzeYTrAyTr1o26pinAQUEV//fY+oC9zDsPY2Smq3Nh7Z1zqlKYLzU13zITKuw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8457.eurprd04.prod.outlook.com (2603:10a6:102:1d8::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 14:39:45 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 14:39:43 +0000
-Date: Wed, 26 Mar 2025 10:39:35 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] PCI: imx6: Let i.MX95 PCIe compliance with 8GT/s
- Receiver Impedance ECN
-Message-ID: <Z+QRp3v/DW0CbVD/@lizhi-Precision-Tower-5810>
-References: <20250326075915.4073725-1-hongxing.zhu@nxp.com>
- <20250326075915.4073725-5-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326075915.4073725-5-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: BY5PR17CA0031.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::44) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72A71F5423;
+	Wed, 26 Mar 2025 14:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743000008; cv=none; b=HwG5XfDlZ3+0d5/5KxR9eF3aKoJl4UyukhOdi8WkN2hLFoo+mfow083rwMWCXuMMyooSZnku1P+GWiUl/02e+TSyEOSjTnc+zptjSD9HvcDu+sYv7iimYxOsy/5BU5hbqZgZC2p8brEG7+YD14kuWyM1ozWAipFnSfhnRrA8AnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743000008; c=relaxed/simple;
+	bh=CBjahAx4C/1ROi+dFt27DdZY43Juz4Iuu0Iih0QWN8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rvCd3K7WiXOLgkhm1OaHIAgtKnz7icnePaw/6aL1aAgeJAZzW2oUWejpVbUqVQEu2zIGDpvIfFDMWM2T5hcHOdxZw4tzqqrMqTETgeSgsqrG0HlP07OIHD9g3v1gcIX2myvfXK6Ys2ZuIbMphSEPmOblaCFyrwqlg5F8atRd6I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5N0hj2m; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso45183595e9.0;
+        Wed, 26 Mar 2025 07:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743000005; x=1743604805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JBeXjQIPHX/DPtw6MHzZgLXu1uaUvVTtJA5pM8jD9SU=;
+        b=K5N0hj2mafa+G++tAyEbG/IJYwqK8fSUPP5IlSHTjASYVyh90co7pJ39HK1iinC52+
+         6D1WO2km6ixPDmKvu/x0iPoWQ8LH4rxYvNIXBFYQABEp5vZy/5wn0AEdWhO1nFwLnZmH
+         u8vRvgzz99ztbKXYj/tQM3X4td56i5li8xCyIZ9N+fZOnYEVPPkH4MQoMZdMRaSU8Lln
+         sK2LM4JV5X48jD1p6ljARG7uyOhw/Z/dPXH3eS+FvfCro2kvDHq+dOIWw6f6wk4AuOR+
+         PP5Vc4ILT4S4LLi2hlYdEGicpTh3S9/HlrsJXcYIXBjNmb6uOL87KEG2C+MHPWKktHTE
+         en6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743000005; x=1743604805;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JBeXjQIPHX/DPtw6MHzZgLXu1uaUvVTtJA5pM8jD9SU=;
+        b=EhOQiAo+zOT5niYCSorW/b6kDL4aXVfbXC9xFggR4cKgu7Qk7q1IQBWCLz60vcmpkl
+         ocLnZZ3tBOjck/aXp648q8Ranhmk3O3WDBnKcGs3cqZZreYh1puiWzYItdTkt0pxqKHK
+         o45fX91TM0IExTM6ZVnDCM+YgxdJqLzabBaXlEpRnr1ZnHJvYls3p/6KervDEo0bwg/u
+         C2g15bwPqsbgAfCXjeT31EIaNuve9d5gEq9VLjj3FVziyI4H2zPPcjAS+E17W+tkAoQw
+         DzsRC1XP0YvJ1i2XbHEEW4t9NbAPDI0eF8QIzs53CXIQCvTa4Tw104A1aQR5QtgNc0Cu
+         P21Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU930iiavgSEtmDuPbRhxKqRhVvZb3z75ct2XWD3/kyts1o0AoYtjUViejinA/5Hm39D/6R+cIMFk2Pgz1M@vger.kernel.org, AJvYcCUHE3RAI4LaWQ4i4zRIgZWpwMDJGAFufGzxTO3BSWwfLVbkvfeF1Jce5wkm1kdHTCQPu35Nf8oY7rdK@vger.kernel.org, AJvYcCUPI6BmjzYuwRsdgOJlqrkFBS9NZfh0OHFlJ5b3AARLflQvZuLSKN9NM+wUQ8z8GJLEe8NUgA2/m5//@vger.kernel.org, AJvYcCVVTaQUboYm1isIre/sFU/aHN9NXhngeycvHJnQPlMhsNGqAexAjR4iPSWhI94OSiYtXXvG+GDIQBk/C6LO@vger.kernel.org, AJvYcCWUb5MQwiiOVlvkj2uUL8+tX79qE8vKgE0qiKUcg1dgLRmTUTVPTNTN8VSp2TwqOt4kKVem+o0usG12@vger.kernel.org, AJvYcCX0sqxSHxTES24NIZ3Siryw7y19Re0MJPeyP0AJJgihvkuRJAdp+agRKdCNJYGuGxCF/+BRWwSCtXsltQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRcRs9j4mSQGuvdTgECNkq8tNRlUw+nPvL6q9yrvdvj1/M9rKc
+	h1ub+duayc6naND4FmoEHtLY8li0LONQQnzDu2xAnRHi+AHPO77i
+X-Gm-Gg: ASbGncusm52mF1/z3MVn5d1eY2luM0DoezjuGhcusMSKk+iqz7niLxum6kytbb+B4tc
+	96Uyb5FvkwjPont09WCRLiw+OmaCfwT68Kt7+fw7MpHnACBoPdAi0Ux5KsTG7O7FMq62v7uoM8s
+	d8tTebaliHV+mFilKpr2dg4pQ3n6cljy4f/IpzEmAGfQ39NKRIcfHau/xMvuOrRR5CRKJ5UdWTT
+	mb7x1yYxOcOTSeXkc3vddKgjrpsAn4WrFm5l9XsvCcce7QDpE9Ne3hjkKg1pUOe9OI+Om4dDWYa
+	vCRIPWqaF6u0OlDVo9+sk64MsESYtTBSmBi9LTXmGTZWJ/bWuSanTl+Mr43pn9ImSQCp
+X-Google-Smtp-Source: AGHT+IHGBMJEO8+R7DqUEz8hzHGBbhkdsO5wRHl9G7dczHcBO14XnWfcboERE9FalZfCBAPnpCJUfQ==
+X-Received: by 2002:a5d:59ae:0:b0:38f:503a:d93f with SMTP id ffacd0b85a97d-3997f9336f0mr21916870f8f.40.1743000004776;
+        Wed, 26 Mar 2025 07:40:04 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:e63e:b0d:9aa3:d18d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82efe9b4sm3891885e9.20.2025.03.26.07.40.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 07:40:04 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 06/15] dt-bindings: serial: renesas: Document RZ/V2N SCIF
+Date: Wed, 26 Mar 2025 14:39:36 +0000
+Message-ID: <20250326143945.82142-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8457:EE_
-X-MS-Office365-Filtering-Correlation-Id: 935a3812-18ca-41fc-f5a8-08dd6c740c10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9z4kHrojH65UT4C/C5RYCww3zBGo4in3APAGFXfUVR5Z0aTQACGZx5jB2KAe?=
- =?us-ascii?Q?qh9qeO1bJLYZewEr7sLLjt4opguEX+2Ldf8QEW6yrjWSTxGc1HmH77CD6yp3?=
- =?us-ascii?Q?lmSbgh3Nx62+UeymCwtFZ7jQ4SAhuVGqAtyjxnLdQ4aYSZ5ndnGFyAGFRu7L?=
- =?us-ascii?Q?laGJ4rkgl8fKu4jE4SrifHmtIX9PgMpRn1o8HOQIKNO9RN9Rp3lK8z7DOl0A?=
- =?us-ascii?Q?nrCI+vsVUQmmngpn5uvbmhL/UJ1VJu1eDxeA0zryzHI/wnyRErc7ExLqiW1l?=
- =?us-ascii?Q?HvPNxgUiWUjGfKVkb3kFanYwYDEYjBrDY8tBkeowdNf9Cdy/+oxxO1Zf8j01?=
- =?us-ascii?Q?IjEjFMpvTffG5muRrqlXlFaXnP4rj0q1zSh4thGMBimcmuWAoO7fF7bPJiuF?=
- =?us-ascii?Q?Mt0ZcisWJha/tnhGvEuShjCo3T4hkIxrw2K3ypl+6RN+eVodWxowGtc0CZ40?=
- =?us-ascii?Q?XTHBIj0R88mvSC3NlB/RLzwfCkou8zg0u03Ydvxdio7Jt9l+8QQJuz0xIwr5?=
- =?us-ascii?Q?F0otYh+wEn48/BO2wK59BlcTMY3vSpFk4tW/7RK5TN2i66nCyvLbbXrbhJE4?=
- =?us-ascii?Q?1PFiATacetv8rFpx5MPvHrm9yEP7qSKrHUrShbT+hQ8F+7UO7YuRIXA8NO3G?=
- =?us-ascii?Q?hGh/RTNKrO+9u8pMneebMfa/zPi3mDyQnCknB2wlEeNS3PVeheo9byxP1oo6?=
- =?us-ascii?Q?gZhBX4YyzuPnCLwdr/DEMenNiXin1k5fwnqWoZAwlT/IMm976rAKutbl+AiL?=
- =?us-ascii?Q?xZI8rOULMseLNmJvvpqSzbowBxYlbXCysSrvJPA+SRfeZGtKiWAPg6e7gxFk?=
- =?us-ascii?Q?tuZaVVhIUihgZgXpqe8rVryHoodJiJb4TVdldIQjkBG5LBWFT/0tdEOBg1tn?=
- =?us-ascii?Q?hDKNgU+wUZXgali4V/5blooZ2aur9/JpvVo/6BHf35OzVgf2F5+3+kOkONrY?=
- =?us-ascii?Q?w1NCt8B7i+XKyKel3bgdQDhfYdtcLMqSrg+wj9tdrkFNe578SgETm6iTayr9?=
- =?us-ascii?Q?qk3oOTbeybcuMWAC0efgbrMkJrR28xk43k5uDCccYuiEFw+DH12hKiqgkNhx?=
- =?us-ascii?Q?z03f9xKdE2VzLJhr5gAqWL5rsA3bmoA1LMwpWGNGJMvt6UqJFciKMYGGeqLG?=
- =?us-ascii?Q?lbJidB5rMqTMpeY6iRICSqx8AzZbQ8oWAXVy37CVKmDtQkofnkt14FHWX/2a?=
- =?us-ascii?Q?614UDvvxXJn81Aujv527jOkoH6Eb2JN+WVteNaOrksrig43LPqtikWBzmfCL?=
- =?us-ascii?Q?5lwb6jFtOXqxlxYQ0ep0dsONZqhW1HvmCRszhudzB/+CSuVfjDsF8riIf3TH?=
- =?us-ascii?Q?D6A1XKCtviAKodHwQ+m2mv+uLBs+LotOXwteLFK4lMFNXLMDekBvtn6qU2Or?=
- =?us-ascii?Q?ptbVsLb9HBtxPmqZKln2kdktDSFSA/n7rtnz8tUD31TAPsa88Jtv3iLBF1Pn?=
- =?us-ascii?Q?/c0B9j/PpUvqx6ALKR+w0DHjUK4fH4Qya3y5Kaj4bR+daoE1GzKNpcTfbPFM?=
- =?us-ascii?Q?Jff1Iv0NDWbL/MI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X4oVWYReJvtRZRhHTiTgAFkZEHlhFQtdmA9p3ShIhnwvRwfSHQfHG3rjC4nu?=
- =?us-ascii?Q?K9djeF+HshMC4Ja5im4Dtn0jPDxF6h5FHtU5CZF0/IyuCVNoK9MBQQ5kOD+p?=
- =?us-ascii?Q?12/G6IIc06Lbnj6QLSyQiWnkyu3s164ckgj6mb1QqpDFwv9sR+6gzONKdoXs?=
- =?us-ascii?Q?b9U4Eg9m2cFx1JRttOpmRknBxKqosKYrG1VEkyqG0xCcS4fCO8xHFKx4dZfX?=
- =?us-ascii?Q?OvdZ4ONze4zcbu6O/UFm8vnWRHpb8pfoxzN2LcEsbdxxJDbddn2ziHQHgvyA?=
- =?us-ascii?Q?n++65RurfunsCHQz5h1KZ8wJxPkISOamRRcWrVxn3IuC1w6W17NETmvP7dE8?=
- =?us-ascii?Q?stuqajVW3LErwAIHDI770/n04cWgGK6G54t/0XIjHJ/9xEBTT8hrFNVUrHEW?=
- =?us-ascii?Q?iBwFSFr+U3oW9NP2yHU4EaU7ZE5VUqS3aMtP2zClvyKNbCyih/fP15vfJZM1?=
- =?us-ascii?Q?mJ0wRZH/xB7tDryB1K54KuADAoI1YazeKNrTvVmUsK69VhF5CTEOWKC6A5F6?=
- =?us-ascii?Q?xO9eWI36/EW7CSjuviuJLMsrd8mdjOsJYCFu6i9/pmNCBqwRMTW/miPFSkuZ?=
- =?us-ascii?Q?NxM8hLEhVsmK1TVeHBiqJKH3izldziOYMzQT49ywJXifS5+BoF8k2gb2WscA?=
- =?us-ascii?Q?MhiRTbMq2RfNEBTS5M8AJVlVtWr0DFyETT/uoMMd3hWONaeBdO1csgknkrmI?=
- =?us-ascii?Q?rhsjp6w/IlQXj0YTQSfq2u/ydP+bBQZlpOFkepAG4LWs4FXEl6i5gEBo4NmZ?=
- =?us-ascii?Q?23bMugV/E0iD1iSJB8hROOUOWJyZGIs99JnP/nZ38uryCjT4od1+CHhTVoFx?=
- =?us-ascii?Q?D+cUSuvFvZUonOM00ANlmibx+6ptI80u+oY+2kiKrR/ijobD9uGDIG6fFhAm?=
- =?us-ascii?Q?fiji4Dxm6+xNIy5LYxmQlbAYlV76bBkIYa5B8PqqjzV71r1MJspzk7zAdJgR?=
- =?us-ascii?Q?zov3FW2EOK7rPD4buN68gblXmFqvU8oD1REI/dFUvGC9Yqp4hUpUtJ0kmtDx?=
- =?us-ascii?Q?/B0s4pJa+QxHKc28rShvynTGmnkEWUBjEHwMhppHfxRTfWLubdYeFuC7h3Rj?=
- =?us-ascii?Q?OcTwx8l4H/xuGDppAtRZaAGmxwoaqwYZCoB4EbNhL7L59sbp2wV8pYOO9dk6?=
- =?us-ascii?Q?Dif0216sb09nsG7BQG7VB0MFoBX6VP5/l6VsFq+D3TUVj4+0KwVGI7r98DCT?=
- =?us-ascii?Q?DcaRVtXYDRPhHCk8j4Rlcmrz6SNV23Cm438f/9pXUr1IWNjCiwn9+6Qiu6SG?=
- =?us-ascii?Q?HLnKRWNbWqBcG/vHafCO12WGHvic9KGtxTZDN297GwirLkrChMnUKuSTTbwm?=
- =?us-ascii?Q?hFHxzZUjns8pwwII/lv3civ4rayfYYFMugyllOaPfGsiAIMcdX3BMpKFz0NQ?=
- =?us-ascii?Q?1UQsZCXxpTcJ0eHw7C0ClcdwRxJ3ZM5WCtCPgKn1lC0/q7XFBnqFvEnXcSKj?=
- =?us-ascii?Q?1ZU2m1X3+cC0nBUqdSIYncNeRsLvqe1Q1YSFp6fnaaak4ri4OShxs1I2XXjm?=
- =?us-ascii?Q?+DbjQzaQ+CH6JxEx1VQnO7wDkCfao9jaiLmSiOkbCuG3k3yY6wEe6eoOZ1js?=
- =?us-ascii?Q?Bo8ZErw+tFf3ceaDInluKkq8XLpzl5UiZCVRO9th?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 935a3812-18ca-41fc-f5a8-08dd6c740c10
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 14:39:43.2562
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qnZYXEdj9kPOG9vdY7jfll2eTycrjhSP0i96ODacC/KQkdNYkjQgdJKVJgvmKCb63nvX7wAzUrx5zmw42Zbbbw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8457
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 03:59:13PM +0800, Richard Zhu wrote:
-> ERR051586: Compliance with 8GT/s Receiver Impedance ECN.
->
-> The default value of GEN3_RELATED_OFF[GEN3_ZRXDC_NONCOMPL] is 1 which
-> makes receiver non-compliant with the ZRX-DC parameter for 2.5 GT/s when
-> operating at 8 GT/s or higher. It causes unnecessary timeout in L1.
->
-> Workaround: Program GEN3_RELATED_OFF[GEN3_ZRXDC_NONCOMPL] to 0.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 33 +++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index fbab5a4621aa..42683d6be9f2 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1261,6 +1261,37 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
->  		regulator_disable(imx_pcie->vpcie);
->  }
->
-> +static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
-> +	u32 val;
-> +
-> +	switch (imx_pcie->drvdata->variant) {
-> +	case IMX95:
-> +	case IMX95_EP:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Use quirk flags
+Document SCIF bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC.
+The SCIF interface in Renesas RZ/V2N is identical to the one available
+in RZ/V2H(P), so `renesas,scif-r9a09g057` will be used as a fallback,
+allowing reuse of the existing driver without modifications.
 
-	if (imx_pcie->drvdata->flags & IMX6_8GT_ECN_51586 ) {
-		...
-	}
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Frank
+diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+index 8e82999e6acb..24819b204ebf 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+@@ -86,6 +86,7 @@ properties:
+       - items:
+           - enum:
+               - renesas,scif-r9a09g047      # RZ/G3E
++              - renesas,scif-r9a09g056      # RZ/V2N
+           - const: renesas,scif-r9a09g057   # RZ/V2H fallback
+ 
+   reg:
+-- 
+2.49.0
 
-> +		/*
-> +		 * ERR051586: Compliance with 8GT/s Receiver Impedance ECN
-> +		 *
-> +		 * The default value of GEN3_RELATED_OFF[GEN3_ZRXDC_NONCOMPL]
-> +		 * is 1 which makes receiver non-compliant with the ZRX-DC
-> +		 * parameter for 2.5 GT/s when operating at 8 GT/s or higher.
-> +		 * It causes unnecessary timeout in L1.
-> +		 *
-> +		 * Workaround: Program GEN3_RELATED_OFF[GEN3_ZRXDC_NONCOMPL]
-> +		 * to 0.
-> +		 */
-> +		dw_pcie_dbi_ro_wr_en(pci);
-> +		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
-> +		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
-> +		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-> +		dw_pcie_dbi_ro_wr_dis(pci);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->  static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
->  {
->  	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
-> @@ -1302,6 +1333,7 @@ static const struct dw_pcie_host_ops imx_pcie_host_ops = {
->  static const struct dw_pcie_host_ops imx_pcie_host_dw_pme_ops = {
->  	.init = imx_pcie_host_init,
->  	.deinit = imx_pcie_host_exit,
-> +	.post_init = imx_pcie_host_post_init,
->  };
->
->  static const struct dw_pcie_ops dw_pcie_ops = {
-> @@ -1401,6 +1433,7 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
->  	struct device *dev = pci->dev;
->
->  	imx_pcie_host_init(pp);
-> +	imx_pcie_host_post_init(pp);
->  	ep = &pci->ep;
->  	ep->ops = &pcie_ep_ops;
->
-> --
-> 2.37.1
->
 
