@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-576555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3F1A71102
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:05:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD5A710FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC393B96DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C2A3B6744
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F19519755B;
-	Wed, 26 Mar 2025 07:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D9E1990B7;
+	Wed, 26 Mar 2025 07:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OLdgg/0l"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfzrFpVU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A550A1917D0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83B2AF0A;
+	Wed, 26 Mar 2025 07:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972609; cv=none; b=cK+OVfI/mZkN4ToLi9jATlqnelHazlDBQDKLxKsD9K8GgDr0omxTOta1RMB+lQKDMEFd8YWdnmRd6W9cVvp2/93iVneXzSq5fEH3xztGKwXnLEUv+lHJZdN7r4TKSAvXFgcDbHX82DfLs0oOUSSwgm9heBwkt0htyHXCFZ9+C2Y=
+	t=1742972598; cv=none; b=gEaMTfE3HAFLtmWmv8csfgUwwA8qkdO1JEFNURcxNgPFHGBOuIT6Vs2BQlA3iZLcgfzdqfD2ABDimKicwOJTIm+NNV4sWh+BERcRSMntpgFXmdDOmR4rZsrlhnTkkyStI81tWXXNL8r3VC9eG3TcZyTVn37vexK98kfzw6DOmYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972609; c=relaxed/simple;
-	bh=qTpgNy6zEDsUZhOgWml+A7fADV/itqrWvIqhBWECVzc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=UeJjrnUCXrlTJK/Q0erOWNK+wAnVQbYjlMdRHcC9BeJ+eBYQ8ABOsAO+g7Q1L2Yxvs+lOmA5j489iDnIucQFJLmT6t6Yqbol3XvOmH3aGrOYZA5Q77aHumNAQQPJHysnBeXIELGuzDqsUcrqXYKGboBEx1ryM0aYklz31x4Fd0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OLdgg/0l; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-39130f02631so2498405f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742972605; x=1743577405; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VjdDMxOJ8ypIsJr26T0ef7SswO7nHrS4JeKFOEHommw=;
-        b=OLdgg/0lcUlFYDTUfmCHOW4+p6ZmeD+XTpQeAknHEolk8qBst5l4m+AxlxzJ6NNz6x
-         CdTwrID5S3BIjG+SbCSIj7oNswm3DQpfyj01+4ol+SirAL5gKSetVzID+lcphx06n6ef
-         SVew1+ekJfidbeWcm3It5+BXVOIqNnsewtjBJRR3HWaX9QPET5pX0V/YY1ZslrntnKjl
-         tKGDJ4tfhhbotu25K3gntRPX7P+MKalv0VZrMouqDqV5kHpGrmbx8o/elplwHZV/k3QI
-         r1y7n+Ssg/wqAomNabRi9mTsMj2gzHXVR9plyvJlmHSvTcfKUL0NuZIPoVOgZkn9MtQl
-         Qp4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742972605; x=1743577405;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VjdDMxOJ8ypIsJr26T0ef7SswO7nHrS4JeKFOEHommw=;
-        b=VcUEkNh2KB+8uzEjqev3f3WOdQqjwE2S1zcydYTIaDb07IFOoiuV9hyJdw0qpB99kP
-         43x/+7NPA/EZlMWoCMI4+PXwv1jeISNbr9v7EqNvP01ZSlucNQlp3wsTkevj2Xip013i
-         8s+e8aQFZnc0O4yTmpUH++QlHZPwxV34/am02DjbQ3YU89SEBbp4oO/WwoTgrfaH9CXd
-         0pxtNUpzqf2PxBGf9/PogenF+GVV24XsjIf6tVBAlmiygq3FvyiwDqXecvhf5vrFf9yQ
-         YFY9sZ+Mhkl/HB06ms5/nLit0mW1rGkvpE+HQlYNj86dBQaLB+JdfWOCT7ZbiybjoO1Y
-         BBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFxl0YEw1o9mg37HgoduJNaz+OlNVEet0YYsPaARWKdtM3rgKbCIhuw5D/KWIhFOIz1i9hdsVmRb8z2Wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykHFK1Hc9rv6bybMOmozXIqRR2noolZyyb2eeG1s6k8FwPoJ4e
-	eFiFi08DpHxmIu127AsZV5cvquwmbWt5baUSpwwLolDv5GW1/QqfsSKdEbOTv3BtqYDWgMaTYg=
-	=
-X-Google-Smtp-Source: AGHT+IH/xYSgXGEpnU/366BtleKSATBGgV7i3H8fDcMjsdSTbRVbQbDtBIxppx2fAgMCYggfEAQrcuBHoQ==
-X-Received: from wmbgx13.prod.google.com ([2002:a05:600c:858d:b0:43d:8f:dd29])
- (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:186d:b0:390:ed04:a676
- with SMTP id ffacd0b85a97d-3997f8ff44fmr18138026f8f.22.1742972605097; Wed, 26
- Mar 2025 00:03:25 -0700 (PDT)
-Date: Wed, 26 Mar 2025 07:02:55 +0000
+	s=arc-20240116; t=1742972598; c=relaxed/simple;
+	bh=/fi76B5UtUwuwMA1yexCDk8ZTpcHFFnF0aLg1Y/cQUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TSpbATYWLad9E1zUPWuy+h/jtG1GCNsBFSdvUcDfZNnfCPzkm8ffObaGluYI4ER4RsgiKr3O9ZLNbWiXkYVN0wZQqAt3kIJQcVPW2X9lXFUEGF1uMemljKX3oExfJWy0EQKS/jxHLwcqBqUkn+dcMctBRTKu5ruYGMtwJ7C01ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfzrFpVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2FBC4CEE2;
+	Wed, 26 Mar 2025 07:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742972596;
+	bh=/fi76B5UtUwuwMA1yexCDk8ZTpcHFFnF0aLg1Y/cQUg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GfzrFpVUxkChqlw79NMqvwzC4dVc5hJYOr/oeX7CD4pEWYqs8qVivKvvANfKrbtz3
+	 6XiA0M/wWJ8T8c/F1zEIu+NIKBY2X5FfYJJjVxfF4opH44do+Wn0zzg/I/HQDymLBB
+	 5JCo47b22IFmtyyGdY48HWCkhMNZS+2x8sNT68J8Uf8R77M/roVZNg6jXRDztl397Q
+	 319AZfKFr6K5lJBS20WN/Y0uBDDdUi9VKk557hJevSnaplWTGA8vRX53Uygdh8RsGc
+	 bPo/eqQAKrPwL0FO5L/ZZFiB45FuiRzVD5x8fu65ECgLQqm479w/sFgZNcFgTIx2/V
+	 ojcwzAZo5nPQw==
+Message-ID: <f1e24507-7cf3-4e0d-8989-05ef3aaa2708@kernel.org>
+Date: Wed, 26 Mar 2025 08:03:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250326070255.2567981-1-keirf@google.com>
-Subject: [PATCH] arm64: mops: Do not dereference src reg for a set operation
-From: Keir Fraser <keirf@google.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Keir Fraser <keirf@google.com>, Kristina Martsenko <kristina.martsenko@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/34] firmware: exynos-acpm: export
+ devm_acpm_get_by_phandle()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+ <20250323-s2mpg10-v1-3-d08943702707@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250323-s2mpg10-v1-3-d08943702707@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The register is not defined and reading it can result in a UBSAN
-out-of-bounds array access error, specifically when the srcreg field
-value is 31.
+On 23/03/2025 23:39, André Draszik wrote:
+> The upcoming Samsung S2MPG10 PMIC driver will need this symbol to
+> communicate with the IC.
+> 
+> Export it.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/firmware/samsung/exynos-acpm.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+> index a85b2dbdd9f0d7b1f327f54a0a283e4f32587a98..7525bee4c6715edb964fc770ac9d8b3dd2be2172 100644
+> --- a/drivers/firmware/samsung/exynos-acpm.c
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -741,6 +741,7 @@ const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
+>  
+>  	return handle;
+>  }
+> +EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
 
-Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Keir Fraser <keirf@google.com>
----
- arch/arm64/include/asm/traps.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If binding changes to parent-child relationship, this might not be needed.
 
-diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-index d780d1bd2eac..82cf1f879c61 100644
---- a/arch/arm64/include/asm/traps.h
-+++ b/arch/arm64/include/asm/traps.h
-@@ -109,10 +109,9 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
- 	int dstreg = ESR_ELx_MOPS_ISS_DESTREG(esr);
- 	int srcreg = ESR_ELx_MOPS_ISS_SRCREG(esr);
- 	int sizereg = ESR_ELx_MOPS_ISS_SIZEREG(esr);
--	unsigned long dst, src, size;
-+	unsigned long dst, size;
- 
- 	dst = regs->regs[dstreg];
--	src = regs->regs[srcreg];
- 	size = regs->regs[sizereg];
- 
- 	/*
-@@ -129,6 +128,7 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
- 		}
- 	} else {
- 		/* CPY* instruction */
-+		unsigned long src = regs->regs[srcreg];
- 		if (!(option_a ^ wrong_option)) {
- 			/* Format is from Option B */
- 			if (regs->pstate & PSR_N_BIT) {
--- 
-2.49.0.395.g12beb8f557-goog
-
+Best regards,
+Krzysztof
 
