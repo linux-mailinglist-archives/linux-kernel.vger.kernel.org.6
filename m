@@ -1,159 +1,154 @@
-Return-Path: <linux-kernel+bounces-577303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9601A71B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:55:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2C7A71B2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5B93A3E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8343A5191
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969DF1F463C;
-	Wed, 26 Mar 2025 15:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D521F4C98;
+	Wed, 26 Mar 2025 15:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ehYVPtdF"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="h2mDSSnc"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6743A1E1E18
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F84114A4C6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004410; cv=none; b=CJEkdnUq0YbVh6is1N1BXNzl6l5QMfdCBhYZFmKfRNyojgGZYyQkesUvMNtcy1b1Nyxx3z+6lHK5GEfnd8O39zHFpGsTS4HGKzbhlX3fniHvfkM1zWGaEPp3q2DGEzpqj3gTt/PW8zLFc5Dueq/bPcnRK29XSFERNGC6Ry5/liw=
+	t=1743004462; cv=none; b=fHO9g/foQOqvidkcTfj4ylrCXH3M7x6DMl8MmEEuPjK54y9JrMoyOy7a2eAe9DHrTGDuZHUHh/oS+4rPP++uy2oJGqMRo6ZC0slSexBqePM6xhGCHo0VPVljfONK66t9lHd8gd5C4VJNpgTZo98oubhqEcqfcKdz+tyYfsM0VWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743004410; c=relaxed/simple;
-	bh=Cmgc9jxK6Ofoo2XQp4Jk7gnBtwLWf98tvySpbz1N580=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eUbT0K4VQzdjawEvJzZx3IpOgqeOAWLCM6IyBeRI6c+Td2Ey5zq0+mOlRxOPyRlUgCdC/NqgwTXu12t8b2xj5WVTNGLQiLF6Axr8K01xOYqUoPfsF35ssRYhFRJ7ETeF+zBiRUP2kOwP9mfYWnPPNmP56CtVdw/DaLStzfsJRRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ehYVPtdF; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3fbaa18b810so2052988b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1743004408; x=1743609208; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SM5fPhKH3eo9QWVzWqGRULqwyyIH1WW4d5YRJrpPBCU=;
-        b=ehYVPtdFhMCYtM9DbsS9zJfc6DbaUSKKCSEItpjmSxyfIV78afqOTXjPhRgqnpvsXk
-         h6vSXpz7NgQiljvaK/CglVay+BGgy4UOrn6J57w6+bQb0Wz+KEK+nsooX+3jMC3UuShD
-         6/e3c0OdVB5AXSYqmODKayaqMua7clPha022w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743004408; x=1743609208;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SM5fPhKH3eo9QWVzWqGRULqwyyIH1WW4d5YRJrpPBCU=;
-        b=en5j5L4TX3/DrZv6bd3xAeBonW1rl4+eodgj+mzOHIOfVQiHGuXe2RkosiGzwbdi6Y
-         i3YujIJ3010dDi72MeqBS9NggaTgMYNGRAjJN1PmxlNG6/J5oOwi/4XLes4UcX9d9GrP
-         wEjrgDVY+AZqBiL2Fg/tLDEV6r+7nMULXR2ctDMXGzR0xBS1/AzHc2hhdNNnc8MUZSxo
-         JiwRpHfFByVo+hX4gYbAt//KDIrOeRwZ6JPU6eTTRzQLLOxox9HSB6JzViygdNRHdzaI
-         sw11CEZGUHig4gBmUyESGOt7l4lDJytDbusnp1nFS/JmEijvOPHNfyLgrJYvX54v6YNi
-         U53g==
-X-Forwarded-Encrypted: i=1; AJvYcCVgPIjwelbXlQyIx/+5EkGDojP8wXUS3n4/TSO1fpyxqdymLlS5bDuy1n12gDiTLJn/YG7UCE4J9EtV34U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7l2pjQNu+N3iTLviFq46vnn7c4k63xs5zA8EM9/ppZGz+BjCm
-	41vPRg8b/6xKAP1k4c69IdcrbFdmZZgBg75GSRhvW71rS3n3yXrUGEtPpSYD7A==
-X-Gm-Gg: ASbGnct/esceyLRZpZoCQAAxzpqVxmVFcHq3PpPN3Fgied6oJ83NW0VuTLIpvQxDII5
-	gFE0y5lHIjdjd9N25P+0eCu8G+8NYtt58qOJJItB8p5J9YEl+6K0N9VMGhZGHWOs2MxzQO2RnEB
-	10sqAbOmTTLQMNwaPp1f5NTLTBoCTmN9CSph8zIdUpZQlYmyeBUNlhImRDqrYxeLvqvLraB4Azx
-	Q3FXb90o4RZv/9ZDUhZ8BLG5imx0VYbfHxf5U2NsFIP8ZVBntPmsTfiaPu9AyHwiBDeJ5sBC3Qg
-	m8nmshVFJlNNOvYdC9XPx5xChrKvWMZLRumLiJ1QkyX4ZWTJnL2hzXZjtW1Osx1pkgDwUbnxg0f
-	Eykt0bpCfioc6o+c2J8E=
-X-Google-Smtp-Source: AGHT+IGAqY1afSx2VOLR53tgrTQpoT0AFaUAQGaXTStPgH9gc/ljordP841Cx+qYslm1PKBCzo1JIA==
-X-Received: by 2002:a05:6808:10c9:b0:3f8:a72f:a976 with SMTP id 5614622812f47-3fefa540987mr23090b6e.11.1743004408340;
-        Wed, 26 Mar 2025 08:53:28 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf6bd815sm2389722b6e.9.2025.03.26.08.53.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 08:53:27 -0700 (PDT)
-Message-ID: <fe0b5fc5-a365-45e2-8e87-24b2830255bf@broadcom.com>
-Date: Wed, 26 Mar 2025 08:53:23 -0700
+	s=arc-20240116; t=1743004462; c=relaxed/simple;
+	bh=FDUGpv8wkh/L+zMY5NUyNY08daDDaIIU0e+pvQ9oYY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQr2CB0J+KjsnGqBSVT8TJr4YfyiD4KUGsgszGbnBRzoOxDAMsqNblf+6hPW+FXxki4pMo50J9TMUJRqA/8hXfVgIEqRJZ20jg2k4MstdZFq7GNGMAYvlCo7Tb/Ada6EBHho3rBjulCJS8gmO4X/63w+yD91b1v06PgLQvNkjz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=h2mDSSnc; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zSLh
+	6u4uG99qS3Ry66qHxhfF2ZHYx/p/tn5fAPvS/l8=; b=h2mDSSnclj1MbnFQxta1
+	sCPwt85MjWu75wLtwX+zd4fkTII+ZZilK4FjkrDY//3Rlr2g5qRFl0/MBMz/jMng
+	v5MAmMYS9INt2nMfSVrqzpoKXBiRZ+cXrdZxCDvdK6hK2dXIbTIm2kVgHXkyOtk0
+	djQLFRZazRVKxP+BHqWUT0kqrE8DqdGJSubN1oNA1dtbNrAOkifdN+7+ghmb6sZq
+	V2ST7/Axd5GaHmH+clfvXilpbiw5kGsh0KsA8nJvG5h4jp3PALiR4EiW/Y641ST/
+	YHe3AfyuGnqW46PM/XYdXxm1Gyx6HzqTG2n732dQLYl/R0ewiURj8ugbybhqtYbb
+	og==
+Received: (qmail 3662529 invoked from network); 26 Mar 2025 16:54:10 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Mar 2025 16:54:10 +0100
+X-UD-Smtp-Session: l3s3148p1@rV0S2UAxBNIujnsv
+Date: Wed, 26 Mar 2025 16:54:09 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v2] media: dvb: usb: Fix WARNING in
+ dib0700_i2c_xfer/usb_submit_urb
+Message-ID: <Z-QjIRoOWpoWaL6l@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+References: <6bb3b80b-a808-4992-8666-535ed9a5c980@rowland.harvard.edu>
+ <67e2fed5.050a0220.a7ebc.0053.GAE@google.com>
+ <29db5fdc-13c9-45f0-9183-c80d637725c6@rowland.harvard.edu>
+ <Z-MKiV0Ei5lmWik6@shikoro>
+ <d0fd60d7-5660-42ed-b1c7-4dfd6b8e74b0@rowland.harvard.edu>
+ <Z-MrfICsY06DZV-2@shikoro>
+ <f8e975a0-87d2-4f83-b580-6858050a252d@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH stable 5.15 v2 2/2] openvswitch: fix lockup on tx to
- unregistering netdev with carrier
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, Ilya Maximets <i.maximets@ovn.org>,
- Friedrich Weber <f.weber@proxmox.com>, Aaron Conole <aconole@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Sasha Levin <sashal@kernel.org>,
- Carlos Soto <carlos.soto@broadcom.com>, "David S. Miller"
- <davem@davemloft.net>, Pravin B Shelar <pshelar@ovn.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
- Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Felix Huettner <felix.huettner@mail.schwarz>,
- Breno Leitao <leitao@debian.org>, Yan Zhai <yan@cloudflare.com>,
- =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@gmx.fr>,
- Joe Stringer <joestringer@nicira.com>, Justin Pettit <jpettit@nicira.com>,
- Andy Zhou <azhou@nicira.com>, Luca Czesla <luca.czesla@mail.schwarz>,
- Simon Horman <simon.horman@corigine.com>,
- "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:OPENVSWITCH" <dev@openvswitch.org>,
- "open list:BPF (Safe dynamic programs and tools)" <bpf@vger.kernel.org>
-References: <20250325192246.1849981-1-florian.fainelli@broadcom.com>
- <20250325192246.1849981-3-florian.fainelli@broadcom.com>
- <2025032620-protract-reassign-f3e7@gregkh>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <2025032620-protract-reassign-f3e7@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6+vuiCGawqSgBAHG"
+Content-Disposition: inline
+In-Reply-To: <f8e975a0-87d2-4f83-b580-6858050a252d@rowland.harvard.edu>
 
-On 3/26/25 08:39, Greg KH wrote:
-> On Tue, Mar 25, 2025 at 12:22:46PM -0700, Florian Fainelli wrote:
->> From: Ilya Maximets <i.maximets@ovn.org>
->>
->> [ Upstream commit 82f433e8dd0629e16681edf6039d094b5518d8ed ]
-> 
-> As Sasha's bot said, this is the wrong git id :(
 
-Sorry, I have been down with the flu over the weekend and am clearly not 
-fully recovered :D
--- 
-Florian
+--6+vuiCGawqSgBAHG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 26, 2025 at 11:28:19AM -0400, Alan Stern wrote:
+> The syzbot fuzzer reported a WARNING related to the dib0700 dvb-usb
+> driver:
+>=20
+> usb 1-1: BOGUS control dir, pipe 80000f80 doesn't match bRequestType c0
+> WARNING: CPU: 1 PID: 5901 at drivers/usb/core/urb.c:413 usb_submit_urb+0x=
+11d9/0x18c0 drivers/usb/core/urb.c:411
+> ...
+> Call Trace:
+>  <TASK>
+>  usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
+>  usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
+>  usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
+>  dib0700_ctrl_rd drivers/media/usb/dvb-usb/dib0700_core.c:95 [inline]
+>  dib0700_i2c_xfer_legacy drivers/media/usb/dvb-usb/dib0700_core.c:315 [in=
+line]
+>  dib0700_i2c_xfer+0xc53/0x1060 drivers/media/usb/dvb-usb/dib0700_core.c:3=
+61
+>  __i2c_transfer+0x866/0x2220
+>  i2c_transfer+0x271/0x3b0 drivers/i2c/i2c-core-base.c:2315
+>  i2cdev_ioctl_rdwr+0x452/0x710 drivers/i2c/i2c-dev.c:306
+>  i2cdev_ioctl+0x759/0x9f0 drivers/i2c/i2c-dev.c:467
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>=20
+> Evidently the fuzzer submitted an I2C transfer containing a length-0
+> read message.  The dib0700 driver translated this more or less
+> literally into a length-0 USB read request.  But the USB protocol does
+> not allow reads to have length 0; all length-0 transfers are
+> considered to be writes.  Hence the WARNING above.
+>=20
+> Fix the problem by adding the I2C_AQ_NO_ZERO_LEN_READ adapter quirk
+> flag to all the USB I2C adapter devices managed by dvb-usb-i2c.c,
+> following Wolfram Sang's suggestion.  This tells the I2C core not to
+> allow length-0 read messages.
+>=20
+> Reported-by: syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com
+> Tested-by: syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com
+> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Link: https://lore.kernel.org/linux-usb/67e1a1f5.050a0220.a7ebc.0029.GAE@=
+google.com/
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Thanks for taking care of it!
+
+
+--6+vuiCGawqSgBAHG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfkIx4ACgkQFA3kzBSg
+KbZQlA/9F/3h5gABvKbiy6ojaD5HfokFTVzFJ/YjhFlvQTXoyoZRIH4BxNRWH2v7
+nVafhaGZ9ynojOtXwxASFODJLRgaEQmB3+8Bot9brgaV0ei9TY8mVknRK3mCby/I
+a7YtMM5QsLtlrr3NB6jegE5qKhCKRtLOArYseRGh+fnpb2FkL8rnnZt/p9IsiiVe
+8zVDnBBpc7BjrRuD7bg9zANX53YTlLjVQ2VhxzMyyvxIkUBneMWxxoqgFOSG9OEz
+VlrioknZ6zxjBHBzlzliQylbRUWPBq6Cn4Rt20ST/VaMWg8tPPP/CLKDIvGeq0be
+R3YU67eSLmuj56uk8OVmnJcf1To4LCyeT3yvvsrVhNu72olMYwxP+tRabhxVphwL
+6eWL1jdJt1BbfSdNXCiKiP6l3hD0bKz04N3tj+bIyLHRiUxd474+H4Vgzzped/j1
+4734hpxf5QWsz35CVGAMXGZl7sr39lhB3cU2RZQsigUferCMwz4pD78u19TbkFpz
+Vx/EPpxLSpCHBE/UimG2hEpr5/R8e23D44Bu6diZpeFoRVa75MO9fi78RAUqk5we
+cduCy7Ciuhagp+a0Im+OkxoVuk/7u/3/dMUgr9Kh2yRKKhuuD8Tljss32sHBJpDb
+QpLjPlpdqKoGSts9dr/K8HRm5PBX62WA668VkkUnZLjSutYjW0I=
+=Qco2
+-----END PGP SIGNATURE-----
+
+--6+vuiCGawqSgBAHG--
 
