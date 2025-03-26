@@ -1,75 +1,64 @@
-Return-Path: <linux-kernel+bounces-576671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46CDA712DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:40:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9803A712E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE22189920A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1529A172A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2E319F121;
-	Wed, 26 Mar 2025 08:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7F91A314D;
+	Wed, 26 Mar 2025 08:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KsW/rGab"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="bC87zUeD"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CAB18C031;
-	Wed, 26 Mar 2025 08:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2F1547C0;
+	Wed, 26 Mar 2025 08:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978410; cv=none; b=efjhz5PPpvdSPlFxtmCXLTiybaNoP6reR3pvWYp4bIe7R6zBIvh7s6WaY9VWvEa3b8Kj7pinumfm5u/bn2ngmAmbq/6yuYbbnyD/C0uV8hrM3SKqwqhn6ikOjRHw5ifgAM8d8nG84fjuCtEF8ShSan50DcusA/NRXBLaY+Ljeqc=
+	t=1742978547; cv=none; b=PEo20yDwTx1Y1xRsBOItR39h6ohncsFpb3jRWwHDM42HbLdItVzOEVmYNTL59Vs0Uflijp9yer5L73t1i0QhZTHK56nfYuovtEHwkaxQnXLsitzOdQqeHT4ucPPfDRlFkyP7Ac8/DUmNBywNH1xwUPmObWVJbaJWFXwBiWero+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978410; c=relaxed/simple;
-	bh=yIt+M7uOO+mgzZtFsWE5czw7q0k+Yi6Iv5h3TlA7gV8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P1jxCPTrP1hAwFjDfh7xbgJg0G7pEQer9SG0BB/9yRd+s7PvMjl1Svlncc7CsWiDs4+1bMfjE3CSJ80ZlnRqfhxJ0Sv4ZHNGKa5hsTF6qdMt2qAJpkDxXdG+826tBG3ZUWKfck4Ij0QNLWb/DnUm6NX+IL7oIG8ybs9QMWGInTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KsW/rGab; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73ADp014514;
-	Wed, 26 Mar 2025 08:40:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=xs4w0gEe6MCwCPXnB/2dBMpr1bX6UUfU7tM
-	Hiwt++EE=; b=KsW/rGabHR5bvZqguawbORshSJTGgd8VBtFBiovqdYIp3PQouwi
-	+EJEgnDhBAX9z/EY2SzM5qP3JPhAJUsFLQNPigrM4QLL/xOD10YAICNbkG4AzrTP
-	C7Gjznx3Sj1H/rsI0GzLXtAqbALG2OAGdOvjaASM+qgNTIS4wrKy84Llpv08/Syg
-	oJBJmm6YDsEJguhModnIN7AlFcLBgopSXcL3pFMkOvmRbWHwy8wXLaf0tctBHIHl
-	4efuk4ISb6wCjWwpPZqPmxa3vwCPqXdfsCUMyQmHu687WG3C6cvDWM96XUQUYTY6
-	OxzV9MM09fMp7zGFQ8TrmepbG9GUTysxAXQ==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45mb9mrg78-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 08:40:03 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q8dxFY003700;
-	Wed, 26 Mar 2025 08:39:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 45hp9mbppy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 08:39:59 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52Q8dx1s003694;
-	Wed, 26 Mar 2025 08:39:59 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-msavaliy-hyd.qualcomm.com [10.213.110.207])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 52Q8dwVp003692
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 08:39:59 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 429934)
-	id 1CF8F22886; Wed, 26 Mar 2025 14:09:58 +0530 (+0530)
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-To: broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: andersson@kernel.org, konradybcio@kernel.org,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: [PATCH V1] spi: Add support for Double Transfer Rate (DTR) mode
-Date: Wed, 26 Mar 2025 14:09:54 +0530
-Message-Id: <20250326083954.3338597-1-quic_msavaliy@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742978547; c=relaxed/simple;
+	bh=My34K5TKuUnMrc1gVZKgmQLkVhJoBVbQZG2R52GRxSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xw4GBAg+6/O03Vd6gTBx6bgFQzh6jBeb/wsGnbeFXrAXYzCE26dCE/stGNXa8JzW/4Eby3IZh5ZjvX2FGRpatnK7DaI5DH/7AeYcy7RjWP1tDF0tQ81K805a/tBWzoR6MecOXVqZz2MvzeOAKNEdwvv57ZGp7amBzuANIXpjGls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=bC87zUeD; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1742978513;
+	bh=JtRy+QMeUiWjWHK0VCeWHxKW/SYd2pDjqLrvJqHva9s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=bC87zUeDk5btGvGbTAL/rSeoBdkzz9iRcXW9yM6Hw/wWq9PbAXnvku8bOzdErr80L
+	 v1RKThO7moKP1w+uxzb8UKpq8p7RuiXXJCqH9K5J68cLYffDaBQbwSqUt4LqIzaFkA
+	 6oE1tl6HWJdqN7/EMqLTHZLtuaK4el8kR17q+qIk=
+X-QQ-mid: bizesmtpip4t1742978501t2w2yga
+X-QQ-Originating-IP: ShppA27fghodDXEBV+PsrNeueFJPD/tjZ0fOco6mXRQ=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 26 Mar 2025 16:41:39 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5189072839362077449
+EX-QQ-RecipientCnt: 9
+From: WangYuli <wangyuli@uniontech.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Hao Li <lihao1@uniontech.com>
+Subject: [PATCH] Bluetooth: btusb: Add RTL8851BE device 0x0bda:0xb850
+Date: Wed, 26 Mar 2025 16:41:35 +0800
+Message-ID: <933CB507F0C72912+20250326084135.18674-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,82 +66,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=cs+bk04i c=1 sm=1 tr=0 ts=67e3bd63 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=AXjDKuDS1RE16Qb0dB8A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: MShBbftaXfVz1vnplNkg03AJqp9WeoQg
-X-Proofpoint-ORIG-GUID: MShBbftaXfVz1vnplNkg03AJqp9WeoQg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_02,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260051
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N01He0LwNYkc0xWyT26piAoGbZ9yM0qU2WkAtR+i2CfXLKiorODxUJnZ
+	KKWc4PvW9Mnq5wDCp/aDoEkIXwPB1URB3E8yfcAqjr5j6c0csWC04Cx5tZ1h+kUTxl77PGJ
+	LYVAR5U6Y7Iz0v/HtsRrvYYkL2jYNAVngLYh/pzTShG5dxI0OFgeV3R1mFmQWMBiYrOHOnD
+	Wg0HTUyGn2uLTUwCYBs/OYuRyE3mfw9ooGfepa9CbCBegMvo5xMYI3AseLUJsleZF+R9R94
+	y+geGTzH8btTDDpjrWhArxbXEc5WWmxQnqnJQdHnWmXDQ4Gj5wCw4TaCRbd9eAxqabNPnqo
+	B4dcwoFu0ratN/YkxiHffx1J8CyeDNxMA6+BDaPNPK4C/85TV1+2DiBiS+6eYRK7f6Y6Ila
+	MAe4uW1vIXSSh3lTS5IHghG3sgppZ8OSTT40e1ZF8WOFaE8YcbZkhju8j3sYK4hDeJQY3mt
+	Yhu9hyk2se0CbofiFHQCyJRZVXvXnmW3McFV0hPGbf1U2dFNNvld/penypb3jkZ1VDb36Ew
+	oWfup6bI7fSR3NzpV9C+63lyy1QlYbgv3IPNV5qi2GpGnhvd3NPlpyS7RILpLM5LSOjRTCL
+	w21RVN5AxLhHiH5lq0gZ8iTZ1XmOHIFwq9euPDmH/B8tV+sNri80I9R2DfFdac3ZrOo+kuh
+	xeDWpQYcKo4mFfwrAcTr15CoG2lFKX8JLLMpFGdkpRCIAUcgBaI1FmfBenRLy+rZ7Ecbhgl
+	TxMfbEFBfc47f7VUm90AXNDRjmuj6CFmrgQdtoVJjbF2Htorn7wHEa75GBYDRZF+T57o21C
+	Um7GaWLnen5PM+9Yxyt1gXqXOGPjfaah6+CKmeDJNvnQN78El7QjjGCzk81+QE+TE0WFt8M
+	jS56EN6kzlLEKipDtCAnGdkc7CmrJGV7fk738GMrk0W3+lS8lpvAgyYSNIWUT8fqx91d2yH
+	VK0WQ4qujGdZx4Q4SbMamFluv8cUcujsUFhh2fZbTbgob4+1gaRHJh54dx2WDUvr17qjdpf
+	ApD9baMjuxKQNDqW4a
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-There is no support for protocol drivers to specify whether a transfer
-should use single or dual transfer mode. As a result, the SPI controller
-has no way to determine this information from the user, leading to
-potential limitations in transfer capabilities.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below:
 
-This change introduces a new field `dtr_mode` in the `spi_transfer`
-structure. The `dtr_mode` field allows protocol drivers to indicate if
-Double Transfer Rate (DTR) mode is supported for a given transfer. When
-`dtr_mode` is set to true, the SPI controller will use DTR mode
-otherwise, it will default to single transfer mode.
+T:  Bus=01 Lev=01 Prnt=01 Port=01 Cnt=02 Dev#=  3 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0bda ProdID=b850 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
 
-The QSPI controller driver uses this flag and configures single or double
-transfer rate using the controller register.
-
-The existing spi-mem driver helps configure the DTR mode but is limited
-to memory devices. There is no support available to set DTR mode for
-non-memory devices, e.g., touch or any generic SPI sensor. This change
-is backward compatible and doesn't break existing SPI or QSPI drivers.
-
-Changes include:
-- Addition of `dtr_mode` field in `spi_transfer` structure.
-- Documentation updates to reflect the new `dtr_mode` field.
-
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Co-developed-by: Hao Li <lihao1@uniontech.com>
+Signed-off-by: Hao Li <lihao1@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- include/linux/spi/spi.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 0ba5e49bace4..4e1152de82cd 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -998,6 +998,7 @@ struct spi_res {
-  *	processed the word, i.e. the "pre" timestamp should be taken before
-  *	transmitting the "pre" word, and the "post" timestamp after receiving
-  *	transmit confirmation from the controller for the "post" word.
-+ * @dtr_mode: true if supports double transfer rate.
-  * @timestamped: true if the transfer has been timestamped
-  * @error: Error status logged by SPI controller driver.
-  *
-@@ -1049,6 +1050,9 @@ struct spi_res {
-  * two should both be set. User can set transfer mode with SPI_NBITS_SINGLE(1x)
-  * SPI_NBITS_DUAL(2x) and SPI_NBITS_QUAD(4x) to support these three transfer.
-  *
-+ * User may also set dtr_mode to true to use dual transfer mode if desired. if
-+ * not, default considered as single transfer mode.
-+ *
-  * The code that submits an spi_message (and its spi_transfers)
-  * to the lower layers is responsible for managing its memory.
-  * Zero-initialize every field you don't set up explicitly, to
-@@ -1083,6 +1087,7 @@ struct spi_transfer {
- 	unsigned	tx_nbits:4;
- 	unsigned	rx_nbits:4;
- 	unsigned	timestamped:1;
-+	bool		dtr_mode;
- #define	SPI_NBITS_SINGLE	0x01 /* 1-bit transfer */
- #define	SPI_NBITS_DUAL		0x02 /* 2-bit transfer */
- #define	SPI_NBITS_QUAD		0x04 /* 4-bit transfer */
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index a0fc465458b2..8744496a9687 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -485,6 +485,7 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 
+ 	/* Realtek 8851BE Bluetooth devices */
++	{ USB_DEVICE(0x0bda, 0xb850), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3600), .driver_info = BTUSB_REALTEK },
+ 
+ 	/* Realtek 8852AE Bluetooth devices */
 -- 
-2.25.1
+2.49.0
 
 
