@@ -1,155 +1,170 @@
-Return-Path: <linux-kernel+bounces-576936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3CFA7163B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:08:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B13BA71646
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337B7188FABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02843A1CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C45E1E1DE8;
-	Wed, 26 Mar 2025 12:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20B11DF74B;
+	Wed, 26 Mar 2025 12:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7mlnSxa"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YxSE5vxx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4541DB548
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED214D2A0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742990887; cv=none; b=MzAI/A+qilJvUY3J0uHNJ69lUcymNVnxdmSc0/xKtFTwm2YCEUvW7WyUDTDz4S4SRldt07GpNVll62Yw0oD7ekqfyWbZ9hwTNzYG/T51IxPAwwoe5IwxAL6JgLj47SR4aPBKAt5lWdpsB3wYRcPmDKFMbYFFQX6VHhz7v3bmlvs=
+	t=1742990978; cv=none; b=FJtLI9cPKM6nOzXz7C8ikEtz7wdjBolhjCiXoTxN+VG5crVNAPngckWmZs1BbESzrDuH0R8OjchN1YdY+BfJQTXjolARBZaNRGuiQ8aU62pVHAtgUnQK1r+LjV6SqMpeBwMetp/h/0Ap7uOMnXet1dO4tkS47/KCaG3SevkLg+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742990887; c=relaxed/simple;
-	bh=jjnSTG3I90Mn5Ca9Xyv++q9P6Z4yvrzjERBIMNIYWYg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DppvbJZWIwbWz1xi0zxxFHlt9PC3E0uTPagM1EBZT+NOopyMzRVXa6FaPbdzrEQE0kLjahtrEBhvL/IqmCiadXggt3dk1iHK+l26WUybOaa34bfS+awtf/KxvahwX6Sq23Z2ADEo8KRcp/xYKztuxDUwwchWj7STIUAl6nmDF0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7mlnSxa; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so12160847a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742990882; x=1743595682; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
-        b=b7mlnSxacG68Yn+Zs3UdGrkbG3EXspdbFsoFxpILRuE109HxFjaaUvjlDsZAPvZpxL
-         9yPtCF7AITdD3DEwz/V08f+7QVex/xwXrbN7mf5yIQRz2ILabI+EFPJ7ZXw+++XQpzVw
-         x0j4jVH4jxQQH0JwvRNf+NBEwvPd/hmGVNKs7NAjrgPNgjiGFOQf/FLpIb2GBl6wwbru
-         e+yEzpPdjaprSk8pYbGFAv84sAPlO1w3zplKw9RKD/UGQFoN6TtNWlEevvFBobitftDU
-         WcYW/O7/kmT9qr52UQvHyc2ELtssW7XNZCBSWTbFWkTm8K+Kc8i53BBZjyDsNBiEzlcp
-         g1JQ==
+	s=arc-20240116; t=1742990978; c=relaxed/simple;
+	bh=/XWouKMbD2oQnq+am6VXLfECTMKaj5hCa9hjtsLparA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FA+feUkE4hpqDfK0Wr+hRIOfDwKXTKgCgy3BvlLvKCxs5v60wXjf1273z8w/+03g6yznFAkY/U+9GKUc2ovtgcsVadb0UBXhwpsmLVQFXYygyC5uKTaPpqrWdYfyJ/hkuLPwcgUbVRJjbuxT9mzRR4Jx2f0m82h0SS8FSjLS6I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YxSE5vxx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742990975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TCTBGWYiVmEwl6WMzGfDrfo/qCoag28PGkVkZQCdvC0=;
+	b=YxSE5vxxE7P6lA8uRVPk4HBuTK+a4BZI5PQP6XwHALDW4tQE39TyCThuhC7c6gO1GgzoGH
+	i2PQqE5cp8CqgIPK8tDjfyDWmrSQxBENkdNQmggd5taUQ3YUJwDnPU/zinGxHFqNiuj6CD
+	V1iuvSmBjMkpmqMpqfeHij7pWAkvrP8=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-225-y-G3bTApOK-vcAL9zSuaqg-1; Wed, 26 Mar 2025 08:09:28 -0400
+X-MC-Unique: y-G3bTApOK-vcAL9zSuaqg-1
+X-Mimecast-MFC-AGG-ID: y-G3bTApOK-vcAL9zSuaqg_1742990966
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff8a2c7912so1749490a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:09:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742990882; x=1743595682;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
-        b=NdGDTmqUe2R3csDdiS4JegoA5bP6yqqOaVwdhk17y6K0Fub7hoItyI6Piw/ON/1+UD
-         gLaD+jWiULbnifPctX9ECSN5dKxaPtyqgaaJBwiqwCeXajpqaQfu4iUSFKBedYTZ6uEL
-         xIPIoP3yxbnqYZzVtMDCZcmirAWZ6D63MNaE/UcyYNnfljiYIRObccDdFGoeDtlH6NcI
-         U6Uj3cAfv1Mn91w3cCMsGJOwqJZ7Q6SBQcFZCb4C4LpCZUMg0/XHjw4UDl893oCZjGIC
-         0AWOifjPvbBxuYaNs4An9B7TOISDxTawihnDh6ZUfubNylnW5wUTz0hQ/Vvgn/APo/xS
-         Ibvg==
-X-Gm-Message-State: AOJu0YywZq8N4ZxAtOBI3+kxprY35P754uJFWN53Xerh1Ho//q3qzu8n
-	4F+cn9EUVsh1yngLz3MNNoWWGaXUNc+DRypAECqFU1CkyxOt+n1ThyolbL47eLM=
-X-Gm-Gg: ASbGncu/eS4VBP3/u0M6M+AvhEQM+KXQnbaC4meeXbwMR+K/zWaBb6UxaCmtEsgizMo
-	CvRIeBvG46yIoQYinEgKfp9wsxGXP1SkgA0C09Tp52fU5SKSllXQwNIz8xZbE8aED0okifVu5gq
-	slxGf6gANTHDBvGDfAtfitktXpxU8y2N9M+K2lBfRt0hwIM8knwSngltlCUZ2fOlwtEXgZr+bU6
-	18jt2vlmo0jR2PfPQT/u2eYg0lGqfliGYObmAJzv1GRD86FWMuv2R+CuTrV3yLKJzJs5xzqG/X5
-	GVD/MnFgWBQCIBOD0YvoBNSlXC4NsQ5IGLcTXsmmXyYo4MVTXOvgbDeDF93Aa7mflCvnRVIUp1z
-	to6m91IeUNE9i3iYrdLryIDFmttuxQXfQ60tM9Z8=
-X-Google-Smtp-Source: AGHT+IFpDQ47OkR0lnhRuhDWvB2zczsji7a4MYoKTE4Oj7Ls7vmFXhE9PL8k1vAEh0QTa7oPWlII7w==
-X-Received: by 2002:a17:907:9694:b0:ac4:5ff:cef6 with SMTP id a640c23a62f3a-ac405ffd0f5mr1438770566b.31.1742990881985;
-        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6ef561e4csm59334466b.119.2025.03.26.05.08.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 26 Mar 2025 12:08:00 +0000
-Subject: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
- accessing ::hws[] in probe()
+        d=1e100.net; s=20230601; t=1742990965; x=1743595765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TCTBGWYiVmEwl6WMzGfDrfo/qCoag28PGkVkZQCdvC0=;
+        b=DvQ9vvHwl64WNqo+hRYEvejrYqz+b8tAefgT7TNouc/vWkeEtafoy282Wx7fQtvUN/
+         lw0Y9QozjqkSTzfgku7/ehJc3y+6hY4oTv8hq+Qb1ntltA1GqqEUkF+/dGcSCYx4XrWH
+         KoF5J5yfJer4gBB0hyIdSLORciLRoKodSmUplzad5TUPDRrei4MmK1HlusV8PXNtRr4s
+         CkiVDlUkILyXdO1RpgbRYhQoy7SLiBlnMydyUN9RoSJMGhE7DZ4Y+gidi+v/pLVCsP/L
+         WOBOITdDLQElH2xQt3k1mjIdY31nvHlFJRhgXHLRBEqkD5J7QyDsGDZCStX/TGcZH3gV
+         rpng==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YGFbOTr0hfvcLk8c+Sx/e1li8Hrta3K7zTvrJ/HL/eP/l4CmwBDBxht5LqyPsj+Lvi18XQG3aYbCzd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0MCXpgZ0YEtzezNta/HgpNV1n/GGMFzKSB53s4lc1JnsS8BaP
+	zBFwtHLAQ5PsLrvacFFJZkV5ETfTh4mf0xoWcP7ccL8JPJ8JsKW+UKrTvVfQklwuwgvMG/nNJZG
+	mwt52BA3R54x7ZXhf87l60N0vSEjKLVss1WKMbc9p+7UYC/TlajVLQKkglhn/x16Sw7eymV2eKT
+	nD270/e87ILO6VcUiBRa02Qi2v8DcuoYBauNq0QjFnc1Lyi0M=
+X-Gm-Gg: ASbGncvpMDqI1S17OB40T/tFQmy1SGWVsQShGZNIh8Ca51Cxol9tFdWg5qcHD3XqI8e
+	7MSpXzFx9j2jIz5Zkp2GYIhauWQvRwQoK+lWgUiTRN4xcQH0rsTGI2YbuV6KCGLRTUH3HzLY=
+X-Received: by 2002:a17:90b:54c4:b0:2fa:562c:c1cf with SMTP id 98e67ed59e1d1-303788c2685mr5612925a91.1.1742990965384;
+        Wed, 26 Mar 2025 05:09:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF08/xQUBw1qW6H7aLUt4LlzOG2QAjL0z5ddqYDq1gJyhsrwBfoOpE9/miJp0mJcZwfCL0bkXJyElu25CxqUpA=
+X-Received: by 2002:a17:90b:54c4:b0:2fa:562c:c1cf with SMTP id
+ 98e67ed59e1d1-303788c2685mr5612880a91.1.1742990964861; Wed, 26 Mar 2025
+ 05:09:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACDu42cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYyMz3WKj3IJiQ0Pd0qTixDzdZEsDS3OLVPOkZAMTJaCegqLUtMwKsHn
- RsbW1AHqshmBfAAAA
-X-Change-ID: 20250326-s2mps11-ubsan-c90978e7bc04
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org, 
- stable@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20250324054333.1954-1-jasowang@redhat.com> <20250324054333.1954-2-jasowang@redhat.com>
+In-Reply-To: <20250324054333.1954-2-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 26 Mar 2025 13:08:48 +0100
+X-Gm-Features: AQ5f1Jrv63LkXsP4PD_7nrO0YIAGYmDZjtrgpSHFpXGUIqckHLvcEGNJAhPgi6A
+Message-ID: <CAJaqyWeX0V2esyyWct3OnnDtCzGdJJamSjphSVz6KEFomYr0DQ@mail.gmail.com>
+Subject: Re: [PATCH 01/19] virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With UBSAN enabled, we're getting the following trace:
+On Mon, Mar 24, 2025 at 6:43=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> To be consistent with virtqueue_reset().
+>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-    UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
-    index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-This is because commit f316cdff8d67 ("clk: Annotate struct
-clk_hw_onecell_data with __counted_by") annotated the hws member of
-that struct with __counted_by, which informs the bounds sanitizer about
-the number of elements in hws, so that it can warn when hws is accessed
-out of bounds.
-
-As noted in that change, the __counted_by member must be initialised
-with the number of elements before the first array access happens,
-otherwise there will be a warning from each access prior to the
-initialisation because the number of elements is zero. This occurs in
-s2mps11_clk_probe() due to ::num being assigned after ::hws access.
-
-Move the assignment to satisfy the requirement of assign-before-access.
-
-Cc: stable@vger.kernel.org
-Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __counted_by")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/clk/clk-s2mps11.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 014db6386624071e173b5b940466301d2596400a..8ddf3a9a53dfd5bb52a05a3e02788a357ea77ad3 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -137,6 +137,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (!clk_data)
- 		return -ENOMEM;
- 
-+	clk_data->num = S2MPS11_CLKS_NUM;
-+
- 	switch (hwid) {
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
-@@ -186,7 +188,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		clk_data->hws[i] = &s2mps11_clks[i].hw;
- 	}
- 
--	clk_data->num = S2MPS11_CLKS_NUM;
- 	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
- 			       clk_data);
- 
-
----
-base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
-change-id: 20250326-s2mps11-ubsan-c90978e7bc04
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/virtio/virtio_ring.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index fdd2d2b07b5a..1bdfd5d617a7 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -1005,7 +1005,7 @@ static void virtqueue_vring_init_split(struct vring=
+_virtqueue_split *vring_split
+>         }
+>  }
+>
+> -static void virtqueue_reinit_split(struct vring_virtqueue *vq)
+> +static void virtqueue_reset_split(struct vring_virtqueue *vq)
+>  {
+>         int num;
+>
+> @@ -1248,7 +1248,7 @@ static int virtqueue_resize_split(struct virtqueue =
+*_vq, u32 num)
+>  err_state_extra:
+>         vring_free_split(&vring_split, vdev, vring_dma_dev(vq));
+>  err:
+> -       virtqueue_reinit_split(vq);
+> +       virtqueue_reset_split(vq);
+>         return -ENOMEM;
+>  }
+>
+> @@ -2092,7 +2092,7 @@ static void virtqueue_vring_attach_packed(struct vr=
+ing_virtqueue *vq,
+>         vq->free_head =3D 0;
+>  }
+>
+> -static void virtqueue_reinit_packed(struct vring_virtqueue *vq)
+> +static void virtqueue_reset_packed(struct vring_virtqueue *vq)
+>  {
+>         memset(vq->packed.vring.device, 0, vq->packed.event_size_in_bytes=
+);
+>         memset(vq->packed.vring.driver, 0, vq->packed.event_size_in_bytes=
+);
+> @@ -2219,7 +2219,7 @@ static int virtqueue_resize_packed(struct virtqueue=
+ *_vq, u32 num)
+>  err_state_extra:
+>         vring_free_packed(&vring_packed, vdev, vring_dma_dev(vq));
+>  err_ring:
+> -       virtqueue_reinit_packed(vq);
+> +       virtqueue_reset_packed(vq);
+>         return -ENOMEM;
+>  }
+>
+> @@ -2852,9 +2852,9 @@ int virtqueue_reset(struct virtqueue *_vq,
+>                 recycle_done(_vq);
+>
+>         if (vq->packed_ring)
+> -               virtqueue_reinit_packed(vq);
+> +               virtqueue_reset_packed(vq);
+>         else
+> -               virtqueue_reinit_split(vq);
+> +               virtqueue_reset_split(vq);
+>
+>         return virtqueue_enable_after_reset(_vq);
+>  }
+> --
+> 2.42.0
+>
 
 
