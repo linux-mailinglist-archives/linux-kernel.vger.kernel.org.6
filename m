@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-576386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCE0A70E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:43:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AF3A70E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B983A6860
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D407918916B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8F512CDA5;
-	Wed, 26 Mar 2025 01:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404B433CB;
+	Wed, 26 Mar 2025 01:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxGXRUlZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W2cTTUfA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADC42A8B;
-	Wed, 26 Mar 2025 01:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61147DA8C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742953348; cv=none; b=glXm5oKxnHlRoa3f6xgdlK4wAplvni20HEHSjErEWLYXf12Q58T3pTHrGlBPaM3O+B7mnbUW0hZjBeqnaeRfWA7XyvTYgbJCwkCFazYIMWV0XPOl52k4qcGXzkdgVk4Ow8f/JJi3dDOy1Ai+k0gLMkMmWg0H7q2XHMXCXFlluok=
+	t=1742953511; cv=none; b=LE7r4yTD3g1EI41DS3loVF1prEHJOn/rXFSEZh+9frf6IOZBsSFWkSKu+xVd/1f8drFAtpU549kGxV1sbSRz2x4ACu45c2tktUHArzdKrx0qq5N3PHZYaq6IDIXlo2Jrgl5SyJBsqES0aN1lyjlPCG4tpzPEwM9zsFrXX+d2hAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742953348; c=relaxed/simple;
-	bh=R8bZfYTsflNVy1yZXbqqdlmcNo1EUdTi/3plZ6Xv40c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i+CBzGI5jbpuQlRoUL72YqE+iv/MjnpUJqN7n+GPRnQxBhUmQq06hdzEgNgkmOX2brcgzKHwZKyl8Dk5tTBvqPi+jCPLfcoBwAsFzgqCtq315d0JP1Fk1CiQIRIg33m+GkgfDVBFwdE7mfuPvWXMpUw5k8SFACKNr4Ur3+i0+Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxGXRUlZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PGaiTO005622;
-	Wed, 26 Mar 2025 01:42:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jG/8MmXGi1LUrYwjdXq076vQieCBZbIBFH+A7XlR4kc=; b=LxGXRUlZEJEQRRG5
-	s7UNp+aaw45hTxwvlXKDp+t0WNk+57LQSM/graCzYoYBsj4vGOMOyHUREswP6IR6
-	qs+WnX/wWqtrNVqKmmu1wavCUClOnZHUs0goiDH+Md1J0mO1Ho4k9hWqjcnTtcxh
-	qfmfQxvFHr9nZfuraYYFKWIZvYfjZOWdfXQp58Iqh9ELKjx+aeqEMJDqxCnnxN67
-	sYAvvtL1nEngkkSwMNcqOllH/187pwdgByi0oL6vDDpFENwvauxW6o56NbiH4oX+
-	O6hmYf41S381iydIpy1ipEWsmAz3Cq1/Q4UNTQH3sUgHSjAjvscuqSx9g6rsvWvs
-	aP8fQw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcybbef-1
+	s=arc-20240116; t=1742953511; c=relaxed/simple;
+	bh=AR0i3fnXRHnzKLCNCJz8BksqziPjecBI9ZQBZ09/f8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OD37F96STak3aNf74U4Lk4oX4x9/O7JIUhGgkzXPDOFos0y7+6k276m+gYDnkfs0rRsxAhvWO5L5rFmG+d1BdmhaW6Ad7Mrz2nyBrCDJxH68BFCrjmx+b4MgPkjeNZitK8x6rynHm4P1xRiubCJJcjwrq22cBLjGxNpDevqeqVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W2cTTUfA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PLagFm005368;
+	Wed, 26 Mar 2025 01:44:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=bzx9ac
+	KEj01nwPiaOBsmDrTzp1VYYY+QC8BCPU0DGQk=; b=W2cTTUfAIsREITsPM13AjC
+	0UO8HEEiSbXVE/w9qZrgU7FG1y8f+Q+lz8myp3pXybMuLdQdSRToFD5IJsjQF+j8
+	OCXsvtcAFJq1RY8jlcU0BEHyrR+H0TFNwB5xkRX2GgbrKxlgNiZH/+jmYEqKT8o9
+	ciRSUAdpnDNUkoAW/amO8IDoKYa6WFgAAqWKhZV2TVx9KT7+faMjnnD8FsdqnZFM
+	029CJcMlEl4cZJr38fouRMJB00CJD4FmilG1RrkT4PJBVNp+xHIClMJeUWLHD1Pw
+	pe+HCIJ2E9ZX97Z0sPY8S6Xp/lAIfREGnOOdQG85fJxEuh81OhMYMfz5F958dWPQ
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx03dv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 01:42:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q1gC16000531
+	Wed, 26 Mar 2025 01:44:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q102pL020029;
+	Wed, 26 Mar 2025 01:44:55 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hnx6pj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 01:42:12 GMT
-Received: from [10.71.112.253] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
- 2025 18:42:11 -0700
-Message-ID: <ee95520b-cdcc-4e10-a70e-683993cafe36@quicinc.com>
-Date: Tue, 25 Mar 2025 18:42:11 -0700
+	Wed, 26 Mar 2025 01:44:55 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52Q1itDY56557876
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 01:44:55 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FEB05803F;
+	Wed, 26 Mar 2025 01:44:55 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 98A4258060;
+	Wed, 26 Mar 2025 01:44:50 +0000 (GMT)
+Received: from [9.43.87.161] (unknown [9.43.87.161])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 01:44:49 +0000 (GMT)
+Message-ID: <554356f9-1672-4c15-a2f2-8cdc16042e3d@linux.ibm.com>
+Date: Wed, 26 Mar 2025 07:14:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,126 +76,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v36 30/31] ALSA: usb-audio: qcom: Add USB offload route
- kcontrol
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
- <20250319005141.312805-31-quic_wcheng@quicinc.com>
- <Z-KU_o_LE3PO6J2y@linaro.org>
+Subject: Re: [PATCH] powerpc64/ftrace: fix module loading without patchable
+ function entries
+To: Adam Williamson <awilliam@redhat.com>, Naveen N Rao <naveen@kernel.org>,
+        Anthony Iliopoulos <ailiop@suse.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        jforbes@redhat.com, kevin@scrye.com
+References: <20250204231821.39140-1-ailiop@suse.com>
+ <wlscshbqan2svtqkz5xc6v47tzndfnsvge7h4lbfn67zoplekl@elt2oxwhrp6f>
+ <89748fc85c6ca477f64e1a5cc1852e74c68b493c.camel@redhat.com>
 Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <Z-KU_o_LE3PO6J2y@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <89748fc85c6ca477f64e1a5cc1852e74c68b493c.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e35b74 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=IcsNMMq9lF3Nb9e63dgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: wQIdrz1gWLNeevlFMaxy0Ufrl9lyiWk0
-X-Proofpoint-GUID: wQIdrz1gWLNeevlFMaxy0Ufrl9lyiWk0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yjTrq7dCbHb8NRRgYp4AfuJxyLr7MBpP
+X-Proofpoint-ORIG-GUID: yjTrq7dCbHb8NRRgYp4AfuJxyLr7MBpP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
- adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260009
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=914 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260004
 
-Hi Stephan,
 
-On 3/25/2025 4:35 AM, Stephan Gerhold wrote:
-> On Tue, Mar 18, 2025 at 05:51:40PM -0700, Wesley Cheng wrote:
->> In order to allow userspace/applications know about USB offloading status,
->> expose a sound kcontrol that fetches information about which sound card
->> and PCM index the USB device is mapped to for supporting offloading.  In
->> the USB audio offloading framework, the ASoC BE DAI link is the entity
->> responsible for registering to the SOC USB layer.
+
+On 3/26/25 6:46 AM, Adam Williamson wrote:
+> On Thu, 2025-02-13 at 22:29 +0530, Naveen N Rao wrote:
+>> On Wed, Feb 05, 2025 at 12:18:21AM +0100, Anthony Iliopoulos wrote:
+>>> get_stubs_size assumes that there must always be at least one patchable
+>>> function entry, which is not always the case (modules that export data
+>>> but no code), otherwise it returns -ENOEXEC and thus the section header
+>>> sh_size is set to that value. During module_memory_alloc() the size is
+>>> passed to execmem_alloc() after being page-aligned and thus set to zero
+>>> which will cause it to fail the allocation (and thus module loading) as
+>>> __vmalloc_node_range() checks for zero-sized allocs and returns null:
+>>>
+>>> [  115.466896] module_64: cast_common: doesn't contain __patchable_function_entries.
+>>> [  115.469189] ------------[ cut here ]------------
+>>> [  115.469496] WARNING: CPU: 0 PID: 274 at mm/vmalloc.c:3778 __vmalloc_node_range_noprof+0x8b4/0x8f0
+>>> ...
+>>> [  115.478574] ---[ end trace 0000000000000000 ]---
+>>> [  115.479545] execmem: unable to allocate memory
 >>
->> It is expected for the USB SND offloading driver to add the kcontrol to the
->> sound card associated with the USB audio device.  An example output would
->> look like:
+>> Ugh, that's nasty.
 >>
->> tinymix -D 1 get 'USB Offload Playback Route PCM#0'
->> -1, -1 (range -1->255)
+>>>
+>>> Fix this by removing the check completely, since it is anyway not
+>>> helpful to propagate this as an error upwards.
+>>>
+>>> Fixes: eec37961a56a ("powerpc64/ftrace: Move ftrace sequence out of line")
+>>> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
+>>> ---
+>>>  arch/powerpc/kernel/module_64.c | 4 ----
+>>>  1 file changed, 4 deletions(-)
+>>>
 >>
->> This example signifies that there is no mapped ASoC path available for the
->> USB SND device.
+>> Thanks for fixing this. It might also be good to add a check in 
+>> setup_ftrace_ool_stubs(). Something like this:
 >>
->> tinymix -D 1 get 'USB Offload Playback Route PCM#0'
->> 0, 0 (range -1->255)
->>
->> This example signifies that the offload path is available over ASoC sound
->> card index#0 and PCM device#0.
->>
->> The USB offload kcontrol will be added in addition to the existing
->> kcontrols identified by the USB SND mixer.  The kcontrols used to modify
->> the USB audio device specific parameters are still valid and expected to be
->> used.  These parameters are not mirrored to the ASoC subsystem.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>  sound/usb/Kconfig                  |  10 ++
->>  sound/usb/qcom/Makefile            |   4 +
->>  sound/usb/qcom/mixer_usb_offload.c | 158 +++++++++++++++++++++++++++++
->>  sound/usb/qcom/mixer_usb_offload.h |  17 ++++
->>  sound/usb/qcom/qc_audio_offload.c  |   2 +
->>  5 files changed, 191 insertions(+)
->>  create mode 100644 sound/usb/qcom/mixer_usb_offload.c
->>  create mode 100644 sound/usb/qcom/mixer_usb_offload.h
->>
->> diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
->> index 6daa551738da..7d8833945711 100644
->> --- a/sound/usb/Kconfig
->> +++ b/sound/usb/Kconfig
->> @@ -176,9 +176,19 @@ config SND_BCD2000
->>  	  To compile this driver as a module, choose M here: the module
->>  	  will be called snd-bcd2000.
+>> diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
+>> index 34a5aec4908f..c10a9c66cfe3 100644
+>> --- a/arch/powerpc/kernel/module_64.c
+>> +++ b/arch/powerpc/kernel/module_64.c
+>> @@ -1125,6 +1125,10 @@ static int setup_ftrace_ool_stubs(const Elf64_Shdr *sechdrs, unsigned long addr,
+>>         unsigned int i, total_stubs, num_stubs;
+>>         struct ppc64_stub_entry *stub;
 >>  
->> +config SND_USB_QC_OFFLOAD_MIXER
->> +	tristate "Qualcomm USB Audio Offload mixer control"
-> 
-> This looks like a "bool" and not a "tristate", since the ifneq in the
-> Makefile below ignores whether this is a "y" or "m".
-> 
-
-Yeah, let me fix this.
-
->> +	help
->> +	 Say Y to enable the Qualcomm USB audio offloading mixer controls.
->> +	 This exposes an USB offload capable kcontrol to signal to
->> +	 applications about which platform sound card can support USB
->> +	 audio offload.  The returning values specify the mapped ASoC card
->> +	 and PCM device the USB audio device is associated to.
+>> +       /* Bail out early if no traceable functions */
+>> +       if (!me->arch.ool_stub_count)
+>> +               return 0;
 >> +
->>  config SND_USB_AUDIO_QMI
->>  	tristate "Qualcomm Audio Offload driver"
->>  	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND && SND_SOC_USB
->> +	select SND_USB_OFFLOAD_MIXER
-> 
-> And I think "SND_USB_OFFLOAD_MIXER" (without _QC suffix) doesn't exist
-> anymore after v30? I see there was some discussion around that there.
-> Is this supposed to be "select SND_USB_QC_OFFLOAD_MIXER"?
-> 
-> If yes, isn't this option always selected if SND_USB_AUDIO_QMI is
-> enabled? In that case you could just drop the config option...
+>>         total_stubs = sechdrs[me->arch.stubs_section].sh_size / sizeof(*stub);
+>>         num_stubs = roundup(me->arch.ool_stub_count * sizeof(struct ftrace_ool_stub),
+>>                             sizeof(struct ppc64_stub_entry)) / sizeof(struct ppc64_stub_entry);
+>>
+>>
+>> Regardless of that, for this patch:
+>> Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
+>>
+>>
+>> - Naveen
+>>
+> Is there anything that can be done to get this bumped along? It
+> completely breaks networking on Fedora's power9 boxes, as it affects
+> the i40e module which they use.
 > 
 
-Will address this as well.
+Sorry missed this, Will pull it in.
 
-Thanks
-Wesley Cheng
+Thanks.
+Maddy
+
+> Thanks!
 
 
