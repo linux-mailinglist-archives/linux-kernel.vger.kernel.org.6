@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-577666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BB3A72009
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AD8A7200D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC07A3192
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FC63B2438
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A57F1F874C;
-	Wed, 26 Mar 2025 20:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDF255E55;
+	Wed, 26 Mar 2025 20:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJwN75Ra"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iefXod47"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ABA1A316E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 20:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7DA137930;
+	Wed, 26 Mar 2025 20:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743021183; cv=none; b=aQtLNxya98E9PgB9u6XlTYdsenBlWdgRhk/Pw3EuBSWbMkurZ511Tzz6XSye9ctmZpOnBt5OmFx5OCGPxQ/iyQrV+h11kfraeJrTbvDIT6JDBLjljpQCAgjO4EQhlhvluVbJ3XMrlshLK9CgiBjgzoVc2EW7AQRFOfCHBAs6HDA=
+	t=1743021434; cv=none; b=SUYMGKDIMHez2bO6NqZjNxsMcf51oI4Jl4AA6WW1NpW306GGlRo0MtNAmgKgQEpSuFWJtr7I6SXsfrgXwCFN4uV9kas7rmyFRqnObJFqy8wr5xFFic+Yb1Xr/tD156OlOk7pH8p6tCqy6zBtLfPl2bGvao6eilBs+dvEUvV4aH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743021183; c=relaxed/simple;
-	bh=pqGT9LMZU/exArP4Iq5TWVGX8JYjTXjnz3TylOn7J60=;
+	s=arc-20240116; t=1743021434; c=relaxed/simple;
+	bh=gIUYBjs4qNqH+FWbyydKPm0g0LeEniBPBOuD5tjT/jU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQDLo8cwwUM95hrkMRbieeEGfndB5aogfvjagVkr4jGemTV8cLDVWjmgLXf98VhET/b4mPWrKnteR0AEr6XO5MoEQmP6+E6LGUVsPjN2crpXIaWJG8CwAjT1/HvjXT6CXxEAW/4qhiVbtv8btPzjEQHu6hP+ysKVqOZ4S4DyWrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJwN75Ra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46736C4CEE2;
-	Wed, 26 Mar 2025 20:33:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fiCHKwoMyT8oPimKy+BvweKWzvJtdMH+Pt5eRnrtBzMXxVr8EAWIAdIUEhcXn3psmyuuJD+/VDIjmK7RMD5rGZIRNTaiRBhSLdFOvbALyOXi9RnX+Od5iKNv9O8iUqOY9ECYOzS3BXVJ6Jb6ZtNjG+fL2SzWMOPv6fZdo9lE6rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iefXod47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5732DC4CEE2;
+	Wed, 26 Mar 2025 20:37:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743021182;
-	bh=pqGT9LMZU/exArP4Iq5TWVGX8JYjTXjnz3TylOn7J60=;
+	s=k20201202; t=1743021433;
+	bh=gIUYBjs4qNqH+FWbyydKPm0g0LeEniBPBOuD5tjT/jU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJwN75RahuCzovxE+lL2Ls2e93xTC29TswmX/RssZKWThBJZILCNqe5oTXsZEYwNj
-	 JKrgzo/dDlXQSJKen5akqtouUzZYgbw8zGmLDKto2ujY5+yKhSLeEjv0Mfq+evgr7/
-	 e5z1WGBG/CIqJQB0YdQ1v8db26QpciW5fL9cZdSV/Uegl9t8nUAFEz/uFqkfmTOLSG
-	 4yS1xzqQ0CZSpEJeztDzvlYpvQKl6nxMDJF6rFyYjMb8bJKDpQhvkyXjc3JLMA4O4V
-	 APtAqrayUAIOLAznVcpnGhxhWx3iuIwo6ucH8xBjhXZV/JOghlFFb6N0wC5k5ED+rg
-	 2lyguaLwOEuJw==
-Date: Wed, 26 Mar 2025 10:33:01 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jake Hillion <jake@hillion.co.uk>
-Cc: arighi@nvidia.com, changwoo@igalia.com, sched-ext@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: create_dsq: Return -EEXIST on duplicate
- request
-Message-ID: <Z-RkfScRAanAPs79@slm.duckdns.org>
-References: <20250325224041.14088-1-jake@hillion.co.uk>
+	b=iefXod47v80rjYS9tmKEVnrdQcLbbHnNFkHyx2VIVSxFtce+oKh6VgmUIrq678PW0
+	 fAgLSea5kBsK+ldIfMsv2r0UkNp/yUDJG2qZQPpEYSsbep8VWNh6sGv74SshB6rR/N
+	 Z8mp3+a2Tj9ulAhRvVKLjGTvXcFmnKgrOhZPlQVcqYszGxkKhnPJs1kjwhvJXx175N
+	 xYuvMLbQOfv5ulWstchROj8Odr2Q1uY03hDwj+0O6TMhPlRrGT8lBpPpqa5p9JTeVH
+	 589do7rnBDDPMrC0maIvdzzhIC6lP3sPzS5KIwjfn3wmxbEqD1mNXq2a7slDQ39l+U
+	 qf1al/wdbyphw==
+Date: Wed, 26 Mar 2025 22:37:09 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sumit Garg <sumit.garg@kernel.org>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	linux-integrity@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
+Message-ID: <Z-RlbEN9BoKnTN2E@kernel.org>
+References: <20250320152433.144083-1-sgarzare@redhat.com>
+ <20250320152433.144083-3-sgarzare@redhat.com>
+ <Z-I86tWMcD6b_YeM@sumit-X1>
+ <Z-Pu4FhcntnKii61@kernel.org>
+ <Z+QQWe/upJuVpU8r@ziepe.ca>
+ <Z-QV5y1JGBDpsPuH@kernel.org>
+ <Z-QkGUenPAMid63l@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,28 +66,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250325224041.14088-1-jake@hillion.co.uk>
+In-Reply-To: <Z-QkGUenPAMid63l@kernel.org>
 
-On Tue, Mar 25, 2025 at 10:41:52PM +0000, Jake Hillion wrote:
-> create_dsq and therefore the scx_bpf_create_dsq kfunc currently silently
-> ignore duplicate entries. As a sched_ext scheduler is creating each DSQ
-> for a different purpose this is surprising behaviour.
+On Wed, Mar 26, 2025 at 05:58:33PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Mar 26, 2025 at 04:57:47PM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Mar 26, 2025 at 11:34:01AM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Mar 26, 2025 at 02:11:12PM +0200, Jarkko Sakkinen wrote:
+> > > 
+> > > > Generally speaking I don't see enough value in complicating
+> > > > callback interface. It's better to handle complications in
+> > > > the leaves (i.e. dictatorship of majority ;-) ).
+> > > 
+> > > That is very much not the way most driver subsystems view the
+> > > world. We want to pull logical things into the core code and remove
+> > > them from drivers to make the drivers simpler and more robust.
+> > > 
+> > > The amount of really dumb driver boiler plate that this series
+> > > obviously removes is exactly the sort of stuff we should be fixing by
+> > > improving the core code.
+> > > 
+> > > The callback interface was never really sanely designed, it was just
+> > > built around the idea of pulling the timout processing into the core
+> > > code for TIS hardware. It should be revised to properly match these
+> > > new HW types that don't have this kind of timeout mechanism.
+> > 
+> > Both TIS and CRB, which are TCG standards and they span to many
+> > different types of drivers and busses. I don't have the figures but
+> > probably they cover vast majority of the hardware.
+> > 
+> > We are talking about 39 lines of reduced complexity at the cost
+> > of complicating branching at the top level. I doubt that there
+> > is either any throughput or latency issues.
+> > 
+> > What is measurable benefit? The rationale is way way too abstract
+> > for me to cope, sorry.
 > 
-> Replace rhashtable_insert_fast which ignores duplicates with
-> rhashtable_lookup_insert_fast that reports duplicates (though doesn't
-> return their value). The rest of the code is structured correctly and
-> this now returns -EEXIST.
-> 
-> Tested by adding an extra scx_bpf_create_dsq to scx_simple. Previously
-> this was ignored, now init fails with a -17 code. Also ran scx_lavd
-> which continued to work well.
-> 
-> Signed-off-by: Jake Hillion <jake@hillion.co.uk>
+> E.g., here's how you can get rid of extra cruft in tpm_ftpm_tee w/o
+> any new callbacks.
 
-Applied to sched_ext/for-6.15-fixes w/ stable cc'd.
+Measurable benefit: no need to allocate memory buffer.
 
-Thanks.
+Let's take that as a starting point ;-)
 
--- 
-tejun
+On that basis I can consider this (i.e. something to measure).
+
+BR, Jarkko
 
