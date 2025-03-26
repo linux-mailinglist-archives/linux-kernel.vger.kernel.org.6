@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-576979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFA0A716EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:53:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31494A716EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 741EA7A31C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2BB16CDF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237821E51FB;
-	Wed, 26 Mar 2025 12:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744BE1E1E0E;
+	Wed, 26 Mar 2025 12:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Grnt17tZ"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="KTur8psl"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA6B1B3950;
-	Wed, 26 Mar 2025 12:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4761B3950
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993566; cv=none; b=a5djTvTjrJk4mige5GLOTDBWuVvH10BoVeuS7H7qiaOob7CbD1lxI55/I+tvVXSc3zRKcNGN627pTA/AYBQi5f04DmvwZqyqgIOMV/Wb8fPy2CrQZXOAj6ooRUO2DXy+QSbFD1fQIHRRkxGAxPHF9IFMdQ16IyZCUAIfCd3f7yU=
+	t=1742993601; cv=none; b=fFrTg4sWzwR+nqp2/8+/L/lLO+5w/3aHfbH14oueRVg8gLaduyac6VbZYRaB4FquB/uRBKOJ6suOPsQRGbkuyL8wy5ISndwUos1Yga8B/PmI7GucU+GyULvOHzRajBEm9fXWVVk+Rkhc16nZYeo6MwqB2gvnpI8+rWwGvQfs3jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993566; c=relaxed/simple;
-	bh=yCg1rgqOSeu+rLDpXWfBkyZmFWl++cTnnHvhB3T0ZmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XC+CEYJ6L6bF5jqYGv8j36q7HVfgr0MFS74hIcpigkMgmDRIFplMlzWH/oF30BT1lfNjb3FzAahVRTTZIsinWoLrIY6S2eajptgYHjn6hAUU+ggQpg3KqebDNDO+J6fsQPhHERYRq03sf/n+LOSy2qMXV/nTLtCzIK0smbFSdLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Grnt17tZ; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-521b84da5e9so2896550e0c.0;
-        Wed, 26 Mar 2025 05:52:44 -0700 (PDT)
+	s=arc-20240116; t=1742993601; c=relaxed/simple;
+	bh=8HHp1uBdC+4gdzNJZq59DdfqIQAiw0gMCqs4ThMiGLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=teA549+TU/dIh9+krCXYB5vrQK7zGpT/RCziKTegtWZGO/KcqgC2ss4j6myRCEDSAEN9eTdDOnIzRN6drvMapPLFt4nmDeXlbvoDLfsK3w6/a27pX/5uoEZ3hlYNS7T+U0l39jlAkvB6nZuRVYJbDzfUNXRk5gc24PuDC3jECPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=KTur8psl; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c54a9d3fcaso690177885a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742993564; x=1743598364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCg1rgqOSeu+rLDpXWfBkyZmFWl++cTnnHvhB3T0ZmU=;
-        b=Grnt17tZgotgkdQ5lzTM7aeNu1bWMjxHTs9cVU8eEa/0xmudI2zh0GiTwl3S59jl4Q
-         zr2rdvaCGvWwYrMLHauKKWNl9zBdbv41ITXaDF+EWRdJab5cjbp0LgIO59Wmry9g6qt5
-         bswCBMhqrfwz/ipZB7BhGWdos0ziZK+rBddTmw/czO3TiNeX7nss22nvbRJ8rekvnrEn
-         FSvWMe+iR34CEeE++Ri2UkRKEdRaH7Kkb13SNvp8EWqWsUZ7wqGg8kGgzgTvD2FkxIJg
-         Qm5cQWopsvqL6AOGOkcLtR+UB8lxzUCMQeGzc6ZavbPxo4vjeO8ZBTVb3TGrv+Cr7spY
-         SQCg==
+        d=gourry.net; s=google; t=1742993597; x=1743598397; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=unBBZW4o0XvmaaTwB/+3iSkpD4sIQERsLXl81RTyoyQ=;
+        b=KTur8pslGSHJ8IVvochTjVgBVpVZpF37vPvfn4u9I+ekOv3fxfxZsYWkQW86ryGvNX
+         YIos6QbYkPgFaPLvnd+aJpX6D7tOwq8/GLlP8j4VzktsC6z3n/MtIy99sfT9/yltPlam
+         pRNMIGzywkBN51M+PMSB5dEsdE+9JMqwjoAUwRTmmzcb3DbHPx3nHuk7Mh24HdWPoW2j
+         8Imxch9Sm8o/IcVM/CCEJIExL71kutg3FWJB8ELkf0X6P5Yk5I/D8RIlviCgiTnPtqbO
+         lh62y4N5dewBMZ77t9FkX9P590UkroY2HdRp7o5nKoNe6XPVXZURr5k4Ac/HnUH9fUIj
+         ys1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742993564; x=1743598364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yCg1rgqOSeu+rLDpXWfBkyZmFWl++cTnnHvhB3T0ZmU=;
-        b=n9zAEuYgIC1+jC7i/0gtSoFhEp8zpb2mkpScLAvqz0x4LkF4zQnFgEoFCI0PAmiIsj
-         rzT4KllI0jwuPrORvq1c/OzYj2GI3Yw6/OiX+zotHPJ3OtxS6sQMBolUXn6NZEiZ0bXB
-         v0rFD3kUH4JzggGbKuhhz+U+vtx6W5jKDtBnCtVJMxuIcYxmCRWtlNPEsR4mDLMThzT6
-         oVgF2qTGP/PWz3kR0RgrVOyBDyB9hqa4oe60TEqvjMtW9nWpAn1bCb5lzgB6XU7p/XnN
-         /nGWYiT76Y6fTlhnGoOiHv399plSglSawYLfDJuEtsm+sEfbu7uBgv5qC71/CR5Tt4WW
-         ZLgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrsHXvY/j9MN49gE95JfJVmepR7U4/R+/l8JNxIzArjWuF3Q5O6UqBXr/8TnhPAtwTZjsjsfjQU15k@vger.kernel.org, AJvYcCVvVBeHl2+USTU+RtYGVb9Kuy/UoQ3uPyA5ZsvtV5MdAW5vqx4bXAwl/HagQI4z7KRyuaZMWrVKxA8FW3WK47eP4KQ=@vger.kernel.org, AJvYcCXR8tiUJqDvc6+kuDNm6mGKZYUs5yPmpqaoxTRYI+VUycFV1nz/9guO8U/YXcNzzIA21g9zQK9/buGszIA4@vger.kernel.org, AJvYcCXS1HFEx0urdAzykKW6zJGWG/97eeuUxswK+RPJAWI1C6ZNKaIfMjhVlxqKIkC4pj60Y6zkhNRW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MyKTjdlI56ySrux3riPwSEqUmApHWZ/uHOUVVYUM2rlpHwFv
-	R3dDrq3l+Zu2+jTN7jxIG1CoAAo8pLcONCCDFasivW3X11F2NQERxp0IkqdpBvWCzP+BjcaZ4MD
-	mirOsooeETzutSvjIhzdLu65moho=
-X-Gm-Gg: ASbGncsliD2LsrinKJRPFZA20obnS+PRXxRHZ0P/bHU411JiXIfdenDZfBr4CidekH/
-	izVi/Fh4H19MD/nUeoQGAsXSGiBq/CNr4Vlr4M3BHSZ+f3suxC01PyxzAERQEjAnlqYc7XCrQeS
-	93h5dA5aHcbxtRBCCF9rwjzobtbYwyIWhagGRtV8jTypfWwjUGu9oofbbcug==
-X-Google-Smtp-Source: AGHT+IF2GYlRCksm5iOmvAw5h/Nm2NCHn/eSKqWf0IIrVguqLczqhR9m/OA32gWx7ZdbP9xEUZ5cFF4uby3trZm3JSs=
-X-Received: by 2002:a05:6122:614d:b0:520:652b:cdf9 with SMTP id
- 71dfb90a1353d-525a838806amr14632718e0c.5.1742993563651; Wed, 26 Mar 2025
- 05:52:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742993597; x=1743598397;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=unBBZW4o0XvmaaTwB/+3iSkpD4sIQERsLXl81RTyoyQ=;
+        b=lcMLN5O0JmkA8ucKnHnOSwNsohheecw5MGvF9NPP9cljqibnY53CpU48JThL2nhE5E
+         KRz7zX9KRAxDyXP1yxbD6rAy0UvGDHZp2wcLwWViDrTrlhno/2kpzTB880w7RGeUnWuc
+         eGlcC30mnbBroHVK3zW1Mq+EXFdXoF3pzNoUBJl0Dz1+wUh1yatVYn81EbsaCOL+PJGw
+         H5aeKbTZfiwXWq8GUSUVxhIGZwPT1wipIrhdKIYB3ydVFN4ONhbPT6w4BIClIsExIpyX
+         3NJPnEBIn8DJEnH5SfirLHSCBzLuvKYoFJn9AXcPSyRFM1PdSqKa1fikhpsyVFRwkjTH
+         VauA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdPGpuYW8IW05vTT3yjE4eYLB8jqlSNCtylyCAub3BvrVHEagDFkcCIGIALa/YuurI+0pf1QdoUVAl3ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOmHrrdzG/iPLS5CmleNUeyVZT43aRsVxLpbQRNEkjD1GweJTa
+	ekPrQl8iRd6QC+3khL0cm0bYgeQZqQhIpMUepeBxGwOcoYIFCMzqaCsg8bxEuBw=
+X-Gm-Gg: ASbGncsnYCqcCutJjsO5iI2KMabLT4TqtMoB+goeKVAup5/EpMtSf/vOPH3oCXSP5ft
+	6o9k3I9ih+xhUk1WKvqBNSxumPOeV0OoId26b5DQXUIYiLVdEEo3MfNco6otbPWlBSkDFEimsz0
+	NuvUvGfUVhjLYXhLkdeTvZXGg9p9A6BXJFK3epTy7AaU9/GI18hhD9UJvkJS/VTfdxbaggoZLHw
+	gxhUrnslsFkoBE1xcdTmI/QSQCR7Xrh2tXf8i0yMSUjpGgZFbCz9JfZZRnzczTEqtc0Z7nMEe9M
+	dHxNODNJF4FK63PRGw5mLWa2tTiwTtTUKCkXUc+QUvxsIRbzhwJ04g==
+X-Google-Smtp-Source: AGHT+IEyK007wueidBJdaxRdr4xRWmnbMteuuUEM+eIwVWK6Vpov8l7x9HZXE3tKIEMisQ/zDeiPqg==
+X-Received: by 2002:a05:620a:29d0:b0:7c5:3c62:804c with SMTP id af79cd13be357-7c5ba157d0amr3415424585a.21.1742993597358;
+        Wed, 26 Mar 2025 05:53:17 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ec688sm760794885a.64.2025.03.26.05.53.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 05:53:16 -0700 (PDT)
+Date: Wed, 26 Mar 2025 08:53:14 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 4: Interleave
+Message-ID: <Z-P4ulrFQAbJBC_A@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z9DQnjPWbkjqrI9n@gourry-fedora-PF4VCD3F>
+ <Z+PIoAGgz33R2c3P@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318205735.122590-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250318205735.122590-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 26 Mar 2025 12:52:17 +0000
-X-Gm-Features: AQ5f1Jp8vxfqG0NLOvLDVY_2Yq7ayGqmlj-XifLUdImduJ_U681u5FCcCZ32CJM
-Message-ID: <CA+V-a8tBh1Ev-8=0vcmz0XB7iqKzZZ5dKefrZCrY49Je3KTCAg@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 0/3] Add GBETH glue layer driver for Renesas
- RZ/V2H(P) SoC
-To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, netdev@vger.kernel.org, 
-	Jose Abreu <joabreu@synopsys.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Magnus Damm <magnus.damm@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Eric Dumazet <edumazet@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z+PIoAGgz33R2c3P@phytium.com.cn>
 
-Hi Paolo and Jakub
+On Wed, Mar 26, 2025 at 05:28:00PM +0800, Yuquan Wang wrote:
+> > 
+> > Notice at both the root and the host bridge, the Interleave Ways is 2.
+> > There are two targets at each level.  The host bridge has a granularity
+> > of 512 to capture its parent's ways and granularity (`2*256`).
+> > 
+> > Each decoder is programmed with the total number of targets (4) and the
+> > overall granularity (256B).
+> >
+> 
+> Sorry, I tried to set this topology on Qemu Virt and used:
+> "cxl create-region -d decoder0.0 -t ram -m mem0,mem1,mem2,mem3"
+> 
+> but it failed with:
+> "cxl region: validate_ways: Interleave ways 2 is less than number of memdevs specified: 4"
+> 
+> It seems like the CFMWs IW should be 4?
+>
 
-On Tue, Mar 18, 2025 at 8:57=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Hi All,
->
-> This patch series adds support for the GBETH (Gigabit Ethernet) interface
-> on the Renesas RZ/V2H(P) SoC. The changes include updating the device tre=
-e
-> bindings, documenting the GBETH bindings, and adding the DWMAC glue layer
-> for the Renesas GBETH.
->
-> Note, this patch series depends on [0].
->
-> [0] https://lore.kernel.org/all/Z82tWYZulV12Pjir@shell.armlinux.org.uk/
->
-This patch series has been marked as "Changes Requested" on Patchwork,
-but there were no review comments on the series. If the status was
-marked as "Changes Requested" due to build failures reported by the
-kernel bots, I=E2=80=99d like to clarify that the failure was caused by a
-patch dependency, which has now been merged into net-next [0]. As a
-result, this series should now build successfully on net-next.
+It has been a while since i've interacted with QEMU's interleave stuff,
+but IIRC (at least back when I was working on it) most configurations
+had 1 device per host bridge - in which case the CFMWS IW should be 4
+with each of the host bridges described in it.
 
-Please let me know if you would like me to resend the series.
+I'm not sure you can do multiple devices per host bridge without a
+switch setup.
 
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git=
-/commit/?id=3D0c1f1eb65425
-
-Cheers,
-Prabhakar
+~Gregory
 
