@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-576673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9803A712E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:42:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB89A712EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:43:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1529A172A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94EC83B5AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7F91A314D;
-	Wed, 26 Mar 2025 08:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3119A1A3148;
+	Wed, 26 Mar 2025 08:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="bC87zUeD"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="NQdFZFBB"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2F1547C0;
-	Wed, 26 Mar 2025 08:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21381A23A9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978547; cv=none; b=PEo20yDwTx1Y1xRsBOItR39h6ohncsFpb3jRWwHDM42HbLdItVzOEVmYNTL59Vs0Uflijp9yer5L73t1i0QhZTHK56nfYuovtEHwkaxQnXLsitzOdQqeHT4ucPPfDRlFkyP7Ac8/DUmNBywNH1xwUPmObWVJbaJWFXwBiWero+k=
+	t=1742978569; cv=none; b=gRdeaLj9XtPsSs4Ha06mSMPJDlr18XlksJz7EwezjSFPxQm7kR/aO6Y9aIGai84CXKBP5XZsMs88hyktR4uQAFAcHyxzTL1jano+hyeupWrkENVMibBcnSWf+aIwhsCQP+ROWGPPvW00cd+0RD3RhJBWNgrtXBcf8K8uSc04hJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978547; c=relaxed/simple;
-	bh=My34K5TKuUnMrc1gVZKgmQLkVhJoBVbQZG2R52GRxSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xw4GBAg+6/O03Vd6gTBx6bgFQzh6jBeb/wsGnbeFXrAXYzCE26dCE/stGNXa8JzW/4Eby3IZh5ZjvX2FGRpatnK7DaI5DH/7AeYcy7RjWP1tDF0tQ81K805a/tBWzoR6MecOXVqZz2MvzeOAKNEdwvv57ZGp7amBzuANIXpjGls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=bC87zUeD; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1742978513;
-	bh=JtRy+QMeUiWjWHK0VCeWHxKW/SYd2pDjqLrvJqHva9s=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=bC87zUeDk5btGvGbTAL/rSeoBdkzz9iRcXW9yM6Hw/wWq9PbAXnvku8bOzdErr80L
-	 v1RKThO7moKP1w+uxzb8UKpq8p7RuiXXJCqH9K5J68cLYffDaBQbwSqUt4LqIzaFkA
-	 6oE1tl6HWJdqN7/EMqLTHZLtuaK4el8kR17q+qIk=
-X-QQ-mid: bizesmtpip4t1742978501t2w2yga
-X-QQ-Originating-IP: ShppA27fghodDXEBV+PsrNeueFJPD/tjZ0fOco6mXRQ=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 26 Mar 2025 16:41:39 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5189072839362077449
-EX-QQ-RecipientCnt: 9
-From: WangYuli <wangyuli@uniontech.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Hao Li <lihao1@uniontech.com>
-Subject: [PATCH] Bluetooth: btusb: Add RTL8851BE device 0x0bda:0xb850
-Date: Wed, 26 Mar 2025 16:41:35 +0800
-Message-ID: <933CB507F0C72912+20250326084135.18674-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742978569; c=relaxed/simple;
+	bh=Qc90giQ3e2ocUzKlkRBnMZaZvxNaHfr/yC1qO2XaQyo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ahL4zJcLTx/6oUzmnsD+tmNG5cTxewHw5ulUcMip3padSoKBjXfccv1adF1wUi4qqLF364BhGHJrsAN8ODQCjeNCdbQBIWa/wF6LSo0wL8Wb06uiDmkWy5gDbT4ElDscerU7xYpRK2o12t0zn5lUnazl/OEcrX8Fzblt/eYUTl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=NQdFZFBB; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Iou+YOMY3B0VmyRSo9N3Los9Mpl9TkUqQwOVItnL4PQ=;
+  b=NQdFZFBBbC9+LDGfXl441ogJ3P0OEFOgr8oEs6mlJWIKB50d7Afa+PuO
+   QXCaGR3xGaCj0ZXPx8R6W3VBhzS8ZCUs5NHqlL0EtIwUH82P0KpDv+591
+   oW72qOq9nMZuP4RgLgrrlaBLituEoNqbj6IIKnhAWQMjjUI23ZcgVeB4G
+   Q=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
+   d="scan'208";a="112619704"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:42:45 +0100
+Date: Wed, 26 Mar 2025 09:42:44 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Erick Karanja <karanja99erick@gmail.com>
+cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
+    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] staging: rtl8723bs: Rename variables
+In-Reply-To: <20250326083334.13030-1-karanja99erick@gmail.com>
+Message-ID: <a43a6053-376b-f75e-925a-e79f23adaddc@inria.fr>
+References: <20250326083334.13030-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N01He0LwNYkc0xWyT26piAoGbZ9yM0qU2WkAtR+i2CfXLKiorODxUJnZ
-	KKWc4PvW9Mnq5wDCp/aDoEkIXwPB1URB3E8yfcAqjr5j6c0csWC04Cx5tZ1h+kUTxl77PGJ
-	LYVAR5U6Y7Iz0v/HtsRrvYYkL2jYNAVngLYh/pzTShG5dxI0OFgeV3R1mFmQWMBiYrOHOnD
-	Wg0HTUyGn2uLTUwCYBs/OYuRyE3mfw9ooGfepa9CbCBegMvo5xMYI3AseLUJsleZF+R9R94
-	y+geGTzH8btTDDpjrWhArxbXEc5WWmxQnqnJQdHnWmXDQ4Gj5wCw4TaCRbd9eAxqabNPnqo
-	B4dcwoFu0ratN/YkxiHffx1J8CyeDNxMA6+BDaPNPK4C/85TV1+2DiBiS+6eYRK7f6Y6Ila
-	MAe4uW1vIXSSh3lTS5IHghG3sgppZ8OSTT40e1ZF8WOFaE8YcbZkhju8j3sYK4hDeJQY3mt
-	Yhu9hyk2se0CbofiFHQCyJRZVXvXnmW3McFV0hPGbf1U2dFNNvld/penypb3jkZ1VDb36Ew
-	oWfup6bI7fSR3NzpV9C+63lyy1QlYbgv3IPNV5qi2GpGnhvd3NPlpyS7RILpLM5LSOjRTCL
-	w21RVN5AxLhHiH5lq0gZ8iTZ1XmOHIFwq9euPDmH/B8tV+sNri80I9R2DfFdac3ZrOo+kuh
-	xeDWpQYcKo4mFfwrAcTr15CoG2lFKX8JLLMpFGdkpRCIAUcgBaI1FmfBenRLy+rZ7Ecbhgl
-	TxMfbEFBfc47f7VUm90AXNDRjmuj6CFmrgQdtoVJjbF2Htorn7wHEa75GBYDRZF+T57o21C
-	Um7GaWLnen5PM+9Yxyt1gXqXOGPjfaah6+CKmeDJNvnQN78El7QjjGCzk81+QE+TE0WFt8M
-	jS56EN6kzlLEKipDtCAnGdkc7CmrJGV7fk738GMrk0W3+lS8lpvAgyYSNIWUT8fqx91d2yH
-	VK0WQ4qujGdZx4Q4SbMamFluv8cUcujsUFhh2fZbTbgob4+1gaRHJh54dx2WDUvr17qjdpf
-	ApD9baMjuxKQNDqW4a
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below:
 
-T:  Bus=01 Lev=01 Prnt=01 Port=01 Cnt=02 Dev#=  3 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=b850 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
 
-Co-developed-by: Hao Li <lihao1@uniontech.com>
-Signed-off-by: Hao Li <lihao1@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, 26 Mar 2025, Erick Karanja wrote:
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a0fc465458b2..8744496a9687 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -485,6 +485,7 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Realtek 8851BE Bluetooth devices */
-+	{ USB_DEVICE(0x0bda, 0xb850), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3600), .driver_info = BTUSB_REALTEK },
- 
- 	/* Realtek 8852AE Bluetooth devices */
--- 
-2.49.0
+> Rename the variable `mediaStatus` to `media_status` and variable
+> `lpsVal` to `lps_val` to adhere to Linux kernel coding
+> standards by using snake_case instead of CamelCase.
+>
+> Fixes checkpatch.pl warning:
+> 	CHECK: Avoid CamelCase: <mediaStatus>
+> 	CHECK: Avoid CamelCase: <lpsVal>
+>
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+>
+> changes in v4:
+>   reverted double blank line changes committed earier ensuring
+>   my patch contains uniform changes.
 
+This is still the wrong place.  It should go under the --- not above it.
+It is the text that is under the --- and before the diff that is dropped.
+
+Also you should include the complete history.
+
+julia
+
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_btcoex.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> index d54095f50113..f4b19ef7b341 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
+> @@ -8,14 +8,14 @@
+>  #include <rtw_btcoex.h>
+>  #include <hal_btcoex.h>
+>
+> -void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
+> +void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
+>  {
+> -	if ((mediaStatus == RT_MEDIA_CONNECT)
+> +	if ((media_status == RT_MEDIA_CONNECT)
+>  		&& (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
+>  		rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
+>  	}
+>
+> -	hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
+> +	hal_btcoex_MediaStatusNotify(padapter, media_status);
+>  }
+>
+>  void rtw_btcoex_HaltNotify(struct adapter *padapter)
+> @@ -52,14 +52,14 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
+>  void rtw_btcoex_LPS_Enter(struct adapter *padapter)
+>  {
+>  	struct pwrctrl_priv *pwrpriv;
+> -	u8 lpsVal;
+> +	u8 lps_val;
+>
+>
+>  	pwrpriv = adapter_to_pwrctl(padapter);
+>
+>  	pwrpriv->bpower_saving = true;
+> -	lpsVal = hal_btcoex_LpsVal(padapter);
+> -	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
+> +	lps_val = hal_btcoex_LpsVal(padapter);
+> +	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
+>  }
+>
+>  void rtw_btcoex_LPS_Leave(struct adapter *padapter)
+> --
+> 2.43.0
+>
+>
+>
 
