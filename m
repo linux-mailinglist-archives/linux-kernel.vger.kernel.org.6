@@ -1,198 +1,180 @@
-Return-Path: <linux-kernel+bounces-577160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F06A71956
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:50:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D4DA7195A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAF017C66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C60717CB2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309181F416A;
-	Wed, 26 Mar 2025 14:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B81F3BB2;
+	Wed, 26 Mar 2025 14:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CKi9cPvQ"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9msC/zI"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7D51DF74B;
-	Wed, 26 Mar 2025 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B685C1F1913
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000274; cv=none; b=jDsGQSJB+kU8nzCewMgrKsInlLVqUxpq7GUYovww2Ejj8eN2BxCcIZ87VLoZ/ZjZa0CxRqs4H0ud3PQE5JbsbIMj4unWA/9U3BdpUw4doFIzP48Ev3Vxw5/UbuV6Z54I2HUAIRuiY18GC/6CqxoASaLX2IZOAr6+H4yukP3zDuc=
+	t=1743000298; cv=none; b=YglYRg2ruQP4VG7L6PWoOU4ChvG/HNkowkp5rr6a0pfqC/EYnGowvLMCvF0WtspZc6kk8g6gbIq0aFIxMws935dP/OA7pe0O7CTV2D48zMbtAZDkGdIXqFMR+Ggyvb/SrgcsKpV7HrKSbeoPzjcZW035NSLsCB/lSxw35CoBY70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000274; c=relaxed/simple;
-	bh=MRFbHFYyoyMaTfUFcp1d9FWNu6nUYKgM6cyNPev6wac=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=jl8/YPOKpdNzJyl51AK80IYAi4eAr2Mi9Kp11aQxdM/z7YPEoiwYaM+c4eyFDDSMoUkT4TP8SCF3Yd4eOsV6a6Cs7rzE0FjfcUyGkAC89o5JUuMscBOQTnby+C/ENaYfxZjaSZCHdCDqafDbgc3spLr97kt+6TsKBeV8AWNLMwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CKi9cPvQ; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB964441AD;
-	Wed, 26 Mar 2025 14:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743000269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y0lbkNHAn2CaamDzuCJgBrXafC1b0VIzMu7nshNJuMY=;
-	b=CKi9cPvQk6lyHYxyEVClQbnylCgh5fl8DfDVmLtPRv3GqxMfN8pQdPyEg8N7L7CCHlsgV6
-	bikMtmCOeeqX171M/0wWMabEMOuUId8HmJUexDwrQfdryTgAF8HogfEnVY7zdg6A1/p7v5
-	eeMgocO6zOYbvF9flBDbokxB85kcYR09ujdCipaUv8F+nHvUWyMU1ixFj3c5QWVwBiGFsz
-	jaBTYyGjk2TsczvRZVMiyw/nJ0TpJMps2zY9kuwSUPuFVhg5R3Fl2HEtwZ6rLkwlhcdAyY
-	RjcdrCDkKVEWNOGpv1CuBW3f+lNmtxJqyufpSQWyDqLrAPq6gf/aeODRpPD7Ig==
+	s=arc-20240116; t=1743000298; c=relaxed/simple;
+	bh=Ghh84CGkR/FCVSnBNgUctPE3F7pU59Z+NKgjxNQtNFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I++PO3fd6UoGEE2jheY6QtrBqtHh6GKrH9jAOYDAOaLyYV7cwI4WAK6BSdpFpJZYubIO/0ApMRZj6pleqWO81CShCNwWQ6z+hGvRjc6R/AuL9RlJrXS0+AD4U2+kXTxG2Tms+emWfGUCgZA+ssKp5M+nMwSjgVQr1jPY2PVuej4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9msC/zI; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso36604915e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743000295; x=1743605095; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=REtKXp4hi6sgBm+AS7b2V8Aev3l8C+kzOBfn08oN45c=;
+        b=U9msC/zIskuQNMsHcYGTDYInxitcUJA9R4/QZKz/+ihpsfVh+GEYzj6KnQkz5gbqqs
+         6hwVdlAGgNnhprSdTSVHz6LxhYeNk+6I2zU1a14/NVmVB+1JHS0U0+rULSfl/HcMwgcx
+         cF93zqKJYZwW9WwHH/j36G0Pq90OyCpYRJmq5nwnBU6QpgccaihPpzieCr8vZ2D/GH/k
+         /QICkcCKDYkzKi7gnujGksr+w366pTqDkXUold4VWJiAmwxfdmcnNf3fmxVAG200P67W
+         oEePc7huY88cDS/Sr8zv89/9cK9HzDUP7asAktnp3+fAvOSlvwL//6nfOGznua+Br/Ow
+         GEqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743000295; x=1743605095;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=REtKXp4hi6sgBm+AS7b2V8Aev3l8C+kzOBfn08oN45c=;
+        b=wB0UYMdHCVkrBp0LUe6HUII98a7QGUwBxNjiTu82hHcgKRVbL8DduZZVxtFuvyHHrj
+         6cZOEeUGo7T5RR9BoCy9cV5ks4mwZUKvmFUVLqmTGK/2/XxKeyPo6cPKFqOf1+TfCQVv
+         k6fGQpjUccjJiMJCNfHX9VFPJ/4PGKIdeHXWlA2BZgzisqytUWFypj6trfEUsUN7dLGy
+         MwrGfQY9X5wEqdDJUiesgOR0LCWR7zX/HAh9lLLlzGoWl3d7zEluWGh2R3QPcJE19ODv
+         nNz0HYiBkYFsbbpIkUqx0A2gt3pREGYjn1yQj9n4tEP9Xo2agcXuBt7gDUEJsIdUg5HA
+         FpLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdTD0vSnEEX8rEQuPJz3sYii4Jy22t1w7PhZlq4esGpt7ZVg3QXM1q9BzH5JuoN5q0dlF3LKiliy86vww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV0tzYstdLZy0SwTWBPBN7EstOQAk21/6TpuZ80qqyUhJ5eM6S
+	U+yT3dfPrb8ws6dEeeGkP/0A+aSO0zLM2P0Yf2pm5ySPSOLb7kXjJLBHhCUwiro=
+X-Gm-Gg: ASbGncskmUeyonD61wjUmqAUKnPkNlg9iib2FU0UiWOGLQ2lz1R3OGs0ur3LEInETgQ
+	3hrE1f0q8hDvDYDPjwUy7GHbvgNSwiYjJLW4YIPHFHIcRcWNBlbzHnxFb+9BV+rtLx41V1kB42b
+	NvIQd11/ifH2QpD1uNB+SrPoqinXJY/KXMJjeDrZydTscNv8TxeEC08pYjPZjvuBjFY+1JJ1iNQ
+	Engfb+164uY1IuFMpLw6RSGOcFYL1RqC8kPWjsvu2CkObFqU3pxjAMVJ9NXsrmLDR44h0qvcmsB
+	mhjdog1Ydw8xsOIP2pVe+L57hKA6PRwTRMarWRd14wp869Y/25WKtJVwzodvsCN8fw==
+X-Google-Smtp-Source: AGHT+IHDOuf6KYAidi0f/+wH2oPjsGxXXLqRAgkCOSMQfLCi0UZThvqs+OxaqR5hMnEF4EQhlhmaOQ==
+X-Received: by 2002:a05:600c:45cf:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-43d508715e4mr191868365e9.0.1743000294919;
+        Wed, 26 Mar 2025 07:44:54 -0700 (PDT)
+Received: from [192.168.0.251] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedd03sm4190975e9.3.2025.03.26.07.44.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 07:44:54 -0700 (PDT)
+Message-ID: <be8e5758-8f85-4476-b6c0-4400c8151cbe@linaro.org>
+Date: Wed, 26 Mar 2025 14:44:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mtd: spi-nor: use rdid-dummy-ncycles DT property
+To: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Takahiro Kuwano <tkuw584924@gmail.com>,
+ Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bacem Daassi <Bacem.Daassi@infineon.com>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
+ Mark Brown <broonie@kernel.org>
+References: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
+ <20250319-snor-rdid-dummy-ncycles-v1-2-fbf64e4c226a@infineon.com>
+ <20250319233024.GA2625856-robh@kernel.org>
+ <a3818477-5a67-43ad-8961-88fa02916968@linaro.org>
+ <CAL_JsqKtz5+R1kjEzjo6bVicOX2c=UauC0_STAF0T02rSDqO+w@mail.gmail.com>
+ <50de19f7-2021-433e-b8f8-d928ed7d5d57@linaro.org>
+ <D8LSAUU0358V.2H1D7QXB9WBOF@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <D8LSAUU0358V.2H1D7QXB9WBOF@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Mar 2025 15:44:28 +0100
-Message-Id: <D8QA116WPNUE.11VKIHSG9N0OZ@bootlin.com>
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Lee Jones"
- <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, "Michael Walle" <mwalle@kernel.org>, "Mark
- Brown" <broonie@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-input@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
- <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
- <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
- <Z9vydaUguJiVaHtU@smile.fi.intel.com>
- <D8PF958QL5AK.2JIE4F1N1NI0F@bootlin.com>
- <Z-LSHoYA1enEOeHC@smile.fi.intel.com>
-In-Reply-To: <Z-LSHoYA1enEOeHC@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegrieeimeefudektdemtgdtsggvmegslegrkeemvgehledvmeeirgeffhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemrgeiieemfedukedtmegttdgsvgemsgelrgekmegvheelvdemiegrfehfpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhklhgvihhnvghksehkvghrn
- hgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhg
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-On Tue Mar 25, 2025 at 4:56 PM CET, Andy Shevchenko wrote:
-> On Tue, Mar 25, 2025 at 03:37:29PM +0100, Mathieu Dubois-Briand wrote:
-> > On Thu Mar 20, 2025 at 11:48 AM CET, Andy Shevchenko wrote:
-> > > On Thu, Mar 20, 2025 at 08:50:00AM +0100, Uwe Kleine-K=C3=B6nig wrote=
-:
-> > > > On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
-> > > > > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@b=
-ootlin.com wrote:
->
-> ...
->
-> > > > > > +	chip =3D devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0)=
-;
-> > > > >=20
-> > > > > This is quite worrying. The devm_ to parent makes a lot of assump=
-tions that may
-> > > > > not be realised. If you really need this, it has to have a very g=
-ood comment
-> > > > > explaining why and object lifetimes.
-> > > >=20
-> > > > Pretty sure this is broken. This results for example in the device =
-link
-> > > > being created on the parent. So if the pwm devices goes away a cons=
-umer
-> > > > might not notice (at least in the usual way). I guess this was done=
- to
-> > > > ensure that #pwm-cells is parsed from the right dt node? If so, tha=
-t
-> > > > needs a different adaption. That will probably involve calling
-> > > > device_set_of_node_from_dev().
-> > >
-> > > It's an MFD based driver, and MFD core cares about propagating fwnode=
- by
-> > > default. I believe it should just work if we drop that '->parent' par=
-t.
-> >=20
-> > Are you sure about that?
->
-> Yes and no. If your DT looks like (pseudo code as I don't know
-> DTS syntax by heart):
->
-> 	device: {
-> 		parent-property =3D value;
-> 		child0:
-> 			...
-> 		child1:
-> 			...
-> 	}
->
-> the parent-property value is automatically accessible via fwnode API,
-> but I don't know what will happen to the cases when each of the children
-> has its own compatible string. This might be your case, but again,
-> I'm not an expert in DT.
+Hi, Michael,
+
+Sorry, I somehow missed your replies.
+
+On 3/21/25 8:00 AM, Michael Walle wrote:
+
+cut
+
+>>>> The
+>>>> problem that I see with that is that we no longer bind against the
+>>>> generic jedec,spi-nor compatible, so people need to update their DT in
+>>>> case they use/plug-in a different flash on their board.
+>>>
+>>> This chip is clearly *not* compatible with a generic chip.
+>>
+>> I think it is compatible. The chip defines the SFDP (serial flash
+>> discoverable parameters) tables. At probe time we parse those tables and
+>> initialize the flash based on them.
+> 
+> I disagree. It's not compatible with "jedec,spi-nor", which is
+> defined as
+> 
+
+cut
+
+> 
+> See my first reply, on how to possibly fix this mess (new
+> compatible if accepted, just use RDSFDP sequence which is backed by
+> the standard and do some fingerprinting).
 >
 
-On my side:
-- Some MFD child do have a child node in the device tree, with an
-  associated compatible value. No problem for these, they do get correct
-  of_node/fwnode values pointing on the child device tree node.
-- Some MFD child do not have any node in the device tree, and for these,
-  they have to use properties from the parent (MFD) device tree node.
-  And here we do have some problems.
+this won't work unless there's a unique parameter or ID in the sfdp or
+vendors tables, which I doubt. Takahiro to confirm.
 
-> > On my side it does not work if I just drop the '->parent', this is why =
-I
-> > ended whit this (bad) pattern.
->
-> > Now it does work if I do call device_set_of_node_from_dev() manually,
->
-> AFAICT, this is wrong API to be called in the children. Are you talking a=
-bout
-> parent code?
->
+> FWIW, a new (or rather different) compatible is needed because we
+> cannot distinguish between random data returned during the dummy
+> cycles and a proper manufacturer id. So there is no way we could fix
+> this in the core itself.
 
-I believe I cannot do it in the parent code, as I would need to do it
-after the call to devm_mfd_add_devices(), and so it might happen after
-the probe. I still tried to see how it behaved, and it looks like PWM
-core really did not expect to get an of_node assigned to the device
-after adding the PWM device.
+Yes, I agree, new compatible it is then.
 
-So either I can do something in MFD core or in sub devices probe(), or I
-need to come with a different way to do things.
+cut
 
-> > so it's definitely better. But I believe the MFD core is not propagatin=
-g
-> > OF data, and I did not find where it would do that in the code. Yet it
-> > does something like this for ACPI in mfd_acpi_add_device(). Or maybe we
-> > do something bad in our MFD driver?
->
-> ...or MFD needs something to have... Dunno.
+>> I think the property vs compatible decision resumes at whether we
+>> consider that the dummy cycles requirement for Read ID is/will be
+>> generic or not.
+> 
+> It is not generic. Because it will break autodetection. And that is
+> the whole purpose of this. Adding that property means, we can just
+> autodetect flashes within this 'group'. And personally, I think this
+> is a bad precedent.
+> 
 
-I have something working with a very simple change in mfd-core.c, but
-I'm really not confident it won't break anything else. I wish I could
-get some insights from an MFD expert.
+yes, I agree.
 
-@@ -210,6 +210,8 @@ static int mfd_add_device(struct device *parent, int id=
-,
-                if (!pdev->dev.of_node)
-                        pr_warn("%s: Failed to locate of_node [id: %d]\n",
-                                cell->name, platform_id);
-+       } else if (IS_ENABLED(CONFIG_OF) && parent->of_node) {
-+               device_set_of_node_from_dev(&pdev->dev, parent);
-        }
+>> I noticed that with higher frequencies or protocol modes (e.g, octal
+>> DTR), flashes tend to require more dummy cycles. I think with time,
+>> we'll have more flashes with such requirement. Takahiro can jump in and
+>> tell if it's already the case with IFX.
+> 
+> But hopefully not with RDID. Again this doesn't play nice with other
+> flashes (or all flashes for now). Instead of adding random delay
+> cycles one should rather define a max clock speed for this opcode.
 
+This could work, yes. But not for this flash. Or maybe encourage vendors
+to either contribute and enlarge the SFDP database or define their own
+vendor tables for all the flash properties that are not covered yet.
+It's strange how Block Protection is not yet covered by SFDP after all
+these years.
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Thanks,
+ta
 
