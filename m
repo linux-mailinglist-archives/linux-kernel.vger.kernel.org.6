@@ -1,230 +1,207 @@
-Return-Path: <linux-kernel+bounces-576679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B208A712FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B614A712FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031A23B981D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA833A4924
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A5017CA1B;
-	Wed, 26 Mar 2025 08:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7641A4E98;
+	Wed, 26 Mar 2025 08:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l7attKm1"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FaHMFtpa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W+luWktA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FaHMFtpa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W+luWktA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2961A255C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4A71A5B8A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978630; cv=none; b=KxtdFJU4vqBB+EmFFHn/vSxxLfkjNxraBa4/UoQ9PumNECwO2b1h39p3HeYClmRzbaXEjJyWi2mkQPkzf6qTdnq84EuHpjPE6FBIgWSMpO0wyNEQ30FOeUcrcUt+8XdwVu7TUYyXqdlwo7kN6wdEaPASFS6VuOSsi9W4AuWOLJc=
+	t=1742978709; cv=none; b=IV+ruxomNLvz9zMV0a5sNPuMwZx0qwK4cEZUw+R/9fCr9UKQpnVWz6XbyAeFC3b+teNd9K6TFCnDNQX/1OwawqVUSWoKYyRdanckcuOXzzo6KTajasf/OBuGmbyqm3sa/eQRXDoN5V7fSRmZAXG1c0V/7qf1JEnwVgjIalvB3cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978630; c=relaxed/simple;
-	bh=+/vbVvp7TBfeyIb5aA4p3N2on+ew4il4U+oUd2qfWzQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=VUrusIJogdkBVu/Eea1pkykJXsYx9GJTke2tG3IbnG8mVkvbsHom7sIMFIzBznPiadQeAVw5osro5u1sZ5ydlpiWE3J1aDlSIit90AUvoQX9RNxX0R7BIyDb/LOburQW4aeDjqiiMN6pUmQkNz44iubrNCAbrSTrM6rZHjEv4gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l7attKm1; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso49711115e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742978626; x=1743583426; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5sJ0/cjtOuS0rqzVhbqmd3GPHS9gnvVNLtBH1FZbB0Y=;
-        b=l7attKm1xluM3oHLAS0WMzTmTJlxJi5GU8WUfenriYx2jiXlB4rJ73EO1WuX8ZeAkH
-         evZ7f0wQUADbT1j9b7lJzlEWpO0x5DedyXX+t43ZnYaxGeUvMb41fBr5FQk4sAfJnimy
-         36xf9+oHdVl5yfcOXcAN/xMqt0S8PJ6wowNO5iNwK1j2HmMnr0cfAbJY8WBTtDOxNGJz
-         YrhDHsu3XBV/L51b5wkgkSDuTk4rDnh4I1+E3OIGmjQoFS8eQXM4+48Wfb8yIZPr7jkk
-         2u/tRV2d1LI35s3ppYtw0Lryk9uukKebvSuyS7hIoQc5eAz1VsAtU1WbAdBk2OhS/Kcp
-         hPTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742978626; x=1743583426;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5sJ0/cjtOuS0rqzVhbqmd3GPHS9gnvVNLtBH1FZbB0Y=;
-        b=VLVYy4uv5GKv+82yjkGZLI+ARnOiDW9t+t19x53vpt1BlXLBwXiFjtVa82XGYUir8b
-         Qsa6VClTv7wt6FhpI48xrs7Rqv2vJEeWTRj3o4sTdJXnTqE+xhT29h40ZZTlw952bN8V
-         NTEIQcaEPWqMBoB4tbmabD+aDEpZWkDGnSwhYMWS7EO0HUVErp/vv7w3wJ9SlZ2XkKax
-         ZV+A8MIBaCRFFesuXIZih/b2/fmivxMDA8S5i2Go5NrZiOUJVeH2lg9UrhAQm5ZQxM3V
-         BgA2vilg3p4mOl+RqwKbUrsSv7t5abiyBjXDd5JR3SD2mncYpgaX/KgcC53QKiUfGohV
-         53ww==
-X-Forwarded-Encrypted: i=1; AJvYcCX/dPgjWduty9RKWaXuZGduvXhXSI9ugxCrM9ekMtCVVqaDN3yfTSfUJFweZaktCav2C3P+wkLAR75LNqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/KNft/ZgRu2v0svOGGCJOhw8aqhzklKkqgfVJlRDvQ37k0EOY
-	aFnV19j3GSA73NS8P2Bf1C3p1u2lJYWdcuMRz960u7b+D6CCexKqvpfU70zamFI=
-X-Gm-Gg: ASbGnctxM/AbfueopMaEYbkPs173LEmFzsqVM/YN4wxeGXoWmKJrOGJvuV4z0fTD8kA
-	+apbfHldLVgmFHngpcMQECPMsvGPCNZJdpZiGGLdy2S2BY4X+guDryY8mTq2z26G6FdObyqhTgB
-	0QN3CqMhcjE8qCapPof2mcENATXzhsAb4g1CX7pCuKjunQ+B9q9vLX4D62ZUPosHIIbX7cvDBW/
-	qYlnH/1KOhH+QmsynlMDr1AZJ1FxQwXfwqMjq++IuxHeOlKQQbEsudegGK2mQhvqERj5LDHbvDZ
-	IHDWydHUSm2EMy8DzXCad2gO7SeB3OwPHmT6JeHstGLROMZA9EfI/9uejUqFtXYSoQZOeW1k7L3
-	nVeBTkmqJ
-X-Google-Smtp-Source: AGHT+IFF0Aq5lld9jdkAuw42huB04Wc3niueUjPOAlPTax9zhbSZF2hXpyEJQbfXp9HVFKoj2aF1Uw==
-X-Received: by 2002:a05:600c:45cf:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-43d508715e4mr174902685e9.0.1742978626245;
-        Wed, 26 Mar 2025 01:43:46 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9ef098sm15849259f8f.84.2025.03.26.01.43.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 01:43:45 -0700 (PDT)
-Message-ID: <8a52679e-830d-4a7f-8eb7-c6ea90c735d7@linaro.org>
-Date: Wed, 26 Mar 2025 09:43:44 +0100
+	s=arc-20240116; t=1742978709; c=relaxed/simple;
+	bh=HWAiggdTKxJZL2el/jilM8w3A7auhTpdSaIDXER4twg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BWwNFSwKQRNrsp9/VBggikesjjXeYvGFXPJz0oB1ouTpq7GQmJ2O9uazUY3/FlJplQJkH5Kl2rF547XVX2zFUAyOOvwWUWVVm8bMZlr+TTh3Xjqy9hRlkfJFmdWQc7vuNH7ejZvj2kmGd8p4JohcGjXUYvcBtYAJ1GukMLG4WgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FaHMFtpa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W+luWktA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FaHMFtpa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W+luWktA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AC98B21179;
+	Wed, 26 Mar 2025 08:45:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742978705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
+	b=FaHMFtpaHeZY8gADsMX/tH4zQAWSJNMHC+Q386fji5echHlZsxH9r5mwP5UMqUeJjYC9Hv
+	cQErBHtmqwj9rulwjb8LjYBrOslFfx/gxFNllV/FFKppqM11vOl7Cg/UfzXcF/HkOE7S83
+	xbzXvibrngdz31u+P6xS8FC78is49+4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742978705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
+	b=W+luWktAB6rJ3T3bJI5wJX+nXwSEtS1t6WF+UW9Y7kAvSYcURIavVwyhIiTP+zFEYNu70h
+	fEzwpXr6SafXi1Cg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742978705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
+	b=FaHMFtpaHeZY8gADsMX/tH4zQAWSJNMHC+Q386fji5echHlZsxH9r5mwP5UMqUeJjYC9Hv
+	cQErBHtmqwj9rulwjb8LjYBrOslFfx/gxFNllV/FFKppqM11vOl7Cg/UfzXcF/HkOE7S83
+	xbzXvibrngdz31u+P6xS8FC78is49+4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742978705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ff3SV2PTsw8orOC0Yhcz/hKa8Dme0rCu6RdQz9ChCM=;
+	b=W+luWktAB6rJ3T3bJI5wJX+nXwSEtS1t6WF+UW9Y7kAvSYcURIavVwyhIiTP+zFEYNu70h
+	fEzwpXr6SafXi1Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63E1C13927;
+	Wed, 26 Mar 2025 08:45:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WUMbF5G+42ecVgAAD6G6ig
+	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 08:45:05 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,  Nicolai Stange <nstange@suse.de>,
+  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
+  Jarkko Sakkinen <jarkko@kernel.org>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
+In-Reply-To: <eded3bf8d7aeb90ffa85bb160af0060c1d10ad34.camel@HansenPartnership.com>
+	(James Bottomley's message of "Tue, 25 Mar 2025 11:44:59 -0400")
+References: <20250323140911.226137-1-nstange@suse.de>
+	<20250323140911.226137-4-nstange@suse.de>
+	<5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
+	<f7d257cd3f98447b2b3d7aff1eee6586c1596606.camel@linux.ibm.com>
+	<eded3bf8d7aeb90ffa85bb160af0060c1d10ad34.camel@HansenPartnership.com>
+Date: Wed, 26 Mar 2025 09:45:04 +0100
+Message-ID: <87sen0qiy7.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Frank Li <Frank.Li@nxp.com>, Alice Guo <alice.guo@nxp.com>,
- Praveenkumar I <quic_ipkumar@quicinc.com>,
- Trevor Woerner <twoerner@gmail.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Johan Hovold <johan@kernel.org>,
- Linux PM mailing list <linux-pm@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [GIT PULL] thermal drivers for v6.15-rc1
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Score: -0.60
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	HAS_WP_URI(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.ibm.com,suse.de,huawei.com,gmail.com,oracle.com,kernel.org,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[hansenpartnership.com:email,trustedcomputinggroup.org:url,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+
+> On Mon, 2025-03-24 at 21:03 -0400, Mimi Zohar wrote:
+>> On Sun, 2025-03-23 at 17:18 -0400, James Bottomley wrote:
+> [...]
+>> > Instead of any of that, why not do what the TCG tells us to do for
+>> > unsupported banks and simply cap them with 0xffffffff record
+>> > EV_SEPARATOR and stop extending to them? (note this would probably
+>> > require defining a separator event for IMA)
+>>=20
+>> open-writers and ToMToU integrity violations are added to the IMA
+>> measurement list as 0x00's, but are extended into the TPM using
+>> 0xFF's.=C2=A0 Unfortunately, as mentioned previously, some verifiers
+>> ignore these integrity violations by automatically replacing the
+>> 0x00's with 0xFF's.
+
+I've researched the EV_SEPARATOR now, and according to [1], sec. 10.4.1
+("Event Types"), PDF p. 128, the _digest_ of 0xffffffff is to get
+extended. So there's no conflict with how IMA violations are extended
+(plain 0xff ... ff), in case that was the reason Mimi mentioned it.
+
+However, the main point of this patchset is to handle unsupported algos,
+so I think the HASH(0xffffffff) constant cannot get computed.
 
 
-Hi Rafael,
+> That sounds like something that should be fixed ...
+>
+>> What do you mean by "simply cap" them?=C2=A0 Does it automatically preve=
+nt
+>> the PCR from being extended?=C2=A0 If not, then this patch set is doing
+>> exactly that - preventing the TPM bank from additional extends.
+>
+> The idea of separators as understood by the TCG (the EV_SEPARATOR
+> event) is that they divide the log up into different phases.  If you
+> see a measurement belonging to a prior phase after a separator you know
+> some violation has occurred, even if the log itself verifies.  The
+> point being that if you log a separator in the last phase of boot (and
+> for IMA logs there only is a single phase) there can be no more valid
+> measurements after that event because of the separator, so the PCR is
+> termed capped, meaning you can't validly extend to it and if you do the
+> verifier shows a violation.
 
-please consider the following changes since commit 
-c3b659b74541f4564f9f5a39f65e625c47e77e21:
+The motivation for extending with constant 0xfe ... fe into unsupported
+banks is based on a very similar line of reasoning: because no event
+template HASH() would possibly come out as that particular constant, no
+sequence of events, including an empty one, could get verified against
+such a bank.
 
-   Merge branches 'thermal-core' and 'thermal-misc' (2025-03-24 14:09:38 
-+0100)
+Thanks,
 
-are available in the Git repository at:
+Nicolai
 
-  
-ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git 
-tags/thermal-v6.15-rc1
+[1] TCG PC Client Platform Firmware Profile Specification, Level 00
+    Version 1.06 Revision 52, December 4, 2023
+    https://trustedcomputinggroup.org/wp-content/uploads/TCG-PC-Client-Plat=
+form-Firmware-Profile-Version-1.06-Revision-52_pub-3.pdf
 
-for you to fetch changes up to 1b4ef46fd6660712afcfdd841eadd928193e850f:
-
-   thermal/drivers/qcom-spmi-temp-alarm: Drop unused driver data 
-(2025-03-25 20:52:04 +0100)
-
-----------------------------------------------------------------
-- Used dev_err_probe() helpers to simplify the init code in the Qoriq
-   driver (Frank Li)
-
-- Powered down the Qoriq's TMU at suspend time (Alice Guo)
-
-- Added ipq5332, ipq5424 compatible for the QCom's tsens driver and
-   TSENS enable / calibration support for V2 (Praveenkumar I)
-
-- Added missing rk3328 mapping entry (Trevor Woerner)
-
-- Removed duplicate struct declaration in the thermal core header
-   (Xueqin Luo)
-
-- Disabled the monitoring mode during suspend for the LVTS Mediatek
-   driver to prevent temperature acquisition glitches (Nícolas
-   F. R. A. Prado)
-
-- Disabled Stage 3 thermal threshold on the LVTS Mediatek driver
-   because it disables the suspend ability and does have an not
-   interrupt handler (Nícolas F. R. A. Prado)
-
-- Fixed low temperature offset interrupt on the LVTS Mediatek driver
-   to prevent multiple interrupts when the system is at its normal
-   functionning temperature (Nícolas F. R. A. Prado)
-
-- Enable the interrupts on the LVTS Mediatek driver only on used
-   sensors (Nícolas F. R. A. Prado)
-
-- Added the BCM74110 compatible DT binding and the corresponding code
-   to support the chip with a different process (Florian Fainelli)
-
-- Corrected indentation and style in DTS example (Krzysztof Kozlowski)
-
-- Unified hexadecimal annotatation in the rcar_gen3 driver (Niklas
-   Söderlund)
-
-- Factored out the code logic to read the fuse on the on Gen3 and Gen4
-   drivers (Niklas Söderlund)
-
-- Dropped unused driver data on the QCom's spmi temperature alarm
-   driver (Johan Hovold)
-
-----------------------------------------------------------------
-Alice Guo (1):
-       thermal/drivers/qoriq: Power down TMU on system suspend
-
-Florian Fainelli (2):
-       dt-bindings: thermal: Update for BCM74110
-       thermal/drivers/brcmstb_thermal: Add support for BCM74110
-
-Frank Li (1):
-       thermal/drivers/qoriq: Use dev_err_probe() simplify the code
-
-Johan Hovold (1):
-       thermal/drivers/qcom-spmi-temp-alarm: Drop unused driver data
-
-Krzysztof Kozlowski (1):
-       dt-bindings: thermal: Correct indentation and style in DTS example
-
-Niklas Söderlund (2):
-       thermal: rcar_gen3: Use lowercase hex constants
-       thermal: rcar_gen3: Reuse logic to read fuses on Gen3 and Gen4
-
-Nícolas F. R. A. Prado (5):
-       thermal/drivers/mediatek/lvts: Disable monitor mode during suspend
-       thermal/drivers/mediatek/lvts: Disable Stage 3 thermal threshold
-       thermal/drivers/mediatek/lvts: Disable low offset IRQ for minimum 
-threshold
-       thermal/drivers/mediatek/lvts: Start sensor interrupts disabled
-       thermal/drivers/mediatek/lvts: Only update IRQ enable for valid 
-sensors
-
-Praveenkumar I (2):
-       dt-bindings: thermal: tsens: Add ipq5332, ipq5424 compatible
-       thermal/drivers/tsens: Add TSENS enable and calibration support 
-for V2
-
-Trevor Woerner (1):
-       thermal/drivers/rockchip: Add missing rk3328 mapping entry
-
-xueqin Luo (1):
-       thermal: core: Remove duplicate struct declaration
-
-  .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml |  48 +++---
-  .../devicetree/bindings/thermal/brcm,avs-tmon.yaml |   1 +
-  .../devicetree/bindings/thermal/imx-thermal.yaml   |  40 ++---
-  .../bindings/thermal/imx8mm-thermal.yaml           |   8 +-
-  .../devicetree/bindings/thermal/qcom-tsens.yaml    |  18 +++
-  drivers/thermal/broadcom/brcmstb_thermal.c         |  11 +-
-  drivers/thermal/mediatek/lvts_thermal.c            | 103 ++++++++----
-  drivers/thermal/qcom/qcom-spmi-temp-alarm.c        |   1 -
-  drivers/thermal/qcom/tsens-v2.c                    | 178 
-+++++++++++++++++++++
-  drivers/thermal/qcom/tsens.c                       |   8 +-
-  drivers/thermal/qcom/tsens.h                       |   3 +
-  drivers/thermal/qoriq_thermal.c                    |  47 +++---
-  drivers/thermal/renesas/rcar_gen3_thermal.c        | 107 ++++++-------
-  drivers/thermal/rockchip_thermal.c                 |   1 +
-  include/linux/thermal.h                            |   2 -
-  15 files changed, 409 insertions(+), 167 deletions(-)
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
 
