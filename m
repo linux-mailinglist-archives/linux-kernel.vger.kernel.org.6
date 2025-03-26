@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-577586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1AFA71F2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:30:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D34A72050
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFA918983C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5AE3BB239
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388EC254877;
-	Wed, 26 Mar 2025 19:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F30E25B692;
+	Wed, 26 Mar 2025 21:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="s+dUci+k"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="ZCu3Bhe1"
+Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5492B1F5615;
-	Wed, 26 Mar 2025 19:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7701A2642;
+	Wed, 26 Mar 2025 21:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017417; cv=none; b=YI+LsIpRLhgKnHZXR8EAaWRrWseSXFPc7PN1kj2ENJUCnW7aJKf/GL9+0ICsGERAuuRLf6lvNr/sF1VY962ElsQU5oLRiQEF3e1ysxTDmaj3RtCmS4mJUM4pAuIDUXI+MZiFtiTL+FXr6BWDC/FmgDDSdoAcTmRwDFaiq2KnvdE=
+	t=1743022819; cv=none; b=c5Ws6YBjuMjgLnvga0oenedly9mE6sFHw1ja9Y8JXENs559qyOJS/PQjTY0DZl9+9fIP79VdbT7f9Of8kiQRXu/HkkwUQkF+bF+72P9IHBEksUSj2K6jFW2OlhpFL/Z8fziG3SMXwGyWMKLmWw5k3TuWIfe3hG6JE5uH+v0jAoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743017417; c=relaxed/simple;
-	bh=wxUq5/+zFED3PwYMGEUHbaMBbiL1ADelefSJnSj5UJM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CfnmK0jQ5/j3JQK7sdgkBQGKFbEq+lIBJDDEnMsTAeFNRKCn4znmWEnAMdKhS3h4kAW5Esu9CdBD4eZGT9xSRxyHOzQcVAfsN8YWqtCNjId17kMmfRtXBN3HLoIOkvmspR9mDujzch/xKzTK5utlSIWxijPIZBHBI8820U/Z/Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=s+dUci+k; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 65003C001C;
-	Wed, 26 Mar 2025 22:30:11 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 65003C001C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1743017411; bh=eX/lMVrNqZtD4hep49X7pN5UAacbqvZzpjPz6T7IxOE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=s+dUci+ktO7iPhJ0NsGmw1iGBX6M1hSzOXl7Of69FJLNcRPUjkzoH+s43wqjzzKPE
-	 lFg/WpdI0gUQj1qUsqRhzRF73HBExwBiCnPHJGotpYvwOXVMYcbeHFqpy04WXi2Gtn
-	 JaDYyqYoTU3fTVgWLcN7Fd9AOlx3rmxU/ZyANTSzfK/4J0dKuCtzzI/qrspRV2oXW5
-	 GmjsB56718Bjp8R63d0py949EKX/3cE2fRiwRui1qcJxJ1KI91IJMNFChe6OhRe3m+
-	 SqJAycS4TEqr/SlDYfAF4B0jXjlOa0rsgLDC5kMan/Y9cNGJJB8lLKe4QBRABnprZm
-	 o6FV01oUj1uuQ==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Wed, 26 Mar 2025 22:30:11 +0300 (MSK)
-Received: from localhost (5.1.51.21) by mmail-p-exch01.mt.ru (81.200.124.61)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Wed, 26 Mar
- 2025 22:30:10 +0300
-Date: Thu, 27 Mar 2025 00:30:08 +0500
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, <UNGLinuxDriver@microchip.com>, "Andrew
- Lunn" <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH v2] net: dsa: felix: check felix_cpu_port_for_conduit()
- for failure
-Message-ID: <20250327003008.cb7282960ade3c1821702c31@mt-integration.ru>
-In-Reply-To: <20250326192259.e3m7ydgkeo2ix6wb@skbuf>
-References: <20250326183504.16724-1-v.shevtsov@mt-integration.ru>
-	<20250326192259.e3m7ydgkeo2ix6wb@skbuf>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64--netbsd)
+	s=arc-20240116; t=1743022819; c=relaxed/simple;
+	bh=YMRAohbi2Dz401n4V/wa16n/WSG1I7lPaLiUl2Qf1rI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oXv6btFxA/HFMXFvTEl/6lCe0PRPUDr0x8prHSEBpQw3PnREMF5Dqae7rfhEzkqncmUem/ybyKBPTMzm+Rm6H5LmDSDbjF79YSsyGiWK8NUXRFyv7VlDGNlNFgcxo3KTFBKzZeSS+J8G/dLePv/qSTN/PMvqWCuhgRL7JOl4X4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=ZCu3Bhe1; arc=none smtp.client-ip=148.163.146.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0142705.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QHT8kv034503;
+	Wed, 26 Mar 2025 19:30:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=PU6PYT3MiOC/wAJweX5b3OMOWC8qcVg8pqlmsFdmaxM=; b=ZCu3Bhe1Xp1F
+	AOxQRmio3pG65LQAkv9FSTU1FN/mFdcmHnEDftNNMdNNJlS/pxEBqHifQcIdas8K
+	6WeUx58eai2gKudgcLj3K4ciTILIRW/WApfEl3DIMKzCpDrdfoXnLKQ72wKU7oj3
+	0FwbZOWNm/kTqGmdmjHG9WDA5Rm7/41DXTspJA+cV/dAD/Xl4BBkZ+AgBQ89sZnM
+	UecHm9KlrbWl5Vv9UT3agYyeadFGKCaEEULy0AfLrCX3DwYDiGopS9pW7znqBIOA
+	L5zggHT+tdJRu+VJl0ZH3u1qaDGkI5j6Hd2k4yiyE6ZS3zANBTcj2pTbpvrt5mps
+	iJ6QOWi/tQ==
+Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45mp15acqu-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 19:30:49 +0000 (GMT)
+Received: from us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Wed, 26 Mar 2025 14:30:47 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.33) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Wed, 26 Mar 2025 14:30:47
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <adrian.hunter@intel.com>
+CC: <andy-ld.lu@mediatek.com>, <avri.altman@wdc.com>, <dsimic@manjaro.org>,
+        <erick.shepherd@ni.com>, <jason.lai@genesyslogic.com.tw>,
+        <jeff.johnson@oss.qualcomm.com>, <jonathan@raspberrypi.com>,
+        <keita.aihara@sony.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        <victor.shih@genesyslogic.com.tw>, <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] mmc: Add quirk to disable DDR50 tuning
+Date: Wed, 26 Mar 2025 14:30:47 -0500
+Message-ID: <20250326193047.1902835-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <c6093207-2b68-4e3a-8a70-7ab4541ac59f@intel.com>
+References: <c6093207-2b68-4e3a-8a70-7ab4541ac59f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Prob_CN_TRASH_MAILERS}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192129 [Mar 26 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 40
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/26 16:58:00 #27827169
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: anLfp7SwaW9XeKnc41Y_e7vegjp6DCEB
+X-Proofpoint-GUID: anLfp7SwaW9XeKnc41Y_e7vegjp6DCEB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=968 malwarescore=0 clxscore=1015
+ adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260119
 
-On Wed, 26 Mar 2025 21:22:59 +0200, Vladimir Oltean wrote:
-
-> Hello Vitaliy,
-> 
-> If the bonding interface has no ports, it is not a DSA conduit.
-> 
-> See the logic in dsa_conduit_changeupper() which, starting from "dev"
-> which is known to be a DSA conduit, it looks at info->upper_dev which is
-> a LAG device, and calls dsa_conduit_lag_join() when it is linking with
-> it. Thus, the LAG device (info->upper_dev) has at least one port: dev.
-> 
-> Also see this comment and walk through the dsa_conduit_lag_leave() path:
-> 
-> 		/* If the LAG DSA conduit has no ports left, migrate back all
-> 		 * user ports to the first physical CPU port
-> 		 */
-> 
-> Given the justification provided thus far, I don't see a reason to merge
-> this patch. The "somehow it fails" needs to be a bit more clear.
-
-Hello, Vladimir.
-
-Okay then. Pretty clear, thanks.
-
--- 
-Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+> Perhaps make a helper function (untested):=0D
+=0D
+Making a helper function seems like a good idea to me. How does this=0D
+look? I tested it using the SD card with our issue to confirm the I/O=0D
+errors no longer appear. I also tested it with another DDR50 SD card=0D
+to make sure the tuning is still executed in that case. I don't have a=0D
+SDR50 or SDR104 card on hand but could try to find them if you believe=0D
+the helper function needs to be tested further.=0D
+=0D
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c=0D
+index cc757b850e79..fc3416027033 100644=0D
+--- a/drivers/mmc/core/sd.c=0D
++++ b/drivers/mmc/core/sd.c=0D
+@@ -613,6 +613,29 @@ static int sd_set_current_limit(struct mmc_card *card,=
+ u8 *status)=0D
+ 	return 0;=0D
+ }=0D
+ =0D
++/*=0D
++ * Determine if the card should tune or not.=0D
++ */=0D
++static bool mmc_sd_use_tuning(struct mmc_card *card)=0D
++{=0D
++	/*=0D
++	 * SPI mode doesn't define CMD19 and tuning is only valid for SDR50 and=0D
++	 * SDR104 mode SD-cards. Note that tuning is mandatory for SDR104.=0D
++	 */=0D
++	if (mmc_host_is_spi(card->host))=0D
++		return false;=0D
++=0D
++	switch (card->host->ios.timing) {=0D
++	case MMC_TIMING_UHS_SDR50:=0D
++	case MMC_TIMING_UHS_SDR104:=0D
++		return true;=0D
++	case MMC_TIMING_UHS_DDR50:=0D
++		return !mmc_card_no_uhs_ddr50_tuning(card);=0D
++	}=0D
++=0D
++	return false;=0D
++}=0D
++=0D
+ /*=0D
+  * UHS-I specific initialization procedure=0D
+  */=0D
+@@ -656,14 +679,7 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)=
+=0D
+ 	if (err)=0D
+ 		goto out;=0D
+ =0D
+-	/*=0D
+-	 * SPI mode doesn't define CMD19 and tuning is only valid for SDR50 and=0D
+-	 * SDR104 mode SD-cards. Note that tuning is mandatory for SDR104.=0D
+-	 */=0D
+-	if (!mmc_host_is_spi(card->host) &&=0D
+-		(card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR50 ||=0D
+-		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50 ||=0D
+-		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR104)) {=0D
++	if (mmc_sd_use_tuning(card)) {=0D
+ 		err =3D mmc_execute_tuning(card);=0D
+ =0D
+ 		/*=0D
+=0D
+Regards,=0D
+Erick=0D
 
