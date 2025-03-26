@@ -1,261 +1,241 @@
-Return-Path: <linux-kernel+bounces-577371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433AFA71C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:49:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B90A71C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B743BC278
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDB4840B4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B011F891D;
-	Wed, 26 Mar 2025 16:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2131E8343;
+	Wed, 26 Mar 2025 16:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aF41UH8+"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcewaUdw"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772EC1F8691;
-	Wed, 26 Mar 2025 16:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918A327456;
+	Wed, 26 Mar 2025 16:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007749; cv=none; b=DYveaS1GEbKWguRTZQHIy09lSEGnaB47POY7ItllqggZwS2+TdUPKNSZz9cdLh+M5UHP6Dbl1dajo7si3HyWtFJnI63l83XuSVHgCM9n2KkwPzBvAvXcy152dVf5v+c1lwAyvgz1JZdtx6oBxCMvfrMQlyD9L1yHgjM3z65BDAQ=
+	t=1743007814; cv=none; b=V4aghV+Lu5VdJNx81tfQxpT+xJEvUHPBCEXd07/6rJ1CM3b7of7JdcF0qeNjlGW1wUH91/l9cKlsmLl+7tmsgTZLgC1DO7qvoM57yQn0mh+wIpggIlsphM9vN0EQ5hPpKb42dZ9aVZw/9dacOAr3AAJKcRLxRhkTJV+hbHooFAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007749; c=relaxed/simple;
-	bh=nhmW9Hjs0+zFtt6OvFSEOjxsJlWfaFnfBPPRw0ryUKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mRUkfPBAMhcx3ILc9L/Tjm1JEKe04EjLzG+aKRqmwBl3rYCyHE6yYjhLSDzjfmJ0rMBQuETl2OY0HTBIiDH5Cj00URgX752g3MvlYEsqeyMsPC+pUuFoTIWRdxEe5HuO+JQt+EFVxKVQJiLoVrH7a5eZMOsgw+pBv9Hu+xPUK9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aF41UH8+; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1743007814; c=relaxed/simple;
+	bh=etAZqQaYWkqjzASZ23KNQtAEL0J4RY8rLP3GIsBFF9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WTjrQCgADNnw+y8FYfdY0KIefLzv2waLtwVTdId+hpFtmvq6aWKy4gvNqpDPp/yeLnxAZGif/x8rvj8sfi13G2bYldGshHZpI00T+hMdfKfJFFlbfUxjPU1Epxi3kC/YjZvsISw521RDPXPoQ1Ug5bjmDSYDZ/SBnktoPq+aoZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcewaUdw; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224191d92e4so2001155ad.3;
-        Wed, 26 Mar 2025 09:49:07 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so395395e9.1;
+        Wed, 26 Mar 2025 09:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743007747; x=1743612547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUO6d0jjnba0ckVkngGpAIGlmyEdZ4QTqAQWQ6PsVsY=;
-        b=aF41UH8+SmpqIa33HEVuOHUU8R0BMee6OGLKw2gBXYGKmH2D4977N9TaV018kaTjTt
-         ZTy46p3f16rwCYtDT+zjyYSOI25W56tjUmx6zbA/rlT9ifGmoNGXEz38MPOhLWKYcyNF
-         QC5uDtssqQyBPOgdP8iVOTqeVxnezCxUzGGOUUTLuwfB7fyu1aN1RwrlPIBRsclj4Wa4
-         cnszG+kL+34VGG5Lb4lV+Vk/UW+nKm5aU+B69/HIHCMW9aREhEy4g0mCR/DrW89O/NX4
-         QH7MPmitWIXfi0E6DLL2WPEKJunk/NRdoq2W4dDVy8Fze+CaWBo8Ake0edAtw3fhrMF8
-         NPOg==
+        d=gmail.com; s=20230601; t=1743007811; x=1743612611; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cT3szQVg53z3x7cQIma2mQu5F2nUuvb/9P0dqPLOAJE=;
+        b=NcewaUdwxmcgTG8tmSdapvZJT/PyTvXGOEotM+Fori5kFMQMEThxJTxUDSrTHOJuM3
+         uyAePSrC9eUOzRuhMdbLxYM6CQkjcNOY6DpAxm2LA6Jb4i6v0Iyjl29tEVZ3BS2/NIH6
+         jVJpKutV0vYpQAlp8ZOEP39HkpIQgU5Nyh1LMJdXOIsJJh3DyMvR6C0Vx1qitXrrNzRE
+         muNzbJ+s04hrwYajfHHHx9RTb/pRJAvuwNsw1ZRgeC06xK+18Q69/6ZtrgurXsN4zuRo
+         UQYG83JACq4lJAShV4odONj1uwLq096WJCi3g1UT/GTTymltOQEDydpKoTAxyWOBHlJY
+         J4Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743007747; x=1743612547;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1743007811; x=1743612611;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KUO6d0jjnba0ckVkngGpAIGlmyEdZ4QTqAQWQ6PsVsY=;
-        b=EJBtPBtBdPU8fzJ9h+WrXqRWi5ZFFe0mGB0Th9VNWReCssmuCu+i4/TcDSAvmclZI4
-         9EnfsuufoiGeo3zjFjwVca5sbmZhn952l1mzQ+IX9CFmp/uOHaPzRW50g0o1OUKDTjEv
-         OWOuXnIJcXbYlAKC1ROoE4I6HwWWdahdgeQkJtNWY7UypkvN0BHauHQFxvpuS9CqbqDf
-         3HCDLaIHWkClFJ03Ls26ncPxM/ZOOeDnvSLXa1dCq34y9vZ12XDNqZU9dj26M8i9Aeyt
-         qjC0F9Xkaogyzu8bnh1cBcX8ygfNj+u3VTiUpE/XoT5ttnQeXDv5dVfRzRY1fJ/fjvhh
-         1uiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOz0NbgIXlZOoETrTxymD4FUVwjM9ejNHfEQp0u+ij4UHG0RcSLkuSxeNb3KNvjROtuniH5HstlTYAAShm@vger.kernel.org, AJvYcCWpPYuj8Du/xGm3wwjVmy9Md1kSFc50tOfV5DgSfh8voMJni3LVy03gnYaT2dTMTP9RiXy73D4Uf4w+aQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA/7eaChcUPW1elSxb3cLJtmhiiV/7Qkg+S7799Bc+OuvsbU1/
-	Hpd1tTfs8ySluGiPtc9iqLDsToycZllIa9jiNrHNu2BITdZp3T7Z
-X-Gm-Gg: ASbGncuajBTCc3UjO603dgOD0Cg5Jgc6GOE1WYdxYj7gOEtcPkl/WzMQMaWiliur2Sk
-	O/tMHlHFBCYN37fopME5A6erlC/eTrB4Yf3h83tGou0X587g0hoZQ6L8hL86PcFVV5PZcb9YyW7
-	rH7/W27nzxpOjOolweQcclv3IJkz6WtwkverLk/hhaO5B/1M8bSPSwyu4Pnoxd4U22gRSMpBEzT
-	lGcSWDNRUG71T66wxbuwK0kIG1x/aw2TI5TXKGnx6W7W6HmHuak/4nMkG0SkShec79qNDXbehlG
-	yiZ4XtXM7Buj+4q+7vYfF0Xh8qXX6ctnFOYKEDDuGFEbYyCPEavoOt+EDw/faZ4Lf5WOksJdkHf
-	McnLkT8fdDT5XS3i1GQ==
-X-Google-Smtp-Source: AGHT+IGPXss10gz0X/i61yF6230qlud8oKXWAERwmUM5ye6hN8TGfr1HpMcjgIq5P9dOyklUPRYBMQ==
-X-Received: by 2002:a05:6a00:3cc9:b0:730:9946:5973 with SMTP id d2e1a72fcca58-73960e10bebmr423774b3a.5.1743007746321;
-        Wed, 26 Mar 2025 09:49:06 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd7a3fsm12903893b3a.67.2025.03.26.09.49.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 09:49:05 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <be099cf4-338b-45c8-b0d3-24b2cefe386e@roeck-us.net>
-Date: Wed, 26 Mar 2025 09:49:04 -0700
+        bh=cT3szQVg53z3x7cQIma2mQu5F2nUuvb/9P0dqPLOAJE=;
+        b=EL/LEF+gJ7TM6mIHGq8y1+qQxvphulL7W/L3d5OtuaM3xjJJgyrqo8d/uBaam8V0OK
+         0X+keVbGVkAo+Stg1BHQpyfjDkfkEtEkaB8BQcIR5AeVN0+FbUNx0h3EZcND7yCnIEv5
+         fFPuEAI60icemExIc31oRJQxfQ5RVsZjSxEkiG4vPdBk5x2a2qYVgBm6h7lMlHjxRKSp
+         MPCwlPQVWHqLSNqRr2B+cNEJlwX54yUSCtxvHlBqOA2YBtU5OlwIlZxCorpnoPmfMuPT
+         pV1HqEJhAfdvQHL5rE02k20wiHkjKyIZevOLw8gsOmpHx4XWJxtBOYV0LBEKBDdEx6AR
+         6eqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDuVRBfOiHz8HsbcGik7rP0oE4Utet9x/YCkgTDoK+hV1OEdihv4QsuPinvyU7roO81Ps9oRBwpJ2yMitC8j8=@vger.kernel.org, AJvYcCXitYdUmALRq33hHdk4yKPt1/6OiIVIPUZXK+0TopQCGzp2hrrk/7m8Pe37a5qqmDWB5hU8PvKmiQAW2mY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqYzM+Y6bs+ff7IJ54yX+Towri5FyI+E41qR1AbMh6ZsRp406m
+	XRVm3tFAuxwpk5fijOWmdNWhqj1UpvnsoVBDDZycchkr5pXfz9r3
+X-Gm-Gg: ASbGncv9gTmQAuBOCrKMuJnTALnPbA6clVy1NRbsM5llrt4CdhJkcDrkQCcXq2GmG8s
+	JaF1y4GselfPPmZ+dqJAMAqQp8tKVY79vfdjBdKfYPXykkG/6j12oPBPrsNBazcdW0yqYv8DM/7
+	tOFZVSt4Ffqk/AL94CiSH3CziLqDhafOUICb0Ibauz2qauHzw0byiKQ2XxKuzaTK1cAaoDPDhn3
+	ymjNuEl9G0i4gGwoOz+2ZJqSDFBigdcP9+OjeiST1/+fQN/SEBjx6pz0p5VaDNAWsZ60d6+/iGh
+	nvkxAgjGsgh5qJQU0vnwelt+K3GVUhaO9fT25KDFA4PsyHr+fGoUXzlmCACG7CQG/hR460q4WZ0
+	WCIzaqerT
+X-Google-Smtp-Source: AGHT+IH6NiB8XIrU1ijLe9eO4y2/TzJx8mk5rBdRofVLqr5lrS8RdsoCsaeLeYoC3Nj3VNUNQ/fRuw==
+X-Received: by 2002:a05:600c:3506:b0:439:9434:4f3b with SMTP id 5b1f17b1804b1-43d8471df17mr5184255e9.8.1743007810338;
+        Wed, 26 Mar 2025 09:50:10 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedd1dsm8026015e9.8.2025.03.26.09.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 09:50:09 -0700 (PDT)
+Date: Wed, 26 Mar 2025 16:50:08 +0000
+From: Stafford Horne <shorne@gmail.com>
+To: Sahil Siddiq <icegambit91@gmail.com>
+Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+	sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] openrisc: Refactor struct cpuinfo_or1k to reduce
+ duplication
+Message-ID: <Z-QwQNmWPIRyVyPg@antec>
+References: <20250323195544.152948-1-sahilcdq@proton.me>
+ <20250323195544.152948-2-sahilcdq@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (max6639) : Allow setting target RPM
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250324185744.2421462-1-you@example.com>
- <b6668968-897f-4864-913c-d4d557f1d7cc@roeck-us.net>
- <CABqG17h8cpnFkdD-nnqyr+UnwADU9XWK6TGBxj_FCH37Y3Q1Lw@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CABqG17h8cpnFkdD-nnqyr+UnwADU9XWK6TGBxj_FCH37Y3Q1Lw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323195544.152948-2-sahilcdq@proton.me>
 
-On 3/26/25 09:36, Naresh Solanki wrote:
-> Hi Guenter,
+On Mon, Mar 24, 2025 at 01:25:42AM +0530, Sahil Siddiq wrote:
+> The "cpuinfo_or1k" structure currently has identical data members for
+> different cache components.
 > 
-> On Tue, 25 Mar 2025 at 05:00, Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 3/24/25 11:57, Your Name wrote:
->>> From: Naresh Solanki <naresh.solanki@9elements.com>
->>>
->>> Currently, during startup, the fan is set to its maximum RPM by default,
->>> which may not be suitable for all use cases.
->>> This patch introduces support for specifying a target RPM via the Device
->>> Tree property "target-rpm".
->>>
->>> Changes:
->>> - Added `target_rpm` field to `max6639_data` structure to store the
->>>     target RPM for each fan channel.
->>> - Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
->>>     property from the Device Tree and set `target_rpm` accordingly.
->>> - Updated `max6639_init_client()` to use `target_rpm` to compute the
->>>     initial PWM duty cycle instead of defaulting to full speed (120/120).
->>>
->>> Behavior:
->>> - If `"target-rpm"` is specified, the fan speed is set accordingly.
->>> - If `"target-rpm"` is not specified, the previous behavior (full speed
->>>     at startup) is retained.
->>>
->>
->> Unless I am missing something, that is not really correct. See below.
->>
->>> This allows better control over fan speed during system initialization.
->>>
->>> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
->>> ---
->>>    drivers/hwmon/max6639.c | 15 ++++++++++++---
->>>    1 file changed, 12 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
->>> index 32b4d54b2076..ca8a8f58d133 100644
->>> --- a/drivers/hwmon/max6639.c
->>> +++ b/drivers/hwmon/max6639.c
->>> @@ -80,6 +80,7 @@ struct max6639_data {
->>>        /* Register values initialized only once */
->>>        u8 ppr[MAX6639_NUM_CHANNELS];   /* Pulses per rotation 0..3 for 1..4 ppr */
->>>        u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
->>> +     u32 target_rpm[MAX6639_NUM_CHANNELS];
->>>
->>>        /* Optional regulator for FAN supply */
->>>        struct regulator *reg;
->>> @@ -560,8 +561,14 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
->>>        }
->>>
->>
->> target_rpm[] is 0 here.
->>
->>>        err = of_property_read_u32(child, "max-rpm", &val);
->>> -     if (!err)
->>> +     if (!err) {
->>>                data->rpm_range[i] = rpm_range_to_reg(val);
->>> +             data->target_rpm[i] = val;
->>> +     }
->>
->> If there is no max-rpm property, or if there is no devicetree support,
->> target_rpm[i] is still 0.
->>
->>> +
->>> +     err = of_property_read_u32(child, "target-rpm", &val);
->>> +     if (!err)
->>> +             data->target_rpm[i] = val;
->>
->> If there is neither max-rpm nor target-rpm, target_rpm[i] is still 0.
->>
->>>
->>>        return 0;
->>>    }
->>> @@ -573,6 +580,7 @@ static int max6639_init_client(struct i2c_client *client,
->>>        const struct device_node *np = dev->of_node;
->>>        struct device_node *child;
->>>        int i, err;
->>> +     u8 target_duty;
->>>
->>>        /* Reset chip to default values, see below for GCONFIG setup */
->>>        err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
->>> @@ -639,8 +647,9 @@ static int max6639_init_client(struct i2c_client *client,
->>>                if (err)
->>>                        return err;
->>>
->>> -             /* PWM 120/120 (i.e. 100%) */
->>> -             err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
->>> +             /* Set PWM based on target RPM if specified */
->>> +             target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
->>
->> If there is no devicetree support, or if neither max-rpm nor target-rpm are
->> provided, target_duty will be 0, and the fans will stop.
->>
->> Maybe my interpretation is wrong, but I think both target_rpm[] and rpm_range[]
->> will need to be initialized. Also, it seems to me that there will need to be an
->> upper bound for target_rpm[]; without it, it is possible that target_duty > 120,
->> which would probably not be a good idea.
-> Yes you're right. I missed it in my analysis.
+> Remove these fields out of struct cpuinfo_or1k and into its own struct.
+> This reduces duplication while keeping cpuinfo_or1k extensible so more
+> cache descriptors can be added in the future.
 > 
-> Here is the logic that would address:
->                  target_rpm = 120;
->                  /* Set PWM based on target RPM if specified */
->                  if (data->target_rpm[i] != 0 &&
->                      data->target_rpm[i]  <= rpm_ranges[data->rpm_range[i]]) {
+> Also add a new field "sets" to the new structure.
 > 
->                          target_duty = 120 * data->target_rpm[i] /
-> rpm_ranges[data->rpm_range[i]];
->                  }
-> 
-> Please let me know your thoughts & suggestions.
-> 
+> Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
 
-I would prefer if target_rpm[] and rpm_range[] were pre-initialized with default
-values in the probe function. That would avoid runtime checks.
+This looks ok to me.
 
-Thanks,
-Guenter
-
+> ---
+> Changes from v1/v2 -> v3:
+> - arch/openrisc/kernel/setup.c:
+>   (print_cpuinfo):
+>   1. Cascade changes made to struct cpuinfo_or1k.
+>   2. These lines are ultimately shifted to the new file created in
+>      patch #3.
+>   (setup_cpuinfo): Likewise.
+>   (show_cpuinfo): Likewise.
+> 
+>  arch/openrisc/include/asm/cpuinfo.h | 16 +++++-----
+>  arch/openrisc/kernel/setup.c        | 45 ++++++++++++++---------------
+>  2 files changed, 31 insertions(+), 30 deletions(-)
+> 
+> diff --git a/arch/openrisc/include/asm/cpuinfo.h b/arch/openrisc/include/asm/cpuinfo.h
+> index 5e4744153d0e..82f5d4c06314 100644
+> --- a/arch/openrisc/include/asm/cpuinfo.h
+> +++ b/arch/openrisc/include/asm/cpuinfo.h
+> @@ -15,16 +15,18 @@
+>  #ifndef __ASM_OPENRISC_CPUINFO_H
+>  #define __ASM_OPENRISC_CPUINFO_H
+>  
+> +struct cache_desc {
+> +	u32 size;
+> +	u32 sets;
+> +	u32 block_size;
+> +	u32 ways;
+> +};
+> +
+>  struct cpuinfo_or1k {
+>  	u32 clock_frequency;
+>  
+> -	u32 icache_size;
+> -	u32 icache_block_size;
+> -	u32 icache_ways;
+> -
+> -	u32 dcache_size;
+> -	u32 dcache_block_size;
+> -	u32 dcache_ways;
+> +	struct cache_desc icache;
+> +	struct cache_desc dcache;
+>  
+>  	u16 coreid;
+>  };
+> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+> index be56eaafc8b9..66207cd7bb9e 100644
+> --- a/arch/openrisc/kernel/setup.c
+> +++ b/arch/openrisc/kernel/setup.c
+> @@ -115,16 +115,16 @@ static void print_cpuinfo(void)
+>  
+>  	if (upr & SPR_UPR_DCP)
+>  		printk(KERN_INFO
+> -		       "-- dcache: %4d bytes total, %2d bytes/line, %d way(s)\n",
+> -		       cpuinfo->dcache_size, cpuinfo->dcache_block_size,
+> -		       cpuinfo->dcache_ways);
+> +		       "-- dcache: %4d bytes total, %2d bytes/line, %d set(s), %d way(s)\n",
+> +		       cpuinfo->dcache.size, cpuinfo->dcache.block_size,
+> +		       cpuinfo->dcache.sets, cpuinfo->dcache.ways);
+>  	else
+>  		printk(KERN_INFO "-- dcache disabled\n");
+>  	if (upr & SPR_UPR_ICP)
+>  		printk(KERN_INFO
+> -		       "-- icache: %4d bytes total, %2d bytes/line, %d way(s)\n",
+> -		       cpuinfo->icache_size, cpuinfo->icache_block_size,
+> -		       cpuinfo->icache_ways);
+> +		       "-- icache: %4d bytes total, %2d bytes/line, %d set(s), %d way(s)\n",
+> +		       cpuinfo->icache.size, cpuinfo->icache.block_size,
+> +		       cpuinfo->icache.sets, cpuinfo->icache.ways);
+>  	else
+>  		printk(KERN_INFO "-- icache disabled\n");
+>  
+> @@ -156,7 +156,6 @@ void __init setup_cpuinfo(void)
+>  {
+>  	struct device_node *cpu;
+>  	unsigned long iccfgr, dccfgr;
+> -	unsigned long cache_set_size;
+>  	int cpu_id = smp_processor_id();
+>  	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[cpu_id];
+>  
+> @@ -165,18 +164,18 @@ void __init setup_cpuinfo(void)
+>  		panic("Couldn't find CPU%d in device tree...\n", cpu_id);
+>  
+>  	iccfgr = mfspr(SPR_ICCFGR);
+> -	cpuinfo->icache_ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
+> -	cache_set_size = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
+> -	cpuinfo->icache_block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
+> -	cpuinfo->icache_size =
+> -	    cache_set_size * cpuinfo->icache_ways * cpuinfo->icache_block_size;
+> +	cpuinfo->icache.ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
+> +	cpuinfo->icache.sets = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
+> +	cpuinfo->icache.block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
+> +	cpuinfo->icache.size =
+> +	    cpuinfo->icache.sets * cpuinfo->icache.ways * cpuinfo->icache.block_size;
+>  
+>  	dccfgr = mfspr(SPR_DCCFGR);
+> -	cpuinfo->dcache_ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
+> -	cache_set_size = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
+> -	cpuinfo->dcache_block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
+> -	cpuinfo->dcache_size =
+> -	    cache_set_size * cpuinfo->dcache_ways * cpuinfo->dcache_block_size;
+> +	cpuinfo->dcache.ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
+> +	cpuinfo->dcache.sets = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
+> +	cpuinfo->dcache.block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
+> +	cpuinfo->dcache.size =
+> +	    cpuinfo->dcache.sets * cpuinfo->dcache.ways * cpuinfo->dcache.block_size;
+>  
+>  	if (of_property_read_u32(cpu, "clock-frequency",
+>  				 &cpuinfo->clock_frequency)) {
+> @@ -320,14 +319,14 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+>  		seq_printf(m, "revision\t\t: %d\n", vr & SPR_VR_REV);
+>  	}
+>  	seq_printf(m, "frequency\t\t: %ld\n", loops_per_jiffy * HZ);
+> -	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache_size);
+> +	seq_printf(m, "dcache size\t\t: %d bytes\n", cpuinfo->dcache.size);
+>  	seq_printf(m, "dcache block size\t: %d bytes\n",
+> -		   cpuinfo->dcache_block_size);
+> -	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache_ways);
+> -	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache_size);
+> +		   cpuinfo->dcache.block_size);
+> +	seq_printf(m, "dcache ways\t\t: %d\n", cpuinfo->dcache.ways);
+> +	seq_printf(m, "icache size\t\t: %d bytes\n", cpuinfo->icache.size);
+>  	seq_printf(m, "icache block size\t: %d bytes\n",
+> -		   cpuinfo->icache_block_size);
+> -	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache_ways);
+> +		   cpuinfo->icache.block_size);
+> +	seq_printf(m, "icache ways\t\t: %d\n", cpuinfo->icache.ways);
+>  	seq_printf(m, "immu\t\t\t: %d entries, %lu ways\n",
+>  		   1 << ((mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTS) >> 2),
+>  		   1 + (mfspr(SPR_DMMUCFGR) & SPR_DMMUCFGR_NTW));
+> -- 
+> 2.48.1
+> 
 
