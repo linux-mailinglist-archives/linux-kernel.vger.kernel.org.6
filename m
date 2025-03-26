@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-577131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A3A718D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:41:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56E9A718BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DABFD188636F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AE77A2E6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDF51F131C;
-	Wed, 26 Mar 2025 14:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1C1F192E;
+	Wed, 26 Mar 2025 14:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Icnj6cfd"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3RLpIUo"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0485B1758B;
-	Wed, 26 Mar 2025 14:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B11F12F3;
+	Wed, 26 Mar 2025 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999949; cv=none; b=ARzJZ5TI4/SGPRMTtssKyFyYnr+aidzOHlaoJ4ob04KDIkqUAoZTkzDZRHPrQybfR2MINkd/BRdEInqalaoClFafXb1pOGty3AzCCIyM5TeDjU/5IYenW8NMioRK278w8yvMxFm0ncOf/BCy8xALj21fzJD+vjDotOWov2r5pTk=
+	t=1743000001; cv=none; b=AzEJwdV/xk4Qngwgi2+XspNCNBu7VfxMPR9rNtU1B/2HYnjHgMNnSTqFl0OiIllUnUa2CufQQrPNqoFhN7YpGWbaQelxwnWONHiu2ldB2EYf2MbEALrbUdOFMBC/g+AXkR8tHSt0PkoyZhdNUQlo5/6opGhtmcAtlPcBaIztkVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999949; c=relaxed/simple;
-	bh=uk2J5/c4Yu4HFsig5DEaqa3GGClXdjh7FZ6I9gY9hbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W+h3XY4seZaLddGnIUv09dqFDkLxkk5rwcRGLnmZHKBtAym532pBwtiPH9xwb8rEdv6tCUKbrW0J5KSuUVmjHhV4Y6fQ35BBLghF9u406vvVk2KkKD2TVtit4xzCU5ACNx2PCKfTumwCDleeNEtQGDvqrOryd6y1ZXZeRm2Djuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Icnj6cfd; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1743000001; c=relaxed/simple;
+	bh=xNcdD4MukR9BXxT1Xn891EkJMtOzk3jHRuQfj1K76Oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ii74MNxIaXNcpR6S6rn1vrDwXRPtfXHM2gFn1pohmbPie6eJzBDWApHKkGRXThNDltE/bbJ7DTwnt2YsFq8VASdfoEgRutam61nn7mEFZfaOo4vJtCzM+UQAX4+Hv6VAORCFO0mkzMUgIQ5Qf4eLlJAjb16nLmznn6Vbajj2RFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3RLpIUo; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22548a28d0cso158077355ad.3;
-        Wed, 26 Mar 2025 07:39:07 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso72316845e9.3;
+        Wed, 26 Mar 2025 07:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742999947; x=1743604747; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742999997; x=1743604797; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6eqkhZ1Vwmt9gRQ04JNUAxBEvP0I4y2gPx1o8AAFWU=;
-        b=Icnj6cfdcmsHrjVXydkSgJSzydZSJtd+3z0IPKQ2HUWofffcuVW4QpNJfLWIu/izgt
-         t3AI/zJ7Eig0g/iGgUd35f5HfCtS6rnvGqfQsBNJ/EpEUx9J2N3yrFLfqeHKPZL0qfn2
-         lea6X5uDeGL383g/8/FXSqskpwiTpB5vyPmwsUsH4TbQa9h+pLzAoxwsip9wAZjvFhXN
-         S895OBL5Gb8Ud853jKzq2vS6V4yH5Lbg+1djyqns8exxPBS8YVVvM3jChu+3JFOO5S+S
-         TO1/rGOfe14Od9M4CURnVQ7z3ahZCoaYOUvrDNbVacK4lSrYHcGReeY3SuFFRxQcbPQl
-         ezGg==
+        bh=w2escYwrmWHZI04j1+ZmCi0mw73OS6dWdYk3lX1suGw=;
+        b=l3RLpIUoeSSvH5lPp35TN8OcBk90zM8ekDOqtaRQdUXhY7WXU2shMOiqwOv85OPJvG
+         RdN+7Pz9U3X0PkNfXiSDJeMLpAYlkPOLLuUGEeWdosa4BbV5wQaK9nlZadzXj8ifAEMo
+         aSyeq8hgsXLYx3mpR5Vgk6NdNpX1sZ6WE1+gvDbQPoqqI9z7iBywKQbra0TbRAukVhr6
+         cNBsO8a5IwcVPb4oeCWAHTwr1LNweFl6fEtCHyMiC3ScNAm/j4vPavQIqWWAsqiiqVE/
+         NuEyqaYSCN2pd89+3XlAH1fvl1Ecbklj2ZM4TNGx0YBKkP4AVlPYghbMaK8N9ua5Nlg/
+         KUtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742999947; x=1743604747;
+        d=1e100.net; s=20230601; t=1742999997; x=1743604797;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y6eqkhZ1Vwmt9gRQ04JNUAxBEvP0I4y2gPx1o8AAFWU=;
-        b=Y8DqRpm95wH22wGScKXw3zjjTZ8XVIkWkMl6z3B42DBncIEwyxM1xhtzTDTZXvm2nK
-         dI9Dc/U8JmBhLiLGhgmcwTSJeY2o5hb27x7YmfX56H2QZHiw0BGcqXZcyLXUiiMqB0wJ
-         rCTYJhvuJR5r9AMnysG8DZjm2JtWX3RfYzgOSmpIxC85m2GTwGeMRhq9wthMkH+sbbyR
-         JzsFIIlxniqphoVwu14i4UMvlq/oIv+tL0cpOlnfD93FqgDGPTCgxr3eVilF1qckRlKk
-         BbNILIKtx8+onWlzf2dCNDvcm9Qlxdz3qZZ8Sk5UtkrtgjLJS2r+S/N1Y/1IPnvFIwSX
-         O2/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrJa8E4xuSwPdmx+SggdQYGXZshaa2LpwMEMHSkg48RNX0rvdIz5AAukk7B23CLMd579aeUW5Yg2MT2U=@vger.kernel.org, AJvYcCX2YGFpqVTwTVoiUMpYBD5lK9AzEKPfD4k7kPeoY2879HZJb1fdBWOEIKSs2hpqky/KLt03IxEs3Kdjqfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTKbfHn192fD61HhOfggmEQ/MxZmgMi41cM1TL6Divl68ZQYtm
-	1TlTJM3CgWAkCRphJbaYqQWqYOaAdFwhTOqAp+Qeca7iVLefbZecEyGqNg==
-X-Gm-Gg: ASbGncsuxtRLt1CWVcfVUjl671Xo3YynEXVoPwIgi/LAdtvz/VEm0k9ycP001ttTXqS
-	kSkeg0G3HydShWK5d9lHvNM6ysahB2IrOGkqQmD44dfk4o2XABT3trot3ftUS5uOUFXO4SdhHMw
-	yRMi2uUHtSY9AVelhcQyVwlK1WZSbngE+U5TLPea4jxaUeaH+AscMiYcjj4s+rnNM7ih32SVUgs
-	rWzWtj19VsuOj6Jh3TM7F1zHPKuYk457X+wmUgADAPrBmV6lQt4jfikevvVpGMwAABfGCoRf1J1
-	u68MtTsHC+VsE14zWJLbt2IK0d2mBG3pKGLKTuGc1dYDfo8v33fQlatIUWK2HDmfbFnrhmA83+5
-	NUE8z6JYCb+pcHYao2Ok=
-X-Google-Smtp-Source: AGHT+IEBdj4C54pk495ep9DblHTWWweUHbck96M9LKkZuKckCu/4LFHmW8yUHZCPndAEkbi38ZOc+w==
-X-Received: by 2002:a17:902:db01:b0:223:5c33:56b4 with SMTP id d9443c01a7336-22780d77ee1mr278798465ad.20.1742999947013;
-        Wed, 26 Mar 2025 07:39:07 -0700 (PDT)
-Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2846270sm11011904a12.36.2025.03.26.07.39.05
+        bh=w2escYwrmWHZI04j1+ZmCi0mw73OS6dWdYk3lX1suGw=;
+        b=Tf8hE0FyQR55SpSQygxX6sO7bTAa9wjktbkwdn1Y9T+kJvfMJs4Sxn7atX+lj/NkN6
+         cEGWh44Ep1Y8AtqG7wifUoQHWOpMxEf990pYErakq0NI+tsp9u08qNHJusLe57+Aq5Ya
+         N1g0tMs4IO4xnMNSr0X4zW5iR55dqHF/lDLdvyrX5S4OJ91Ioiw/qmt3NC06hmxuYcOa
+         kOl2gVp/6azx/HSKxBOdDSWnc4zZXTe4gTMUvPCR6uVrmd6KMlrTINgaXC8MIBIe1k6S
+         KHng5ClZI0jxRoY8rUEXNq35OIsaiV8TFchU0b9GCOQJw9AJ2OFhgpz9N/Luq/2eN7rp
+         5SDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURIdwhox0gTHP/6O2SMigIXJMCQX2xfH3olvUTawz1mc1kecFubOLskBie9dCwn9np1QY7onbN/+gdnA==@vger.kernel.org, AJvYcCV6MdFCwiNolvMTg3h1HE7uCWWOVy9RCGIlBEWHqAxBbcoGQHk+R2iBd4w7TqoVjgesjVQ2k3Jq9nKK@vger.kernel.org, AJvYcCVFmGNJFs41Gb9vCVVv7rvLsOJFiDHfUFI/qgQyNcFLbhG0l7RfZmkJjZy52WLSbbZxKmbJi9B4n3+Kxq8s@vger.kernel.org, AJvYcCWOBRIf9jae2MGzwjzLnMLVPgmP9eDMx0Ub6UJKr7gUnulQxEF5s7ZLV8oCh9YemnSLkotC44ehUyOp@vger.kernel.org, AJvYcCWXQErbeXn0RNvSfVnSsFFzBMubjocVc1AH05ckr7XwhXwF+I9a5DLOA19Hnr9SeCXIac4cwkAdH2kZ@vger.kernel.org, AJvYcCWa4v2SvDTqDxPZiq1yjvqWTv4Tj41K+up2mip7+aEuWcVzVmf0JRrCj5Swnr8uynuOi3k+ZlwdDWJn8D53@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjph1bPHEz+4if0cGSOqvCfmsvHtYOLV9KqVdcC3YpdeE1qNdv
+	vOZsGah/u6Y/usnlIQfpLWEyO0+8FuDUDRpl4Ya+Y+Ly0uSmSMOc
+X-Gm-Gg: ASbGnctf0268BbGPMdsr6prkngpc78lwNmPBVsyx6bVdRCoCAfboqTKuiJBbRMzJZzp
+	zdhMSG/VLxm+SwQzRnFu2sC114lS600AXB2gKWLmdR7FnyQ4j6n/gWSD00dhc3BPeldM43PNT/g
+	8o05hHsEGrVb3fAmguLz1rlYZp0x05ooVm1AklWBZiAWjOvNlZFi36RUGbofC3dqB5RtuZLJQaq
+	nvFRYnVavB9PCdR3CKnAyCkn87CcrM2DamjvcmvSFuwN4nObwL/w4vDAnSTltVEsUQK/HoVOw4w
+	Ug4gphfNrFgaHeqxFMe4xOrKLgDjNJV/EYoEWIfFQNQSBHcFdvwZkM6DfuaZJSpYJMTD
+X-Google-Smtp-Source: AGHT+IGdl4gZEs10PQlzsN+VIaU/DUCwY0IWNIT2HC33rcyjm98sYqp/GuDO9Lr86yE82SREs/oVZQ==
+X-Received: by 2002:a05:600c:5849:b0:43c:f81d:f with SMTP id 5b1f17b1804b1-43d52a2068emr136915965e9.8.1742999997100;
+        Wed, 26 Mar 2025 07:39:57 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:e63e:b0d:9aa3:d18d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82efe9b4sm3891885e9.20.2025.03.26.07.39.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:39:06 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Rob Clark <robdclark@chromium.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
-	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
-Subject: [PATCH] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
-Date: Wed, 26 Mar 2025 07:39:03 -0700
-Message-ID: <20250326143903.24380-1-robdclark@gmail.com>
+        Wed, 26 Mar 2025 07:39:56 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 00/15] Add support for Renesas RZ/V2N SoC and EVK
+Date: Wed, 26 Mar 2025 14:39:30 +0000
+Message-ID: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,65 +109,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add support for exporting a dma_fence fd for a specific point on a
-timeline.
+This patch series adds initial support for the Renesas RZ/V2N (R9A09G056)
+SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+microprocessor (MPU) designed for power-efficient AI inference and
+real-time vision processing. It features Renesas' proprietary AI
+accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+it ideal for applications such as Driver Monitoring Systems (DMS),
+industrial monitoring cameras, and mobile robots.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/drm_syncobj.c | 8 ++++++--
- include/uapi/drm/drm.h        | 2 ++
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Key features of the RZ/V2N SoC:
+  Processing Power:
+    - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computing
+    - Single Arm Cortex-M33 core at 200MHz for real-time processing
+    - 1.5MB on-chip SRAM for fast data access
+    - LPDDR4/LPDDR4X memory interface for high-speed RAM access
 
-diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-index 4f2ab8a7b50f..eb7a2dd2e261 100644
---- a/drivers/gpu/drm/drm_syncobj.c
-+++ b/drivers/gpu/drm/drm_syncobj.c
-@@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
- }
- 
- static int drm_syncobj_export_sync_file(struct drm_file *file_private,
--					int handle, int *p_fd)
-+					int handle, u64 point, int *p_fd)
- {
- 	int ret;
- 	struct dma_fence *fence;
-@@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
- 	if (fd < 0)
- 		return fd;
- 
--	ret = drm_syncobj_find_fence(file_private, handle, 0, 0, &fence);
-+	ret = drm_syncobj_find_fence(file_private, handle, point, 0, &fence);
- 	if (ret)
- 		goto err_put_fd;
- 
-@@ -882,8 +882,12 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
- 
- 	if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
- 		return drm_syncobj_export_sync_file(file_private, args->handle,
-+						    args->point,
- 						    &args->fd);
- 
-+	if (args->point)
-+		return -EINVAL;
-+
- 	return drm_syncobj_handle_to_fd(file_private, args->handle,
- 					&args->fd);
- }
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 7fba37b94401..c71a8f4439f2 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -912,6 +912,8 @@ struct drm_syncobj_handle {
- 
- 	__s32 fd;
- 	__u32 pad;
-+
-+	__u64 point;
- };
- 
- struct drm_syncobj_transfer {
+  AI and Vision Processing:
+    - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+    - Arm Mali-C55 ISP (optional) for image signal processing
+    - Dual MIPI CSI-2 camera interfaces for multi-camera support
+
+  High-Speed Interfaces:
+    - PCIe Gen3 (2-lane) 1ch for external device expansion
+    - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+    - USB 2.0 (Host/Function) 1ch for legacy connectivity
+    - Gigabit Ethernet (2 channels) for network communication
+
+  Industrial and Automotive Features:
+    - 6x CAN FD channels for automotive and industrial networking
+    - 24-channel ADC for sensor data acquisition
+
+LINK: https://tinyurl.com/renesas-rz-v2n-soc
+
+The series introduces:
+- Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pinctrl).
+- RZ/V2N SoC identification support.
+- Clock and pinctrl driver updates for RZ/V2N.
+- Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+- Enabling RZ/V2N SoC support in `arm64 defconfig`.
+
+These patches have been tested on the RZ/V2N EVK with v6.14,
+logs can be found here https://pastebin.com/8i3jgVby 
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (15):
+  dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants
+  dt-bindings: soc: renesas: Document RZ/V2N EVK board
+  soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+  dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+  soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+  dt-bindings: serial: renesas: Document RZ/V2N SCIF
+  dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
+  dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+  clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part number
+  clk: renesas: rzv2h: Add support for RZ/V2N SoC
+  dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+  pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+  arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+  arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+  arm64: defconfig: Enable Renesas RZ/V2N SoC
+
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |   5 +-
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |   4 +-
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +
+ .../bindings/serial/renesas,scif.yaml         |   1 +
+ .../soc/renesas/renesas,r9a09g057-sys.yaml    |   1 +
+ .../bindings/soc/renesas/renesas.yaml         |  15 +
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 264 ++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 115 ++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a09g056-cpg.c           | 152 ++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c               |  18 +-
+ drivers/clk/renesas/rzv2h-cpg.h               |   1 +
+ drivers/pinctrl/renesas/Kconfig               |   1 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  36 ++-
+ drivers/soc/renesas/Kconfig                   |  10 +
+ drivers/soc/renesas/Makefile                  |   1 +
+ drivers/soc/renesas/r9a09g056-sys.c           | 107 +++++++
+ drivers/soc/renesas/rz-sysc.c                 |   3 +
+ drivers/soc/renesas/rz-sysc.h                 |   1 +
+ .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  24 ++
+ .../pinctrl/renesas,r9a09g056-pinctrl.h       |  30 ++
+ 24 files changed, 790 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+ create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
+ create mode 100644 drivers/soc/renesas/r9a09g056-sys.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g056-cpg.h
+ create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g056-pinctrl.h
+
 -- 
 2.49.0
 
