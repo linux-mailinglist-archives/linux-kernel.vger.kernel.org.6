@@ -1,128 +1,189 @@
-Return-Path: <linux-kernel+bounces-576974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AEA5A716DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2BEA716E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90CB1889FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54469188A208
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0211E51E2;
-	Wed, 26 Mar 2025 12:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048001B983F;
+	Wed, 26 Mar 2025 12:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTVRq0fN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6kuzXi9"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC841E1DEC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64E2433C8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993095; cv=none; b=GWGiWjm2YhQNkU4KQQbYvueE/VxkCGxx8EHrjzjW501nMH0LPo6mvNuMGlNPbXfQmHxZvOzQYZrL4K4PYnD0oxBVWSg63GnHiIiv7wYmkmvokTdqNZfo/l0XDAJF2aRcwEfECr+no+snRXdUrQIOj5IeZJWIJHlrKlGtu8/PCdU=
+	t=1742993198; cv=none; b=ndXB7W3VM0aDo6OUgebyMRAMvEQsdRDL/c91JbPWMSx4GA3Dk+b7FfOZe1wyZZKn9sGUiQVaxVObRePEy4FKo+13dfWXe0OToocd/97lPqUi1VATMEL3dSgZZCY508noFlvh6oCDjeh95MBDn7DOZEqIY+NETdyAucKuhBboh5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993095; c=relaxed/simple;
-	bh=XKWMPLPo1WH5vVWYpjrlZj/2ZgPVqf4aRksu4KN91vE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ne1z9M4QNeC21SyMgBLCoymsTJb7+HTck6Zzk9P4K04nhEs5PaBIJRnFn5xwecGIAoS3lPOPuoHqCktU2jZ4SDFXTXYeG8D7TS3CwkUJRoZOBKPJ6lfdFt8m/8CMgJwgsO2ebz/pCUj3iR86aUGgDPGwMrgQb+gTP2BnG7E6Btc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTVRq0fN; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1742993198; c=relaxed/simple;
+	bh=5wK7E07iRV1w8nsbK4WWm7B+/2pX2jiV7X5MntOmbPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UDsZdFcLQE83wo2pApeOPL+boOnm/KbMU9EDzUv9NE0YHiN3V/5iTwYlMKfHbT22d5UT1BKRPzBasxkLZKjUQUlIrcbzhxhUK1bXrJt2Xq6Ksc0NcR0XkJ/iMAJuDIcuuCOxaOyHlMl05CS8p5uONVU3l2G5vQzSz+WUOx1Eui0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6kuzXi9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742993092;
+	s=mimecast20190719; t=1742993195;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8fvRV+vXgcsKP9jFTuEcTFLOervcwZLIt7LcD5mec5E=;
-	b=GTVRq0fNEw+kFJT8K4WJi3bJFI7pA/cqq+fN3XRHhw+hVyFcxp43uGtYgDptXPlD23TxDo
-	nBhvmh1PvZCEss8+2jlcP1tcFX4nUHYOI4ZZfViBbL5CRyNmem+5FZZNpcQufkjoaVHZps
-	fWC7u/ngGRXyNLENwPYjVb9VwUC2kQE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-260-t5IosiLiOCGREskSV5Cxig-1; Wed,
- 26 Mar 2025 08:44:47 -0400
-X-MC-Unique: t5IosiLiOCGREskSV5Cxig-1
-X-Mimecast-MFC-AGG-ID: t5IosiLiOCGREskSV5Cxig_1742993085
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64F7119560B0;
-	Wed, 26 Mar 2025 12:44:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A0B1419560AB;
-	Wed, 26 Mar 2025 12:44:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Mar 2025 13:44:11 +0100 (CET)
-Date: Wed, 26 Mar 2025 13:44:03 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Dominique Martinet <asmadeus@codewreck.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <20250326124402.GD30181@redhat.com>
-References: <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
- <20250325130410.GA10828@redhat.com>
- <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
- <Z-LEsPFE4e7TTMiY@codewreck.org>
- <20250326121946.GC30181@redhat.com>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=s77PIgFRT3AtQ1+X+1bT16Z9Vl7GBWDfTOwmyThXt4c=;
+	b=D6kuzXi9HCrUqMKgClISlTNptuKqwJEgORwsusbZBPH4ksR/FH/BcPDv5zupOBLrE3Mid6
+	bZKON2KnPOkcVQ+eoMveFBgrFIjAcni6AjWK9AF363SvH9QhKyxUsAv3YCXf2VgQ0xPuVP
+	FyYGGZiE8Q5hYYNfUvOsdArwYV5OcWg=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-448-1gytYCixPzqqqj2K-Xpq0Q-1; Wed, 26 Mar 2025 08:46:33 -0400
+X-MC-Unique: 1gytYCixPzqqqj2K-Xpq0Q-1
+X-Mimecast-MFC-AGG-ID: 1gytYCixPzqqqj2K-Xpq0Q_1742993193
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4775d202ae6so40652911cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:46:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742993193; x=1743597993;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s77PIgFRT3AtQ1+X+1bT16Z9Vl7GBWDfTOwmyThXt4c=;
+        b=GTcHW2J3LyI9t64npezKMuJLMCfGaNRMdv98ssRglIO41Zco+myBfGkB+8e1+VSDRS
+         LmdpEw/tai5GfHEseCYpgpGis/HRWdmM6fzJWNVFiTPAbNAt69XqcPHEHjmhFzlxeAvr
+         pUzzwXG5APuLy9e8gPW56iZLzWaJg7LuwY2ubXVcI4x/6Upd/SL0ghPGVo/Stj/KKgDV
+         sAcs36bchcZy+uc+KSPrDpY5m64i1wbTOcGEs7dxZcd2oESfdE1PjfljUic+WjbJKV4X
+         HTaT/8oQ6F7nBGfu9zhjeYqzPI7K4Irf6g2wqTvCN0b4b/RZHZGIuXmxHacNHzPvcKid
+         6Qvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNRsxrnxtjddDMn0YKE0CB1ThjuFxzWGZn7Re7u9dajC3JfwAKkh9NQs+iOVRSTlbfl5/MWMWmeDrt1sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFM7UFI8C31cG6AhpNKkYj5307DXocNYaLgZ90SKq9P3nJH2gk
+	FjL3t6f590fIcFXaRsfZGL6C/6fv03MHQzBE3sEm6oY6hZLs1o7xDceKJt32lrctZ+t210ebjHC
+	TAKmqj82ud+oCTmtRepx3tWnA0vL9G6aOL4Ooi0pivPOBLPok1BpMK4l4L0GsQA==
+X-Gm-Gg: ASbGnctmXv2LcQOxz5m/5OsPL9TQlycLfY4txhgZ2KWcys6joZyy2VSK42knGJ21ci5
+	2E/nKIEIlhYxz+x501/pKc7VozMHQzXNX3vpYI83S4p0mGU1UbU9J06I6lvLJEQR2M3asl2XQCx
+	Drv4FkCPNZ356YHDJeKqQBYm9hkA9VtDhRiK+u6hUCBT3JYKHtdIkCkFf3TXH1unEhRO6QZTqIh
+	cKxnK/gp+gxnFCLh3wLu2rPG8fKBJUCgJjXR5GKCsygntDKvwJt71pwJFWW2wXYcfgsP1dba9Ct
+	U8rCpV7M/IEm
+X-Received: by 2002:a05:622a:8c8:b0:476:a713:f792 with SMTP id d75a77b69052e-4771de76b37mr393709841cf.49.1742993193084;
+        Wed, 26 Mar 2025 05:46:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzkqpqjEwPUTEAvDnO0P+5L0dcnCmpDb5RpBr8CRpdw+f+sjDwy6OQgYyXF4UGIgJUyGBQKQ==
+X-Received: by 2002:a05:622a:8c8:b0:476:a713:f792 with SMTP id d75a77b69052e-4771de76b37mr393709461cf.49.1742993192666;
+        Wed, 26 Mar 2025 05:46:32 -0700 (PDT)
+Received: from [172.20.3.205] ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d51fec4sm71024641cf.52.2025.03.26.05.46.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 05:46:32 -0700 (PDT)
+Message-ID: <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
+Date: Wed, 26 Mar 2025 13:46:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326121946.GC30181@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: Jinjiang Tu <tujinjiang@huawei.com>, yangge1116@126.com,
+ akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
+ aneesh.kumar@linux.ibm.com, liuzixing@hygon.cn,
+ Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+ <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/26, Oleg Nesterov wrote:
->
-> Hmm... I don't understand why the 2nd vfs_poll(ts->wr) depends on the
-> ret from vfs_poll(ts->rd), but I assume this is correct.
+On 26.03.25 13:42, Jinjiang Tu wrote:
+> Hi,
+> 
 
-I meant, if pt != NULL and ts->rd != ts->wr we need both
-vfs_poll(ts->rd) and vfs_poll(ts->wr) ?
+Hi!
 
-and the reproducer writes to the pipe before it mounts 9p...
+> We notiched a 12.3% performance regression for LibMicro pwrite testcase due to
+> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+> 
+> The testcase is executed as follows, and the file is tmpfs file.
+>      pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
 
-Prateek, this is just a shot in the dark but since you can reproduce,
-can you check if the patch below makes any difference?
+Do we know how much that reflects real workloads? (IOW, how much should 
+we care)
 
-Oleg.
+> 
+> this testcase writes 1KB (only one page) to the tmpfs and repeats this step for many times. The Flame
+> graph shows the performance regression comes from folio_mark_accessed() and workingset_activation().
+> 
+> folio_mark_accessed() is called for the same page for many times. Before this patch, each call will
+> add the page to cpu_fbatches.activate. When the fbatch is full, the fbatch is drained and the page
+> is promoted to active list. And then, folio_mark_accessed() does nothing in later calls.
+> 
+> But after this patch, the folio clear lru flags after it is added to cpu_fbatches.activate. After then,
+> folio_mark_accessed will never call folio_activate() again due to the page is without lru flag, and
+> the fbatch will not be full and the folio will not be marked active, later folio_mark_accessed()
+> calls will always call workingset_activation(), leading to performance regression.
 
---- x/net/9p/trans_fd.c
-+++ x/net/9p/trans_fd.c
-@@ -234,8 +234,10 @@ p9_fd_poll(struct p9_client *client, str
- 	}
- 
- 	ret = vfs_poll(ts->rd, pt);
--	if (ts->rd != ts->wr)
-+	if (ts->rd != ts->wr) {
-+		if (pt != NULL) vfs_poll(ts->wr, pt);
- 		ret = (ret & ~EPOLLOUT) | (vfs_poll(ts->wr, pt) & ~EPOLLIN);
-+	}
- 	return ret;
- }
- 
+Would there be a good place to drain the LRU to effectively get that 
+processed? (we can always try draining if the LRU flag is not set)
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
