@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-576886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3994CA71596
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:22:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A4BA71599
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 840707A5BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5121316CF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53241D8DE0;
-	Wed, 26 Mar 2025 11:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37081DDC04;
+	Wed, 26 Mar 2025 11:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aG/ouA9V"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J3tjCCUz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A782DEEC3;
-	Wed, 26 Mar 2025 11:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8504C1CAA96;
+	Wed, 26 Mar 2025 11:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742988131; cv=none; b=FTj/5+zc14yt8J9XTYokhy0S98EW/Wp5D/l+mtu/VcesAmrJlbvdZi9UB8zqsocRSfE/mdoJJjrvAFaUVpE9ckKIejJjuCkd6ugXuYXn9rg/e03SRWhy0Vvhs1kXIIkv0gGBthjL9VBuM/KqFbDZ68CmtdEVTQII5hwXbLje5eM=
+	t=1742988149; cv=none; b=FfN2uuRGoVNTFyhF867PxrNpsnEURhpr7JV9mF/X4LFzPHXUZQ/Rt9StFFwzTHkFTV/R3dN2cogv5r0axfZTVlVhTbto5awlYsmJ1yuBBJ9oDOcq7a0DbY+jhfgVRDNed/WQIDuia6lHrcL2Q/iaDFoquyW4yFa1JkA815W46Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742988131; c=relaxed/simple;
-	bh=DDYSSoeVhtr1bSG7emTvEf7aXB/ybdiJGg8e+EDIylA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoZ/onsH3lXipukHKBttXsikin0tIHfNBXHMO6YKmDWHgfldGFmdJOAYdY/GhEnqGQcfNdRB3Z59AAsvV+2JfY3kjVpgSEGu/GpXLOhjz/V5re44F+ahJ8hivKsX4eBCS3NTTyMFznjvRHzZGHu/6g8dKPjQLPrBRvQt64pEN6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aG/ouA9V reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5C77140E01FF;
-	Wed, 26 Mar 2025 11:22:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2BBJubJfUa6X; Wed, 26 Mar 2025 11:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742988121; bh=HHmqfeWTgw3N+abSgf1eEvtMfI5HsocYTyjY2Y/8nZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aG/ouA9ViexZdNByT93a5dwhb+1CXWJcAuelsphHkx8e93/dO0BW1QldVxlT9POsa
-	 uGIHfghooDUE8UFtzBQJShNq9eWsTf1h5D2SFODw1iTLNZFWC2zgi2DX27SnIVUhc+
-	 D71sAU2AQuc45meB6zxxyyBSlsj7SMExaWoCarLZh7jsG8rNUYXnJzkst+yDYhF5Mx
-	 xI2NSoRS1NRZvOo9YV9SR1ATS5WIVilgPupFFyojgZo9lFV/itBpeg4rmr/NJMjmLf
-	 SeqYr0XOCnP83ZiQkXleMWhrli3lID3a+wyNLM80+hqdEFWJ2LWv2hdKPKnfXekRM/
-	 bhWIxM9kqiMA503IXOgaNLy1KhusZXcIrXuIrY0s+rMhcr4tZQBys6CkihfLea7MBg
-	 3Lvkwe/cVm509IBItBSAPMDAl6T+NF6A3fZtTohN/kGmiH3QnGJF0hcknp5/XE9sDM
-	 IOjD6SpFKC9GrW5Sz53udRR9m1aiyWrrBgtFpFqNLsuesT7wnDpKoPAOnqg5MQjWHG
-	 x2hwZR2a9dcwAaXe1i9FrnWiFcGrc1czzhIRIgjs4XeMfn06CC/bS/4LRbMP8b54jz
-	 trB3+9FUr29rdPAhSMmtdM8HkhvqB76OvR1ND63Ax06DLZrRWbCf4qMOl72ZZKcfBn
-	 Fffh7UZj/O7uuDigVra8WASU=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C404F40E0213;
-	Wed, 26 Mar 2025 11:21:48 +0000 (UTC)
-Date: Wed, 26 Mar 2025 12:21:43 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-pci@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Juergen Gross <jgross@suse.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
- domain flag
-Message-ID: <20250326112143.GAZ-PjR5xrN1GyzXzE@fat_crate.local>
-References: <20250219092059.90850-1-roger.pau@citrix.com>
- <20250219092059.90850-4-roger.pau@citrix.com>
- <20250326110455.GAZ-PfV3kOiQw97fDj@fat_crate.local>
- <Z-PhgWQMHjxbac3b@macbook.local>
+	s=arc-20240116; t=1742988149; c=relaxed/simple;
+	bh=CndoDvn0jkjEWqRyynmQWpLG7kKUVa3kGb5BIs3AG68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUogYeHDcEKXi73sFUTL2uVYQ+SAle3UkTn1eSdwhPgYI/8XZvKh1SOsG/TcrezbOTZ1Abb0C/RccgoAkwlj0fKZoMaPBwFt1IW2r9DW/0KnUMZxb5CYvO0Ew9IZ/c4MoqAyOEnxLUawfebCln6xwwYIY/3AomDd1XR3R0hwwjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J3tjCCUz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=nk8QyZuJsVYS3VmlEAQjifVbkAMkGVtYdMxw10Sn9jA=; b=J3tjCCUz69LtEGyBhQNKEkakVQ
+	F83tU98Dh+ymLIej4Cati3/wDcByRg6XQ4qMmZEFVyRGBwmkJD5dfUP/NXb/4MgEcvBFQIdYgXuX6
+	StFKpeV3L5f9PjqnEX648RPkmYebq+jCJYUPDPGqHWCErl51P13zyiN/frqhYbH4+Wd7vxYNahe4a
+	BVL98iCryjjE2JyouY48p0bVbbaegtF149pFcJ4VR1C7m7D7nnOqXog6vkVne7/ejWUfgBZB5vbjM
+	mfR+lrlZR7JZ4I9+rr9QjAe+iiazgfyPxTqjkj16kjBR3MZd9OPmfLTz/6x5mc2fJP0WP7SC2zEYW
+	W6p8IR7A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txOq0-00000008LLi-2YJF;
+	Wed, 26 Mar 2025 11:22:24 +0000
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: jack@suse.cz,
+	hch@infradead.org,
+	James.Bottomley@HansenPartnership.com,
+	david@fromorbit.com,
+	rafael@kernel.org,
+	djwong@kernel.org,
+	pavel@kernel.org,
+	song@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gost.dev@samsung.com,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: [RFC 0/6] fs: automatic kernel fs freeze / thaw
+Date: Wed, 26 Mar 2025 04:22:14 -0700
+Message-ID: <20250326112220.1988619-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-PhgWQMHjxbac3b@macbook.local>
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Wed, Mar 26, 2025 at 12:14:09PM +0100, Roger Pau Monn=C3=A9 wrote:
-> Sorry, not on KVM, I've tested on Xen and native.  It also seems to be
-> somewhat tied to the Kconfig, as I couldn't reproduce it with my
-> Kconfig, maybe didn't have the required VirtIO options enabled.
+Based on discussions at LSFMM, on where are we at with automatic fs
+suspend / resume. I did a quick check and most of the complexities from
+the last series I tried from 2023-03 [0] are now resolved, namely the
+following patches are no longer needed as Christian did the work for
+this already:
 
-Right.
+  fs: unify locking semantics for fs freeze / thaw
+  fs: distinguish between user initiated freeze and kernel  initiated freeze
+  fs: move !SB_BORN check early on freeze and add for thaw
 
-> It's fixed by:
->=20
-> https://lore.kernel.org/xen-devel/87v7rxzct0.ffs@tglx/
->=20
-> Waiting for Thomas to formally sent that.
+So the only thing left to do is add an fs flag for a sanity check that
+the fs doesn't use rely on ktrhead freezing, and enable it for
+filesystems which have done that work. This adds the work for
+a few filesystems. If regressions are found we can simply remove
+FS_AUTOFREEZE from the fs.
 
-Yap, he just pointed me to that one.
+I did a quick boot test with this on my laptop and suspend doesn't work,
+its not clear if this was an artifact of me trying this on linux-next or
+what, I can try without my patches on next to see if next actually
+suspends without them. And so, we gotta figure out if there's something
+stupid still to fix, or something broken with these changes I overlooked
+on the rebase.
 
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
+[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20230507-fs-freeze
 
-Thx.
+Luis Chamberlain (6):
+  fs: add frozen sb state helpers
+  fs: add iterate_supers_excl() and iterate_supers_reverse_excl()
+  fs: add automatic kernel fs freeze / thaw and remove kthread freezing
+  ext4: replace kthread freezing with auto fs freezing
+  btrfs: replace kthread freezing with auto fs freezing
+  xfs: replace kthread freezing with auto fs freezing
 
---=20
-Regards/Gruss,
-    Boris.
+ fs/btrfs/disk-io.c     |   4 +-
+ fs/btrfs/scrub.c       |   2 +-
+ fs/btrfs/super.c       |   2 +-
+ fs/ext4/ext4_jbd2.c    |   2 +-
+ fs/ext4/mballoc.c      |   2 +-
+ fs/ext4/super.c        |   9 +--
+ fs/gfs2/sys.c          |   2 +-
+ fs/quota/quota.c       |   3 +-
+ fs/super.c             | 149 +++++++++++++++++++++++++++++++++++++++--
+ fs/xfs/xfs_discard.c   |   2 +-
+ fs/xfs/xfs_log.c       |   3 +-
+ fs/xfs/xfs_log_cil.c   |   2 +-
+ fs/xfs/xfs_mru_cache.c |   2 +-
+ fs/xfs/xfs_pwork.c     |   2 +-
+ fs/xfs/xfs_super.c     |  16 ++---
+ fs/xfs/xfs_trans.c     |   3 +-
+ fs/xfs/xfs_trans_ail.c |   3 -
+ fs/xfs/xfs_zone_gc.c   |   2 -
+ include/linux/fs.h     |  38 +++++++++++
+ kernel/power/process.c |  15 ++++-
+ 20 files changed, 223 insertions(+), 40 deletions(-)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+-- 
+2.47.2
+
 
