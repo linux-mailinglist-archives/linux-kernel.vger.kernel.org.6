@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-576848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD59A7151F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:53:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39120A71524
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEAF3B6027
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:52:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEEB1890C69
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23161CAA73;
-	Wed, 26 Mar 2025 10:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B1C8635;
+	Wed, 26 Mar 2025 10:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTfFB6kl"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WVonhhUL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A7C4A29;
-	Wed, 26 Mar 2025 10:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D981C84C9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986373; cv=none; b=BRIFua751LnCAP7ejN4OI8X9J6CY3A2orcyXqeE7nvCnDpw/r2yghPtHkGd4n7Q5JOOt2f4Q7Ochd62Dg2WwpdbUybk7JmZZOdStxNwg9LCQOeniLYT+F10EJXX9k2UMCMXhMERKLBGnEPE+GuEr/RqkZR2Y0CNabdwpkghuDWQ=
+	t=1742986478; cv=none; b=nAcBz01OERW5ZCSd5sgbCsqTt+n5vi3ocWoDJ885AUAE5S7W5fqfGLplqCxzNqCFTggcjjwH6+HG+Lblmt4AiB6InE+X7DXZBWRIWVgiL0F2oxopo208hdT2XsGmyFbK5jL+9VQDlQMV9utAk03xgoE2Q+wjlJMEDY6+UyEFzzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986373; c=relaxed/simple;
-	bh=Djiuh0TTQ+OQMWUiqRkRsKWbVm7hMusiXM1xRsAVliM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JLpLnKEKKiOBekp3bvgZjLhrC5nVUX16JXAo36oA+tsxSC0367eezPwgHpeM1qDVf51ZwdZmsY7nConTei4rrZEvPTgWXAqs3grk1ZoWVLL2CY9yGhe8P7gbtYBxDL8gc5+0T+i96l3b4Nay8rUsPCzThFzL3ihL/9JEDlNbWw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTfFB6kl; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223f4c06e9fso14561685ad.1;
-        Wed, 26 Mar 2025 03:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742986371; x=1743591171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwRuOYtlCLzRZmhCJLfT7hvVNcHg1UTJcmJVtwUdAw0=;
-        b=CTfFB6kly2Pb3PAeWdu4wMQhxUmp/090nSRuGKz17qA4JJp4440pdc5LEslt4+veXt
-         Pb1KVKtvi6S+HCm9uoNmrctFdOEranZ04C7YhmwxkVtLQrIaNj/wBXEBTiFurqbWpJS+
-         GwrKTsmKfwWrRdAGPj7Ntc6y1ZnA+XJmJ6gwmb0IMRPLg/LPiTqgHgrXQloVR+P6u0X9
-         EO7PJA9lEIKflW+ptLUJZJJzUh/l35tHUyB9Sb26s7tCVnPbgzPSn6332ic5skdo8Uyl
-         8ipV50z+SP03ct390u1w0GlmSr85RMGw3qVCpXn4y2Ak5A6uL4YBfF1KbLXSwKAFV7AH
-         6J0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742986371; x=1743591171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wwRuOYtlCLzRZmhCJLfT7hvVNcHg1UTJcmJVtwUdAw0=;
-        b=Eta6x3rccQ1C9CSW4BxSdxwjiQenKGkUA0pIFmRlxSKuOx/nsulQCIUZFXk2JlJIAk
-         S2YuYwZkTqfs4X8uOmMu1u6gPrLdi4VOjXHtyVx/+d9ZWawkeXxA79jCQ26k9uq91/y5
-         z5X7X7OHgpHPGJ4S+JnPxfqOWvzCRdZNAXY9/KS1B2nn2ltwVgZroxGoj95KMsO1o2+8
-         HSeUTfLB99oYoyreswRXHVqOiBnmQN9yytg4s+RDINZkFffmOMaXmdnz1BM+ikyaoO7z
-         lEHu3D22itKDyO5BCwDD/2zNU2mRzJwUQhEgoh6kCRqTibnoRopPXP4htVXZASHOTHsN
-         yZsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXzzeaB4S/frp3/koGSgIzrunAiMcCxWIsFetF21yWPTAPpf+04ruELoBT4IPjvhXzT88R1AED@vger.kernel.org, AJvYcCWa61y+iVRi/8utEGF4prvKftshkJdXWhqbPHYd0reQkVLG5s+JtouZIRkqQ3I9l0sPCNLcyfO5oRoy3vA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc0jce/jV0IEnvHBu1u/s9X/IXVmR3zqzD2tUhCR2fXdFsi/dD
-	/1k641Aufi9PckLt6hvHIvWTOn8OPmHn0Spf+GKndnqMLg+5vHL1
-X-Gm-Gg: ASbGncu8aPFvSb7oon/GYvc7B2TXfegmPrgg97qKUNwCjTdEPNzdC1ePkacA+r3vLhn
-	bizvdSh+53PcT8X0Q9SXRa1DlT4rIsj4+67aPi+RRkATYlJEK9GI7Z4olozWb+jrg9uxIu4hZ5f
-	UiCuhqy+oVcSL+K3Eu/PREEs5AdBUvRKX8mQAP8FqWyrIRBMoTjGDahRf4MrsIsrVpXaLcJN7Qt
-	ASqKKVYVvCaLwCh3ReE2PmC9F7Yjrt+cQDslBwwC2REjjnR+LbmmB3vW6myqzPva7y+aoNAOnoc
-	nKyy0hi7IQxWzWNPMjQ7agYK3BcC1jA+nfiaVkucjakYAdNpKvS3d5LKEIqhhsDmT6Yz+9592Ug
-	=
-X-Google-Smtp-Source: AGHT+IE4QXqhpL4pCNd808nbhmu+o/NuYs7Ewl82eJ04YX9HoXM/cdykFs9gadLeiRj9Zk9KT9O3lQ==
-X-Received: by 2002:a17:902:e946:b0:220:e91f:4408 with SMTP id d9443c01a7336-227efb817ebmr55076935ad.22.1742986371125;
-        Wed, 26 Mar 2025 03:52:51 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4599fsm107516005ad.67.2025.03.26.03.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 03:52:50 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH] net: ipv6: Fix NULL dereference in ipv6_route_check_nh
-Date: Wed, 26 Mar 2025 16:22:15 +0530
-Message-Id: <20250326105215.23853-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742986478; c=relaxed/simple;
+	bh=kqvc9gqaZFqz4zk2Z1WI6mBz6fpdOjwBd3T92JdtEOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JX14YKPVmq5TLhBwZJ5pemUjJ+PhfPUivTIBVoCxoVvMkUXAfqhQt8ywzR/ilt3jx2LPIqpYWoDXK+A8kfnlpKbQdLSGwXJY0VlR+J7mKexu9zvXEugg8GK/xnTbR6Kgyyn6O+Zq+74qqA/7FdEuBS7qIeKSMzXTdIw038sORtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WVonhhUL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nbnBL06pB45fzWAHqKwSaMaHJhZWmXAUhJuqN+ACJZI=; b=WVonhhULebs82is9MN1i1h5rEy
+	sOwlwgC1wimWJ6Udx5JFUb7htc15dJoA0ePi+33p6uqbf4aLT7YxGpfe6TpUfngCZ2VL9GmH0UL4s
+	BXnTn9Iw91yX8zkC8Pd4ZKhMMVglQEVBR46FsWAUr/afS/dfPV9ydOasLFqeipvIO4n6L0WNPXwB1
+	JWgsGZySqx7VKnlxLeptGJ72nynJam7V8a2XVHm72kA1VxKpTBh2KckEAW5DT5QqNGQSDnDPKmyTS
+	0niBJBgo7srUPhqR7mz+8z0+Ixz5CFeTiwyoi6b+xzHr0NT+v+fsuEBuUl6gVfuy7mcScE/AXQrCg
+	iMQbtlew==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txOP2-0000000HPuG-1AbF;
+	Wed, 26 Mar 2025 10:54:32 +0000
+Date: Wed, 26 Mar 2025 10:54:32 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: jens.wiklander@linaro.org, sumit.garg@kernel.org, vbabka@suse.cz,
+	akpm@linux-foundation.org, kernel@pengutronix.de,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tee: shm: fix slab page refcounting
+Message-ID: <Z-Pc6C1YUqLyej3Z@casper.infradead.org>
+References: <20250325200740.3645331-1-m.felsch@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325200740.3645331-1-m.felsch@pengutronix.de>
 
-Fix Smatch-detected error:
-net/ipv6/route.c:3427 ip6_route_check_nh() error:
-we previously assumed '_dev' could be null
+On Tue, Mar 25, 2025 at 09:07:39PM +0100, Marco Felsch wrote:
+> Skip manipulating the refcount in case of slab pages according commit
+> b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page").
 
-Ensure _dev and idev are checked for NULL before dereferencing in
-ip6_route_check_nh. Assign NULL explicitly when fib_nh_dev is NULL
-to prevent unintended dereferences.
+This almost certainly isn't right.  I know nothing about TEE, but that
+you are doing this indicates a problem.  The hack that we put into
+networking should not be blindly replicated.
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- net/ipv6/route.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Why are you taking a reference on the pages to begin with?  Is it copy
+and pasted from somewhere else, or was there actual thought put into it?
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index ef2d23a1e3d5..ad5b3098eba0 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -3424,9 +3424,20 @@ static int ip6_route_check_nh(struct net *net,
- 		if (dev != res.nh->fib_nh_dev)
- 			err = -EHOSTUNREACH;
- 	} else {
--		*_dev = dev = res.nh->fib_nh_dev;
--		netdev_hold(dev, dev_tracker, GFP_ATOMIC);
--		*idev = in6_dev_get(dev);
-+		if (res.nh->fib_nh_dev) {  /* Ensure fib_nh_dev is valid */
-+			dev = res.nh->fib_nh_dev;
-+
-+			if (_dev)  /* Only assign if _dev is not NULL */
-+				*_dev = dev;
-+
-+			netdev_hold(dev, dev_tracker, GFP_ATOMIC);
-+			*idev = in6_dev_get(dev);
-+		} else {
-+			if (_dev)
-+				*_dev = NULL;  /* Explicitly set NULL */
-+			if (idev)
-+				*idev = NULL;  /* Explicitly set NULL */
-+		}
- 	}
- 
- 	return err;
--- 
-2.34.1
+If it's "prevent the caller from freeing the allocation", well, it never
+accomplished that with slab allocations.  So for callers that do kmalloc
+(eg setup_mm_hdr()  in drivers/firmware/efi/stmm/tee_stmm_efi.c), you
+have to rely on them not freeing the allocation while the TEE driver
+has it.
+
+And if that's your API contract, then there's no point in taking
+refcounts on other kinds of pages either; it's just unnecessary atomic
+instructions.  So the right patch might be something like this:
+
++++ b/drivers/tee/tee_shm.c
+@@ -15,29 +15,11 @@
+ #include <linux/highmem.h>
+ #include "tee_private.h"
+
+-static void shm_put_kernel_pages(struct page **pages, size_t page_count)
+-{
+-       size_t n;
+-
+-       for (n = 0; n < page_count; n++)
+-               put_page(pages[n]);
+-}
+-
+-static void shm_get_kernel_pages(struct page **pages, size_t page_count)
+-{
+-       size_t n;
+-
+-       for (n = 0; n < page_count; n++)
+-               get_page(pages[n]);
+-}
+-
+ static void release_registered_pages(struct tee_shm *shm)
+ {
+        if (shm->pages) {
+                if (shm->flags & TEE_SHM_USER_MAPPED)
+                        unpin_user_pages(shm->pages, shm->num_pages);
+-               else
+-                       shm_put_kernel_pages(shm->pages, shm->num_pages);
+
+                kfree(shm->pages);
+        }
+@@ -321,13 +303,6 @@ register_shm_helper(struct tee_context *ctx, struct iov_iter *iter, u32 flags,
+                goto err_free_shm_pages;
+        }
+
+-       /*
+-        * iov_iter_extract_kvec_pages does not get reference on the pages,
+-        * get a reference on them.
+-        */
+-       if (iov_iter_is_kvec(iter))
+-               shm_get_kernel_pages(shm->pages, num_pages);
+-
+        shm->offset = off;
+        shm->size = len;
+        shm->num_pages = num_pages;
+@@ -341,10 +316,8 @@ register_shm_helper(struct tee_context *ctx, struct iov_iter *iter, u32 flags,
+
+        return shm;
+ err_put_shm_pages:
+-       if (!iov_iter_is_kvec(iter))
++       if (iter_is_uvec(iter))
+                unpin_user_pages(shm->pages, shm->num_pages);
+-       else
+-               shm_put_kernel_pages(shm->pages, shm->num_pages);
+ err_free_shm_pages:
+        kfree(shm->pages);
+ err_free_shm:
 
 
