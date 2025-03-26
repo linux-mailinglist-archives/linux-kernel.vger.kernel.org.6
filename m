@@ -1,184 +1,145 @@
-Return-Path: <linux-kernel+bounces-576995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7CBA71720
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:11:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662F8A71722
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E133B068B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75421894494
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08CF1E5B6C;
-	Wed, 26 Mar 2025 13:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309B91E51FB;
+	Wed, 26 Mar 2025 13:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gzS4bThc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQjpO7Tx"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799261A2398;
-	Wed, 26 Mar 2025 13:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36C1A2398
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742994659; cv=none; b=EgDXrG9bvnVEspzm23Yk2DVrj5//eslFkcT0KBSV/yaTkeY3QtGsJas7eglEFgel38Hx5dGvG3txHrEucueSVCssmDhaDelC+BtkH1fd1ro1bT7S9HGkat06/9pEWzgxE/2BUVCk/ve6IQppOVxYlBL3QLXdoXL5k2WG3jDcHCE=
+	t=1742994665; cv=none; b=TAW+aj7lECJi35z9pL/OEdFE39mAeBSQbKEnyMZZZZGk4/MYgn24oFcNwpxv+MQEINxa0Z269v1uFnZM/ntg3VF6nMtfE33mE6SKoaE7cB6F4mrfRPX+2lKl82Q8nv8ajKqFxCzQ3sN5vU3Nl7BEw5PsNGoInBYlugoNxYv+ZEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742994659; c=relaxed/simple;
-	bh=pcGemtqeLCa12GaytPmSy1mLPmv3gaNtLKFT7C5Ws/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GrT8KugtXqdAcQ8B9XpPHuROfRqJylgFSYsQtOPoBtYdS//L2pzNwIex/TIegkWfpukKfdhE5wpgooxkYxgZBjHLy1hsqMcqfBrlDKWEVZy0NOuw1bds3tDihFjcNrBmVHhQJ+H6Dueds0wOK1/R4JzCuQxwXt4Fd0v7GQupOPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gzS4bThc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q44JdY028382;
-	Wed, 26 Mar 2025 13:10:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=nT38b4
-	dlu+sSPzXtH+E32XelC14qGuu494AMIpez530=; b=gzS4bThcnKQgx9CkoTgww1
-	nk5pqCPntkPoS1SzyEKytoGah0MERTIS/wG/UqnUFCgwTCvrbWe3DMdjmrCfbUUS
-	Y2rMrlT+nVVI0r0YbrEO5WGPQbHU62Hmrj8MW39c2G5uMqSLt4sQF4dJxgNTJaJV
-	FwuL9lutQaT9kJQziO6OPWHSVlQO1GzQdfhZ36Cw+I4roX3Q3udfO5S6daFN5IB2
-	LO7/EhYInmQ8hgINZhcy/CJdI7ok237kbJ+TJR1tNQEED6YjsIaAz3AVTx6E/3xM
-	1Zr72zTVRqpB/svU85WD4Yh13MG5ONRqeqFQMeYd5nIHU2SRQ8CWD/c4172SgvAQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx2ysu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 13:10:45 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q9lo3e025462;
-	Wed, 26 Mar 2025 13:10:44 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j7x08k7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 13:10:44 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QDAhgV28115710
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 13:10:44 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D34D758054;
-	Wed, 26 Mar 2025 13:10:43 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 33F9E5805C;
-	Wed, 26 Mar 2025 13:10:41 +0000 (GMT)
-Received: from [9.61.254.184] (unknown [9.61.254.184])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 13:10:40 +0000 (GMT)
-Message-ID: <e41a7fc8-824d-4369-b581-1fa8600ae3ec@linux.ibm.com>
-Date: Wed, 26 Mar 2025 18:40:39 +0530
+	s=arc-20240116; t=1742994665; c=relaxed/simple;
+	bh=qldN62PjCFlYuOW1Hw/7vBhDRt4i9kg3Fs4B3evpBbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCHHQTKwSUcIMPM14nB/bRojqDOhuxg35iLQudg+35pm0k/2LRUdeus3NXWB9iaZ7sQRpsWMOAZYhFEFV/eA5YvLhu3DZFPSFaW6xNQRIbSQWqCbgQeYxVIEZCZv+JibtAP77RSGUAqr5DOcJQZRjYIDvQjbG6umfemRFnncuf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQjpO7Tx; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso5677426f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742994662; x=1743599462; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=coBo9zTOkV+54/uJ8ZjRiGU/vI3P1bGg7BoPmlBVdVs=;
+        b=TQjpO7TxhihHFg0WqDDX2wZaRN5vgMNeQnfSqibOCQlXQ8OpX68SfU0uOdMjl30Nqe
+         BRd0uPExReRjayXFq0kkl0lS3rGC+UGayWqSgvEShbEVhcncxfQT9H4fTZ2dyTmfwdhG
+         oHLcq0egSTPlWsPzsT2N6linrPHNAkfnlOUigZnSVkA0+CHIq7WupMXYbVO4iNrO51Rg
+         Ks1eEPr0wLQbGcpYJaIussuL2ysk3gTyC3l5i7/Pax4guybmU9Pl0HdKOYY5lVEv6o+3
+         rzFbmyKavoDG4uNOt2yqnT1MYbdo29azKApuX96M3M6e9acjAdnRv1ZP8CNyOv1nNeY3
+         I1RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742994662; x=1743599462;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=coBo9zTOkV+54/uJ8ZjRiGU/vI3P1bGg7BoPmlBVdVs=;
+        b=QQDND7kl15WsEKadXImEHe0Zz/uxB1V59XqqoyI4SsyLvPD1+BvUBntf8F3OyB4oPO
+         5mE/WgGcNqAycz/GDUlcs9WWPmwlC1k4c/iui/Zn3+ij6S5OqgxLenYBMEU+qcF2r2Ww
+         XOG+tGub6/yO1VOBy7T37QuheFPsrj0eSYCVgoKiwlC7TPl6L+2baBOMI0+pD5YB0HES
+         bMb/MQjFJpYexiJCtQYhNzbx8RhUwfyPv4Jpx+E5AotYiarP9I6Ar/f0e1YdEnvm1ACP
+         lPNel9z5DufYa5dEHVh5jbdxDUaBEcMejEdvdO2+YSWHo4TvW+HunGVR8wTHzz05PEry
+         hT4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8fB3fwyKTLoMrd1e4ZA26fvHmG3rujsmWmOTjWEPtOYka8jqEWfB13+k36Cdrf+BE8e4lJcQdF3HyO3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7NQafbu9ucpu+eVuFoY0UZIVYeZ2PiI5W9SZmN6edKYpu7dhr
+	Jgwtx0qbEcXyzgBT7aNslfdnnzGYgPiZOshScDvfAFNt3U834S33
+X-Gm-Gg: ASbGncvocd/AJywwupfZi/EiedT5fNmjSfm8uY6syXU2KBetZtvEtFVUJV839Es8IZL
+	1Chqeoj+GtBOEVvHH0ROdJc0iV1EDwDMNT5lzd4U/mXoBZDNI1ycX3DwF1USfBiYA+yZ7I4TP5e
+	a3LRbDbV0f3SjtlSLszCCBbKuxjzpdDE3mYEIuD/FONfuMbQYLpM0xQL8gNqMmJbfsGlevyb7En
+	vKnkokCADA+ncJfnjl0QhnpRKZyW4mWlOYjigTljtmTvdNohaG/5c3iQOg/iuCeXO04JzcUTJLd
+	m4XfEOqIfKDOeyih+40JL1oQ9Hf5O8WqA77ZyYH6RHo7Cs+BFEvCJxCV
+X-Google-Smtp-Source: AGHT+IGo5kRZQjK7go8ME7rLgXCUGjJN5HdX5Ne05KaMSmNpoFgkpvAveAfXQrZVzmsvdqDm6os96w==
+X-Received: by 2002:a5d:584b:0:b0:390:f9a5:bd79 with SMTP id ffacd0b85a97d-3997f90ab9emr20396175f8f.26.1742994661851;
+        Wed, 26 Mar 2025 06:11:01 -0700 (PDT)
+Received: from debian.local ([2a0a:ef40:4d4:f101:e41a:977a:f788:910f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e6ab48sm1773125e9.10.2025.03.26.06.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 06:11:01 -0700 (PDT)
+Date: Wed, 26 Mar 2025 13:10:58 +0000
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, nouveau@lists.freedesktop.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	lyude@redhat.com, sumit.semwal@linaro.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/prime: fix drm_prime_gem_destroy comment
+Message-ID: <Z-P84iMUP4NBAY7k@debian.local>
+References: <Z9GHj-edWJmyzpdY@debian.local>
+ <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
+ <Z9q-ggKKgTsvW-Rz@debian.local>
+ <Z9rA0G2urlVHFOSx@cassiopeiae>
+ <1f4a534f-8883-4793-b191-60c2773f6217@amd.com>
+ <Z9rSTkXlub-JZAz0@cassiopeiae>
+ <Z-P4zQ1464SeZGmB@debian.local>
+ <94eeb36a-9aa5-4afd-9ba6-76e8ace10122@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/build: Use SYSTEM_BPFTOOL for system bpftool
-Content-Language: en-GB
-To: Tomas Glozar <tglozar@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, John Kacur <jkacur@redhat.com>,
-        Luis Goncalves <lgoncalv@redhat.com>, Quentin Monnet <qmo@qmon.net>
-References: <20250326004018.248357-1-tglozar@redhat.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <20250326004018.248357-1-tglozar@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dfFNw-joNW9YygyCJUJUZE8a20B8jpwe
-X-Proofpoint-ORIG-GUID: dfFNw-joNW9YygyCJUJUZE8a20B8jpwe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
- clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260079
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <94eeb36a-9aa5-4afd-9ba6-76e8ace10122@amd.com>
 
+Edit the comments on correct usage of drm_prime_gem_destroy to note
+that, if using TTM, drm_prime_gem_destroy must be called in the
+ttm_buffer_object.destroy hook, to avoid the dma_buf being freed leaving
+a dangling pointer which will be later dereferenced by
+ttm_bo_delayed_delete.
 
-On 26/03/25 6:10 am, Tomas Glozar wrote:
-> The feature test for system bpftool uses BPFTOOL as the variable to set
-> its path, defaulting to just "bpftool" if not set by the user.
->
-> This conflicts with selftests and a few other utilities, which expect
-> BPFTOOL to be set to the in-tree bpftool path by default. For example,
-> bpftool selftests fail to build:
->
-> $ make -C tools/testing/selftests/bpf/
-> make: Entering directory '/home/tglozar/dev/linux/tools/testing/selftests/bpf'
->
-> make: *** No rule to make target 'bpftool', needed by '/home/tglozar/dev/linux/tools/testing/selftests/bpf/tools/include/vmlinux.h'.  Stop.
-> make: Leaving directory '/home/tglozar/dev/linux/tools/testing/selftests/bpf'
->
-> Fix the problem by renaming the variable used for system bpftool from
-> BPFTOOL to SYSTEM_BPFTOOL, so that the new usage does not conflict with
-> the existing one of BPFTOOL.
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> Closes: https://lore.kernel.org/linux-kernel/5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com/
-> Suggested-by: Quentin Monnet <qmo@qmon.net>
-> Fixes: 8a635c3856dd ("tools/build: Add bpftool-skeletons feature test")
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->   tools/build/feature/Makefile   | 2 +-
->   tools/scripts/Makefile.include | 2 +-
->   tools/tracing/rtla/Makefile    | 2 +-
->   3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index 4f9c1d950f5d..b8b5fb183dd4 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -419,7 +419,7 @@ $(OUTPUT)test-libpfm4.bin:
->   	$(BUILD) -lpfm
->   
->   $(OUTPUT)test-bpftool-skeletons.bin:
-> -	$(BPFTOOL) version | grep '^features:.*skeletons' \
-> +	$(SYSTEM_BPFTOOL) version | grep '^features:.*skeletons' \
->   		> $(@:.bin=.make.output) 2>&1
->   ###############################
->   
-> diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
-> index 6268534309aa..5158250988ce 100644
-> --- a/tools/scripts/Makefile.include
-> +++ b/tools/scripts/Makefile.include
-> @@ -92,7 +92,7 @@ LLVM_OBJCOPY	?= llvm-objcopy
->   LLVM_STRIP	?= llvm-strip
->   
->   # Some tools require bpftool
-> -BPFTOOL		?= bpftool
-> +SYSTEM_BPFTOOL	?= bpftool
->   
->   ifeq ($(CC_NO_CLANG), 1)
->   EXTRA_WARNINGS += -Wstrict-aliasing=3
-> diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
-> index 4cc3017dccaa..746ccf2f5808 100644
-> --- a/tools/tracing/rtla/Makefile
-> +++ b/tools/tracing/rtla/Makefile
-> @@ -72,7 +72,7 @@ src/timerlat.bpf.o: src/timerlat.bpf.c
->   	$(QUIET_CLANG)$(CLANG) -g -O2 -target bpf -c $(filter %.c,$^) -o $@
->   
->   src/timerlat.skel.h: src/timerlat.bpf.o
-> -	$(QUIET_GENSKEL)$(BPFTOOL) gen skeleton $< > $@
-> +	$(QUIET_GENSKEL)$(SYSTEM_BPFTOOL) gen skeleton $< > $@
->   else
->   src/timerlat.skel.h:
->   	$(Q)echo '/* BPF skeleton is disabled */' > src/timerlat.skel.h
+Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Suggested-by: Christian König <christian.koenig@amd.com>
+---
+ drivers/gpu/drm/drm_prime.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Tested this patch by applying on linux-next20250326 and this patch fixes 
-the reported issue.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 32a8781cfd67..452d5c7cd292 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
+  * &drm_driver.gem_prime_import_sg_table internally.
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
++ * hook when using this function, to avoid the dma_buf being freed while the
++ * ttm_buffer_object can still dereference it.
+  */
+ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf,
+@@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
+  * implementation in drm_gem_prime_fd_to_handle().
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
++ * hook when using this function, to avoid the dma_buf being freed while the
++ * ttm_buffer_object can still dereference it.
+  */
+ struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf)
+-- 
+2.47.2
 
-Please add below tag.
-
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
 
 
