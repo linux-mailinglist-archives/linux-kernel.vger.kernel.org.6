@@ -1,101 +1,243 @@
-Return-Path: <linux-kernel+bounces-576779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D4DA7145B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:03:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2C2A71448
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:58:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2079E16C6BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E78817454B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C040E1B0439;
-	Wed, 26 Mar 2025 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5BF1B040D;
+	Wed, 26 Mar 2025 09:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="j0FRvxoT"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kSC0IVL8"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F203F8C1F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4514C96
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983398; cv=none; b=H6S2xAdVBQ9vFZwr4idhB3Jhp5RWAYXVIfk3xGoKFSCdLJEcjwiO9SepGEI2ybBgZtmZ+dY55n4br4OVjh92uYU3gK4mO3jfgdh6+40AJMvZ6DlsNtp22y6G4bkvxsMsLSDqoYxYLvHFE/GFBoHDYtEmoX9zbDkyw3ec/HWCcYY=
+	t=1742983090; cv=none; b=HeYwuB6ePfXouqDlhCOVmr/UABVjOOZwFla5pVp8wxIJ0QAAYO4CNwQo5hSSG01jGaixCH/VlKnYQ4tOPLVjg4DBDqSHyCGd54JZZlpaSZfFF0aIUg0jlK+qqpu/dlzaP7H7JSrR88rdf25WBrmjMtR8doGxyWAopkzbu2/JYm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983398; c=relaxed/simple;
-	bh=o1OW7eMPI7BT9Kuja4q/FC0vO0bwCYy1NuCvSDE5Qag=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=jOtzsDGj7oKfJU10q8g/sySRl11yKlmFzpACvUQwFtNpR4NLCSWUDJR7dsJ9PzhDp6vDP6/9Fu6MUsNiq3o3h8OCurLoKq5okQwmDhymFrfi7CGF4WYtQZDk+aBf1/mjHU4tEvjZtF+GRBRNwCuyMEyyRc6hAuXdrt7Xx97fLCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=j0FRvxoT; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742983082; bh=11V6Ppzqx37uke9W1v3EMjT5frvAqdD1NpkPS7WBiS8=;
-	h=From:To:Cc:Subject:Date;
-	b=j0FRvxoTbT01zf/sjp8fcfTnbRau335bjg4qoWCTzhfjLK4C3nhxuGdo+i8ntdRdz
-	 fvjGE3aTpbe4xwURgzIP7Bf8/aiNmfWlNbN4/7h0hCMILdUSQogLf6SFE3iosnelYI
-	 be7LsyZySLAHUdkQRTzAMMeU4T9T6M6jbSRUJQ4g=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id E809F01D; Wed, 26 Mar 2025 17:58:00 +0800
-X-QQ-mid: xmsmtpt1742983080t69ymxsez
-Message-ID: <tencent_FD614E97ED4F67FE2F74C9C158AB50E7C806@qq.com>
-X-QQ-XMAILINFO: NnA3IMNPwBd+ZrUAlHVGcvrCGFv1twgmb9koVlBwb4p/Bzwcwg8qFg910QmTNx
-	 kbsyisMmk1x9HuhXNbtiWlDyX+SoNWTkloYzuNVcQtc9IooAOddpCIfDa0MMRKRaV+re7IzkqNgn
-	 3l+LLZMu9BVCit9xXwef98f16wYkR41OxptHEGkZyFwHZFTfKZT7U0orbd4lNj1AZMftzXSd5WR0
-	 wKG0lbNgICf2yl0V5KBGTbQUY7A4g24rcaTPa67Z0RIGdLMocyuf9e+a+usO5Mw9CHUZ8JyZpQab
-	 gP0JHREkqgZPIyJn5Uj6ny9rHP/MVmZ+zzZ3O9xLj3rqJGqlP2ukiBMt0ji9jSgYAiH7oCanknbS
-	 E5ndXEXpcUq5n677IeNeFdscg+NkfNpf5wvAgqMg6uYni79CvkQ5jxTQ5tcXVs4aLIs0u9Pox4Fv
-	 HN5M1K8t+bSSlHuJiY8dSF+d/9uD7M9RJ4Gl1ZGbuqQn82+yLL66MGy2NFgjxYZ2heDqV7G70jP4
-	 eN5aKmDD7+q5suoBTJpYoi5eAELeXFhE4dJwx+mdk2yl3R0/TMekS+Q5350+QQrfTB7S8L2fgVlt
-	 zbGfirFsqSzVMvB+AF0aGFs0Q869ZlfpIYperZxvnaI3YlS5t3MbJVAsO4MDgzieANgzDvvQtnyi
-	 WOgRN6x6hdJ6wdI3mpFr9C4VAIIrMe1jxro/dWl3BlHFFxNTDPT1L3f5DKGJez8wjtU3+W2/jkvQ
-	 FGILC79K5Uup7BYlDq+34J+nXOHf8dI0vgFZ1V1KqjGfTAqRr4QaQg2xoMEOpx/zBx10zDcDXBO6
-	 JniRfspyEqBC9wDvAX4V38CNNDxVdMrUqfMITUEi21eOxCb9AseXluZeBcRpkS9r2Iy9ScQvTjy8
-	 6bwkZzh64O1HSZ35tnzE+4Aa17U3+SbNj4tRoFYw7fafPGJJAwUAX6KwBBRgy+24tndd42kXM5
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH 0/3] nvme: Add sysfs interface for APST configuration management
-Date: Wed, 26 Mar 2025 17:57:56 +0800
-X-OQ-MSGID: <20250326095759.1292617-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742983090; c=relaxed/simple;
+	bh=G2mie2cYylZkzBkEuGSmLt098MlPBjaPdn6PWJttyKw=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GwlfMRd/PGMKR83l/qtDtrTx9BfqgNPQsJlRWvNQPALeJ6IkjCZ4w7AWr6jOKP2m7CC4DclFtjViRlVMSjUvF54UmrgAQR9igAjpIORTT+axgS/ZjcZqW7QDxwFjVlxPJ3dd+C6uQVvf2aQbkPb1B0EF19pP115037v/0aQSa6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kSC0IVL8; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 07E42419EF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742983081;
+	bh=YmqDnJYd3sHMeIErDl7QaGhRZ3q+ZmYDEpXuE0o+U+M=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=kSC0IVL8JmSktY0WSq0OhRFYzMwUSal03M9I/Zz1M/sp6uc+R0mirHdpsmivGNzmg
+	 kjuP3AFuqDJwqE1ds058kb7TCWYjC3vr4dgZ/AibfV3AEI22EFhzzFaQYZWRQPer2l
+	 XsNKV0VDispLH531mlNLpzBbAVOSZ8mOJBbAcyQ/f9ek5tYbBb6zEkziHeShFof0DB
+	 goGVX3TWZmfenWx5sCCEvTQPr1GnBSrui8Ij09BLgYP61lKG4vGPlqOt+Hj3nedAGy
+	 wFFvWGXMupfbRl6aDylONPgZzZkhHwXofA3xh5pLaDw0n32MZtM/5EjALc2jcE7LEs
+	 bMeW+/2GNS47Q==
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2c72e6e51ceso1873370fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:58:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742983080; x=1743587880;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmqDnJYd3sHMeIErDl7QaGhRZ3q+ZmYDEpXuE0o+U+M=;
+        b=Rd9Wn+KsEdXrfBDLNCIjfp8qQRbKt0ZCjFlgfU8KdU/yXNdeGMU1WJG6arD76LkJ78
+         Vf7yDHu4TUAU2704uiC2HDM2D+ktqnFqfrnHiUVrqSfHOPWqXH1hxW4X+rhsGMsn6x2i
+         bPyG+iTdGUXZEYrU8ORd1hQ6JeT1nr1Vw5QhYMdWregIKpPM3Xvepx5wVHTEc87VdmRH
+         +F3ZRZ1zIsZ5JZ8SeBnEqb48r0swGOkJEoJv+a9R5BEKmiiOOMzmU+5/DTWuhoto7/SX
+         yDN78WCIEeUzCE6Gwc45i87Ym0XnezMRyuAHTieAjRiGqg0rfOVKAtIX9istMyl5EFLn
+         /KQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZCScJToY4l1bxDAPtE7F5+IkADKOcWz4oD5HXoJQrs8AIjdCYLxgw1ZcLkF4hJPtcCtkFUqoZBEw48Es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCr1lN6IYVdot+Jho+Q+SbgPYr0wsya+deg6OcvTe2u7OqZDPP
+	IZNf4bjocD5BIdGyEftP/HOpBg2cwsrXVea14kOIW18KmSW3APPP1ci/TzKD9Cs2ZZUb6Sps8Dw
+	AWknCg+QowRk3WdJOzHJ+Y+QKge8BEos41YdCzkc74mIQ3S5aUVFmV37/+ikKiGIBAkdVjdi5K8
+	QZCR3ZBw3QtgNK2d0We3nDbDKF2nlAQQAmqT4b65nkkaNkDwgzR23x
+X-Gm-Gg: ASbGnctaCqCzSGgezxk441KPV+wTdkfU4LzVz9p89pCCOArW4vFy6H4jnCCdgtsHZ4I
+	Iln2njK41zRMhtWNU05hrhEtYmok5wReRCVD+w+iApYXeBqmv1ouWvG4MdG4s5m6Md+GJPe2BZv
+	WjYvpOhXayCB06jdoYvWa+oik=
+X-Received: by 2002:a05:6870:c0d0:b0:2c2:4d76:f1ad with SMTP id 586e51a60fabf-2c7802fc7f4mr11950006fac.16.1742983079710;
+        Wed, 26 Mar 2025 02:57:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGusUKpLdTuUy3QkZj5OSCHZAzUQifzrm4ATjVXeFFaB5uxz8Mol5J1QaqA22HHkXCckElEM60R81g5exSGuLQ=
+X-Received: by 2002:a05:6870:c0d0:b0:2c2:4d76:f1ad with SMTP id
+ 586e51a60fabf-2c7802fc7f4mr11949984fac.16.1742983079188; Wed, 26 Mar 2025
+ 02:57:59 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 26 Mar 2025 02:57:57 -0700
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 26 Mar 2025 02:57:57 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20250326-owl-of-algebraic-wealth-61aeda@krzk-bin>
+References: <20250325141311.758787-1-emil.renner.berthing@canonical.com>
+ <20250325141311.758787-2-emil.renner.berthing@canonical.com> <20250326-owl-of-algebraic-wealth-61aeda@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Wed, 26 Mar 2025 02:57:57 -0700
+X-Gm-Features: AQ5f1JoPkONs1cP6b2bcNZ0PAFZ-pHAaJXVnYD4E0Nk0jWsjQfMiZsd9uQXxdiM
+Message-ID: <CAJM55Z9+dpbqt-c=55WXUXsw=Dhk6m6Q1_Js3s-T+8W7dtrURQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] dt-bindings: pinctrl: Add eswin,eic7700-pinctrl binding
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>, 
+	Pritesh Patel <pritesh.patel@einfochips.com>, Min Lin <linmin@eswincomputing.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+Krzysztof Kozlowski wrote:
+> On Tue, Mar 25, 2025 at 03:13:03PM +0100, Emil Renner Berthing wrote:
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - eswin,eic7700-pinctrl
+>
+> Blank line
+>
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +required:
+>
+> required: goes after patternProperties.
+>
+> > +  - compatible
+> > +  - reg
+> > +
+> > +patternProperties:
+> > +  '-[0-9]+$':
+>
+> Recommended is to have more meaningful prefix or suffix, e.g.
+> -grp/-group. I also don't get why it has to end with number.
+>
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    patternProperties:
+> > +      '-pins$':
+> > +        type: object
+> > +        allOf:
+> > +          - $ref: /schemas/pinctrl/pincfg-node.yaml#
+> > +          - $ref: /schemas/pinctrl/pinmux-node.yaml#
+> > +
+> > +        additionalProperties: false
+> > +
+> > +        description:
+> > +          A pinctrl node should contain at least one subnode describing one
+> > +          or more pads and their associated pinmux and pinconf settings.
+> > +
+> > +        properties:
+> > +          pins:
+> > +            items:
+> > +              enum: [ CHIP_MODE, MODE_SET0, MODE_SET1, MODE_SET2, MODE_SET3,
+> > +                      XIN, RTC_XIN, RST_OUT_N, KEY_RESET_N, GPIO0, POR_SEL,
+> > +                      JTAG0_TCK, JTAG0_TMS, JTAG0_TDI, JTAG0_TDO, GPIO5, SPI2_CS0_N,
+> > +                      JTAG1_TCK, JTAG1_TMS, JTAG1_TDI, JTAG1_TDO, GPIO11, SPI2_CS1_N,
+> > +                      PCIE_CLKREQ_N, PCIE_WAKE_N, PCIE_PERST_N, HDMI_SCL, HDMI_SDA,
+> > +                      HDMI_CEC, JTAG2_TRST, RGMII0_CLK_125, RGMII0_TXEN,
+> > +                      RGMII0_TXCLK, RGMII0_TXD0, RGMII0_TXD1, RGMII0_TXD2,
+> > +                      RGMII0_TXD3, I2S0_BCLK, I2S0_WCLK, I2S0_SDI, I2S0_SDO,
+> > +                      I2S_MCLK, RGMII0_RXCLK, RGMII0_RXDV, RGMII0_RXD0, RGMII0_RXD1,
+> > +                      RGMII0_RXD2, RGMII0_RXD3, I2S2_BCLK, I2S2_WCLK, I2S2_SDI,
+> > +                      I2S2_SDO, GPIO27, GPIO28, GPIO29, RGMII0_MDC, RGMII0_MDIO,
+> > +                      RGMII0_INTB, RGMII1_CLK_125, RGMII1_TXEN, RGMII1_TXCLK,
+> > +                      RGMII1_TXD0, RGMII1_TXD1, RGMII1_TXD2, RGMII1_TXD3, I2S1_BCLK,
+> > +                      I2S1_WCLK, I2S1_SDI, I2S1_SDO, GPIO34, RGMII1_RXCLK,
+> > +                      RGMII2_RXDV, RGMII2_RXD0, RGMII2_RXD1, RGMII2_RXD2,
+> > +                      RGMII2_RXD3, SPI1_CS0_N, SPI1_CLK, SPI1_D0, SPI1_D1, SPI1_D2,
+> > +                      SPI1_D3, SPI1_CS1_N, RGMII1_MDC, RGMII1_MDIO, RGMII1_INTB,
+> > +                      USB0_PWREN, USB1_PWREN, I2C0_SCL, I2C0_SDA, I2C1_SCL, I2C1_SDA,
+> > +                      I2C2_SCL, I2C2_SDA, I2C3_SCL, I2C3_SDA, I2C4_SCL, I2C4_SDA,
+> > +                      I2C5_SCL, I2C5_SDA, UART0_TX, UART0_RX, UART1_TX, UART1_RX,
+> > +                      UART1_CTS, UART1_RTS, UART2_TX, UART2_RX, JTAG2_TCK, JTAG2_TMS,
+> > +                      JTAG2_TDI, JTAG2_TDO, FAN_PWM, FAN_TACH, MIPI_CSI0_XVS,
+> > +                      MIPI_CSI0_XHS, MIPI_CSI0_MCLK, MIPI_CSI1_XVS, MIPI_CSI1_XHS,
+> > +                      MIPI_CSI1_MCLK, MIPI_CSI2_XVS, MIPI_CSI2_XHS, MIPI_CSI2_MCLK,
+> > +                      MIPI_CSI3_XVS, MIPI_CSI3_XHS, MIPI_CSI3_MCLK, MIPI_CSI4_XVS,
+> > +                      MIPI_CSI4_XHS, MIPI_CSI4_MCLK, MIPI_CSI5_XVS, MIPI_CSI5_XHS,
+> > +                      MIPI_CSI5_MCLK, SPI3_CS_N, SPI3_CLK, SPI3_DI, SPI3_DO, GPIO92,
+> > +                      GPIO93, S_MODE, GPIO95, SPI0_CS_N, SPI0_CLK, SPI0_D0, SPI0_D1,
+> > +                      SPI0_D2, SPI0_D3, I2C10_SCL, I2C10_SDA, I2C11_SCL, I2C11_SDA,
+> > +                      GPIO106, BOOT_SEL0, BOOT_SEL1, BOOT_SEL2, BOOT_SEL3, GPIO111,
+> > +                      LPDDR_REF_CLK ]
+>
+> All these should be lowercase.
 
-This series enhances NVMe APST (Autonomous Power State Transition) support by:
-1. Adding warnings for PST table allocation failures
-2. Exposing APST tables via sysfs for runtime inspection
-3. Providing per-controller sysfs interface for APST configuration
+Plenty of pinctrl drivers use uppercase names for the pins, intel, amd,
+mediatek to name a few, and this is also what the EIC7700 documentation uses.
+Do you still wan't Linux to call the pins something else?
 
-The changes allow better visibility and control of power management settings
-through userspace tools while maintaining the existing functionality.
-
-Yaxiong Tian (3):
-  nvme: Add warning for PST table memory allocation failure in
-    nvme_configure_apst
-  nvme: add sysfs interface for APST table updates
-  nvme: add per-controller sysfs interface for APST configuration
-
- drivers/nvme/host/core.c  | 24 ++++++++++------
- drivers/nvme/host/nvme.h  |  6 ++++
- drivers/nvme/host/sysfs.c | 59 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 8 deletions(-)
-
--- 
-2.25.1
-
+>
+> > +            description: List of pads that properties in the node apply to.
+> > +
+> > +          function:
+> > +            enum: [ csi, debug, ddr, fan, gpio, hdmi, i2c, i2s, jtag, mipi,
+> > +                    mode, oscillator, pci, pwm, rgmii, reset, sata, spi, sdio,
+> > +                    uart, usb ]
+> > +            description: The mux function to select for the given pins.
+> > +
+> > +          bias-disable: true
+> > +
+> > +          bias-pull-up:
+> > +            oneOf:
+> > +              - type: boolean
+> > +              - const: 25000
+> > +            description: Enable internal 25kOhm pull-up
+>
+> Why bool and fixed value? Do they have different meaning? Description
+> says they are the same.
+>
+> Anyway, don't repeat constraints in free form text.
+>
+> > +
+> > +          bias-pull-down:
+> > +            oneOf:
+> > +              - type: boolean
+> > +              - const: 22000
+> > +            description: Enable internal 22kOhm pull-down
+>
+> Same questions
+>
+> > +
+> > +          drive-strength-microamp:
+> > +            enum: [ 3100, 6700, 9600, 12900, 18000, 20900, 23200, 25900 ]
+> > +
+> > +          input-enable: true
+> > +
+> > +          input-disable: true
+> > +
+> > +          input-schmitt-enable: true
+> > +
+> > +          input-schmitt-disable: true
+> > +
+> > +        required:
+> > +          - pins
+>
+> Best regards,
+> Krzysztof
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
