@@ -1,212 +1,146 @@
-Return-Path: <linux-kernel+bounces-576545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8E5A710C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:50:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BAC4A710C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1020C7A5739
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E4917299C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE8A190696;
-	Wed, 26 Mar 2025 06:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201A8191F6D;
+	Wed, 26 Mar 2025 06:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lPgdg4vw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="18plpg2A";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lPgdg4vw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="18plpg2A"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1yoyuRT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AF816C684
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715A04A29;
+	Wed, 26 Mar 2025 06:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742971811; cv=none; b=LCPvMVWhgoVPvgenIfkvFKGSMwKW30Yt5wxKbEs2nVnu4TwAyB1mV5Ac1BkPgFnOPv/SfCNteB47BO0mAMroDVKCLigAJqN9zWIluNL9wlGciDsDMQfoCXkmeYT1Qi4xndEyYrPSJV+Tdgf/8AH2ASJOQw89xcgRcEYbxD8pUbk=
+	t=1742972046; cv=none; b=lNoOQR7OcQqxyoQ4CHfCCYFN6PAv6PF6sqmfvjGMx1+aBbp3cc5sXLrlOF/5JsRAoZQ+IZ7CCaC1n57Xd5KLrUsp/9w2bM3SNgfFiv1eshseut2Z63TRqK5+nD42nrNfcJaoYRKAtC7c3e8c4df0jevWFEqE5y6o5Z7/V17GLvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742971811; c=relaxed/simple;
-	bh=vvIMKN60Orf2V99yJ3fawF7I4H1WzJtvNXtSgz1Y/YM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D6pGTfuZqV82n/LzkFkccOW+pe4Vznoa87WchnSFffvdgcM9EX54bXdVZwiNP3zfNzzYHbBQIDOErQWkHHCGnnMQwugtQpMRqYc0cxoomPQA84SKRBQcd2V3KpmVg/7nNgCI3K9N62aiKEdUmT4lyZANV5sE9YfauMe+w+Rz8nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lPgdg4vw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=18plpg2A; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lPgdg4vw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=18plpg2A; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6772A1F391;
-	Wed, 26 Mar 2025 06:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742971807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=laj/EhJ7jWdcyYdTlvjhEoV/kv6Zg6+tir35KJD6ti0=;
-	b=lPgdg4vwbea8sbAMt3UUk4fxCdrVceLjyLVfvAMyCFWGotZnOqnzl2eOW/jxy4lklUMnbJ
-	ZyWwjk+IzLpj1vsgUKjBOfQHLyvxtoER1If/nBTHqTLsfdA2ZgLD0Gruon6Bn9qACTPsdG
-	nEQvhPFAS7XFKd0IOY0E+3UvcbEv1Lg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742971807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=laj/EhJ7jWdcyYdTlvjhEoV/kv6Zg6+tir35KJD6ti0=;
-	b=18plpg2AEalPvbDg0RtDh1aV4c8Rfp1EDW6Co8TN7K/8724QazTMKQvbXooh4bWQudm/i8
-	7KKifdLwjrXuibDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lPgdg4vw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=18plpg2A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742971807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=laj/EhJ7jWdcyYdTlvjhEoV/kv6Zg6+tir35KJD6ti0=;
-	b=lPgdg4vwbea8sbAMt3UUk4fxCdrVceLjyLVfvAMyCFWGotZnOqnzl2eOW/jxy4lklUMnbJ
-	ZyWwjk+IzLpj1vsgUKjBOfQHLyvxtoER1If/nBTHqTLsfdA2ZgLD0Gruon6Bn9qACTPsdG
-	nEQvhPFAS7XFKd0IOY0E+3UvcbEv1Lg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742971807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=laj/EhJ7jWdcyYdTlvjhEoV/kv6Zg6+tir35KJD6ti0=;
-	b=18plpg2AEalPvbDg0RtDh1aV4c8Rfp1EDW6Co8TN7K/8724QazTMKQvbXooh4bWQudm/i8
-	7KKifdLwjrXuibDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A08C13927;
-	Wed, 26 Mar 2025 06:50:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bE6hCJ+j42fPMwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 26 Mar 2025 06:50:07 +0000
-Date: Wed, 26 Mar 2025 07:50:06 +0100
-Message-ID: <87iknwb80x.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: 1100928@bugs.debian.org,
-	"C.D. MacEachern" <craig.daniel.maceachern@gmail.com>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: Bug#1100928: [regression 6.1.y] microphone no longer records (on VivoBook_ASUSLaptop TP401MARB_J401MA)
-In-Reply-To: <Z-MMsp3XJyNHOlma@eldamar.lan>
-References: <174248253267.1718.4037292692790831697.reportbug@x>
-	<Z95s5T6OXFPjRnKf@eldamar.lan>
-	<Z-MMsp3XJyNHOlma@eldamar.lan>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1742972046; c=relaxed/simple;
+	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEcFUcVJydlfA+b4MUFobOVzFPvQh5NmNVPEPVnvMobBZf3L8oUdXczPvlaLYMetNbTjozvmEDK+qqFt3k0c+qMl5THxPEeEHARvrPIRMEaXM8Es3JCkxDkPN3Rzze6zjOtxHj6zSEAP+iPgk4MtRwhFOQF1+bQqRdf34ZKBVnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1yoyuRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D562DC4CEE2;
+	Wed, 26 Mar 2025 06:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742972045;
+	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I1yoyuRTZPYV+8QANl6Hc+Tw0BUQ9tvDhKCElr9TXtHQrMPD5vJM3eq62OiGFazBD
+	 R9FMd6nzLbhowCjQzMTsO+yJOuISqMdYMKO+NOhmEXqyabxKGK/KXHBnfEONTDo7mL
+	 ikicBP8MAdHVQxpFhEQwCNsT3KB0ZhlotpRDL3koQaIprPByu3HdvfHzMGamM3juqc
+	 hWDTYpd/f4JRsDHHTQ/Td3Rzzzz5lwgfO9d+G6pmV56oQu2dAQAUAIcdMRMedzEPsb
+	 WWm7S1ZHj16CcZ8wgqTWltrydfwqiHigsM2OoVOG1/OCacCow/AI5RF6BIEAWYw0pD
+	 E1/EIY3TA2Kxg==
+Message-ID: <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
+Date: Wed, 26 Mar 2025 07:53:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 6772A1F391
-X-Spam-Score: -2.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[bugs.debian.org,gmail.com,suse.de,vger.kernel.org,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
+ simple-mfd syscon on PolarFire SoC
+To: Conor Dooley <conor@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley
+ <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+ <20250321-ramrod-scabby-a1869f9979b6@spud>
+ <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+ <20250325-feline-roundworm-dc391b755673@spud>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250325-feline-roundworm-dc391b755673@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025 21:06:10 +0100,
-Salvatore Bonaccorso wrote:
+On 25/03/2025 17:03, Conor Dooley wrote:
+> On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
+>>> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
+>>> +
+>>> +maintainers:
+>>> +  - Conor Dooley <conor.dooley@microchip.com>
+>>> +
+>>> +description:
+>>> +  An wide assortment of registers that control elements of the MSS on PolarFire
+>>> +  SoC, including pinmuxing, resets and clocks among others.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: microchip,mpfs-mss-top-sysreg
+>>> +      - const: syscon
+>>> +      - const: simple-mfd
+>>
+>> You need to list the children if you use simple-mfd. Commit msg
+>> mentioned clock controller, so where is it?
 > 
-> Hi Craig, all
-> 
-> On Sat, Mar 22, 2025 at 08:55:17AM +0100, Salvatore Bonaccorso wrote:
-> > Control: tags -1 + moreinfo upstream
-> > 
-> > Hi
-> > 
-> > On Thu, Mar 20, 2025 at 10:55:32AM -0400, C.D. MacEachern wrote:
-> > > Package: src:linux
-> > > Version: 6.1.129-1
-> > > Severity: important
-> > > X-Debbugs-Cc: craig.daniel.maceachern@gmail.com
-> > > 
-> > > Dear Maintainer,
-> > > 
-> > > After update to kernel image 6.1.0-32 on Debian bookworm my builtin microphone
-> > > would no longer record
-> > > anything - no levels detected and I checked for muted channels with tools like
-> > > pavucontrol and alsamixer.
-> > > 
-> > > I found that my microphone was using the `snd_hda_intel` driver in the kernel,
-> > > so tried rebooting and choosing
-> > > the 6.1.0-31 kernel instead to rule out hardware issue. Previous kernel works
-> > > as expected, mic records and playback
-> > > is fine, so some update related to this driver, or the driver itself was
-> > > updated and no longer works correctly with
-> > > the builtin microphone.
-> > 
-> > Thanks for reproting the issue (leaving boot log context, hw used,
-> > below for context).
-> > 
-> > I think this might be introduced with 3b4309546b48 ("ALSA: hda: Fix
-> > headset detection failure due to unstable sort") wich landed as well
-> > in 6.1.129.
-> > 
-> > If you revert that commit on top of 6.1.129, does that fixes your
-> > issue? Would you be able to test this?
-> > 
-> > #regzbot introduced: v6.1.128..v6.1.129
-> > #regzbot link: https://bugs.debian.org/1100928
-> > 
-> > The solution might be similar to c6557ccf8094 ("ALSA: hda/realtek: Fix
-> > microphone regression on ASUS N705UD") from 6.14-rc5 (which got
-> > backported to 6.13.6, 6.12.18, 6.6.81 but not yet 6.1.y).
-> 
-> In case you need help in trying a kernel build with the revet applied,
-> I'm attaching the revert patch. With that you can follow
-> https://kernel-team.pages.debian.net/kernel-handbook/ch-common-tasks.html#id-1.6.6.4
-> to build a kernel using the `test-patches` helper script to test with.
-> 
-> Is that enough help so we can confirm the breaking commit?
-> 
-> Kuan-Wei Chiu, Takashi Iwai any input on our issue?
+> I don't think a child node is required here, there's not enough
 
-Please give alsa-info.sh outputs from both working and non-working
-kernels.  Run the script with --no-upload option and attach the
-outputs.
+Then this is not a simple-mfd.
 
-
-thanks,
-
-Takashi
+Best regards,
+Krzysztof
 
