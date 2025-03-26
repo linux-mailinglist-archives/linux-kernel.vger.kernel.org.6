@@ -1,119 +1,190 @@
-Return-Path: <linux-kernel+bounces-577238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14764A71A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:30:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76FCA71A2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:26:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3BC3BDF5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2987A4828
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466561F3B9C;
-	Wed, 26 Mar 2025 15:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBD91F2369;
+	Wed, 26 Mar 2025 15:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC7IxoH9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fMKrbAZ9"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A306814A4C6;
-	Wed, 26 Mar 2025 15:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825DB14A4C6;
+	Wed, 26 Mar 2025 15:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743002719; cv=none; b=ZarIMqNo+3IVc9Qpw7/dYxpVQF9goBb7mIT5AFQWY8obyZKqIPAsylmWcq2+DrAyNlUXlghKoA7tKDimo1DAgBvB7QaPRVjnaTtPOXP/rb7lQ5HJUHzaOrn3NOoE9poUNoLqsvS1VtifI0DZj4Ifk7t9pGWDaNbHv3Yc1auGCIQ=
+	t=1743002781; cv=none; b=g686PwssVT+RJuTVUevI+LpmA+6BdPL82pTq01fZg11TYhJtSE1th3ocgk0MYseIixa+On+oy0ZIxZLkjJE7cb+G9n0q5bSvguFrNCeWk1RP0y8SgviNGhoLNy8T2opQ/Q+Ub1fd3OiPdbpkMYxCK7QTpl8T/sFbqZsjdzVzuNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743002719; c=relaxed/simple;
-	bh=fAuSUL7yObr2JsUjb/aNOLhrRIjNLcrPE9UvoJPnNnI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaX3b7kBYsWitGo0eSy3edVisTGh/Oa+b1Cc/jFgyCuWatk1uZ1DTYRDNWMh+READg3LRlr+683jTJf3WH0oH0Qn+WSIhEMRKQcSqcsuZ0J16B1/sky646lAU/77QSEJ3/vLEJ7kJ+XTsbiE3+nGA4qNOUUXe5tiNHbEhUBOYFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LC7IxoH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F0E2C4CEEE;
-	Wed, 26 Mar 2025 15:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743002719;
-	bh=fAuSUL7yObr2JsUjb/aNOLhrRIjNLcrPE9UvoJPnNnI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LC7IxoH9s5uM7aSYG/LyfJ4Z5BDoAFUQW2ObD3P6edGM/15AQNyWnoi4/6FtTuxB1
-	 zt++n3xiCp/p6sbpXBN3wei5zXQPLPMAuMo4m9N6YoAh3mteB8fDXBctQgF8pkgdDq
-	 /5+2F7aOfH5hbs7LcHtsFIs6pP/X2RAPnn6A7uDZ+y9wwfDJKq5R+Jp+W5Isg97Sqy
-	 nBK3wDXYQQ9RPYt/TfemxoDMn68CuhImCWWOKfOTz/4YWMU3RZl44/VLmnlVkCBYtL
-	 GssFM4Rwc3wiTypr67jT2ge+vbTe278RM8KVcVNpy8SzifYh6CQEZSV7G7MV2XaG5Q
-	 KUhgVlW6eohbg==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72c14138668so1138808a34.2;
-        Wed, 26 Mar 2025 08:25:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGw/qjFOQs5W4Sju+kHJu2D3mUdj2AGgJwdUb7Sa0w7J1em28EIhYx/XPWrQ0aCeHEc03AZDi+wOPQ@vger.kernel.org, AJvYcCXfsHcmgzsrAGMLj5NXirDYTNx0TB15RxLM+sFu+e+/X4BM09gTGlGiX1wT8jQfOURts1Vi15yK4kBnWquQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHJQmaJlC2QNq05M0B10vDoVh9WKMR9CBxRKluRe7483bOfhQ7
-	tpoIFGwkqbwqDtycICCEoBsYR4mPWm6Y/ILn4V0FpjaPUm6zlOH7ADao4xhtE0QwJO8fXWko3GW
-	nwUYqM9TKoeLgZO5OF5iZuBHi9n4=
-X-Google-Smtp-Source: AGHT+IHr5tsGpOngZIcIxU/BshH+uj+SEmFWZRPxZ1xT9KDNCl5JkjcXIT/guU1z2fkpt2dop7yD15PAh+5hCWL/xAA=
-X-Received: by 2002:a05:6870:20d:b0:2c6:72d3:fc93 with SMTP id
- 586e51a60fabf-2c7802ef8b5mr11720539fac.12.1743002718471; Wed, 26 Mar 2025
- 08:25:18 -0700 (PDT)
+	s=arc-20240116; t=1743002781; c=relaxed/simple;
+	bh=KcLx+LUsuQ+1FVIso4P5u4UhRImurn8WgvxTB/HPrz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vyh0ZJ5lTl9Hx+3iqDQMGl/N/vbclolNcf0A85j0pOCWT7b4ET54u2U8OLIC+EctIkX3s+rsdVscNZOyz7WvCUb9v1BM1rvDpRBBCyQANkzW++7TsHNF9aYm1uOZFLfDpcHAzyWljBuqzWwJpDgnmVbBcSS+pUDiZZcTljtdMV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fMKrbAZ9; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743002776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EZLo1jQQXln+Xf5Ba7tBgf55edk8Etnb6mTfw0jd+O0=;
+	b=fMKrbAZ95CgFQx1idRLbepXmVc+5F+vVd/5nGzLidOuej04JwpEj0X7PHCYyIkPSakfpvt
+	f1FAlskEJ+PoDpuNcerDcjYSN52EF2JAGwbuiHyVCiwAxmxLkVKMU2n8XUcy9xrd9jxj6b
+	SEIB62cQDziFrnhiJRWaGCgve8x50Bw=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] lib/sort.c: Add _nonatomic() variants with cond_resched()
+Date: Wed, 26 Mar 2025 11:26:06 -0400
+Message-ID: <20250326152606.2594920-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320092943.92790-1-qiaozhe@iscas.ac.cn>
-In-Reply-To: <20250320092943.92790-1-qiaozhe@iscas.ac.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Mar 2025 16:25:05 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gUDxrAn4W+Rf3ifjrg8Z9ZzTTOZjPFSSN5488mPqzXeA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrFEpUN-GlO-VC4xnjHPMjRt4YSppHgFV2CAH6qLqsSxNLTbDaOdzQZnd4
-Message-ID: <CAJZ5v0gUDxrAn4W+Rf3ifjrg8Z9ZzTTOZjPFSSN5488mPqzXeA@mail.gmail.com>
-Subject: Re: [PATCH] ACPICA: Adjust the position of code lines.
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>
-Cc: robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 20, 2025 at 10:33=E2=80=AFAM Zhe Qiao <qiaozhe@iscas.ac.cn> wro=
-te:
->
-> In the acpica/utcache.c file, adjust the position of the
-> "ACPI_MEM_TRACKING(cache->total_allocated++);" code line
-> to ensure that the increment operation on total_allocated
-> is included within the ACPI_DBG_TRACK_ALLOCATIONS configuration.
->
-> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
+Andrew - if you're ok with this patch I'd like to get it in soon as a
+bugfix, I've been getting quite a few reports on this one.
 
-In order to modify ACPICA code in the Linux kernel, please first
-submit the change in question to the upstream ACPICA project on GitHub
-as a pull request.  Once that pull request has been merged, you can
-send a corresponding Linux patch with a Link: tag pointing to it, but
-in principle it is not necessary to do so because ACPICA changes are
-automatically integrated into the Linux code base on a more-or-less
-regular basis.
+I don't much care for the naming though, thoughts there?
 
-Thanks!
+-- >8 --
 
-> ---
->  drivers/acpi/acpica/utcache.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.=
-c
-> index 85a85f7cf750..046e6ba127d4 100644
-> --- a/drivers/acpi/acpica/utcache.c
-> +++ b/drivers/acpi/acpica/utcache.c
-> @@ -251,9 +251,9 @@ void *acpi_os_acquire_object(struct acpi_memory_list =
-*cache)
->         } else {
->                 /* The cache is empty, create a new object */
->
-> +#ifdef ACPI_DBG_TRACK_ALLOCATIONS
->                 ACPI_MEM_TRACKING(cache->total_allocated++);
->
-> -#ifdef ACPI_DBG_TRACK_ALLOCATIONS
->                 if ((cache->total_allocated - cache->total_freed) >
->                     cache->max_occupied) {
->                         cache->max_occupied =3D
-> --
-> 2.34.1
->
->
+bcachefs calls sort() during recovery to sort all keys it found in the
+journal, and this may be very large - gigabytes on large machines.
+
+This has been causing "task blocked" warnings, so needs a
+cond_resched().
+
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+---
+ include/linux/sort.h | 11 +++++++++++
+ lib/sort.c           | 46 +++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 52 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/sort.h b/include/linux/sort.h
+index e163287ac6c1..8e5603b10941 100644
+--- a/include/linux/sort.h
++++ b/include/linux/sort.h
+@@ -13,4 +13,15 @@ void sort(void *base, size_t num, size_t size,
+ 	  cmp_func_t cmp_func,
+ 	  swap_func_t swap_func);
+ 
++/* Versions that periodically call cond_resched(): */
++
++void sort_r_nonatomic(void *base, size_t num, size_t size,
++		      cmp_r_func_t cmp_func,
++		      swap_r_func_t swap_func,
++		      const void *priv);
++
++void sort_nonatomic(void *base, size_t num, size_t size,
++		    cmp_func_t cmp_func,
++		    swap_func_t swap_func);
++
+ #endif
+diff --git a/lib/sort.c b/lib/sort.c
+index 8e73dc55476b..60b51dac00ec 100644
+--- a/lib/sort.c
++++ b/lib/sort.c
+@@ -186,6 +186,8 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
+ 	return i / 2;
+ }
+ 
++#include <linux/sched.h>
++
+ /**
+  * sort_r - sort an array of elements
+  * @base: pointer to data to sort
+@@ -212,10 +214,11 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
+  * O(n*n) worst-case behavior and extra memory requirements that make
+  * it less suitable for kernel use.
+  */
+-void sort_r(void *base, size_t num, size_t size,
+-	    cmp_r_func_t cmp_func,
+-	    swap_r_func_t swap_func,
+-	    const void *priv)
++static void __sort_r(void *base, size_t num, size_t size,
++		     cmp_r_func_t cmp_func,
++		     swap_r_func_t swap_func,
++		     const void *priv,
++		     bool may_schedule)
+ {
+ 	/* pre-scale counters for performance */
+ 	size_t n = num * size, a = (num/2) * size;
+@@ -286,6 +289,9 @@ void sort_r(void *base, size_t num, size_t size,
+ 			b = parent(b, lsbit, size);
+ 			do_swap(base + b, base + c, size, swap_func, priv);
+ 		}
++
++		if (may_schedule)
++			cond_resched();
+ 	}
+ 
+ 	n -= size;
+@@ -293,8 +299,25 @@ void sort_r(void *base, size_t num, size_t size,
+ 	if (n == size * 2 && do_cmp(base, base + size, cmp_func, priv) > 0)
+ 		do_swap(base, base + size, size, swap_func, priv);
+ }
++
++void sort_r(void *base, size_t num, size_t size,
++	    cmp_r_func_t cmp_func,
++	    swap_r_func_t swap_func,
++	    const void *priv)
++{
++	__sort_r(base, num, size, cmp_func, swap_func, priv, false);
++}
+ EXPORT_SYMBOL(sort_r);
+ 
++void sort_r_nonatomic(void *base, size_t num, size_t size,
++		      cmp_r_func_t cmp_func,
++		      swap_r_func_t swap_func,
++		      const void *priv)
++{
++	__sort_r(base, num, size, cmp_func, swap_func, priv, true);
++}
++EXPORT_SYMBOL(sort_r_nonatomic);
++
+ void sort(void *base, size_t num, size_t size,
+ 	  cmp_func_t cmp_func,
+ 	  swap_func_t swap_func)
+@@ -304,6 +327,19 @@ void sort(void *base, size_t num, size_t size,
+ 		.swap = swap_func,
+ 	};
+ 
+-	return sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w);
++	return __sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w, false);
+ }
+ EXPORT_SYMBOL(sort);
++
++void sort_nonatomic(void *base, size_t num, size_t size,
++		    cmp_func_t cmp_func,
++		    swap_func_t swap_func)
++{
++	struct wrapper w = {
++		.cmp  = cmp_func,
++		.swap = swap_func,
++	};
++
++	return __sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w, true);
++}
++EXPORT_SYMBOL(sort_nonatomic);
+-- 
+2.49.0
+
 
