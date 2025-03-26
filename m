@@ -1,224 +1,174 @@
-Return-Path: <linux-kernel+bounces-577298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54B0A71B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:52:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E4AA71B18
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2B6A7A7123
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7976E1709D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A191F4196;
-	Wed, 26 Mar 2025 15:50:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74B21F4276;
+	Wed, 26 Mar 2025 15:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FAQvHtDI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8271F416B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8202B3A1BA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004224; cv=none; b=Y2+X+ZNMO3BHk6u7tbzPBsGJNGDhz90zw0m8I+0GmhBKWKdNAucVjRkflDef/D+KqRZC41W72GGuXvNgPnGcn34CWG+o2Gx1rilPeR2wvRXmZL5sc+kC3Fggc/NimrHWZk9jk7yViAVyW+7HZnEAYyK+PRbwWmz6xRDDidVLSeU=
+	t=1743004310; cv=none; b=dJGVbCGoVU2+3utQH1DqhR2Sc7vCulkVZHWCG8gVEWSCqaNyxXVhH8vT2QIc7DJlh9Srr1WDR8e+soWSqkrVgdmrJqQgDCYd3NzEmXd/jB0pIYZhHHOFmW4TIfhtrr/RjFJ6fstJZq4F9/F+mm1clXLEvTSCM2zh3C9l1UtK5rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743004224; c=relaxed/simple;
-	bh=LzbKBR9wIboXNKQE+6dzB2GsBy+0kqdV+lC+GtAyOlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eS3Dc2JBid6w7YYkU0JwGJmkgLT9q0FdeJvVMJDBtUHYDBIqZo8l/0i/cDnbQb3r0RxVdBFXIUwZjALqcup6AxSLIhqjtRqMTD+OBDk+jtwLjUwaxlJt9rx0vkXNkGJ8Pf1p6AHDuqNoziUpReM0UTxo9OcxHEvLlr2PM4EokAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2097BC4CEE2;
-	Wed, 26 Mar 2025 15:50:23 +0000 (UTC)
-Date: Wed, 26 Mar 2025 11:51:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar
- <tglozar@redhat.com>
-Subject: [GIT PULL] latency tracing: Updates for 6.15
-Message-ID: <20250326115109.32b69701@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743004310; c=relaxed/simple;
+	bh=WDTgACKfbFOAULZ00BSFWmKYsHzNYTrM9EPoZ8yADMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cx8o75IwILMAqrz8uEYrB54YEjx0HbtUH72sbBo/haxSpupuIpGS9VvSg3u8/7t/c5yFCY/XrwijYgwebrk7NlQNfVImHRKEZpdHYOqTxPsXDGZUHJncNYFmDpy+MbR0GbZs3zvTdjz2fDQJze2GMtQwSkzAJprWcPRBro3rq+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FAQvHtDI; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743004308; x=1774540308;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WDTgACKfbFOAULZ00BSFWmKYsHzNYTrM9EPoZ8yADMU=;
+  b=FAQvHtDITl1+1PGwmkL8K/D4DQ7FCTkAlhKYKu218NqFaL+N+9lN9hcu
+   sV9ml5xFDbYS8Yd360SeIPCbtwmNPdhTZo+Yk1KIN2BO9Cr7sf+49jnUz
+   EVwfYGA5DnQjahOcr8PmBt2XX3c5WdGIBwyBTk7BaVXkTMNCwRaNmf+aX
+   iYqw/853zhis+sTLDOrLk+Paqni1tX0NUgCe9JNq+GIQglOWwDlPvN7sL
+   Co250xX8cFYxePfcwU44ZnQ9G5Fhts1ISwC4ekvjTT1jHrQvsEL9My/QA
+   JMkgJpL8onsl9/SBBDltl3R6+hl0uZKYbmjz/XuVV9JX1I5Oybyu9U0zy
+   w==;
+X-CSE-ConnectionGUID: 7MGdNLS6RkWxoQ6wWlvDDQ==
+X-CSE-MsgGUID: rLNuL4MaQp6JvskKs6535w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44188254"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="44188254"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:51:48 -0700
+X-CSE-ConnectionGUID: LS0XVK0wRUKBR+t1osMCeA==
+X-CSE-MsgGUID: b1QK+8PmQXC8SugrBN4iNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="124550670"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:51:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1txT2d-000000067f4-1as0;
+	Wed, 26 Mar 2025 17:51:43 +0200
+Date: Wed, 26 Mar 2025 17:51:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Oded Gabbay <ogabbay@kernel.org>,
+	"Avizrat, Yaron" <yaron.avizrat@intel.com>,
+	"Elbaz, Koby" <koby.elbaz@intel.com>,
+	"Sinyuk, Konstantin" <konstantin.sinyuk@intel.com>
+Subject: Re: [PATCH v3 1/1] accel/habanalabs: Switch to use %ptTs
+Message-ID: <Z-Qij4C8DSmS0Mq-@smile.fi.intel.com>
+References: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
+ <Z-PM8oBtTPzqv-S2@smile.fi.intel.com>
+ <87zfh86rqi.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfh86rqi.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Wed, Mar 26, 2025 at 11:55:33AM +0200, Jani Nikula wrote:
+> On Wed, 26 Mar 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > +Cc: Jani (sorry, forgot to add you in the first place).
+> >
+> > Do you think it's applicable now?
+> 
+> Cc: Yaron, Koby, and Konstantin who are supposed to be the new
+> maintainers for accel/habanalabs.
+
+Thank you!
+
+> > On Wed, Mar 05, 2025 at 01:00:25PM +0200, Andy Shevchenko wrote:
+> >> Use %ptTs instead of open-coded variant to print contents of time64_t type
+> >> in human readable form.
+> >> 
+> >> This changes N/A output to 1970-01-01 00:00:00 for zero timestamps,
+> >> but it's used only in the dev_err() output and won't break anything.
+> >> 
+> >> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >> ---
+> >> 
+> >> v3: explained the difference for N/A cases (Jani)
+> >> v2: fixed the parameters to be the pointers
+> >> 
+> >>  drivers/accel/habanalabs/common/device.c | 25 +++---------------------
+> >>  1 file changed, 3 insertions(+), 22 deletions(-)
+> >> 
+> >> diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
+> >> index 68eebed3b050..80fa08bf57bd 100644
+> >> --- a/drivers/accel/habanalabs/common/device.c
+> >> +++ b/drivers/accel/habanalabs/common/device.c
+> >> @@ -1066,28 +1066,11 @@ static bool is_pci_link_healthy(struct hl_device *hdev)
+> >>  	return (device_id == hdev->pdev->device);
+> >>  }
+> >>  
+> >> -static void stringify_time_of_last_heartbeat(struct hl_device *hdev, char *time_str, size_t size,
+> >> -						bool is_pq_hb)
+> >> -{
+> >> -	time64_t seconds = is_pq_hb ? hdev->heartbeat_debug_info.last_pq_heartbeat_ts
+> >> -					: hdev->heartbeat_debug_info.last_eq_heartbeat_ts;
+> >> -	struct tm tm;
+> >> -
+> >> -	if (!seconds)
+> >> -		return;
+> >> -
+> >> -	time64_to_tm(seconds, 0, &tm);
+> >> -
+> >> -	snprintf(time_str, size, "%ld-%02d-%02d %02d:%02d:%02d (UTC)",
+> >> -		tm.tm_year + 1900, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+> >> -}
+> >> -
+> >>  static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
+> >>  {
+> >>  	struct eq_heartbeat_debug_info *heartbeat_debug_info = &hdev->heartbeat_debug_info;
+> >>  	u32 cpu_q_id = heartbeat_debug_info->cpu_queue_id, pq_pi_mask = (HL_QUEUE_LENGTH << 1) - 1;
+> >>  	struct asic_fixed_properties *prop = &hdev->asic_prop;
+> >> -	char pq_time_str[64] = "N/A", eq_time_str[64] = "N/A";
+> >>  
+> >>  	if (!prop->cpucp_info.eq_health_check_supported)
+> >>  		return true;
+> >> @@ -1095,17 +1078,15 @@ static bool hl_device_eq_heartbeat_received(struct hl_device *hdev)
+> >>  	if (!hdev->eq_heartbeat_received) {
+> >>  		dev_err(hdev->dev, "EQ heartbeat event was not received!\n");
+> >>  
+> >> -		stringify_time_of_last_heartbeat(hdev, pq_time_str, sizeof(pq_time_str), true);
+> >> -		stringify_time_of_last_heartbeat(hdev, eq_time_str, sizeof(eq_time_str), false);
+> >>  		dev_err(hdev->dev,
+> >> -			"EQ: {CI %u, HB counter %u, last HB time: %s}, PQ: {PI: %u, CI: %u (%u), last HB time: %s}\n",
+> >> +			"EQ: {CI %u, HB counter %u, last HB time: %ptTs}, PQ: {PI: %u, CI: %u (%u), last HB time: %ptTs}\n",
+> >>  			hdev->event_queue.ci,
+> >>  			heartbeat_debug_info->heartbeat_event_counter,
+> >> -			eq_time_str,
+> >> +			&hdev->heartbeat_debug_info.last_eq_heartbeat_ts,
+> >>  			hdev->kernel_queues[cpu_q_id].pi,
+> >>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci),
+> >>  			atomic_read(&hdev->kernel_queues[cpu_q_id].ci) & pq_pi_mask,
+> >> -			pq_time_str);
+> >> +			&hdev->heartbeat_debug_info.last_pq_heartbeat_ts);
+> >>  
+> >>  		hl_eq_dump(hdev, &hdev->event_queue);
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Linus,
-
-Latency tracing changes for v6.15:
-
-- Add some trace events to osnoise and timerlat sample generation
-
-  This adds more information to the osnoise and timerlat tracers as well as
-  allows BPF programs to be attached to these locations to extract even more
-  data.
-
-- Fix to DECLARE_TRACE_CONDITION() macro
-
-  It wasn't used but now will be and it happened to be broken causing the
-  build to fail.
-
-- Add scheduler specification monitors to runtime verifier (RV)
-
-  This is a continuation of Daniel Bristot's work.
-
-  RV allows monitors to run and react concurrently. Running the cumulative
-  model is equivalent to running single components using the same
-  reactors, with the advantage that it's easier to point out which
-  specification failed in case of error.
-
-  This update introduces nested monitors to RV, in short, the sysfs
-  monitor folder will contain a monitor named sched, which is nothing but
-  an empty container for other monitors. Controlling the sched monitor
-  (enable, disable, set reactors) controls all nested monitors.
-
-  The following scheduling monitors are added:
-
-  * sco: scheduling context operations
-      Monitor to ensure sched_set_state happens only in thread context
-  * tss: task switch while scheduling
-      Monitor to ensure sched_switch happens only in scheduling context
-  * snroc: set non runnable on its own context
-      Monitor to ensure set_state happens only in the respective task's context
-  * scpd: schedule called with preemption disabled
-      Monitor to ensure schedule is called with preemption disabled
-  * snep: schedule does not enable preempt
-      Monitor to ensure schedule does not enable preempt
-  * sncid: schedule not called with interrupt disabled
-      Monitor to ensure schedule is not called with interrupt disabled
-
-
-Please pull the latest trace-latency-v6.15 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-latency-v6.15
-
-Tag SHA1: 8b5e36dd7793df531fdf118ea07c1e7a9389d044
-Head SHA1: 4ffef9579ffc51647c5eb55869fb310f3c1e2db2
-
-
-Gabriele Monaco (11):
-      tracing: Fix DECLARE_TRACE_CONDITION
-      rv: Add license identifiers to monitor files
-      sched: Add sched tracepoints for RV task model
-      rv: Add option for nested monitors and include sched
-      rv: Add sco and tss per-cpu monitors
-      rv: Add snroc per-task monitor
-      rv: Add scpd, snep and sncid per-cpu monitors
-      tools/rv: Add support for nested monitors
-      verification/dot2k: Add support for nested monitors
-      Documentation/rv: Add docs for the sched monitors
-      tools/rv: Allow rv list to filter for container
-
-Tomas Glozar (1):
-      trace/osnoise: Add trace events for samples
-
-----
- Documentation/tools/rv/rv-mon-sched.rst            |  69 ++++++
- Documentation/trace/rv/monitor_sched.rst           | 171 ++++++++++++++
- include/linux/rv.h                                 |   4 +-
- include/linux/sched.h                              |  16 ++
- include/trace/define_trace.h                       |   7 +
- include/trace/events/osnoise.h                     |  96 ++++++++
- include/trace/events/sched.h                       |  13 ++
- kernel/sched/core.c                                |  23 +-
- kernel/trace/rv/Kconfig                            |   7 +
- kernel/trace/rv/Makefile                           |   7 +
- kernel/trace/rv/monitors/sched/Kconfig             |  11 +
- kernel/trace/rv/monitors/sched/sched.c             |  38 +++
- kernel/trace/rv/monitors/sched/sched.h             |   3 +
- kernel/trace/rv/monitors/sco/Kconfig               |  14 ++
- kernel/trace/rv/monitors/sco/sco.c                 |  88 +++++++
- kernel/trace/rv/monitors/sco/sco.h                 |  47 ++++
- kernel/trace/rv/monitors/sco/sco_trace.h           |  15 ++
- kernel/trace/rv/monitors/scpd/Kconfig              |  15 ++
- kernel/trace/rv/monitors/scpd/scpd.c               |  96 ++++++++
- kernel/trace/rv/monitors/scpd/scpd.h               |  49 ++++
- kernel/trace/rv/monitors/scpd/scpd_trace.h         |  15 ++
- kernel/trace/rv/monitors/sncid/Kconfig             |  15 ++
- kernel/trace/rv/monitors/sncid/sncid.c             |  96 ++++++++
- kernel/trace/rv/monitors/sncid/sncid.h             |  49 ++++
- kernel/trace/rv/monitors/sncid/sncid_trace.h       |  15 ++
- kernel/trace/rv/monitors/snep/Kconfig              |  15 ++
- kernel/trace/rv/monitors/snep/snep.c               |  96 ++++++++
- kernel/trace/rv/monitors/snep/snep.h               |  49 ++++
- kernel/trace/rv/monitors/snep/snep_trace.h         |  15 ++
- kernel/trace/rv/monitors/snroc/Kconfig             |  14 ++
- kernel/trace/rv/monitors/snroc/snroc.c             |  85 +++++++
- kernel/trace/rv/monitors/snroc/snroc.h             |  47 ++++
- kernel/trace/rv/monitors/snroc/snroc_trace.h       |  15 ++
- kernel/trace/rv/monitors/tss/Kconfig               |  14 ++
- kernel/trace/rv/monitors/tss/tss.c                 |  91 ++++++++
- kernel/trace/rv/monitors/tss/tss.h                 |  47 ++++
- kernel/trace/rv/monitors/tss/tss_trace.h           |  15 ++
- kernel/trace/rv/monitors/wip/Kconfig               |   2 +
- kernel/trace/rv/monitors/wip/wip.c                 |   2 +-
- kernel/trace/rv/monitors/wip/wip.h                 |   1 +
- kernel/trace/rv/monitors/wwnr/Kconfig              |   2 +
- kernel/trace/rv/monitors/wwnr/wwnr.c               |   2 +-
- kernel/trace/rv/monitors/wwnr/wwnr.h               |   1 +
- kernel/trace/rv/rv.c                               | 154 +++++++++++--
- kernel/trace/rv/rv.h                               |   4 +
- kernel/trace/rv/rv_reactors.c                      |  28 ++-
- kernel/trace/rv/rv_trace.h                         |   6 +
- kernel/trace/trace_osnoise.c                       |  55 ++---
- tools/verification/dot2/dot2k                      |  27 ++-
- tools/verification/dot2/dot2k.py                   |  80 +++++--
- tools/verification/dot2/dot2k_templates/Kconfig    |   3 +
- tools/verification/dot2/dot2k_templates/main.c     |   4 +-
- .../dot2/dot2k_templates/main_container.c          |  38 +++
- .../dot2/dot2k_templates/main_container.h          |   3 +
- tools/verification/models/sched/sco.dot            |  18 ++
- tools/verification/models/sched/scpd.dot           |  18 ++
- tools/verification/models/sched/sncid.dot          |  18 ++
- tools/verification/models/sched/snep.dot           |  18 ++
- tools/verification/models/sched/snroc.dot          |  18 ++
- tools/verification/models/sched/tss.dot            |  18 ++
- tools/verification/rv/include/in_kernel.h          |   2 +-
- tools/verification/rv/include/rv.h                 |   3 +-
- tools/verification/rv/src/in_kernel.c              | 256 ++++++++++++++++-----
- tools/verification/rv/src/rv.c                     |  38 +--
- 64 files changed, 2135 insertions(+), 166 deletions(-)
- create mode 100644 Documentation/tools/rv/rv-mon-sched.rst
- create mode 100644 Documentation/trace/rv/monitor_sched.rst
- create mode 100644 kernel/trace/rv/monitors/sched/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sched/sched.c
- create mode 100644 kernel/trace/rv/monitors/sched/sched.h
- create mode 100644 kernel/trace/rv/monitors/sco/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sco/sco.c
- create mode 100644 kernel/trace/rv/monitors/sco/sco.h
- create mode 100644 kernel/trace/rv/monitors/sco/sco_trace.h
- create mode 100644 kernel/trace/rv/monitors/scpd/Kconfig
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd.c
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd.h
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd_trace.h
- create mode 100644 kernel/trace/rv/monitors/sncid/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid_trace.h
- create mode 100644 kernel/trace/rv/monitors/snep/Kconfig
- create mode 100644 kernel/trace/rv/monitors/snep/snep.c
- create mode 100644 kernel/trace/rv/monitors/snep/snep.h
- create mode 100644 kernel/trace/rv/monitors/snep/snep_trace.h
- create mode 100644 kernel/trace/rv/monitors/snroc/Kconfig
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc.c
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc.h
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc_trace.h
- create mode 100644 kernel/trace/rv/monitors/tss/Kconfig
- create mode 100644 kernel/trace/rv/monitors/tss/tss.c
- create mode 100644 kernel/trace/rv/monitors/tss/tss.h
- create mode 100644 kernel/trace/rv/monitors/tss/tss_trace.h
- create mode 100644 tools/verification/dot2/dot2k_templates/main_container.c
- create mode 100644 tools/verification/dot2/dot2k_templates/main_container.h
- create mode 100644 tools/verification/models/sched/sco.dot
- create mode 100644 tools/verification/models/sched/scpd.dot
- create mode 100644 tools/verification/models/sched/sncid.dot
- create mode 100644 tools/verification/models/sched/snep.dot
- create mode 100644 tools/verification/models/sched/snroc.dot
- create mode 100644 tools/verification/models/sched/tss.dot
----------------------------
 
