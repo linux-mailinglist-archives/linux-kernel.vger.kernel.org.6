@@ -1,85 +1,138 @@
-Return-Path: <linux-kernel+bounces-576594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C168A7118E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9953A71194
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D48188EF53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B163A188EEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF99919DF9A;
-	Wed, 26 Mar 2025 07:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E519E7F9;
+	Wed, 26 Mar 2025 07:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIxxlW39"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdrZpt62"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B8919ABD8;
-	Wed, 26 Mar 2025 07:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D81519D898;
+	Wed, 26 Mar 2025 07:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742974917; cv=none; b=mOpVZItTgQJsYddNJUu8t0T5jOkefKzPFn5Q2Ui0k8l9aFL44XEKgsJAisaoz6wNF+IbPUAS1ZaJ1szVZAR4gZzVyTxUnNKaVG5UmXPwVVosUL9A9VI/+IL/rOipE8PZcZIXl82N5AcmyIl5Dnb3UEk4zvuRzokMvxS+laL22io=
+	t=1742974953; cv=none; b=IWkz0CGSyk5EJNSLbytqcyQvjReBPpYBMxXBnaXGFG3B4+MC7VZsVeZDqofF2HLlK2vrAdbSECxNdrrO8pkKlMcfa5SEQ6TYYak8piZos3MtZmi9dPi03DGoxPFcHhnL2Bi1xF9ZyOgJ1SIKrdPlZHgb/kknSY5M3hz6vhey37c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742974917; c=relaxed/simple;
-	bh=rKOd4j1t74rlaXbctW4uta67o0YN3LITaSJsnrWbc38=;
+	s=arc-20240116; t=1742974953; c=relaxed/simple;
+	bh=a39+hOyOBrLWeBos3bRjt0r0Ck9szc7SKc42ebq5PoM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pW0UmPrYhp83YEcDUdcj9zcUmX9b7CqF+ynPFtLhCHVKuOiidSa5Cejgiggxs/gLmVr6OuvAxGEYhLSX73zom1WGN0oq1UNGEG8G8sOLPwDMKPeS/lV96LWKgw8krMwcJv5IyPlBVqA/i1kFySCvm+HiDCaUvZ8CySFBq2XrCL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIxxlW39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B77C4CEE2;
-	Wed, 26 Mar 2025 07:41:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmaNVkDnI2GO7YklIFqBMo4y1PBBXm1ovRVv5iJvk9v/Is8E39irvG9AKMRlVhnPN6ZJYGZqAR5pZowBV92FMvkgBMKLMwPtS6mNwemJ0UhxWAegbnYaQanQEjZVMySRBKGxL7rZBihLFZlHUYvG7s4LBpcGo78t3x/RuOSuiYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdrZpt62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA28C4CEEE;
+	Wed, 26 Mar 2025 07:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742974916;
-	bh=rKOd4j1t74rlaXbctW4uta67o0YN3LITaSJsnrWbc38=;
+	s=k20201202; t=1742974953;
+	bh=a39+hOyOBrLWeBos3bRjt0r0Ck9szc7SKc42ebq5PoM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TIxxlW39PQQqRFZ4v6Bj1eF/al7IN+zt+cDy8kyspl19eOj5XLtOWj7htTrZvJi7N
-	 aE/lZxGA5EszkpdfxtD7k11lkvQr0g1/+J5jyoSLYKE0SxCLAOgIqXCMc7PrGMHnyB
-	 yt8cwzZlBn5XrPmDoDGZCsZyNlEMWIc4778LGMVRPvPvxSe0jFUTZbqNgor+n4RRMB
-	 fSnHnc767b/nUtVW34ZGg6ZuXCh51oo0Zh/154dZ4KqAcKearMCt2mngjjhBSDBT/q
-	 1wnNxzRgObQErJrhcEo9fAXP7ViDzhvuBamqptBTFLN1m9/eaXt1Ncmd1td6FUaKmC
-	 r48TymtjCPb8A==
-Date: Wed, 26 Mar 2025 08:41:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?utf-8?B?QsO2cmdlIFN0csO8bXBmZWw=?= <boerge.struempfel@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <gradenovic@ultratronik.de>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] ARM: dts: stm32: add initial support for
- stm32mp157-ultra-fly-sbc board
-Message-ID: <20250326-lumpy-spry-alpaca-ce087c@krzk-bin>
-References: <20250325110409.2323611-1-goran.radni@gmail.com>
- <20250325110409.2323611-4-goran.radni@gmail.com>
+	b=DdrZpt62vmxatBvcF50WRZeLjwuQK1aCe+C+9urExeiH7vWpYuv3xjFQhRVwqCJZ9
+	 2tB9Tzh6sAT32Ci3dDhsNnw712zwSeNykTqNKk1Oe3h/8g93cDKodhXJNGqsxUqVab
+	 2ZqsXrtQZS2q0dXn8bv97v+YxDr2omeekzpP5ae4qIlxOeEHBF8D1xVyDbqNyVt5RI
+	 qsTN95w3I8ikx95q04nmkARoHRdhsCQdVl/IMcKPUUD9SWpmaT7ZoToKmQz3RB0FpB
+	 envgh04m+n3QXDp3LrIQEkPOg9JL8F5z8486HhayWmu1Ywj2Ptv8tWX9llX7kKFjnk
+	 oO1uaXSHQCDAw==
+Date: Wed, 26 Mar 2025 08:42:27 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH] bug: Add the condition string to the
+ CONFIG_DEBUG_BUGVERBOSE=y output
+Message-ID: <Z-Ov478wdBKpqtmA@gmail.com>
+References: <20250317104257.3496611-2-mingo@kernel.org>
+ <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
+ <20250324115955.GF14944@noisy.programming.kicks-ass.net>
+ <Z-J5UEFwM3gh6VXR@gmail.com>
+ <Z-KRD3ODxT9f8Yjw@gmail.com>
+ <20250325123625.GM36322@noisy.programming.kicks-ass.net>
+ <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
+ <Z-MxULQtc--KoKMW@gmail.com>
+ <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250325110409.2323611-4-goran.radni@gmail.com>
+In-Reply-To: <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
 
-On Tue, Mar 25, 2025 at 12:04:07PM +0100, Goran Ra=C4=91enovi=C4=87 wrote:
-> From: Goran Ra=C4=91enovi=C4=87 <gradenovic@ultratronik.de>
->=20
-> Add support for Ultratronik's stm32mp157c fly board. This board embeds
-> a STM32MP157c SOC and 1GB of DDR3. Several connections are available on
-> this boards: 2*USB2.0, 1*USB2.0 MiniUSB, Debug UART, 1*UART, 1*USART,
-> SDcard, RJ45, ...
->=20
-> This patch enables basic support for a kernel boot - SD-card or eMMC.
->=20
-> Signed-off-by: Goran Ra=C4=91enovi=C4=87 <goran.radni@gmail.com>
 
-All patches seem to have same issue....
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Best regards,
-Krzysztof
+> On Tue, 25 Mar 2025 at 15:42, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > So something like the patch below?
+> > [...]
+> > After:
+> >
+> >   WARNING: CPU: 0 PID: 0 at [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
+> >                             ^^^^^^^^^^^^^^^
+> 
+> Hmm. Is that the prettiest output ever? No. But it does seem workable,
+> and the patch is simple.
+> 
+> And I think the added condition string is useful, in that I often end
+> up looking up warnings that other people report and where the line
+> numbers have changed enough that it's not immediately obvious exactly
+> which warning it is. Not only does it disambiguate which warning it
+> is, it would probably often would obviate having to look it up
+> entirely because the warning message is now more useful.
 
+Yeah, that exactly was the original motivation for SCHED_WARN_ON(): 
+core kernel code often gets backported on and changed by distributions, 
+so line numbers are fuzzy and with large functions it's sometimes 
+unclear exactly where the warning originated from.
+
+> So I think I like it. Let's see how it works in practice.
+> 
+> (I actually think the "CPU: 0 PID: 0" is likely the least useful part 
+> of that warning string, and maybe *that* should be moved away and 
+> make things a bit more legible, but I think that discussion might as 
+> well be part of that "Let's see how it works")
+
+Okay!
+
+The CPU and PID part is particularly useless, given that it's repeated 
+in the splat a few lines later:
+
+  ------------[ cut here ]------------^M
+  WARNING: CPU: 0 PID: 0 at [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
+  Modules linked in:
+  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-01616-g94d7af2844aa #4 PREEMPT(undef)
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+  RIP: 0010:sched_init+0x20/0x410
+
+So I'll just remove it, which will turn this into:
+
+  WARNING: [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
+
+Which is actually pretty nicely formatted IMHO and orders the 
+information by expected entropy: most constant, most valuable 
+information comes first.
+
+BTW., there's also another option we still have open: by using a unique 
+character separator that isn't 0 we could split up the single string 
+into cond_str and FILE_str parts, and leave formatting to 
+architectures. But I don't think it's needed if we get rid of the "CPU: 
+PID:" noise though.
+
+	Ingo
 
