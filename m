@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-577359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE2FA71C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BECEA71C10
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA34B16CCB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:43:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FC616F092
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3141F583C;
-	Wed, 26 Mar 2025 16:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F781F4E49;
+	Wed, 26 Mar 2025 16:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rq8lWHdp"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="I3VrO/ZK"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8771547E7;
-	Wed, 26 Mar 2025 16:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCF1547E7;
+	Wed, 26 Mar 2025 16:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007390; cv=none; b=cEUJvQDqhz9sTKsw12JYk0iYAOFqsOeADUC951SVhiSdX/GyokTe7C1xyJZkRdEBNmVPtYmPojIJr0sKP5niGHn7md70K3Z8h/dtvE0S+ahj71Q4N9GSUtgbX9zK7ZKenJRPSS0n3cMpyBlZ9gcDm9sIzPZM6DuwmmIVp8yQIyA=
+	t=1743007396; cv=none; b=Sugoi08k6zq7WKnvg2Ky3KXWaSqdAE5PWZ4Ab0QNHF0oGKNxy4InME3IqCBE6GaSICy1zLK9KDql/EefPwoEioiie2BeTcjMQmrIxfoNZtPLQuHhlShnh14Un1a1cY9OrsNvcKUicXXeSUc7gtENOOowY4DrAHWqrkFhyyiYPsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007390; c=relaxed/simple;
-	bh=5LaXNLW37E2EEaddRWCUX09i5J874uRaHchU5pVY+P0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pAvgQhj7dT0zAx9wj611i/nyWHsAmOPoy1c115HppeaJNw3UzLRBQlaktuPZIyjvMbO3lHj3SPFUjzMnJhJS4oLhaB/YJYVj/VxW3uKRTZ4crDHTctMIN/fizIqzhEUebALqIORBYGWpH728oD21qOONngc6+QBIId9v2bXlVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rq8lWHdp; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5DC0242D46;
-	Wed, 26 Mar 2025 16:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743007381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hjKXwDgvk3pdIxFfT6ggKwXmZB2CLaZ9TOBwOFL7yIs=;
-	b=Rq8lWHdpvOVWYeg7riGtJTI+acq1/fmtn++wNgbJAqF9lD9bSWUzOBCr0FeszVEQaiQHP8
-	4JCexxQJy/DWx0c+J33z8UlwysohKktZUxjSXdApqHOuCzmiGhOOJ3XTzd4FFIJX24cEyV
-	qnbV1GboNUyojBkp9j/Y516j7DB/3GZHRcbtsAwn1Nl/VFao5Z00cIvsXqC3RD4YtnqoP1
-	NjDfUEgzokjQzCua1f/B6a+Vv54i4rAMz0NzpG9+aiOci4w2MtkgP5tROuXP0ZjgPyIZju
-	rTu9N/l0t1GKQNjKy/OpNX6sVzcmP8nu182di4RqMQugdLNC3icGwfY/z0Y2Eg==
-Date: Wed, 26 Mar 2025 17:42:57 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, <m-leonard@ti.com>,
- <praneeth@ti.com>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <khilman@baylibre.com>,
- <rogerq@kernel.org>, <lgirdwood@gmail.com>, <linux-omap@vger.kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <tony@atomide.com>,
- <andreas@kemnade.info>, <aaro.koskinen@iki.fi>, <broonie@kernel.org>, Lee
- Jones <lee@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 0/5] Add TI TPS65214 & TPS65215 PMIC MFD Driver
- Support
-Message-ID: <20250326174257.33f74e81@kmaincent-XPS-13-7390>
-In-Reply-To: <c0f28cb1-d2a8-4583-937d-4908e4b70b4a@ti.com>
-References: <20250206173725.386720-1-s-ramamoorthy@ti.com>
-	<173928615760.2233464.12306998726512431222.b4-ty@kernel.org>
-	<7f33b5c7-b1a7-4db9-9e19-e30cbb0066ab@ti.com>
-	<471cdd13-3250-46b1-b7a0-a4f236a47773@kernel.org>
-	<c0f28cb1-d2a8-4583-937d-4908e4b70b4a@ti.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743007396; c=relaxed/simple;
+	bh=+hdv/LjO9fA4Bcgn7xIAsdgMxjncq2nRwtddTAlYvZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eAi6H0QochLkSZFcVw+6ntJToo67lZ2SMsc6GkbpNOp8KIAxD7giAa4WNSj7jVqLjvY/M8xQ95rlB2fueBPPiYHlofpq1p7QI3EMnxv/FMFvvWUC6edKYVpjGCcRV23EAfIraCANe0Z/hBif+aAHcaTOP7DyXY5mu6hl1qV7YbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=I3VrO/ZK; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 408612CEB2B;
+	Wed, 26 Mar 2025 17:43:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1743007385; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=74qiUoWQtpmpyF0zd2or6v2KnYkCfwI6j7YpofjaEyg=;
+	b=I3VrO/ZKv5FSf8Louq8+4t7aHIRH5vWsvvLRVL3+qYx2hqP4Gk/zTdxSIN78vIRIHfgyzk
+	fMU5nSx+9rXnoUDf6iMZI2kkseZPBEKpaHG0aBdml52o9aLMNiqVXW1z9CF3sZ40styHiG
+	9fOtNlvdhtK20Itrgufp6dqVUjntyU4W1fEc/1LgZiEjLu1ETepLl/+K1CpqcLRzsJIdoI
+	Oz3kjkGsZBULfGsqRaIf5fvekwf59mnOlwvUN8BR6GQ2o4dReAkkyvB/flMVNab6Pya17l
+	/O17kV6ObUP8WNPAubb3/YKoS4nXo5GwjsIxtfYPVSEQ5jZLrvl09kx3uFo5Ww==
+Message-ID: <ed0e6342-8ae0-445e-8ccb-490a218e0758@cjdns.fr>
+Date: Wed, 26 Mar 2025 17:43:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeitdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmeekfeegrgemsggvvddvmegrtdgvugemkeguvdgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemkeefgegrmegsvgdvvdemrgdtvggumeekugdvrgdphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepshdqrhgrmhgrmhhoohhrthhhhiesthhirdgtohhmpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmqdhlvghon
- hgrrhgusehtihdrtghomhdprhgtphhtthhopehprhgrnhgvvghthhesthhirdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2 04/10] dt-bindings: timer: Add EcoNet EN751221 "HPT"
+ CPU Timer
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250325134349.2476458-1-cjd@cjdns.fr>
+ <20250325134349.2476458-5-cjd@cjdns.fr>
+ <20250326-gigantic-mauve-capuchin-e667ed@krzk-bin>
+ <890a302e-9105-446c-a2a9-110e94457dac@cjdns.fr>
+ <79452943-bb0e-4c0c-a47d-f33a5bdeca21@kernel.org>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <79452943-bb0e-4c0c-a47d-f33a5bdeca21@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 6 Mar 2025 16:56:56 -0600
-Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
 
-> Hi,
->=20
-> On 3/6/2025 1:26 AM, Krzysztof Kozlowski wrote:
-> > On 05/03/2025 22:09, Shree Ramamoorthy wrote: =20
-> >> Hi Lee,
-> >>
-> >>
-> >> On 2/11/25 9:02 AM, Lee Jones wrote: =20
->  [...] =20
->  [...] =20
->  [...] =20
-> >> Would you be able to remove this series from your branch & replace it =
-with
-> >> this v6 [0], so Mark Brown will be able to apply the dependent regulat=
-or
-> >> series [1]? Thank you! =20
-> > You replied 3 weeks later. If something was applied not as it should,
-> > you ought to reply IMMEDIATELY, not 3 weeks after.
-> >
-> > The trees are mostly immutable after publishing.
-> >
-> > Best regards,
-> > Krzysztof =20
->=20
-> Completely understand, sorry for re-sending the first 5 patches that were
-> already applied! I'll wait for the next merge window, so there won't be
-> dependencies between the MFD and regulator tree then.
+On 26/03/2025 15:20, Krzysztof Kozlowski wrote:
+> On 26/03/2025 09:19, Caleb James DeLisle wrote:
+>>>> +          - const: econet,en751221-timer
+>>>> +      - items:
+>>>> +          - const: econet,en751627-timer
+>>>> +          - const: econet,en751221-timer
+>>>> +
+>>>> +  reg: true
+>>> Widest constraints are always here.
+>> (AFACT) there's no common constraint to both.
+> That's why I did not ask for common, but for the widest, just like the
+> example I gave explicitly for that case in my talk.
+>
+> https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
 
-Hello Shree,
+Got it, thank you for the clarification.
 
-I think what you should have asked here was a to use an immutable tag to let
-Mark uses this tag to merge the regulator part of the series on top of it.
-We use immutable tag when work need to be merged thought several Linux
-merge tree.
+Caleb
 
-It seems Lee does not remove the MFD support so now that we are in the merge
-window, you just need to wait two weeks and repost the regulator part.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+>
+> Best regards,
+> Krzysztof
 
