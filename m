@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-577099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C78EA71852
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:20:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8364EA7185B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C4E1604F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C5B188E569
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56641F1911;
-	Wed, 26 Mar 2025 14:20:07 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FC354652;
+	Wed, 26 Mar 2025 14:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJnOwChJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D557E1B4132;
-	Wed, 26 Mar 2025 14:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46AB125DF;
+	Wed, 26 Mar 2025 14:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998807; cv=none; b=acAUIXgO3tM9PGftSSv+RCTOnvaILcTZS45wjuLOjNOiQyUu+UMZmsGmxkPaUY6FrKqIH9y7XW16J9qqsIzdMwpI7TtgLBNt3XgtoaCLoE9UZKbQX96h3i4zx0/fmSukvaw7LJ7+WcARD6dFrFT2nP0fD/LeVIceyYhoRm2Wlaw=
+	t=1742998816; cv=none; b=cWxhVCwqs/9GAn4zNd3pAViCt+iJdOrygMt04Angb+YJWkKIorUVzyFLf01MP+Z3D6/ByQRZwCCFLsxv85wl4KthII5UjZ1KCY9p+yOJAUoF8jTzrq7c/IPAhsIzYJqfm239D+4fLmLaOBFXwI7cZ48moINiKeE7KCJj7JE2NL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998807; c=relaxed/simple;
-	bh=PM9RdmhtSz0Ds1dbVBa+7sDzqP7P586CQYhhr5hryOc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Nag65VBlDPe4qBeNTGCbZk2uUHCK+fdKpfcwgtW8CnCsPqcb2dVRU6/22XjIV1XOanii8v4oVVORsskyc0eJKMSSFhsEFgsVWBVU+ZuGsyyWPX/QUrtxmh/OquHo8AmPpqYeAhrkO+8CRCNhIlZogY/dKoNgm+bv9cW9IrL3dHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZN87j4QqFz8R040;
-	Wed, 26 Mar 2025 22:20:01 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 52QEJrrh028468;
-	Wed, 26 Mar 2025 22:19:53 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Wed, 26 Mar 2025 22:19:55 +0800 (CST)
-Date: Wed, 26 Mar 2025 22:19:55 +0800 (CST)
-X-Zmail-TransId: 2afc67e40d0bfffffffffab-d87e9
-X-Mailer: Zmail v1.0
-Message-ID: <20250326221955611qu6Ix3Pt5WgKvhL6sTySX@zte.com.cn>
+	s=arc-20240116; t=1742998816; c=relaxed/simple;
+	bh=4mUe84q+knTzutx1DErQS5WlZsgREQd5JAeOmoIzTSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IaZo0M+0wxhExJ4AnNHz3jXpJ3ak4W+JhxCHpKq5uA9CS9JKaNf0Tng4Qxd854DGM6CEuTcgiboTWKHyRWzI50PFQQFSofS1lth8lqtVT2JolHxsURQPlXKyaewfoKepyjbXiOR7/JZmj8jHVjTAPpBGJjH6yRakweBlRBragds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJnOwChJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0301C4CEE2;
+	Wed, 26 Mar 2025 14:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742998815;
+	bh=4mUe84q+knTzutx1DErQS5WlZsgREQd5JAeOmoIzTSI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iJnOwChJ0VVArnIpCI72uvowtZe9RkVjiV2GThCe/V3J3MI37MWV3ORPgaoJqkBfh
+	 uIcRma5aLb5lsXq7/zbHGASMUXWUHC+ubN1VVQG4t4JCU1IjoMzJM5y/bZGsfgvFqw
+	 DyN65HAwc/YP4LhZWmwBfKHHArTom96x41482ie111Yaibj3AwMOE6wN7TV6fwg7cg
+	 mILYTxPhNmJRNy6RkvvjrzIwjo988QjZ4RHOD0HlPUVEQmNBPWNnKsX9LkeJRM+fQt
+	 mFShDNxSIDeqYDGuCVpqTv7+qfHeFr2L0gYa8hvGgX1ugo0Y6zXIjqu0u52YvgAbuw
+	 8Ph2RXcH4Y/Ig==
+Message-ID: <79452943-bb0e-4c0c-a47d-f33a5bdeca21@kernel.org>
+Date: Wed, 26 Mar 2025 15:20:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <leon@kernel.org>
-Cc: <yishaih@nvidia.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBSRE1BOiBSZXBsYWNlIG1zZWNzX3RvX2ppZmZpZXMgd2l0aCBzZWNzX3RvX2ppZmZpZXMgZm9ywqB0aW1lb3V0?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52QEJrrh028468
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67E40D11.004/4ZN87j4QqFz8R040
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/10] dt-bindings: timer: Add EcoNet EN751221 "HPT"
+ CPU Timer
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250325134349.2476458-1-cjd@cjdns.fr>
+ <20250325134349.2476458-5-cjd@cjdns.fr>
+ <20250326-gigantic-mauve-capuchin-e667ed@krzk-bin>
+ <890a302e-9105-446c-a2a9-110e94457dac@cjdns.fr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <890a302e-9105-446c-a2a9-110e94457dac@cjdns.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Peng Jiang <jiang.peng9@zte.com.cn>
+On 26/03/2025 09:19, Caleb James DeLisle wrote:
+>>
+>>> +          - const: econet,en751221-timer
+>>> +      - items:
+>>> +          - const: econet,en751627-timer
+>>> +          - const: econet,en751221-timer
+>>> +
+>>> +  reg: true
+>> Widest constraints are always here.
+> 
+> (AFACT) there's no common constraint to both.
 
-In drivers/infiniband/hw/mlx4/mcg.c and drivers/infiniband/hw/mlx5/mr.c,
-`msecs_to_jiffies` is used to convert milliseconds to jiffies.
-For constant milliseconds, using `msecs_to_jiffies` introduces additional
-computational overhead. For example, it is unnecessary to check
-if m > jiffies_to_msecs(MAX_JIFFY_OFFSET) or (int)m < 0 for constants,
-while using `secs_to_jiffies` can avoid these extra calculations.
+That's why I did not ask for common, but for the widest, just like the
+example I gave explicitly for that case in my talk.
 
-Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
-Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
----
- drivers/infiniband/hw/mlx4/mcg.c | 8 ++++----
- drivers/infiniband/hw/mlx5/mr.c  | 6 +++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
 
-diff --git a/drivers/infiniband/hw/mlx4/mcg.c b/drivers/infiniband/hw/mlx4/mcg.c
-index 33f525b744f2..e279e69b9a51 100644
---- a/drivers/infiniband/hw/mlx4/mcg.c
-+++ b/drivers/infiniband/hw/mlx4/mcg.c
-@@ -43,7 +43,7 @@
-
- #define MAX_VFS		80
- #define MAX_PEND_REQS_PER_FUNC 4
--#define MAD_TIMEOUT_MS	2000
-+#define MAD_TIMEOUT_SEC	2
-
- #define mcg_warn(fmt, arg...)	pr_warn("MCG WARNING: " fmt, ##arg)
- #define mcg_error(fmt, arg...)	pr_err(fmt, ##arg)
-@@ -270,7 +270,7 @@ static int send_join_to_wire(struct mcast_group *group, struct ib_sa_mad *sa_mad
- 	if (!ret) {
- 		/* calls mlx4_ib_mcg_timeout_handler */
- 		queue_delayed_work(group->demux->mcg_wq, &group->timeout_work,
--				msecs_to_jiffies(MAD_TIMEOUT_MS));
-+				   secs_to_jiffies(MAD_TIMEOUT_SEC));
- 	}
-
- 	return ret;
-@@ -309,7 +309,7 @@ static int send_leave_to_wire(struct mcast_group *group, u8 join_state)
- 	if (!ret) {
- 		/* calls mlx4_ib_mcg_timeout_handler */
- 		queue_delayed_work(group->demux->mcg_wq, &group->timeout_work,
--				msecs_to_jiffies(MAD_TIMEOUT_MS));
-+				   secs_to_jiffies(MAD_TIMEOUT_SEC));
- 	}
-
- 	return ret;
-@@ -1091,7 +1091,7 @@ static void _mlx4_ib_mcg_port_cleanup(struct mlx4_ib_demux_ctx *ctx, int destroy
- 	for (i = 0; i < MAX_VFS; ++i)
- 		clean_vf_mcast(ctx, i);
-
--	end = jiffies + msecs_to_jiffies(MAD_TIMEOUT_MS + 3000);
-+	end = jiffies + secs_to_jiffies(MAD_TIMEOUT_SEC + 3);
- 	do {
- 		count = 0;
- 		mutex_lock(&ctx->mcg_table_lock);
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index b7c8c926c578..7943f183267a 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -525,7 +525,7 @@ static void queue_adjust_cache_locked(struct mlx5_cache_ent *ent)
- 		ent->fill_to_high_water = false;
- 		if (ent->pending)
- 			queue_delayed_work(ent->dev->cache.wq, &ent->dwork,
--					   msecs_to_jiffies(1000));
-+					   secs_to_jiffies(1));
- 		else
- 			mod_delayed_work(ent->dev->cache.wq, &ent->dwork, 0);
- 	}
-@@ -576,7 +576,7 @@ static void __cache_work_func(struct mlx5_cache_ent *ent)
- 					"add keys command failed, err %d\n",
- 					err);
- 				queue_delayed_work(cache->wq, &ent->dwork,
--						   msecs_to_jiffies(1000));
-+						   secs_to_jiffies(1));
- 			}
- 		}
- 	} else if (ent->mkeys_queue.ci > 2 * ent->limit) {
-@@ -2051,7 +2051,7 @@ static int mlx5_revoke_mr(struct mlx5_ib_mr *mr)
- 			ent->in_use--;
- 		if (ent->is_tmp && !ent->tmp_cleanup_scheduled) {
- 			mod_delayed_work(ent->dev->cache.wq, &ent->dwork,
--					 msecs_to_jiffies(30 * 1000));
-+					 secs_to_jiffies(30));
- 			ent->tmp_cleanup_scheduled = true;
- 		}
- 		spin_unlock_irq(&ent->mkeys_queue.lock);
--- 
-2.25.1
+Best regards,
+Krzysztof
 
