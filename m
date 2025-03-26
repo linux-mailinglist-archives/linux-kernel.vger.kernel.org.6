@@ -1,237 +1,277 @@
-Return-Path: <linux-kernel+bounces-576786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAA9A71470
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:08:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4771DA71474
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91C13AE3CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CB947A641B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466401B4132;
-	Wed, 26 Mar 2025 10:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874841B4141;
+	Wed, 26 Mar 2025 10:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="EyKTZQZQ"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2064.outbound.protection.outlook.com [40.107.20.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0aKifaQ"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4603E1ADFE4;
-	Wed, 26 Mar 2025 10:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983676; cv=fail; b=RsYfdQ60ReJOOIpwyBf9k3kuqs/bfEtKa6yxMtTIn0zeErjqgwKAUDa5DQAcXUIwRB3vA8viDJMEUxDrUoC4gmZo2d606QN/bKj5w1rHuZPkjvsmqqRzc62Tr118ucT7ugiaBOEfZUa5rlS5TjI/JDZuafbSOHjdjjQdxSPAfJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983676; c=relaxed/simple;
-	bh=PfGc57GCessjc7RCul66IMha7AmLRsRWQsYw6AH+Qcg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=J7fT10SzMmca2oJPzyF3N4KROvplKD2MTVEbMLhzo/zPLnT4CeR0PlzWsmj9GJ5PYbuuxqrow653H2/qefzOxiSLBnwnQ5Rp39yk042Nl85k45Z+CLSz/ujD11JFY5MJ3nMkweIYb2wxPLAGHq7mkmSaMTcYsyJ5TDgbiYZ7Tlo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=EyKTZQZQ; arc=fail smtp.client-ip=40.107.20.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U7vmuVhwo5WdO/JUbTsD1/Vy0+4NiTGJjPWtMxEWXQN0oRxb2fD3JSuEBL5rHpdt6+d3N2t9y/W1HSDQPTgzQYZTAm1+7etg/5f70ZYTm3/G7WOo+nYZ8N4033w50zMioa7WX98Gf9K8cUAoK8ISjKfVbVlLI1qRBS0X/Wn13ltd4lIOjphnpJm4NkR42lIjRdz+gH6C3YCmmUA+PK8juMpBM3En1fXKeRvzNKt1Ha6aQysu6I/dghdiEIiASCpi1WWLKgw8/UvVfwRsWnGPAlet0zTA/+3bttPfxywl28ySWIQDK3rtie0Bp8LBrMnqUqjVLPFms3Sd8niKO1Wsow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CftGM7F50bgJ5vj1z5Mh9VxqneGieh04XpjTw8sGDzU=;
- b=kijME9jPR+W73mY9vOiPnrC+SrUTV2rnqoXoTiJoDsCogIFQLPF/bkG43/vFpE3hqC7RtPGXkYhbAXWlegotsavnJt4+dvXNixzWZmkU2hXeWNCDXV9owSiBvXDh2jIpYV/4QQNkRR5rMnKB/x2MBMsW79C64Bh0cdRmCmDkQjO4H1P780oJ1a7H+pHTIIvpXjBR2h4NnuRtABQOSkzGG3RLg9JdJ0C2QshseZJRa+ZkRxqXDnY0bGjLBF5DMbF4ijCv18nzOzpe1RBsKd7vsHsYjD651TcKJOq71bIhc8R2aK1wE95TXUp37V4qiq1klPiSOMEQ3UHgAyUDXZBxLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CftGM7F50bgJ5vj1z5Mh9VxqneGieh04XpjTw8sGDzU=;
- b=EyKTZQZQfUIwVSdyz7Yk0F/P/bri1iI+6qnsf/RVF7EQCbuF7kRKU3069UYJrYAxejQ+qLBX93141qOf6jaeGGlg9+MIl2eX8xlccKfhrG+FNXnvNsMC1PEincxy4DaQjnbLEGLE68308l00bPd3mJI4qcNqHHxO/7G9e2SfRFc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DU2PR04MB8661.eurprd04.prod.outlook.com (2603:10a6:10:2dc::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 10:07:48 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 10:07:48 +0000
-Message-ID: <f73743cb-fdea-4b53-9665-4cc303498171@cherry.de>
-Date: Wed, 26 Mar 2025 11:07:47 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Remove overdrive-mode OPPs from
- RK3588J SoC dtsi
-To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org,
- Alexey Charkov <alchark@gmail.com>
-References: <eeec0d30d79b019d111b3f0aa2456e69896b2caa.1742813866.git.dsimic@manjaro.org>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <eeec0d30d79b019d111b3f0aa2456e69896b2caa.1742813866.git.dsimic@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0196.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e5::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734BC1B21A7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742983759; cv=none; b=JYIj++HK7bZuZCl2smTlR3tAzMQk/xpwg7xvo1cQGREwo5aS/AvPxrNz7tIFMiivHI8c7PKzNqQnet3i2cSYi0Ma4dKFnUL3zjeZaEghjycvSw7JOrNBYkYHk3QuOYbF8fDs1SgukCxv2ejRId++kfzgerXQ2/KA94ZwZ1+WPQA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742983759; c=relaxed/simple;
+	bh=P2ErozGc1YzloiYKFY8XVll++8O7M+IJCl8ipftI2Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKBNjSvoIZrvJIpyt/waV718UTvNP+IMfHvL54uue84SzLgIAi4TXO9xzb8foqeZITKIsi9vzGV1u8x2KAu2dtPxy0CYIIcj35PZcr5vc/cObZUXv50weuGIeJ6a5m0eFZairnXNSwoXkGld3Vlwsh7qbs30fLojEUSVrHD64Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0aKifaQ; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1365807566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:09:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742983756; x=1743588556; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mxE8mSuQFba5USugxIRzMPXLK6rZ2IlU479/J4S7RRQ=;
+        b=q0aKifaQ2qy5v288k5NA63z5aNi0UvdiSrsQXvU1PzWFATC5wn/+uaFX05IL5Gi6Xl
+         T6wSSwD0/qtdTxQtx83rT/9A+LcCPNWK7UO7v8wZjF2Wet5rLDWIoUKvKMrttpByUuUq
+         QQegCzmu73TDiurY1QJNV1ry+9zjEpxFbViPQoQ8s0bjCvOdcQgtV6+OY2Mt2qQMUXqK
+         2ag+iKc1VemK1wWwGLGjoEU5pLGcN8oSQwn1E3tshfHMEcgGdPDVG7sf/HFXs8+pDVVs
+         QtsTg4UEBke3wDZs9YJBrJxPemcBwfulTiZETMnMC8Rimp/YWcHdnrOaPXipVIgkqTJN
+         Ggbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742983756; x=1743588556;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mxE8mSuQFba5USugxIRzMPXLK6rZ2IlU479/J4S7RRQ=;
+        b=LqzRTRCrxwhY8/6la2SOSYYCjjnLp1hFPwqnqQ4WHSYr0XmF55hY70NDDwf/JlFrCj
+         ReYrfkTaHYtuNs/ioO7mx9E5cW+J1xBsz5ccygxfIHZcu2vGJYuQnPxyfzHsPOCKrtR7
+         THvnjmDsm66cF7R4eufHvL7ChdRrRu7QoU/Ydb5o1fMWV1EDxynW5nDV5wIkmU0202sf
+         aQo5I2PODNosOLfL5WKKY5DM5CtJu6zYMsw02Ive9XEj+SpUfdCtBy+K1OTlF6xd23Gn
+         beD1ncvQnRz9guFR6A7mNK2yL3hzaPpWF3k+WSwVZNXvb9gn7A5SmOtSkzqYNh2DDbor
+         T89w==
+X-Forwarded-Encrypted: i=1; AJvYcCWevqEsPHSEcXWnvsh9s3Kvm5gxfeC8KD8tteM9CQO+COAU5juTdlWwYwp4d9QT6J6nfx66yJPuDvo8MPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ciDl4VYEBPBg+IZR6usy7i31/dpw+l+Ktx5eZXWER4dJzTZd
+	wrp+vCZVuAMrbVwNrYV30IY3utmcOiybjbmLp+JtiloGybuJEkY61QK9QRhOvw4=
+X-Gm-Gg: ASbGncvT1jHMIHEprr891ittb4ZpuuF1gBzbJqyCryi8xkScX4wSh8Pm7OLmJdILWvX
+	EENcoyQyHm+SkAcMHHWMTxeHxrzQd+cQ+gA2zFVDaCocc3aNtT4/4ixw1otxzObd2rHlXcDWRWr
+	wIA7EaAsIWfDbS0HaP3kf87F8uZJ3Qz34KxjlE0Yiny3JDYzSK9/6jhD9pKdLsbVwTr1QIgC7Km
+	w8neO4LyvdAT/pR9L+yLeT7AzvYLaTAMborSbC6fidF6TU3IqxQLd3EcdClopA+lL+IA3JNUJKm
+	PKpqY5i72oh//nIE4COEKfso4Ql2CdIVUvc8Oy1hMvcKoKTHSVjcluQ=
+X-Google-Smtp-Source: AGHT+IGuB/epcJCgNqpypGqs/8PJnFxUfea7pF2X+I+R3S5XuLqn/BDqdYJIFIeL24XP+sXSUduRlw==
+X-Received: by 2002:a17:907:7292:b0:ac3:8895:8e99 with SMTP id a640c23a62f3a-ac3f20ba753mr2011787766b.3.1742983755500;
+        Wed, 26 Mar 2025 03:09:15 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:b2cf:5182:7604:e8d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef869eefsm993244766b.30.2025.03.26.03.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 03:09:15 -0700 (PDT)
+Date: Wed, 26 Mar 2025 11:09:13 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz,
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net,
+	broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
+	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+Subject: Re: [PATCH v36 28/31] ALSA: usb-audio: qcom: Introduce QC USB SND
+ offloading support
+Message-ID: <Z-PSSXt8WY3yVFM4@linaro.org>
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
+ <20250319005141.312805-29-quic_wcheng@quicinc.com>
+ <Z-J7n8qLMPVxpwuV@linaro.org>
+ <5a7442c9-493d-4c23-a179-128f02a29f73@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DU2PR04MB8661:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b32f82b-c5eb-4a77-1ec4-08dd6c4e0fa7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WkNUVy9FeXFXMTFZU1dmc0lyOHFmVGk0allOL1BnMlRlL0RPa2IrVDEyOGE0?=
- =?utf-8?B?cHdCL1RFSHJrWlhtY3lpYTY5ck1tVmlhSW80TUJkMTlyc2pOclVYQ0JTZXBm?=
- =?utf-8?B?ZEdsR1o5NE45SFd0T0lDS1I1WUxLTXlBeU42RTdXZkhGZHlZbG5iWXJncFBy?=
- =?utf-8?B?ZjlncnhPaDFWdW53SHpCU3VueWZadmVsM3JsS2ZmZ2dQYXkwWEU1cHJTMmNy?=
- =?utf-8?B?aVh3alNmOG5WU0l6a21JQ0ZJVkpLQmxWUTRxdkxFYWtuKy9JamgySHBJSThZ?=
- =?utf-8?B?eDZoTjJWV2t0NWE1SUQ3NVVoVUkzWHhsMTB1RXk5SEF0cmpSWGFPeVdaV09y?=
- =?utf-8?B?aE5YdGJDaXMzc3lSWStQbURwbkg4bVlKM0kza1Q0YldSSzhwQkc5T0pUVDVy?=
- =?utf-8?B?dkVTS21uNVM1UVBIUVJCeXhGQ093dmkycEFoUzJla3Y5VWpjNWpONm0rVzZD?=
- =?utf-8?B?Vm14QVJiZVYwZE4zRis2bURIS1NPaFBlRGp5dWtkTlhQTk85SmhlNnpkd0tG?=
- =?utf-8?B?V2hHM1o3UnZNcDhRZm94UWFWQ3BWb3lkV0tPWlYySy95MW9vcFNVLzYxVzMv?=
- =?utf-8?B?RXJUWmZTTWRhclVlYzBDYS9ackxQMW9ueXk3MUQ5NEN1b2pqbUxxV2h6am0z?=
- =?utf-8?B?aUJlR0h6U1FXZ0pUSG1MV09ZRUxHL3BuZXM0NVh5bGtZUXJqSHMzN0V6K0I2?=
- =?utf-8?B?dkxveVFpOWljYTdsWW9QSVpRT2IzVW9Tcy8rRms3K0xPbS9ZUjZ1aGh1WkRp?=
- =?utf-8?B?MWw4K1A5KzdMRlhEYUQ4Slh3eVBQcmtMYUxScGhuZXpYVThTSHdvZU0zOEVM?=
- =?utf-8?B?d2JFOFM0eE1VUkgwck1oRW5jTytqZUZ4TXBUY0dBMmYzc2QzZTVwMlBvak9U?=
- =?utf-8?B?U1JpNGgxRVM2L3NhM0QwQU5FMGRyaXc1MkZNZjFMRWlIWVFmZHJucXRyUlVR?=
- =?utf-8?B?QnVJdGJMNlVTZGloRDlZbFM2d0pzSzA2S05ORU50bGNwVThac3pTOFlaNGo4?=
- =?utf-8?B?YlhYc2pucnVNZSs1UHFkbXladDRQeTJRWTA4WXJianY4TkxEOG9SRERUampm?=
- =?utf-8?B?UUxxU29QV28vcDFHRkxheVhVVVNOMTAzVTBvMW0ranJ1Uzl3ZytHYzlYTG8z?=
- =?utf-8?B?UUlLSzlJWk1nNnE5TzlIUFN0VmFSSUxVcDJhZ2t6d0p0MW5GSU1OTy9LeTB0?=
- =?utf-8?B?SGhkMzY1SmNQbEJBSDZPc3VqSzMraVUrWUtmanFWb2I5UzRaMElRUmlBQTFz?=
- =?utf-8?B?Rk9qSzIvZXJLbDdxMXVVNFFQWmtQeklNc1c4TTI0TmV1NTA5K1Rtdml2TjdL?=
- =?utf-8?B?YUVENm44dDQ2c1A1bDJCMUVDWHY5WFBxOXh1WkNYNUJibVJPZDNNbnliZnJk?=
- =?utf-8?B?L0Y2d1RhdkRhcCtlY0dLYUZrL1d0Mi9XYnMvaEM0dThsbkxnVkRyT1pTdGtV?=
- =?utf-8?B?a2NVc3RBdHovRXoxMnV2M2VINkxZVnIvZEJObXVMRklFOTAwZ0pPMlBhTHEz?=
- =?utf-8?B?ai9vRW9WTGlxRjVwNmNxVm01UkZvcTdqall0TXlQMmw2Q0xNcVJ1VGtWK3pR?=
- =?utf-8?B?VzZJYmJDcTVoKzZYY3ZtSzlHWEZJMnpRTWRHTkprNWY3Z3F2MkdtQ3E3TWVQ?=
- =?utf-8?B?ell0WFdhMHRKY0l5Z2lseGdFRXBReWNSNzNXZWVTM2MyNU9KVkdSSEkxM3hj?=
- =?utf-8?B?dWR6bzVwazZKbktjd2V1R0E2b24rQm9QU2JDUGxSZEp3MmZrRUdsZzNldVRk?=
- =?utf-8?B?N3FyMmJzUDNGZld1TitGYlhmLzF0Y2lMZGloMnpHQUk0OFowVTR3WWNYZzVK?=
- =?utf-8?B?a0lnT3NieGJvTFk2MGd4Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZzFQMUk2YWdXZUFUckRwaEYwNlNEcFEzTkliTXlkY2RuWEJmODJLdEZOcGRE?=
- =?utf-8?B?cGFZY1A1cHJ1Tyt4eERIRkhoK01JMjN1aGVBY0ExS2FOakMva045OGtlYU5w?=
- =?utf-8?B?MXcreUlOL0swUkh0c0FibStvalVNMWFxUEZ5ZDBJWHFjQkFXWXVsZjdDZHlX?=
- =?utf-8?B?d2M5MjBSMmovaUtibXJXNFNiL2wyYmp5dEhPZVI0aTJQbGwxNDJXTWwyVGJk?=
- =?utf-8?B?K2RyUldWL0IyU3UrbytOajB6SXA4VlkzaFVqbjJFWG5uRmJiazVQUkNiZHFa?=
- =?utf-8?B?Rk1GWDFQZHBUckpQbFJYZzdBM0lLaWk5MnNXSGdsMGNweVZLVy8zaG94VWRW?=
- =?utf-8?B?ek9WRExqT29hcnFJcmdiWTZNZk1wcGdHOHNwRCtlV0lpTGpPTU9DOFd2enNC?=
- =?utf-8?B?VkVpNGV6VkMyQzVsUkhXZ043RlErOG5nZjRudytkRE15cnRSdlpDbXVUVFVK?=
- =?utf-8?B?d2dNa2d2bWM3bTdxdVlYa1FXV1JCUXNjV3E3TjVZa2x3bzc1aEFiN3NKRWV4?=
- =?utf-8?B?UmZieXE2ZXJVUitxZkZ2cXN3NUYyQmwyN3cyZE9pVno1UFc1QVlHTmJ1dkpW?=
- =?utf-8?B?UDRKc2NnRjV5QVJDOUt3blJjNmhscmJyQUdkYi9kajloaVBmMmxrUmhPK2hl?=
- =?utf-8?B?R095MnVpNlJwdjdTVlJaKzN1L1VBTytyNCswQnYyZjFZK3NVenVDYlpXSDRO?=
- =?utf-8?B?ZzEwM0hYTVFJVy9qWGh1cUZheUp4SGoyVjFTL2V2V1NHS043TFE2M2daWThL?=
- =?utf-8?B?OEpnVUhSRXRUSjYxRkZsVVRGNGx6S2RscW1TOXE5MU9QYzJjTjVGdGFkVm0y?=
- =?utf-8?B?RktwTWpac3pFd010dmFSeHdIWUcyaHlOZHVtT1JRelRYSkRZbEZtSzF4d0Q5?=
- =?utf-8?B?Rk9qQWsxMndXaVpBQXQ3Z0l2NXdQUVFZdEJJYVF2dWczY3MxNmt4MEZrMjQv?=
- =?utf-8?B?M3RBUHVwTHdkVm9mVTEzUithaW5JUERSYWVLaUF5VmE0blMvZDJkTzV3K1d3?=
- =?utf-8?B?NmNJeDBpaytDNU4wV2pJK01rL0J5VEJoY2dtU1FvYVdVM2hTa2c1T2Y5cTU2?=
- =?utf-8?B?Vk9mN2FDcXV1QkZUa3V6NVA4RzVYUzB5UjA0WnNxT0gxdXhhQ2FqUVQrWDQr?=
- =?utf-8?B?UGVMU281SzBMRDYrY3QyQkFQc09iQ0NlSGd0OEFseUlmc0QzeE4wUmZHeFJv?=
- =?utf-8?B?S01ySy9wQitZelYxQjdGVTBiaVgxNFpqcEF6bnc2OHBRZmxhUEpuYkNyUEdW?=
- =?utf-8?B?cnp6MjJsbU9NTnBNaml6djJRRUxieHVZU2s5Z1NkWUpxeExBVlR0TU0yTnNo?=
- =?utf-8?B?UVM2c2xsWkc0VW8zYzFzeUhxbWs0d2w1VjFrZFhsSVJSeUFNOWxZL0VqdTFU?=
- =?utf-8?B?ZkUrMjRubW4rZ2U0YzNhVWcvYkNYU0NBZjNHTWo0bWxrRDRqZjZtakI3Vy85?=
- =?utf-8?B?d0lxaE0wTUVoZXJjVEVRckRrcm5sWEMzMDgyNnNDZ2ZyMkVVbFBJRWlKZ3cw?=
- =?utf-8?B?UmlTVkY1VHdLYmJFSGQ2ZEF1RVUreGhjcjYrUzNndDJ3eVljUFdVUm1jaHVa?=
- =?utf-8?B?QTU4Mm1xb0tvUVVqeEd5NmY3TVFLRTFGSUR0Q3liN3QxLzV0Z2YrWjhibTBY?=
- =?utf-8?B?Zlh5Z2cyQmlpcU1HQ2U1R0dsK1pKSTlFanY1VDB6TTJWV2NNVWFLY0sxMk9v?=
- =?utf-8?B?cVgrUkNwY0RrVWV4NldXUFduL3BodjRBeXVUbHFaU2tvSXZGR05sR0ROeExv?=
- =?utf-8?B?TkNIckx5d1FiVzdYaExSeGg1TzJpdHJlSU4ySnYxV1JTeU1iWlAyRGYrQVl4?=
- =?utf-8?B?TkJwb3ZKQVJnSlRkVzF4a0l2OWw1V3ovbDdIYm9TWERyZk5Ba1BkLzBLV3hp?=
- =?utf-8?B?dUdRQVprK2VjbkFrOG9FVjV6KzdZbE8rZThQVUptYVhHVkIxd1BWQTV5L3cv?=
- =?utf-8?B?aU9TZFMwTkc3S01pOGpqZ28wSHRRbU9TR3BaQ3JwMDh0dGtGVXJDRGVPK0kr?=
- =?utf-8?B?MVJRMlF6b0pFa3RFSnZjcmtrVXVqN0lFYTNHakNkL1M0b0I4QVRYMjUrK2NW?=
- =?utf-8?B?WTRVZ2lEc2lXSGJIbkEwZWlSTnZMMEVTNE44anQzaUhnNVZiaXJDS3B2d1FK?=
- =?utf-8?B?VzVlYlhCZzR6MitJbjZXcmY3czd2RkZsS2VjTG9aWnZmajFlS0F5UVFkbDh3?=
- =?utf-8?B?OFE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b32f82b-c5eb-4a77-1ec4-08dd6c4e0fa7
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 10:07:48.4607
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uGNSpWui42q2Q/usNtZulgBR3vu+46iKdXBlkNph/TiBadpnpWzy0MU4J4I8IzzSuyGU52LPa9lKxXOqUBDoU64+sJRfazLpcRCy3q+dXTg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8661
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a7442c9-493d-4c23-a179-128f02a29f73@quicinc.com>
 
-Hi Dragan,
-
-On 3/24/25 12:00 PM, Dragan Simic wrote:
-> The differences in the vendor-approved CPU and GPU OPPs for the standard
-> Rockchip RK3588 variant [1] and the industrial Rockchip RK3588J variant [2]
-> come from the latter, presumably, supporting an extended temperature range
-> that's usually associated with industrial applications, despite the two SoC
-> variant datasheets specifying the same upper limit for the allowed ambient
-> temperature for both variants.  However, the lower temperature limit is
-> specified much lower for the RK3588J variant. [1][2]
+On Tue, Mar 25, 2025 at 06:32:14PM -0700, Wesley Cheng wrote:
+> On 3/25/2025 2:47 AM, Stephan Gerhold wrote:
+> > On Tue, Mar 18, 2025 at 05:51:38PM -0700, Wesley Cheng wrote:
+> >> Several Qualcomm SoCs have a dedicated audio DSP, which has the ability to
+> >> support USB sound devices.  This vendor driver will implement the required
+> >> handshaking with the DSP, in order to pass along required resources that
+> >> will be utilized by the DSP's USB SW.  The communication channel used for
+> >> this handshaking will be using the QMI protocol.  Required resources
+> >> include:
+> >> - Allocated secondary event ring address
+> >> - EP transfer ring address
+> >> - Interrupter number
+> >>
+> >> The above information will allow for the audio DSP to execute USB transfers
+> >> over the USB bus.  It will also be able to support devices that have an
+> >> implicit feedback and sync endpoint as well.  Offloading these data
+> >> transfers will allow the main/applications processor to enter lower CPU
+> >> power modes, and sustain a longer duration in those modes.
+> >>
+> >> Audio offloading is initiated with the following sequence:
+> >> 1. Userspace configures to route audio playback to USB backend and starts
+> >> playback on the platform soundcard.
+> >> 2. The Q6DSP AFE will communicate to the audio DSP to start the USB AFE
+> >> port.
+> >> 3. This results in a QMI packet with a STREAM enable command.
+> >> 4. The QC audio offload driver will fetch the required resources, and pass
+> >> this information as part of the QMI response to the STREAM enable command.
+> >> 5. Once the QMI response is received the audio DSP will start queuing data
+> >> on the USB bus.
+> >>
+> >> As part of step#2, the audio DSP is aware of the USB SND card and pcm
+> >> device index that is being selected, and is communicated as part of the QMI
+> >> request received by QC audio offload.  These indices will be used to handle
+> >> the stream enable QMI request.
+> >>
+> >> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> >> ---
+> >>  sound/usb/Kconfig                 |   14 +
+> >>  sound/usb/Makefile                |    2 +-
+> >>  sound/usb/qcom/Makefile           |    2 +
+> >>  sound/usb/qcom/qc_audio_offload.c | 1988 +++++++++++++++++++++++++++++
+> >>  4 files changed, 2005 insertions(+), 1 deletion(-)
+> >>  create mode 100644 sound/usb/qcom/Makefile
+> >>  create mode 100644 sound/usb/qcom/qc_audio_offload.c
+> >>
+> >> diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
+> >> index 4a9569a3a39a..6daa551738da 100644
+> >> --- a/sound/usb/Kconfig
+> >> +++ b/sound/usb/Kconfig
+> >> @@ -176,6 +176,20 @@ config SND_BCD2000
+> >>  	  To compile this driver as a module, choose M here: the module
+> >>  	  will be called snd-bcd2000.
+> >>  
+> >> +config SND_USB_AUDIO_QMI
+> >> +	tristate "Qualcomm Audio Offload driver"
+> >> +	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND && SND_SOC_USB
+> >> +	help
+> >> +	  Say Y here to enable the Qualcomm USB audio offloading feature.
+> >> +
+> >> +	  This module sets up the required QMI stream enable/disable
+> >> +	  responses to requests generated by the audio DSP.  It passes the
+> >> +	  USB transfer resource references, so that the audio DSP can issue
+> >> +	  USB transfers to the host controller.
+> >> +
+> >> +	  To compile this driver as a module, choose M here: the module
+> >> +	  will be called snd-usb-audio-qmi.
+> >> [...]
+> >> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+> >> new file mode 100644
+> >> index 000000000000..3319363a0fd0
+> >> --- /dev/null
+> >> +++ b/sound/usb/qcom/qc_audio_offload.c
+> >> @@ -0,0 +1,1988 @@
+> >> [...]
+> >> +static int __init qc_usb_audio_offload_init(void)
+> >> +{
+> >> +	struct uaudio_qmi_svc *svc;
+> >> +	int ret;
+> >> +
+> >> +	svc = kzalloc(sizeof(*svc), GFP_KERNEL);
+> >> +	if (!svc)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	svc->uaudio_svc_hdl = kzalloc(sizeof(*svc->uaudio_svc_hdl), GFP_KERNEL);
+> >> +	if (!svc->uaudio_svc_hdl) {
+> >> +		ret = -ENOMEM;
+> >> +		goto free_svc;
+> >> +	}
+> >> +
+> >> +	ret = qmi_handle_init(svc->uaudio_svc_hdl,
+> >> +			      QMI_UAUDIO_STREAM_REQ_MSG_V01_MAX_MSG_LEN,
+> >> +			      &uaudio_svc_ops_options,
+> >> +			      &uaudio_stream_req_handlers);
+> >> +	ret = qmi_add_server(svc->uaudio_svc_hdl, UAUDIO_STREAM_SERVICE_ID_V01,
+> >> +			     UAUDIO_STREAM_SERVICE_VERS_V01, 0);
+> >> +
+> >> +	uaudio_svc = svc;
+> >> +
+> >> +	ret = snd_usb_register_platform_ops(&offload_ops);
+> >> +	if (ret < 0)
+> >> +		goto release_qmi;
+> >> +
+> >> +	return 0;
+> >> +
+> >> +release_qmi:
+> >> +	qmi_handle_release(svc->uaudio_svc_hdl);
+> >> +free_svc:
+> >> +	kfree(svc);
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static void __exit qc_usb_audio_offload_exit(void)
+> >> +{
+> >> +	struct uaudio_qmi_svc *svc = uaudio_svc;
+> >> +	int idx;
+> >> +
+> >> +	/*
+> >> +	 * Remove all connected devices after unregistering ops, to ensure
+> >> +	 * that no further connect events will occur.  The disconnect routine
+> >> +	 * will issue the QMI disconnect indication, which results in the
+> >> +	 * external DSP to stop issuing transfers.
+> >> +	 */
+> >> +	snd_usb_unregister_platform_ops();
+> >> +	for (idx = 0; idx < SNDRV_CARDS; idx++)
+> >> +		qc_usb_audio_offload_disconnect(uadev[idx].chip);
+> >> +
+> >> +	qmi_handle_release(svc->uaudio_svc_hdl);
+> >> +	kfree(svc);
+> >> +	uaudio_svc = NULL;
+> >> +}
+> >> +
+> >> +module_init(qc_usb_audio_offload_init);
+> >> +module_exit(qc_usb_audio_offload_exit);
+> >> +
+> >> +MODULE_DESCRIPTION("QC USB Audio Offloading");
+> >> +MODULE_LICENSE("GPL");
+> > 
+> > What will trigger loading this if this code is built as module?
+> > 
+> > Testing suggests nothing does at the moment: If this is built as module,
+> > playback via USB_RX will fail until you manually modprobe
+> > snd-usb-audio-qmi.
+> > 
 > 
-> To be on the safe side and to ensure maximum longevity of the RK3588J SoCs,
-> only the CPU and GPU OPPs that are declared by the vendor to be always safe
-> for this SoC variant may be provided.  As explained by the vendor [3] and
-> according to the RK3588J datasheet, [2] higher-frequency/higher-voltage
-> CPU and GPU OPPs can be used as well, but at the risk of reducing the SoC
-> lifetime expectancy.  Presumably, using the higher OPPs may be safe only
-> when not enjoying the assumed extended temperature range that the RK3588J,
-> as an SoC variant targeted specifically at higher-temperature, industrial
-> applications, is made (or binned) for.
+> Yes, it would only get triggered on a modprobe.  I think the more important
+> part is when snd_usb_register_platform_ops() is called.  This is what would
+> register the vendor USB offload driver callbacks for USB connect/disconnect
+> events.
 > 
-> Anyone able to keep their RK3588J-based board outside the above-presumed
-> extended temperature range at all times, and willing to take the associated
-> risk of possibly reducing the SoC lifetime expectancy, is free to apply
-> a DT overlay that adds the higher CPU and GPU OPPs.
+> > I think the easiest way to solve this would be to drop the
+> > module_init()/module_exit() and instead call into these init/exit
+> > functions from one of the other audio modules. This would also ensure
+> > that the QMI server is only registered if we actually need it (if the
+> > board sound card actually has a USB DAI link).
+> > 
 > 
-> With all this and the downstream RK3588(J) DT definitions [4][5] in mind,
-> let's delete the RK3588J CPU and GPU OPPs that are not considered belonging
-> to the normal operation mode for this SoC variant.  To quote the RK3588J
-> datasheet [2], "normal mode means the chipset works under safety voltage
-> and frequency;  for the industrial environment, highly recommend to keep in
+> It would be difficult from the perspective of USB SND, because if we got
+> rid of the vendor ops, it would be messy, since the USB offload vendor
+> driver will be specific for every SoC.
+> 
 
-FYI, the answer from Rockchip support about what "industrial 
-environment" means is:
+What I meant is calling qc_usb_audio_offload_init() from any of the
+other drivers that are involved, e.g. q6usb. Or register an auxilliary
+device like in qcom_pd_mapper, so the modules don't need to link
+together directly. That shouldn't get too messy.
 
-"""
-Industrial environments encompass a wide range of settings, from
-manufacturing plants to chemical processing facilities. These
-environments are characterized by the use of complex machinery,
-stringent safety protocols, and the need for continuous operations.
-"""
+There are several reasonable options here, any of them is fine as long
+as this module will get automatically loaded for users that need it.
+Anything else would defeat the purpose of the generic USB sound
+offloading userspace interface, because you would need to load the
+QC-specific snd-usb-audio-qmi module manually. :-)
 
-which is not really helping me understand when we should be able to use 
-the overdrive mode.
-
-Why would you buy an RK3588J variant if you don't plan on using them on 
-the -40 - -20°C range that isn't supported by the RK3588 variant, which 
-seems to me to be the only advertised difference?
-
-It also seems like the RK3588M supports the same operating range as the 
-RK3588J but at faster speeds? c.f. 
-https://en.t-firefly.com/product/industry/aio3588mq#spec and 
-https://download.t-firefly.com/%E4%BA%A7%E5%93%81%E8%A7%84%E6%A0%BC%E6%96%87%E6%A1%A3/%E6%A0%B8%E5%BF%83%E6%9D%BF/iCore-3588MQ%20-%20Automotive-Grade%20AI%20Core%20Board.pdf
-
-Couldn't find a datasheet though.
-
-Talk about confusing specs...
-
-I'll stop caring from now about this very topic :)
-
-Cheers,
-Quentin
+Thanks,
+Stephan
 
