@@ -1,179 +1,259 @@
-Return-Path: <linux-kernel+bounces-577574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF766A71EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035F8A71F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08A53AF3F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87983AFE92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7648624EF73;
-	Wed, 26 Mar 2025 19:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C4253F00;
+	Wed, 26 Mar 2025 19:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C7JjcTQ9"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPtQBPVy"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F3315990C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743016744; cv=fail; b=PrUC5LpQtITCZ+3CxK1iHxJiPgMsvSFjqz9QslS58S4hK3Oc7klM3hjsF5/OjPHXNu/g/hVPL6i9pWolUaKmcO8tEkRHLyVlWDLOdNJZRCfSUVJ1z8Ec0SPdUJArQQ1TnI3Q9Kki8iLo8bOOS4dfgAh8AubuhGgxvMjKoRaoWGU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743016744; c=relaxed/simple;
-	bh=E7i+uMB5+29Xp7saZd2ouf3hOPczxh1IvXN5og6tHxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=M8H6u38azhV8YMDbob1b1nMZ/3qVz+jwnk4dYg6/kX1F79tdcb4dNFeEHWCHPswPQoVW7a7KldnkwAeWRzFahKaH9ZG1acSDBMNu1t8qnQtcdVjEbCx2sTn6/fZUxitwfft7entcwFvrW8gvFlfjKXqskEyocigT478BlSZrZu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C7JjcTQ9; arc=fail smtp.client-ip=40.107.220.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E0ibEe0WRLQ1dgv5vfiTPmImBQCRsiJeu3EW06s0fK9VWQz07/wT3fNDpU+taYp1RSAGs0Bhuki74sjPQOeC3e8FrOSocfjkntAAEFXcXYETchhG4QwsJsudERrHw3zhve9xwOGtXDia1dbeWE7ozba4/ulgVcmqR2n/Ya6Rgfgj1QArwfsxsO3rq5WAHTdm37mZzxbZjWE/I1gE92wlup12EFXMabn+Nsak26s4h2w1CJ24uCF58Jug1Y5Iy9zkMDBW8tFHRGTwJWbjHou1gcnqz2ABtav6H+M0/iOqKg2dvZo5onZfXMzmEJ8iJH6ZyajAbFQT/UjQGhmyIg+eDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XHIBbo8ZDbSeCmpwO41HrrbFB4gPtaJUkY+5xfNuQNI=;
- b=LvbVnN+zf0QIvICR7uEAhpF82RA+y37SwGWzv+Kpblk9Plxws77M3Df3Rukqwg5pca10d6B4AvV7EunM0dCBm0H3o0dlqYPBUnWgYuBS2oKD6MqR15X0hUAtufCH6x91xPCVthKDeFMG9bKjBrAYwyPXpUUJXx8hmzZfjxXCu1BWvRfGenR5x/c7xfo6q7+w7P8+K5AA7iLLpSb8pupS9i5/ICaNWYSir32/T2ZgWteakp5lUyj4hUVrskkYge76opeK1FwLf0z8Ml0j00tun6/A7Po32n0+6XtwKGZQgQJ3KOpxrRvj8Jm/K9ZnSukei9KoWFqRgYlhrLIMC3UhUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XHIBbo8ZDbSeCmpwO41HrrbFB4gPtaJUkY+5xfNuQNI=;
- b=C7JjcTQ9U3A2QqtBlyssSNml9mVWZg0zVQTN+HrMKB0pM7KRflouk6dcKrDWoauFoTvge91GwlTZwoDJ/3C2GDIESDIQZHvbkXGwBrl6gAIHkLABSXyUoDDamouKLDy2Av78xLYOjAnUVaiB7SfICGf46v2gOJRlW1q+CrIVDmH3j4X3JJRgx7CqQO3BQYqQtr6hJls1KWv+FDW3o2wPwhXN6CjhCwqLyp9VyNp+8Znfyd2wDh55jjdC1uGIB7bhiUKKxfFGurSi0+hCOoMXs3pQF1pVAeGKeN/qub8kYhdwLRPvqcXjeTYXtSOox53kuZCCpU5bEixGfvtE9Kh16A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by CYYPR12MB8889.namprd12.prod.outlook.com (2603:10b6:930:cb::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 19:19:00 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 19:19:00 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: idle: Fix return code of scx_select_cpu_dfl()
-Date: Wed, 26 Mar 2025 20:18:49 +0100
-Message-ID: <20250326191849.195303-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI0P293CA0015.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::8) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D1415990C;
+	Wed, 26 Mar 2025 19:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743016894; cv=none; b=hm0CXlK3m7ePFvcjyvPbPx3PLZRn6Juz9UGuewMeaMrLBLNC8qi0FW0BL6SSfWDveTmX/FIO0hsriQkLO3e/9ywRt8soDCtFKpwufZ02rSVBy8ntkXEjFxjwjt6+6rqhoano0xyCbVbb3+gQUHf3WSpUkvOHBkut2LO9LTkg4Ck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743016894; c=relaxed/simple;
+	bh=9SujrNYMLA/XAMHXQB+2rCkk6Yg1jBiNU3xCW6K3B9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UDmAEKU5pQsps3V28PieeooHO+Njbmfiz63OPRc/3b4lk4RXO4Bsv2lI9txXnqAgHkhKkl5w8+qHvWx6YXWKg9bkkyEyuWyPm8BM/AiCW7WzOTUfpap9V629D6xZxTOD3KcVB3ZWCiI1dwruGfuYDdU0nyavcC883K50ekWyUCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPtQBPVy; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5240b014f47so100640e0c.1;
+        Wed, 26 Mar 2025 12:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743016891; x=1743621691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=64vjjGgKkyej47wZkg9Q8gzWkXdomxA9oEZPcwE0Oo0=;
+        b=ZPtQBPVyyDWXoYnU9uFhHV+QqhPn8GIaTVlFnZrw0Gkjfs1uEwK3V4y8JJo1LKZrJw
+         zSWqdauIyJTTivBFnVsKLYc1LDpO/VJYSPhpbpBW3f0MeY0vIl+rzCi90w1DTsWkrel0
+         WK5BARvBjzGEHU+ZbP4/GpFVWgM8OWDE+2X6T7NEVorBIicJAK+ebpKbPv8EPM7lzX2D
+         a9QChfoaTa7mYCLJnd7PbpUc+lddhCw6DErbqR1LSwoslQ1kQXpAbDC9RlPVyRzrGCc0
+         GHMfdaKqPLlPpNYYbnGFs7Va0fKTmu+NVIrka/BsPe5gF8HfzgQiiidL8BWi6buMmrmD
+         mDwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743016891; x=1743621691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=64vjjGgKkyej47wZkg9Q8gzWkXdomxA9oEZPcwE0Oo0=;
+        b=WiqJKThFJczmooXs2SU/emJf+mtDhuQoN6LHz3WqK/1vBFfHMrlUe7Nww378RYH5rt
+         iDxHItyYVcTMBXXAQAi9QNt2EvKf2WuDwdE0Ltmbjw4LyMIo2miuVqD3ZQfTTi/vwLdR
+         HSDlLGveoe7r5S7SElX/ol5bVO1dl+iZQ+3PMiBngRUup2IFY8YBSC5haV6IvZCul2dg
+         y9bgKYHAO5W3fAxksCqkOppZtXZyAeuWyxYpEQY3dAegLvZlWIzWW2WLpclsVBzVgoBv
+         tL5a8lfQoyKDTO1BwsotNoxFfz9n7uCGAvWLP5JbcFKqgW/AKuzjAz02gAg0nkG7VM2q
+         517g==
+X-Forwarded-Encrypted: i=1; AJvYcCUNFBGKlBuG7YBWYKUhsYnP0yfhUSUF3HfccUNXdeu9L6DRfM1w+cJi9D+3B0k4XHfcacHL8+0AXWpnew==@vger.kernel.org, AJvYcCUy4tlNwHhRH1ska91YonaTkEwYdUoA8V9oHU0bmYWA3/SR5/KunjS7e48eHKYVq7+vXs0rQhW9T2PWfFGF68sHwMQ=@vger.kernel.org, AJvYcCWZmden09U1k3WzZaKVOaSvjizRI6bDghfZdbfJ/fOQnpVX+fvORy//yqORbT7GQ9/yLnnTSY53ThxH+cJN@vger.kernel.org, AJvYcCWg7OR5AwjEWOsJpUkwoeCIq7euOMade+KnT2ingrICZgAZ/qS6CPApL6r0YkemkP2AyK6Nehl8mTJyNaJo@vger.kernel.org, AJvYcCX1J9ziV9C49Bw4jZGmWnkgBHCK6QnvMh0L+pOc9T2qjzPqwhyNgEt+dJ9Qdg5XQNPCUUYYAPg/oOPt@vger.kernel.org, AJvYcCXaqQlayKgOr6A7+EDvjZX0t38KvvJYmw1rHuJP+qSkubFKxXGjB4DP1KH5aSATEfUBntffhNhHK8pI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU4yK/Te9qwyNXsD1x1Y6S7yJyCrdEf8eN1CrMfPkTU/jBl63i
+	ImRjpiv2jLwgkSwlEmQrJSHzMxHyuJ7ydk0//tHCzVhFLALUoH1LjT3C8YTuHhTcvWttNKD6mom
+	rnYxEIDtLMsCqu/+sfuI6cn/yacc=
+X-Gm-Gg: ASbGncsXAFiucXKdHzOnjugnL7DW/HEZtcvAv17PF/UIzbS8igZBPlsmARuOogOuKsK
+	FnWmhxEi44gB7zDMDYbF6zreWGMq7HCb2y4BX7fSnGUZATXR73BFE9l3Scrg6zzaDHcqw4DXANc
+	73Dw9BzDU7HboJGzATBz1YsrnaW/Luv8ql41oelv0=
+X-Google-Smtp-Source: AGHT+IEMDUu/kTsNu1CbItYSDxUZeO1gxYDQkWcrekLYRRg2eqkHhtGCeqXHHIbGy6v6eIHaPx/Rv/onzgSKYSV/BuA=
+X-Received: by 2002:a05:6122:660c:b0:50b:e9a5:cd7b with SMTP id
+ 71dfb90a1353d-52600a8ada4mr1173468e0c.9.1743016890983; Wed, 26 Mar 2025
+ 12:21:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CYYPR12MB8889:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5da177e-8309-4dd3-81f9-08dd6c9b1001
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QckmfS01ry5Y+ks9lGx/f42EvztPQHXL0ZGklqT+n8sD5ssGFDYInJYKJZ8C?=
- =?us-ascii?Q?UPnVcfEbmk9dyCNGGUQc3tnHb7P582pFTwYAPQnunkW0pYDO2jKvIXeq/IKD?=
- =?us-ascii?Q?k/Jzfc3KVGpIKtR+JjNYBegw41XHJTOUEUy0hfjj8iGKy6ZlEzR4THZdnQi/?=
- =?us-ascii?Q?5Z5kE533SRTE4vCo5Tbj7GginUvRAGpB9DYX4UseZUTj0UVN/WpCAZtZTuRp?=
- =?us-ascii?Q?JdVoWc0T7IbqnJqk04p4M8Tc7/IIuMGBFqmD/hRZ5C9xKoUu1HabCWrBvZrw?=
- =?us-ascii?Q?npGCEZxu01rCIV87qXKHVgRbKSm4sCBG2AfimCOZaxciqq09cGdlLnNOwx1q?=
- =?us-ascii?Q?RDUuWW5mX7RcNK9foANOJ5zFPxWjA8RebFFOXl1XzhPKZOM3q8njWKWQHrlM?=
- =?us-ascii?Q?cvIJ826bRKUlw3ev9V3tGwC9OCj58CCTkVMTSOrVgSD/oVZ0Tvt1BpifXzzI?=
- =?us-ascii?Q?38Xi0kc4hJbV8xPOLdoEF8hgCY80+/2urIK8AqjpAITEChAb8aFwdknyy2sx?=
- =?us-ascii?Q?v8cdrLVJKfD9TayscwVGJL6Vur07qt1v09ApmPkfE8OEd5pncTTtexJ9BQd5?=
- =?us-ascii?Q?YTmPrGtfTfwwVnDS1TxVvqpeUB25o7bW+d13/Pfg3PvlQPEfHUJaps6eJVv+?=
- =?us-ascii?Q?EmecqYFn6joQYWXAr+371Y42crgTn5lY4lTBNQyLWTlCi+St9UODRMm/fHGL?=
- =?us-ascii?Q?5k+2Q8B5n62yW8Hf2yNEcMdozoopfe9LVQgVGXg1pSSs714mEz2gqLykRPr2?=
- =?us-ascii?Q?+VyuIxHTPRFYygfWRQ2cfS9MfKnrYocieeUx/ZqpJUP5rO/DiHGjWbwntDif?=
- =?us-ascii?Q?1+TwQm0vnDKwF4QaqTr/3HWQY7xNZKl6Jcsh7v0kbC7oApKh35jH6le8t7yV?=
- =?us-ascii?Q?JNgcZ3PJCbZXGp8QDeqS+Wrr/qmFZLuStMxAdVOM00Zz69vLVp1kWRTGQ44c?=
- =?us-ascii?Q?z/2Z9GBsjbFahBMhBvlhgt/TGUwRHKFGg4vPr8bAaqwLw22yEtOZS0J87ro0?=
- =?us-ascii?Q?5WqlQ2dxCGISoKrmtIvnEm/GTLf4sTUWIHTuBytWXWaKWLGsSAdCj8uEu2/u?=
- =?us-ascii?Q?vrT92dAVzDu3OuLp0ovg3+VBIsgZ4tkdzHho5l7+otuy1Hjv0XW7GvcVKpbm?=
- =?us-ascii?Q?NteyZTSiQWpJX7IckFah+lvw3W2Z+2llUKP8VvVfKtf8JNUjsoPUw09i9ERf?=
- =?us-ascii?Q?TL6VdujgcYF4t5bF1hVhw6zU2nMAQAjl8OK8kk0pTwFwuM2jH2hPWf8aWsVH?=
- =?us-ascii?Q?T2uqvnr8ro+gx8RZi6tjrnu+XXRnkH9PXumia7ae0Wi6p7J0KikQFL3qkVBR?=
- =?us-ascii?Q?coPiZfybE3QxAeadHFjxfu1Qpc04kvQ22FYs5o61ZNTULMUPu4ZzUuKaLQjl?=
- =?us-ascii?Q?r6Z3VvEw6sNCd7WtTLZfCRAnw9od?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PC12p7a31iDAoV8fl8HQ7mixERCbNMPJXwMWyPOJl5/NGJsP5mHItU+4B/b5?=
- =?us-ascii?Q?XwlnikgYWRaBNdBQcefeHD4IlNWS4kI2OQgheoWfSlcYKYZLT7Br7Wh4cpH/?=
- =?us-ascii?Q?DpcTlLUyu4ho2H2cN4wGvCLid42sL0SLpb03Dd7ba1bCelgFkVOPW1cARDZq?=
- =?us-ascii?Q?j8mV2ZFkeBKw1gyoiua/I/U/eoL9+RyyEvjc3axTk6KdWghrgKJqQD4GeWlP?=
- =?us-ascii?Q?JZ83UqcaVa3t2titP5ihcbuIu5WSdIgiTY1Si6Bn43MWuFK3h0oyJL6Lw01O?=
- =?us-ascii?Q?3OH49TRJNsmt+NjDwQZ+zfqhVgXURibIX2tNIr8DwjR/92tvfJDUnnf89h+Y?=
- =?us-ascii?Q?V+4PycSjDXBS8UcO0A2kwfq34IU4jyYu3cDaMJdO3tA9fegbapkFm8p7Upso?=
- =?us-ascii?Q?2s2nzgIjV9t5c53hZF32iljfYrdyKbym1V+fk4esB5YmF4Cdr04Hv/M2mkKX?=
- =?us-ascii?Q?SIErzxPuk3Nvf1S2n72ku6DtVHddXGGYUVVvB+nttG7yGsaLZtLmjoYXt0xy?=
- =?us-ascii?Q?6GM5HAZrT3D3yXXimo+ImZZq1aUGWZorj136wWtinw6+B4BFTweF3m9+qFaG?=
- =?us-ascii?Q?webTrhBRZ2xyKp5z0aVOPunnpmbBt8N6HVooV5TWNsvtJ5Y3csXNnWC5LWW5?=
- =?us-ascii?Q?g3bzlRhZnKVu31O6FwyTMVKBQYHOWcqACDd1pDwxAjCzqXYQHtaaj651QXvR?=
- =?us-ascii?Q?N+R3Flm2RLaXm0mrrv5RW89HIyQMFRcWhY3ol7sygIVBLhdJEz97SdHvLGS3?=
- =?us-ascii?Q?rUXMrcJeyCFkp5agQbviKGnq50oCaRCtYkw0BfaxUBQMpQgljP08yaucj2KV?=
- =?us-ascii?Q?Vq+dgWTVGVhK3Iuvzy9SzxpDmAZEHAO6jaTylY3Rjff92vMcgsNyFLkai0ii?=
- =?us-ascii?Q?epeO+v5rCZmShtftfnVpQ5gSkNndp3IoQWFz7G4t7a2gJytSyt4VJU5DBY+5?=
- =?us-ascii?Q?bXJ3Rnt1Vm9Mn7bmX8O+60OER6UVk+UBvkXr8q0z0DZtcrEqcA/FI9AsIa9C?=
- =?us-ascii?Q?Opog2Ls+/rrfnpN+CtootLzH3GLlOvMkCF9sA/sHtRoOo6xd5tzpnWnU+Zw6?=
- =?us-ascii?Q?YgSrLKvRSnti2QbECEi6lJkjGjpumGCR2XyPsWTTqvObzEaow2rqFX3kGlnO?=
- =?us-ascii?Q?Ax2bSZ8Tp5DFV7mULd63EVlzLa9CWdKPbiGTyxZ9Amj40k1Vi9849pkS0JmJ?=
- =?us-ascii?Q?8jE6YDSbQBXBQJ3+QH64DX27Iy0izcmL0wJ+Zbu6s0d0+iwit9crG9UpLQT0?=
- =?us-ascii?Q?bdM+KoAiF3iUrQpbCcdchxbsqG0xMWUmJExiHAVC7puwR+H6O2jZEUIeNVOw?=
- =?us-ascii?Q?Ig0ajG2OLBxFDJig1aAoo1mWgx4SiADpbuDQpupieKvfI5we4Z+YyzTe1CCw?=
- =?us-ascii?Q?6UwihuotbdYZekPMz3wvw8rL2JSMKVaN/nucVLW3gXDB3kSM2yEh6uGeC18a?=
- =?us-ascii?Q?49cbjcpedO19+jPJ8eqzceoMzxTM42Asso/lVmkfxyx6UgQTIdHF422MAhsM?=
- =?us-ascii?Q?tQ3YYaIbDmRKAhutt9goaw1n8HOTMb3+QMvFLdogfjWdA/rzg0Kj1Hnt9Is6?=
- =?us-ascii?Q?Kx6s3TS8MlBsfglmYbcJVCwcpiYxvucaFNuRng/f?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5da177e-8309-4dd3-81f9-08dd6c9b1001
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 19:19:00.1987
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B8+2w7bIk210q0TpbxxD17oubjfwrsCWCySw1fOQQAZEK+ktK5cLdzcY6spAV2UYJnAJUaD3Ej5+wNJEopQpUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8889
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <174301523991.2716417.14351851624098585706.robh@kernel.org>
+In-Reply-To: <174301523991.2716417.14351851624098585706.robh@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 26 Mar 2025 19:21:03 +0000
+X-Gm-Features: AQ5f1Jp6yjmSyKSnpYoXWKYVnLBzGIWh9gTSXr8OSv020P_GOH986D8KqbvLGlA
+Message-ID: <CA+V-a8tBGdAFoUW1Dt2wZTeQBcVts-CGc9DgC24uvtFSfoUFeA@mail.gmail.com>
+Subject: Re: [PATCH 00/15] Add support for Renesas RZ/V2N SoC and EVK
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-serial@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Conor Dooley <conor+dt@kernel.org>, 
+	Will Deacon <will@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Return -EBUSY when using %SCX_PICK_IDLE_CORE with scx_select_cpu_dfl()
-if a fully idle SMT core cannot be found, instead of falling back to
-@prev_cpu, which is not a fully idle SMT core in this case.
+Hi Rob,
 
-Fixes: c414c2171cd9e ("sched_ext: idle: Honor idle flags in the built-in idle selection policy")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext_idle.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Mar 26, 2025 at 7:11=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+>
+> On Wed, 26 Mar 2025 14:39:30 +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > This patch series adds initial support for the Renesas RZ/V2N (R9A09G05=
+6)
+> > SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+> > microprocessor (MPU) designed for power-efficient AI inference and
+> > real-time vision processing. It features Renesas' proprietary AI
+> > accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+> > it ideal for applications such as Driver Monitoring Systems (DMS),
+> > industrial monitoring cameras, and mobile robots.
+> >
+> > Key features of the RZ/V2N SoC:
+> >   Processing Power:
+> >     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computin=
+g
+> >     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+> >     - 1.5MB on-chip SRAM for fast data access
+> >     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+> >
+> >   AI and Vision Processing:
+> >     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+> >     - Arm Mali-C55 ISP (optional) for image signal processing
+> >     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+> >
+> >   High-Speed Interfaces:
+> >     - PCIe Gen3 (2-lane) 1ch for external device expansion
+> >     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+> >     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+> >     - Gigabit Ethernet (2 channels) for network communication
+> >
+> >   Industrial and Automotive Features:
+> >     - 6x CAN FD channels for automotive and industrial networking
+> >     - 24-channel ADC for sensor data acquisition
+> >
+> > LINK: https://tinyurl.com/renesas-rz-v2n-soc
+> >
+> > The series introduces:
+> > - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pi=
+nctrl).
+> > - RZ/V2N SoC identification support.
+> > - Clock and pinctrl driver updates for RZ/V2N.
+> > - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+> > - Enabling RZ/V2N SoC support in `arm64 defconfig`.
+> >
+> > These patches have been tested on the RZ/V2N EVK with v6.14,
+> > logs can be found here https://pastebin.com/8i3jgVby
+> >
+> > Cheers,
+> > Prabhakar
+> >
+> > Lad Prabhakar (15):
+> >   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants
+> >   dt-bindings: soc: renesas: Document RZ/V2N EVK board
+> >   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+> >   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+> >   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+> >   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+> >   dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
+> >   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+> >   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part numbe=
+r
+> >   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+> >   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+> >   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+> >   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+> >   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+> >   arm64: defconfig: Enable Renesas RZ/V2N SoC
+> >
+> >  .../bindings/clock/renesas,rzv2h-cpg.yaml     |   5 +-
+> >  .../devicetree/bindings/mmc/renesas,sdhi.yaml |   4 +-
+> >  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +
+> >  .../bindings/serial/renesas,scif.yaml         |   1 +
+> >  .../soc/renesas/renesas,r9a09g057-sys.yaml    |   1 +
+> >  .../bindings/soc/renesas/renesas.yaml         |  15 +
+> >  arch/arm64/boot/dts/renesas/Makefile          |   2 +
+> >  arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 264 ++++++++++++++++++
+> >  .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 115 ++++++++
+> >  arch/arm64/configs/defconfig                  |   1 +
+> >  drivers/clk/renesas/Kconfig                   |   5 +
+> >  drivers/clk/renesas/Makefile                  |   1 +
+> >  drivers/clk/renesas/r9a09g056-cpg.c           | 152 ++++++++++
+> >  drivers/clk/renesas/rzv2h-cpg.c               |  18 +-
+> >  drivers/clk/renesas/rzv2h-cpg.h               |   1 +
+> >  drivers/pinctrl/renesas/Kconfig               |   1 +
+> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  36 ++-
+> >  drivers/soc/renesas/Kconfig                   |  10 +
+> >  drivers/soc/renesas/Makefile                  |   1 +
+> >  drivers/soc/renesas/r9a09g056-sys.c           | 107 +++++++
+> >  drivers/soc/renesas/rz-sysc.c                 |   3 +
+> >  drivers/soc/renesas/rz-sysc.h                 |   1 +
+> >  .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  24 ++
+> >  .../pinctrl/renesas,r9a09g056-pinctrl.h       |  30 ++
+> >  24 files changed, 790 insertions(+), 10 deletions(-)
+> >  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.=
+dts
+> >  create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
+> >  create mode 100644 drivers/soc/renesas/r9a09g056-sys.c
+> >  create mode 100644 include/dt-bindings/clock/renesas,r9a09g056-cpg.h
+> >  create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g056-pinct=
+rl.h
+> >
+> > --
+> > 2.49.0
+> >
+> >
+> >
+>
+>
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>
+>   pip3 install dtschema --upgrade
+>
+>
+> This patch series was applied (using b4) to base:
+>  Base: attempting to guess base-commit...
+>  Base: tags/next-20250326 (best guess, 15/18 blobs matched)
+>
+> If this is not the correct base, please add 'base-commit' tag
+> (or use b4 which does this automatically)
+>
+> New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/renesas=
+/' for 20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com:
+>
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000:=
+ 'interrupt-controller' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000:=
+ '#interrupt-cells' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+>
+>
+As mentioned in patch 13/15 [0] the above warnings are expected this
+is because as part of the initial support, the ICU has not been added
+yet. The interrupt-related properties will be added to the pinctrl
+node along with ICU support.
 
-diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
-index 52c36a70a3d04..45061b5843806 100644
---- a/kernel/sched/ext_idle.c
-+++ b/kernel/sched/ext_idle.c
-@@ -544,7 +544,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
- 		 * core.
- 		 */
- 		if (flags & SCX_PICK_IDLE_CORE) {
--			cpu = prev_cpu;
-+			cpu = -EBUSY;
- 			goto out_unlock;
- 		}
- 	}
--- 
-2.49.0
+[0] https://lore.kernel.org/all/20250326143945.82142-14-prabhakar.mahadev-l=
+ad.rj@bp.renesas.com/
 
+Cheers,
+Prabhakar
 
