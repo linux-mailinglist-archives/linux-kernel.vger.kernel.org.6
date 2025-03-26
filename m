@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-577604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DF7A71F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:42:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17AEA71F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68A4189E431
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1F73BF7DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CDE266B67;
-	Wed, 26 Mar 2025 19:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D633F2673A1;
+	Wed, 26 Mar 2025 19:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="opK+3mJE"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="StOcjs8Q"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446C5266EE6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AC266F1B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017846; cv=none; b=ksKOGYVM0WHFYxoQyD/ypeu2DUhYsAVVkKDSly352yyFq8jn7HR0ZuYOZCFdtMhNHjxA3B3z10fzMyUPeP028wxJazE7UwDF1MzBX5KwV8ATuG4l3wNPspedOBA74+a+pZClcMiwO1gpi6AD12Fo7LgOwk/k5Z4epJ1Un+Mrom8=
+	t=1743017849; cv=none; b=eDH1+xjNSEk1AVpVGW/ZTQ24wlWUUJwTLufJ2HFbB7bGUcdrYK5dGTa3pIzQeSSgr0nW3UHBQo1UqpzNBAiBrsQfDeKFprQYqUSi6HFeDe0yxjd+gHXYe8LHdCWuG7lOVp0+2i0oEF0i3zhVxogV4UoDkvC4YYZ5dQrG8hoZB+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743017846; c=relaxed/simple;
-	bh=3Ye1q7YXzWoF7O3oHOkWLZxhE5yQL9AFie+PfckvtmQ=;
+	s=arc-20240116; t=1743017849; c=relaxed/simple;
+	bh=loAUSq0Aq87olV/rGnT8LR/81Gpuj4/ZkhLvLAh+RMc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=esCpZ85aoIHrjz/EUl/gsIYlgQCOM0mLda1AtVFg+eRWkizzyG+NgVkfayiB8iDJD4nV0n6U2HPpKukme8ZOhqUJ6W1xUxdaHbxQqZgq0sH0qlbPtUVM+O8efYMdY+kS/jKTmEKIgjuZY2Up0v8HHZUbpadac/R6l+NKLSoYSok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=opK+3mJE; arc=none smtp.client-ip=91.218.175.184
+	 MIME-Version; b=G7soHL3HIAiv+yS5NWSb8B/aftbmQziMj9+2LqmguF/FsP3G1VSMam8+0rD629975SzbFm6t7r9pTiCTrm1IeU9jT429x/T24XUxyJROn4FRW+8X1HJpzj/4DXaqsyq+zLitZRjLWmbKcqsoCJ+wfzAkGtdTkBlVg3Jgs9BFd0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=StOcjs8Q; arc=none smtp.client-ip=91.218.175.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743017843;
+	t=1743017845;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I/LsgZIA22WkXYrCYCVpKZhtRhnxjqvdS7qU44Fmjps=;
-	b=opK+3mJE1ZGDfvX+MwBDXgRgp8ecNzDd5EEzTLb6Ha49rhEhfGmfOPUM1QAfTiFA3NYAhP
-	k181UbE8UbS925MKFmnls0mnOvcYpD/PB8fMgIXWGVBmxkGKui/92Q1QvfQpvNw3xG1YBK
-	qVVuITgMIrHocGog332HPuzWGNBXt70=
+	bh=LtfzDuEN4GEuy4ZNyh+58E8l9WpCgtIrX1y6M8KtoeE=;
+	b=StOcjs8Q3VKA37jffPg31SfE3GDTKGPe1ycDSwv1dyFxjECD5bSrPQmIniYPtyAmzxcWjz
+	7IhRb4J5Dih85rdnW7dPkbHVz/e7/uvB1p0WuKJnt+hkApJ/wZ8XoHQsQcQ/tFySWIZkNM
+	kfQ60onkTb2usnIbFdx2b4zcayC8bxU=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -53,9 +53,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [RFC PATCH 16/24] KVM: x86/mmu: Allow skipping the gva flush in kvm_mmu_invalidate_addr()
-Date: Wed, 26 Mar 2025 19:36:11 +0000
-Message-ID: <20250326193619.3714986-17-yosry.ahmed@linux.dev>
+Subject: [RFC PATCH 17/24] KVM: nSVM: Flush both L1 and L2 ASIDs on KVM_REQ_TLB_FLUSH
+Date: Wed, 26 Mar 2025 19:36:12 +0000
+Message-ID: <20250326193619.3714986-18-yosry.ahmed@linux.dev>
 In-Reply-To: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
 References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -67,54 +67,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Refactor a helper out of kvm_mmu_invalidate_addr() that allows skipping
-the gva flush. This will be used when an invalidation is needed but the
-GVA TLB translations that require invalidation are not of the current
-context (e.g. when emulating INVLPGA for L1 to flush L2's translations).
+KVM_REQ_TLB_FLUSH is used to flush all TLB entries for all contexts
+(e.g. in kvm_flush_remote_tlbs()). Flush both L1 and L2 ASIDs in
+svm_flush_tlb_all() to handle it appropriately.
 
-No functional change intended.
+This is currently not required as nested transitions do unconditional
+TLB flushes, but this is a step toward eliminating that.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- arch/x86/kvm/mmu/mmu.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/kvm/svm/nested.c |  1 -
+ arch/x86/kvm/svm/svm.c    | 10 ++--------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 4a72ada0a7585..e2b1994f12753 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -6355,15 +6355,15 @@ static void kvm_mmu_invalidate_addr_in_root(struct kvm_vcpu *vcpu,
- 	write_unlock(&vcpu->kvm->mmu_lock);
+diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+index c336ab63c6da3..56a4ff480bb3d 100644
+--- a/arch/x86/kvm/svm/nested.c
++++ b/arch/x86/kvm/svm/nested.c
+@@ -491,7 +491,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
+ 	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
+ 	 * things to fix before this can be conditional:
+ 	 *
+-	 *  - Flush TLBs for both L1 and L2 remote TLB flush
+ 	 *  - Honor L1's request to flush an ASID on nested VMRUN
+ 	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
+ 	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index fb6b9f88a1504..4cad1085936bb 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4064,14 +4064,8 @@ static void svm_flush_tlb_all(struct kvm_vcpu *vcpu)
+ 	if (WARN_ON_ONCE(svm_hv_is_enlightened_tlb_enabled(vcpu)))
+ 		hv_flush_remote_tlbs(vcpu->kvm);
+ 
+-	/*
+-	 * Flush only the current ASID even if the TLB flush was invoked via
+-	 * kvm_flush_remote_tlbs().  Although flushing remote TLBs requires all
+-	 * ASIDs to be flushed, KVM uses a single ASID for L1 and L2, and
+-	 * unconditionally does a TLB flush on both nested VM-Enter and nested
+-	 * VM-Exit (via kvm_mmu_reset_context()).
+-	 */
+-	svm_flush_tlb_asid(vcpu, is_guest_mode(vcpu));
++	svm_flush_tlb_asid(vcpu, false);
++	svm_flush_tlb_asid(vcpu, true);
  }
  
--void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
--			     u64 addr, unsigned long roots)
-+static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-+				      u64 addr, unsigned long roots, bool gva_flush)
- {
- 	int i;
- 
- 	WARN_ON_ONCE(roots & ~KVM_MMU_ROOTS_ALL);
- 
- 	/* It's actually a GPA for vcpu->arch.guest_mmu.  */
--	if (mmu != &vcpu->arch.guest_mmu) {
-+	if (gva_flush && mmu != &vcpu->arch.guest_mmu) {
- 		/* INVLPG on a non-canonical address is a NOP according to the SDM.  */
- 		if (is_noncanonical_invlpg_address(addr, vcpu))
- 			return;
-@@ -6382,6 +6382,12 @@ void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 			kvm_mmu_invalidate_addr_in_root(vcpu, mmu, addr, mmu->prev_roots[i].hpa);
- 	}
- }
-+
-+void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-+			     u64 addr, unsigned long roots)
-+{
-+	__kvm_mmu_invalidate_addr(vcpu, mmu, addr, roots, true);
-+}
- EXPORT_SYMBOL_GPL(kvm_mmu_invalidate_addr);
- 
- void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva)
+ static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
 -- 
 2.49.0.395.g12beb8f557-goog
 
