@@ -1,53 +1,68 @@
-Return-Path: <linux-kernel+bounces-577459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22628A71D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:38:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7EEA71D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2203BE352
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:35:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A6BC7A3FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5CF23BF8F;
-	Wed, 26 Mar 2025 17:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9G9Ab8A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4637E21A422;
+	Wed, 26 Mar 2025 17:36:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19921F4E5F;
-	Wed, 26 Mar 2025 17:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036AA1F4190
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010491; cv=none; b=bnE0CZdWUmzbQ3A/TP1z4LdUKZLRX/yKiO2oKLSA+sHp6unvIgyWda339i4c6JixtUt1gwWNjp2RNEjtk4avEWkqqnm1OxmLa3qpm8DaYMM3BAfBxChr741fSbGHbU4GLiLMLjCBWZJQ8mAw+IZK4b2WG0ABY7W6abTVmbc/32s=
+	t=1743010595; cv=none; b=ui3Y+Nc0Ej/El4IoTx+BQefbfsKrzJtakFilE3Yf8PfCUq7ZjtrY8NbRt3a84gETLHbcv0vO0bC4qYfEUYLOzCSQ0T8+ofmnuJUAXcmC+dYxOt3ny5fxfwRB5yg5QL9e5lg1kSYi1GPLXhnV+Oqs+7HkOGYH4utFuUKioL1wNWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010491; c=relaxed/simple;
-	bh=IA3VVan9JDdi0Jpz7trFZPJfMehAmi+QTlVRkh32LMg=;
+	s=arc-20240116; t=1743010595; c=relaxed/simple;
+	bh=1VrlRkek0WqK4HdrG8gRnbeBPzHFXN/BnW7I901OUcI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aqx+EBee5X8GN5HiiJr3EVA798Ljz1aOXPkR5szre+B9OLcRwXCboVEfnYyZbqkcTltdedyadMDPs6A4XrrCqaSJP6uay2FxLg5ZH8PDYCyMRaTtw0NPJRdpNEE8rXDHNZ6UaBCiefl06aMA3n3fhAm8XZZTWHL+knk/SLoPwV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9G9Ab8A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA682C4CEE2;
-	Wed, 26 Mar 2025 17:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743010491;
-	bh=IA3VVan9JDdi0Jpz7trFZPJfMehAmi+QTlVRkh32LMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9G9Ab8AQPFVzzyvNBBDchidmLn9AkStmMEEnYnF3cWD1TaD4N/SEymbp1W9V4HST
-	 VXS0OV/ohp24Ogt72Kb03yZj19j19JvE91djE7NEXZ9y7Xo9XRb0c0fxkVUXxnjRYm
-	 MFZqYydRmDcLVv+cVue5ooPEbOxTqkNL/xnkDn8zVbepNNf589SBiSecErssC1Tq2R
-	 RgU3THGjnVcDhXwqXRKLmLdfBtvzk4ASym8EOv/iDkShOPuT7b6KxEqzF5r96TSW3j
-	 wDawGcEgevwF39vy7xPaIUudvRAlvi9Odfzd9qPutOsxd9yCmkCLzHFOqRF+Hplclt
-	 wEADlLnYWkXxg==
-Date: Wed, 26 Mar 2025 17:34:47 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spi: spidev: Add compatible for LWE's btt device
-Message-ID: <83685ed2-f41a-456c-8a22-0ac069304386@sirena.org.uk>
-References: <20250326174228.14dfdf8c@wsk>
- <20250326172445.2693640-1-lukma@denx.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sELIflMxL97fnJID1JmwqowU5zlU7jNLSrIR/gpqA4ZyjKE12oQ/SfwqOFmxd0DmZOO7gu8KSUvaw0zhRZyVUiD1ghZ88gRBb0LDFVpaaKQf/W74rFTgFWpQ/yKeSltuS9by77JWmw5iTMi7zm3+zEsa/18XkBxJ6uKgDiKNSlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1txUfR-0000ck-SV; Wed, 26 Mar 2025 18:35:53 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1txUfO-001nHx-0b;
+	Wed, 26 Mar 2025 18:35:50 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id B6C7C3E7719;
+	Wed, 26 Mar 2025 17:35:49 +0000 (UTC)
+Date: Wed, 26 Mar 2025 18:35:47 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
+Message-ID: <20250326-utopian-mega-scallop-5f6899-mkl@pengutronix.de>
+References: <20250225081644.3524915-1-a0282524688@gmail.com>
+ <20250225081644.3524915-5-a0282524688@gmail.com>
+ <20250317-outrageous-helpful-agama-39476f-mkl@pengutronix.de>
+ <CAOoeyxVF9baa8UKJKWcbTLzvMo3Ma=GRCbdnBSoGOw0Lk5j4sA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,46 +70,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zKe5HkPWNi4XHZkV"
+	protocol="application/pgp-signature"; boundary="3fo4gps22dugmrwp"
 Content-Disposition: inline
-In-Reply-To: <20250326172445.2693640-1-lukma@denx.de>
-X-Cookie: To err is humor.
+In-Reply-To: <CAOoeyxVF9baa8UKJKWcbTLzvMo3Ma=GRCbdnBSoGOw0Lk5j4sA@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
---zKe5HkPWNi4XHZkV
-Content-Type: text/plain; charset=us-ascii
+--3fo4gps22dugmrwp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
+MIME-Version: 1.0
 
-On Wed, Mar 26, 2025 at 06:24:45PM +0100, Lukasz Majewski wrote:
+On 26.03.2025 10:37:11, Ming Yu wrote:
+> Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2025=E5=B9=B43=E6=9C=881=
+7=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=888:01=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> > > +static int nct6694_can_start(struct net_device *ndev)
+> > > +{
+> > > +     struct nct6694_can_priv *priv =3D netdev_priv(ndev);
+> > > +     const struct can_bittiming *d_bt =3D &priv->can.data_bittiming;
+> > > +     const struct can_bittiming *n_bt =3D &priv->can.bittiming;
+> > > +     struct nct6694_can_setting *setting __free(kfree) =3D NULL;
+> > > +     const struct nct6694_cmd_header cmd_hd =3D {
+> > > +             .mod =3D NCT6694_CAN_MOD,
+> > > +             .cmd =3D NCT6694_CAN_SETTING,
+> > > +             .sel =3D ndev->dev_port,
+> > > +             .len =3D cpu_to_le16(sizeof(*setting))
+> > > +     };
+> > > +     int ret;
+> > > +
+> > > +     setting =3D kzalloc(sizeof(*setting), GFP_KERNEL);
+> > > +     if (!setting)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     setting->nbr =3D cpu_to_le32(n_bt->bitrate);
+> > > +     setting->dbr =3D cpu_to_le32(d_bt->bitrate);
+> >
+> > I just noticed one thing that needs clarification/documentation.
+> >
+> > You have nct6694_can_bittiming_nominal_const and
+> > nct6694_can_bittiming_data_const, but only pass the bit rates to your
+> > device.
+> >
+> > Do the bit timing const really reflect the HW limitations of your
+> > device?
+> >
+> > Are you sure your device uses the same algorithm as the kernel and
+> > calculates the same bit timing parameters as the kernel, so that the
+> > values given to the user space reflects the bit timing parameter chosen
+> > by your device?
+> >
+>=20
+> Originally, I only intended to provide NBR and DBR for user
+> configuration. In the next patch, I will add code to configure
+> NBTP(Nominal Bit Timing Prescaler) and DBTP(Data Bit Timing Prescaler)
+> based on the setting of nct6694_can_bittiming_nominal_const and
+> nct6694_can_bittiming_data_const.
 
-> Changes for v2:
-> - Use 'lwn' vendor prefix instead of 'lwe' (as the former one is already
->   well used in Linux sources).
+Sounds good, but this doesn't answer my questions:
 
-Are you sure?
+You have nct6694_can_bittiming_nominal_const and
+nct6694_can_bittiming_data_const, but only pass the bit rates and the
+prescaler to your device.
 
-Note also that as previously mentioned I expect to see a binding
-document update too which doesn't appear to be here.
+Do the bit timing const really reflect the HW limitations of your
+device?
 
-Please don't send new patches in reply to old patches or serieses, this
-makes it harder for both people and tools to understand what is going
-on - it can bury things in mailboxes and make it difficult to keep track
-of what current patches are, both for the new patches and the old ones.
+Are you sure your device uses the same algorithm as the kernel and
+calculates the same bit timing parameters as the kernel, so that the
+values given to the user space reflects the bit timing parameter chosen
+by your device?
 
---zKe5HkPWNi4XHZkV
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--3fo4gps22dugmrwp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfkOrcACgkQJNaLcl1U
-h9Demgf7BCHSQ8IOd6alX4Cu/7qDm1yKbDRxbS0CAoI+dXZjlTYfZQfuzY8NJ9oI
-BVHT8R4eBrkP8huveZEo48nClXhIjz+wKqLvS13bi7ctmRdseM7RigGbJE2bqtVT
-JXIDNLDLDqa1MzT6IeZ4gPj/H25GwG2vXRVMVxMqxtMw3jEWXk/tmv//pcIt61H4
-8g+ACcTqZDDFJGOcvq7W37GEE9eZ4mdbUqAsaVg/V0JuJENurwCEBFoavBtmdP/L
-PTpnHDroKR5ezt0S/qAXaQPpH219+0A/pwOFDR98z6WNCOWeNmlPb9d8pbBPF0FW
-bVjTW4ITiHcdP7bTvLMG6YY/uOGa0A==
-=en6H
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfkOvEACgkQDHRl3/mQ
+kZzpHQgAgGRAJKZUC90pxD/IpTMDutPBbTPEyhq69hM419fjym5rJ4HxuM6meZHF
+MCGE5zEy8fsC05K8QdtwmiAmvaGYg8b/Ky/4MTwj0R5AjFqfWFghJJ5hrypphQzB
+ZKiyvcnkIAxTgkEZlMg9MBQf+OdN5Q3Z/nHLPvfk0OHrsz44UqxPAfWuMI6HWoaN
+RTSbxLxlKoAWEDTzmyT6YAyehq42fVSdsC+FK82lQmloaAkq7dkQAUmaJn1pTEHL
++ea6VayK34n+e3kzz2OkTDrOIvJwDSdX0lMrIT9A97ju+hgzdQSY839BL5xOvDEe
+9TFcEhv92TjknvV5PdmFfiwnNLDNHg==
+=T1kB
 -----END PGP SIGNATURE-----
 
---zKe5HkPWNi4XHZkV--
+--3fo4gps22dugmrwp--
 
