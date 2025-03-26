@@ -1,198 +1,168 @@
-Return-Path: <linux-kernel+bounces-576821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E386DA714C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:26:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CD5A714D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02BF16DAAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70291895B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDA7191461;
-	Wed, 26 Mar 2025 10:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1261B87C9;
+	Wed, 26 Mar 2025 10:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oK65oWsJ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XPPhUaHM"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997DD1B0F3C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A11A8405
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984772; cv=none; b=L+VYYhhmfPXdzsrcUq767+KYahgu6idAjlIZVYMMBgikypOyg611kwdUNKOy7RZRDYtOc6hA9aBg0YNXBxlWbmX9ldVJPavsWdnK3xLZvCd4sVYx4XtXA+2sT6yfPoL/JVvjjnPCjwWvWyiwkh9bIcaoxpY4nGMKHJwn0y7JmqU=
+	t=1742984772; cv=none; b=Mt9qL7ev24VEaO/B9PQavi2qiL34VJ4yrEB0JD3wkaxaiYR1onL4kNNArXSDvLysCNofZHFno7E0JjHcVPxYZHKSVSIggRmq6+8s0JUxRy0+9EluNFfvErOnfU8AmSOBswmL8Mb5mTl4s/ib4ZtqOzIDVaWkvYCTf3jgAwt8f+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742984772; c=relaxed/simple;
-	bh=MM12JQn2wzPk2C0uiAR4+c0nN2f2FV/rP/aPhZgTdNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKDqw+4oe2ABTdcj9Sx6YRyBPCeGjpyFPGFtDJ7QhspVEyGscMkRVjIL8PK3MmDDCLP5QMd+UKoKOU/zEy7JtCzHnmkSt1itglb987hYRprTn3u06Y+nhYVvx5kTgp9/ZA/lnhIv2zRq/6fZPNUix6MVbVV0oMDFfHcn90oDZmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oK65oWsJ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=McOHGzb5sQRovXsRNn1qB5Me1cYEx0yWEIKpIsq3eZI=; b=oK65oWsJ8tK2k9oVpnUIRGh6i7
-	ywQwgCMLq8U6OfHwkM1Ugty0rqxnAwFxYcgQm4KDF+iSU6BIZxROvEXcJ91jMLS+ANQQtkcZdP3w8
-	Y0CqCr3WzpbTfk33GgScgPk7GgzI9ZKUuP1gc1mH56/rz/xzOoUi8EoMRMmjrXk/ZWoY80XRq2URh
-	pLSz2iGREMyLi0XOgxQiO8R7bjU8QkoCzYKfIO82MVPjwurV93KU8Epwqa/EEQ2LIrnnDRpc2KiH7
-	wYULwteuRCUhdNdR3qRAVElO7PxKyxBa4rF14gmBKSsfA8ulGPFs0+iioSTqmKgFM877RypdrFRdG
-	pmp0jBdQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txNxK-00000005mj7-302Y;
-	Wed, 26 Mar 2025 10:25:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F085C3003C4; Wed, 26 Mar 2025 11:25:53 +0100 (CET)
-Date: Wed, 26 Mar 2025 11:25:53 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	tim.c.chen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
-	gautham.shenoy@amd.com, mingo@kernel.org, kprateek.nayak@amd.com,
-	yu.chen.surf@foxmail.com
-Subject: Re: [RFC][PATCH] sched: Cache aware load-balancing
-Message-ID: <20250326102553.GA12071@noisy.programming.kicks-ass.net>
-References: <20250325120952.GJ36322@noisy.programming.kicks-ass.net>
- <4cd8ba54-8b9e-4563-8fbc-1d6cd6699e81@intel.com>
- <20250326093841.GC25239@noisy.programming.kicks-ass.net>
+	bh=VmZW3dYOkE+WcIdW+rTFDYurYECcNeudvlHZ1LESI8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FwTKJ35wTsCKi3fBgAsq+IWmjdjcoSgc2duZWUdod10vNraDB41mhEkgbT+3JtCvBzQN3YWF0myukBSfM1+myx4NPDVxd6nM59pkhLp1FfF6mIRB384v+8PcpEYuqC+QImPykXhHxrGrHuihKAg5I8Ib6XgLoXwq00PcTnqQdWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XPPhUaHM; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so63824295e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742984769; x=1743589569; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=98hcAito2MMtQTY1iL6KWHxMYRyo687ywiMmqIh+p7A=;
+        b=XPPhUaHMMHildxl7E/pGbg3LqEdcenwWvdjeuLPj1f8OT7a6BYtjs2bu24XtbAnFFY
+         s9+jVhzzy9BFkI3JMO+QBwfdpCUz6XYuPUqDbZPhh1GKp+3K27W5+fCppeyI/7od9GV5
+         scsDjSsDhiRkFPWlWeter1dzRKgY0BJ24tX0Zakn7d3gRB/jl78ONFJba5+ry4db+fqB
+         w+6iIB3FLjU3RMJ99bkzWnP317J2KjottjvJYV3+hj66I0kjq40id1xBzpo5I2EkX5wd
+         w/9qMcNz3WXfeWm2gcUcFe6Pwo2OXAUJ2wzYK+dfZXPPfP1ln1vMQLy1bUed15eH795l
+         DSVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742984769; x=1743589569;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=98hcAito2MMtQTY1iL6KWHxMYRyo687ywiMmqIh+p7A=;
+        b=JqfMAMrP3KDlTn9ae30bJRufJ8wtu5AU86gp54UnwRAk8LYG7zABRi9R0RJw5tpGY/
+         dp+l2yvr20BZOU/KjKt46gKEcYR1k8m5ngmXWP5XChHEYS4kukdkhkWHpc/2Vxa8DfhS
+         BFMA6e1Kvr6qyzp0meo++ZFH0jsag4/hnf0wzNYmV3OYQIEWW+sP/eBHJNWI1bMIGjJa
+         cjfFYTcse1aIYL1+GyCyT25AUR4jeR3BZHLqXgmETC0U6I2iQigj82CB3O1j5WBypvTS
+         VVeIBlDYKH2CgFlKrIX6QgpcokT0BFFJsNw+cMLyMbcYcui4XA/JF9Eay/+Dm4KqPMMi
+         I5Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp9df03tpplqlSnzqTWszojsbTg0uoLsY6Z+bEMd4xmiZX87klB88z2hjma28M3ryF2bh5obXNrhnES0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPUZg7iaq5pvHH53SMk9rpgi+6o4yJek6Bh2mIv0auwSDgL8qz
+	11RSuK6+M06Cy0gI3hGCST0+X+bP/rQM5FsoPlCWWapvoQF377XMfRk+Tt3OQxMvck03GilZPrq
+	IxjM=
+X-Gm-Gg: ASbGncv7BP9GpqojDPzrOQjWnkckhdEZonBPJ+R9YeMH3bza/Un16gbv8bMvDyOc2ja
+	RYcjFksTfudepteqKP9C78H+uI7xRPwlaU/+ZwRH2ZZXQBAnv8dL6JYLh8jtM1fP+oX7T95+Nma
+	/IPLnZeVhjjga7YBmoHCBWtrY0mQq0wH98ma7Q0nU26mta+Kxl35mbXxSAUPXb4dbtyX6eofVEL
+	g6t1suj1PKSOCqTJ0//t7hU6Uyg86rRUNNvnxwKX5lAb6wgk09KRvg1VXihdOarwKhCGJhAX3Bx
+	0A82d7uwsc4HBzRatneusUxZxLVxqxyDc0kjM/oY8KJ0q5RgBYzWN8QhlSHV+e2y+Pb8TBuw3go
+	=
+X-Google-Smtp-Source: AGHT+IFNIgbM5SxndZJ31+RxAuvmVblk7zrUQEK1IUI9dhFX9c6aTpE7fdxiqMV2lHxT/eOf35nkUw==
+X-Received: by 2002:a05:600c:c0d:b0:43d:738:4a9 with SMTP id 5b1f17b1804b1-43d50a33d03mr154416225e9.27.1742984768921;
+        Wed, 26 Mar 2025 03:26:08 -0700 (PDT)
+Received: from [192.168.1.38] (i5E863BED.versanet.de. [94.134.59.237])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6651sm16436745f8f.75.2025.03.26.03.26.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 03:26:08 -0700 (PDT)
+Message-ID: <5060c248-3160-4d52-81ec-8e06bbd246bf@linaro.org>
+Date: Wed, 26 Mar 2025 11:26:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326093841.GC25239@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
+ syna,pdt-fallback-desc
+To: Krzysztof Kozlowski <krzk@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
+ <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
+ <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
+ <3c5e12fc-eb91-46e8-a558-9896f0bdcab4@ixit.cz>
+ <b3a5ec89-0125-4b01-8cca-69b9985b6089@kernel.org>
+ <48bb62eb-8aa9-465c-9e77-c0b375df0c9f@linaro.org>
+ <492da0ab-3a5c-4ee9-bc37-d66b007ffd81@kernel.org>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <492da0ab-3a5c-4ee9-bc37-d66b007ffd81@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 26, 2025 at 10:38:41AM +0100, Peter Zijlstra wrote:
 
-> Nah, the saner thing to do is to preserve the topology averages and look
-> at those instead of the per-cpu values.
+
+On 3/26/25 07:57, Krzysztof Kozlowski wrote:
+> On 25/03/2025 14:23, Caleb Connolly wrote:
+>>
+>>
+>> On 3/25/25 08:36, Krzysztof Kozlowski wrote:
+>>> On 24/03/2025 19:00, David Heidelberg wrote:
+>>>> On 10/03/2025 10:45, Krzysztof Kozlowski wrote:
+>>>>> On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
+>>>>>> From: Caleb Connolly <caleb.connolly@linaro.org>
+>>>>>>
+>>>>>> This new property allows devices to specify some register values which
+>>>>>> are missing on units with third party replacement displays. These
+>>>>>> displays use unofficial touch ICs which only implement a subset of the
+>>>>>> RMI4 specification.
+>>>>>
+>>>>> These are different ICs, so they have their own compatibles. Why this
+>>>>> cannot be deduced from the compatible?
+>>>>
+>>>> Yes, but these identify as the originals.
+>>>
+>>>
+>>> It does not matter how they identify. You have the compatible for them.
+>>> If you cannot add compatible for them, how can you add dedicated
+>>> property for them?
+>>
+>> Hi Krzysztof,
+>>
+>> There are an unknown number of knock-off RMI4 chips which are sold in
+>> cheap replacement display panels from multiple vendors. We suspect
+>> there's more than one implementation.
+>>
+>> A new compatible string wouldn't help us, since we use the same DTB on
+>> fully original hardware as on hardware with replacement parts.
+>>
+>> The proposed new property describes configuration registers which are
+>> present on original RMI4 chips but missing on the third party ones, the
+>> contents of the registers is static.
 > 
-> Eg. have task_cache_work() compute and store averages in the
-> sched_domain structure and then use those.
+> 
+> So you want to add redundant information for existing compatible, while
+> claiming you cannot deduce it from that existing compatible... Well,
+> no.. you cannot be sure that only chosen boards will have touchscreens
+> replaced, thus you will have to add this property to every board using
+> this compatible making it equal to the compatible and we are back at my
+> original comment. This is deducible from the compatible. If not the new
+> one, then from old one.
 
-A little something like so perhaps ?
+hmm I see, so instead we should add a compatible for the specific 
+variant (S3320 or something) of RMI4 in this device and handle this in 
+the driver? I think that makes sense.
 
-This immediately also gives the information required for clusters and
-finding the best LLC of a Node and things like that.
+> 
+> Best regards,
+> Krzysztof
 
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -82,6 +82,9 @@ struct sched_domain_shared {
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
- 	int		nr_idle_scan;
-+
-+	unsigned long   sum_occ;
-+	unsigned long	avg_occ;
- };
- 
- struct sched_domain {
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1286,8 +1286,8 @@ static void task_cache_work(struct callb
- 	struct task_struct *p = current;
- 	struct mm_struct *mm = p->mm;
- 	unsigned long m_a_occ = 0;
--	int cpu, m_a_cpu = -1;
--	cpumask_var_t cpus;
-+	int m_a_cpu = -1;
-+	int cpu;
- 
- 	WARN_ON_ONCE(work != &p->cache_work);
- 
-@@ -1296,46 +1296,46 @@ static void task_cache_work(struct callb
- 	if (p->flags & PF_EXITING)
- 		return;
- 
--	if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
--		return;
--
- 	scoped_guard (cpus_read_lock) {
--		cpumask_copy(cpus, cpu_online_mask);
- 
--		for_each_cpu(cpu, cpus) {
--			/* XXX sched_cluster_active */
--			struct sched_domain *sd = per_cpu(sd_llc, cpu);
--			unsigned long occ, m_occ = 0, a_occ = 0;
--			int m_cpu = -1, nr = 0, i;
-+		for_each_online_cpu(cpu) {
-+			struct sched_domain *sd;
-+			struct sched_domain_shared *sds;
-+			unsigned long occ;
-+
-+			for_each_domain(cpu, sd) {
-+				if (!(sd->flags & SD_SHARE_LLC))
-+					break;
- 
--			for_each_cpu(i, sched_domain_span(sd)) {
-+				sds = sd->shared;
- 				occ = fraction_mm_sched(cpu_rq(i),
- 							per_cpu_ptr(mm->pcpu_sched, i));
--				a_occ += occ;
--				if (occ > m_occ) {
--					m_occ = occ;
--					m_cpu = i;
--				}
--				nr++;
--				trace_printk("(%d) occ: %ld m_occ: %ld m_cpu: %d nr: %d\n",
--					     per_cpu(sd_llc_id, i), occ, m_occ, m_cpu, nr);
--			}
--
--			a_occ /= nr;
--			if (a_occ > m_a_occ) {
--				m_a_occ = a_occ;
--				m_a_cpu = m_cpu;
-+				sds->sum_occ += occ + 1;
- 			}
-+		}
- 
--			trace_printk("(%d) a_occ: %ld m_a_occ: %ld\n",
--				     per_cpu(sd_llc_id, cpu), a_occ, m_a_occ);
-+		for_each_online_cpu(cpu) {
-+			struct sched_domain *sd;
-+			struct sched_domain_shared *sds;
-+
-+			for_each_domain(cpu, sd) {
-+				if (!(sd->flags & SD_SHARE_LLC))
-+					break;
-+
-+				sds = sd->shared;
-+				if (sds->agg_occ) {
-+					sds->avg_occ = (sds->agg_occ - sd->span_weight) /
-+						       sd->span_weight;
-+					sds->sum_occ = 0;
-+				}
- 
--			for_each_cpu(i, sched_domain_span(sd)) {
--				/* XXX threshold ? */
--				per_cpu_ptr(mm->pcpu_sched, i)->occ = a_occ;
-+				if (sd == per_cpu(sd_llc, cpu)) {
-+					if (sds->avg_occ > m_a_occ) {
-+						m_a_occ = sds->avg_occ;
-+						m_a_cpu = cpu;
-+					}
-+				}
- 			}
--
--			cpumask_andnot(cpus, cpus, sched_domain_span(sd));
- 		}
- 	}
- 
-@@ -1346,8 +1346,6 @@ static void task_cache_work(struct callb
- 		m_a_cpu = -1;
- 
- 	mm->mm_sched_cpu = m_a_cpu;
--
--	free_cpumask_var(cpus);
- }
- 
- void init_sched_mm(struct task_struct *p)
+-- 
+Caleb (they/them)
+
 
