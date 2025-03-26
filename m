@@ -1,89 +1,66 @@
-Return-Path: <linux-kernel+bounces-576844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C57A71515
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:45:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F9EA71517
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 105EB17409F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746AD3B5B65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08AB1C862D;
-	Wed, 26 Mar 2025 10:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3581C8601;
+	Wed, 26 Mar 2025 10:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rf6cLOBm"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IuLIAG44"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDBC1ACEA6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB85A1AE876
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742985929; cv=none; b=BC2Fw3n8cUBGjlp7w2A6PZvLZ042KZ5bVevWOOS6AK7KgWo0imUgoLn2H0ImR2Px3r/QTw7feaogwH5zeozR4jxhhivzIwFccfSY+E+GTV8DTvQTYzAzVRE/C2FMe0f8bmWnpYOArRMbIXOiLCaNczU0GVc5qfXcvNO4Q+ppD4E=
+	t=1742986008; cv=none; b=h0I5EeOpxfES4DfTeT4tqZkmMaDYt/2dZ/nZcIYzdN227JcKt4tdYpA+rYZ/GHJQago6RXR2zrKLTRAIF/UnRfdOE3n1ohbwzl7Jj0jg+KE6Hgnxin0RHRWLTLG419bqVLsa1+sp6Zm+iftRSMVM1NtpmS2U8Ke/FywdHIZKYvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742985929; c=relaxed/simple;
-	bh=TeVLOGY3oC6jCtD+U4GHaV57vwWRjlfcCuYfEofJ1cc=;
+	s=arc-20240116; t=1742986008; c=relaxed/simple;
+	bh=WX4cqTlZEbs9Hwg4nddBqQtyhY2nnkhpxJz/QIbatfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7P6ME54JUMRFwkKjuPOGJzum1t2D7/qDSAk4dNPh9U6uOCcqIpFUAjikCfMHHmNUI9p4y2YihvW4jb/gDqbujdhzwNFM3DSVAyhLMSXz9dNGzQWz0coF6K3+e1pxrrToi0asnaGi56my60rzpEcfeoPhoYWpmyhtq9a1lUUZ/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rf6cLOBm; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf848528aso55511835e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742985926; x=1743590726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sj9IC/ITgYzbYCPda8r17Blt5shGufVre2k2P1fl+Zg=;
-        b=Rf6cLOBm2LT4kG7FUEtbHDMHqRpDu3hUHaVNqmEhDsHYclnqNzEZvb0b0HY1wv26h1
-         6yy2GwKowcvXSgwc4xL/941kLdtbraL1AvOgIe5NhcZ7cxkiYxSa7onBlsRIHVGu24N1
-         DywHjXvpO1oZX0tpiX90KIqbBT1hh/A3BtnjPWUxfNPXfdAcXpTxKdh9aiVL/lTYUWS9
-         k6ONO/nXw5+sGIdQZXjQ1cXxJ0Y8Xm+LMAroGiIREy4qkbQ9LIokB0aeHUVsEnoj26vp
-         NVJPf5TgLbR0suYhEngCWQetLaPHIPo26+ZoN8FQe/4da+0v0LaltsyD6nwVc/+JXrX8
-         LcAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742985926; x=1743590726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sj9IC/ITgYzbYCPda8r17Blt5shGufVre2k2P1fl+Zg=;
-        b=gFPwXd/q+BLid3ea3dbOvjq1IELGa7iNma8yEk5lcqt/7T7gngQdBoMJjP5mtF/5Kh
-         M9ZbjjWkmaxTkniqEbDbyUTLdWDOnJgiR4mVhjTXVaD9p4riblCxhEdLCp4vmEQVzCWf
-         q0EV5Gl1obwuHBdH4dbjjCX1IbjHv+HlggNLutwexwZFNEnFhZN6sQIjOxC0cbQF5zUw
-         slvWfcfGdv54MBwa0hzaUqKHfZGt5MaRropdxXgJDtnbeFEiwEtfbo3IKxPlyCpAoSBC
-         30szTcdJIG65Ech+WownZX2TVlbvlg1g/4AM22Wz3630Qg4wIszGv4HJA4gn70rnvAy9
-         9gvg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3kM/OwT2ZRVkU/OzuwfNiaaRIyvzL3vi/ldzdZ6/8WAKOhviPP+h5+S6F1PdK+dIm1QbymQRR8RRUm7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4+shsHIApb8ZnmaOuQIP1K+UndqDKFTBEw52bTVEcux8Vrppb
-	1sBPcuJc4QDsHeH1DoJAddQ6NJlza2nxWmvH7EegNCGSiGOt4DRb2IUvW/benQ==
-X-Gm-Gg: ASbGnctOCkuv5mgkw/eaKbVeDVO2vBJFvB+Oa5CmmEsfdWFS7L8t4DcVXxFTsomUwea
-	OKGGpYLp9HPFFQQ5Pg5NOlhpxvw6XrHpjrPK7f35DXQ2pykOGy26BxPu2OzUDbZE5ZCV0QI9bc8
-	KW7ot67F0XOOQ8ZuSiStCZ2MLLs9PzOmx9Le+lCA3lrmgZH02SMfaXX23cos2D/1hTugkz4yMpH
-	jGmLvpX4iTw6aA2gZu/b8DiiTKRUYVUGAbMWA39yOGagXjlHomcDU14vCOXSmwZWgHm/vlefFF/
-	/aA9n7t3ejUNRukzFIMvk9wiz8sh1/p8O13+z152inn8r/YAupZUHazIgGi7OlCculzgEOTow0p
-	aYZU=
-X-Google-Smtp-Source: AGHT+IFBLSf5Cc3mFyYZdvuynNJIpSKOy4KRKa6vJr8hwGbWkLycXjgd1M0s6yReqROa/HVWBrx5NA==
-X-Received: by 2002:a05:600c:34cc:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-43d5f8b9236mr144487305e9.3.1742985925530;
-        Wed, 26 Mar 2025 03:45:25 -0700 (PDT)
-Received: from google.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f995611sm16697147f8f.15.2025.03.26.03.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 03:45:24 -0700 (PDT)
-Date: Wed, 26 Mar 2025 10:45:20 +0000
-From: Keir Fraser <keirf@google.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: mops: Do not dereference src reg for a set
- operation
-Message-ID: <Z-PawJpGJRcSTMnc@google.com>
-References: <20250326070255.2567981-1-keirf@google.com>
- <Z-PWZ98oNna6nVu1@J2N7QTR9R3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NP1mX+ZVm1aZrpG+cyPA4e8/hNcQ2ArHmjJ7I844+opHywT4QZRdsnUVeVht3tZp6HqQHzfzy6hSk5ak7RxLWzev4v0FCzqqa1AzzykGayza0SCRKxjmJ+jWLGQhe4iTWTlLgj3kV1YLXRoUfdoPhfHF8RPJKYGrglcBzMtWPJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IuLIAG44; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=64NlIFTX6igdIKyqbO9/7Y2I1xjU9JuHdqRdG30MxD0=; b=IuLIAG44znVPcN+VS/AZf2GTqR
+	kBcUc8USFFgteOfJCzQCRuZTgjFhq2INL0pr5K3ccjqtQqp4KdagsH8ZfZWgyUMn3vCMWxZ7ROU2U
+	HBylHiq0+86vWymdu3Lm37RpNyRLroS0GAFjYrDUBkCAh4e0w99IhHUTOyVplp4z59H0KZLPV/h+q
+	5MeqAnYg9VE9cZmWfBoysoLoYw3ztDxikzlrEQLVtPXiIIuphWlb/54s2pJhtoqFBgExMbS0ytuo6
+	L4tnrq8DvPk0ZUU9KCi0zl7esiS5d1//FxpGMH8QtSOR/gyfqYddDHzYnI6/Rnml0c+TyaYE/mZRV
+	5f80Lcpg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txOHD-0000000HPVh-45ZY;
+	Wed, 26 Mar 2025 10:46:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4247F3003C4; Wed, 26 Mar 2025 11:46:27 +0100 (CET)
+Date: Wed, 26 Mar 2025 11:46:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	tim.c.chen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
+	gautham.shenoy@amd.com, mingo@kernel.org, kprateek.nayak@amd.com,
+	yu.chen.surf@foxmail.com
+Subject: Re: [RFC][PATCH] sched: Cache aware load-balancing
+Message-ID: <20250326104627.GC12071@noisy.programming.kicks-ass.net>
+References: <20250325120952.GJ36322@noisy.programming.kicks-ass.net>
+ <4cd8ba54-8b9e-4563-8fbc-1d6cd6699e81@intel.com>
+ <20250326093841.GC25239@noisy.programming.kicks-ass.net>
+ <20250326102553.GA12071@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,94 +69,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-PWZ98oNna6nVu1@J2N7QTR9R3>
+In-Reply-To: <20250326102553.GA12071@noisy.programming.kicks-ass.net>
 
-On Wed, Mar 26, 2025 at 10:26:47AM +0000, Mark Rutland wrote:
-> On Wed, Mar 26, 2025 at 07:02:55AM +0000, Keir Fraser wrote:
-> > The register is not defined and reading it can result in a UBSAN
-> > out-of-bounds array access error, specifically when the srcreg field
-> > value is 31.
+On Wed, Mar 26, 2025 at 11:25:53AM +0100, Peter Zijlstra wrote:
+> On Wed, Mar 26, 2025 at 10:38:41AM +0100, Peter Zijlstra wrote:
 > 
-> I'm assuming this is for a MOPS exception taken from a SET* sequence
-> with XZR as the source?
-
-Yes.
-
-> It'd be nice to say that explicitly, as this is the only case where any
-> of the src/dst/size fields in the ESR can be reported as 31. In all
-> other cases where a CPY* or SET* instruction takes register 31 as an
-> argument, the behaviour is CONSTRAINED UNPREDICTABLE and cannot generate
-> a MOPS exception.
-
-Okay, will do.
-
-> Note that in ARM DDI 0487 L.a there's a bug where:
-> 
-> * The prose says that SET* taking XZR as a src is CONSTRAINED
->   UNPREDICTABLE, per K1.2.17.1.1 linked from C6.2.332.
-> 
->   The title for the K1.2.17.1.1 is "Memory Copy and Memory Set CPY*",
->   which looks like an editing error.
-> 
-> * The pseudocode is explicit that the CONSTRAINED UNPREDICTABLE
->   behaviours differ for CPY* and SET* per J1.1.3.121
->   CheckCPYConstrainedUnpredictable() and J1.1.3.125
->   CheckSETConstrainedUnpredictable().
-> 
-> ... and I'll go file a ticket about that soon if someone doesn't beat me
-> to it.
-> 
-> > Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: stable@vger.kernel.org
-> 
-> Looks like this should have:
-> 
-> Fixes: 2de451a329cf662b ("KVM: arm64: Add handler for MOPS exceptions")
-> 
-> Prior to that, the code in do_el0_mops() was benign as the use of
-> pt_regs_read_reg() prevented the out-of-bounds access. It'd also be nice
-> to note that in the commit message.
-
-I will add this too. And Marc's reviewed-by. And re-send as v2. Thanks!
-
- Keir
-
-> Mark.
-> 
-> > Signed-off-by: Keir Fraser <keirf@google.com>
-> > ---
-> >  arch/arm64/include/asm/traps.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > Nah, the saner thing to do is to preserve the topology averages and look
+> > at those instead of the per-cpu values.
 > > 
-> > diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-> > index d780d1bd2eac..82cf1f879c61 100644
-> > --- a/arch/arm64/include/asm/traps.h
-> > +++ b/arch/arm64/include/asm/traps.h
-> > @@ -109,10 +109,9 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
-> >  	int dstreg = ESR_ELx_MOPS_ISS_DESTREG(esr);
-> >  	int srcreg = ESR_ELx_MOPS_ISS_SRCREG(esr);
-> >  	int sizereg = ESR_ELx_MOPS_ISS_SIZEREG(esr);
-> > -	unsigned long dst, src, size;
-> > +	unsigned long dst, size;
-> >  
-> >  	dst = regs->regs[dstreg];
-> > -	src = regs->regs[srcreg];
-> >  	size = regs->regs[sizereg];
-> >  
-> >  	/*
-> > @@ -129,6 +128,7 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
-> >  		}
-> >  	} else {
-> >  		/* CPY* instruction */
-> > +		unsigned long src = regs->regs[srcreg];
-> >  		if (!(option_a ^ wrong_option)) {
-> >  			/* Format is from Option B */
-> >  			if (regs->pstate & PSR_N_BIT) {
-> > -- 
-> > 2.49.0.395.g12beb8f557-goog
-> > 
+> > Eg. have task_cache_work() compute and store averages in the
+> > sched_domain structure and then use those.
+> 
+> A little something like so perhaps ?
+
+Oh urgh, ignore all that, I'm an idiot.
+
+The numbers are per process, can't stick them in global structures.
+
+I remember going through all this before :-/ Its just so very tempting
+since its the right structure and everything, but we need it per
+process :-(
 
