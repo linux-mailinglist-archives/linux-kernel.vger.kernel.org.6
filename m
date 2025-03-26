@@ -1,189 +1,145 @@
-Return-Path: <linux-kernel+bounces-577189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1496A719BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:07:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E39A719C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590CF18994AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8296319C1E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C141F4196;
-	Wed, 26 Mar 2025 14:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D703B1F417C;
+	Wed, 26 Mar 2025 14:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX6aTZbf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wQ6UwGiE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1471EEA36;
-	Wed, 26 Mar 2025 14:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E631547C9;
+	Wed, 26 Mar 2025 14:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000928; cv=none; b=ZBnDrQqNqtPVR5d3WT+NObr7pfoX9FG4ABKkemqRLWNGDXlfJ13aFo43zCQWP0TQbiTd1PbL5RWRKp8TBZ/j0U++RZuFBVcm5tnNMwmvtGQAudwMPYjLoKx+t8LgefYBXPBI6dSXkHkKs8ZA+/zI8EW6ttQo/76o8g4lpbOYGys=
+	t=1743000987; cv=none; b=cjEtstPGynH0j9If6Gm6M8dUIb9+r9na7NVFlE9zsGwQNxGPs+hOKuQ3ckOgX+ef4eXgoFPTJ5sp0W9xeH+d35M1XAIGU1587nAxW63naeqXQGCNg+W1A7tfbleXs1X8iD4MHeeH/KwhrVh8D/zS6g2kAmgzS5YLSZPh/c0qoDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000928; c=relaxed/simple;
-	bh=2FjJkXZ1Sr7UVOgZLzCfOaayYT0ey4QBq9TK9OK+P/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iny8sHywRy1KDbeDQ8bEOeoLWeS1yRNjap40ktcb3yMCdjkyEfceIfsqdJeUTQgKG49caAwF1cPGvHqOINZLTHf0aqZyZKw7Au8JqWQ4MeTWJiYHGfE10lUYCv63ivspVyEhYd3nhB7vgqgW3XT8D5Mmd9MFksXJBH9qBvaA6Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX6aTZbf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CA9C4CEE2;
-	Wed, 26 Mar 2025 14:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743000927;
-	bh=2FjJkXZ1Sr7UVOgZLzCfOaayYT0ey4QBq9TK9OK+P/E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HX6aTZbfmKW3A2e/vn8L0G+6m4LL7IV/4qxaFFkyjSE9WQc2yJgVcmxtQn0yvGNkB
-	 j6/G1HeyjUGGQ+beZvHvcO588uANwt91E4OKcxRzxTXZI5mCXQTIZ2GG9s8mhOZjSp
-	 TS0R+5Y4qCBs+JMfbnbCvadMlrkMaksBOO3waBiF05sW9mCoLUbEcMF8Yx3tUsMpXq
-	 fHw/Kn1InTPrQzu2NX8fmA9qXnwoc+6z/41+WHWS62uemtTQ1oQHUCZj9FZzfLavBp
-	 5C39yp2vgvXV6jaJWKLHkNQxTEJwn3NhnThF88ek5cHtzIAmEj4Zxl7WPMuPhOcEm9
-	 Z//hTubBOrTcw==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2c2c754af3cso3523539fac.3;
-        Wed, 26 Mar 2025 07:55:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/nLXbfqNxVE6AKjH4vRNioLbDxaMz94xZdKU7DF6o8QZZx7QJ5OT5LNAnsj5HJfj0DT1mcfO2OZD/7Asw@vger.kernel.org, AJvYcCVBwVumVtKSzzDL3fRQgHJsNyZitgY5rtR7MooIXKcotd/J2MM2zwlANPKYDWd7tDG2pJkuSWqEkkdB@vger.kernel.org, AJvYcCVLM2AEqUVI6S5NEaf4QGYR/jksq1lONKFoboKm6tM38msGE4e/glC1DIjKdEIdOChN8wJvRpT7mAT//Q==@vger.kernel.org, AJvYcCWZE/EOvRFCRUzrabNmjb5ZEUm3KJpMXQzK5uZvlOD4tSgHY0k57YM3XWVseGIHDahL04QAKAcnKdz1@vger.kernel.org, AJvYcCXO77w8RQlvdpbARz9KV2CX/7pEmkYSZyoImlBt6ppwx3eEiFFXyjkYX8rcLxD6uGsMsIuyMtduYoZXNOal@vger.kernel.org, AJvYcCXjeHZ97FWu/c0b7Nyew0lu4N3lIEt7maak/pm5VLy+r/BYjrnTgrn1DvLZoYfygOFokG3uqQaTTFOL4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHW6hqHItVobhEdS17eTiFOAWMBtIy0LkA/0afBker09U/MIYI
-	NMA45GSvzl7+/vKcjiFF5w0uZho8JHLUCfjKgxby8qW7W73zLfWWZQ88gg7aTTN2f7r3SxcC8er
-	Vsol+BoEQRLRMxkKn4NVTVi3D4pU=
-X-Google-Smtp-Source: AGHT+IEYYA/6LylePhPYpVsBFlVh+o1a/2X6ugf3+5Zk77UyBnBXpaSo0UzJzWGtji5Mqp0Q8hwWmxY8a4Ns27KKFng=
-X-Received: by 2002:a05:6871:5223:b0:2bd:455e:c22e with SMTP id
- 586e51a60fabf-2c7803002damr12663712fac.19.1743000926945; Wed, 26 Mar 2025
- 07:55:26 -0700 (PDT)
+	s=arc-20240116; t=1743000987; c=relaxed/simple;
+	bh=V7bIP3PfXYHdxWscf/6gdQ5fxEXhiB2IjmMn4K1DbyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=najUy2SpNoasz6baJlauTnpijZCsOXuBUWZpdLoICfNQlQqZAx3byFZgT8OUO6EEixa27GyawwMwGXQhNUXO43FXeHk/4Wylb85zZEamQX50jIbPSR643JjY2QtAeiezNesVZSa0W7gi1JtgBHn9HU7qC566iIHOkpwjueoWnMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wQ6UwGiE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=XsXoxAWOHRxb8XUNWIPSw3DwDe7Nwe/bbRvZogg7X78=; b=wQ6UwGiE+di8+hXe0P4v50aG+y
+	PpXsJ74I/SUjB5p+UszPuGpykVfHURE4rvToqITr5EHQXHov0N+BE0Qgc67Ye40x96hbbplFIaaN/
+	COv7cvehMHhaJNMy4kDozA5AbkyziIg8Kh0kiEHAJNMT1jf1Jt6zOZ9OKBndtSWeb/CM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1txSAx-007BFX-38; Wed, 26 Mar 2025 15:56:15 +0100
+Date: Wed, 26 Mar 2025 15:56:15 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
+ AS21xxx PHYs
+Message-ID: <dfa78876-d4a6-4226-b3d4-dbf112e001ee@lunn.ch>
+References: <20250326002404.25530-1-ansuelsmth@gmail.com>
+ <20250326002404.25530-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315001931.631210-1-romank@linux.microsoft.com> <20250315001931.631210-11-romank@linux.microsoft.com>
-In-Reply-To: <20250315001931.631210-11-romank@linux.microsoft.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Mar 2025 15:55:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g1bX_3zRUUf-=euuvhm1dPB6bjEXPH9O-kMGcZjRspcw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr4yQ264W4Fr4uvYbe-kFtKKfam4-v0_OqzzA1JU-y-jScH9oT2tKvFv-0
-Message-ID: <CAJZ5v0g1bX_3zRUUf-=euuvhm1dPB6bjEXPH9O-kMGcZjRspcw@mail.gmail.com>
-Subject: Re: [PATCH hyperv-next v6 10/11] ACPI: irq: Introduce acpi_get_gsi_dispatcher()
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
-	conor+dt@kernel.org, dan.carpenter@linaro.org, dave.hansen@linux.intel.com, 
-	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com, 
-	joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, 
-	lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, 
-	mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com, 
-	oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
-	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
-	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
-	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
-	sunilmut@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326002404.25530-3-ansuelsmth@gmail.com>
 
-On Sat, Mar 15, 2025 at 1:19=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
-.com> wrote:
->
-> Using acpi_irq_create_hierarchy() in the cases where the code
-> also handles OF leads to code duplication as the ACPI subsystem
-> doesn't provide means to compute the IRQ domain parent whereas
-> the OF does.
->
-> Introduce acpi_get_gsi_dispatcher() so that the drivers relying
-> on both ACPI and OF may use irq_domain_create_hierarchy() in the
-> common code paths.
->
-> No functional changes.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-
-This basically looks OK to me except for a couple of coding style
-related nits below.
-
-> ---
->  drivers/acpi/irq.c   | 15 +++++++++++++--
->  include/linux/acpi.h |  5 ++++-
->  2 files changed, 17 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
-> index 1687483ff319..8eb09e45e5c5 100644
-> --- a/drivers/acpi/irq.c
-> +++ b/drivers/acpi/irq.c
-> @@ -12,7 +12,7 @@
->
->  enum acpi_irq_model_id acpi_irq_model;
->
-> -static struct fwnode_handle *(*acpi_get_gsi_domain_id)(u32 gsi);
-> +static acpi_gsi_domain_disp_fn acpi_get_gsi_domain_id;
->  static u32 (*acpi_gsi_to_irq_fallback)(u32 gsi);
->
->  /**
-> @@ -307,12 +307,23 @@ EXPORT_SYMBOL_GPL(acpi_irq_get);
->   *     for a given GSI
->   */
->  void __init acpi_set_irq_model(enum acpi_irq_model_id model,
-> -                              struct fwnode_handle *(*fn)(u32))
-
-Please retain the indentation here and analogously below.
-
-> +       acpi_gsi_domain_disp_fn fn)
->  {
->         acpi_irq_model =3D model;
->         acpi_get_gsi_domain_id =3D fn;
->  }
->
-> +/**
-> + * acpi_get_gsi_dispatcher - Returns dispatcher function that
-> + *                           computes the domain fwnode for a
-> + *                           given GSI.
+> +#define PHY_ID_AS21XXX			0x75009410
+> +/* AS21xxx ID Legend
+> + * AS21x1xxB1
+> + *     ^ ^^
+> + *     | |J: Supports SyncE/PTP
+> + *     | |P: No SyncE/PTP support
+> + *     | 1: Supports 2nd Serdes
+> + *     | 2: Not 2nd Serdes support
+> + *     0: 10G, 5G, 2.5G
+> + *     5: 5G, 2.5G
+> + *     2: 2.5G
 > + */
+> +#define PHY_ID_AS21011JB1		0x75009402
+> +#define PHY_ID_AS21011PB1		0x75009412
+> +#define PHY_ID_AS21010JB1		0x75009422
+> +#define PHY_ID_AS21010PB1		0x75009432
+> +#define PHY_ID_AS21511JB1		0x75009442
+> +#define PHY_ID_AS21511PB1		0x75009452
+> +#define PHY_ID_AS21510JB1		0x75009462
+> +#define PHY_ID_AS21510PB1		0x75009472
+> +#define PHY_ID_AS21210JB1		0x75009482
+> +#define PHY_ID_AS21210PB1		0x75009492
+> +#define PHY_VENDOR_AEONSEMI		0x75009400
 
-I would format this kerneldoc comment a bit differently:
+O.K. This helps.
 
-/*
- * acpi_get_gsi_dispatcher() - Get the GSI dispatcher function
- *
- * Return the dispatcher function that computes the domain fwnode for
-a given GSI.
- */
+> +static struct phy_driver as21xxx_drivers[] = {
+> +	{
+> +		/* PHY expose in C45 as 0x7500 0x9410
+> +		 * before firmware is loaded.
+> +		 */
+> +		PHY_ID_MATCH_EXACT(PHY_ID_AS21XXX),
+> +		.name		= "Aeonsemi AS21xxx",
+> +		.probe		= as21xxx_probe,
+> +	},
+> +	{
+> +		PHY_ID_MATCH_EXACT(PHY_ID_AS21011JB1),
+> +		.name		= "Aeonsemi AS21011JB1",
+> +		.read_status	= as21xxx_read_status,
+> +		.led_brightness_set = as21xxx_led_brightness_set,
+> +		.led_hw_is_supported = as21xxx_led_hw_is_supported,
+> +		.led_hw_control_set = as21xxx_led_hw_control_set,
+> +		.led_hw_control_get = as21xxx_led_hw_control_get,
+> +		.led_polarity_set = as21xxx_led_polarity_set,
+> +	},
 
-> +acpi_gsi_domain_disp_fn acpi_get_gsi_dispatcher(void)
-> +{
-> +       return acpi_get_gsi_domain_id;
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_get_gsi_dispatcher);
-> +
->  /**
->   * acpi_set_gsi_to_irq_fallback - Register a GSI transfer
->   * callback to fallback to arch specified implementation.
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 4e495b29c640..abc51288e867 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -336,8 +336,11 @@ int acpi_register_gsi (struct device *dev, u32 gsi, =
-int triggering, int polarity
->  int acpi_gsi_to_irq (u32 gsi, unsigned int *irq);
->  int acpi_isa_irq_to_gsi (unsigned isa_irq, u32 *gsi);
->
-> +typedef struct fwnode_handle *(*acpi_gsi_domain_disp_fn)(u32);
-> +
->  void acpi_set_irq_model(enum acpi_irq_model_id model,
-> -                       struct fwnode_handle *(*)(u32));
-> +       acpi_gsi_domain_disp_fn fn);
-> +acpi_gsi_domain_disp_fn acpi_get_gsi_dispatcher(void);
->  void acpi_set_gsi_to_irq_fallback(u32 (*)(u32));
->
->  struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
-> --
+It is guaranteed by the current code that these entries are tried in
+the order listed here. If that was to change, other drivers would
+break.
 
-With the above addressed, please feel free to add
+So what you can do is have the first entry for PHY_ID_AS21XXX with
+as21xxx_probe, have the probe download the firmware and then return
+-ENODEV. PHY_ID_AS21XXX tells us there is no firmware, so this is what
+we need to do. The -ENODEV then tells the core that this driver entry
+does not match the hardware, try the next.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+After the firmware download, the phylib core will still have the wrong
+ID values. So you cannot use PHY_ID_MATCH_EXACT(PHY_ID_AS21011JB1).
+But what you can do is have a .match_phy_device function. It will get
+called, and it can read the real ID from the device, and perform a
+match. If it does not match return -ENODEV, and the core will try the
+next entry.
 
-to the patch and route it along with the rest of the series.
+You either need N match_phy_device functions, one per ID value, or you
+can make use of the .driver_data in phy_driver, and place the matching
+data there.
 
-Thanks!
+In the end you should have the correct phy_driver structure for the
+device. The core will still have the wrong ID values, which you should
+document with a comment. But that mostly only effects
+/sys/class/bus/mdio-bus/...
+
+	Andrew
 
