@@ -1,137 +1,309 @@
-Return-Path: <linux-kernel+bounces-577370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74F6A71C51
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:50:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A483A71C27
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B5216659D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9121882EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466081F76A5;
-	Wed, 26 Mar 2025 16:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4C51F4177;
+	Wed, 26 Mar 2025 16:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JyS3UwKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPv+gsl8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2511F63DD;
-	Wed, 26 Mar 2025 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494BD19D07A;
+	Wed, 26 Mar 2025 16:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007744; cv=none; b=Le0/E0HzC/TFtzoNmCVyh2ZIQ1M9F4dD1cgdXMtHUq9MckSu7WqrF1t10vSEA+3gPKgF3bhgXmYMx8O3RvsMRvr/SSHxfFlM9GVIXYJPFdMZSMDzp5IaqIP+/S1YJTrLukQTrFzmK04dZ72uW5bZ+cT0EEX5AYL1axqkfj+VbuE=
+	t=1743007654; cv=none; b=NytF4Xc7KogIk8RURSJtOrHZYbf77KPQe/uXHCd8BB7Z4y/nCU3hGi4/+srkynNkAxsGPqQPeWd+eqYLYitg8QtmdctNpV95MPuaUwHyLCHG+UDNSrziUi1RjnGQOhp34xGwN3RK6hhXixDw73xf51jpEZJ7kKP/5J6hczGDWx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007744; c=relaxed/simple;
-	bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pXWvz6sc4i8TlOk1FF3l72bNjgcunqboMiQCFjHG8bbzKgzPkU1eRIW8Dv4y8Voj3hPrMMjWTlwzoN54pYKuLtJyBEkUMlDMHZDcF1uO098Eik3aLR+XLEPdLhlFskKzfJ95VM/88TGzXj2wxoCPWEz0JMWk4XkuEyaPJXdES1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JyS3UwKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76AF7C4CEE8;
-	Wed, 26 Mar 2025 16:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743007744;
-	bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JyS3UwKK3WkGtk39qAWuY7N9POEno+elq8+Yn63ObrElD0PH/fWZWWgGKIAG64Psf
-	 nwJMov2csx1azoWJ8WSDwB4w4eKxd+zoxgBe2KvFPIJpzgixDr2E9DoBBRVKJOqAWg
-	 2TFDMDu7iWVWQmdSkPQ29vYEvlSIO7lugoJP0nKlpOfIrJDkKeQSpaDwjjVNUWRio4
-	 oU8O6aOloQYP0kP1yygoP4kDARVAs60jiyLdtK3U+ftX07fJdzfBtA1npzcSUu1Ola
-	 IhLFp8DNVg5hEffOYMU9HzGkBUyQuu126xwpH0jZ98wXW/vlSnCdzqq1rNf6DtYm+P
-	 59gictiW/9nxg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Wed, 26 Mar 2025 17:45:30 +0100
-Subject: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+	s=arc-20240116; t=1743007654; c=relaxed/simple;
+	bh=sOSsIyhjI4wpB49/7pxJneBZ/1MLJNlnrsTjQgMFDIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mP+o8zNfUleBGb3hVirrbaarwG6NTHbw49QAgLaRfy7l/eoE99V45ruY3/97vxWqsu8OMewfzowbFT6RZ48eWMVvpho07JVdOvm+EZTzct9l7a73cMwmNO8wA6xm3zkXNmJRB5GmzCjDsIrWl3XtkUn4SY7UfKVUj1+MrFtpxM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPv+gsl8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743007652; x=1774543652;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=sOSsIyhjI4wpB49/7pxJneBZ/1MLJNlnrsTjQgMFDIw=;
+  b=IPv+gsl8XD0FrSz2FqhY6WS1ALSHTgQA0TmRUtN+HXTQbmS3u7/Bpc7u
+   /40L1x1QIILGGnTSuE+11RSdbOxVeaD2B1+OKyuUMd2AK09wFpRxhXO3+
+   s3suAa+r0ij5NvOntgfgkZ6ihSMAHweHdSHZj7tpsAvUlsNKXlpTGtBT7
+   mnJPOWBEMj56U8nI4C1LBtqTAtIK+bVm/HyZkLUKlOuf3brgiSivijSWE
+   KbKt0mzkdDrAU9xMgH9K+NqafBC4qYns2/h473AQkapPrPj/75Vo1kKe0
+   S4kNtM6oYVix3v8BvGgRzhxex6/IykxQMZX3TBx2Xe1Y4JKUhbqDh1HYW
+   A==;
+X-CSE-ConnectionGUID: qaswatc5QXWwyLpXEKzheQ==
+X-CSE-MsgGUID: fGKXzl0YQZ24AdAKCASQtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44409620"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="44409620"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:47:32 -0700
+X-CSE-ConnectionGUID: e+r/9cLJTd++TskeRqsVSA==
+X-CSE-MsgGUID: BJVhCgooS7qPH4LzQWC3MQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="129937683"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.239])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 09:47:29 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Robert Richter <rrichter@amd.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, ming.li@zohomail.com,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject:
+ Re: [PATCH 2/4 v3] cxl/core: Add helpers to detect Low memory Holes on x86
+Date: Wed, 26 Mar 2025 17:47:26 +0100
+Message-ID: <8700175.W097sEU6C4@fdefranc-mobl3>
+In-Reply-To: <Z909uPbvRVlZ_J1Z@rric.localdomain>
+References:
+ <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+ <20250314113708.759808-3-fabio.m.de.francesco@linux.intel.com>
+ <Z909uPbvRVlZ_J1Z@rric.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACkv5GcC/x2MQQqAIBAAvyJ7TjDTor4SHcRW20MaGhGIf086z
- GEOMwUyJsIMCyuQ8KFMMTTpOwb2MMEjp705SCG1GOTIbQyOvMv8NBTuBiY+oxJ2Etoop6GVV0J
- H739dt1o/1dN962UAAAA=
-X-Change-ID: 20250326-configfs-maintainer-9e40c705a4f5
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Breno Leitao <leitao@debian.org>, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1620; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBn5C87y6IUdxQ9EJ3NhSrjxdqXDgFE/kOR30jGs
- xF2EKadJSaJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ+QvOwAKCRDhuBo+eShj
- dy8GD/oCrGI/gskZiZMr9Nuvx5Ycpzijn/pIDaqkH8RyHRLyWThcn3B/w2xOVGnBxbf7ahWesVE
- yOnnxX1FVr5yC1PHsPIXeWgnfLplYgtYNkvNkOBhB9kBxRchVvUO4l24g0iHNmCwl6khmebED8l
- +xh5otRCFy9WZ0G9l3xbVk3sVwXtKd77lWInSZ1ITCSrFpxA5G9GvIHsUIuqXmPA+by4qRo9tF9
- wLk6JNrDjB5RATDlHJ07QIbbFrEYLju/Il4rYwJvN7om5buz12agrBIP1GHo8hRdy3ZFInMHp+X
- E2b130MpYH14r5Hx6LajYj9u8i51e7voA1He0QkwKzJV5UZ9XKiyzcCEincMEiAYMy4yOoTDLXA
- UtdG4jZZweIHaJWMOdobXQH6Sx8TpvkCaB1f1Yv6o4pJ1LvfMYxAaqKCTuElyqoUYjgO7I2Z/kw
- zd6yaH5dCpFP5cqnRifmcm858vd2MOZ6ipcseZaEtYeZfEP/41RSLKPR5wJTpHnAewTBISoLjnK
- 8sFnMh/iyzQp8iU2LIsWTbmRr3yT4pfB0tf++Q1XH8JrelqyCce+T9JNCZ0dgWINTIbS3cZLMjQ
- 8KRlp7PPQ/CtrHDULtlkgkLF2GjnYme4HnAMrsNgf76cbpCp4TTJTVf+3CG4SBsVutK0qb2K906
- vHQZFE090OAxXeg==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Remove Joel Becker as maintainer of configfs and add Andreas Hindborg as
-maintainer and Breno Leitao as reviewer. Also update the tree URL.
+On Friday, March 21, 2025 11:21:44=E2=80=AFAM Central European Standard Tim=
+e Robert Richter wrote:
+> On 14.03.25 12:36:31, Fabio M. De Francesco wrote:
+> > In x86 with Low memory Hole, the BIOS may publishes CFMWS that describe
+> > SPA ranges which are subsets of the corresponding CXL Endpoint Decoders
+> > HPA's because the CFMWS never intersects LMH's while EP Decoders HPA's
+> > ranges are always guaranteed to align to the NIW * 256M rule.
+> >=20
+> > In order to construct Regions and attach Decoders, the driver needs to
+> > match Root Decoders and Regions with Endpoint Decoders, but it fails and
+> > the entire process returns errors because it doesn't expect to deal with
+> > SPA range lengths smaller than corresponding HPA's.
+> >=20
+> > Introduce functions that indirectly detect x86 LMH's by comparing SPA's
+> > with corresponding HPA's. They will be used in the process of Regions
+> > creation and Endpoint attachments to prevent driver failures in a few
+> > steps of the above-mentioned process.
+> >=20
+> > The helpers return true when HPA/SPA misalignments are detected under
+> > specific conditions: both the SPA and HPA ranges must start at
+> > LMH_CFMWS_RANGE_START (that in x86 with LMH's is 0x0), SPA range sizes
+>=20
+> "... that for Intel with LMHs is 0x0", not true for AMD.
+>=20
+> > be less than HPA's, SPA's range's size be less than 4G, HPA's size be
+> > aligned to the NIW * 256M rule.
+> >=20
+> > Also introduce a function to adjust the range end of the Regions to be
+> > created on x86 with LMH's.
+> >=20
+> > Cc: Alison Schofield <alison.schofield@intel.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
+com>
+> > ---
+> >  drivers/cxl/core/lmh.c | 56 ++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/cxl/core/lmh.h | 29 ++++++++++++++++++++++
+>=20
+> The split of the code in patch #2 and #3 does not make sense. The
+> "interface" you introduce here is out of context which is patch #3.
+> And in patch #3 the functions are actually used, so you need to switch
+> back to this one. Other than that, the code is not enabled here at
+> all, it is even not built.
+>=20
+I prefer to split the introduction of helpers and the use of them in
+separate patches.
+>
+> >  2 files changed, 85 insertions(+)
+> >  create mode 100644 drivers/cxl/core/lmh.c
+> >  create mode 100644 drivers/cxl/core/lmh.h
+> >=20
+> > diff --git a/drivers/cxl/core/lmh.c b/drivers/cxl/core/lmh.c
+> > new file mode 100644
+> > index 000000000000..2e32f867eb94
+> > --- /dev/null
+> > +++ b/drivers/cxl/core/lmh.c
+> > @@ -0,0 +1,56 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +#include <linux/range.h>
+> > +#include "lmh.h"
+> > +
+> > +/* Start of CFMWS range that end before x86 Low Memory Holes */
+> > +#define LMH_CFMWS_RANGE_START 0x0ULL
+>=20
+> This looks arbitrary. An endpoint decoder's zero base address could
+> have other reasons too, e.g. the need of address translation. So you
+> need a different check for the mem hole.
+>=20
+> In my previous review comment I have requested a platform check for
+> this code to enable.
+>=20
+> > +
+> > +/*
+> > + * Match CXL Root and Endpoint Decoders by comparing SPA and HPA range=
+s.
+> > + *
+> > + * On x86, CFMWS ranges never intersect memory holes while endpoint de=
+coders
+> > + * HPA range sizes are always guaranteed aligned to NIW * 256MB; there=
+fore,
+> > + * the given endpoint decoder HPA range size is always expected aligne=
+d and
+> > + * also larger than that of the matching root decoder. If there are LM=
+H's,
+> > + * the root decoder range end is always less than SZ_4G.
+> > + */
+> > +bool arch_match_spa(const struct cxl_root_decoder *cxlrd,
+> > +		    const struct cxl_endpoint_decoder *cxled)
+> > +{
+> > +	const struct range *r1, *r2;
+> > +	int niw;
+> > +
+> > +	r1 =3D &cxlrd->cxlsd.cxld.hpa_range;
+> > +	r2 =3D &cxled->cxld.hpa_range;
+> > +	niw =3D cxled->cxld.interleave_ways;
+> > +
+> > +	if (r1->start =3D=3D LMH_CFMWS_RANGE_START && r1->start =3D=3D r2->st=
+art &&
+> > +	    r1->end < (LMH_CFMWS_RANGE_START + SZ_4G) && r1->end < r2->end &&
+>=20
+> How about removing LMH_CFMWS_RANGE_START at all? It is zero anyway and
+> would make this check much easier.
+>
+I think that in the next version I'll check that the range start is a multi=
+ple=20
+of Number of Interleave Ways * 256M (it would include 0x0).
+> =20
+> Can this being modified to reuse this codes for "holes" other than
+> below 4G?
+>=20
+This series enables CXL Regions creation and Endpoints attach for x86 LOW=20
+Memory Holes. I prefer not to enable regions on platforms with memory holes=
+=20
+beyond 4G until I'm sure it's needed. arch_match_spa() and arch_match_regio=
+n()
+can be easily modified if in future they need to be.
+>
+> > +	    IS_ALIGNED(range_len(r2), niw * SZ_256M))
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +/* Similar to arch_match_spa(), it matches regions and decoders */
+> > +bool arch_match_region(const struct cxl_region_params *p,
+> > +		       const struct cxl_decoder *cxld)
+> > +{
+> > +	const struct range *r =3D &cxld->hpa_range;
+> > +	const struct resource *res =3D p->res;
+> > +	int niw =3D cxld->interleave_ways;
+> > +
+> > +	if (res->start =3D=3D LMH_CFMWS_RANGE_START && res->start =3D=3D r->s=
+tart &&
+> > +	    res->end < (LMH_CFMWS_RANGE_START + SZ_4G) && res->end < r->end &&
+>=20
+> Same here.
+>=20
+> > +	    IS_ALIGNED(range_len(r), niw * SZ_256M))
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+>=20
+> Right now the default check is:
+>=20
+>   (p->res->start =3D=3D r->start && p->res->end =3D=3D r->end)
+>=20
+> Can't we just calculate a matching spa range for the decoder and
+> region and then check if both match? Both match functions would be
+> obsolete then.
+>=20
+I prefer to keep the design untouched. Anyway, I'll check for other aligned=
+=20
+res->start, as said above.
+>
+> > +
+> > +void arch_adjust_region_resource(struct resource *res,
+> > +				 struct cxl_root_decoder *cxlrd)
+> > +{
+> > +	res->end =3D cxlrd->res->end;
+> > +}
+>=20
+> This should be squashed with arch_match_spa(): same style and
+> interface as for cxl_extended_linear_cache_resize(). Please generalize
+> the interface of cxl_extended_linear_cache_resize() first.
+>=20
+Do you mean that arch_match_spa() should adjust res->end? I don't think
+it should.
+>
+> > diff --git a/drivers/cxl/core/lmh.h b/drivers/cxl/core/lmh.h
+> > new file mode 100644
+> > index 000000000000..16746ceac1ed
+> > --- /dev/null
+> > +++ b/drivers/cxl/core/lmh.h
+> > @@ -0,0 +1,29 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +
+> > +#include "cxl.h"
+> > +
+> > +#ifdef CONFIG_CXL_ARCH_LOW_MEMORY_HOLE
+> > +bool arch_match_spa(const struct cxl_root_decoder *cxlrd,
+> > +		    const struct cxl_endpoint_decoder *cxled);
+> > +bool arch_match_region(const struct cxl_region_params *p,
+> > +		       const struct cxl_decoder *cxld);
+> > +void arch_adjust_region_resource(struct resource *res,
+> > +				 struct cxl_root_decoder *cxlrd);
+> > +#else
+> > +static bool arch_match_spa(struct cxl_root_decoder *cxlrd,
+> > +			   struct cxl_endpoint_decoder *cxled)
+> > +{
+> > +	return false;
+> > +}
+> > +
+> > +static bool arch_match_region(struct cxl_region_params *p,
+> > +			      struct cxl_decoder *cxld)
+> > +{
+> > +	return false;
+> > +}
+> > +
+> > +static void arch_adjust_region_resource(struct resource *res,
+> > +					struct cxl_root_decoder *cxlrd)
+> > +{
+> > +}
+> > +#endif /* CXL_ARCH_LOW_MEMORY_HOLE */
+>=20
+> I don't think we will need all this helpers if there are platform
+> specific callbacks as suggested in a comment to v1.
+>=20
+> -Robert
+>=20
+As said in a reply to 0/4, I'm not yet aware of issues that would interfere
+with non Intel x86. Anyway, I'll think a bit more about using platform
+specific callbacks, even if currently I don't think they are necessary.=20
+>=20
+Thanks,
 
-Add an entry for Joel Becker to CREDITS.
+=46abio
 
-Acked-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
-As recommended in plenary session at LSF/MM plenary session on March 25 2025.
-Joel is no longer active in the community.
----
- CREDITS     | 4 ++++
- MAINTAINERS | 5 +++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/CREDITS b/CREDITS
-index 53d11a46fd69..3ec620f7260b 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -317,6 +317,10 @@ S: Code 930.5, Goddard Space Flight Center
- S: Greenbelt, Maryland 20771
- S: USA
- 
-+N: Joel Becker
-+E: jlbec@evilplan.org
-+D: configfs
-+
- N: Adam Belay
- E: ambx1@neo.rr.com
- D: Linux Plug and Play Support
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 00e94bec401e..ff62b2bff99a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5860,9 +5860,10 @@ S:	Maintained
- F:	Documentation/security/snp-tdx-threat-model.rst
- 
- CONFIGFS
--M:	Joel Becker <jlbec@evilplan.org>
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Breno Leitao <leitao@debian.org>
- S:	Supported
--T:	git git://git.infradead.org/users/hch/configfs.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git configfs-next
- F:	fs/configfs/
- F:	include/linux/configfs.h
- F:	samples/configfs/
-
----
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-change-id: 20250326-configfs-maintainer-9e40c705a4f5
-
-Best regards,
--- 
-Andreas Hindborg <a.hindborg@kernel.org>
 
 
 
