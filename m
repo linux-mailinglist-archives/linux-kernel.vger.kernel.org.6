@@ -1,295 +1,140 @@
-Return-Path: <linux-kernel+bounces-576902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333A8A715CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:32:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27729A715D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBA9170217
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E801A172791
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3DA1DC9A8;
-	Wed, 26 Mar 2025 11:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0AC1DDA0F;
+	Wed, 26 Mar 2025 11:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edwfmcyr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ibYTr7Mt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615AA1B87F2;
-	Wed, 26 Mar 2025 11:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978311D79B3;
+	Wed, 26 Mar 2025 11:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742988756; cv=none; b=sr0PRe7pxZVCBePKeCtLbUiZ+lrnT1sB2/NrSreBGvwUuiYjvIEYlJf9rpuHZXRpupA88N4vHLPYx2ki7YZZxvItIN+1ws2la5Eyk2DUIMNMDUM0gXUsADndzUaHG+xebI2J0HMmM9hmoXkUpzrP8bSLdcv0Pvl5Dmc116e2K8k=
+	t=1742988864; cv=none; b=BfF97kvop2Ch87JdfHwAOzDdbgD6VUA9LqspcTfglaKI+l29w71+tbzwk08bapznbZyOtSmcltu0eYY0tBtqfUTxp7HNr7t3AN105K3EBc41VLfA4YydbfVWMdCdhI4uN2OuALu+3kSgJB9P7ebQ+raHirNoWLdWMD+ISsTIAb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742988756; c=relaxed/simple;
-	bh=q7DwmVhXt+r1eeJ0Yd69/IgoEkDDwrwkgbKKbHqRxU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKoZWE4a+1qxAIbT9kuZDPXUYayYxab13KbQG+lrbffSJgAjlIQ9wUAOK3Fv71PLvT/HHszXvAp/NEHgchIT9u/hbnX26tMmwVERuX0mvatSE3GqLtRsxYMZVHMPi8lGRMkpZtB+YpxJeEra49W/jbox23sWI1vXrqIDl2a4w70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edwfmcyr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4C5C4CEE2;
-	Wed, 26 Mar 2025 11:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742988755;
-	bh=q7DwmVhXt+r1eeJ0Yd69/IgoEkDDwrwkgbKKbHqRxU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EdwfmcyrXDvf31OBxyvyihmDkKIQPI2mAzbKc8SR5GVWC+iqa72B26AnUzIl1uDJS
-	 XiqdGYWRZ6qHKvuvfkgzJl0IYpsJduxAz1c/QoAxfe2tq0L9t1xVWnN4yaH/GijBsO
-	 vDpJeb0BpX5pgjdk9xkErgWlW03xElTgNj2eG/HJE1oBp19Z3YM10PIIs7edcGz0ww
-	 jehnRQldpiXoOtqVnY8sDKb4VjbtzCEVpbNayZe1VejxLOATydEgxOTSbPAhTTTuW/
-	 abD3lhWOt0xHdKNsHG1z5tDm9Hq3xSyKYunpgHsxmTn8CjS8rYpCuTJukgHg6mb2i7
-	 oXsywjveHQH3g==
-Date: Wed, 26 Mar 2025 12:32:33 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] pwm: ehrpwm: add get_state function to retrieve
- PWM channel state
-Message-ID: <vri7ypbwczwj3mrsdocy27k6g4umk3swq5uw34yds2yvri2sq3@7wnx5klo4gfs>
-References: <20250207212954.934-1-rafael.v.volkmer@gmail.com>
- <20250207213234.1026-1-rafael.v.volkmer@gmail.com>
+	s=arc-20240116; t=1742988864; c=relaxed/simple;
+	bh=cPNRXbKHXeYbN7MqMsZP5cCAL4pCe92DtlpwCIrTgTU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P+TjxhUqEycQFJa84fV/q+c9sITkj9qP3JxiamuRMrNZs9uzw0+y+nbdkLHAepTK5kFCqimmONdrC78e38UXTiVDaaedLqt6bh7lSSOrpPyd06/9noiyZl7FOhVHbx41gbjIIVyQKnIz/kyLhStoipxYHoY/b5C+AeRUHhdJXtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ibYTr7Mt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 549473A4;
+	Wed, 26 Mar 2025 12:32:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742988752;
+	bh=cPNRXbKHXeYbN7MqMsZP5cCAL4pCe92DtlpwCIrTgTU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ibYTr7MtlScqXZeuS0rszG/NwLkF3XnNV0n+exjUpGpG0evMo1kXC0Zsj7orRaumE
+	 BCuPOGbJ7GSpDZppgJzB1ZKvUuXRLAcsOc9vn8P2ilHeRhyvawhGARjjTOYVjFoYcM
+	 2+XIgeP4nOpv7MAhK98BeFSFMwGfTF6nEOOErRqQ=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v7 0/3] media: ti: cal: Add streams support
+Date: Wed, 26 Mar 2025 13:34:00 +0200
+Message-Id: <20250326-cal-streams-v7-0-659df87ad231@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dzn5ynb6ngfdh3pz"
-Content-Disposition: inline
-In-Reply-To: <20250207213234.1026-1-rafael.v.volkmer@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACjm42cC/3XOzU7EIBSG4VuZsJbmHP4KrrwP44JSsMQpGGiIZ
+ tJ7l05iJuq4/JJznrwXUn2JvpLH04UU32KNOfUxPpyIW2x69TTOfRMGjIMGTZ0907oVb9dKJ4N
+ cA3PKBEH6x3vxIX5cteeXvkPJK92WfnwzODAEGKUc0CAqQZFueY1Ds+c3H5NPT3H2tuY0ZVvmw
+ eX1kJdYt1w+r5lNHP79onZ4GPioEDwYof5qR1iTN8LgL0JSoEJLDDDyILX9h1DfhATOxE9CdYJ
+ pZ3iYdABn7hD7vn8BsZiqgH0BAAA=
+X-Change-ID: 20230808-cal-streams-b913802c69f4
+To: linux-media@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Benoit Parrot <bparrot@ti.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2072;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=cPNRXbKHXeYbN7MqMsZP5cCAL4pCe92DtlpwCIrTgTU=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn4+Y3662s+sdJ/g2Y654Taxe+8sobeJ9mq9YF+
+ PxILVgadI2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ+PmNwAKCRD6PaqMvJYe
+ 9d8dD/9lYWtvSO74Oo156BabgTLwsg6WwB6Z8ux4BK2KocMTemKjHt5WNJQKfuLpZpVKCsShcSw
+ kK1PnNy+QoCQmFIVRwjpmX9donnrv7FfSv609/F7Yklu7bmrRaY9/bpfqQ+SE3y1PR93x4LQ54d
+ IuU31pYMakmyq5wcsS/ukaKFG9T3kl0FElQg8N/rfKOgN8a+eCPlFMeusEluqV4iGSRye10h/Rm
+ IsYSZn3TI1rq4OamX4Oj50WVkCUcX42oIh+WXDd2/oReLN6pRLCJvcEowFCHP0StRR2CINQ/axH
+ Ftg1MB59JRhuBIEAapMun799RYMX7wFmYhUB/wrs9OjY0JZUKJKoWK3bmZI31gwr0u9/qu8iI4j
+ z0U/8Ly4jR5+acf4FmDL1gx4o0xy1gClg1nDiKlXn861mxRZBdyt3PU4ppsuSNYu/qGVSbzpEEb
+ KGDO4a3gJxTTuYa4d33envzKGACpcJTkqjyq7RdO5q/zQgpkbMEFYs552B2aOGR2HCih24UhgyI
+ 89L07BLn38rsLyLY3Nsb1fmjpSTnMo/q1skaKBy3Rj9+GuSSZy6HubuFD821SbYUSfTuBxeZM7Z
+ Ny2M7f8qfvI5eVntuBRTXNhMV+ysm7ITD9U/oXNa6f1uUTScC966ZCW72pGPhJmYOZJly90B0+W
+ 4ToPTfCelU+LluQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
+This adds streams support to TI CAL driver (and two minor improvements).
 
---dzn5ynb6ngfdh3pz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/3] pwm: ehrpwm: add get_state function to retrieve
- PWM channel state
-MIME-Version: 1.0
+The previous version was sent in 2023, but there has been no changes
+except from rebasing to upstream.
 
-Hello Rafael,
+ Tomi
 
-On Fri, Feb 07, 2025 at 06:32:34PM -0300, Rafael V. Volkmer wrote:
-> The ehrpwm driver was missing a get_state function, which is required
-> to properly retrieve the current state of the PWM channel. This commit
-> adds the ehrpwm_get_state() function, allowing users to query the
-> enabled state, period, duty cycle, and polarity of the PWM output.
+---
+Changes in v7:
+- Add Kieran's RBs
+- Fix checkpatch warnings wrt. formatting
+- Link to v6: https://lore.kernel.org/r/20250324-cal-streams-v6-0-28c93fb8f0c9@ideasonboard.com
 
-s/This commit adds/Add/
+Changes in v6:
+- Rebase on top of v4.16-rc7
+- Add two small patches (not related to streams as such)
+- Dropper the metadata patch for now, to make the series apply to plain
+  upstream
+- Link to v5: https://lore.kernel.org/r/20230918-cal-streams-v5-0-4851f073f58a@ideasonboard.com
 
-> The function reads the relevant registers (AQCSFRC, AQCTLx, TBPRD, CMPA)
-> to determine:
-> - Whether the PWM is enabled or disabled
-> - The configured period and duty cycle
-> - The polarity based on action-qualifier configurations
->=20
-> Additionally, this commit updates the pwm_ops structure to include
-> .get_state, ensuring proper integration with the PWM subsystem.
+Changes in v5:
+- Some improvements in the patch description of the first patch
+- Add "media: ti: cal: Add metadata streams support"
+- Link to v4: https://lore.kernel.org/r/20230808-cal-streams-v4-1-1f37610e0946@ideasonboard.com
 
-The last two paragraphs are too verbose. I'd drop them.
+Changes in v4:
+- A few minor formatting changes
+- Small changes regarding how the code handles metadata formats.
+  No metadata formats are supported yet, but we do have some code to
+  ensure that metadata formats aren't allowed on video nodes in video
+  capture mode. A future patch will enable metadata capture, allowing
+  the runtime change of video nodes between video and meta capture.
+- Link to v3: https://lore.kernel.org/all/20230302100755.191164-6-tomi.valkeinen@ideasonboard.com/
 
-> Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
-> ---
->  drivers/pwm/pwm-tiehrpwm.c | 122 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 122 insertions(+)
->=20
-> diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-> index 50516f46ab04..52527136c507 100644
-> --- a/drivers/pwm/pwm-tiehrpwm.c
-> +++ b/drivers/pwm/pwm-tiehrpwm.c
-> @@ -81,7 +81,9 @@
->  #define AQCTL_ZRO_MASK			GENMASK(1, 0)
->  #define AQCTL_PRD_MASK			GENMASK(3, 2)
->  #define AQCTL_CAU_MASK			GENMASK(5, 4)
-> +#define AQCTL_CAD_MASK			GENMASK(7, 6)
->  #define AQCTL_CBU_MASK			GENMASK(9, 8)
-> +#define AQCTL_CBD_MASK			GENMASK(11, 10)
-> =20
->  /*
->   * FORCE LOW	=3D> 0b01
-> @@ -495,9 +497,129 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, =
-struct pwm_device *pwm,
->  	return err;
->  }
-> =20
-> +/**
-> + * ehrpwm_get_state - Retrieves the current state of the eHRPWM channel
-> + * @chip:	pointer to the PWM chip structure
-> + * @pwm:	pointer to the PWM device structure
-> + * @state:	pointer to the pwm_state structure to be filled
-> + *
-> + * @return:	0 on success or a negative error code on failure
-> + */
-> +static int ehrpwm_get_state(struct pwm_chip *chip, struct pwm_device *pw=
-m,
-> +							struct pwm_state *state)
-> +{
-> +	int ret =3D 0u;
-> +
-> +	struct ehrpwm_pwm_chip *pc =3D NULL;
-> +
-> +	unsigned long long tbclk_rate =3D 0u;
-> +
-> +	/* Registers */
-> +	u16 aqcsfrc_reg =3D 0u;
-> +	u16 aqctl_reg =3D 0u;
-> +	u16 tbprd_reg =3D 0u;
-> +	u16 cmpa_reg =3D 0u;
+---
+Tomi Valkeinen (3):
+      media: ti: cal: Use printk's fourcc formatting
+      media: ti: cal: Fix wrong goto on error path
+      media: ti: cal: Add streams support
 
-No need to initialize these. Also please drop the u suffix (which is
-also inconsistant as you used U in patch #1). And then they can group
-them in single code lines (i.e.
+ drivers/media/platform/ti/cal/cal-camerarx.c | 270 +++++++++++++++++++++------
+ drivers/media/platform/ti/cal/cal-video.c    | 157 ++++++++++------
+ drivers/media/platform/ti/cal/cal.c          |  45 +++--
+ drivers/media/platform/ti/cal/cal.h          |   3 +-
+ 4 files changed, 347 insertions(+), 128 deletions(-)
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20230808-cal-streams-b913802c69f4
 
-	u16 aqcsfrc_reg, aqctl_reg, tbprd_reg, cmpa_reg;
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-).
-
-> +	/* Bits */
-> +	u8 csf_bits =3D 0u;
-> +
-> +	/* Values */
-> +	u64 period_cycles =3D 0u;
-> +	u64 duty_cycles =3D 0u;
-> +
-> +	/* Actions */
-> +	u8 up_action =3D 0u;
-> +	u8 down_action =3D 0u;
-> +
-> +	if (chip =3D=3D NULL || pwm =3D=3D NULL || state =3D=3D NULL)
-> +		return -EINVAL;
-
-Drop this check, the core makes sure these are all valid.
-
-> +	pc =3D to_ehrpwm_pwm_chip(chip);
-> +	if (pc =3D=3D NULL || pwm =3D=3D NULL || state =3D=3D NULL)
-> +		return -EINVAL;
-
-Some of these you already checked above (so drop these, too). In my eyes
-you can assume that to_ehrpwm_pwm_chip() doesn't return NULL.
-
-> +	tbclk_rate =3D clk_get_rate(pc->tbclk);
-> +	if (tbclk_rate <=3D 0)
-> +		return -EINVAL;
-
-tbclk_rate is long long while the return value of clk_get_rate is long
-only. Also given that tbclk_rate is unsigned <=3D doesn't make much sense.
-
-Also note that clk_get_rate() is only supposed to be called for an
-enabled clock.
-
-> +	/*< Get if EHRPWM is enable by checking registers values >*/
-
-s/enable/enabled/
-
-> +	/*
-> +	 * The 'hwpwm' field identifies which hardware output channel (e.g.,
-> +	 * 0 for channel A and 1 for channel B) of the eHRPWM module is in use.
-> +	 */
-> +	if (pwm->hwpwm =3D=3D 0) {
-> +		aqcsfrc_reg =3D readw(pc->mmio_base + AQCSFRC);
-> +		csf_bits =3D FIELD_GET(AQCSFRC_CSFA_MASK, aqcsfrc_reg);
-> +		aqctl_reg =3D readw(pc->mmio_base + AQCTLA);
-> +	} else {
-> +		aqcsfrc_reg =3D readw(pc->mmio_base + AQCSFRC);
-> +		csf_bits =3D FIELD_GET(AQCSFRC_CSFB_MASK, aqcsfrc_reg);
-> +		aqctl_reg =3D readw(pc->mmio_base + AQCTLB);
-> +	}
-> +
-> +	if (csf_bits)
-> +		state->enabled =3D false;
-> +
-> +	else if (aqctl_reg)
-> +		state->enabled =3D true;
-
-	else
-		state->enable is uninitialized :-\
-
-> +	/*< Get EHRPWM Period by checking registers values >*/
-
-This is kind of obvious. What is that /*< style? Looks like a bird :-)
-
-> +	tbprd_reg =3D readw(pc->mmio_base + TBPRD);
-> +	period_cycles =3D (u64)(tbprd_reg + 1u);
-
-Maybe you need to cast first and then add 1?
-
-> +	/*
-> +	 * period (in ns) =3D (period_cycles * 1e9) / tbclk_rate
-> +	 * Using DIV_ROUND_UP_ULL to avoid floating-point operations.
-> +	 */
-> +	state->period =3D DIV_ROUND_UP_ULL(period_cycles * NSEC_PER_SEC, tbclk_=
-rate);
-> +
-> +	/*< Get EHRPWM Duty Cycle by checking registers values >*/
-> +	cmpa_reg =3D readw(pc->mmio_base + CMPA);
-> +	duty_cycles =3D cmpa_reg;
-> +
-> +	/*
-> +	 * duty_cycle (in ns) =3D (duty_cycles * 1e9) / tbclk_rate
-> +	 * Using DIV_ROUND_UP_ULL to avoid floating-point operations.
-> +	 */
-> +	state->duty_cycle  =3D DIV_ROUND_UP_ULL(duty_cycles * NSEC_PER_SEC, tbc=
-lk_rate);
-
-s/  / /
-
-> +
-> +	/*< Get EHRPWM polarity by checking registers values >*/
-> +
-> +	/*
-> +	 * The 'hwpwm' field identifies which hardware output channel (e.g.,
-> +	 * 0 for channel A and 1 for channel B) of the eHRPWM module is in use.
-> +	 */
-> +	if (pwm->hwpwm =3D=3D 0) {
-> +		aqctl_reg =3D readw(pc->mmio_base + AQCTLA);
-> +		up_action =3D FIELD_GET(AQCTL_CAU_MASK, aqctl_reg);
-> +		down_action =3D FIELD_GET(AQCTL_CAD_MASK, aqctl_reg);
-> +	} else {
-> +		aqctl_reg =3D readw(pc->mmio_base + AQCTLB);
-> +		up_action =3D FIELD_GET(AQCTL_CBU_MASK, aqctl_reg);
-> +		down_action =3D FIELD_GET(AQCTL_CBD_MASK, aqctl_reg);
-> +	}
-> +
-> +	/*
-> +	 * Evaluate the actions to determine the PWM polarity:
-> +	 *  - If an up-count event sets the output (AQCTL_FRCHIGH) and a down-c=
-ount
-> +	 *    event clears it (AQ_CLEAR), then polarity is NORMAL.
-> +	 *  - If an up-count event clears the output (AQ_CLEAR) and a down-count
-> +	 *    event sets it (AQCTL_FRCLOW), then polarity is INVERSED.
-> +	 */
-> +	if (up_action =3D=3D AQCTL_FRCHIGH && down_action =3D=3D AQCTL_FRCLOW)
-> +		state->polarity =3D PWM_POLARITY_NORMAL;
-> +
-> +	else if (up_action =3D=3D AQCTL_FRCLOW && down_action =3D=3D AQCTL_FRCH=
-IGH)
-> +		state->polarity =3D PWM_POLARITY_INVERSED;
-
-	else ??? (maybe return an error?)
-
-> +	return ret;
-> +}
-> +
-
-Best regards
-Uwe
-
---dzn5ynb6ngfdh3pz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfj5c4ACgkQj4D7WH0S
-/k4utwgAmsr1tEJGrSSugB+yqB0uNpRNpyYQOnz0rQCx8dNFYSm66VKV41oUtXBN
-k+x+LxC9c11itQNuBOY2QIhORp54XXawyE60NeLf21AVssjpkNWY/j4r/h+px6lB
-62HeNdk6o/VZmsEqNyqQcIbhqqM9tiBeiQBlu1on49/e0xUhGJxOepv/L+PPliHt
-SFzHgQ41mwZ9tzQEkRpaTA/tbnMaiDRsPRQHaETPrvoRKCGC92XP1PIgRn+JMttS
-o3Pz8HbZoqEtYxBa1K1rZsGztb3qPM9BppuEKGlYWAAqQWSd/d9srU7UW1Ksyd4W
-XwinP2suXvTa/rxSrid1TSLoTJIfuQ==
-=r6LV
------END PGP SIGNATURE-----
-
---dzn5ynb6ngfdh3pz--
 
