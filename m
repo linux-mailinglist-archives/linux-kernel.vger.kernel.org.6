@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-576738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499D2A713CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:35:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B5AA713D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F18189542E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31A97A5A72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF81515381A;
-	Wed, 26 Mar 2025 09:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58FA1A8412;
+	Wed, 26 Mar 2025 09:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Meadw21h"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c5gD+Uvg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2B11A08B8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9381624DF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981723; cv=none; b=PzsDKcahwRbZNAPSVEL6cJZbUTQu9eFMH7LlI6ybZFZF7JfudzbRvabLYd+vDl+kI9RquacPLbWTjtMZzuL9bPwgKm5lEJObqQ4PCDZx2DwQDn4WjNabbQbao3uAPXi9D2HU3Kc5cgK0CVlQgcWy/doAxf8EB1nDh6vKTW4Cqs4=
+	t=1742981779; cv=none; b=V0R6sLw5Z7xmI5Ag5sdKVCD57NZ6jL7IXjPKTEgQbqcSyOP7PDBoi1+RhNtZOkyWnVp/Itmf6yUSReFAYuMN+KdvSnYoo1NpXWGMkHTyJphraz3rcTqiTnJ7fzTEnjqrBz6065kWyamdl1YbzIqDKa+9stno2yIaettIrCUB/TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981723; c=relaxed/simple;
-	bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ExONWOb8GIQbfFvXSM4jLQCfk7yMpsMLSfSGOesXWFg/l2PAyTG6OQiTVYzJaRp2OHlZ2/BMrwPb/vsj1qL9A16i0cGukaA60W2UR6vYezqqg32PYV1qQPEQOC3HbElJGVGHyAvvIwa2inFhjUweaQrLfI16zG1hZdptIiO5ewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Meadw21h; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso68333235e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742981720; x=1743586520; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
-        b=Meadw21hAJAbPxHWIvE2IdbDLH8Iu3gP2LwW1a7LUKHThLlqX6CsngMPJQR3Q8jmMi
-         Y/eXaeJ2x7qmckOmGM+Jt76QXYznKk6sayGrFiGmC3p4f12N30t7L+d30z9E2Q8aBkXP
-         iQ9hoRNkYoHeidu7iB/Di4Nb87PM8VkZiIUZy8lIkD+LLt/igq+9XyvPqk1gxuPfoNxl
-         az/n99XmR9iXn/FKMzOJ5s0zKA/MJzY5VQAMMlW+2epY2do+caRJMfrvEs7M1EEfVSIC
-         BfJkoIRfkPD63mUG+g0R72X73Y+mHNCvriWSWpX1id9Hr4XFD9b76gm+Vt2PfVNWG7gs
-         QRsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742981720; x=1743586520;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mO7U4m0oTja17D3RFzqvynDUKnVhiYqxVxjxnWasqbo=;
-        b=PSoLvWwxL+Twgv9go77bXiazvs5sQzAAVWZJfsD+SYEoZCOSvDN2Vc4pwmLBH3diG1
-         XJnEaTspB0ja7W1qvld/QMZNydPxoHwJSnx2Fif53ouyn/44gLSLq8dAmOd49GYYnpeB
-         yYXsqgkSVTzZmSxypqQ2fTuAARvloLtD4hO+EEXEeNJaAL4jo/C6aIBK3h0wBBpL8MAO
-         56PIPNBmlx+1OGkH/+NYGEvAm+5AYrIbQTAVBu9/MGCd1GdHl0W8RT1tBUS6kcWUfn7J
-         YKo7Zj/xSeuElL5c4HddYNbN5iJUvBK4B28L5eQVUkVxOX5NkWd7i019zZtY/Qw6Gir8
-         lGgw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5yufQjlLtaoBFG7Jn3D9eU7dMh3vw2PTxjwxwTAuM3xmOBpbi8+RGgT77wiVocDhdO9vtXjZXORreW2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQMuvGwmz52+meLbRt3SnGwsXcj8hxjIBvN314DhGgSqz/4Bd
-	TVXzvcQjFwoNxRSzlKn8FhRZ9xmM53PG3upTeeZH8eXHXl1oNpMmqWVeIjrkscs=
-X-Gm-Gg: ASbGnctwpELPs0nzkDvG3JcsCZP2VD2/u0AE5CUZ5edpV1YM7XOrRqUMT/qc4PQ8bZ2
-	p/KRh1WyoQE+rkbjMNiV52GoYDt94ZxMeWsUR6199MqHrtbnZ1Xx4o8xH9cp8vwkCxHpvag/h6Y
-	gl3DdlJYWN+C/ONDa4XbfySRd/fQFMfi2legGLo+xFBDYufg4Ap/en1Czx0UnuJuboSAUphkgwC
-	5GzzDTcoK9OfqSOBMmxyaqxG/LJEXaJChjMp7b+64ieOpBDPURamg8pQOJnqowvRpRDU2gWsHZI
-	tykftWsUbvaGNjrn18vr9bcEtVf4ZYFr9moWYkQQRZ/ghgDPJg==
-X-Google-Smtp-Source: AGHT+IGcfQ6I4FNrJirurd36EI4HsUJuWVwi1KHS1E2yEYqjMI56gm6awQtr8PEUURenI12KJk6YUQ==
-X-Received: by 2002:a05:600c:c0d:b0:43d:738:4a9 with SMTP id 5b1f17b1804b1-43d50a33d03mr152636725e9.27.1742981719714;
-        Wed, 26 Mar 2025 02:35:19 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f32fcdsm232615235e9.7.2025.03.26.02.35.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 02:35:19 -0700 (PDT)
-Message-ID: <40a8d82aab764669cf755adbabac80a5c0044a5e.camel@linaro.org>
-Subject: Re: [PATCH 12/34] mfd: sec: add support for S2MPG10 PMIC
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
- Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Alim Akhtar	 <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Russell King
- <linux@armlinux.org.uk>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Alexandre Belloni	 <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org
-Date: Wed, 26 Mar 2025 09:35:18 +0000
-In-Reply-To: <25eb9c47-96ba-4037-b320-af16e0226f4c@kernel.org>
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
-	 <20250323-s2mpg10-v1-12-d08943702707@linaro.org>
-	 <25eb9c47-96ba-4037-b320-af16e0226f4c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	s=arc-20240116; t=1742981779; c=relaxed/simple;
+	bh=aPS1tJ4jno8OgHfjqqCfT1rUCV0Rlu9rTyQpCyd/T3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=grc7vAMNtHYHWoQR6XntclQk1LkDKEhzoIsoxOq146xxwm+zczWwLJKmNHqFrQcggDvh1Jb0lWCgHopxnjvGlwb0FVBVrNnTrR5UOx24A+LgGhtOmdqvdMtxFXUlkrkfgyD1CT4jcQQemR/oXq6wVqlg/UKQToZiJsQDBtb3qeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c5gD+Uvg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742981776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7s6kGrJksefYUT5ouwvuh5z8KUx3QyiVOgbgLYNxiYY=;
+	b=c5gD+UvgXhRBCGdCuLW/vJA1FtYuc0TpmCdlgBRqHoafZZt2kXQeKW0QwOrb3+PI0JNfjm
+	Vanjt6GQkMBH84Yhf/hkOMgUdhAWHeWwNY1gAS01eb9IXdTTWfKlmbhgqvvgjva3GvaahR
+	pmhLQEFk+YnIxLiycblcfXRX+L+Dl5A=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-Ntfzn1olMPiWbWipkhq9bA-1; Wed,
+ 26 Mar 2025 05:36:12 -0400
+X-MC-Unique: Ntfzn1olMPiWbWipkhq9bA-1
+X-Mimecast-MFC-AGG-ID: Ntfzn1olMPiWbWipkhq9bA_1742981771
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 050D61809CA5;
+	Wed, 26 Mar 2025 09:36:11 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3517919541A5;
+	Wed, 26 Mar 2025 09:36:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Mar 2025 10:35:38 +0100 (CET)
+Date: Wed, 26 Mar 2025 10:35:33 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: kernel test robot <lkp@intel.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Phil Auld <pauld@redhat.com>
+Subject: Re: kernel/sched/isolation.c:50: undefined reference to
+ `sched_numa_find_closest'
+Message-ID: <20250326093532.GA30181@redhat.com>
+References: <202503260646.lrUqD3j5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503260646.lrUqD3j5-lkp@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, 2025-03-26 at 08:22 +0100, Krzysztof Kozlowski wrote:
-> On 23/03/2025 23:39, Andr=C3=A9 Draszik wrote:
-> > Add support for Samsung's S2MPG10 PMIC, which is a Power Management IC
-> > for mobile applications with buck converters, various LDOs, power
-> > meters, RTC, clock outputs, and additional GPIOs interfaces.
-> >=20
-> > Contrary to existing Samsung S2M series PMICs supported, communication
-> > is not via I2C, but via the Samsung ACPM firmware.
-> >=20
-> > This commit adds the core driver.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> >=20
-> > ---
-> > Checkpatch suggests to update MAINTAINERS, but the new file is covered
-> > already due to using a wildcard.
-> > ---
->=20
-> I did a quick look and seems fine, but I suspect small rework when PMIC
-> becames child of ACPM, so full review later.
+On 03/26, kernel test robot wrote:
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   2d09a9449ecd9a2b9fdac62408c12ee20b6307d2
+> commit: 5097cbcb38e6e0d2627c9dde1985e91d2c9f880e sched/isolation: Prevent boot crash when the boot CPU is nohz_full
+> date:   11 months ago
+> config: sh-randconfig-r132-20250326 (https://download.01.org/0day-ci/archive/20250326/202503260646.lrUqD3j5-lkp@intel.com/config)
+...
+> >> kernel/sched/isolation.c:50: undefined reference to `sched_numa_find_closest'
 
-Thanks Krzysztof! And yes, there'll be a small change to support that appro=
-ach
-instead.
+kernel/sched/isolation.c makes no sense without CONFIG_SMP, but
 
+	config CPU_ISOLATION
+		bool "CPU isolation"
+		depends on SMP || COMPILE_TEST
 
-Cheers,
-Andre'
+and .config above has CONFIG_COMPILE_TEST but not CONFIG_SMP.
+
+It also has CONFIG_NUMA, it doesn't depend on CONFIG_SMP in
+arch/sh/mm/Kconfig, so isolation.c can't use the dummy version
+of sched_numa_find_closest() in kernel/sched/sched.h, and
+kernel/sched/build_utility.c doesn't include topology.c without
+CONFIG_SMP.
+
+Perhaps we can should simply remove this "|| COMPILE_TEST" ?
+
+Oleg.
+
+--- x/init/Kconfig
++++ x/init/Kconfig
+@@ -709,7 +709,7 @@ endmenu # "CPU/Task time and stats accou
+ 
+ config CPU_ISOLATION
+ 	bool "CPU isolation"
+-	depends on SMP || COMPILE_TEST
++	depends on SMP
+ 	default y
+ 	help
+ 	  Make sure that CPUs running critical tasks are not disturbed by
+
 
 
