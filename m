@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-576412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B0FA70EE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:18:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939CCA70EE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0DD19C0A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2753B8D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF23D143895;
-	Wed, 26 Mar 2025 02:16:56 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9851012F5A5;
+	Wed, 26 Mar 2025 02:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOhDP9Hd"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90F2904;
-	Wed, 26 Mar 2025 02:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC71EEA9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742955416; cv=none; b=jZO+P46Ljf5UquYqT2Hir/F6JZ6rluf4qsZF2L/TxA6XYRn/9M+TBOsz22bm+1DMlzi0/ym1MzU1wyPCpBZ4Xw1IaUUUxHdUIfrgnXsu4Nn5aUWMvuG9MT0EG1irsUf8kzW2Y+CfSLckKOq8pQHv6XXm3zYNauNrSuXWDA4nOow=
+	t=1742955562; cv=none; b=HEV5TmWdVPplYXru/9VU8lXMXm6+z63JbGTIy7T+vJWk4KZiFFUGEFhqGaDacrhD8Ly5obCBj3iHWnjwvb3p8xJ+y2030H0cht39TUcsgj83w9cT2Cu+SncBXvUCd9Xu7wDi5AAmdfzzdUw7fVAJXQNLEQ37iX6PQDhYNcxUMoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742955416; c=relaxed/simple;
-	bh=0pFQ2xu7zxHQ8FHvgjU1qjsyx/mC4SibL8xajPm2Q0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HffyLM+jFhYEBVmVc3GckGheoDcg7Jm7c90EB4jIeVLyCDL3EA2lmjXgWy9pvi/C5YjEwff2jF7T2fDIdI5EC9t91SIw84AlxpaQtvf4X/+sMkneVewpze8hwEfDP6VieWeaJ+PMp8+pr8M5aOyy1LLG7bqYiP9/tkajNiEH0k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZMr4q67V8z1d108;
-	Wed, 26 Mar 2025 10:16:27 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id F398B1400F4;
-	Wed, 26 Mar 2025 10:16:49 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 26 Mar
- 2025 10:16:49 +0800
-Message-ID: <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
-Date: Wed, 26 Mar 2025 10:16:31 +0800
+	s=arc-20240116; t=1742955562; c=relaxed/simple;
+	bh=TfxFK9jsSWKqRnxwXCns93febKGMUKg797Y4sPzkXAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dmPvVib2SjYQ8Fpb3WtP4oan4/MJNZGpZzDCfZDVpDaGTr1bNM7LrptgBZRO3iWloJPJf5vrQRzJQbLMBuGWwH89r6S0yS4FfVQoI+9eF3pp/T/m0T9ZbI6gtROfID2zlpt2wSC5i7cvUOuNOtXrxvhKbwRZJiaj+gB9heDmAtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOhDP9Hd; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227b828de00so57999155ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742955560; x=1743560360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PAT0zokbIOKhPWn+286xYZMuNKFDGnURedHLTd/KJUs=;
+        b=MOhDP9HdOJljQi+AMMOSx7ktDk3KXPuoecwD6Q1RzE2tW4yhiDawPKDFUYg0z9JBnr
+         Bjhq0OHEWP0Eqc6Cs5AHewYfd+ZotufUioHeUG2t7wwnjlsMQRZF7T0P/VFiY4EoVzcb
+         YpsGejnCdJYJKdgsFvuJnQMc15XNkp1VN/+6PkA3n4jNYPrydo8R85pbL2kosLoIFJnx
+         VJK4Ois/LSiEsU9L6+BAEjHP+OeEaRTNgGNNyQlCGInR5AvWAaKkPOdicjGauwp9DD2N
+         QGN4MKQRhue7wjORBD5UmLBobQSc+56uK/i/9G/fE7IfL4l8KxRALJ5aO6jT/7KV1IAr
+         2N+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742955560; x=1743560360;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PAT0zokbIOKhPWn+286xYZMuNKFDGnURedHLTd/KJUs=;
+        b=pSi7mwtMo+nVXZN8ydFD1HCZ74Gqu8CqdwzCHBIN88DsZ9XEMWBpK5JOGj0vtbZeZM
+         6XMY8QT/QzRuXe8kJRfKInt4c8O37cQ7RBP4AvbuPWvlqOTzIbKaYQnBj/lW8DCFmRg5
+         BCMN0HEmCItAmHyIZEMij2ep0AI6J+v7eyTQbZiO1MJWFa6XGfzlIXiEW/sl4PRlzmP4
+         DdPm/TCzcoa0l34zGF7Ov4vB4yXbf8sclPADl107qPZDMU2UUoTZKYHFsaL4Rx/kmb+o
+         HLEnyRkFPtcXy42aym9qUeG8m9oVpprGLzR2puo2MS1GhxM+wPODxGzYvkyWb/6m2gzG
+         dGBA==
+X-Gm-Message-State: AOJu0YwXoPqnRVH5LJW4xXnH+trvZJt6ZaiaSx3N2fSwWkhW9bSO2hA5
+	PExW+oc2esg5z/pStajEPihL/K5hh4bIT+gmoKIEd9pokntkQa45
+X-Gm-Gg: ASbGncvZR623h6fnfjKznSv2oy1AFPU26bBjAMhcn5k3hhkh1H7hbhXtazjxDN3VOOC
+	eZcRZCyFiYa3/DmUTqyKlaTDBcFkDd38LmVPSIBX0ayWuSeepzng9PhTzTPLyrpS8UTDQ/u4lIx
+	gQp5/p6pXUc1UG53vFeBkcmqE7daeJaGjLCgfbHbf5/HrbkAFloeiCYiY+2n4GKLLvnbT88m6/E
+	99HX6hBUgr9SRfFZbjjd49UTmQsPhD5yrveeDHu+0c+DU3yqlaDE1fawSRbgTWQVrBMGt5Q5SJj
+	/A2SuZwJP39VubohI4G47jBEF10AqNmOv0hBGaALhmFQ1GM1262mjWkExTNAQsKAUkYL31VW0Q=
+	=
+X-Google-Smtp-Source: AGHT+IE9MGbXHDllv+CWXOFGyfbZpdi2K2ZEOSrOrv5zn0f0h35JYS0x/syi4jJWc/3Xk5XNnUraJw==
+X-Received: by 2002:a17:903:2346:b0:224:c76:5e56 with SMTP id d9443c01a7336-22780da3761mr286694315ad.27.1742955559733;
+        Tue, 25 Mar 2025 19:19:19 -0700 (PDT)
+Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:7cf9:c75d:456:248c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3966esm98323905ad.13.2025.03.25.19.19.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 19:19:19 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+Date: Wed, 26 Mar 2025 10:19:14 +0800
+Message-ID: <20250326021914.49794-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+References: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Theodore Ts'o <tytso@mit.edu>
-CC: <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>, Ritesh Harjani
-	<ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>, Yang Erkun
-	<yangerkun@huawei.com>
-References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
- <20250316014128.GA787758@mit.edu>
- <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250319023129.GF787758@mit.edu>
- <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500008.china.huawei.com (7.202.181.45)
 
-On 2025/3/26 1:57, Ojaswin Mujoo wrote:
-> On Tue, Mar 18, 2025 at 10:31:29PM -0400, Theodore Ts'o wrote:
->> On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
->>>> So this is something we need to do if the journal is actived, and if
->>>> it's active, then sbi->s_journal will be non-NULL, and so we can just
->>>> check to see if inode == sbi->s_journal instead.  This will simplify
->>> I believe you mean inode == sbi->s_journal->j_inode here right?
->> Yes, that's what I meant; sorry for the not catching this before I
->> sent my reply.
->>
->> Cheers,
->>
->> 					- Ted
-> Hi Ted, Baokun,
->
-> I got some time to revisit this. Seems like checking against
-> s_journal->j_inode is not enough. This is because both
-> ext4_check_blockref() and check_block_validity() can be called even
-> before journal->j_inode is set:
->
-> ext4_open_inode_journal
->    ext4_get_journal_inode
-> 	  __ext4_iget
-> 		  ext4_ind_check_inode
-> 			  ext4_check_blockref  /* j_inode not set */
->
->    journal = jbd2_journal_init_inode
-> 	  bmap
-> 		  ext4_bmap
-> 			 iomap_bmap
-> 			   ext4_iomap_begin
-> 				   ext4_map_blocks
-> 					   check_block_validity
->
->    journal->j_inode = inode
->
->
-> Now, I think in this case the best solution might be to use the extra
-> field like we do in this patch but set  EXT4_SB(sb)->s_journal_ino
-> sufficiently early.
->
-> Thoughts?
+#syz test
 
-Because system zone setup happens after the journal are loaded, I think we
-can skip the check if the journal haven't been loaded yet, like this:
+diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+index 2956d888c131..c0bbfdab40ec 100644
+--- a/fs/ocfs2/quota_local.c
++++ b/fs/ocfs2/quota_local.c
+@@ -302,7 +302,7 @@ static int ocfs2_add_recovery_chunk(struct super_block *sb,
+ 	if (!rc)
+ 		return -ENOMEM;
+ 	rc->rc_chunk = chunk;
+-	rc->rc_bitmap = kmalloc(sb->s_blocksize, GFP_NOFS);
++	rc->rc_bitmap = kzalloc(sb->s_blocksize, GFP_NOFS);
+ 	if (!rc->rc_bitmap) {
+ 		kfree(rc);
+ 		return -ENOMEM;
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d04d8a7f12e7..38dc72ff7e78 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -383,9 +383,10 @@ static int __check_block_validity(struct inode 
-*inode, const char *func,
-                                 unsigned int line,
-                                 struct ext4_map_blocks *map)
-  {
-+       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-+
-         if (ext4_has_feature_journal(inode->i_sb) &&
--           (inode->i_ino ==
-- le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+           (!journal || inode == journal->j_inode))
-                 return 0;
-         if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
-                 ext4_error_inode(inode, func, line, map->m_pblk,
-
-If any part of the journal area overlaps with the system zone, we'll catch
-it when we add the journal area to the system zone later.
-
-
-Cheers,
-Baokun
 
 
