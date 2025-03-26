@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-576474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234A4A70FC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:02:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF0AA70FC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AAA3BE67B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DDAF3BE807
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A4D15F41F;
-	Wed, 26 Mar 2025 04:01:53 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEB817A310;
+	Wed, 26 Mar 2025 04:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="m1BT3k8A"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BA64A29;
-	Wed, 26 Mar 2025 04:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA672BB15;
+	Wed, 26 Mar 2025 04:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742961713; cv=none; b=Pfo+Uy5kH0x4QIr8Hcn7VNF0OM+EOdiAzDpqujt5T1lSCbY3fZRaiN496pVJh6uiZbjoFZyy2aeiK2se7BrwsH1YpvEfDQsbI+aKBnc2r7CFOiWfYbbe6psr4qyOAjzgzrBjsE/L1m0ZT9YnxlrMiyS7sGo82AkSnelbFAEfHfk=
+	t=1742961717; cv=none; b=R3ViU1Z9osbey4Ir05X2RlkRqpVQfj5rfi5hgblBqCl2Dv0JhxWiwz9rKgpivFPkc4JSjxBL5JM6Kqg3+EixPWY4g2UXICeNkRv4wUbE8efd0u71c8WoAiV2Tm6rCpjHoFXdL7BmISGylaeNZ2aAxySUcCuQdefnZJRO3YAhLWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742961713; c=relaxed/simple;
-	bh=K2vt3ZRLTE4ifwlqZMCuqkJdBq8lXKR2NPQ/BFlY7Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DeQcWspEIysrtQaqq1wZS96rbNoWt76B4Gb3LCTKeXu1Jmci1js+bxPvVj12H7kohA4NOMaXQvZYmv+QKv3lweQRrPOQonImjUDuz5DbfOv33O2SI818wpwEfTBh5MCx2c9g9Z/gFInVZgqbShGNtOL0aRNhi8J9TIElevcJRMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZMtR517bcz27hP7;
-	Wed, 26 Mar 2025 12:02:25 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 740F11800B2;
-	Wed, 26 Mar 2025 12:01:47 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 26 Mar 2025 12:01:46 +0800
-Message-ID: <be35b86c-1e64-4593-8f68-fbd1f6b61eef@huawei.com>
-Date: Wed, 26 Mar 2025 12:01:45 +0800
+	s=arc-20240116; t=1742961717; c=relaxed/simple;
+	bh=ZfSoMc33qB/l3GDPsuSYgh4EhHc3kElyQwM8qwNCLeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AJqYPEJOoC/+0QUI9Mcjdp/GOEmErHeZULvvHTRZUnpo+P+SLCbn46kdPQuxldHO3gIdXDghoAjqKbLHmbhtkJehlDEjlEKXL/lQykru6FV2FJ0CemGVx3RLVxLb03oSXYEnC1OGwdhq/y1pvp+bm923BE5JZ+GTD8YK9Zaus4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=m1BT3k8A; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742961710;
+	bh=F98RMd0v2W7u7GsS9/A5PQYVXizV8j+2mjObVrUmias=;
+	h=Date:From:To:Cc:Subject:From;
+	b=m1BT3k8AQ6P3qRsl3fVGkf7hTpUoy4K9rpai/1G9AYNc7nPlqSPM6Vy/VxEC9k0xy
+	 zynCBBWzVjmwLYUJQbuX1KETtBmpe245dJyWpUI8G3DoLYNcXKfnQfBgPuOZSiGrEN
+	 /hsO9DwgoHorQsVJS6GDFxjV2HfYGfQZPMbQlimfag8X0MXhKHc9gmEQnydf8f0PM/
+	 xF6FSSyILvtW8O4B01y4yehT1+BiEHWUZ5x0ekXgVkhd9maSuxJUCGxlzhZa9X95Kn
+	 J9JwM+gS+HpLZpHZ3XWbVE4d9mqdf6b5/J2JnjoD28+99KltjWUIMJ2DH1cc6bqMvP
+	 ruHdUEcaCSLvg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMtQP6tF0z4wd0;
+	Wed, 26 Mar 2025 15:01:49 +1100 (AEDT)
+Date: Wed, 26 Mar 2025 15:01:48 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: John Johansen <john.johansen@canonical.com>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Networking
+ <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the apparmor tree
+Message-ID: <20250326150148.72d9138d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-To: Baokun Li <libaokun1@huawei.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>
-CC: <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>, Ritesh Harjani
-	<ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>, Yang Erkun
-	<yangerkun@huawei.com>, Theodore Ts'o <tytso@mit.edu>
-References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
- <20250316014128.GA787758@mit.edu>
- <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250319023129.GF787758@mit.edu>
- <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huawei.com>
-In-Reply-To: <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: multipart/signed; boundary="Sig_/ZbV_BhTwyw=afJTEYdyleTJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2025/3/26 10:16, Baokun Li wrote:
-> On 2025/3/26 1:57, Ojaswin Mujoo wrote:
->> On Tue, Mar 18, 2025 at 10:31:29PM -0400, Theodore Ts'o wrote:
->>> On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
->>>>> So this is something we need to do if the journal is actived, and if
->>>>> it's active, then sbi->s_journal will be non-NULL, and so we can just
->>>>> check to see if inode == sbi->s_journal instead.  This will simplify
->>>> I believe you mean inode == sbi->s_journal->j_inode here right?
->>> Yes, that's what I meant; sorry for the not catching this before I
->>> sent my reply.
->>>
->>> Cheers,
->>>
->>>                     - Ted
->> Hi Ted, Baokun,
->>
->> I got some time to revisit this. Seems like checking against
->> s_journal->j_inode is not enough. This is because both
->> ext4_check_blockref() and check_block_validity() can be called even
->> before journal->j_inode is set:
->>
->> ext4_open_inode_journal
->>    ext4_get_journal_inode
->>       __ext4_iget
->>           ext4_ind_check_inode
->>               ext4_check_blockref  /* j_inode not set */
->>
->>    journal = jbd2_journal_init_inode
->>       bmap
->>           ext4_bmap
->>              iomap_bmap
->>                ext4_iomap_begin
->>                    ext4_map_blocks
->>                        check_block_validity
->>
->>    journal->j_inode = inode
->>
->>
->> Now, I think in this case the best solution might be to use the extra
->> field like we do in this patch but set  EXT4_SB(sb)->s_journal_ino
->> sufficiently early.
->>
->> Thoughts?
-> 
-> Because system zone setup happens after the journal are loaded, I think we
-> can skip the check if the journal haven't been loaded yet, like this:
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d04d8a7f12e7..38dc72ff7e78 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -383,9 +383,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
->                                 unsigned int line,
->                                 struct ext4_map_blocks *map)
->  {
-> +       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-> +
->         if (ext4_has_feature_journal(inode->i_sb) &&
-> -           (inode->i_ino ==
-> - le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-> +           (!journal || inode == journal->j_inode))
->                 return 0;
->         if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
->                 ext4_error_inode(inode, func, line, map->m_pblk,
-> 
-> If any part of the journal area overlaps with the system zone, we'll catch
-> it when we add the journal area to the system zone later.
-> 
-> 
+--Sig_/ZbV_BhTwyw=afJTEYdyleTJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Since the creation of the system zone relies on the journal being
-loaded, I think there is no risk in proceeding to call
-ext4_inode_block_valid() to perform a basic block range check for
-the journal inode, or even better.
+Hi all,
 
-Thanks,
-Yi.
+After merging the apparmor tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+security/apparmor/af_unix.c: In function 'unix_state_double_lock':
+security/apparmor/af_unix.c:627:17: error: implicit declaration of function=
+ 'unix_state_lock'; did you mean 'unix_state_double_lock'? [-Wimplicit-func=
+tion-declaration]
+  627 |                 unix_state_lock(sk1);
+      |                 ^~~~~~~~~~~~~~~
+      |                 unix_state_double_lock
+security/apparmor/af_unix.c: In function 'unix_state_double_unlock':
+security/apparmor/af_unix.c:642:17: error: implicit declaration of function=
+ 'unix_state_unlock'; did you mean 'unix_state_double_lock'? [-Wimplicit-fu=
+nction-declaration]
+  642 |                 unix_state_unlock(sk1);
+      |                 ^~~~~~~~~~~~~~~~~
+      |                 unix_state_double_lock
+
+Caused by commit
+
+  c05e705812d1 ("apparmor: add fine grained af_unix mediation")
+
+interacting with commit
+
+  84960bf24031 ("af_unix: Move internal definitions to net/unix/.")
+
+from the net-next tree.
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Mar 2025 14:31:44 +1100
+Subject: [PATCH] fix up for "apparmor: add fine grained af_unix mediation"
+
+interacting with "af_unix: Move internal definitions to net/unix/."
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/net/af_unix.h | 3 +++
+ net/unix/af_unix.h    | 3 ---
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+index b588069ece7e..1af1841b7601 100644
+--- a/include/net/af_unix.h
++++ b/include/net/af_unix.h
+@@ -55,4 +55,7 @@ struct unix_sock {
+ #define unix_sk(ptr) container_of_const(ptr, struct unix_sock, sk)
+ #define unix_peer(sk) (unix_sk(sk)->peer)
+=20
++#define unix_state_lock(s)	spin_lock(&unix_sk(s)->lock)
++#define unix_state_unlock(s)	spin_unlock(&unix_sk(s)->lock)
++
+ #endif
+diff --git a/net/unix/af_unix.h b/net/unix/af_unix.h
+index ed4aedc42813..59db179df9bb 100644
+--- a/net/unix/af_unix.h
++++ b/net/unix/af_unix.h
+@@ -8,9 +8,6 @@
+ #define UNIX_HASH_SIZE	(256 * 2)
+ #define UNIX_HASH_BITS	8
+=20
+-#define unix_state_lock(s)	spin_lock(&unix_sk(s)->lock)
+-#define unix_state_unlock(s)	spin_unlock(&unix_sk(s)->lock)
+-
+ struct sock *unix_peer_get(struct sock *sk);
+=20
+ struct unix_skb_parms {
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZbV_BhTwyw=afJTEYdyleTJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjfCwACgkQAVBC80lX
+0Gz9zwf+KH7mlPcIKpMLx9vYrm1H8LYrC4iV7S3iKhscGn0ZJX5LsyXF/FcMANGN
+YYGa1zAyOlbTgw5Etsxq0GiYtYaG2UO2in+cyCmFseix6SP1SzKreXXmKhXPpghg
+Zp/laEm7sW7CAjAFuBgqJF3CLJIFGT/3x0pnqWOZ8vHo0nEtMOL2OoZTwI/wCudl
+F4dnWAacgTe7A6rcGPY2T+esnspklArq/jDXDhQV/WchRoVAtdYksqG3cfVvzZwR
+HzAAPBcHdLYvUmLF0Atv+aHxo4qabVWMoD1CB/P7RdOulIufJokumMJLIQkNoRDj
+1vSj4Q8vtglpbKABrid43D0rHDB6VA==
+=FUA+
+-----END PGP SIGNATURE-----
+
+--Sig_/ZbV_BhTwyw=afJTEYdyleTJ--
 
