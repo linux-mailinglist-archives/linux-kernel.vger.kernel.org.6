@@ -1,176 +1,97 @@
-Return-Path: <linux-kernel+bounces-576387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AF3A70E91
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879FAA70E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D407918916B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487A81894FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404B433CB;
-	Wed, 26 Mar 2025 01:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791892BB15;
+	Wed, 26 Mar 2025 01:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W2cTTUfA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5isTd8b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61147DA8C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D5EEEC3;
+	Wed, 26 Mar 2025 01:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742953511; cv=none; b=LE7r4yTD3g1EI41DS3loVF1prEHJOn/rXFSEZh+9frf6IOZBsSFWkSKu+xVd/1f8drFAtpU549kGxV1sbSRz2x4ACu45c2tktUHArzdKrx0qq5N3PHZYaq6IDIXlo2Jrgl5SyJBsqES0aN1lyjlPCG4tpzPEwM9zsFrXX+d2hAM=
+	t=1742953579; cv=none; b=rZBunxiw53cnVFbtirqyHtTS/1pXCtIOvXveULe7t5WusyNXdRz9OcucXm8J8whC0cjCDmI6T7NYeHdkLyil3fNTlSCh3jSov0+/tfDvfFjRA3200JpyDSAhDujeMEA3vzmhSi8vSvioEwQmengTFt3rCt2sDkK6IONwZCLKE+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742953511; c=relaxed/simple;
-	bh=AR0i3fnXRHnzKLCNCJz8BksqziPjecBI9ZQBZ09/f8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OD37F96STak3aNf74U4Lk4oX4x9/O7JIUhGgkzXPDOFos0y7+6k276m+gYDnkfs0rRsxAhvWO5L5rFmG+d1BdmhaW6Ad7Mrz2nyBrCDJxH68BFCrjmx+b4MgPkjeNZitK8x6rynHm4P1xRiubCJJcjwrq22cBLjGxNpDevqeqVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W2cTTUfA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PLagFm005368;
-	Wed, 26 Mar 2025 01:44:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bzx9ac
-	KEj01nwPiaOBsmDrTzp1VYYY+QC8BCPU0DGQk=; b=W2cTTUfAIsREITsPM13AjC
-	0UO8HEEiSbXVE/w9qZrgU7FG1y8f+Q+lz8myp3pXybMuLdQdSRToFD5IJsjQF+j8
-	OCXsvtcAFJq1RY8jlcU0BEHyrR+H0TFNwB5xkRX2GgbrKxlgNiZH/+jmYEqKT8o9
-	ciRSUAdpnDNUkoAW/amO8IDoKYa6WFgAAqWKhZV2TVx9KT7+faMjnnD8FsdqnZFM
-	029CJcMlEl4cZJr38fouRMJB00CJD4FmilG1RrkT4PJBVNp+xHIClMJeUWLHD1Pw
-	pe+HCIJ2E9ZX97Z0sPY8S6Xp/lAIfREGnOOdQG85fJxEuh81OhMYMfz5F958dWPQ
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx03dv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 01:44:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q102pL020029;
-	Wed, 26 Mar 2025 01:44:55 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hnx6pj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 01:44:55 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52Q1itDY56557876
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 01:44:55 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4FEB05803F;
-	Wed, 26 Mar 2025 01:44:55 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 98A4258060;
-	Wed, 26 Mar 2025 01:44:50 +0000 (GMT)
-Received: from [9.43.87.161] (unknown [9.43.87.161])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 01:44:49 +0000 (GMT)
-Message-ID: <554356f9-1672-4c15-a2f2-8cdc16042e3d@linux.ibm.com>
-Date: Wed, 26 Mar 2025 07:14:47 +0530
+	s=arc-20240116; t=1742953579; c=relaxed/simple;
+	bh=VYDRUzsbwI5tJrmOYcOqRdaiJinko9uOWTmLeWYfkQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpmsZh1BuMF4gE8ovrsuWmcJGqJvGomjZ5Tyk3+kWTc4zPJIgnjWX5VaPQXOujsrmeNEGfaBnM0er8NMBPo9mR5qGXLQPf1zJMBzk5UjKOAOMOIpmr7geXgB4XakdbiUao24ZjTa5BiME1GQjy8I4CDk5y/0pG6/7NCfP2gIEw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5isTd8b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81379C4CEE4;
+	Wed, 26 Mar 2025 01:46:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742953579;
+	bh=VYDRUzsbwI5tJrmOYcOqRdaiJinko9uOWTmLeWYfkQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5isTd8bWqPiT/jYIdMvB0RQBh2R4+II1CkXzDbSLAguG5BSw5KJtintpyjdQKpqp
+	 U94CV9vK6hnF6XwUJy2iiSSEbswM18oNsuHavygni/GkXDHPAC6/slyH78X4dlYgDy
+	 liBYq7e+e3NqmLplMflasiIpLjGDiQn03wuRvytmziqwXlu6oERttimntDby9Z/nqF
+	 8CulrzEIHFpD7YsZ/hMj/A/TCE3NOUJEV4Wl6WRDOoQ+wGJtIuIqd9bBT9Setxlz1B
+	 0YusUm3ufOyudZwXnexh0n0Kmsy0CWPKPjJnmHTnGek7k5Skn7b19sYuc/BLHT8WYE
+	 +1uNoLU2jItfw==
+Date: Tue, 25 Mar 2025 18:46:16 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>, 
+	linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, media: dib8000: Prevent
+ divide-by-zero in dib8000_set_dds()
+Message-ID: <w636w4p7xtg4v2lbuic7dnxs7how7mqp2ipkp5xyvfbqr3idvs@oxnon2piapsl>
+References: <bd1d504d930ae3f073b1e071bcf62cae7708773c.1742852847.git.jpoimboe@kernel.org>
+ <174294059839.14745.12160091729171456650.tip-bot2@tip-bot2>
+ <20250326064239.5194fdc8@sal.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc64/ftrace: fix module loading without patchable
- function entries
-To: Adam Williamson <awilliam@redhat.com>, Naveen N Rao <naveen@kernel.org>,
-        Anthony Iliopoulos <ailiop@suse.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        jforbes@redhat.com, kevin@scrye.com
-References: <20250204231821.39140-1-ailiop@suse.com>
- <wlscshbqan2svtqkz5xc6v47tzndfnsvge7h4lbfn67zoplekl@elt2oxwhrp6f>
- <89748fc85c6ca477f64e1a5cc1852e74c68b493c.camel@redhat.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <89748fc85c6ca477f64e1a5cc1852e74c68b493c.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yjTrq7dCbHb8NRRgYp4AfuJxyLr7MBpP
-X-Proofpoint-ORIG-GUID: yjTrq7dCbHb8NRRgYp4AfuJxyLr7MBpP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
- clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=914 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260004
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250326064239.5194fdc8@sal.lan>
 
-
-
-On 3/26/25 6:46 AM, Adam Williamson wrote:
-> On Thu, 2025-02-13 at 22:29 +0530, Naveen N Rao wrote:
->> On Wed, Feb 05, 2025 at 12:18:21AM +0100, Anthony Iliopoulos wrote:
->>> get_stubs_size assumes that there must always be at least one patchable
->>> function entry, which is not always the case (modules that export data
->>> but no code), otherwise it returns -ENOEXEC and thus the section header
->>> sh_size is set to that value. During module_memory_alloc() the size is
->>> passed to execmem_alloc() after being page-aligned and thus set to zero
->>> which will cause it to fail the allocation (and thus module loading) as
->>> __vmalloc_node_range() checks for zero-sized allocs and returns null:
->>>
->>> [  115.466896] module_64: cast_common: doesn't contain __patchable_function_entries.
->>> [  115.469189] ------------[ cut here ]------------
->>> [  115.469496] WARNING: CPU: 0 PID: 274 at mm/vmalloc.c:3778 __vmalloc_node_range_noprof+0x8b4/0x8f0
->>> ...
->>> [  115.478574] ---[ end trace 0000000000000000 ]---
->>> [  115.479545] execmem: unable to allocate memory
->>
->> Ugh, that's nasty.
->>
->>>
->>> Fix this by removing the check completely, since it is anyway not
->>> helpful to propagate this as an error upwards.
->>>
->>> Fixes: eec37961a56a ("powerpc64/ftrace: Move ftrace sequence out of line")
->>> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
->>> ---
->>>  arch/powerpc/kernel/module_64.c | 4 ----
->>>  1 file changed, 4 deletions(-)
->>>
->>
->> Thanks for fixing this. It might also be good to add a check in 
->> setup_ftrace_ool_stubs(). Something like this:
->>
->> diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
->> index 34a5aec4908f..c10a9c66cfe3 100644
->> --- a/arch/powerpc/kernel/module_64.c
->> +++ b/arch/powerpc/kernel/module_64.c
->> @@ -1125,6 +1125,10 @@ static int setup_ftrace_ool_stubs(const Elf64_Shdr *sechdrs, unsigned long addr,
->>         unsigned int i, total_stubs, num_stubs;
->>         struct ppc64_stub_entry *stub;
->>  
->> +       /* Bail out early if no traceable functions */
->> +       if (!me->arch.ool_stub_count)
->> +               return 0;
->> +
->>         total_stubs = sechdrs[me->arch.stubs_section].sh_size / sizeof(*stub);
->>         num_stubs = roundup(me->arch.ool_stub_count * sizeof(struct ftrace_ool_stub),
->>                             sizeof(struct ppc64_stub_entry)) / sizeof(struct ppc64_stub_entry);
->>
->>
->> Regardless of that, for this patch:
->> Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
->>
->>
->> - Naveen
->>
-> Is there anything that can be done to get this bumped along? It
-> completely breaks networking on Fedora's power9 boxes, as it affects
-> the i40e module which they use.
+On Wed, Mar 26, 2025 at 06:42:39AM +0800, Mauro Carvalho Chehab wrote:
+> > +		u32 internal = dib8000_read32(state, 23) / 1000;
+> > +
+> >  		ratio = 4;
+> > -		unit_khz_dds_val = (1<<26) / (dib8000_read32(state, 23) / 1000);
+> > +
+> > +		unit_khz_dds_val = (1<<26) / (internal ?: 1);
 > 
+> This is theoretical, as in practice dib8096 won't likely be tuning
+> if reading this register would return zero, but at least for my
+> eyes, it would sound better to set unit_khz_dds_val to 1 internal
+> is zero, instead of 1<<26. 
 
-Sorry missed this, Will pull it in.
+I don't pretend to understand this device, I just figured one is the
+closest you can get to zero :-)
 
-Thanks.
-Maddy
+So something like this instead?
 
-> Thanks!
-
+diff --git a/drivers/media/dvb-frontends/dib8000.c b/drivers/media/dvb-frontends/dib8000.c
+index cfe59c3255f7..c80134ff511b 100644
+--- a/drivers/media/dvb-frontends/dib8000.c
++++ b/drivers/media/dvb-frontends/dib8000.c
+@@ -2705,7 +2705,7 @@ static void dib8000_set_dds(struct dib8000_state *state, s32 offset_khz)
+ 
+ 		ratio = 4;
+ 
+-		unit_khz_dds_val = (1<<26) / (internal ?: 1);
++		unit_khz_dds_val = internal ? ((1<<26) / internal) : 1;
+ 		if (offset_khz < 0)
+ 			dds = (1 << 26) - (abs_offset_khz * unit_khz_dds_val);
+ 		else
 
