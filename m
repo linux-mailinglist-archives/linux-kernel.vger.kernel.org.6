@@ -1,247 +1,111 @@
-Return-Path: <linux-kernel+bounces-576972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D2BA716D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:43:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64181A716DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295DC16FC5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE501888DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C321E1E1B;
-	Wed, 26 Mar 2025 12:42:53 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA371E51E6;
+	Wed, 26 Mar 2025 12:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmYzKXr6"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1421E1DEC;
-	Wed, 26 Mar 2025 12:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED87A57C9F;
+	Wed, 26 Mar 2025 12:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742992972; cv=none; b=kLeumHLsuzH064FavB8o2m8n5Naz2LNLXvQaa6xCq1fNcICL9b2MY1fU/FXT56VRRdn2+SCl+l4+9jKmfXgKfflvGH1DeOlmM6BFlATxZEoZhw6U8+V+4W6BHJPggiC9JK6SaS7x6mX0po5MSM3zKIBhrn+0Xk3b7rP0imnqqBQ=
+	t=1742993032; cv=none; b=o/ZINRN6SUFtMWo4zGbbEKcUJzzLHsbOKVXxZDXexfqESUXZ+72mIZhfjreVXi9psgB8u0NzHlLi4jwnxvtMul0qwZCMd+k80LJCTniSfF7/i08ZL3Tlu3XqYtLS2tjKcft/A0nCoWTFlrLJM29PF1oCmDIWnhLyrF9n/BtDxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742992972; c=relaxed/simple;
-	bh=9PLfRglBIRDWW4vWcZCofYESNHEJ70S3FZVGIXq2CMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YEEuLA0p0JYvU2CFT6ej8O2XAzSp/disQFXdIhqNIqBr114gW84rMTL1dXuslrJVv9gYjnET620SsiUuGCUQ26gkK3kWAmTByaT+1sC6qDM2S78f/IyxyymXQIFAKeBbROSeIXjKAKHpVSeT+IjON55/5o2OuUrLC9aQ+uiXyBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZN5th4xjjzvWpl;
-	Wed, 26 Mar 2025 20:38:36 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7D8251400F4;
-	Wed, 26 Mar 2025 20:42:33 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 26 Mar 2025 20:42:32 +0800
-Message-ID: <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
-Date: Wed, 26 Mar 2025 20:42:31 +0800
+	s=arc-20240116; t=1742993032; c=relaxed/simple;
+	bh=y/fk5fKjjzL4ukQRptQc3n83PShLp3cHuHqSoFsaP7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=at3F4UczDI2ChzUVdBUuPgrTpmQhEdJmCESaAswAIqR3dBjeemLT6+qhDapXyVr7pLFTy4RXSzBCkZSye5Znh4vLKaVf2+/wqVtxlVFbxWP2OYPKP2f4ERBr2FDr81Nf7tuuQRWisdKdG06IKhry32YPl7NTPeX4XXj+kYF7YSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmYzKXr6; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e6405e4ab4dso809760276.0;
+        Wed, 26 Mar 2025 05:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742993030; x=1743597830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Amp8ZyCu9CKjhLpb+I9YkMW1dEF+3WzD+1rz4IUnCpk=;
+        b=CmYzKXr690iSlDUhRhIR5W0CZ1htzoHt648peqN+jI1KoYCxNxHSeMnrixMW/u/2Yb
+         FsOrOpy6g7ujJMirUgpOvNuERHqfh41qRObNF3/8HspJNhbs8TNecYOKTDoi2jwbXyyH
+         7eM4468EigJSW66tc2P38+pmnL5h2md6x1GPHt9fKmuEH+wXkZyXQkMU4L7X7N9h0gcC
+         LIzAbajTLQ95FBSDLYl8pc5N50k2KfvqUND3myM/V0/qVKnlj318ksdwntenRQXAZoub
+         Ll2zhPOudOfL2SSaG3LhzZ+nRg2X0V4pMdEHb2YRZZ7RQ15+Gr1Zo8rUIutZaxbCWT0W
+         F7fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742993030; x=1743597830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Amp8ZyCu9CKjhLpb+I9YkMW1dEF+3WzD+1rz4IUnCpk=;
+        b=Rbhaj63UR9LPJS/866tyOXGk2+ThoKTXiul3/KkbB2aBqsmAsaVDu/zraFtK0q12oQ
+         Ke8CGVtpnY5M9SQah+YEfDMXvd89ZnCTCAWyva5qIB56/Ubn6CS9dtPrmAkg4Y7UUxnV
+         yNcpfDEPScqAziKATwJt0OOQAc7EQj58rLbiTvcCMMuEy12Vat9s68Jj0zXTzn8oaMJL
+         gsASEjxOv7SaReGwjV2LzzwohUWc8hnd0FITlnHvFnYa0nwYvjWIZNfIy4JpWbKis0Cr
+         X2khzGo8gl58Qx/PdcGDJV2hVYUvOc308zRcixOsYqRZbAkcY4KLS8cjhQr3QTUu9VWA
+         epeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVZz2OZ8c4E0uBMfBmNcoYXx7QXWrO3qp+avuCcss6On7Efy5463msJgV3B/tSDpaWxtTyhs0l@vger.kernel.org, AJvYcCX+ybe4oflIIpGQM24X6OlwwZNu7utuERhPDbYWdgjeGeNFuh4daGyP7IXZrEylaesCNiWgAtuOZZqY6+I=@vger.kernel.org, AJvYcCXvnwBZSPafQakVmdKw0CnlGAKp8dW0/UFFqgu63twq+xG8d9RMbrr/K+3alFC/wJYL/XN2ukJDv4i0PWMideFn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2BGzGHfFCo2bq9jm6phfqnMC0+eDHpQmFiJDoi0LqbGoL06iN
+	E3v4yst1GeXbLaRWwwwlGmFLkVsC2MfOX0uMs5f2qkyeZ5xd0iuabOsHoLEjuh93SohaAXRIwtY
+	0XtthBYoTO8JV/mQQS2UIyKRJ+RM=
+X-Gm-Gg: ASbGncuQdtaymsldWV6WL2n5B7gzCNW86Sa0YXtD2q3yA+igYZS8vQQxownUubT5EOG
+	gUErpWpesrBQdZNddatBnrTq8e63Wi9mPXc/liEyv0oGboZObbb1Es36w+H1eeAnfBjPTXMPkIo
+	09lGaVjHfvM6WFfaV03rZVn2kmVvjZxqhxisQAb8ZkZovRE8Y0+cxZLOSDF7E=
+X-Google-Smtp-Source: AGHT+IFkvobMbaSO9WjOFFFi0TFkk8AMZfKjuovz7NPfXP+Q32aIymRGtDa48zKqzC2gM4+tHZ1iUQjyuULWnSAWo1A=
+X-Received: by 2002:a05:6902:1b01:b0:e60:b135:4c07 with SMTP id
+ 3f1490d57ef6-e692ed3bdb3mr3898013276.15.1742993029738; Wed, 26 Mar 2025
+ 05:43:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: <yangge1116@126.com>, <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, <21cnbao@gmail.com>, <david@redhat.com>,
-	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
-	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <1720075944-27201-1-git-send-email-yangge1116@126.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemo200002.china.huawei.com (7.202.195.209)
+References: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+ <20250325020802.7632-1-dqfext@gmail.com> <58712444-1de7-4076-b850-4c6035792931@openvpn.net>
+ <CALW65jZ=Jngf0THLTuWHuhpQb0NDM=4x4HN_Xj922nmq71EMUQ@mail.gmail.com> <bdcc035e-24c2-4469-a0fd-f63494d74169@openvpn.net>
+In-Reply-To: <bdcc035e-24c2-4469-a0fd-f63494d74169@openvpn.net>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Wed, 26 Mar 2025 20:43:40 +0800
+X-Gm-Features: AQ5f1JofMqZICNlYxEgbGnec4lmbH1e88pHT58xTj_OR2iU5XUXml6rajqFB6mM
+Message-ID: <CALW65jYBtu3Uew9k=aZS9BNdqH6fJ0bqWVFNVeqHJxqSYzjebQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, 
+	ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Xiao Liang <shaw.leon@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-We notiched a 12.3% performance regression for LibMicro pwrite testcase due to
-commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
-
-The testcase is executed as follows, and the file is tmpfs file.
-    pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
-
-this testcase writes 1KB (only one page) to the tmpfs and repeats this step for many times. The Flame
-graph shows the performance regression comes from folio_mark_accessed() and workingset_activation().
-
-folio_mark_accessed() is called for the same page for many times. Before this patch, each call will
-add the page to cpu_fbatches.activate. When the fbatch is full, the fbatch is drained and the page
-is promoted to active list. And then, folio_mark_accessed() does nothing in later calls.
-
-But after this patch, the folio clear lru flags after it is added to cpu_fbatches.activate. After then,
-folio_mark_accessed will never call folio_activate() again due to the page is without lru flag, and
-the fbatch will not be full and the folio will not be marked active, later folio_mark_accessed()
-calls will always call workingset_activation(), leading to performance regression.
-
-In addition, folio_mark_accessed() calls __lru_cache_activate_folio(). This function does as
-follow comments:
-
-/*
-	 * Search backwards on the optimistic assumption that the folio being
-	 * activated has just been added to this batch.
-*/
-
-However, after this patch, folio without lru flag may be in other fbatch too, such as cpu_fbatches.activate.
-
-在 2024/7/4 14:52, yangge1116@126.com 写道:
-> From: yangge <yangge1116@126.com>
+On Wed, Mar 26, 2025 at 6:22=E2=80=AFPM Antonio Quartulli <antonio@openvpn.=
+net> wrote:
+> >> This is not what we want.
+> >
+> > Got it. You could replace it with
+> > atomic_fetch_add_unless(&pid->seq_num, 1, 0) and check if it wraps
+> > around to zero.
 >
-> If a large number of CMA memory are configured in system (for example, the
-> CMA memory accounts for 50% of the system memory), starting a virtual
-> virtual machine with device passthrough, it will
-> call pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory.
-> Normally if a page is present and in CMA area, pin_user_pages_remote()
-> will migrate the page from CMA area to non-CMA area because of
-> FOLL_LONGTERM flag. But the current code will cause the migration failure
-> due to unexpected page refcounts, and eventually cause the virtual machine
-> fail to start.
->
-> If a page is added in LRU batch, its refcount increases one, remove the
-> page from LRU batch decreases one. Page migration requires the page is not
-> referenced by others except page mapping. Before migrating a page, we
-> should try to drain the page from LRU batch in case the page is in it,
-> however, folio_test_lru() is not sufficient to tell whether the page is
-> in LRU batch or not, if the page is in LRU batch, the migration will fail.
->
-> To solve the problem above, we modify the logic of adding to LRU batch.
-> Before adding a page to LRU batch, we clear the LRU flag of the page so
-> that we can check whether the page is in LRU batch by folio_test_lru(page).
-> It's quite valuable, because likely we don't want to blindly drain the LRU
-> batch simply because there is some unexpected reference on a page, as
-> described above.
->
-> This change makes the LRU flag of a page invisible for longer, which
-> may impact some programs. For example, as long as a page is on a LRU
-> batch, we cannot isolate it, and we cannot check if it's an LRU page.
-> Further, a page can now only be on exactly one LRU batch. This doesn't
-> seem to matter much, because a new page is allocated from buddy and
-> added to the lru batch, or be isolated, it's LRU flag may also be
-> invisible for a long time.
->
-> Fixes: 9a4e9f3b2d73 ("mm: update get_user_pages_longterm to migrate pages allocated from CMA region")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: yangge <yangge1116@126.com>
-> ---
->   mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
->   1 file changed, 31 insertions(+), 12 deletions(-)
->
-> V4:
->     Adjust commit message according to David's comments
-> V3:
->     Add fixes tag
-> V2:
->     Adjust code and commit message according to David's comments
->
-> diff --git a/mm/swap.c b/mm/swap.c
-> index dc205bd..9caf6b0 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -211,10 +211,6 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
->   	for (i = 0; i < folio_batch_count(fbatch); i++) {
->   		struct folio *folio = fbatch->folios[i];
->   
-> -		/* block memcg migration while the folio moves between lru */
-> -		if (move_fn != lru_add_fn && !folio_test_clear_lru(folio))
-> -			continue;
-> -
->   		folio_lruvec_relock_irqsave(folio, &lruvec, &flags);
->   		move_fn(lruvec, folio);
->   
-> @@ -255,11 +251,16 @@ static void lru_move_tail_fn(struct lruvec *lruvec, struct folio *folio)
->   void folio_rotate_reclaimable(struct folio *folio)
->   {
->   	if (!folio_test_locked(folio) && !folio_test_dirty(folio) &&
-> -	    !folio_test_unevictable(folio) && folio_test_lru(folio)) {
-> +	    !folio_test_unevictable(folio)) {
->   		struct folio_batch *fbatch;
->   		unsigned long flags;
->   
->   		folio_get(folio);
-> +		if (!folio_test_clear_lru(folio)) {
-> +			folio_put(folio);
-> +			return;
-> +		}
-> +
->   		local_lock_irqsave(&lru_rotate.lock, flags);
->   		fbatch = this_cpu_ptr(&lru_rotate.fbatch);
->   		folio_batch_add_and_move(fbatch, folio, lru_move_tail_fn);
-> @@ -352,11 +353,15 @@ static void folio_activate_drain(int cpu)
->   
->   void folio_activate(struct folio *folio)
->   {
-> -	if (folio_test_lru(folio) && !folio_test_active(folio) &&
-> -	    !folio_test_unevictable(folio)) {
-> +	if (!folio_test_active(folio) && !folio_test_unevictable(folio)) {
->   		struct folio_batch *fbatch;
->   
->   		folio_get(folio);
-> +		if (!folio_test_clear_lru(folio)) {
-> +			folio_put(folio);
-> +			return;
-> +		}
-> +
->   		local_lock(&cpu_fbatches.lock);
->   		fbatch = this_cpu_ptr(&cpu_fbatches.activate);
->   		folio_batch_add_and_move(fbatch, folio, folio_activate_fn);
-> @@ -700,6 +705,11 @@ void deactivate_file_folio(struct folio *folio)
->   		return;
->   
->   	folio_get(folio);
-> +	if (!folio_test_clear_lru(folio)) {
-> +		folio_put(folio);
-> +		return;
-> +	}
-> +
->   	local_lock(&cpu_fbatches.lock);
->   	fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
->   	folio_batch_add_and_move(fbatch, folio, lru_deactivate_file_fn);
-> @@ -716,11 +726,16 @@ void deactivate_file_folio(struct folio *folio)
->    */
->   void folio_deactivate(struct folio *folio)
->   {
-> -	if (folio_test_lru(folio) && !folio_test_unevictable(folio) &&
-> -	    (folio_test_active(folio) || lru_gen_enabled())) {
-> +	if (!folio_test_unevictable(folio) && (folio_test_active(folio) ||
-> +	    lru_gen_enabled())) {
->   		struct folio_batch *fbatch;
->   
->   		folio_get(folio);
-> +		if (!folio_test_clear_lru(folio)) {
-> +			folio_put(folio);
-> +			return;
-> +		}
-> +
->   		local_lock(&cpu_fbatches.lock);
->   		fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate);
->   		folio_batch_add_and_move(fbatch, folio, lru_deactivate_fn);
-> @@ -737,12 +752,16 @@ void folio_deactivate(struct folio *folio)
->    */
->   void folio_mark_lazyfree(struct folio *folio)
->   {
-> -	if (folio_test_lru(folio) && folio_test_anon(folio) &&
-> -	    folio_test_swapbacked(folio) && !folio_test_swapcache(folio) &&
-> -	    !folio_test_unevictable(folio)) {
-> +	if (folio_test_anon(folio) && folio_test_swapbacked(folio) &&
-> +	    !folio_test_swapcache(folio) && !folio_test_unevictable(folio)) {
->   		struct folio_batch *fbatch;
->   
->   		folio_get(folio);
-> +		if (!folio_test_clear_lru(folio)) {
-> +			folio_put(folio);
-> +			return;
-> +		}
-> +
->   		local_lock(&cpu_fbatches.lock);
->   		fbatch = this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
->   		folio_batch_add_and_move(fbatch, folio, lru_lazyfree_fn);
+> What about the first time when seq_num is 0? It will already stop, no?
+
+The initial value of seq_num is 1.
+
+> +void ovpn_pktid_xmit_init(struct ovpn_pktid_xmit *pid)
+> +{
+> +        atomic64_set(&pid->seq_num, 1);
+> +}
 
