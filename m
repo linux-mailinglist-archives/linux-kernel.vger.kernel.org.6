@@ -1,171 +1,169 @@
-Return-Path: <linux-kernel+bounces-577216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AC1A71A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:19:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298AEA71A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFFB188B1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:10:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2975684155A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0A91F3BB6;
-	Wed, 26 Mar 2025 15:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8111F3BB9;
+	Wed, 26 Mar 2025 15:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV6dsB9I"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq8aBQw7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5801F1905
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A8C1E1E0D;
+	Wed, 26 Mar 2025 15:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001821; cv=none; b=g6h9vNbMQB4h69mWcq8m9+I3Rm3v/mFUfC0CEfo6gagQ/mOjvKWUjvcGxBfbdcCH45VfdFE7uAjUz2wTwxbS0tJA/c/+7JdOwaEog8CmhalXZamr51MGr4rPg3L+wLnmzRLmzbCpHbmzbgQUlZeI38LCug1aDtbxtjpnrNJkFQU=
+	t=1743001875; cv=none; b=cR5FQoIgdPWkAQNzFfnV+ZBpImewyco4ilIuAwU3W+n9KWI+JzoIf4yBPhksfPzBIV66QRhTWAzKwPCdofow2MrNCx2ySEXd4DGLmP+u9YbM2BsNP2xLsHe2F5joxdhZk6zwgLQ8SGSw3zlk1qLKHX9OVej/C2UHVWS9dZ3ab7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001821; c=relaxed/simple;
-	bh=HcPfpNlloMHtiCkZks0Msr+BkKYikuD+2TRrqShCPOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QBwzy24GyloGFF0rpuJLXWmO49WxDMXfvs1W+hy7KZJuu3T4jBALSBkWr6m7J1Jl5ezOpJAo4sz0bR+vhkPlyKySRccznRNNnHq+FGBrTt8GBrHko0yA+VHWtiIuV8aS9urqz35W6wGxuPwM0cIgCZGJG2zxH9QMM/G3qGQMjes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV6dsB9I; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2a01bcd0143so8891843fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743001819; x=1743606619; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=e7nsPJjvQpk51YxNNbivqm77VoNojg0kZvO2nM7R+ec=;
-        b=mV6dsB9IvsQYXUiSZTK3JTAgEA/cnThqblAp4i694VMkZOF406Y3p4HB+jllBtqdpz
-         +F08Tkd/uk4KkB7phsmeP/1hbzuqWFlgMp5DNguo/3+omyybgDx67D3UZHvKm70SzsGw
-         DJk06ZVPtqtTXserq7v3YwrD4bYx/DHYjhrURZqx0j2hPRmSGdyWQRYfljQ1atyMyoBF
-         8fUMg8RDBlvxKrU6VhGyTeQnCSbpSNDIAOkgrMaspgQ6m3ceWIkChNNnDhwtjojSkuU/
-         pdME6REJCwS8CJLz5M6Y4UPnx1IgZxp6Sxx77AbO556F0sZu5Wg9JK6amC1ZUWonpndO
-         MnfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743001819; x=1743606619;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e7nsPJjvQpk51YxNNbivqm77VoNojg0kZvO2nM7R+ec=;
-        b=fvTMJ2lWbBfXU27ikh79rEq32DFQmBakZ4lwad5rMvA2z0hVjhTOMbL/LI2w4Ylk59
-         S8FjocR/+zip3PSnL1+cfOi36t5+0ZCl5pVNCdLxa2ePpzyHa0HU+QUJDmHdN7sB4dkF
-         /TPulWnTtIt/owVkgFNPsYW1MHd8ZobM6SaxvqkasMqcHSjmEXVXjFtjr2+g3+B9w5sT
-         xUSVrZpQLJfbaRsRAxlk8ra/7hqFGvVdoY3JBjOR1qB/HY1+oTL3CUbKQGCxwpwcuEqJ
-         kAr9qefzegKK2r0c2wibDWpkplWqvuyxX+hXLEuTi/cPCjgx24zKM51nP98HIBmX4HM1
-         UY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZb8K2Nm0v1bF/rwUCdE6inYroUK1w/tbb+D+/CppPp1ZYNSqjRz4srGN1i7QXrGu4BjE+ePTpbWXITuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2yWy0Nx06uPK8TriDgwPZ0xyg5rWQAWPp7q4rAOy/dhcOBz2h
-	mCL9cD1PGm6hWFJ0Gl/dpapDIfEW+Y/Ie3f4aM9bKLcKfJb+NCeo
-X-Gm-Gg: ASbGncuUaOR+BsiF5o0Hr61avA+uk3V9KnYUAYA4CDvLkw4j3QlMVl3u4aqhno43hNC
-	qQmOfUKWcmVHopzKBc8Y9kFDdoU2ke7ciSWb2eEl7QJ0zhLGawLH6sg8jzrDlLkRG6FbD2PP12v
-	tZ5nBguLTk3di480d5JHv4Zb4mwXhkx68C7ae8kb9ufuKuPK9Vh7/6yxati+/pcsbGSxkNYZNGz
-	4DsoDRn8qeB9AKv3cMHTP+zdhWGhPwod4OILldCHUTSYp9gChpbF0zQAQ5QJndtOfncvn2I/Jd6
-	At0DXNjoN3nADaHL6g90Q+XPb355wqz2ej486dcKJsQyqxFDW+EEK8g8xdAONr63K1FEoj58cNZ
-	IRrcU+lsFQUUYsdPaNtVbTWJFLbuZD0TU
-X-Google-Smtp-Source: AGHT+IFyDIdW9c8VswcEIUw+315NWGOfmsnBzfXw1kzh3hm2kzhOmp+hfEL+UhjmBT1+s1xpy3Vmew==
-X-Received: by 2002:a05:6870:6e87:b0:2c1:ade0:2699 with SMTP id 586e51a60fabf-2c77fe297a4mr12522555fac.0.1743001818859;
-        Wed, 26 Mar 2025 08:10:18 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77ebc9e02sm3059333fac.7.2025.03.26.08.10.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 08:10:18 -0700 (PDT)
-Message-ID: <ff14a8fc-a2f0-4bad-9687-86a88094151e@gmail.com>
-Date: Wed, 26 Mar 2025 10:10:17 -0500
+	s=arc-20240116; t=1743001875; c=relaxed/simple;
+	bh=T2vj5fs1lJoyIJWe3E0BaCVb+RTTxO7rAjHyemXklF4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DPPnN6WdW7lFwM4pEOXmDIytWTcuJavj+plC0SXdVKDJ8qlfEmqpPNiyMarHgjrjLIINlhq0LFxxzviEh8dkNY3i2pr/XyIbgwitZZvMftH4oIbYdWTnDq9x64tOXylyTJ1rOa5qr1nXaOHR8kyGmpx2Car+KytSD8PfD6Dp3wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq8aBQw7; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743001874; x=1774537874;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=T2vj5fs1lJoyIJWe3E0BaCVb+RTTxO7rAjHyemXklF4=;
+  b=Oq8aBQw7iP613k3oZiIej3oM8swD6n6gKht7OmfR0JYkctGaEHRizwla
+   XXhTfoo3WHXp6ayYO2Kn0XfM1CFFi6VomoUrMYvPCCnbUvSBAcY7/dvSQ
+   iaXVfa3+OZ35ToGEET/aBivEzsQJ7P3t6grgVqIPyRmlKGxvQICAngs4I
+   kWugprTk0TZOo1oocQceAVwFSYzt6IMC2fwug1BzhJ9sn/HqlvMF+WaFb
+   2kwfKndsJv/2PZb/Tre8fBaUzcL7p/COLxxMAR7tnH2io9CzPZiA9WALk
+   2CHHMNzNMjzTL8qYg9067piKK+Q0uaR9Rkm6yLW4HAtzLllIv40ISFieC
+   A==;
+X-CSE-ConnectionGUID: H16PUm1KSgOY5w4iRecgAw==
+X-CSE-MsgGUID: UZwYrOIMRmyTdmzuSrC/dQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="47950122"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="47950122"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:11:14 -0700
+X-CSE-ConnectionGUID: xuZCinpVSzu60sPZ4LJ70g==
+X-CSE-MsgGUID: ZI+qmaGRThuotURKYdK1wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="124817289"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:11:08 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 26 Mar 2025 17:11:04 +0200 (EET)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v6 4/6] PCI/IOV: Check that VF BAR fits within the
+ reservation
+In-Reply-To: <20250320110854.3866284-5-michal.winiarski@intel.com>
+Message-ID: <4959d675-edd8-a296-661c-6a7bd22fbc0d@linux.intel.com>
+References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-5-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] panic: reduce CPU consumption when finished handling panic
-To: Thomas Gleixner <tglx@linutronix.de>, pmladek@suse.com,
- Andrew Morton <akpm@linux-foundation.org>, jani.nikula@intel.com,
- open list <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, takakura@valinux.co.jp,
- john.ogness@linutronix.de
-References: <f2272f04-510e-4c92-be5e-fedcbb445eb0@gmail.com>
- <87wmci1a0j.ffs@tglx>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <87wmci1a0j.ffs@tglx>
+Content-Type: multipart/mixed; boundary="8323328-1797840117-1743001864=:942"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1797840117-1743001864=:942
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hello,
+On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
 
-On 3/21/25 14:03, Thomas Gleixner wrote:
-> On Mon, Mar 17 2025 at 17:01, Carlos Bilbao wrote:
->> After the kernel has finished handling a panic, it enters a busy-wait loop.
->> But, this unnecessarily consumes CPU power and electricity. Plus, in VMs,
->> this negatively impacts the throughput of other VM guests running on the
->> same hypervisor.
->>
->> I propose introducing a function cpu_halt_end_panic() to halt the CPU
->> during this state while still allowing interrupts to be processed. See my
->> commit below.
-> That's not the way how change logs are written. You explain the problem
-> and then briefly how it is addressed.
->
-> No proposal, no 'see below'. Such wording does not make any sense in a
-> git commit. See Documentation/process/
->
->> @@ -276,6 +276,21 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
->>          crash_smp_send_stop();
-> Your patch is malformed due to white space damage:
->
->   patch: **** malformed patch at line 31:          crash_smp_send_stop();
->
->> +static void cpu_halt_end_panic(void)
->> +{
->> +#ifdef CONFIG_X86
->> +    native_safe_halt();
->> +#elif defined(CONFIG_ARM)
->> +    cpu_do_idle();
->> +#else
->> +    /*
->> +     * Default to a simple busy-wait if no architecture-specific halt is
->> +     * defined above
->> +     */
->> +    mdelay(PANIC_TIMER_STEP);
->> +#endif
-> Architecture specific #ifdefs in core code are not the right way to
-> go. Split this into three patches:
->
-> 1) Add a weak fallback function
->
-> void __weak cpu_halt_after_panic(void)
-> {
->         mdelay(PANIC_TIMER_STEP);
-> }
->
-> 2) Add non weak implementation in arch/x86
->
->     native_safe_halt() is wrong vs. paravirtualization.
->
->     safe_halt() is what you want.
->   
-> 3) Add non weak implementation for arch/arm
->
->    Not my playground, so no comment
+> When the resource representing VF MMIO BAR reservation is created, its
+> size is always large enough to accommodate the BAR of all SR-IOV Virtual
+> Functions that can potentially be created (total VFs). If for whatever
+> reason it's not possible to accommodate all VFs - the resource is not
+> assigned and no VFs can be created.
+>=20
+> The following patch will allow VF BAR size to be modified by drivers at
 
+"The following patch" sounds to be like you're referring to patch that=20
+follows this description, ie., the patch below. "An upcoming change" is=20
+alternative that doesn't suffer from the same problem.
 
-Sounds good, sending patch set now. Thanks for your time!
+> a later point in time, which means that the check for resource
+> assignment is no longer sufficient.
+>=20
+> Add an additional check that verifies that VF BAR for all enabled VFs
+> fits within the underlying reservation resource.
 
+So this does not solve the case where the initial size was too large to=20
+fix and such VF BARs remain unassigned, right?
 
->
-> Thanks,
->
->         tglx
->
->     
+> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> ---
+>  drivers/pci/iov.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index cbf335725d4fb..861273ad9a580 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -646,8 +646,13 @@ static int sriov_enable(struct pci_dev *dev, int nr_=
+virtfn)
+> =20
+>  =09nres =3D 0;
+>  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> +=09=09resource_size_t vf_bar_sz =3D
+> +=09=09=09pci_iov_resource_size(dev,
+> +=09=09=09=09=09      pci_resource_num_from_vf_bar(i));
 
+Please add int idx =3D pci_resource_num_from_vf_bar(i);
 
-Thanks,
+>  =09=09bars |=3D (1 << pci_resource_num_from_vf_bar(i));
+>  =09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
+> +=09=09if (vf_bar_sz * nr_virtfn > resource_size(res))
+> +=09=09=09continue;
 
-Carlos
+Not directly related to this patch, I suspect this could actually try to=20
+assign an unassigned resource by doing something like this (perhaps in own=
+=20
+patch, it doesn't even need to be part of this series but can be sent=20
+later if you find the suggestion useful):
 
+=09=09/* Retry assignment if the initial size didn't fit */
+=09=09if (!res->parent && pci_assign_resource(res, idx))
+=09=09=09continue;
+
+Although I suspect reset_resource() might have been called for the=20
+resource and IIRC it breaks the resource somehow but it could have been=20
+that IOV resources can be resummoned from that state though thanks to=20
+their size not being stored into the resource itself but comes from iov=20
+structures.
+
+>  =09=09if (res->parent)
+>  =09=09=09nres++;
+>  =09}
+>=20
+
+--=20
+ i.
+
+--8323328-1797840117-1743001864=:942--
 
