@@ -1,215 +1,186 @@
-Return-Path: <linux-kernel+bounces-577147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9635EA718FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:43:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BEFA718F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 008347A34D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CE0188840A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325701FC7F4;
-	Wed, 26 Mar 2025 14:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510C71F3BA4;
+	Wed, 26 Mar 2025 14:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OP/gs54w"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X4jHQz57";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9XfM/ht"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80CD1FBC89;
-	Wed, 26 Mar 2025 14:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604F61F192E;
+	Wed, 26 Mar 2025 14:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000017; cv=none; b=hwrb+Itr1r4l2f4slfIeJQ5GAMDCZVSFFCnGUn5eQFw0tfaF9J/ctUod8ScpT5FvP8wYLmwRD/INaOCovYDI0RuY3avbAJMlESTfYJ0iT5rdhHhCJDHH5uxskwAD/ec7dZT48amsc1B3ZQ0Uq1Mogfzz4OhtReOZmnvnlBwndQE=
+	t=1742999992; cv=none; b=sUWouSpWOEU66jACC0b0sr2/9JM/f2SYv0v66Diani66JmTDlUArsgW8NuAogO1zjgeqwQBSstfO/AgRTsjpUOLlETS8R/PbIDtozm+gmRSK0ZIq/WabO3g8Rq7uSnYfn2cNQsk/s/SdyOa5fHIaK7bk6qLrXrz2zAI0zoF/lJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000017; c=relaxed/simple;
-	bh=o5hgzM4VQ5OJeGEXkCVX1VygAU/9FrnkB/FemZCGrts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qtrCEzQE65i6gFvseZ9Ls0IsgKbpAyDBrW8iGahqVCHNH+8HJokQ+mm1PIgq8uHnTRG+fVhgzg8LBPRZDYUDMd3TNzyuZb9DJQmFA20I8zTQm7O4nrC86uwJXMmSg7HLxhixLUglayjGX/my3VnXAmD/jTNqlswGqeX5ivMbcrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OP/gs54w; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39ac56756f6so2712934f8f.2;
-        Wed, 26 Mar 2025 07:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743000013; x=1743604813; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6hfLsSuXXkQW+oQprMpqK3KHzdpSf8DxnzIWa6RWKI=;
-        b=OP/gs54w5Z1Z+soZcS12XJrcEM2ELQGu9DScYlalcvnIIlyeEfGDycOsi+SY0JLPNB
-         YBuJo5q583QX/GSzCwH25hqtF7YBO2CQMiYMmkGWr0lRFeGBbiYmCae4qR032R3MI/m+
-         VDsZRY2X9OCP7HjUPuXxKZRJ9TRw1atH+NkcLVZNms1TjqFbizVzWc1hU67tmocJrHTD
-         bdxtsnCooijKIOUIUk29fl3Vn6DJpecdMKka8esIjRYcuiONS2hcgF9cJlvvKeMD03lz
-         i6rh71+e1xBJXdt5kph21eSVxb4X+NJPhEUun53eUtUUc0RKL+x4TZS+/kyhYRKFXatj
-         HwDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000013; x=1743604813;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C6hfLsSuXXkQW+oQprMpqK3KHzdpSf8DxnzIWa6RWKI=;
-        b=F7isUU8tjSUpF7dk3HSblhCjJAzq9SRlBhOvcckb4UNJYNpjcvNTTg4CGD+1SPvTp7
-         LLX1imvFi07saTld5u7rQXQwY67dVGXL6WPOp3tq6Mfd6INDenzMbOq+rNkS0QuMyRfA
-         NU7UUQuLSihWq6rV+pb67GTbirChdmktAl9PFjB+Yw0Wl2GWnSv3/BX/A+9YesU7hCSY
-         qLToi+f3a5Qi6vbNwGZbtc5sJGybUpn2O13LYpBj59ym0tme+kmP1HWFCd5kPzXQ1Ln3
-         WZH//96uUi9nbwSsghxj976WDqxa7U97He+Eb859Cm2KQwSR7rF7c481kBJd/CIcd5RO
-         +CRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFKatmHLXoL6rEA6LaJ02qkHNU3aiM/QWfIw5lKVL/5MluEMGqNnsU8+8iuwRm2MQjkkYc+k5xtr7yV2FX@vger.kernel.org, AJvYcCV1nhF/1s03PozkmImGgzN6HTZYGAv74McNUVhCYGAkdRtCm3ciCVQ1OKDMIMt+D7TA6A9GHA9fn5MA@vger.kernel.org, AJvYcCVVS4RI7++P55el0xyOewPdlUrOeTLP6phZI9F4cEMlynNVtBtCtCfoOE0O5S9yzzsAiuwnbkqBgwMe@vger.kernel.org, AJvYcCVkKuEsLrYLW7LM5b492kta3ix8CK+KsSjlNU/BWaxn4u7DUHfdpOYhY3F9T8UpA/qLtP62b6nHJBfijQ==@vger.kernel.org, AJvYcCWXTZWYPUOdq0pdURqDH75HLwsOi++RtnstSwnbUNm7Ekf3GSqBXhvv6Tt4OSa01+3Av5zzF55HXnbF@vger.kernel.org, AJvYcCXzIMsMVMwD7p7kEOH7Lg6OlHHrgWL6b+YIsxe5j2ViLDB8eeNOYI/cS1JN/KCdWcYj3qjgmZewrJ7yfbJU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzueyocH0Vs/sAnK6B+vQIUYRZwPfxjaa7NwM+U6v6PoYqsFTe
-	OrxeDh71SBIdm32Yw3A4RuzYQvcnaoWvTkV4joULxUJLC4ZcDAi7
-X-Gm-Gg: ASbGncvKp9eS9Pz4/GEsKZrzaAoj3U3Fm4LmFOLEK7r56TOTPpRUquR4Mw0nSclqrqX
-	BC5fqyUcoyRf/rqYxcgzPMeHTuB26DThwtYNrxrkIStb3tUS1ScZ7tIziumuMdzjLw7BHy7IYqn
-	xwT7cB+ngNbRMt6ea1bb6ncG57hia60xxpPH5xOlnrB7KSbcyz2TNALDHN2RwiKsyTvztqSJlw9
-	lAD0MDf97h6l0b+8dafT7Z9KjCwQilxMA6TxOm9iQvXsAyMs++Q9uTzGKbku/qgbBnAdoOifH1C
-	bqhxoxd3aEWzzYJzemvthVnf7uQxGBG+0BE9cjh+MlfYuJmMxHJT2WmcFhfsjsrJhIuY
-X-Google-Smtp-Source: AGHT+IE4qtcNDA9+68gnJpQW7sH+JjJZJUZhlD6D7jXeTF/bWc027ggNQ2cK9NDwA9P5cuQE+xB1mA==
-X-Received: by 2002:a05:6000:2cd:b0:390:fc5a:91c8 with SMTP id ffacd0b85a97d-3997f940ec2mr19210115f8f.53.1743000012657;
-        Wed, 26 Mar 2025 07:40:12 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:e63e:b0d:9aa3:d18d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82efe9b4sm3891885e9.20.2025.03.26.07.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:40:11 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 12/15] pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
-Date: Wed, 26 Mar 2025 14:39:42 +0000
-Message-ID: <20250326143945.82142-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1742999992; c=relaxed/simple;
+	bh=39aqIo2xz4Ol8cLnm6iE5OSq3M7FWInUydvY4kFRFG8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=TfFzef5tCCq7+Awkvgen2ArwSgI4NL9sR5G9/dUnElMP0/d7HNnqfvUTI5xDhedcLoJftUf3ma53WqAPhwcLQFjKnSCO3C0ifQQf47tzLCdCLAZbbAcrV94CRart8CGK6gb1/0eC09AAHSG4AgiY8rvTRZifX2Qu4/adQEqpAlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X4jHQz57; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9XfM/ht; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Mar 2025 14:39:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742999988;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPyMtws/0XIqxIMQcIBSUa4peOxdCuTdOTld/TGEtWo=;
+	b=X4jHQz579ofAS6RGA/asRShN2MCPfOBd9Jo009fX4U2n0u5W7ECUSBLhwOPzsT0jsAx6DI
+	k9dBVS1XQo5gh+R3mZfMN9ZChuAiEdJE64REfPxOvl9Kg3/lu2IYEUyvTnfUtfX3rnMqiR
+	8oB8b5mUrHHR0GzaV7z1eVwUnDaIr1MIc9qOVpwQtV4mHLTJCfzi6KrW0vU4nTncllJMzP
+	fCzjSVl1j2kYlJn0tddHYZEuQCKFKgmG/LrnMGLZsAvithOSH8RqzoO7dTO+Qnt6fDvyQG
+	C7q4M5MtZCHTRL5CbWqkcQiuAX/Wbl6NQ6yYggEwYAiZchcKf76xJK+zKjAD6g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742999988;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPyMtws/0XIqxIMQcIBSUa4peOxdCuTdOTld/TGEtWo=;
+	b=f9XfM/ht888REuYdzwy7UKc6GddX3Fqxf1eNrwbkakspvAvnRkG1nls7JXvsqWDNKyN92s
+	nheXn01VoE4jS6Cg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] PCI/MSI: Handle the NOMASK flag correctly for
+ all PCI/MSI backends
+Cc: Daniel Gomez <da.gomez@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <87iknwyp2o.ffs@tglx>
+References: <87iknwyp2o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174299998368.14745.8248965655680348410.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The following commit has been merged into the timers/urgent branch of tip:
 
-Add pinctrl support for the Renesas RZ/V2N SoC by reusing the existing
-RZ/V2H(P) pin configuration data. The PFC block is nearly identical, with
-the only difference being the absence of `PCIE1_RSTOUTB` on RZ/V2N.
+Commit-ID:     3ece3e8e5976c49c3f887e5923f998eabd54ff40
+Gitweb:        https://git.kernel.org/tip/3ece3e8e5976c49c3f887e5923f998eabd54ff40
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 26 Mar 2025 13:05:35 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 26 Mar 2025 15:28:43 +01:00
 
-To accommodate this, move the `PCIE1_RSTOUTB` entry to the end of the
-`rzv2h_dedicated_pins` array and set `.n_dedicated_pins` to
-`ARRAY_SIZE(rzv2h_dedicated_pins) - 1` in the RZ/V2N OF data.
+PCI/MSI: Handle the NOMASK flag correctly for all PCI/MSI backends
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The conversion of the XEN specific global variable pci_msi_ignore_mask to a
+MSI domain flag, missed the facts that:
+
+    1) Legacy architectures do not provide a interrupt domain
+    2) Parent MSI domains do not necessarily have a domain info attached
+   
+Both cases result in an unconditional NULL pointer dereference. This was
+unfortunatly missed in review and testing revealed it late.
+
+Cure this by using the existing pci_msi_domain_supports() helper, which
+handles all possible cases correctly.
+
+Fixes: c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag")
+Reported-by: Daniel Gomez <da.gomez@kernel.org>
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Borislav Petkov <bp@alien8.de>
+Tested-by: Daniel Gomez <da.gomez@kernel.org>
+Link: https://lore.kernel.org/all/87iknwyp2o.ffs@tglx
+Closes: https://lore.kernel.org/all/qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7
 ---
- drivers/pinctrl/renesas/Kconfig         |  1 +
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 36 ++++++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 1 deletion(-)
+ drivers/pci/msi/msi.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/Kconfig b/drivers/pinctrl/renesas/Kconfig
-index 3c18d908b21e..e16034fc1bbf 100644
---- a/drivers/pinctrl/renesas/Kconfig
-+++ b/drivers/pinctrl/renesas/Kconfig
-@@ -42,6 +42,7 @@ config PINCTRL_RENESAS
- 	select PINCTRL_RZG2L if ARCH_RZG2L
- 	select PINCTRL_RZV2M if ARCH_R9A09G011
- 	select PINCTRL_RZG2L if ARCH_R9A09G047
-+	select PINCTRL_RZG2L if ARCH_R9A09G056
- 	select PINCTRL_RZG2L if ARCH_R9A09G057
- 	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
- 	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index c72e250f4a15..ae5e040f3276 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2304,7 +2304,6 @@ static struct rzg2l_dedicated_configs rzv2h_dedicated_pins[] = {
- 	{ "SD1DAT3", RZG2L_SINGLE_PIN_PACK(0xc, 3, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR |
- 						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
- 	{ "PCIE0_RSTOUTB", RZG2L_SINGLE_PIN_PACK(0xe, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR)) },
--	{ "PCIE1_RSTOUTB", RZG2L_SINGLE_PIN_PACK(0xe, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR)) },
- 	{ "ET0_MDIO", RZG2L_SINGLE_PIN_PACK(0xf, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR |
- 						     PIN_CFG_IEN | PIN_CFG_PUPD)) },
- 	{ "ET0_MDC", RZG2L_SINGLE_PIN_PACK(0xf, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR |
-@@ -2359,6 +2358,14 @@ static struct rzg2l_dedicated_configs rzv2h_dedicated_pins[] = {
- 	{ "ET1_RXD1", RZG2L_SINGLE_PIN_PACK(0x14, 5, (PIN_CFG_PUPD)) },
- 	{ "ET1_RXD2", RZG2L_SINGLE_PIN_PACK(0x14, 6, (PIN_CFG_PUPD)) },
- 	{ "ET1_RXD3", RZG2L_SINGLE_PIN_PACK(0x14, 7, (PIN_CFG_PUPD)) },
-+
-+	/*
-+	 * This pin is only available on the RZ/V2H(P) SoC and not on the RZ/V2N.
-+	 * Since this array is shared with the RZ/V2N SoC, this entry should be placed
-+	 * at the end. This ensures that on the RZ/V2N, we can set
-+	 * `.n_dedicated_pins = ARRAY_SIZE(rzv2h_dedicated_pins) - 1,`.
-+	 */
-+	{ "PCIE1_RSTOUTB", RZG2L_SINGLE_PIN_PACK(0xe, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR)) },
- };
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index d741628..7058d59 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -285,8 +285,6 @@ static void pci_msi_set_enable(struct pci_dev *dev, int enable)
+ static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
+ 			      struct irq_affinity_desc *masks)
+ {
+-	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
+-	const struct msi_domain_info *info = d->host_data;
+ 	struct msi_desc desc;
+ 	u16 control;
  
- static struct rzg2l_dedicated_configs rzg3e_dedicated_pins[] = {
-@@ -3349,6 +3356,29 @@ static struct rzg2l_pinctrl_data r9a09g047_data = {
- 	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
- };
+@@ -297,7 +295,7 @@ static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
+ 	/* Lies, damned lies, and MSIs */
+ 	if (dev->dev_flags & PCI_DEV_FLAGS_HAS_MSI_MASKING)
+ 		control |= PCI_MSI_FLAGS_MASKBIT;
+-	if (info->flags & MSI_FLAG_NO_MASK)
++	if (pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY))
+ 		control &= ~PCI_MSI_FLAGS_MASKBIT;
  
-+static struct rzg2l_pinctrl_data r9a09g056_data = {
-+	.port_pins = rzv2h_gpio_names,
-+	.port_pin_configs = r9a09g057_gpio_configs,
-+	.n_ports = ARRAY_SIZE(r9a09g057_gpio_configs),
-+	.dedicated_pins = rzv2h_dedicated_pins,
-+	.n_port_pins = ARRAY_SIZE(r9a09g057_gpio_configs) * RZG2L_PINS_PER_PORT,
-+	.n_dedicated_pins = ARRAY_SIZE(rzv2h_dedicated_pins) - 1,
-+	.hwcfg = &rzv2h_hwcfg,
-+	.variable_pin_cfg = r9a09g057_variable_pin_cfg,
-+	.n_variable_pin_cfg = ARRAY_SIZE(r9a09g057_variable_pin_cfg),
-+	.num_custom_params = ARRAY_SIZE(renesas_rzv2h_custom_bindings),
-+	.custom_params = renesas_rzv2h_custom_bindings,
-+#ifdef CONFIG_DEBUG_FS
-+	.custom_conf_items = renesas_rzv2h_conf_items,
-+#endif
-+	.pwpr_pfc_lock_unlock = &rzv2h_pwpr_pfc_lock_unlock,
-+	.pmc_writeb = &rzv2h_pmc_writeb,
-+	.oen_read = &rzv2h_oen_read,
-+	.oen_write = &rzv2h_oen_write,
-+	.hw_to_bias_param = &rzv2h_hw_to_bias_param,
-+	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
-+};
+ 	desc.nvec_used			= nvec;
+@@ -604,20 +602,18 @@ static void __iomem *msix_map_region(struct pci_dev *dev,
+  */
+ void msix_prepare_msi_desc(struct pci_dev *dev, struct msi_desc *desc)
+ {
+-	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
+-	const struct msi_domain_info *info = d->host_data;
+-
+ 	desc->nvec_used				= 1;
+ 	desc->pci.msi_attrib.is_msix		= 1;
+ 	desc->pci.msi_attrib.is_64		= 1;
+ 	desc->pci.msi_attrib.default_irq	= dev->irq;
+ 	desc->pci.mask_base			= dev->msix_base;
+-	desc->pci.msi_attrib.can_mask		= !(info->flags & MSI_FLAG_NO_MASK) &&
+-						  !desc->pci.msi_attrib.is_virtual;
+ 
+-	if (desc->pci.msi_attrib.can_mask) {
 +
- static struct rzg2l_pinctrl_data r9a09g057_data = {
- 	.port_pins = rzv2h_gpio_names,
- 	.port_pin_configs = r9a09g057_gpio_configs,
-@@ -3389,6 +3419,10 @@ static const struct of_device_id rzg2l_pinctrl_of_table[] = {
- 		.compatible = "renesas,r9a09g047-pinctrl",
- 		.data = &r9a09g047_data,
- 	},
-+	{
-+		.compatible = "renesas,r9a09g056-pinctrl",
-+		.data = &r9a09g056_data,
-+	},
- 	{
- 		.compatible = "renesas,r9a09g057-pinctrl",
- 		.data = &r9a09g057_data,
--- 
-2.49.0
-
++	if (!pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY) &&
++	    !desc->pci.msi_attrib.is_virtual) {
+ 		void __iomem *addr = pci_msix_desc_addr(desc);
+ 
++		desc->pci.msi_attrib.can_mask = 1;
+ 		desc->pci.msix_ctrl = readl(addr + PCI_MSIX_ENTRY_VECTOR_CTRL);
+ 	}
+ }
+@@ -715,8 +711,6 @@ static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries
+ static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
+ 				int nvec, struct irq_affinity *affd)
+ {
+-	const struct irq_domain *d = dev_get_msi_domain(&dev->dev);
+-	const struct msi_domain_info *info = d->host_data;
+ 	int ret, tsize;
+ 	u16 control;
+ 
+@@ -747,7 +741,7 @@ static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
+ 	/* Disable INTX */
+ 	pci_intx_for_msi(dev, 0);
+ 
+-	if (!(info->flags & MSI_FLAG_NO_MASK)) {
++	if (!pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY)) {
+ 		/*
+ 		 * Ensure that all table entries are masked to prevent
+ 		 * stale entries from firing in a crash kernel.
 
