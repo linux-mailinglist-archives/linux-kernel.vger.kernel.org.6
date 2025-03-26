@@ -1,135 +1,217 @@
-Return-Path: <linux-kernel+bounces-577049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB527A717B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:43:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44745A717BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F28175880
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6D37A4B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CF31EDA13;
-	Wed, 26 Mar 2025 13:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91495189919;
+	Wed, 26 Mar 2025 13:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="MHOQwHpi"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zY9ntoT0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZApb6cmH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uxP/yxEv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7I2Syf60"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CD91DD87D;
-	Wed, 26 Mar 2025 13:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1E41ADFE3
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742996607; cv=none; b=AzbsFZMiTbbUWFNtmoFEob54PlLgyly2h4C6W00SpH0I3HPrMHfrUb/E/Nsd/J/I5XNb+40kQe+6kPx7+oDX26BUBvu0J4zF8YFA5pjnio8v74dCro4Xt7tgJ1CqVL07tQ4Sd1IciswGHiOCFXrF3cZ1u29hFviomJ7F5q1Jx80=
+	t=1742996773; cv=none; b=nEKNEX+ef8CJkTfKgxuIWJrmRuuc7AdK5uJhMb+URHz3hHnpWvK5YEBf3flcjaCa8vC3a674d+h29ToIyegvrZZ1qdwb5ojm/Pbjq3Eji0UCYCsHE16zSfx1cRchPjHGGzjd4XSoBVWVpbK8gZLS8wKc+0Od3C4jLc23iWWwjzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742996607; c=relaxed/simple;
-	bh=rsQJ5LC/bSdyiKQG9gXUm29k+4ZRN5zoxDpj5nrX4ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rp18xzhU6h+lKc47tFOjp5sKgiOblYmKIshvRy8gBjXOSqGc8k771bMpYzOdXKRJnyLrgUF7xvVpnoQ7PE23e4kskmzJ1hx0urXI4PFZKJ+rDi00zxdi7ZwSucFKPQDkOl/4NColM9dWzTPAEzDZw9nGHyZH7jX2WG4YgPkSUgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=MHOQwHpi; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8B9CC1026C8B4;
-	Wed, 26 Mar 2025 14:43:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742996602; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=3h4Wq9WQJYYYEPwbk70jEgO+x7vy4tSco2GJpE6NQEM=;
-	b=MHOQwHpiBpSfJOp1+TFl4lGaw2nxTj8fOT9IVNMcOVvh6ENcLyeCIzVV7qqg9l0ZVft3jc
-	vDObYEXPYrZCh4w/zF3SwarxuHvqrOoiGrO2uVWWte1gmJkzFx6dM/g19UuBZPRLIEEZMx
-	vH7zi0byyTafmd9BZOsMwcs/xw6DOKDfe4tXL/nvmfRiasLyDpD+3GWEpj47ofjbPjj8jO
-	sZDUMfdMO7/kRU3tNCf7Kl5FN4zaVCR2/ZIgX24MQYHF0f99iHQB2G0ZtG00xFc7td0qPk
-	IEYvCaJftTKslzcAuoXdysSbsw3boD+qS5D6CD2BtY+wLNgzbP1iM70Dfb6oLg==
-Date: Wed, 26 Mar 2025 14:43:16 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
-Message-ID: <20250326144316.2ca252f7@wsk>
-In-Reply-To: <2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-3-lukma@denx.de>
-	<2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742996773; c=relaxed/simple;
+	bh=3fXF0s7Lr97Mx30wHkU7YdB2Bni6vue4HSrPiKMG7kA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qCROAVhNu6vSALPzp0XTtk5uN/9H9U2C1JfthP67rNymQgi/yoRhqX1lZxp6KzsC62uVs5QIcyhvyBJfga6poF5ghqXdbkvkQjJoo6O0co+GMgoCiDiCNELWIuVZZKIrIRzlvyeN6dnedgPXw1dHW333R/oZD9Dj3KtQS8dbipU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zY9ntoT0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZApb6cmH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uxP/yxEv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7I2Syf60; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D69E81F44E;
+	Wed, 26 Mar 2025 13:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742996765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oTG/Q8no1YkK7xiuHcS7e1v3axl5d4cauK+3RFAeiBw=;
+	b=zY9ntoT0VworqMSXYhm3W+mJ7v1PV5nB5LFAV9tr6/a4Q+lP4ZaEhEw8oqUequdWwR9aOW
+	S0T1UDvzCVNioQe77CDxCxwBAvI5IIBz2jotnfv3XIuTlyBjjyCEk4kdSoBe1vAwqFCuxR
+	QPCcgQkwYsM4bpox7VLPl/PTR4DN+1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742996765;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oTG/Q8no1YkK7xiuHcS7e1v3axl5d4cauK+3RFAeiBw=;
+	b=ZApb6cmH4iiwyllFeyGJzvplvLFixeU98E7MWaEesl98/r9hextN1HqNKM1xRgYQ2zn4Tn
+	eVwjLCOS4wu1jkCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742996764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oTG/Q8no1YkK7xiuHcS7e1v3axl5d4cauK+3RFAeiBw=;
+	b=uxP/yxEvb05prcMPpSQkDwCwI4/ezeFMPuF2kzsZyrM93G7A6LOwvqvUyBu0lb8lwUanTM
+	JKu/L+3DSg6T7rqGIXZdAexvmlnA+14R7mwJVKUfPKoi6hcL6Zb6rH3oeMRYARXLAFaUis
+	oaUuVks8JAbnlUcrAj4RAGDX7yZ862Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742996764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oTG/Q8no1YkK7xiuHcS7e1v3axl5d4cauK+3RFAeiBw=;
+	b=7I2Syf601hxMxDyXIrpq7WTI7OILFQeHwkansOtUhYWK0WNbFEN4AeeTR1xGMgSanknUpt
+	SbyCLeyDmtPujkAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7FC781374A;
+	Wed, 26 Mar 2025 13:46:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iiqUHRwF5GcOOQAAD6G6ig
+	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 13:46:04 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Roberto Sassu
+ <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+  Eric Snowberg <eric.snowberg@oracle.com>,  Jarkko Sakkinen
+ <jarkko@kernel.org>,  James Bottomley
+ <James.Bottomley@HansenPartnership.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
+ sysfs file for ima_hash
+In-Reply-To: <fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
+	(Mimi Zohar's message of "Wed, 26 Mar 2025 09:17:05 -0400")
+References: <20250323140911.226137-1-nstange@suse.de>
+	<20250323140911.226137-3-nstange@suse.de>
+	<35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
+	<fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
+Date: Wed, 26 Mar 2025 14:46:03 +0100
+Message-ID: <87wmcboqg4.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/hdQ30b6hV96Q+u6lViERlzE";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
-
---Sig_/hdQ30b6hV96Q+u6lViERlzE
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Spam-Score: -0.60
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,huawei.com,gmail.com,oracle.com,kernel.org,HansenPartnership.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Andrew,
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-> > +  phy-reset-gpios:
-> > +    deprecated: true
-> > +    description:
-> > +      Should specify the gpio for phy reset. =20
->=20
-> It seem odd that a new binding has deprecated properties. Maybe add a
-> comment in the commit message as to why they are there. I assume this
-> is because you are re-using part of the FEC code as is, and it
-> implements them?
->=20
+> On Wed, 2025-03-26 at 09:21 +0100, Nicolai Stange wrote:
+>> Mimi Zohar <zohar@linux.ibm.com> writes:
+>>=20
+>> > On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
 
-In the case of MTIP L2 switch, the reset gpio line (in my case, but
-also on e.g. imx28-evk, and vf610) is single for both PHYs.
+>> > "ima_hash" is the default file hash algorithm.  Re-using it as the def=
+ault
+>> > complete measurement list assumes that the subsequent kexec'ed kernels=
+ configure
+>> > and define it as the default file hash algorithm as well, which might =
+not be the
+>> > case.
+>>=20
+>> I don't really see why the ima_hashes would have to match between kexecs
+>> for this to work -- all events' template hashes are getting recreated
+>> from scratch anyway after kexec (ima_restore_measurement_list() ->
+>> ima_calc_field_array_hash()).
+>>=20
+>> That is, if ima_hash=3Dsha256 first, and ima_hash=3Dsha384 after kexec, =
+one
+>> would have *runtime_measurements_sha256 first and
+>> *runtime_measurements_sha384 after kexec. And both had exclusively
+>> template hashes of their respective algo in them each.
+>>=20
+>> What am I missing?
+>
+> Your solution would work nicely, if the "ima_hash" algorithm could be gua=
+ranteed
+> to be built into the kernel.  It's highly unlikely someone would choose a=
+ hash
+> algorithm not built into kernel, but it is possible.  hash_setup() only v=
+erifies
+> that the hash algorithm is a valid name.
 
-I could move the reset to mdio child nodes, but this would be
-problematic, as asserting reset on one PHY would reset the second one.
+But ima_init_ima_crypto(), hence the whole IMA __init, would fail if
+ima_hash was unavailable at __init time?
 
-That is why there is a single 'phy-reset-gpios' property for the switch
-driver.
+Thanks,
 
-I do believe that for FEC it may be deprecated, but for the HW
-configurations I'm aware of it fits best.=20
+Nicolai
 
-> 	   Andrew
->=20
+> Either fix hash_setup() to guarantee that the chosen hash algorithm is bu=
+ilt
+> into the kernel or use the CONFIG_IMA_DEFAULT_HASH and add a Kconfig to s=
+elect
+> the hash algorithm.  This would be in lieu of v2 05/13.
+>
+>> > Drop this patch.
+>>=20
+>> Fine by me, but just to confirm, in case there's no TPM attached and
+>> SHA1 was disabled, there would be no /sys/*/*runtime_measurement* at all
+>> then. Is that Ok?
+>
+> Of course not.  :)
+>
+>> ima_hash was chosen here only, because after this series, it will be the
+>> only single algorithm guaranteed to be available.
+>
+> With the proposed changes to "[RFC PATCH v2 05/13] ima: select CRYPTO_SHA=
+256
+> from Kconfig', SHA256 would be added to the "extra" measurements if the T=
+PM
+> SHA256 bank is disabled.
 
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/hdQ30b6hV96Q+u6lViERlzE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfkBHQACgkQAR8vZIA0
-zr239QgA3MSVrlumXuhEjcoCf8W+hg3avvIWRw4daEsO50k/ugQTmv9/4bqbfj6k
-BtxEPPhyiOephpxS8XHQF9E/202BBMl3f3llgZHLDlxi1ufU76syBEElHKoIe9RQ
-I+5tNr/r4B7xTT1FB27AYmCGPzg1C157biYYyJQcqARQdHBIUp6yhNuNPEup4Jpx
-2rcD0nNQtlgV/7jQJDToUyXCyIiZB/+vJ9saevLSPthW+l2QvraOVqWNdoQc9687
-cWetCOL7cfuxTZ2Sp9BplA0w+rBi6wUvLEsYzaq96H91HAwrpGZ+prcT/eZQgfUk
-o1FdUJU4MbTZK1uZV4BLgLOLFWDgbQ==
-=SJGV
------END PGP SIGNATURE-----
-
---Sig_/hdQ30b6hV96Q+u6lViERlzE--
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
 
