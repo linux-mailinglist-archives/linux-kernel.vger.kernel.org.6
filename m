@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-577076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A63A7180D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:04:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878FDA7180F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B8F3B81AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:03:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B8816799B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024A11A2381;
-	Wed, 26 Mar 2025 14:03:28 +0000 (UTC)
-Received: from rudorff.com (rudorff.com [193.31.26.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7F41EDA3F;
+	Wed, 26 Mar 2025 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E+MhRjrY"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7061E1DE8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.31.26.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A9D18EB0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742997807; cv=none; b=fwa87fBIz4in3HxeSgswrOt+7FQa8EVSDtB48SUYT6zldXVEr3uwmZPaSCo9MSCcrHtjggvUhoaqtthJPle2Oeh5Kox3zsCm9/sdoUttVmAKun0byLtXv/eY5Ck9ZZDhKk7aEivc5vPgBQrZVdnoau3DqnxpSSeco/ERLt+YHrI=
+	t=1742997910; cv=none; b=jkXJCPuJgwZNOi7dBvL+iTmFsBgBNQg8/Gl23mf6RwAbw1xuXS2KeufCsyF9JHJiULRmAJ9xoqLPnDupjz28mmyDkjfZl4H4yFY98q08MYFSos6bL+WsdFZcOQjwqmcdcqbh+Y1yKXMJkyEThryJdPjqzpO7+7AaTAcGRQ+/zfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742997807; c=relaxed/simple;
-	bh=zXYAwsu8jRZm0KhpIS84+TXFUfhPlTHAYfS6K4f4U7I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TXEF+rQrjy6ufqEfqVnvZZtZcLpjBp/kDIOjvtWVMuKbmdSN828ONfsNihQDAu1TZB+nO+opgrGmp30k1kWEHj7/bfjfD0oLL1YwHcVsPqSGeBUvDgs6n/AC28HGLTkJTG1T5BNsBOKRmHXdIi6CrE2H/09SRbeXEInEA+9/o3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rudorff.com; spf=pass smtp.mailfrom=rudorff.com; arc=none smtp.client-ip=193.31.26.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rudorff.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rudorff.com
-Received: from [127.0.0.1] (dynamic-2a02-3102-8418-1620-0000-0000-0000-04cc.310.pool.telefonica.de [IPv6:2a02:3102:8418:1620::4cc])
-	by rudorff.com (Postfix) with ESMTPSA id 9C887401B2;
-	Wed, 26 Mar 2025 15:03:16 +0100 (CET)
-From: Christoph Rudorff <chris@rudorff.com>
-Date: Wed, 26 Mar 2025 15:02:48 +0100
-Subject: [PATCH BACKPORT v3] drm/nouveau: fix hibernate on disabled GPU
+	s=arc-20240116; t=1742997910; c=relaxed/simple;
+	bh=MAUPqztEcEvMzz9KKyDIk1n2vKwEIJ4+M6R7oK5I+Qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BWcFK9p+Fc2MuQyEYiBBNSmCG4iduY18LZ17k3k+/8ppO1RXc12Iruvc3uMrdNsE0Ef8MRm0acBeXmVxWVL6N3Y1Y3+QaPudzihbBvhFMoWXhv0uVA+Nqjj1OapJoFJbBf51yxAkUWxYyPHNkMQiBgYfILGFYMn0ACL2CY2fPDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E+MhRjrY; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QAApOe027689;
+	Wed, 26 Mar 2025 14:04:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rLUoDI
+	gLEIMNKtQPUuBdHTqMji1aMxNbTKWy0xmu5Kk=; b=E+MhRjrY0jN/wpDoFibz7b
+	Dn801IOp07rk2Nkqs2xemWUkN/QoEhVMY/UXNGIkytZgTLU0xyfUnVtDJs4+sQ/5
+	HwJHT7i6ymGNPdFc4/5jJQfwj/0M31CqIye5C1N5r/x74q2BJp4DXziO6SfKbPZ0
+	RnQS3kvMkTtoMPm2L6lmEuqpr6kD6O6+SkxJgkSeLgNJXDXf82vlPrOE0tbfS63r
+	2lj8pkpwQGVEotAvMR2bzJKQ4o8MCpoxu57PZqAia/2mpgaDWR8bCSwb9v3vfClO
+	3w/vB6YEhA3p9MBob2AYJaDHYwLKmq50UmmXXC4bQR52Ad4dfH6NaQzLOc8vEsGA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx38hn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:04:31 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QDqBnX010962;
+	Wed, 26 Mar 2025 14:04:31 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx38hj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:04:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QA1taf020029;
+	Wed, 26 Mar 2025 14:04:30 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hp0ks7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:04:30 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QE4T3k20775614
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 14:04:29 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1F8858053;
+	Wed, 26 Mar 2025 14:04:28 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C003658043;
+	Wed, 26 Mar 2025 14:04:12 +0000 (GMT)
+Received: from [9.43.88.159] (unknown [9.43.88.159])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 14:04:12 +0000 (GMT)
+Message-ID: <1a130b61-bc34-4d9d-90b8-ebfb31946b05@linux.ibm.com>
+Date: Wed, 26 Mar 2025 19:34:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.15-1 tag
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: adubey@linux.ibm.com, amachhiw@linux.ibm.com, arnd@arndb.de,
+        atrajeev@linux.ibm.com, avnish@linux.ibm.com,
+        christophe.leroy@csgroup.eu, gautam@linux.ibm.com,
+        gbatra@linux.ibm.com, jk@ozlabs.org, kjain@linux.ibm.com,
+        kuba@kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, naveen@kernel.org,
+        npiggin@gmail.com, paulus@ozlabs.org, robh@kernel.org,
+        schwab@linux-m68k.org, segher@kernel.crashing.org,
+        sourabhjain@linux.ibm.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, vaibhav@linux.ibm.com
+References: <90872dd1a7f8844e313876afb74ec15aff7299b7.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <90872dd1a7f8844e313876afb74ec15aff7299b7.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-nouveau-fix-hibernate-v3-1-893271fdcb59@rudorff.com>
-X-B4-Tracking: v=1; b=H4sIAAcJ5GcC/4XNvQ7CIBQF4FdpmMWUC1Tr5M/ooDFuxqGUW8tgM
- dASTdN3lzDpYBxPzrnfHYlHZ9CTVTYSh8F4Y7sY+CwjdVt1N6RGx0wgB5nzXNDODgGrgTbmSVu
- j0HVVjxREuYRCC1goReLtw2EcJPdCtpvd/ng4nck1Nq3xvXWv9DCw1P+xA6OMIgrBuRRFHK7do
- K1rmnlt78kM8OGA/OVAdEBpWTPeqFLyb2eapjdI59LMDgEAAA==
-X-Change-ID: 20250304-nouveau-fix-hibernate-249826d427bb
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Christoph Rudorff <chris@rudorff.com>
-X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xGOttpnaiOg7-yul-hD8T_cr07eqDgad
+X-Proofpoint-ORIG-GUID: 2BrsVHCAoIGqKxBLj5zGH2CuIJzrlqta
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260085
 
-Hibernate bricks the machine if a discrete GPU was disabled via
 
-echo IGD > /sys/kernel/debug/vgaswitcheroo/switch
 
-The freeze and thaw handler lacks checking the GPU power state,
-as suspend and resume do.
+On 3/26/25 4:20 PM, John Paul Adrian Glaubitz wrote:
+> Hello Madhavan,
+> 
+> does the removal of IBM Cell Blades affect the possibility to run Linux
+> on the PlayStation 3 in any way? I assume there are still some hobbyists
+> using it.
 
-This patch add the checks and fix this issue.
+PS3 platform is still maintained. Only IBM Blade server platform 
+is dropped.
 
-This is a backport and applies to v6.6 and below.
+> 
+> There is at least one user within the Debian community using Linux on PS3.
+> 
 
-Signed-off-by: Christoph Rudorff <chris@rudorff.com>
----
-I got an old MacBook having a defective nvidia GPU
+Glad to know we have users. :)
 
-So I put this in the initrd scripts to turn it off asap:
+Maddy
 
-mount -t debugfs none /sys/kernel/debug
-echo IGD > /sys/kernel/debug/vgaswitcheroo/switch
-
-which powers down the nouveau.
-
-Suspend and resume works,
-but hibernate locks up the machine.
-
-The handlers are not checking the GPU state.
-
-This is a good candidate for backport.
-This patch applies to v6.6 and below
----
-Changes in v3:
-- Backport for v6.6 and below
-- Link to v2: https://lore.kernel.org/r/20250325-nouveau-fix-hibernate-v2-1-2bd5c13fb953@rudorff.com
-
-Changes in v2:
-- EDITME: use my real name, my nick raised bugs
-- Link to v1: https://lore.kernel.org/r/20250304-nouveau-fix-hibernate-v1-1-ee4433546030@rudorff.com
----
- drivers/gpu/drm/nouveau/nouveau_drm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index ac15a662e06042e2c133da9c17fcd53000a98650..a05151b557dac6860e07fe7147aa81b7b15e6f4b 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1026,6 +1026,11 @@ nouveau_pmops_freeze(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
-+
-+	if (drm_dev->switch_power_state == DRM_SWITCH_POWER_OFF ||
-+	    drm_dev->switch_power_state == DRM_SWITCH_POWER_DYNAMIC_OFF)
-+		return 0;
-+
- 	return nouveau_do_suspend(drm_dev, false);
- }
- 
-@@ -1034,6 +1039,11 @@ nouveau_pmops_thaw(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
-+
-+	if (drm_dev->switch_power_state == DRM_SWITCH_POWER_OFF ||
-+	    drm_dev->switch_power_state == DRM_SWITCH_POWER_DYNAMIC_OFF)
-+		return 0;
-+
- 	return nouveau_do_resume(drm_dev, false);
- }
- 
-
----
-base-commit: 4b6a8fa777d29785c7ddb51dcbb2b5411deefaca
-change-id: 20250304-nouveau-fix-hibernate-249826d427bb
-
-Best regards,
--- 
-Christoph Rudorff <chris@rudorff.com>
+> Thanks,
+> Adrian
+> 
 
 
