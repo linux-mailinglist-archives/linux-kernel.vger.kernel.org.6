@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-576631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1003A7120F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B55CA71214
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679C8171D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F79516D1EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3DC1A2630;
-	Wed, 26 Mar 2025 08:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A002F1A23B5;
+	Wed, 26 Mar 2025 08:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lNGrwlPF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q/6W+0Qe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhnkrNVW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F02629D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1E119DF48;
+	Wed, 26 Mar 2025 08:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742976475; cv=none; b=SF8ZLg3eUn5wKB5eFoDrbIgpoas8JgtZ+8+YoalIZoHwvELxxggTlOP1bM4GPU2mfFN9KCBWeEXW96jJ+9M4U/JyBhpp9OWiAJvQIkoOe+CHQg5euJznPcj5YiFlY3TNh9LnEV1vCDMq+xwHEWsjmROfBZi4GOfhTIm1RiBR7L0=
+	t=1742976514; cv=none; b=WGPCmfBmA+cBK3eLp8rv2VHEXln2XkoUQtL33uOEhW/ZYGG2ubL1Zwpv01xcHUBHeOXNDDQkqENv2j9wXJSAL1uc36M8hh8nGFaE2SJ+zKwvax4TjYk2DMfe69fo0aKdUp/8lcakC/54gkfUBEU5Mi6tTwmMsQBuAAiJ25O/p1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742976475; c=relaxed/simple;
-	bh=UxBS92GQ45LUnanF/bFoFizTZVD0tvd6G70vV86NyLg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ntpj/KiVWu56hRv4TT9COdl2nrSPk/uTf3K8PzOl0JIQl7VJ5jUnm3tW2MipTOhZ8CxU3ZnypPJwuhzNBDlyEBhtAAeKj4gVMkdHfH3sV8+hndOmikyRUGDUw/Mhl7hwzfzuGLx8gki9xVm2/3Pdbvqv/SZFacAg3W4WFjxlLVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lNGrwlPF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q/6W+0Qe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742976472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETk2UupwFvvVpDyiifSQD52EUhmJaQXXMm0OcMJCSE4=;
-	b=lNGrwlPFgQZUCpVYeTMO1I7ez+L1MaaNktpucTkooQXGmpzCDqWbcshAM0lRUNVs/Vn72N
-	JcLSjT+JdZs9c7zqZQTDElt8cLElb7FV71NAcnZO5GCWqSgtbv0Fr08OKDikxC3qCYjjYY
-	PSmal4RSJzEXBoeEBfEIwyY3x2fDf9a9T+bjyF46VMkVMsjnn6RCV7AcrkVoxY7ljRkMQg
-	K63kPxVwSgBhtOGJDWttBGcpbY06Cxvt5T/3FjY7garJ25USmLM9+6w1kzUrj+UbA+xJK5
-	fsi0Czd/bxReuM8NiWMozFBlMQtYmE4GJSP6YKvubjWL+KKA4S2qpRT19S2zbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742976472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETk2UupwFvvVpDyiifSQD52EUhmJaQXXMm0OcMJCSE4=;
-	b=q/6W+0QeGFX1m3u5F50e3Wlrm25vjxKbCARTI72limhwint5vZ+C/xQ3gf4jGZAjJTWhQB
-	FJrs6CrtG2KHCmBg==
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- x86@kernel.org, Eric Dumazet <edumazet@google.com>, Benjamin Segall
- <bsegall@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- oliver.sang@intel.com
-Subject: Re: [tip:timers/core] [posix]  1535cb8028:
-  stress-ng.epoll.ops_per_sec 36.2% regression
-In-Reply-To: <202503241406.5c9cb80a-lkp@intel.com>
-References: <202503241406.5c9cb80a-lkp@intel.com>
-Date: Wed, 26 Mar 2025 09:07:51 +0100
-Message-ID: <87pli4z02w.ffs@tglx>
+	s=arc-20240116; t=1742976514; c=relaxed/simple;
+	bh=CDFf2aeXu4QXIiFbZUwZnAMW6FSK+tUT/RdaVv9VNrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuq7lxdqz1eYx0N2LFLogdyBVF5MoX841r9P09wCXoHoXYtcHiU2BcRLCcAu9v4yT8ZkvuMWKdmyHwkvJBuCIth195xk1KCTXxkW5HHnX5xk37rGLNcvEDWKnb8zDWN2BdmgipKq1Q7gz6gzu5Xh7AkVJzZCQn8x2h/RcqM6IQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhnkrNVW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9BAC4CEE2;
+	Wed, 26 Mar 2025 08:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742976513;
+	bh=CDFf2aeXu4QXIiFbZUwZnAMW6FSK+tUT/RdaVv9VNrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LhnkrNVWq0d5hbhno4LYFKTjshBak3FDQRA4QGpROYbmj8vw1FesRdCLkOUi2pyU6
+	 X2cClnnG9c6d4ciAS1sb+5Kok8y/vukWa3WiG8YULWwr6fSWl6+2bMsjApcCAv6Yyw
+	 wj5dFLiIEMsnLPoOPsk6BFeuK3WN6Gl9EywRwdShmk22sWV0szq9slCYUJa0mWtVea
+	 O4fyd6TOmDVs2ES6ukMrY5PfvvXda5I8u8bbm0jLFHFEIvWe+wNyE8TsA7TvT2x5oY
+	 2efh++eDThJB4eS9g4bxdEu5yfw95lnVrFDfDPWThuqkzqbMgHzEoAHx/qU1NxOxMa
+	 hkBWm1877pcZw==
+Date: Wed, 26 Mar 2025 09:08:29 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Christopher Obbard <christopher.obbard@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna40yk20:
+ document ATNA40YK20
+Message-ID: <20250326-foxhound-of-nonstop-temperance-6f5a67@krzk-bin>
+References: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org>
+ <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-1-e9bc7c9d30cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-1-e9bc7c9d30cc@linaro.org>
 
-On Mon, Mar 24 2025 at 14:39, kernel test robot wrote:
-> kernel test robot noticed a 36.2% regression of stress-ng.epoll.ops_per_sec on:
->
-> commit: 1535cb80286e6fbc834f075039f85274538543c7 ("posix-timers: Improve hash table performance")
-> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git timers/core
->
-> testcase: stress-ng
-> config: x86_64-rhel-9.4
-> compiler: gcc-12
-> test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
-> parameters:
->
-> 	nr_threads: 100%
-> 	testtime: 60s
-> 	test: epoll
-> 	cpufreq_governor: performance
->
->
-> In addition to that, the commit also has significant impact on the following tests:
->
-> +------------------+---------------------------------------------------------------------------------+
-> | testcase: change | stress-ng: stress-ng.epoll.ops_per_sec 124.9% improvement                       |
-> | test machine     | 256 threads 2 sockets GENUINE INTEL(R) XEON(R) (Sierra Forest) with 128G memory |
-> | test parameters  | cpufreq_governor=performance                                                    |
-> |                  | nr_threads=100%                                                                 |
-> |                  | test=epoll                                                                      |
-> |                  | testtime=60s                                                                    |
-> +------------------+---------------------------------------------------------------------------------+
+On Tue, Mar 25, 2025 at 07:21:26PM +0000, Christopher Obbard wrote:
+> The Samsung ATNA40YK20 panel is a 14" AMOLED eDP panel. It is
+> similar to the ATNA33XC20 except that it is larger and has a
+> different resolution.
+> 
+> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-How on earth can this commit result in both a 36% regression and a 25%
-improvement with the same test?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Unfortunately I can't reproduce any of it. I checked the epoll test
-source and it uses a posix timer, but that commit makes the hash less
-contended so there is zero explanation.
+Best regards,
+Krzysztof
 
-Thanks,
-
-        tglx
 
