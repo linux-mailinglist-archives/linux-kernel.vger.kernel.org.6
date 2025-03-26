@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-576838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D814CA71501
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475F2A71504
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F573B5221
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B3417423B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C061B424A;
-	Wed, 26 Mar 2025 10:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9981C84C9;
+	Wed, 26 Mar 2025 10:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yc4ddnmN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J5BQnGxL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8856019F495;
-	Wed, 26 Mar 2025 10:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928F41B424A;
+	Wed, 26 Mar 2025 10:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742985533; cv=none; b=RgnGGtap9IaILJsKFcFnbE6RpiWIHwpryLUV5XPcP4ziVjAzuVnNazaZW6Emd6vKxfLOtX6HCtGKxcnE+adwxxCXKP0050vJQH6483iBtgO0jTOU7aCi2ny9cGG9wkg9Dig9+ymL+TlQZyaYk/xyMVBj2CurxpyqtC1+eKNB6jk=
+	t=1742985567; cv=none; b=QFQOYESphpRfrYokrKyqf5m7+3Ghy5Eaj+1JgG3ar0xKUH/JokyY/irJszVnqIE1N2LZLWppkidlXh1ya9jE92dQnK3JCX7/qOeFXvsO7gmaG6Y+kyEZjAKkXMaIB4vuY684gGUj6JtSE4olw6E4xGLtgeeTNS2GjhcoMEix1XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742985533; c=relaxed/simple;
-	bh=TwVrby1x9qMf1Pcrh5IouJqZ49ShDOifVJ5ebj2gNS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVg3I8jGahIr7Go1nJJQiRIstWrVerKH+qmzojqpzFRZK4F/W1nAHe8AZF7QfgZlvINFn64pS3Do+TnXx+Urw+RmpDyHSvJsd2Hog0BKewbmfNvz/xNK8n9CeqGc6SkeHDEdaESlt2u9dvRESENtSvThU9QD6gKtU59Grki6IMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yc4ddnmN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1zKKwHBQrnwVUIfjr6+BTrqXcVsJWLW7+XZ5P4QFKY0=; b=Yc4ddnmNxsrcSqpdBS+y64zIAN
-	JweeQOFvhwe6NNKb+x/d65ZLrL75hxSxK5GX95hv7Og/4x4Cnq4oRYBFhKuQvbteRpauo3hlAW45w
-	6pcAKnL9H+4Jm0GmDYlFvvT4UujPndPwBIzJVcIbW3Eg3Wf6fky/J7FxTmnWc3RpTQ8EgenqhU4I/
-	B6nJx3sW9M+GXspZzPDd4Z70D8IegCuofQ1Ps08kmXCvdaiUKXgsP+7KDaLx9DnE9KP/kpIadJ32n
-	gWhVjw/+lFXm2P7FfZcbdXyaXxVQYmxdR4Dk3z09l8sjq9L6NgAC5ewmcm5eIiv9TfvY+zm9hpSyI
-	+51lU4XQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txO9k-00000005mqV-0bGP;
-	Wed, 26 Mar 2025 10:38:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B46CA3003C4; Wed, 26 Mar 2025 11:38:43 +0100 (CET)
-Date: Wed, 26 Mar 2025 11:38:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
-	jikos@kernel.org, mbenes@suse.cz, joe.lawrence@redhat.com,
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
- live-patching
-Message-ID: <20250326103843.GB5880@noisy.programming.kicks-ass.net>
-References: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
- <Z-PNll7fJQzCDH35@pathway.suse.cz>
+	s=arc-20240116; t=1742985567; c=relaxed/simple;
+	bh=jzGCBkutBgzfiA+VlgU2fbb9z16gst/HAke89+6OrwA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BuBj82+cE0qcOuvL+zgznFqWPYuPisJ85ljlJJ6sZyV+yZsydeJI8BCZTHJlIFRQ//OdDYKPWilE9SjBuPkTlNQQMWgGGBZTVTXDNO/Q8MUQInN4kv5LNGmGcefaXxgeVxuRWcIZGJtaSS/8aPXTSIw0cGagSalA3wxIUb9AGb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J5BQnGxL; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742985566; x=1774521566;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=jzGCBkutBgzfiA+VlgU2fbb9z16gst/HAke89+6OrwA=;
+  b=J5BQnGxLvpZXYXzxcSin+RHftXe9JR8PqMa4cUduh3FGdV1Bo6XeWJQB
+   au1XkPJLrYPLtz7QKUorNKM1u4fjtEo8n6cVa0unKGGwuvvo3DcEkwnnY
+   BDLp5Gc2c3eIrwAYQzWyKvTcBde6kVO8oboyPlI19Ro55XzlZHWMZXB8a
+   KXIOgIZUTgu1R/J+dIO8U7YJ4N/5uHG5T0EOScVNc8f9gAUwW+vutQ9VO
+   pdDQn8Rnc0RP87pv7Rsl2sDLHqE7+itPUmfLt5PDex57toRdC/ZMCvt9c
+   8t8ETrPU9jLHZaJPftrQVhWIrHV9VeiVw85Eqt7aL1qQEaQ4Y5s6FgM5Y
+   A==;
+X-CSE-ConnectionGUID: g9ny3ka3SNm450JQR0ZL2A==
+X-CSE-MsgGUID: +Hn+qYKwQoyj9NszBVoYeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44144992"
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="44144992"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:39:24 -0700
+X-CSE-ConnectionGUID: 8tQtKnKxS7yJ/BafNRrroA==
+X-CSE-MsgGUID: R2XbqdYXSyS3ofmm/GBCqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
+   d="scan'208";a="124896092"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.210])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:39:18 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Lyude Paul <lyude@redhat.com>, Maxime Ripard <mripard@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "open
+ list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm/edid: Use unsigned int in drm_add_modes_noedid()
+In-Reply-To: <20250325212823.669459-2-lyude@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250325212823.669459-1-lyude@redhat.com>
+ <20250325212823.669459-2-lyude@redhat.com>
+Date: Wed, 26 Mar 2025 12:39:15 +0200
+Message-ID: <87wmcc6ppo.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-PNll7fJQzCDH35@pathway.suse.cz>
+Content-Type: text/plain
 
-On Wed, Mar 26, 2025 at 10:49:10AM +0100, Petr Mladek wrote:
-> On Mon 2025-03-24 14:49:09, Peter Zijlstra wrote:
-> > 
-> > With the goal of deprecating / removing VOLUNTARY preempt, live-patch
-> > needs to stop relying on cond_resched() to make forward progress.
-> > 
-> > Instead, rely on schedule() with TASK_FREEZABLE set. Just like
-> > live-patching, the freezer needs to be able to stop tasks in a safe /
-> > known state.
-> 
-> > Compile tested only.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  include/linux/livepatch_sched.h | 15 +++++--------
-> >  include/linux/sched.h           |  6 -----
-> >  kernel/livepatch/transition.c   | 30 ++++++-------------------
-> >  kernel/sched/core.c             | 50 +++++++----------------------------------
-> >  4 files changed, 21 insertions(+), 80 deletions(-)
-> > 
-> > diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
-> > index 013794fb5da0..7e8171226dd7 100644
-> > --- a/include/linux/livepatch_sched.h
-> > +++ b/include/linux/livepatch_sched.h
-> > @@ -3,27 +3,24 @@
-> >  #define _LINUX_LIVEPATCH_SCHED_H_
-> >  
-> >  #include <linux/jump_label.h>
-> > -#include <linux/static_call_types.h>
-> > +#include <linux/sched.h>
-> > +
-> >  
-> >  #ifdef CONFIG_LIVEPATCH
-> >  
-> >  void __klp_sched_try_switch(void);
-> >  
-> > -#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
-> > -
-> >  DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
-> >  
-> > -static __always_inline void klp_sched_try_switch(void)
-> > +static __always_inline void klp_sched_try_switch(struct task_struct *curr)
-> >  {
-> > -	if (static_branch_unlikely(&klp_sched_try_switch_key))
-> > +	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
-> > +	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
-> >  		__klp_sched_try_switch();
-> >  }
-> 
-> Do we really need to check the TASK_FREEZABLE state, please?
-> 
-> My understanding is that TASK_FREEZABLE is set when kernel kthreads go into
-> a "freezable" sleep, e.g. wait_event_freezable().
+On Tue, 25 Mar 2025, Lyude Paul <lyude@redhat.com> wrote:
+> A negative resolution doesn't really make any sense, no one goes into a TV
+> store and says "Hello sir, I would like a negative 4K TV please", that
+> would make everyone look at you funny.
 
-Right.
+That is largely the point, though. You know something fishy is going on
+when you have a negative resolution. Nobody blinks an eye when you ask
+for 4294963K telly, but it's still just as bonkers as that negative 4K.
 
-> But __klp_sched_try_switch() should be safe when the task is not
-> running and the stack is reliable. IMHO, it should be safe anytime
-> it is being scheduled out.
+I think the change at hand is fine, but please let's not pretend using
+unsigned somehow protects us from negative numbers.
 
-So for the reasons you touched upon in the next paragraph, FREEZABLE
-seemed like a more suitable location.
 
-> Note that wait_event_freezable() is a good location. It is usually called in
-> the main loop of the kthread where the stack is small. So that the chance
-> that it is not running a livepatched function is higher than on
-> another random schedulable location.
+BR,
+Jani.
 
-Right, it is the natural quiescent state of the kthread, it holds no
-resources.
 
-> But we actually wanted to have it in cond_resched() because
-> it might take a long time to reach the main loop, and sleep there.
-
-Well, cond_resched() is going to get deleted, so we need to find
-something else. And I was thinking that the suspend people want
-reasonable timeliness too -- you don't want your laptop to continue
-running for many seconds after you close the lid and stuff it in your
-bag, now do you.
-
-So per that reasoning I figured FREEZABLE should be good enough.
-
-Sharing the pain with suspend can only lead to improving both -- faster
-patching progress leads to faster suspend and vice-versa.
+-- 
+Jani Nikula, Intel
 
