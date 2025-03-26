@@ -1,122 +1,79 @@
-Return-Path: <linux-kernel+bounces-577122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859BEA7188F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:34:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E546A7188D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 085E57A36D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19EF73AD6EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CDA1F2C3B;
-	Wed, 26 Mar 2025 14:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="OsyVIHS1"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061A31F12F3;
+	Wed, 26 Mar 2025 14:33:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0FE1EB5D4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E4825634;
+	Wed, 26 Mar 2025 14:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999646; cv=none; b=VXgbgtIUdeqcGIcJYhSbJ9pKtzuNXVANoYqppfu2Bf4r6yxsRssAMGeDrro9HRt+Uo7rUFupuuKUYSAy6nHoJ05eDQzVFZqLv88oEwtpXgdTgLPjyXFx46eadAqBlqEEoUdvFNrwEM6XYFeYcJhtXez+QrXkPYpfKfiP0jG9t28=
+	t=1742999614; cv=none; b=MC28dRWSeySlj3BfiM3ufbr4sBvW5/yRH1TTNbQd31j/NrvcYmzX3XS8V2usn275nH1Fjsvpy/K9uxqxNuV2IdHQ78P3qRo9haFDp+YKH6nwHSjtaQNiJqzJNfhJsqxcYTOQcZI+X5B7IoVdB0Gn5pvqevoqQkQ61pZiLWYS5W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999646; c=relaxed/simple;
-	bh=X9K0ZiIBbyvbHh33ELRxPX3WXyDf6Rv/bbUWC1l6rkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nq7fK+Tb8emaDIxkGWzs1hhmTjKo65/dQiE16lgJzeLFQfwA8dzbF0ix4GD7U8O5i9SuAnAEfyttBjJcxSX+NJ4gCUFlRrwhP7gvVXvz78vZnETKyNapCqx9vIHtib78fFxB6uzpvvrtDqIHh5AGOHxAIIKoUOK53PusgVJrixE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=OsyVIHS1; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c5c815f8efso367645485a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1742999643; x=1743604443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X9K0ZiIBbyvbHh33ELRxPX3WXyDf6Rv/bbUWC1l6rkI=;
-        b=OsyVIHS1DCbkohaT8GNSyvOIwoQ7zn3xRt6+wTj3Y+r9XYdSdLiD0qgXXGl/89DTtG
-         e8pJLVNtLWtI+dWmUpwX1e+jGg9HrKAStwSJt3jQTBSsJsA0LCGyiZkuQz66WvG2n8P1
-         UF+0MU8y100y7T3SS/OEE9ueHxOh1TAWznFfI7xd7tAwsXwbd0BgUf4bnx8/Wv1lhzcj
-         hEu/D3CZTPHqVasmWzOsZqb7kIJ4a2VW9+WIDQnCdOiGGat9uqCZPyegJZ3touewr+B1
-         PQIqlP05CMceZZpGkEkEg66AmYZSuyJSIJYrpVsq4zjzmlfbz4+lr2k66W+gOdFeJXq8
-         1OZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742999643; x=1743604443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X9K0ZiIBbyvbHh33ELRxPX3WXyDf6Rv/bbUWC1l6rkI=;
-        b=CSukg9TfdK47v2xIlJDe53jrqKSgi56mg9mKWgbMP4vi1BOvgn+eGLJsfESdpjRfXP
-         E2xM8Cg6v873Xq+itgOs0Z72gZVncAQkcG9FQOwysPP6fYrpy9kkcIlFv9C8vXKaGzOk
-         ytJFkWEtlbPh6F9BU/cWWr+fsCKpyruHW0iCFodCviEULVfETl8H9Ec+Il/7eSM3uGLy
-         s5Dk7KONkW9Jl5EO213SpL/Rf1s1DJ5+Gu7+A/lvNTdYl+32A5zSl+9fC1LeL9L3Ival
-         HlmfodcS1doyLc1lx9b+K3JvuUkc7/qz09k36kSyqjQwcPd3PYSWV9v2G6iRXzWdYqar
-         SA+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzVtqILAh+/9tmZiYk1+vG6EXkT5WeiNJeBJpkq5MPZpYqBvmjgrAlgzYBRpiVIAiakrw/bnkj/YnD3FM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw87Qov3nezMgQwI2OTQUtaDue1AfhLhbs241HdErkypoyG1eU2
-	k0TrVUQHlhaSVmHkIcsZf5gk+FYvs+r1Vv7W28UZoQ8mkoQ8To2wbvwwzQ3hIYY=
-X-Gm-Gg: ASbGncssEG6FSbq77hdV4Mbg7AFaLUQBxXl2FDKL6tatcVBF4KwGJRS36X96rEtSm7W
-	0U852ni2PKenDQqElBfCd8H3HyfImuCUsAGz96oyIv1qweTycORxFWG3K2V+LZUp2CTlWhAwHEe
-	l1iUh9upUhy4JD3qivZHnP2KPlsdo8YYVaYueMw9GvmbE5PLk/aWwv4iyFIYFiDF1GQNI+sopmZ
-	UN7WdD6kZJeFqz87xwgumK0w42yWs5EoNMifA3wir8FaRcTFFdqkOZePgRhc3iyLAOWRZR/QQ0W
-	1ArrU4JUtGwyzEmusw==
-X-Google-Smtp-Source: AGHT+IEvJNHFEY70ZCHkTf9bLLQ/xpRNZLwrrnPOmT9ZRkaQAnsvEu15xp7iNKz4p/RtU1qliO8qlA==
-X-Received: by 2002:a05:620a:2a08:b0:7c5:5670:bd75 with SMTP id af79cd13be357-7c5ba1e961amr3571891985a.46.1742999643403;
-        Wed, 26 Mar 2025 07:34:03 -0700 (PDT)
-Received: from ziepe.ca ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b934831esm772669385a.80.2025.03.26.07.34.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:34:02 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1txRpR-000ATd-1m;
-	Wed, 26 Mar 2025 11:34:01 -0300
-Date: Wed, 26 Mar 2025 11:34:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Sumit Garg <sumit.garg@kernel.org>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
-Message-ID: <Z+QQWe/upJuVpU8r@ziepe.ca>
-References: <20250320152433.144083-1-sgarzare@redhat.com>
- <20250320152433.144083-3-sgarzare@redhat.com>
- <Z-I86tWMcD6b_YeM@sumit-X1>
- <Z-Pu4FhcntnKii61@kernel.org>
+	s=arc-20240116; t=1742999614; c=relaxed/simple;
+	bh=MaULBIdNn2vB8Nor2XI3gLXRhcvwPLrW8fdv5CNl2O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qTsEUl63KvJmfCl6mT4+ED2tkGq089O94Lrmbi9PKmRTKc0yF7lxDkok2kG5za+BQuA9unQz58SUt927Vh1J82jY0so/Q4PXbj35yjLUnFBEnxmxa59McMokWAKkg5Os1tmTdUX6x/5KzDAM9/ox+j9AUhn1pYkhRWjq6uKr6P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B764C4CEE2;
+	Wed, 26 Mar 2025 14:33:33 +0000 (UTC)
+Date: Wed, 26 Mar 2025 10:34:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: Tomas Glozar <tglozar@redhat.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, John Kacur
+ <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, Venkat Rao
+ Bagalkote <venkat88@linux.ibm.com>
+Subject: Re: [PATCH] tools/build: Use SYSTEM_BPFTOOL for system bpftool
+Message-ID: <20250326103419.7e833208@gandalf.local.home>
+In-Reply-To: <67e8c04d-e021-4f98-8020-5ee030fa24e3@kernel.org>
+References: <20250326004018.248357-1-tglozar@redhat.com>
+	<67e8c04d-e021-4f98-8020-5ee030fa24e3@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-Pu4FhcntnKii61@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 26, 2025 at 02:11:12PM +0200, Jarkko Sakkinen wrote:
+On Wed, 26 Mar 2025 09:59:12 +0000
+Quentin Monnet <qmo@kernel.org> wrote:
 
-> Generally speaking I don't see enough value in complicating
-> callback interface. It's better to handle complications in
-> the leaves (i.e. dictatorship of majority ;-) ).
+> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> > Closes: https://lore.kernel.org/linux-kernel/5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com/
+> > Suggested-by: Quentin Monnet <qmo@qmon.net>  
+> 
+> 
+> Let's use <qmo@kernel.org> if possible, please.
 
-That is very much not the way most driver subsystems view the
-world. We want to pull logical things into the core code and remove
-them from drivers to make the drivers simpler and more robust.
+Updated.
 
-The amount of really dumb driver boiler plate that this series
-obviously removes is exactly the sort of stuff we should be fixing by
-improving the core code.
+> 
+> 
+> > Fixes: 8a635c3856dd ("tools/build: Add bpftool-skeletons feature test")
+> > Signed-off-by: Tomas Glozar <tglozar@redhat.com>  
+> 
+> Looks good, thanks a lot!
+> 
+> Acked-by: Quentin Monnet <qmo@kernel.org>
 
-The callback interface was never really sanely designed, it was just
-built around the idea of pulling the timout processing into the core
-code for TIS hardware. It should be revised to properly match these
-new HW types that don't have this kind of timeout mechanism.
+I added this to my queue.
 
-Jason
+Thanks everyone.
+
+-- Steve
 
