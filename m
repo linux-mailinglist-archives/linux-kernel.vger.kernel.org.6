@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-576411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50321A70EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B0FA70EE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C6317946D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0DD19C0A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DDD12F5A5;
-	Wed, 26 Mar 2025 02:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ei61GXJ5"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF23D143895;
+	Wed, 26 Mar 2025 02:16:56 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9F84A2B;
-	Wed, 26 Mar 2025 02:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90F2904;
+	Wed, 26 Mar 2025 02:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742955382; cv=none; b=IUafFqhy6ETv8DwX2JrNTtL1rgXf5DkqmaiHL7Et2UtDDs2bT7enAOS0CRfY90s6xL7eLeBqxTwDhW6SnDYHqF7+cboqWZD1XIjt0LjM2t4f5UoDpsIjoE51W7o5NMcK8uSBFwFbyYugbnf9f7uyTwtKFk+Rx9R8V7G5V+/A5Mg=
+	t=1742955416; cv=none; b=jZO+P46Ljf5UquYqT2Hir/F6JZ6rluf4qsZF2L/TxA6XYRn/9M+TBOsz22bm+1DMlzi0/ym1MzU1wyPCpBZ4Xw1IaUUUxHdUIfrgnXsu4Nn5aUWMvuG9MT0EG1irsUf8kzW2Y+CfSLckKOq8pQHv6XXm3zYNauNrSuXWDA4nOow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742955382; c=relaxed/simple;
-	bh=Hq7XG4Ykfz7pEmUszbpTbvVQ/ZwNlA8FtyoeBb3Cd4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6UUH+gMm54d20VlRHybtErSeXGM6XLO77HlSORG+8FjOj9pUdGXMP54T/RfiXD8ktWMQtlsFRyxQIc34AILUM0C/0AXqLlvJJ0P7aoHBKHNinze4Q0H1ntoD+bbhaX4TE8whoivznZgZH+wOXU/w3BpUPBXcIc+8de+KITdWkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ei61GXJ5; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3DgIwOhvzwGCeEhq7w7K6EzcRsAPUrRix3z5aztq7PA=; b=ei61GXJ5g4QDUz1q+tLEaiU3fd
-	Islgyr3cOrnAP/NDRu6CPg/GDVmrjgBaifqsPZfTqoZDekbKJYLbrDZ+ESRxguhzUhf+oty2XHHdj
-	s2EPoqE7o3aw3p8HZm8+yyUHV84g3fuE2NLb4EtEdmI7/F+pgdnzZbxAhjd3100/WxQCiYcNp5zH+
-	d0phKyIVHl+VP1CyE2bH6vUJ1uEIr9Qrd0CRLsaBGwbLfwV4XIb6SWN+VhEa6kvzdcAdvDpNj+42X
-	1qH2+rJsZC4W3HE7k3iZ/L/wg5qArHm4BdEK4G6+GhDWXQcHEdp7i3/Bg7cSSuQs5phc0LAcREYBe
-	BH2K7Vgg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1txGJO-00AAcQ-1o;
-	Wed, 26 Mar 2025 10:16:11 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Mar 2025 10:16:10 +0800
-Date: Wed, 26 Mar 2025 10:16:10 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [GIT PULL] Crypto Update for 6.15
-Message-ID: <Z-NjarWmWSmQ97K0@gondor.apana.org.au>
-References: <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
- <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
- <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
- <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
- <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
- <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
- <20250325152541.GA1661@sol.localdomain>
- <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+	s=arc-20240116; t=1742955416; c=relaxed/simple;
+	bh=0pFQ2xu7zxHQ8FHvgjU1qjsyx/mC4SibL8xajPm2Q0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HffyLM+jFhYEBVmVc3GckGheoDcg7Jm7c90EB4jIeVLyCDL3EA2lmjXgWy9pvi/C5YjEwff2jF7T2fDIdI5EC9t91SIw84AlxpaQtvf4X/+sMkneVewpze8hwEfDP6VieWeaJ+PMp8+pr8M5aOyy1LLG7bqYiP9/tkajNiEH0k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZMr4q67V8z1d108;
+	Wed, 26 Mar 2025 10:16:27 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id F398B1400F4;
+	Wed, 26 Mar 2025 10:16:49 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 26 Mar
+ 2025 10:16:49 +0800
+Message-ID: <8b76667a-a331-4bf5-bb6a-8db9319d84da@huawei.com>
+Date: Wed, 26 Mar 2025 10:16:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Theodore Ts'o <tytso@mit.edu>
+CC: <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>, Ritesh Harjani
+	<ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
+ <20250316014128.GA787758@mit.edu>
+ <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20250319023129.GF787758@mit.edu>
+ <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <Z-Lunpbeh176mwRu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Wed, Mar 26, 2025 at 09:49:14AM +0800, Herbert Xu wrote:
+On 2025/3/26 1:57, Ojaswin Mujoo wrote:
+> On Tue, Mar 18, 2025 at 10:31:29PM -0400, Theodore Ts'o wrote:
+>> On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
+>>>> So this is something we need to do if the journal is actived, and if
+>>>> it's active, then sbi->s_journal will be non-NULL, and so we can just
+>>>> check to see if inode == sbi->s_journal instead.  This will simplify
+>>> I believe you mean inode == sbi->s_journal->j_inode here right?
+>> Yes, that's what I meant; sorry for the not catching this before I
+>> sent my reply.
+>>
+>> Cheers,
+>>
+>> 					- Ted
+> Hi Ted, Baokun,
 >
-> Let's see how your version is so much better:
-> 
-> https://lore.kernel.org/all/20250212154718.44255-6-ebiggers@kernel.org/
+> I got some time to revisit this. Seems like checking against
+> s_journal->j_inode is not enough. This is because both
+> ext4_check_blockref() and check_block_validity() can be called even
+> before journal->j_inode is set:
+>
+> ext4_open_inode_journal
+>    ext4_get_journal_inode
+> 	  __ext4_iget
+> 		  ext4_ind_check_inode
+> 			  ext4_check_blockref  /* j_inode not set */
+>
+>    journal = jbd2_journal_init_inode
+> 	  bmap
+> 		  ext4_bmap
+> 			 iomap_bmap
+> 			   ext4_iomap_begin
+> 				   ext4_map_blocks
+> 					   check_block_validity
+>
+>    journal->j_inode = inode
+>
+>
+> Now, I think in this case the best solution might be to use the extra
+> field like we do in this patch but set  EXT4_SB(sb)->s_journal_ino
+> sufficiently early.
+>
+> Thoughts?
 
-BTW, I absolutely hate how the fs/block layer uses work queues
-for everything.  It's been used as an argument for async being
-unnecessary because you can always wait for completion since
-you're in a work queue.
+Because system zone setup happens after the journal are loaded, I think we
+can skip the check if the journal haven't been loaded yet, like this:
 
-But this is exactly the wrong way to do asynchronous completion.
-In fact, now that async support has been removed because of
-religious opposition to ahash, we now end up with the worst of
-both worlds where hashing is punted off to a work queue where
-it is simply executed on the CPU:
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index d04d8a7f12e7..38dc72ff7e78 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -383,9 +383,10 @@ static int __check_block_validity(struct inode 
+*inode, const char *func,
+                                 unsigned int line,
+                                 struct ext4_map_blocks *map)
+  {
++       journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
++
+         if (ext4_has_feature_journal(inode->i_sb) &&
+-           (inode->i_ino ==
+- le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
++           (!journal || inode == journal->j_inode))
+                 return 0;
+         if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+                 ext4_error_inode(inode, func, line, map->m_pblk,
 
-/**
- * fsverity_enqueue_verify_work() - enqueue work on the fs-verity workqueue
- * @work: the work to enqueue
- *
- * Enqueue verification work for asynchronous processing.
- */
-void fsverity_enqueue_verify_work(struct work_struct *work)
-{
-        queue_work(fsverity_read_workqueue, work);
-}
+If any part of the journal area overlaps with the system zone, we'll catch
+it when we add the journal area to the system zone later.
 
-The correct way to do async offload is to do it conditionally:
-
-	ret = submit_request(rq);
-	if (unlikely(needs_async(ret))) {
-		allocate for async path with fallback to sync
-		processing in case of OOM
-		return;
-	}
-
-	execute normal synchronous path
 
 Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Baokun
+
 
