@@ -1,187 +1,247 @@
-Return-Path: <linux-kernel+bounces-577172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98967A71978
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:55:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB8FA71994
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4193A8D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1261886E6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67E41F2C5F;
-	Wed, 26 Mar 2025 14:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDF81E1E16;
+	Wed, 26 Mar 2025 14:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="czJXluoG"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2045.outbound.protection.outlook.com [40.107.100.45])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YvEEf/hk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812791DED5F;
-	Wed, 26 Mar 2025 14:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000706; cv=fail; b=JI8RwINeCZziG5Ap/r6SsA5DdhXxqPQF+XkRMzYHHSDOim7wndXEczndkKeWuD3YpKnYU3Cw1fxyR1hx1q5mSgd464+LPbxb9zOJtI5/Z2k6Uqy+EmkPWpweWn90m/SwQzNoHn5Q7bDwsBus6h8rg7Q7JV4aLH7k35b3YgxAK3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000706; c=relaxed/simple;
-	bh=lKJYS3yqbijytUjk9kx/KiLnGF3suEEaQtEIWdMfCqM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kJqoHLkWUIU0W2Mw0xtuEs7RpVOBGmRZuPFzkOlVcyrmZdGjTBsTGuomqEkOjVmUU3e5TRQmAeZAYgSWo7vWiCk1ed0GGFR5nC1a5g3PZEd7V+sxHTfymWID0nFsNhaWyDQamW6xHVo7Hj5kGWsjJt2mUUDirVupK3SDk2ccmcQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=czJXluoG; arc=fail smtp.client-ip=40.107.100.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hAVNlrmTC7YsHxSPZ2gqQNTaI9GXRibwy5ELAPwOJydnfcn8uMHy2xNnE3eFN/mliDBWBpjLYxu84l6uYrcaiGAx4AYopHLG9pPRduwUpMtX5EeeDfmc542LGygGx7iF9r0WK2GGy5myJT9KrIn18hg8cXRblhZC20N1zXDf9JZFc8Mj8upeiNVJDvrzyapIqmV4lIX/XfQYt55nQdPlyla8IGB/XuAOUbPRLXoxn3xMR7T7w6lIxw0VhpdxXmsEIFXfOWWgxMVMrgK+N5tkDzqYX+x3iGQwPt9D2kCWHr7xtcv/A5S23MzukfKy90NrhezlHIV6cjlBDcPR6vvNyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ny/skl1M4u8Zad6jVHcSfa61Xg88+FJTh4cHVDrCRys=;
- b=RwZflJrqBwVmXrdaR7oDZTfpdAwHwUeVAewrORxLC8vcjv3NXOfdC99sVVcHgRdt8ShOsEeXf0T7TAx3YvWXDNIrpoiW/LAsLE6qxxUZYxTEuIf4T/JgKFG9S3nUMb45JcbWCWDNEQ7KhgKMhpgVKozTee3dbns0WyBL9ga6QwicnSqfYDGUppZjDTXAM7rOQvgpb4H6IEYfyAaxXh4SPGFhDMyrvEY1N/82kiPhvJtoq68Gm7jIXxxO+v7iPQvf+jZ7HC4EvDKw2D/4iOM56g0oRkCXl/6cXiMZNKxRBxGMmYJk4Ct93BbgSOWJc8VFJ4fMzVQYm5AdeKNZPk/F7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gondor.apana.org.au
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ny/skl1M4u8Zad6jVHcSfa61Xg88+FJTh4cHVDrCRys=;
- b=czJXluoGe8lTAy9MjRTsoPJq5Qetfjp90HeKC47Y6AXH2xxLR+HXIsvTJktN3ZeJ+Z7r//wYmwnujZKXB0X1fayB01qMQeUPmS9AOoLvuzroZytLheNuNEQC+6NHBOhuHK2qA1PVWRKpz3kqp30cN9XbtyuFHt/1Ju0dK+Y4noRChRLDJdLbosn98QcopnFhb2ajt0xlKGnqH2PwmWZfSXCMJj5lbu5lneKtyaC7vAmj+UZQxc5yDsbrJbC5s6LNO6KJ0jfzkkeoL+HYmVXVS8n2Ui6ObCzUEepYhC5WXEsIMee8RI0yTunRs5e4o6exFoFhEm2BXehoyTVJdNpxTg==
-Received: from SJ0PR03CA0199.namprd03.prod.outlook.com (2603:10b6:a03:2ef::24)
- by SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 14:51:41 +0000
-Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::8e) by SJ0PR03CA0199.outlook.office365.com
- (2603:10b6:a03:2ef::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Wed,
- 26 Mar 2025 14:51:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Wed, 26 Mar 2025 14:51:40 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Mar
- 2025 07:51:21 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Mar
- 2025 07:51:21 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 26 Mar 2025 07:51:18 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH] crypto: tegra: Fix IV usage for AES ECB
-Date: Wed, 26 Mar 2025 20:21:10 +0530
-Message-ID: <20250326145111.57991-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3708B1E8349;
+	Wed, 26 Mar 2025 14:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743000754; cv=none; b=tRXZEE30+5yk5rOE44MGbTk/DOxVMebzdJ/mqMNdHjoxKyJ9kyA1vFkHtgU7ENP6356jd8cNPe39mkH3O8XPtt0kPfPgWfAedd31m68RECTjFaryXK/u3UnPDBqywPgk+lXmwDzTY8dk8RqFnZ7nwoHHqaOfPTobYwbr/EwM/yc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743000754; c=relaxed/simple;
+	bh=kMWBFtvP0kEE/trvo0qGsOmq8xhchyKSw1YVss2QtLk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PdMEhNYKJZf16X0b15XhBEwd2G7Vdx/H3Aiugv2tuRnaOWiMG6BKmLiTzvjOq7M55ahbGFUSQ0+E+tBfo/rk1nOlRhx5/igbSYCDTBKQ4S14Q1D/vOT9zChv/gr29uMM2RCiZNs4WNOMWLDXvjSlQxepPeqkpU15ECD/Kx3k7ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YvEEf/hk; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743000753; x=1774536753;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kMWBFtvP0kEE/trvo0qGsOmq8xhchyKSw1YVss2QtLk=;
+  b=YvEEf/hk7OPwYSPoeBL39D0ZFQUfkn00k8f4PW1v4XQo71kzQiXhNiGh
+   PiygvvF9hmde1Gwe67blZtf5vwNwmsZY12hDLhduHgWSY2/VNM38JxQGA
+   CLXMVQvwV/y69ClRzw5cr6Ilk8jjojeplyNKMa4Kuz09+9oh0gET8TDZc
+   ywW1yqHqty2NkSEbqXcUoS04lurU+Mc55Py1+9RsMTZOc1YygFfSFwgpe
+   dLjQzfQdahxdmyCo89qMQxgkzJj6z5CvvliOFZBLD0iZxtKdWf0VL3w/C
+   WJ/xI4+vX6Ch6Z3rLyosJ1tP6mBw50gq9OwIpmG7KFWW//EKZQnSK06+s
+   A==;
+X-CSE-ConnectionGUID: ByqPfI5lQNiYyucK4Fx7gw==
+X-CSE-MsgGUID: HTWb3y2YTQWb/DpcSAoGDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44455139"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="44455139"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:52:32 -0700
+X-CSE-ConnectionGUID: /xCYhiUWTT+6GflWnlz/Pw==
+X-CSE-MsgGUID: I5/SSNZdRc6H47G3BpwTZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="124596406"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:52:26 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 26 Mar 2025 16:52:22 +0200 (EET)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v6 1/6] PCI/IOV: Restore VF resizable BAR state after
+ reset
+In-Reply-To: <b10b559c-cb23-d21e-d6ee-e060eb0b6b5b@linux.intel.com>
+Message-ID: <f12b85eb-0dad-fa48-ffca-d052f41e0a28@linux.intel.com>
+References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-2-michal.winiarski@intel.com> <b10b559c-cb23-d21e-d6ee-e060eb0b6b5b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|SA0PR12MB4349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 670e3566-eda7-4f7b-5828-08dd6c75b7a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?q97W1XbWpiOtuUV6caYkfy1ri/2DWUcPwnve3PkhszuAAL+2Q2RZEfbTgU0j?=
- =?us-ascii?Q?wP80cxe0Nf8oMHhNZb/l613K0oIjLyGK7cwnCFktkFm7McQgJCVxu5gP4R28?=
- =?us-ascii?Q?yiSkPbhhj5r8qyxyw7WP/lxDKzaadyhweTUwgIWKUvVFI8Bz2zqLJaPxT5ve?=
- =?us-ascii?Q?4ultMZZGdR2XZ58HCCMriz0wdTFbA3GIZMs39TiEJOZAZ7u+qY0gp99/MsIL?=
- =?us-ascii?Q?fIe04l1fpUMUXp26MN13CrDPxHEi4hsEq+ytHZo4rPaG+fsjpu1t+qbk0vvi?=
- =?us-ascii?Q?JEJbJhz1UjAw7h7RM+owmOzxVZjRUtSsypIdteVkm1Uvszidf3l/1Eb/nG/h?=
- =?us-ascii?Q?o5MIQ1FcNhVN1iltAIUJR6RtkoL/nGQtMuY8Iqwbbjw/YITq1Uy98BpDptzX?=
- =?us-ascii?Q?Kn3cGD4tmcdsAAkFizMM1ppKVsfY+s0k/tRqa36bnwmAF1qRpwbqC207mJlR?=
- =?us-ascii?Q?yT8zJT3ThPTjpjNNbAs3ITKXRb1LD25I9+D3Ma4/ee4ic2sKiXiUqaX1MNkT?=
- =?us-ascii?Q?CV1pUVt9rzmC/C0M4BA4uD/NBsOqYpIhY8JsB1xYN2p63lkrOzJz9XwSw4P+?=
- =?us-ascii?Q?bxM+WKMwNGchl1q3dtKT+PgGTCaii+wSu50cE9Bop+XKOQs/3GY8tSnruQWn?=
- =?us-ascii?Q?PvN1gnYp2OWD27DY8gT3WULpMlDWJOo92NPWKPpToq3dhlp0zzwR6XxAurlN?=
- =?us-ascii?Q?ZUHyG51C+M5ozNJQjSvMgVRO548aXbTvmUEvdngv5dliAek4RYh7ESyHqAqJ?=
- =?us-ascii?Q?XyY7XEs9YXjY5hXyCeyzTtBjCpF1GHKe06pLWxWRbEVZgwsEXwX7S2A80kUI?=
- =?us-ascii?Q?sEWEJd/47MZ0ocbFx1G+Sqfjr71hjFCfkkGEKnFZhL3cMUxpd16y1fORDNxn?=
- =?us-ascii?Q?F80ybPJcnK2TCpn4ee8riEvHRb7vch14bgq0jUWSssYZK4JYQDBD+VDdaQ2n?=
- =?us-ascii?Q?HnHaDPO76VZPqUAhzB4YnUM77eMLEVdAeRcppKaW7jsdAfKPYUWjNAmXUz3+?=
- =?us-ascii?Q?MzXQYV9Qb0qrLlHStJGrNT3a120AFiCB1MU3bIUP2imo0ILNs5XteNi4SfoK?=
- =?us-ascii?Q?3ft+q7Cxm5Rt46DxThFdavFzRCYLzVaNlbgEgb98BynW22UxEY3WTYhFF7s9?=
- =?us-ascii?Q?TM6E74F3DftFX3FeLhO1h7RXj4S8+4jE4MvV5wEcOILHbYLWhhpzAPhosSzv?=
- =?us-ascii?Q?yNbagkxwghrHEG5L2CpHUBWuGqDLcV0nm1qop1WMNgaKCbXovXasUqVVq8tH?=
- =?us-ascii?Q?0zb7jivNHEbtoYNSMUsItInbmQWtgEybn3VF0S5yM/MI1Jg+IxGoq/E25QUi?=
- =?us-ascii?Q?QGIKVzI55BRVv9kARalVC9g/bo7BooU+MSbVilR0pRUydZaePLHmCMwQVXsd?=
- =?us-ascii?Q?sxFjktKZN0vB32EX8mts8fp9YrbeE7IzjppN1BO1VGBArB/V8O3XA5i/9et3?=
- =?us-ascii?Q?HLXfFeQNN9EyDIOFYQ5RKFJxVevfxpJwY/6VSqwWDazyk72TVaFC4VuTBFjD?=
- =?us-ascii?Q?46I6g5zXQYIQ9cc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 14:51:40.3137
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 670e3566-eda7-4f7b-5828-08dd6c75b7a3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4349
+Content-Type: multipart/mixed; boundary="8323328-657385912-1743000742=:942"
 
-Modifying the crypto_request turns out to be not the right way to handle
-the stale value issue with the IV. Though the IV is not used for AES ECB,
-it eventually get used in algorithms like LRW in the next step after
-AES ECB encryption/decryption. Setting req->iv to NULL breaks the
-implementation of such algorithms. Hence modify only the local reqctx
-to check for IV.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Fixes: bde558220866 ("crypto: tegra - Set IV to NULL explicitly for AES ECB")
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- drivers/crypto/tegra/tegra-se-aes.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+--8323328-657385912-1743000742=:942
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
-index ca9d0cca1f74..0e07d0523291 100644
---- a/drivers/crypto/tegra/tegra-se-aes.c
-+++ b/drivers/crypto/tegra/tegra-se-aes.c
-@@ -269,7 +269,7 @@ static int tegra_aes_do_one_req(struct crypto_engine *engine, void *areq)
- 	unsigned int cmdlen, key1_id, key2_id;
- 	int ret;
- 
--	rctx->iv = (u32 *)req->iv;
-+	rctx->iv = (ctx->alg == SE_ALG_ECB) ? NULL : (u32 *)req->iv;
- 	rctx->len = req->cryptlen;
- 	key1_id = ctx->key1_id;
- 	key2_id = ctx->key2_id;
-@@ -498,9 +498,6 @@ static int tegra_aes_crypt(struct skcipher_request *req, bool encrypt)
- 	if (!req->cryptlen)
- 		return 0;
- 
--	if (ctx->alg == SE_ALG_ECB)
--		req->iv = NULL;
--
- 	rctx->encrypt = encrypt;
- 
- 	return crypto_transfer_skcipher_request_to_engine(ctx->se->engine, req);
--- 
-2.43.2
+On Wed, 26 Mar 2025, Ilpo J=C3=A4rvinen wrote:
 
+> On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
+>=20
+> > Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
+> > the system firmware or the PCI subsystem itself.
+> >=20
+> > Add the capability ID and restore it as a part of IOV state.
+> >
+> > See PCIe r4.0, sec 9.3.7.4.
+>=20
+> Usually it's best o refer to latest gen doc, the section number seems to=
+=20
+> be the same also in r6.2.
+
+Actually, it isn't. r6.2 9.3.7 does specify capability IDs so I though you=
+=20
+be refering to that section, but there's no 9.3.7.4 section at all.
+
+--
+ i.
+
+> This didn't refer to spec section that specified VF Rebar ext capability
+> (7.8.7) though. I think it should and it would also be good to mention th=
+e=20
+> capability layout is the same as with the rebar cap.
+>=20
+> > Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > ---
+> >  drivers/pci/iov.c             | 30 +++++++++++++++++++++++++++++-
+> >  drivers/pci/pci.h             |  1 +
+> >  include/uapi/linux/pci_regs.h |  1 +
+> >  3 files changed, 31 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> > index 121540f57d4bf..bf95387993cd5 100644
+> > --- a/drivers/pci/iov.c
+> > +++ b/drivers/pci/iov.c
+> > @@ -7,6 +7,7 @@
+> >   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
+> >   */
+> > =20
+> > +#include <linux/bitfield.h>
+> >  #include <linux/pci.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/export.h>
+> > @@ -830,6 +831,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
+> >  =09pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
+> >  =09if (pci_pcie_type(dev) =3D=3D PCI_EXP_TYPE_RC_END)
+> >  =09=09iov->link =3D PCI_DEVFN(PCI_SLOT(dev->devfn), iov->link);
+> > +=09iov->vf_rebar_cap =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_V=
+F_REBAR);
+> > =20
+> >  =09if (pdev)
+> >  =09=09iov->dev =3D pci_dev_get(pdev);
+> > @@ -868,6 +870,30 @@ static void sriov_release(struct pci_dev *dev)
+> >  =09dev->sriov =3D NULL;
+> >  }
+> > =20
+> > +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
+> > +{
+> > +=09unsigned int pos, nbars, i;
+> > +=09u32 ctrl;
+> > +
+> > +=09pos =3D dev->sriov->vf_rebar_cap;
+> > +=09if (!pos)
+> > +=09=09return;
+> > +
+> > +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> > +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
+> > +
+> > +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
+> > +=09=09int bar_idx, size;
+> > +
+> > +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> > +=09=09bar_idx =3D FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
+> > +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
+> > +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
+> > +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
+> > +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
+>=20
+> I started to wonder if we'd still want to have the VF Rebar ones in=20
+> uapi/linux/pci_regs.h (despite the same capability layout):
+>=20
+> /*
+>  * PCI Resizable BAR and PCI VF Resizable BAR extended capabilities have=
+=20
+>  * the same layout of fields.
+>  */
+> #define PCI_VF_REBAR_CTRL=09=09PCI_REBAR_CTRL
+> #define PCI_VF_REBAR_CTRL_BAR_IDX=09PCI_REBAR_CTRL_BAR_IDX
+> etc.
+>=20
+> as then it would be possible grep to pick up only the relevant lines.
+>=20
+> I'd not duplicate _SHIFT defines though. FIELD_PREP/GET() in general does=
+=20
+> not need _SHIFT defines at all and they are just duplicated information.
+>=20
+> > +=09}
+> > +}
+> > +
+> >  static void sriov_restore_state(struct pci_dev *dev)
+> >  {
+> >  =09int i;
+> > @@ -1027,8 +1053,10 @@ resource_size_t pci_sriov_resource_alignment(str=
+uct pci_dev *dev, int resno)
+> >   */
+> >  void pci_restore_iov_state(struct pci_dev *dev)
+> >  {
+> > -=09if (dev->is_physfn)
+> > +=09if (dev->is_physfn) {
+> > +=09=09sriov_restore_vf_rebar_state(dev);
+> >  =09=09sriov_restore_state(dev);
+> > +=09}
+> >  }
+> > =20
+> >  /**
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index b81e99cd4b62a..adc54bb2c8b34 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -482,6 +482,7 @@ struct pci_sriov {
+> >  =09u16=09=09subsystem_vendor; /* VF subsystem vendor */
+> >  =09u16=09=09subsystem_device; /* VF subsystem device */
+> >  =09resource_size_t=09barsz[PCI_SRIOV_NUM_BARS];=09/* VF BAR size */
+> > +=09u16=09=09vf_rebar_cap;=09/* VF Resizable BAR capability offset */
+> >  =09bool=09=09drivers_autoprobe; /* Auto probing of VFs by driver */
+> >  };
+> > =20
+> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_reg=
+s.h
+> > index ba326710f9c8b..bb2a334e50386 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -745,6 +745,7 @@
+> >  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
+> >  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
+> >  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
+> > +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
+> >  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
+> >  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
+> >  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Manageme=
+nt */
+>=20
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+>=20
+--8323328-657385912-1743000742=:942--
 
