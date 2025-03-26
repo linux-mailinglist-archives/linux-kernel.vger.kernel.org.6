@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-576434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C9BA70F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:46:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E4AA70F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8F63B1101
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B901891D36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B141D14D2A0;
-	Wed, 26 Mar 2025 02:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7uhKs7r"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7EE14B96E;
+	Wed, 26 Mar 2025 02:50:28 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2336262BE;
-	Wed, 26 Mar 2025 02:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2162B9CF;
+	Wed, 26 Mar 2025 02:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742957192; cv=none; b=ZPfhtC7c5Qd7NhYBuQTA7R/u8QewGjg+cStYNJaHsOkz97dNfSi54ExX/420jxaWdVYkJ6LrRSsgG7aYvq5kkW8L1SafLNirE81CMzqIWjgoltoCAUKvVX6H4yijkq++FEUdUoqugVLUFo3L6DQlvisbN7hzWJ+DfPugs9RlesQ=
+	t=1742957428; cv=none; b=na1LXDICELAPv/wBBn66mh77bKEwRyTs643Zhvfbg7nzTtxfXd2gMWOMIlXvYvHINq64LbBYZldwcxh/IUhX6PgLv1yrOCIp35dP83g6S1xNYZmw1fc19BkGusuRb3OyecTdDzrP6ebLBAzHjrJNtFnOrxW8BREiiOANiX7j8ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742957192; c=relaxed/simple;
-	bh=TemeIxXOTP0Uco3Ec2kGFeEcW8zPICZSTXId1YidIAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TLYQ8NpeOOPWNOAcpe+g3o7GyEFm4jK+5Jr/ratXQ1CD+0IcXY7ORsolcVdhh4FjZS1v1iR2hNMZrJazNXYtAnywC69izDmqsDQvnh3fTAeE0WEyqoQ1k19BilMvyV2z217DKMfsNJM+Zmil4lhEib94HyFLa7YzMHgN/pMBD8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7uhKs7r; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7020d8b110aso8925777b3.1;
-        Tue, 25 Mar 2025 19:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742957189; x=1743561989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yESuct/MDFnKMjYbraaASh3Kh95O5CiA85bHOnZL3q8=;
-        b=J7uhKs7rN5TZ6vJATgEuHF636BkXt1Gl9PHjD79tD1efPvDlaJTLPRH8+9lMQvdaoy
-         jmKEXT53SDA9Vj5WUMNiPj3mwp8WayWTGsvfoAxTuJ/MGJPRDdMRDgUnDpbmwNEh0IXj
-         FJMloBAreNzZp81YeUwa3AZXN5eZ7IzokssirRtliTGwV5lWNDJVwnU+DbvWIklEK//7
-         3Kq37wa7OXzA7yoA1iAFTOZQIsvveaqmPi4PHQkYo9DRZLKkL1g8HJOokyB/y9ulKSdZ
-         uyv0Al96iWLy0OaDCWO+KVn1F3xRXd/BhBNqNQLcnv/nzKS/O+CO6wI7vf6OnnMz1OMl
-         pNJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742957189; x=1743561989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yESuct/MDFnKMjYbraaASh3Kh95O5CiA85bHOnZL3q8=;
-        b=HsdT8wNRvnXUq9iQyEyARMsmxZkzgtCAANYOr+ttXfRvoCwVJLRKnJ+EIV3TEf0t7l
-         vx/IUqfk1DliHUUVM+4UJIqg4ZsAyPzom2o7vPy1/izrKzpoDfq71gTXJSocggq0565C
-         DqMH6M77HRXUreGejlOzYZHl8veDoiSSIgOFkB95T1+dji7THqeaZiKuQH7CYrvYkuDI
-         gkcCNDpWsdatGzNEb7ilg3YHnlj4Rh6FAeCxx+s1x15HierO1xQ8pmSulHtBZqXaNniu
-         x83OvUOmDmNvqDljNdMRhl8M11n9xg/POJy5x0RYEvVZReuh0yR/qnZDIgQZUNEm2ZVn
-         hFWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+dlu14qcRsG0+TFz7W+tfXEpAO33D2Xipeui3ZqO1YsfTVBrNWk87RUbMvm4POMYCOS/hSdDaX97BMn4=@vger.kernel.org, AJvYcCUNZN12fcqcOzB9LCm92vYMgcEmpxhCwSpbNRC7gvgskE7WTG3RNb7C2qowZ6rl+FSiJtFstp2BWAw=@vger.kernel.org, AJvYcCUQlVXHJYpsTf2lM65Mpzwa178lBg5hIxb5P5HEArDoUYSZ1dOFB8X8E5vKjRRtAgpXFgSGvXDdyGd9@vger.kernel.org, AJvYcCUmHzWSqAmMZjo/k5MGOtqV3snXe5hxwZkmr1mxThpemW+JmLU1LGitoMPI+eSdEgF4YPa3dzvlXb1ubQuf@vger.kernel.org, AJvYcCV+gEnV6jZC78Cv9eFSd7WRGPVR6ifkxv0HtpXNyRhKUszesGDYhooqLW3j62OHHXE6lRJ7sENuPYSOIW3tFyA=@vger.kernel.org, AJvYcCVYXrVyfrBSm/xYtg120RCwx2ATN+qdTpj04xNAwVc2AfYBtHd+qAd2Wbb5fus9Wysd5YX7S6DXvor5@vger.kernel.org, AJvYcCWOEf617RDPUZQ3d6UxRh/TRqju3whOQ4k6WkXAhluILSDNtpu7KlwcQLtmfBg3dA81t5PQrBTH@vger.kernel.org, AJvYcCWc4ivZZFykSm8X1Uvm1B2+iHwVx1i/Lmw30Jz0byLda0uwo08HUkVTpK8WPsXDaO5V1cEtx3KWYaKMiw==@vger.kernel.org, AJvYcCXiC45PODz2og1iw64Rch9qcEJYD46w2TvC7D8WG+zJPWPzVDzhOZnSE9fCHa2oG19WOw1qGCnx4Cs+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUlsq+BLoXY9hkwlFCb/+WQanHYpHLY6tW0/0vyKtKUnsAWpgI
-	TTPJ5p+lNnb1noofvnV6HGOT4jd+3fzZTDK7y7W0hjZRYAJa1c/jC1IjXhTv0+gC/gHKrpyyD8T
-	abui4xgvAVpqfPmHTs4mcIBPDnkI=
-X-Gm-Gg: ASbGncvEKccXG6/fci0WZ6t9XOy10cjKg/3bpoJHlMMP05tocU33iGpYT9wjOXY5dWn
-	0XWvDw83CtGWbdwS1kGmz4dHk1z+T8y1SU4cAJ6a7sOi4iJOMRLoS3BT/G7OKQI2OTUbHlM6Mlq
-	KbSrv7TMpob1EvSA2NNpa2tof45CQvoWROx6slhnqDI2n3h++eyLQZ3f5AT44E
-X-Google-Smtp-Source: AGHT+IFlXvJ6CTG+2JknDASvW7bjKlrzkRcYT6RT+aDT+hRu6ILVt+wIY5x0+ZpDOAOu+0XQ+vPtSQpiPpRl4f+ZLVk=
-X-Received: by 2002:a05:690c:338f:b0:6fb:4fee:6044 with SMTP id
- 00721157ae682-700bac61f86mr264571117b3.15.1742957189450; Tue, 25 Mar 2025
- 19:46:29 -0700 (PDT)
+	s=arc-20240116; t=1742957428; c=relaxed/simple;
+	bh=P4cNx8UpvXvFeQzrapJXpJI7nVJOk6s+ylMENBO5nPg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=f8UUqsA/72tCfEsUlHhkK8rkEDFcJzyuwvYgqaCtr3rCCto+fmGNQHnzzwUFMK1jh7C2YCJe8xwApk146QRXtxHoEScB5vRVUlYQHgYy1SodsOI43X0vofabaoIqtm7LTIVLDLOCM8AzwzQyZWhnTpg+5ntne8qCVURgYQYa54Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZMrqP3w07z13LCv;
+	Wed, 26 Mar 2025 10:49:53 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id D90901800FD;
+	Wed, 26 Mar 2025 10:50:15 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 26 Mar 2025 10:50:15 +0800
+Subject: Re: [PATCH] jffs2: check jffs2_prealloc_raw_node_refs() result in few
+ other places
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Richard Weinberger <richard@nod.at>
+CC: David Woodhouse <dwmw2@infradead.org>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20250325163215.287311-1-pchelkin@ispras.ru>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <742d0485-66ec-94b3-4e97-481ffc33383e@huawei.com>
+Date: Wed, 26 Mar 2025 10:50:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-4-a0282524688@gmail.com> <jpaqx2z5io2bvtluexnzrkz4zcvea7qqgpa6bdhm4yzby2rjgb@izncuolmv7tl>
-In-Reply-To: <jpaqx2z5io2bvtluexnzrkz4zcvea7qqgpa6bdhm4yzby2rjgb@izncuolmv7tl>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 26 Mar 2025 10:46:17 +0800
-X-Gm-Features: AQ5f1JotWQQLWQYsnc4zYwYRmgkRl0gS2ASZgEbf7NXF88zg4Wj3pquEN306WFE
-Message-ID: <CAOoeyxUwgxsLNN1i8vM6_NdR+ytesuVA1iE_TSO4CPbSa2sAnw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/7] i2c: Add Nuvoton NCT6694 I2C support
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250325163215.287311-1-pchelkin@ispras.ru>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-Dear Andi,
+ÔÚ 2025/3/26 0:32, Fedor Pchelkin Ð´µÀ:
+> Fuzzing hit another invalid pointer dereference due to the lack of
+> checking whether jffs2_prealloc_raw_node_refs() completed successfully.
+> Subsequent logic implies that the node refs have been allocated.
+> 
+> Handle that. The code is ready for propagating the error upwards.
+> 
+> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+> CPU: 1 PID: 5835 Comm: syz-executor145 Not tainted 5.10.234-syzkaller #0
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+> RIP: 0010:jffs2_link_node_ref+0xac/0x690 fs/jffs2/nodelist.c:600
+> Call Trace:
+>   jffs2_mark_erased_block fs/jffs2/erase.c:460 [inline]
+>   jffs2_erase_pending_blocks+0x688/0x1860 fs/jffs2/erase.c:118
+>   jffs2_garbage_collect_pass+0x638/0x1a00 fs/jffs2/gc.c:253
+>   jffs2_reserve_space+0x3f4/0xad0 fs/jffs2/nodemgmt.c:167
+>   jffs2_write_inode_range+0x246/0xb50 fs/jffs2/write.c:362
+>   jffs2_write_end+0x712/0x1110 fs/jffs2/file.c:302
+>   generic_perform_write+0x2c2/0x500 mm/filemap.c:3347
+>   __generic_file_write_iter+0x252/0x610 mm/filemap.c:3465
+>   generic_file_write_iter+0xdb/0x230 mm/filemap.c:3497
+>   call_write_iter include/linux/fs.h:2039 [inline]
+>   do_iter_readv_writev+0x46d/0x750 fs/read_write.c:740
+>   do_iter_write+0x18c/0x710 fs/read_write.c:866
+>   vfs_writev+0x1db/0x6a0 fs/read_write.c:939
+>   do_pwritev fs/read_write.c:1036 [inline]
+>   __do_sys_pwritev fs/read_write.c:1083 [inline]
+>   __se_sys_pwritev fs/read_write.c:1078 [inline]
+>   __x64_sys_pwritev+0x235/0x310 fs/read_write.c:1078
+>   do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>   entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 2f785402f39b ("[JFFS2] Reduce visibility of raw_node_ref to upper layers of JFFS2 code.")
+> Fixes: f560928baa60 ("[JFFS2] Allocate node_ref for wasted space when skipping to page boundary")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+> 
+> Similar to https://lore.kernel.org/linux-mtd/20250307163409.13491-2-a.sadovnikov@ispras.ru/
+> but touches two remaining places.
+> 
+>   fs/jffs2/erase.c | 4 +++-
+>   fs/jffs2/scan.c  | 4 +++-
+>   2 files changed, 6 insertions(+), 2 deletions(-)
 
-Thank you for reviewing,
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
+> index ef3a1e1b6cb0..fda9f4d6093f 100644
+> --- a/fs/jffs2/erase.c
+> +++ b/fs/jffs2/erase.c
+> @@ -425,7 +425,9 @@ static void jffs2_mark_erased_block(struct jffs2_sb_info *c, struct jffs2_eraseb
+>   			.totlen =	cpu_to_je32(c->cleanmarker_size)
+>   		};
+>   
+> -		jffs2_prealloc_raw_node_refs(c, jeb, 1);
+> +		ret = jffs2_prealloc_raw_node_refs(c, jeb, 1);
+> +		if (ret)
+> +			goto filebad;
+>   
+>   		marker.hdr_crc = cpu_to_je32(crc32(0, &marker, sizeof(struct jffs2_unknown_node)-4));
+>   
+> diff --git a/fs/jffs2/scan.c b/fs/jffs2/scan.c
+> index 29671e33a171..62879c218d4b 100644
+> --- a/fs/jffs2/scan.c
+> +++ b/fs/jffs2/scan.c
+> @@ -256,7 +256,9 @@ int jffs2_scan_medium(struct jffs2_sb_info *c)
+>   
+>   		jffs2_dbg(1, "%s(): Skipping %d bytes in nextblock to ensure page alignment\n",
+>   			  __func__, skip);
+> -		jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
+> +		ret = jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
+> +		if (ret)
+> +			goto out;
+>   		jffs2_scan_dirty_space(c, c->nextblock, skip);
+>   	}
+>   #endif
+> 
 
-Andi Shyti <andi.shyti@kernel.org> =E6=96=BC 2025=E5=B9=B43=E6=9C=8820=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=887:58=E5=AF=AB=E9=81=93=EF=BC=9A
->
-...
-> > +enum i2c_baudrate {
-> > +     I2C_BR_25K =3D 0,
-> > +     I2C_BR_50K,
-> > +     I2C_BR_100K,
-> > +     I2C_BR_200K,
-> > +     I2C_BR_400K,
-> > +     I2C_BR_800K,
-> > +     I2C_BR_1M
-> > +};
->
-> do we need all these frequencies? I don't see them use anywhere.
->
-
-Originally, I used module parameters to configure these I2C's baud
-rate, Do you think this approach iis suitable?
-
-> Besides, can you please use a proper prefix? I2C_BR_* prefix
-> doesn't belong to this driver.
->
-
-Okay, I will fix these macros in the next patch.
-
-
-Best regards,
-Ming
 
