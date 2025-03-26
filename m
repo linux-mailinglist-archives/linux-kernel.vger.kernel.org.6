@@ -1,371 +1,262 @@
-Return-Path: <linux-kernel+bounces-576889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37324A7159F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:23:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BFCA715A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B7188DB4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:23:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D9D7A5C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083AB1DED79;
-	Wed, 26 Mar 2025 11:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C0D1DC997;
+	Wed, 26 Mar 2025 11:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="46lg4Qo4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="owjI7ujj"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F2BEEC3;
-	Wed, 26 Mar 2025 11:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4D11A7262
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742988149; cv=none; b=X2EfzP9GyL8c9ZX5oralJjXgHs0pTrkLrLhxGgv/D7hz1sLBT9g9CJBFB6kejosA8dgtPHhjEYF8Z6t0lP70qeKcClPrNvM/g2OuedJLK9VIGOfz6l35nYrvI8HKh0pCYD5xs4l28hffl9GWxm22rayr1/iBxxUOYI38tmc2O38=
+	t=1742988302; cv=none; b=GypJhuqhmwkpP+n/Wyy5Pl/ZRMdaz4kxPUaJz8/SxA+lIClJu4OOYdtNfAGOYUHSfYaemH/GtgQol9/BCA23zmzczX5aDchnFoxFOg2OIznCgpoWVDI4TBe8wsbF92JyVWdyeW60A9xv83B30RwSIyQoOAjQ0miLlzr0fMc0dwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742988149; c=relaxed/simple;
-	bh=GqQAE2gI9jpYg3gMwXkCpEnwEG0pEMzVmX2dEBpK1U8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=POgYJAvf4GxxnEIJDa9PFOrXMU25BsiOr7lavuDkS8TLAyFPAYTKHkTwUc9h8BNc9XtmbC6MmoMcpiw7yq/m3SqFRjcuPsY+FL4bKDjsOyw4iOiFgeHip93244+wYa4fDyinC1MRCXLRyC3h5j46RSZ26sNKC/HRUDGdxj3/6Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=46lg4Qo4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=d0u73LY7N6aNB4yHaOSQ3RxfhJSx72C3Op6MMJeJuck=; b=46lg4Qo4UazkYkHkgsh8m6mAjk
-	WRSWIz5C4Rel7jWx3B95q5QuEtiCg9gMLXHdnjX3lk7xbtrd2j8lXZeXJlpynb+5hWRjBmvuNghtA
-	p2BaXSqMYkyBXIfn7rwL3LHtFdsPhsDujTeGXnb3EU7by29LgkPr44fCcd1TXM20bFyaUFQJwJ9my
-	OGMFSCxu1ov1IbzEvxDqB/yZ3vuA016Y7F/5ETa4SFq3oFecg7D/Ctgg/W9slCF7b4B9Uwf7erPPU
-	6IdZSsnwvCHuXWVVWD50/lVKtYZUP9y2ji3GigrY47BAbJ6wxkYHlwafsva1bZ32FFGklnj4JPKay
-	4yrqtGhg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txOq0-00000008LMC-3XEq;
-	Wed, 26 Mar 2025 11:22:24 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: jack@suse.cz,
-	hch@infradead.org,
-	James.Bottomley@HansenPartnership.com,
-	david@fromorbit.com,
-	rafael@kernel.org,
-	djwong@kernel.org,
-	pavel@kernel.org,
-	song@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC 6/6] xfs: replace kthread freezing with auto fs freezing
-Date: Wed, 26 Mar 2025 04:22:20 -0700
-Message-ID: <20250326112220.1988619-7-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250326112220.1988619-1-mcgrof@kernel.org>
-References: <20250326112220.1988619-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1742988302; c=relaxed/simple;
+	bh=PtOldyJkQTuOrIlrZ0MS2qSdzcnjeTVIRPUO/G6iQWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OLIZRYQHZTBevgDUWITlfX5duDJZmB+4tcBARdvkNLxd05TD4ZouuBrQEOQL2Az4UF8j0cAcBx/K94SJDhBLWus5LURi8tHfBIDgicgPKqrwSYNcg03IKMa3seHTrHjn4c6vZB4hC46J+Q4xUsNO1fzJ6gcf5LF3AiheY5/DAoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=owjI7ujj; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6febf391132so59077487b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742988299; x=1743593099; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CAKfg0qsqFTp3rC4gKRjScpyZGRWGz93JbWST6kAsnA=;
+        b=owjI7ujj7JWmWS6SVVsCM7txATPiNOvF3yprKYwoxiSW6Rp7yL5r5cSaQjrmWrz2tF
+         tzcgp0wApnTXPa/lCxK3HLlCgRuZVWUozrxLXku69AbUwLU3mx7ydZFpjlP76+5zygxF
+         C7ofQyaO+ieEFzkr3Jv88po1SaZFM8pCTxtm/XkwL6MC6BTFPV9DMdT5oLDz3K5AM0sp
+         2ea9xPu7bMqnEgVCn/Nja7hvwpje+WjEI0av+drjFY55e+5Awxn+dAyqIqqL3edeKdcl
+         SF/lXyJ/znTHi4EV5AUFMPQip/mtkFGW0MLV3ljD/jp5YwloM5dk2iZgVIFsY0c5Wm+W
+         D3iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742988299; x=1743593099;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CAKfg0qsqFTp3rC4gKRjScpyZGRWGz93JbWST6kAsnA=;
+        b=JCRMGuhad/4AvGTOm1cyUO0GerTWvqB8qnV0WtKPY0VKUr035fNeejf6BxYnYpXIhb
+         VgdN5JQ+KnkfAjPwvkgdHAlpq7nGJpn6LK0wzMPRU6kk+oPcEcpxZ2ro8GPlJI9eCesy
+         lV2bHQStMDTOM18lcA341DCnsl63cp2chka22DRTDCDLM7A/srJqevXgLXqpQ+Oz4myj
+         IlnjMB0ebYgePTze1IGEm+Kpmv9qaM3gzEHQKX/sa+RX2d5vDH3chazmodzqc2Vd5h/P
+         zcwqi2HE2nsD+yF5ISyNwmgYP8PRLz6XHjRV8UqLLmGp3FVVM070PU55BqulAe9sE93/
+         GhzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/KWA1xPRho+smbsZ8SYJuMva9vfvPbKdoGLslTVoWWXkEoj7ljnwYgv4s55lAoV4ftCKjtoU82KpuLHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8kBZi7/SKK/g8T+Lb0Yvyb0Ma4aIEizueR3E1ro+k3qx9LiwP
+	3XwQ8o8ce7Ixmuybr8h1FCi4t6/KI2BMCeZl9THIqJDDDIJNLql0dxwHKYdf1Yty30EMiWsUm87
+	2wTjMYUJmeQetTOJnMoZsLWdOvcHzF3qFNgQhNA==
+X-Gm-Gg: ASbGncsnop4uBeVzyUxMvtiTozzkRHGbNL3LpO3YUS0EpuJseiKerncJ7dEtrlStm4C
+	kCuPcWuf4DVCbG6AOIQ5VhG6bAqZxaXo9ydFYL6AYtfM7agJxswiGa9UtS1b4WYDJusjnWEMCUg
+	EXys9qRUNemLzEkX1At8c59BFK6DbE0EcsYNZyTHbM61WvjsSb19BHW85uvOI=
+X-Google-Smtp-Source: AGHT+IG0bRqZ7yucLkko4jSBCBt6Lj/LtcXgRGGRXa8ZXxRF/rWOCdZbLtb/q8iP+odXXLa6ynfR6bWujWIchPutkxQ=
+X-Received: by 2002:a05:690c:f86:b0:6f9:7921:480e with SMTP id
+ 00721157ae682-700babfd2d6mr231478087b3.5.1742988298731; Wed, 26 Mar 2025
+ 04:24:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20250303143629.400583-1-m.wilczynski@samsung.com>
+ <CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
+ <20250303143629.400583-5-m.wilczynski@samsung.com> <de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
+ <4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com> <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
+ <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com> <38d9650fc11a674c8b689d6bab937acf@kernel.org>
+In-Reply-To: <38d9650fc11a674c8b689d6bab937acf@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 26 Mar 2025 12:24:22 +0100
+X-Gm-Features: AQ5f1Jr_9rY3NEgVW4bBC1NZ3qSkcNWvCh-D1oUbC5XKRCPzJhBOl8lQH97_HVA
+Message-ID: <CAPDyKFqsJaTrF0tBSY-TjpqdVt5=6aPQHYfnDebtphfRZSU=-Q@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with CLKGEN
+ reset support
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, alex@ghiti.fr, 
+	aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, 
+	mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	robh@kernel.org, wefu@redhat.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The kernel power management now supports allowing the VFS
-to handle filesystem freezing freezes and thawing. Take advantage
-of that and remove the kthread freezing. This is needed so that we
-properly really stop IO in flight without races after userspace
-has been frozen. Without this we rely on kthread freezing and
-its semantics are loose and error prone.
+On Tue, 25 Mar 2025 at 23:40, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Michal Wilczynski (2025-03-19 02:22:11)
+> >
+> >
+> > On 3/13/25 10:25, Philipp Zabel wrote:
+> > > On Do, 2025-03-06 at 17:43 +0100, Michal Wilczynski wrote:
+> > >>
+> > >> On 3/6/25 00:47, Stephen Boyd wrote:
+> > >>> Quoting Michal Wilczynski (2025-03-03 06:36:29)
+> > >>>> The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
+> > >>>> clock gate is marked as "Reserved" in hardware, while core and cfg are
+> > >>>> configurable. In order for these clock gates to work properly, the
+> > >>>> CLKGEN reset must be managed in a specific sequence.
+> > >>>>
+> > >>>> Move the CLKGEN reset handling to the clock driver since it's
+> > >>>> fundamentally a clock-related workaround [1]. This ensures that clk_enabled
+> > >>>> GPU clocks stay physically enabled without external interference from
+> > >>>> the reset driver.  The reset is now deasserted only when both core and
+> > >>>> cfg clocks are enabled, and asserted when either of them is disabled.
+> > >>>>
+> > >>>> The mem clock is configured to use nop operations since it cannot be
+> > >>>> controlled.
+> > >>>>
+> > >>>> Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de [1]
+> > >>>>
+> > >>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> > >>> [...]
+> > >>>> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> > >>>> index ea96d007aecd..1dfcde867233 100644
+> > >>>> --- a/drivers/clk/thead/clk-th1520-ap.c
+> > >>>> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> > >>>> @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
+> > >>> [...]
+> > >>>>
+> > >>>>  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
+> > >>>>                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
+> > >>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
+> > >>>> +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gpu_ops);
+> > >>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+> > >>>> +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gpu_ops);
+> > >>>> +
+> > >>>> +static void ccu_gpu_clk_disable(struct clk_hw *hw)
+> > >>>> +{
+> > >>>> +       struct ccu_gate *cg = hw_to_ccu_gate(hw);
+> > >>>> +       unsigned long flags;
+> > >>>> +
+> > >>>> +       spin_lock_irqsave(&gpu_reset_lock, flags);
+> > >>>> +
+> > >>>> +       ccu_disable_helper(&cg->common, cg->enable);
+> > >>>> +
+> > >>>> +       if ((cg == &gpu_core_clk &&
+> > >>>> +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
+> > >>>> +           (cg == &gpu_cfg_aclk &&
+> > >>>> +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
+> > >>>> +               reset_control_assert(gpu_reset);
+> > >>>
+> > >>> Why can't the clk consumer control the reset itself? Doing this here is
+> > >>> not ideal because we hold the clk lock when we try to grab the reset
+> > >>> lock. These are all spinlocks that should be small in lines of code
+> > >>> where the lock is held, but we're calling into an entire other framework
+> > >>> under a spinlock. If an (unrelated) reset driver tries to grab the clk
+> > >>> lock it will deadlock.
+> > >>
+> > >> So in our case the clk consumer is the drm/imagination driver. Here is
+> > >> the comment from the maintainer for my previous attempt to use a reset
+> > >> driver to abstract the GPU init sequence [1]:
+> > >>
+> > >> "Do you know what this resets? From our side, the GPU only has a single
+> > >> reset line (which I assume to be GPU_RESET)."
+> > >>
+> > >> "I don't love that this procedure appears in the platform reset driver.
+> > >> I appreciate it may not be clear from the SoC TRM, but this is the
+> > >> standard reset procedure for all IMG Rogue GPUs. The currently
+> > >> supported TI SoC handles this in silicon, when power up/down requests
+> > >> are sent so we never needed to encode it in the driver before.
+> > >>
+> > >> Strictly speaking, the 32 cycle delay is required between power and
+> > >> clocks being enabled and the reset line being deasserted. If nothing
+> > >> here touches power or clocks (which I don't think it should), the delay
+> > >> could potentially be lifted to the GPU driver."
+> > >>
+> > >> From the drm/imagination maintainers point of view their hardware has
+> > >> only one reset, the extra CLKGEN reset is SoC specific.
+> > >
+> > > If I am understanding correctly, the CLKGEN reset doesn't reset
+> > > anything in the GPU itself, but holds the GPU clock generator block in
+> > > reset, effectively disabling the three GPU clocks as a workaround for
+> > > the always-ungated GPU_MEM clock.
+> > >
+> > >> Also the reset driver maintainer didn't like my way of abstracting two
+> > >> resets ("GPU" and and SoC specific"CLKGEN") into one reset
+> > >
+> > > That is one part of it. The other is that (according to my
+> > > understanding as laid out above), the combined GPU+CLKGEN reset would
+> > > effectively disable all three GPU clocks for a while, after the GPU
+> > > driver has already requested them to be enabled.
+> >
+> > Thank you for your comments Philipp, it seems like we're on the same
+> > page here. I was wondering whether there is anything I can do to move the
+> > patches forward.
+> >
+> > Stephen, if the current patch is a no go from your perspective could you
+> > please advise whether there is a way to solve this in a clock that would
+> > be acceptable to you.
+>
+> It looks like the SoC glue makes the interactions between the clk and
+> reset frameworks complicated because GPU clks don't work if a reset is
+> asserted. You're trying to find a place to coordinate the clk and reset.
+> Am I right?
+>
+> I'd advise managing the clks and resets in a generic power domain that
+> is attached to the GPU device. In that power domain, coordinate the clk
+> and reset sequencing so that the reset is deasserted before the clks are
+> enabled (or whatever the actual requirement is). If the GPU driver
+> _must_ have a clk and reset pointer to use, implement one that either
+> does nothing or flag to the GPU driver that the power domain is managing
+> all this for it so it should just use runtime PM and system PM hooks to
+> turn on the clks and take the GPU out of reset.
+>
+> From what I can tell, the GPU driver maintainer doesn't want to think
+> about the wrapper that likely got placed around the hardware block
+> shipped by IMG. This wrapper is the SoC glue that needs to go into a
+> generic power domain so that the different PM resources, reset, clk,
+> etc. can be coordinated based on the GPU device's power state. It's
+> either that, or go the dwc3 route and have SoC glue platform drivers
+> that manage this stuff and create a child device to represent the hard
+> macro shipped by the vendor like Synopsys/Imagination. Doing the parent
+> device design isn't as flexible as PM domains because you can only have
+> one parent device and the child device state can be ignored vs. many PM
+> domains attached in a graph to a device that are more directly
+> influenced by the device using runtime PM.
+>
+> Maybe you'll be heartened to know this problem isn't unique and has
+> existed for decades :) I don't know what state the graphics driver is in
+> but they'll likely be interested in solving this problem in a way that
+> doesn't "pollute" their driver with SoC specific details. It's all a
+> question of where you put the code. The reset framework wants to focus
+> on resets, the clk framework wants to focus on clks, and the graphics
+> driver wants to focus on graphics. BTW, we went through a similar
+> discussion with regulators and clks years ago and ended up handling that
+> with OPPs and power domains.
 
-The filesystem therefore is in charge of properly dealing with
-quiescing of the filesystem through its callbacks if it thinks
-it knows better than how the VFS handles it.
+Right, power-domain providers are mostly implementing SoC specific code.
 
-The following Coccinelle rule was used as to remove the now superfluous
-freezer calls:
+In some cases, power-domain providers also handle per device SoC
+specific constraints/sequences, which seems what you are discussing
+here. For that, genpd has a couple of callbacks that could be
+interesting to have a look at, such as:
 
-make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/xfs
+genpd->attach|detach_dev() - for probe/remove
+genpd.dev_ops->start|stop() - for runtime/system PM
 
-virtual patch
+That said, maybe just using the regular genpd->power_on|off() callback
+is sufficient here, depending on how you decide to model things.
 
-@ remove_set_freezable @
-expression time;
-statement S, S2;
-expression task, current;
-@@
+>
+> I believe a PM domain is the right place for this kind of stuff, and I
+> actually presented on this topic at OSSEU[1], but I don't maintain that
+> code. Ulf does.
+>
+> [1] https://osseu2024.sched.com/event/1ej38/the-case-for-an-soc-power-management-driver-stephen-boyd-google
 
-(
--       set_freezable();
-|
--       if (try_to_freeze())
--               continue;
-|
--       try_to_freeze();
-|
--       freezable_schedule();
-+       schedule();
-|
--       freezable_schedule_timeout(time);
-+       schedule_timeout(time);
-|
--       if (freezing(task)) { S }
-|
--       if (freezing(task)) { S }
--       else
-	    { S2 }
-|
--       freezing(current)
-)
-
-@ remove_wq_freezable @
-expression WQ_E, WQ_ARG1, WQ_ARG2, WQ_ARG3, WQ_ARG4;
-identifier fs_wq_fn;
-@@
-
-(
-    WQ_E = alloc_workqueue(WQ_ARG1,
--                              WQ_ARG2 | WQ_FREEZABLE,
-+                              WQ_ARG2,
-			   ...);
-|
-    WQ_E = alloc_workqueue(WQ_ARG1,
--                              WQ_ARG2 | WQ_FREEZABLE | WQ_ARG3,
-+                              WQ_ARG2 | WQ_ARG3,
-			   ...);
-|
-    WQ_E = alloc_workqueue(WQ_ARG1,
--                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE,
-+                              WQ_ARG2 | WQ_ARG3,
-			   ...);
-|
-    WQ_E = alloc_workqueue(WQ_ARG1,
--                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE | WQ_ARG4,
-+                              WQ_ARG2 | WQ_ARG3 | WQ_ARG4,
-			   ...);
-|
-	    WQ_E =
--               WQ_ARG1 | WQ_FREEZABLE
-+               WQ_ARG1
-|
-	    WQ_E =
--               WQ_ARG1 | WQ_FREEZABLE | WQ_ARG3
-+               WQ_ARG1 | WQ_ARG3
-|
-    fs_wq_fn(
--               WQ_FREEZABLE | WQ_ARG2 | WQ_ARG3
-+               WQ_ARG2 | WQ_ARG3
-    )
-|
-    fs_wq_fn(
--               WQ_FREEZABLE | WQ_ARG2
-+               WQ_ARG2
-    )
-|
-    fs_wq_fn(
--               WQ_FREEZABLE
-+               0
-    )
-)
-
-@ add_auto_flag @
-expression E1;
-identifier fs_type;
-@@
-
-struct file_system_type fs_type = {
-	.fs_flags = E1
-+                   | FS_AUTOFREEZE
-	,
-};
-
-Generated-by: Coccinelle SmPL
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/xfs/xfs_discard.c   |  2 +-
- fs/xfs/xfs_log.c       |  3 +--
- fs/xfs/xfs_log_cil.c   |  2 +-
- fs/xfs/xfs_mru_cache.c |  2 +-
- fs/xfs/xfs_pwork.c     |  2 +-
- fs/xfs/xfs_super.c     | 16 ++++++++--------
- fs/xfs/xfs_trans_ail.c |  3 ---
- fs/xfs/xfs_zone_gc.c   |  2 --
- 8 files changed, 13 insertions(+), 19 deletions(-)
-
-diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
-index c1a306268ae4..1596cf0ecb9b 100644
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -333,7 +333,7 @@ xfs_trim_gather_extents(
- static bool
- xfs_trim_should_stop(void)
- {
--	return fatal_signal_pending(current) || freezing(current);
-+	return fatal_signal_pending(current);
- }
- 
- /*
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 6493bdb57351..317f6db292fb 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1489,8 +1489,7 @@ xlog_alloc_log(
- 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
- 
- 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
--				    WQ_HIGHPRI),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_HIGHPRI),
- 			0, mp->m_super->s_id);
- 	if (!log->l_ioend_workqueue)
- 		goto out_free_iclog;
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index 1ca406ec1b40..8ff5d68394e6 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -1932,7 +1932,7 @@ xlog_cil_init(
- 	 * concurrency the log spinlocks will be exposed to.
- 	 */
- 	cil->xc_push_wq = alloc_workqueue("xfs-cil/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_UNBOUND),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_UNBOUND),
- 			4, log->l_mp->m_super->s_id);
- 	if (!cil->xc_push_wq)
- 		goto out_destroy_cil;
-diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
-index d0f5b403bdbe..c9a49c6f6129 100644
---- a/fs/xfs/xfs_mru_cache.c
-+++ b/fs/xfs/xfs_mru_cache.c
-@@ -293,7 +293,7 @@ int
- xfs_mru_cache_init(void)
- {
- 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM), 1);
- 	if (!xfs_mru_reap_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/xfs/xfs_pwork.c b/fs/xfs/xfs_pwork.c
-index c283b801cc5d..3f5bf53f8778 100644
---- a/fs/xfs/xfs_pwork.c
-+++ b/fs/xfs/xfs_pwork.c
-@@ -72,7 +72,7 @@ xfs_pwork_init(
- 	trace_xfs_pwork_init(mp, nr_threads, current->pid);
- 
- 	pctl->wq = alloc_workqueue("%s-%d",
--			WQ_UNBOUND | WQ_SYSFS | WQ_FREEZABLE, nr_threads, tag,
-+			WQ_UNBOUND | WQ_SYSFS, nr_threads, tag,
- 			current->pid);
- 	if (!pctl->wq)
- 		return -ENOMEM;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index b2dd0c0bf509..4fae48072ef3 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -565,37 +565,37 @@ xfs_init_mount_workqueues(
- 	struct xfs_mount	*mp)
- {
- 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_buf_workqueue)
- 		goto out;
- 
- 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_unwritten_workqueue)
- 		goto out_destroy_buf;
- 
- 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_reclaim_workqueue)
- 		goto out_destroy_unwritten;
- 
- 	mp->m_blockgc_wq = alloc_workqueue("xfs-blockgc/%s",
--			XFS_WQFLAGS(WQ_UNBOUND | WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_UNBOUND | WQ_MEM_RECLAIM),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_blockgc_wq)
- 		goto out_destroy_reclaim;
- 
- 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_inodegc_wq)
- 		goto out_destroy_blockgc;
- 
- 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
-+			XFS_WQFLAGS(0), 0, mp->m_super->s_id);
- 	if (!mp->m_sync_workqueue)
- 		goto out_destroy_inodegc;
- 
-@@ -2228,7 +2228,7 @@ static struct file_system_type xfs_fs_type = {
- 	.parameters		= xfs_fs_parameters,
- 	.kill_sb		= xfs_kill_sb,
- 	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
--				  FS_LBS,
-+				  FS_LBS | FS_AUTOFREEZE,
- };
- MODULE_ALIAS_FS("xfs");
- 
-@@ -2500,7 +2500,7 @@ xfs_init_workqueues(void)
- 	 * max_active value for this workqueue.
- 	 */
- 	xfs_alloc_wq = alloc_workqueue("xfsalloc",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM), 0);
- 	if (!xfs_alloc_wq)
- 		return -ENOMEM;
- 
-diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-index 0fcb1828e598..ad8183db0780 100644
---- a/fs/xfs/xfs_trans_ail.c
-+++ b/fs/xfs/xfs_trans_ail.c
-@@ -636,7 +636,6 @@ xfsaild(
- 	unsigned int	noreclaim_flag;
- 
- 	noreclaim_flag = memalloc_noreclaim_save();
--	set_freezable();
- 
- 	while (1) {
- 		/*
-@@ -695,8 +694,6 @@ xfsaild(
- 
- 		__set_current_state(TASK_RUNNING);
- 
--		try_to_freeze();
--
- 		tout = xfsaild_push(ailp);
- 	}
- 
-diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-index c5136ea9bb1d..1875b6551ab0 100644
---- a/fs/xfs/xfs_zone_gc.c
-+++ b/fs/xfs/xfs_zone_gc.c
-@@ -993,7 +993,6 @@ xfs_zone_gc_handle_work(
- 	}
- 
- 	__set_current_state(TASK_RUNNING);
--	try_to_freeze();
- 
- 	if (reset_list)
- 		xfs_zone_gc_reset_zones(data, reset_list);
-@@ -1041,7 +1040,6 @@ xfs_zoned_gcd(
- 	unsigned int		nofs_flag;
- 
- 	nofs_flag = memalloc_nofs_save();
--	set_freezable();
- 
- 	for (;;) {
- 		set_current_state(TASK_INTERRUPTIBLE | TASK_FREEZABLE);
--- 
-2.47.2
-
+Kind regards
+Uffe
 
