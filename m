@@ -1,219 +1,161 @@
-Return-Path: <linux-kernel+bounces-577130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B178A718B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A3A718D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454C41888B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DABFD188636F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52391F3B98;
-	Wed, 26 Mar 2025 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDF51F131C;
+	Wed, 26 Mar 2025 14:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s1C+acTD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KDeJ3oyt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s1C+acTD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KDeJ3oyt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Icnj6cfd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582CF1F2361
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0485B1758B;
+	Wed, 26 Mar 2025 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999873; cv=none; b=q102dg3uYsJ6y4YaKEb7nT88T+BTgsXqzThRmYxOwE99PYorFgPfh19WV2BqX4eSTuM6zwadhvLxZ549H/hUgO9pyPEGwMTZ4hvvxccHft7L+8Ry6Bs14G13BoqsdGYlNuHJZMmD3b2fTS8Rj5NnZWeV98/jrOV+N4B6Sh/SQeA=
+	t=1742999949; cv=none; b=ARzJZ5TI4/SGPRMTtssKyFyYnr+aidzOHlaoJ4ob04KDIkqUAoZTkzDZRHPrQybfR2MINkd/BRdEInqalaoClFafXb1pOGty3AzCCIyM5TeDjU/5IYenW8NMioRK278w8yvMxFm0ncOf/BCy8xALj21fzJD+vjDotOWov2r5pTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999873; c=relaxed/simple;
-	bh=aF4BxnLqgMaCkIfKhFH1072+sZe6ru3YYsMv3ROsBew=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ujkTDqU39DQIufp+fnhv4GnI3Mh9x3sXsBNLCz3GVrZ7+8XAyr75V7PbYZopEFDFxZ0pkF1618kjLb0igi0EyQc9T9HmBSMNPydjqj4UuQ2id/snU7RhJjnm5z7Lb2PTEeJJBFtTGjJNKeGWJ78rmdS9AAX4730RWcxNFWG5yKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s1C+acTD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KDeJ3oyt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s1C+acTD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KDeJ3oyt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8D9A621169;
-	Wed, 26 Mar 2025 14:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742999870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iei0290+sElRTf7ajx+JEEEsALtKWNsDpN8ouPBF5NI=;
-	b=s1C+acTDi4pQtD7Fkqnv9T2NwSmTkPHzo31rH4lPc2vwW3RyXci6ueDDk3xfxjDeHiK8ed
-	4nD7dz7n79JaFfRxPDxko+mFdg0ZkwYL9zfPxo+nGR8IjCNKAGh5Hx3lDvY04LwS8oeG4A
-	4DSUDNOlf4CuQJ2B8larNlm+BMTlc8A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742999870;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iei0290+sElRTf7ajx+JEEEsALtKWNsDpN8ouPBF5NI=;
-	b=KDeJ3oytxjLjk3SZcWH4nMykOItOK1V0kZykfzaGK9MQS0dxuQYEARJk1u1RLWL2vxLg53
-	5I4DV8mjVQ3pSpAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742999870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iei0290+sElRTf7ajx+JEEEsALtKWNsDpN8ouPBF5NI=;
-	b=s1C+acTDi4pQtD7Fkqnv9T2NwSmTkPHzo31rH4lPc2vwW3RyXci6ueDDk3xfxjDeHiK8ed
-	4nD7dz7n79JaFfRxPDxko+mFdg0ZkwYL9zfPxo+nGR8IjCNKAGh5Hx3lDvY04LwS8oeG4A
-	4DSUDNOlf4CuQJ2B8larNlm+BMTlc8A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742999870;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iei0290+sElRTf7ajx+JEEEsALtKWNsDpN8ouPBF5NI=;
-	b=KDeJ3oytxjLjk3SZcWH4nMykOItOK1V0kZykfzaGK9MQS0dxuQYEARJk1u1RLWL2vxLg53
-	5I4DV8mjVQ3pSpAQ==
-Date: Wed, 26 Mar 2025 15:37:50 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Petr Mladek <pmladek@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>, 
-    mingo@kernel.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-    dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-    mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org, 
-    jikos@kernel.org, joe.lawrence@redhat.com, linux-kernel@vger.kernel.org, 
-    live-patching@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-    Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
- live-patching
-In-Reply-To: <20250326103843.GB5880@noisy.programming.kicks-ass.net>
-Message-ID: <alpine.LSU.2.21.2503261534450.4152@pobox.suse.cz>
-References: <20250324134909.GA14718@noisy.programming.kicks-ass.net> <Z-PNll7fJQzCDH35@pathway.suse.cz> <20250326103843.GB5880@noisy.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1742999949; c=relaxed/simple;
+	bh=uk2J5/c4Yu4HFsig5DEaqa3GGClXdjh7FZ6I9gY9hbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W+h3XY4seZaLddGnIUv09dqFDkLxkk5rwcRGLnmZHKBtAym532pBwtiPH9xwb8rEdv6tCUKbrW0J5KSuUVmjHhV4Y6fQ35BBLghF9u406vvVk2KkKD2TVtit4xzCU5ACNx2PCKfTumwCDleeNEtQGDvqrOryd6y1ZXZeRm2Djuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Icnj6cfd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22548a28d0cso158077355ad.3;
+        Wed, 26 Mar 2025 07:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742999947; x=1743604747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6eqkhZ1Vwmt9gRQ04JNUAxBEvP0I4y2gPx1o8AAFWU=;
+        b=Icnj6cfdcmsHrjVXydkSgJSzydZSJtd+3z0IPKQ2HUWofffcuVW4QpNJfLWIu/izgt
+         t3AI/zJ7Eig0g/iGgUd35f5HfCtS6rnvGqfQsBNJ/EpEUx9J2N3yrFLfqeHKPZL0qfn2
+         lea6X5uDeGL383g/8/FXSqskpwiTpB5vyPmwsUsH4TbQa9h+pLzAoxwsip9wAZjvFhXN
+         S895OBL5Gb8Ud853jKzq2vS6V4yH5Lbg+1djyqns8exxPBS8YVVvM3jChu+3JFOO5S+S
+         TO1/rGOfe14Od9M4CURnVQ7z3ahZCoaYOUvrDNbVacK4lSrYHcGReeY3SuFFRxQcbPQl
+         ezGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742999947; x=1743604747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y6eqkhZ1Vwmt9gRQ04JNUAxBEvP0I4y2gPx1o8AAFWU=;
+        b=Y8DqRpm95wH22wGScKXw3zjjTZ8XVIkWkMl6z3B42DBncIEwyxM1xhtzTDTZXvm2nK
+         dI9Dc/U8JmBhLiLGhgmcwTSJeY2o5hb27x7YmfX56H2QZHiw0BGcqXZcyLXUiiMqB0wJ
+         rCTYJhvuJR5r9AMnysG8DZjm2JtWX3RfYzgOSmpIxC85m2GTwGeMRhq9wthMkH+sbbyR
+         JzsFIIlxniqphoVwu14i4UMvlq/oIv+tL0cpOlnfD93FqgDGPTCgxr3eVilF1qckRlKk
+         BbNILIKtx8+onWlzf2dCNDvcm9Qlxdz3qZZ8Sk5UtkrtgjLJS2r+S/N1Y/1IPnvFIwSX
+         O2/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzrJa8E4xuSwPdmx+SggdQYGXZshaa2LpwMEMHSkg48RNX0rvdIz5AAukk7B23CLMd579aeUW5Yg2MT2U=@vger.kernel.org, AJvYcCX2YGFpqVTwTVoiUMpYBD5lK9AzEKPfD4k7kPeoY2879HZJb1fdBWOEIKSs2hpqky/KLt03IxEs3Kdjqfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKbfHn192fD61HhOfggmEQ/MxZmgMi41cM1TL6Divl68ZQYtm
+	1TlTJM3CgWAkCRphJbaYqQWqYOaAdFwhTOqAp+Qeca7iVLefbZecEyGqNg==
+X-Gm-Gg: ASbGncsuxtRLt1CWVcfVUjl671Xo3YynEXVoPwIgi/LAdtvz/VEm0k9ycP001ttTXqS
+	kSkeg0G3HydShWK5d9lHvNM6ysahB2IrOGkqQmD44dfk4o2XABT3trot3ftUS5uOUFXO4SdhHMw
+	yRMi2uUHtSY9AVelhcQyVwlK1WZSbngE+U5TLPea4jxaUeaH+AscMiYcjj4s+rnNM7ih32SVUgs
+	rWzWtj19VsuOj6Jh3TM7F1zHPKuYk457X+wmUgADAPrBmV6lQt4jfikevvVpGMwAABfGCoRf1J1
+	u68MtTsHC+VsE14zWJLbt2IK0d2mBG3pKGLKTuGc1dYDfo8v33fQlatIUWK2HDmfbFnrhmA83+5
+	NUE8z6JYCb+pcHYao2Ok=
+X-Google-Smtp-Source: AGHT+IEBdj4C54pk495ep9DblHTWWweUHbck96M9LKkZuKckCu/4LFHmW8yUHZCPndAEkbi38ZOc+w==
+X-Received: by 2002:a17:902:db01:b0:223:5c33:56b4 with SMTP id d9443c01a7336-22780d77ee1mr278798465ad.20.1742999947013;
+        Wed, 26 Mar 2025 07:39:07 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2846270sm11011904a12.36.2025.03.26.07.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 07:39:06 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
+Date: Wed, 26 Mar 2025 07:39:03 -0700
+Message-ID: <20250326143903.24380-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Rob Clark <robdclark@chromium.org>
 
-On Wed, 26 Mar 2025, Peter Zijlstra wrote:
+Add support for exporting a dma_fence fd for a specific point on a
+timeline.
 
-> On Wed, Mar 26, 2025 at 10:49:10AM +0100, Petr Mladek wrote:
-> > On Mon 2025-03-24 14:49:09, Peter Zijlstra wrote:
-> > > 
-> > > With the goal of deprecating / removing VOLUNTARY preempt, live-patch
-> > > needs to stop relying on cond_resched() to make forward progress.
-> > > 
-> > > Instead, rely on schedule() with TASK_FREEZABLE set. Just like
-> > > live-patching, the freezer needs to be able to stop tasks in a safe /
-> > > known state.
-> > 
-> > > Compile tested only.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  include/linux/livepatch_sched.h | 15 +++++--------
-> > >  include/linux/sched.h           |  6 -----
-> > >  kernel/livepatch/transition.c   | 30 ++++++-------------------
-> > >  kernel/sched/core.c             | 50 +++++++----------------------------------
-> > >  4 files changed, 21 insertions(+), 80 deletions(-)
-> > > 
-> > > diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
-> > > index 013794fb5da0..7e8171226dd7 100644
-> > > --- a/include/linux/livepatch_sched.h
-> > > +++ b/include/linux/livepatch_sched.h
-> > > @@ -3,27 +3,24 @@
-> > >  #define _LINUX_LIVEPATCH_SCHED_H_
-> > >  
-> > >  #include <linux/jump_label.h>
-> > > -#include <linux/static_call_types.h>
-> > > +#include <linux/sched.h>
-> > > +
-> > >  
-> > >  #ifdef CONFIG_LIVEPATCH
-> > >  
-> > >  void __klp_sched_try_switch(void);
-> > >  
-> > > -#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
-> > > -
-> > >  DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
-> > >  
-> > > -static __always_inline void klp_sched_try_switch(void)
-> > > +static __always_inline void klp_sched_try_switch(struct task_struct *curr)
-> > >  {
-> > > -	if (static_branch_unlikely(&klp_sched_try_switch_key))
-> > > +	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
-> > > +	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
-> > >  		__klp_sched_try_switch();
-> > >  }
-> > 
-> > Do we really need to check the TASK_FREEZABLE state, please?
-> > 
-> > My understanding is that TASK_FREEZABLE is set when kernel kthreads go into
-> > a "freezable" sleep, e.g. wait_event_freezable().
-> 
-> Right.
-> 
-> > But __klp_sched_try_switch() should be safe when the task is not
-> > running and the stack is reliable. IMHO, it should be safe anytime
-> > it is being scheduled out.
-> 
-> So for the reasons you touched upon in the next paragraph, FREEZABLE
-> seemed like a more suitable location.
-> 
-> > Note that wait_event_freezable() is a good location. It is usually called in
-> > the main loop of the kthread where the stack is small. So that the chance
-> > that it is not running a livepatched function is higher than on
-> > another random schedulable location.
-> 
-> Right, it is the natural quiescent state of the kthread, it holds no
-> resources.
-> 
-> > But we actually wanted to have it in cond_resched() because
-> > it might take a long time to reach the main loop, and sleep there.
-> 
-> Well, cond_resched() is going to get deleted, so we need to find
-> something else. And I was thinking that the suspend people want
-> reasonable timeliness too -- you don't want your laptop to continue
-> running for many seconds after you close the lid and stuff it in your
-> bag, now do you.
-> 
-> So per that reasoning I figured FREEZABLE should be good enough.
-> 
-> Sharing the pain with suspend can only lead to improving both -- faster
-> patching progress leads to faster suspend and vice-versa.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/drm_syncobj.c | 8 ++++++--
+ include/uapi/drm/drm.h        | 2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-If I remember correctly, we had something like this in the old kGraft 
-implementation of the live patching (SUSE way). We exactly had a hook 
-somewhere in the kthread freezing code. This looks much cleaner and as far 
-as I know the fridge went through improvements recently.
-
-Peter, so that I understand it correctly... we would rely on all kthreads 
-becoming freezable eventually so that both suspend and livepatch benefit. 
-Is that what you meant by the above?
-
-Miroslav
+diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+index 4f2ab8a7b50f..eb7a2dd2e261 100644
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
+ }
+ 
+ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+-					int handle, int *p_fd)
++					int handle, u64 point, int *p_fd)
+ {
+ 	int ret;
+ 	struct dma_fence *fence;
+@@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+ 	if (fd < 0)
+ 		return fd;
+ 
+-	ret = drm_syncobj_find_fence(file_private, handle, 0, 0, &fence);
++	ret = drm_syncobj_find_fence(file_private, handle, point, 0, &fence);
+ 	if (ret)
+ 		goto err_put_fd;
+ 
+@@ -882,8 +882,12 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
+ 
+ 	if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
+ 		return drm_syncobj_export_sync_file(file_private, args->handle,
++						    args->point,
+ 						    &args->fd);
+ 
++	if (args->point)
++		return -EINVAL;
++
+ 	return drm_syncobj_handle_to_fd(file_private, args->handle,
+ 					&args->fd);
+ }
+diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+index 7fba37b94401..c71a8f4439f2 100644
+--- a/include/uapi/drm/drm.h
++++ b/include/uapi/drm/drm.h
+@@ -912,6 +912,8 @@ struct drm_syncobj_handle {
+ 
+ 	__s32 fd;
+ 	__u32 pad;
++
++	__u64 point;
+ };
+ 
+ struct drm_syncobj_transfer {
+-- 
+2.49.0
 
 
