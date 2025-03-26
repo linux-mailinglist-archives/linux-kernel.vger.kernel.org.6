@@ -1,115 +1,164 @@
-Return-Path: <linux-kernel+bounces-577026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AAAA71773
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B6AA71774
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BF13BDCE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C113BDF9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A831F4299;
-	Wed, 26 Mar 2025 13:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD541E834A;
+	Wed, 26 Mar 2025 13:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EfwIHjRQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="lKiFVRlT"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90BC1F4193
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E5919E7E2;
+	Wed, 26 Mar 2025 13:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742995418; cv=none; b=Ajbnfx1VLB7doYQrz3zCROreTzWQNf6NtRjCQFBFD+bmWh87z4ZiJxa2oAumMQ8Ph+f1DW4Ee8/TVjCnNnDEBQpd5eSkM3PmqrsMwZTQFv9foSxKFlek+uLZXAZKuBnyg78ya2mYi2y0gaUjdNKjMfH8ScIkGfXHAIRjuatO008=
+	t=1742995507; cv=none; b=YnEUjPwMVpRHk3uGx2CP6LXB9tRRJrWcijblQWC4RBXfKklHApnjvk6/RXkPgSNWi5ULnpglYwg+mC6BhQC39ZVhagBZQeENF9dG9OyIz7PobzggyUXZKql5Pf3iVU66bQQkSyq7kAP1zAhc6wJG9dEFqDjHVC5AZru73sC40fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742995418; c=relaxed/simple;
-	bh=slBT5ASGlHlLYRfFHdYzBrpOFjHVj6vIx9ezqvhm0zk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X2IqzsnZEg08DDcZJtz1Ty2Fqk0M0UohI1haIwWAVaDkqp3WZuiun0Aq2wyollGVALWof9ntzGda2YenuEo9h0Mb6l98ahSGRlZmpA4L+poG6p554GLYKJ/AJT1wtTc9ZF1iU0Jo9ieV12UvecmGwge3xmtBy5VvzAno5N954iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EfwIHjRQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9AE2E1963;
-	Wed, 26 Mar 2025 14:21:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742995299;
-	bh=slBT5ASGlHlLYRfFHdYzBrpOFjHVj6vIx9ezqvhm0zk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EfwIHjRQVLubJCVoeMMp3KoFoKUUhiKhawQtKOditfHbhDXfv0f7z+Y8C4fzubz3s
-	 5R+7hWkPYIh5iDBk4aZbqPBZjlZg9ffj6hmiPzEhfg4vMX7lcn9Txh59KBmO0moakN
-	 a3XsJQlLP1fpQ3lZ3bj39MLg3m0hRL6vW8Gz81RU=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 26 Mar 2025 15:22:54 +0200
-Subject: [PATCH v4 11/11] drm: xlnx: zynqmp: Add support for XVUY2101010
+	s=arc-20240116; t=1742995507; c=relaxed/simple;
+	bh=Nl+10FAzfsORuUu1DCuzZNgcTfzPXOUYYQaR/dcvcHw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qvsTO0yqhlLSua52+JZrYSAcHQPEk+5vGy7SA9damo8QujJFbMjE7qUE0g7omeiZkRBpKL5nSjc/KdOwa7Ypj/lQnYhwWG57yuoDo8Vj0f3I726fyv+nb7zZNz0AYCpnbyoHa+USHmMmye3t02nVnrtavSKfp0VdJ2klAwrCGAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=lKiFVRlT; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q9Vo3V014128;
+	Wed, 26 Mar 2025 09:24:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=gWv2MyO/NWHLdJ26ZZhkCq82dNl
+	g2t2fpQcAb3y2jdI=; b=lKiFVRlTZ7ylDmYIBQ9QQnAonywvaMpibkrNBgA7BjX
+	iIMbVHKh1UF/xj0cBlxM6Rg7bbqfn4dEkjzSetpedxtmd72Db14njMGYOZDSZ+kG
+	ajV1WfieJgU/LP0hOnrYhFsMtRlx4tbZ5N2h+IJTKN+ZoBWQ9S9wu/AsRymS2zz7
+	9G9Iyqeh+7zDsiRApURpxIqQEe8ibn9nZmdMtfqsk4HlXKxqkV7ZuPVCrm0WCFtK
+	j0LZWYmW3SGFbNaxKK97WE12Vk0xL4oa1+O4kPdpDBwF5uu0Xge1IzyOpSb20Mkg
+	8NDBZxcRinO/YRhkXbALQZioaVQYkPBns1Pby/A0idA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45mf1h0y35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 09:24:35 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52QDOY0n042990
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Mar 2025 09:24:34 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 26 Mar 2025 09:24:34 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 26 Mar 2025 09:24:34 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 26 Mar 2025 09:24:34 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52QDOJbU007524;
+	Wed, 26 Mar 2025 09:24:21 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <corbet@lwn.net>, <dlechner@baylibre.com>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v3 0/4] iio: adc: ad4000: Add SPI offload support
+Date: Wed, 26 Mar 2025 10:24:15 -0300
+Message-ID: <cover.1742992305.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-xilinx-formats-v4-11-322a300c6d72@ideasonboard.com>
-References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
-In-Reply-To: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
-To: Vishal Sagar <vishal.sagar@amd.com>, 
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Geert Uytterhoeven <geert@linux-m68k.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=781;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=slBT5ASGlHlLYRfFHdYzBrpOFjHVj6vIx9ezqvhm0zk=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn4//DsRCMB1WLCta1estzXkjXoSWER8pSvhQMe
- KB37gD3tzOJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ+P/wwAKCRD6PaqMvJYe
- 9YjgD/4176gMq72C0vNw+apzQNHJlqYV3VbqPh3TMJ/E+F3SJ8igO26yenPGmMC6YL1NwmI8sD1
- VCRJ7Bzr/G0MG+FbqmU0eUeUGlJCwoixtjCTtiRW+fyoNYRJs+cVKJLrK4WAiylri44RPu138eD
- jh4ZFaS8Is9jAU3Qj1n5TwZsAhVof+4jWjqpX72+98iTUTklWo+Xwnz9b74qdwQ3rApzKAhX4aM
- hk3T/wJ4sDRFMrVimMG6TBrMvKQ0BRIQ+/cql6IxNwx9liLQbAtTL05IDTnydTNFqTad6YKKBhf
- RVRtykBfQzVP6z0gF/klnlVyGASfx1mIG8DoCfNINcCSC9k0PTGg7C6KI04V6y2W8/FxW4lOQWm
- LC9yedg2gVmS3AJPvkWtzdBog5DHf0GUZOW+A93385F/T9C7PvrjJRIcdw2dJe8WSL+eufWCul8
- kQYYvNeerHKWd+eUja/xUTQlbQ5AH4gs80zzdbfQ7xOIG3i0k68taatYwl1/MWrnyloAvSzs/yO
- lYCha1+wkeM7CnR6bM3dFzwkA2XE1n73A0/s1/dmZOfo1gb4HY2tDv0kStCfk0XrWM+ZvT3vAsx
- nsyBMKs5r1FoP5nPUPqpBcl8uqABtsYKzFu9wSDluGctgS9gSB56vV72Fgyw/MtJq9CknEbXLMI
- nQ0kBNBUuV7BMSw==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=B5+50PtM c=1 sm=1 tr=0 ts=67e40013 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=yEi1-Fu5WF2DL2A3visA:9
+X-Proofpoint-ORIG-GUID: -MccmbZBhSl6WKwg86snZMKUqdphdZn_
+X-Proofpoint-GUID: -MccmbZBhSl6WKwg86snZMKUqdphdZn_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 mlxscore=0 impostorscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260082
 
-Add support for XVUY2101010 format.
+This patch series extends the ad4000 driver to support SPI offloading.
+In addition to that, ad4000 IIO documentation is expanded to:
+- list PulSAR parts supported by the ad4000 driver.
+- describe some characteristics of AD4000 IIO device.
+- describe changes when SPI offload is being used.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Change log v2 -> v3
+- Dropped patch 1 of v2 series and reverted buffer endianness and SPI transfer
+  bits_per_word configurations to the way they were in v1.
+- Removed dummy transfer in ad4000_prepare_offload_turbo_message().
+- Unified offload message preparation.
+- Removed spi->cs_hold.value to use cs_inactive to set CNV/CS high time.
+- Adjusted max sample rate for AD7983 and AD7984.
+- Dropped AD4000_TCONV_NS and made all time related constants a time_spec field.
+- Removed _offl param from _CHANNELS() macros and added a comment about that.
+- Commented IIO_BE check in ad4000_prepare_3wire_mode_message().
+- Now using predisable to balance with postenable.
+- Put spi/offload/consumer.h include right after spi/spi.h.
+- Removed unrelated brackets in info_mask_separate_available assignment
+- Added blank line after if.
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-index ce685dfbf31f..79f58e06f38f 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-@@ -322,6 +322,11 @@ static const struct zynqmp_disp_format avbuf_vid_fmts[] = {
- 		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YV24_10,
- 		.swap		= false,
- 		.sf		= scaling_factors_101010,
-+	}, {
-+		.drm_fmt	= DRM_FORMAT_XVUY2101010,
-+		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YUV444_10,
-+		.swap		= false,
-+		.sf		= scaling_factors_101010,
- 	},
- };
- 
+Change log v1 -> v2
+- Fixed passing inappropriate pointer instead of ret to dev_err_probe()
+- [new patch] Set transfer bits_per_word to have data in CPU endianness
+- Set iio_dev num_channels close to where channels is set.
+- Complement offload message comment about first sample being invalid
+- Document why the first buffer sample is invalid when offloading
+- Added blank line before a 'simple return'.
 
+Link to v2: https://lore.kernel.org/linux-iio/cover.1742394806.git.marcelo.schmitt@analog.com/
+Link to v1: https://lore.kernel.org/linux-iio/cover.1741970538.git.marcelo.schmitt@analog.com/
+
+v3 was tested and worked with the following setups
+- ADAQ4003 on CoraZ7 with SPI offload support;
+- AD7687 on CoraZ7 with SPI offload support;
+- AD7687 on rpi (no SPI offload support).
+The Linux image ran on cora was built from IIO testing branch.
+The Linux image ran on rpi was built from rpi tree rpi-6.14.y branch with
+some adaptations to cope with old iio_device_claim_direct_mode() and addition
+of the following patches
+iio: adc: ad4000: Stop using iio_device_claim_direct_scoped()
+spi: add basic support for SPI offloading
+spi: offload: add support for hardware triggers
+dt-bindings: trigger-source: add generic PWM trigger source
+spi: offload-trigger: add PWM trigger driver
+spi: add offload TX/RX streaming APIs
+iio: buffer-dmaengine: split requesting DMA channel from allocating buffer
+iio: buffer-dmaengine: add devm_iio_dmaengine_buffer_setup_with_handle()
+
+Marcelo Schmitt (4):
+  iio: adc: ad4000: Add support for SPI offload
+  Documentation: iio: ad4000: Add new supported parts
+  Documentation: iio: ad4000: Add IIO Device characteristics section
+  Documentation: iio: ad4000: Describe offload support
+
+ Documentation/iio/ad4000.rst |  86 +++++++-
+ drivers/iio/adc/Kconfig      |   7 +-
+ drivers/iio/adc/ad4000.c     | 405 ++++++++++++++++++++++++++++++++---
+ 3 files changed, 463 insertions(+), 35 deletions(-)
+
+
+base-commit: af94f401e26f686f7391ce79b38a6129417c22dc
+prerequisite-patch-id: 3d517eef53a799adba5922815fe684b913e36773
 -- 
-2.43.0
+2.47.2
 
 
