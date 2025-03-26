@@ -1,103 +1,143 @@
-Return-Path: <linux-kernel+bounces-576698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A0FA71330
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:58:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9312A71335
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9833ACA52
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9751704B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80931A4F21;
-	Wed, 26 Mar 2025 08:57:30 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0665F1A4E98;
+	Wed, 26 Mar 2025 08:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mc4mL7AH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61A31DFDE;
-	Wed, 26 Mar 2025 08:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B91862BB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742979450; cv=none; b=DF6gac6z5T426pgaZaGtWKs3cIWzUe0zXQBN1kxlOXJdDgMz/hCF9dUMBIOPPU/4f8H/JqULlvl9XAcWyZ4w24WeFh22ZAB6+/EBkww8OtmCDnrtJc/s85jKZVPm2EBwDc10B9dnvfrfVpzzRHP6EIlLepmZqKkfvNTHoUpoz7M=
+	t=1742979546; cv=none; b=j/Q4yBmas2EkJBf1z9f3h6pQlEtc3wtB+Q+mnWBahkda1whldjYR9IuAFNjarC6dSuDsfwgY+Z35MJ9StA+Ju5cfDv6f5KK2FAY0fDl/1vlWsgvGPapDOOnIEthOzSleWJbuHV9c4fJcBwMTa/NiP7AmYP5JSaTeOx8u5BTcbXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742979450; c=relaxed/simple;
-	bh=GbObKGvHtL1gdFqssOg+BAIGhnssLdBcbtorEnZyhqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LPZJfaFP0VsWzuqtnyjQkM9sic/K/1zKuRO1+oFzlGxJ+nbRCnIlk81TaTScJfuelmipKDhM02VcVDA8r/J4Z0SvtFmJb7HeFbxzAY2/zCCCGMIgqaloe3DXX2d+QQEEGvOoOj5I0kyivLJIrwcyJESb1MUgotoIZuQIt3PTK/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 016F520481;
-	Wed, 26 Mar 2025 08:57:20 +0000 (UTC)
-Message-ID: <c023271e-23fe-40f4-8e84-8f99f6156484@ghiti.fr>
-Date: Wed, 26 Mar 2025 09:57:20 +0100
+	s=arc-20240116; t=1742979546; c=relaxed/simple;
+	bh=FdsJiAbVWh4zlGzzu5hykozqWOHEFR+0JZ6czLPTNlY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KmEJfieQC039ldI2s3cAXyfQrlWNPKCYatMOT1pwMOWhWM3LZhi3g8hmvuSJHc3z0gvtMYhhFRoPBMXunsZqRfnsvZ2DBOoWNUZOuzgXLFyHOEWylbtRcuDhG2ybFwr28u7VXtX+nNo4Fup0/pp1lCVXPqANGIn59mKZv3/m2hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mc4mL7AH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7173C4CEE2;
+	Wed, 26 Mar 2025 08:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742979545;
+	bh=FdsJiAbVWh4zlGzzu5hykozqWOHEFR+0JZ6czLPTNlY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mc4mL7AHlA+W62MdbSABDrCa62oQwnlMkklcTzJtGgQvAA2TI3V/6g0F+0acT9ffp
+	 QyI6c7bi261DOnwOHOe3uQ27s2HqUkvQvVaP3KqeefOCoRTI0ekVNxJhqVpK9DpeZV
+	 mP3jrrkGwYspWw7VqrdfG1RMxivRS/gEW4+HyNDm6BpABQShW8BvS0THY3vJnrBcgu
+	 8sd5ftOv87zMV8xTtMok2ZUZQDxnATJi87fGaICmHRXe7BqjCM1MBNA71mURG7aYJ6
+	 tblU4kcC4WF1eu+lKBq7tPpcVlDzJKj2oVDFfJVc9frsYwFjdKNxAlK4udy4sdBBR4
+	 PyjTHNymuWekg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1txMbH-00HE1j-6p;
+	Wed, 26 Mar 2025 08:59:03 +0000
+Date: Wed, 26 Mar 2025 08:59:02 +0000
+Message-ID: <8634f0mall.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Ulf Hansson
+	<ulf.hansson@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com,
+	hajun.sung@samsung.com,
+	d7271.choe@samsung.com,
+	joonki.min@samsung.com
+Subject: Re: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in GICv3 ITS driver
+In-Reply-To: <Z+Nv8U/4P3taDpUq@perf>
+References: <CGME20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5@epcas2p3.samsung.com>
+	<Z+Nv8U/4P3taDpUq@perf>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: riscv: Fix typo MIMPLID -> MIMPID
-Content-Language: en-US
-To: Nam Cao <namcao@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
- Evan Green <evan@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>,
- Andrew Jones <ajones@ventanamicro.com>, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240925142532.31808-1-namcao@linutronix.de>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240925142532.31808-1-namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieehudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueefgeehheegtddvgeelgeejjeefudekgeetffeijefgveejudehfffftdelhffhnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemgegsiegumeehkegstdemtgdvtgemkeelgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeegsgeiugemheeksgdtmegtvdgtmeekleegkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemgegsiegumeehkegstdemtgdvtgemkeelgeekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehnrghmtggroheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhop
- ehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheptghlvghgvghrsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegvvhgrnhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhm
-X-GND-Sasl: alex@ghiti.fr
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: youngmin.nam@samsung.com, tglx@linutronix.de, saravanak@google.com, ulf.hansson@linaro.org, vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com, hajun.sung@samsung.com, d7271.choe@samsung.com, joonki.min@samsung.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Nam, Jon,
+On Wed, 26 Mar 2025 03:09:37 +0000,
+Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> 
+> Hi.
+> 
+> On our SoC, we are using S2IDLE instead of S2R as a system suspend mode.
+> However, when I try to enable ARM GICv3 ITS driver (drivers/irqchip/irq-gic-v3-its.c),
+> I noticed that there is no proper way to invoke suspend/resume callback,
+> because it only uses syscore_ops, which is not called in an s2idle scenario.
 
-On 25/09/2024 16:25, Nam Cao wrote:
-> The macro that is really defined is RISCV_HWPROBE_KEY_MIMPID, not
-> RISCV_HWPROBE_KEY_MIMPLID (difference is the 'L').
->
-> Also, the riscv privileged specification names the register "mimpid", not
-> "mimplid".
->
-> Correct these typos.
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> ask me how I found out..
->
->   Documentation/arch/riscv/hwprobe.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 85b709257918..fb0affa61eb9 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -51,7 +51,7 @@ The following keys are defined:
->   * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
->     defined by the RISC-V privileged architecture specification.
->   
-> -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
-> +* :c:macro:`RISCV_HWPROBE_KEY_MIMPID`: Contains the value of ``mimpid``, as
->     defined by the RISC-V privileged architecture specification.
->   
->   * :c:macro:`RISCV_HWPROBE_KEY_BASE_BEHAVIOR`: A bitmask containing the base
+This is *by design*.
 
+> Please refer to the codes below.
+> 
+> <drivers/irqchip/irq-gic-v3-its.c>
+> 5028 static struct syscore_ops its_syscore_ops = {
+> 5029         .suspend = its_save_disable,
+> 5030         .resume = its_restore_enable,
+> 5031 };
+> ...
+> 5803         register_syscore_ops(&its_syscore_ops);
+> 
+> <kernel/power/suspend.c>
+> 444         if (state == PM_SUSPEND_TO_IDLE) {
+> 445                 s2idle_loop();
+> 446                 goto Platform_wake;
+> 447         }
+> 448
+> 449         error = pm_sleep_disable_secondary_cpus();
+> 450         if (error || suspend_test(TEST_CPUS)) {
+> 451                 log_suspend_abort_reason("Disabling non-boot cpus failed");
+> 452                 goto Enable_cpus;
+> 453         }
+> 454
+> 455         arch_suspend_disable_irqs();
+> 456         BUG_ON(!irqs_disabled());
+> 457
+> 458         system_state = SYSTEM_SUSPEND;
+> 459
+> 460         error = syscore_suspend();
+> 
+> How should we handle this situation ?
 
-It looks like this patch was never merged even though it is relevant. 
-@Jon: is it ok to merge it as-is? If you want, I can merge it, let me 
-know how you want to proceed.
+By implementing anything related to GIC power-management in your EL3
+firmware. Only your firmware knows whether you are going into a state
+where the GIC (and the ITS) is going to lose its state (because power
+is going to be removed) or if the sleep period is short enough that
+you can come back from idle without loss of context.
 
-Thanks,
+Furthermore, there is a lot of things that non-secure cannot do when
+it comes to GIC power management (most the controls are secure only),
+so it is pretty clear that the kernel is the wrong place for this.
 
-Alex
+I'd suggest you look at what TF-A provides, because this is not
+exactly a new problem (it has been solved several years ago).
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
