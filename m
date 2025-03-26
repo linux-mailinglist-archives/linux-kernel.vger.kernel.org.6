@@ -1,163 +1,192 @@
-Return-Path: <linux-kernel+bounces-577289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE29A71B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E07A71B03
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11E43A7597
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B93A95D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89831F63E8;
-	Wed, 26 Mar 2025 15:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3473B1F7580;
+	Wed, 26 Mar 2025 15:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Gp7O5FyI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RA5zcMMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986361F3B98
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709591F754E;
+	Wed, 26 Mar 2025 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003676; cv=none; b=ZprmN2HH+L+4mOaomNULNMcH8HeJbQZV2XSB/rEaMeBMaUXcndP2QWmqWCTG+wDfHjIQf5p8wAPzETpEpCWopz1xKFM5mIS1IXoIWhR01IhY/p0FbxaLVofyjofD+k9UPiqDavnwpZE4x4Ykfxf9urrNtXdzZsJw3XAw7VIXq/o=
+	t=1743003731; cv=none; b=sLCCpEBdGjmR5FzrGG+zJLypQOTvixlMGYIfRlMaWzQkGXM0cRReEpICkbOHkGE73yVikoohRJWS1L0XL+V6+S+QmxjkSvLloxkiK6cfqgnAcocbC72lM/LvH+KtjDf1TVtMDxXdqN6UaQ2GYX9XqI5fI3lhvcaOAUm4uB8CJXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003676; c=relaxed/simple;
-	bh=fzfdMlKqaXubyatVU2YdthyvsoU12xFxPbIEjhB7qs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TXQ4cSb45Jv4kSIOS74eRkvN0KyZojJn/hR3BvilwB8/loixaQt2y7ry7Hfxi/meYz1ogr+NvB8qd0LcZXGO5RfSb7gSHEIKEjVuo7OBje3L3WhcxyaV9z9xFS1vBvLGMexzEZflqZemEha4EdSfgJybv7W4KpQLbjuuNUJ7uoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Gp7O5FyI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QF0I0w006142
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:41:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JaWfJx73MJITf1MAGS+5QLKh97/YhkXy5JoIZnID5V8=; b=Gp7O5FyIP6Gqz6dK
-	XVI+I/XaMl9cTBDvfK0wKvYyDmMMIkTtSTeUzl/P3Bl9Qh7L1zj03mkKwcoXFUpD
-	NmEVHWYNLJHMYegZxYq6WEDINGJENLMuismtDGr3N63n7P9xXWY+UDX70RzFVIqQ
-	+MiwpFYLdCIHPiO7IZMY50Bqi6tudbCWYhz2x4/dfB3hyiKDtUum5S+l+Gi80A3o
-	SnZ4ZOFRAnn8BE73B9PhxILIFE87L6VSFebsefNbmNKB5D/5JY/CPR2W6x3S9kcu
-	Lgdw2TeGwTVQOWZ40qF2TrMUQKozY/krpsjszkUIplomuimXknS+P94Omak1/q/o
-	X+IHGw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj1umg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:41:13 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2241ae15dcbso516765ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:41:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743003672; x=1743608472;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JaWfJx73MJITf1MAGS+5QLKh97/YhkXy5JoIZnID5V8=;
-        b=XiLEKLs7rAG2UPPw8ONaAJXBd9BQnIfk9dZ6cv6hyIoDZRuhFyQBoGlcbnuu7V2Ckk
-         PlF2hsTphlmc2yuq9pQfYGJe1lF353udMJb848uYrL6SgoRAbx2Q53iPvxC/3IZAOGnH
-         e+7s/Whw18iF1PN6t7OLE6L8EnMm0HrC2dqtMnlAiMG9RKizMi/QqcOCZUY/OgKJblpn
-         mSHPeJ5ZW4MXQViKgtQcrUAsVNDNrzLy7OgdVXZ/Dxs1cc/Di4MWwBs7wBlLtdJJWz0y
-         Yg2Ssg2mhocFh4qB1451HbqsKktdLuEuiYrinb3Zl6CsiKiFWHpcYvvRRw8uAylUqeDR
-         euTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXo23QxE4rgLKHeHAkSweQ3XrH4ATpdJGFQGkvSk5dBaQwne+F+w5CyPIuBBFZ1aqM3TRD25vLwA7nqmMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpvGdHwcVf6K6jpq15I2Jk1+DnIEjtZnCbjDUCaflI7DuvE+TX
-	xNFjGOuZ3qc1lhHbszbwLcMsjW4lKHWwRGYuYZG/QrxU249BsIZcMxWI7CGXpfhBSo3NJ+rUfWn
-	E7Z01tiWPBBMqt92Bq03zEOJ/odFcyiPKXeagEwpDM/smgnQX/0bWjnLEiwVkblA=
-X-Gm-Gg: ASbGncsq8vwAgMcihEmX+/JP5A2rQGCV6oPh84xLMq5Wx/IMdFPO/SgB706eDGE2AS3
-	n1QIcaX3faP23PjG9mxRGBJ9VuTrdk4HwHgFBEpJS9I2Q0Gx/RpoNyC1fjavOSPlrzmIL2jFbT2
-	HfnKVVhfutprzzF+tX32VVWV7PgR5bHltglfntdXuMMViFSwatTh7lwPbnt4f2vA4ZmW9kdKMDu
-	QivQ8H7N5MVANc/Mix/+ofak/0uDlV7pO+w2QS4K1wwfREBS8yhoTIl05bTppsHv62QdxgqL9Pg
-	iGg7sdwY3SyEkYbyow/bjT16tkCXAD2Nv4jGSnvpLduCyQOlIa6ICh8jTSCqp4wJrjtu+MA=
-X-Received: by 2002:a17:902:f646:b0:21f:6c81:f63 with SMTP id d9443c01a7336-228048551b5mr595415ad.16.1743003671660;
-        Wed, 26 Mar 2025 08:41:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnH5u4MzTNZ2itV/SZImEzCKgZzaGZ6mk6zIodOEC2MvXI64y3FpBAUpsvlQ360/Koa9EetQ==
-X-Received: by 2002:a17:902:f646:b0:21f:6c81:f63 with SMTP id d9443c01a7336-228048551b5mr594745ad.16.1743003671066;
-        Wed, 26 Mar 2025 08:41:11 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da347sm111163645ad.161.2025.03.26.08.41.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 08:41:10 -0700 (PDT)
-Message-ID: <f922860a-e4a5-416a-bfe4-e22a8653ad8c@oss.qualcomm.com>
-Date: Wed, 26 Mar 2025 08:41:09 -0700
+	s=arc-20240116; t=1743003731; c=relaxed/simple;
+	bh=ib4x6OcF6rnhMi00OM/dZg1cf6CcAyobXf3DKclgFn4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pBa5Cfv6FbNFOulJh8uv82BTp7LrBzRhUvw1VlNaCX66HUm+0ggTRRBcDvV8yBOPi1kf+fXhqaSwzSlvZgueoj9hSSWc739RnTrejQHfPF6Llh3qVAmmrLkRxGw9f72uCBMgFsEAD3nI6ArMITAAPQKxMo8UI5M+b/+pniTl7Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RA5zcMMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D642CC4CEE2;
+	Wed, 26 Mar 2025 15:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743003730;
+	bh=ib4x6OcF6rnhMi00OM/dZg1cf6CcAyobXf3DKclgFn4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RA5zcMMKSAFp+Sh6oqJ3dX3rcY2FQARSZe3fzCcqx+YdXwmJmltd36L5z7JEyWNRR
+	 E1/gMw7VlL8gsmHWk5QCI6PGRpNZjS3qFdHQHMUBdpDaHSsLuWDFP6EerC0UVnoWeK
+	 wr6AAiI/4UmBiQoanAekZkm8TDlqBpx/4JsKMhV5WmhZMsp96eytxyPxSIwArlgJY2
+	 YjPQSnooP5f/O2oqjwAES11D0byOrlNKYrtGVn38ABjZzU9v4UbGEZn1pU52t5JuPp
+	 sPOlEHMZpz+0i6kRj/w81AwnuupB/SHLgAkC6aHYwRjl1tgl4zQOMVRlPPZ+XRe/qU
+	 KDo82i7zupSoQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1txStM-00HLiv-1l;
+	Wed, 26 Mar 2025 15:42:08 +0000
+Date: Wed, 26 Mar 2025 15:42:06 +0000
+Message-ID: <86y0wrlrxt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ankit Agrawal <ankita@nvidia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>,
+	Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>,
+	Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>,
+	Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>,
+	Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
+In-Reply-To: <Z-QU7qJOf8sEA5R8@google.com>
+References: <86wmcmn0dp.wl-maz@kernel.org>
+	<20250318125527.GP9311@nvidia.com>
+	<Z9nJ42PllG8a7AY7@linux.dev>
+	<20250318230909.GD9311@nvidia.com>
+	<Z9pryQwy2iwa2bpJ@linux.dev>
+	<20250319170429.GK9311@nvidia.com>
+	<Z9sItt8BIgvbBY8M@arm.com>
+	<20250319192246.GQ9311@nvidia.com>
+	<Z9s7r2JocpoM_t-m@arm.com>
+	<SA1PR12MB7199C7BD48EB39F536DD34DBB0A62@SA1PR12MB7199.namprd12.prod.outlook.com>
+	<Z-QU7qJOf8sEA5R8@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: extend dma mask to 36 bits
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-        Jeff Johnson
- <jjohnson@kernel.org>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>,
-        ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250321162331.19507-1-johan+linaro@kernel.org>
- <8edf77d9-1afd-402a-b966-d1b3e5b4ba1b@oss.qualcomm.com>
- <Z-QaMwB215vTKSTq@hovoldconsulting.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <Z-QaMwB215vTKSTq@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: bTIOO5qcEpj9aloJyX481iyyK1NY8uLI
-X-Proofpoint-ORIG-GUID: bTIOO5qcEpj9aloJyX481iyyK1NY8uLI
-X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e42019 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=wpi7UN2eRMKIAmbdDfcA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=655
- malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260095
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: seanjc@google.com, ankita@nvidia.com, catalin.marinas@arm.com, jgg@nvidia.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com, aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com, alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org, ddutile@redhat.com, tabba@google.com, qperret@google.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 3/26/2025 8:16 AM, Johan Hovold wrote:
-> On Wed, Mar 26, 2025 at 08:11:11AM -0700, Jeff Johnson wrote:
->> On 3/21/2025 9:23 AM, Johan Hovold wrote:
->>> Extend the DMA mask to 36 bits to avoid using bounce buffers on machines
->>> without an iommu (under OS control) similar to what was done for ath11k
->>> in commit dbd73acb22d8 ("wifi: ath11k: enable 36 bit mask for stream
->>> DMA").
->>>
->>> This specifically avoids using bounce buffers on Qualcomm Snapdragon X
->>> Elite machines like the Lenovo ThinkPad T14s when running at EL1.
->>>
->>> Note that the mask could possibly be extended further but unresolved DMA
->>> issues with 64 GiB X Elite machines currently prevents that from being
->>> tested.
->>>
->>> Also note that the driver is limited to 32 bits for coherent
->>> allocations and that there is no need to check for errors when setting
->>> masks larger than 32 bits.
->>>
->>> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
->>>
->>> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
->>> ---
->>
->> Please make sure to include linux-wireless for all ath.git patches so that
->> they are processed by patchwork.kernel.org
+On Wed, 26 Mar 2025 14:53:34 +0000,
+Sean Christopherson <seanjc@google.com> wrote:
 > 
-> Ok, I'll try to remember that, but it seems you need to update
-> MAINTAINERS to include that list:
+> On Wed, Mar 26, 2025, Ankit Agrawal wrote:
+> > > On Wed, Mar 19, 2025 at 04:22:46PM -0300, Jason Gunthorpe wrote:
+> > > > On Wed, Mar 19, 2025 at 06:11:02PM +0000, Catalin Marinas wrote:
+> > > > > On Wed, Mar 19, 2025 at 02:04:29PM -0300, Jason Gunthorpe wrote:
+> > > > > > On Wed, Mar 19, 2025 at 12:01:29AM -0700, Oliver Upton wrote:
+> > > > > > > You have a very good point that KVM is broken for cacheable PFNMAP'd
+> > > > > > > crap since we demote to something non-cacheable, and maybe that
+> > > > > > > deserves fixing first. Hopefully nobody notices that we've taken away
+> > > > > > > the toys...
+> > > > > >
+> > > > > > Fixing it is either faulting all access attempts or mapping it
+> > > > > > cachable to the S2 (as this series is trying to do)..
+> > > > >
+> > > > > As I replied earlier, it might be worth doing both - fault on !FWB
+> > > > > hardware (or rather reject the memslot creation), cacheable S2
+> > > > > otherwise.
+> > > >
+> > > > I have no objection, Ankit are you able to make a failure patch?
+> > >
+> > > I'd wait until the KVM maintainers have their say.
+> > > 
+> > 
+> > Maz, Oliver any thoughts on this? Can we conclude to create this failure
+> > patch in memslot creation?
 > 
-> 	$ scripts/get_maintainer.pl 0001-wifi-ath12k-extend-dma-mask-to-36-bits.patch 
-> 	Jeff Johnson <jjohnson@kernel.org> (supporter:QUALCOMM ATH12K WIRELESS DRIVER)
-> 	ath12k@lists.infradead.org (open list:QUALCOMM ATH12K WIRELESS DRIVER)
-> 	linux-kernel@vger.kernel.org (open list)
+> That's not sufficient.  As pointed out multiple times in this thread, any checks
+> done at memslot creation are best effort "courtesies" provided to userspace to
+> avoid terminating running VMs when the memory is faulted in.
 > 
-> Do you want me to resend?
+> I.e. checking at memslot creation is optional, checking at fault-in/mapping is
+> not.
+> 
+> With that in place, I don't see any need for a memslot flag.  IIUC, without FWB,
+> cacheable pfn-mapped memory is broken and needs to be disallowed.  But with FWB,
+> KVM can simply honor the cacheability based on the VMA.  Neither of those requires
 
-no need to resend -- I already picked it up in my 'pending' branch
+Remind me how this work with stuff such as guestmemfd, which, by
+definition, doesn't have a userspace mapping?
 
-Let me open a separate thread on the MAINTAINERS issue.
+> a memslot flag.  A KVM capability to enumerate FWB support would be nice though,
+> e.g. so userspace can assert and bail early without ever hitting an
+> ioctl error.
 
-/jeff
+It's not "nice". It's mandatory. And FWB is definitely *not* something
+we want to expose as such.
 
+> 
+> If we want to support existing setups that happen to work by dumb luck or careful
+> configuration, then that should probably be an admin decision to support the
+> "unsafe" behavior, i.e. an off-by-default KVM module param, not a memslot flag.
+
+No. That's not how we handle an ABI issue. VM migration, with and
+without FWB, can happen in both direction, and must have clear
+semantics. So NAK to a kernel parameter.
+
+If I have a VM with a device mapped as *device* on FWB host, I must be
+able to migrate it to non-FWB host, and back. A device mapped as
+*cacheable* can only be migrated between FWB-capable hosts.
+
+Importantly, it is *userspace* that is in charge of deciding how the
+device is mapped at S2. And the memslot flag is the correct
+abstraction for that.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
