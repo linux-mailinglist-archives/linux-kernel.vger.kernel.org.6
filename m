@@ -1,142 +1,136 @@
-Return-Path: <linux-kernel+bounces-577493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBBBA71DD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:57:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7444A71DD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5961889485
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:58:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98D17A135B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067F123E33D;
-	Wed, 26 Mar 2025 17:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769BE2405F6;
+	Wed, 26 Mar 2025 17:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+0jSa7c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnS2FyLz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C9F23E334;
-	Wed, 26 Mar 2025 17:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81C223E334;
+	Wed, 26 Mar 2025 17:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743011869; cv=none; b=TLz8atY25mzOg0J6MDaoCHuz37PK6wJ/AlzivDm2fskQLZMVgcv7GU6oqgyNwlJQjREiAnOPOJKlmXzmdD/O0TK3BFUX6xy/KFaJ91rIjWCLQ9moLBL9CzUXA+tRF9ahEZ8UnPYBQte/hhkOQ3uj1xlY+HVy77LS2l3K9Lww9sI=
+	t=1743011896; cv=none; b=Cz2HgaYdW1HqjjZLzemzNRcRMB1YiQW7dbGssCEzQK6jZnH/7FNaIJJ6h23a6wJpbfBoAO8fWoTUFuxv3wJza/VTAlFZ+8ho5wv3YciGoM7NF0WLdk2LcT2YeNnW51n0N1ctIwksMoE8FYbn/ekc4rNCssnNsLqQy0gHAMDjGqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743011869; c=relaxed/simple;
-	bh=GqOcnRFwlAHtp/aIMlSjsrauyIL3K6klyA2xEQOJUvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URrCfqwSYbMG/EfG12PoakzvY/M8W2aYLU6RLJ7GFwEf+LWukL4l7rHEYitmDVRxCB8gsDK9WwPwk2MHxAdXMzGYyg+pMrgRHDFDbKObU3jIRsXMAFQdnxPHoG5bjeCCkLY9Qii0tl3mfRHaw4HyjiOZhpJo3u/FRbuJhvPNJ38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+0jSa7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D956DC4CEE9;
-	Wed, 26 Mar 2025 17:57:48 +0000 (UTC)
+	s=arc-20240116; t=1743011896; c=relaxed/simple;
+	bh=qD/cQ41RTo+8BDYdoRt9s5SKovqsdZGdDznd1NSpQ6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQv7oB+8enMWHqvxoKl8OsrYfPmtk3TmNe31Rk1IxF3W+xN/AQMZ78jGvW1R2wQgPpH77+pN80gVMmM9+TVzmokiVxn2r1KWLup0+pbpNrPPrTLKdnHLS9JKJNTlD5HkTrrJU6Vt9ccdNJlGrbeMxXfqCDA9NCJ4z1BxDJOLxNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnS2FyLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A90C4CEE2;
+	Wed, 26 Mar 2025 17:58:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743011868;
-	bh=GqOcnRFwlAHtp/aIMlSjsrauyIL3K6klyA2xEQOJUvk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b+0jSa7cZfR/1HhlQHIH8Zu8IxU8dTyf/ZW+W6v3rGedeJZ4hDz5p2Bii+DzH2RLP
-	 bb/NCTZHuKmmkgPI7/MtOFSl1viIjaYeqEMsMp3WmUFPMnzdFAETzy4UYvBrYQVdn2
-	 XNF/irI7SEjZJw9ICpKdZY+IFqxa22VXfw5XBPtFvLv+/vygOifc9u0va0lIPZKW7V
-	 rS6GBdvW/Gy98o3zdE2VLAMFrSpDSZ5R+UZ3droT5tI1yubqF2JEZLi1EJ0iL83s8H
-	 vqW97g5q2wGuuFC0bJo9voPX3zqr3eMDA+rU2SWDh4G6T3owCF/h0dx9I0qvcCp4oy
-	 KUI73Y0qUCmDg==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72bbc03d436so101690a34.3;
-        Wed, 26 Mar 2025 10:57:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAq/IDu6iiWytq0kU07PbK4Uh0hUlSEZ6eFEsNtpS/djWWo1vLzj+iLtKZJjHtKt8w4Nbm5HnNI/3ugzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhI5YoXEQhrO/bXEfzi/Feq/VPYAr7ie83tTAD/XcmGIyhrON/
-	7tH9VDvYkokqalnOWrGsfE57xxQeO7Aa+7jn1t0KX6ZNd2uKMLSLxDzGI7B+On6y8hq/rKqTEPL
-	bbHD3I870LtgYfHjA9RXIaAjqtTw=
-X-Google-Smtp-Source: AGHT+IGt4eD2dTMMXBmq7kFDQ2GELUuv+zrkhHmxQU26TbdlWTVi8vwnmhmQbiKeeKP6QytrVdIEIhVN54F0jvDImK0=
-X-Received: by 2002:a05:6830:3151:b0:72b:93c9:41a6 with SMTP id
- 46e09a7af769-72c4c9f2c69mr441975a34.20.1743011868181; Wed, 26 Mar 2025
- 10:57:48 -0700 (PDT)
+	s=k20201202; t=1743011896;
+	bh=qD/cQ41RTo+8BDYdoRt9s5SKovqsdZGdDznd1NSpQ6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CnS2FyLz/sd/a9zJ6hmgsKESQg/fH8iDeWVq2tPaA4JXR14WInCiekYIY9X8GYBxv
+	 v+2S2s5YrK+EMlc62REZ7YCao5x9cUjTH6z6a0dLif7BvHSQvYq4JMHSxwwTM1aXuS
+	 1EtwJmvhlHKjnereQixhR2d5dcJOhjBr3Jn4xpGWAjM3BqKD0FbvbiAQThaoGFlkDd
+	 DLZKN7T0R+XMRSD1ZwgxVHqlc54xkVBIdunljgm39zqs7ZJwjDS7xZcGmOITVYfLee
+	 zEI19BS2enPqpLIrDi+7FNL2jSpOalh01klMNugAgsXT0+cE407KhXs1hZwu0pUaNS
+	 D2VDFkTjl2AGg==
+Date: Wed, 26 Mar 2025 17:58:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Benjamin Bara <benjamin.bara@skidata.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Klaus Goger <klaus.goger@theobroma-systems.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, quentin.schulz@cherry.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: usb: cypress,hx3: Add support for all
+ variants
+Message-ID: <20250326-fanatic-onion-5f6bf8ec97e3@spud>
+References: <20250326-onboard_usb_dev-v1-0-a4b0a5d1b32c@thaumatec.com>
+ <20250326-onboard_usb_dev-v1-2-a4b0a5d1b32c@thaumatec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ1CgxEJn543x50SbvZQZCvSxUFB2xJ7OL3ejcgNqWr0=O52JQ@mail.gmail.com>
-In-Reply-To: <CAJ1CgxEJn543x50SbvZQZCvSxUFB2xJ7OL3ejcgNqWr0=O52JQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Mar 2025 18:57:35 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hzLXt5P9VWw_DfmUop37Gju7qf5p5W20RPDWtCFH-yxw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoYRG2zv3xvwYfCHGdETN8jDDq7DPyIyz6dD4HUTunVXXto8_NbVHl56Dc
-Message-ID: <CAJZ5v0hzLXt5P9VWw_DfmUop37Gju7qf5p5W20RPDWtCFH-yxw@mail.gmail.com>
-Subject: Re: ACPI BIOS errors causing intermittent boot freezes on Lenovo
- Legion Pro 5
-To: Dominik Pawlik <osemka59@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9k9ZnTZP7lApPE38"
+Content-Disposition: inline
+In-Reply-To: <20250326-onboard_usb_dev-v1-2-a4b0a5d1b32c@thaumatec.com>
+
+
+--9k9ZnTZP7lApPE38
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 6:36=E2=80=AFPM Dominik Pawlik <osemka59@gmail.com>=
- wrote:
->
-> To: linux-acpi@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Subject: ACPI BIOS errors causing intermittent boot freezes on Lenovo
-> Legion Pro 5
->
-> SYSTEM INFORMATION
->
-> Hardware:
-> - Laptop/Desktop Model: Lenovo Legion Pro 5 16IRX9 i9-14900HX
-> - CPU: i9-14900HX
-> - BIOS Version: N0CN29WW
->
-> Kernel Version: 6.13.8-061308-generic #202503222044
-> Distribution: Ubuntu 24.10
->
-> OBSERVED ISSUE
->
-> Description: System freezes intermittently during boot due to ACPI BIOS e=
-rrors.
+On Wed, Mar 26, 2025 at 05:22:57PM +0100, Lukasz Czechowski wrote:
+> The Cypress HX3 hubs use different default PID value depending
+> on the variant. Update compatibles list.
+>=20
+> Fixes: 1eca51f58a10 ("dt-bindings: usb: Add binding for Cypress HX3 USB 3=
+=2E0 family")
+> Cc: stable@vger.kernel.org # 6.6
+> Cc: stable@vger.kernel.org # Backport of the patch in this series fixing =
+product ID in onboard_dev_id_table and onboard_dev_match in drivers/usb/mis=
+c/onboard_usb_dev.{c,h} driver
+> Signed-off-by: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+> ---
+>  Documentation/devicetree/bindings/usb/cypress,hx3.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml b/Doc=
+umentation/devicetree/bindings/usb/cypress,hx3.yaml
+> index 1033b7a4b8f9..f0b93002bd02 100644
+> --- a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
+> @@ -15,8 +15,14 @@ allOf:
+>  properties:
+>    compatible:
+>      enum:
+> +      - usb4b4,6500
+> +      - usb4b4,6502
+> +      - usb4b4,6503
+>        - usb4b4,6504
+>        - usb4b4,6506
+> +      - usb4b4,6507
+> +      - usb4b4,6508
+> +      - usb4b4,650a
 
-There are two things here, the ACPI error messages in the kernel log
-and failing boot.  Do you actually know how these two things are
-related to each other?
+All these devices seem to have the same match data, why is a fallback
+not suitable?
 
-First, the same or similar messages are also present in your
-successful boot log.  Second, there is nothing I can see that would
-indicate a direct connection between those messages and boot failures.
+> =20
+>    reg: true
+> =20
+>=20
+> --=20
+> 2.43.0
+>=20
 
-> Errors indicate missing symbols (_TZ.ETMD,
-> _SB.PC00.LPCB.EC0._Q37.PNOT, _Q38.PNOT)
-> in ACPI tables.
+--9k9ZnTZP7lApPE38
+Content-Type: application/pgp-signature; name="signature.asc"
 
-True, but is this the reason for failing to boot?
+-----BEGIN PGP SIGNATURE-----
 
-> Error Logs:
-> [13:40:52] kernel: ACPI Error: Aborting method \_SB.IETM._OSC due to
-> previous error (AE_NOT_FOUND) (20240827/psparse-529)
-> [13:40:52] kernel: ACPI BIOS Error (bug): Could not resolve symbol
-> [\_TZ.ETMD], AE_NOT_FOUND (20240827/psargs-332)
-> [13:40:21] kernel: ACPI: video: Video Device [GFX0] (multi-head: yes
-> rom: no  post: no)
-> [13:40:21] kernel: ACPI: video: Video Device [PEGP] (multi-head: yes
-> rom: no  post: no)
-> [13:40:21] kernel: ACPI Error: Aborting method \_SB.IETM._OSC due to
-> previous error (AE_NOT_FOUND) (20240827/psparse-529)
-> [13:40:21] kernel: ACPI BIOS Error (bug): Could not resolve symbol
-> [\_TZ.ETMD], AE_NOT_FOUND (20240827/psargs-332)
-> [13:40:21] kernel: ACPI BIOS Error (bug): Could not resolve symbol
-> [\_SB.PC00.LPCB.EC0._Q37.PNOT], AE_NOT_FOUND (20240827/psargs-332)
-> [13:40:21] kernel: ACPI Error: Aborting method \_SB.PC00.LPCB.EC0._Q38
-> due to previous error (AE_NOT_FOUND) (20240827/psparse-529)
->
-> Full boot logs available in:
-> - boot_failed_journal.txt (failed boot case)
-> - boot_succeeded_journal.txt (successful boot case)
-> - acpidump.txt (ACPI tables)
->
-> STEPS TO REPRODUCE
-> 1. Reboot the system
-> 2. Observe ACPI errors during boot (freezes occur intermittently,
-> every few boots)
->
-> TROUBLESHOOTING ATTEMPTED
-> - Updated BIOS to latest version (N0CN29WW)
-> - Tried booting without splash screen (nomodeset)
-> - Tested with multiple kernel versions (including official)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+RAMwAKCRB4tDGHoIJi
+0tRpAQDNS6dW2CGP9zLlr+W7yJhcE2bWiGiO3BKrgWFrmthJsAEAs22eY1Eg/Hrt
+9vPFW4oviBxxip0Da3nn9lOjzkpFSQM=
+=9XYv
+-----END PGP SIGNATURE-----
+
+--9k9ZnTZP7lApPE38--
 
