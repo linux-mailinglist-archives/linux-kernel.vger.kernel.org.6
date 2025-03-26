@@ -1,141 +1,191 @@
-Return-Path: <linux-kernel+bounces-576369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F54A70E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:19:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95483A70E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308DE3BE13B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C563BEFF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6B620328;
-	Wed, 26 Mar 2025 01:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6213D405F7;
+	Wed, 26 Mar 2025 01:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L1t8UzKi"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="guMPy+lW"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D66634EC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C65C2904;
+	Wed, 26 Mar 2025 01:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742951910; cv=none; b=c9SXDEKDeyjKwA3g8pb19oO9QJwzWMmdFd0lse4+glmtfi8vkUjWQgCHbvPxOaUHo1SETSqi92M2lGSvsukZm+aAhnlQp7bDGC1j0Hl70e9muw03iPEpQHCGze5z1mpwB//M+6Rlaj2NIKKwAVWw3Seb2P4hrIoLsX9HL0M3R0g=
+	t=1742951938; cv=none; b=hJH87OHFI6WbvSzrpoA6VEDAYvCNRyIQscaWJ7iZzE8N6FVno0JX69Wvlh8RrEYth5wu9iaj+t6RCPW37Ls+/w5zTHwX/giBXxafewLl2dlEvVFttIAz6kTPl7Avuatv2QMcK7tizh0DQe3+/xG6g+Y2RjcsZuuLjcGbUI5aaJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742951910; c=relaxed/simple;
-	bh=5RYvswtWE+GnIh/JiB8nfYa6DgGi/wCVV0OmMHC4jqE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XTyvt5l556MzlBVqnNeI3GL/KU10Uz7fq+WTPElIaiOl3p+i/DocuznxZfS7lZZfhJqF4pAkY5uKlDljCSqcpW7AnrGMKbVKdRhnlEAgOPv/zazWLwUFMX1rQDFeKVShrx4yuxE5LIzUdQhwdFkVZOG3bYaIpYmMdWT9ElPVqrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L1t8UzKi; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742951905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=AXpKOR2GMxCoVvpFxRv1qPlHNVEaxgMDCeiLw9aKmNw=;
-	b=L1t8UzKiFURd0xqLT3QXXuGuqIW0pYLoPfoPUoCTF7pjeBI6FV2Zvjfot9sLBQDZapeNHq
-	CZEUDxZyhC52alJ7j5ogV51f722vhuD3PzfsUjx7k9M1QWdrvNcEQAriiCCLu/SYeH+LsX
-	+tejpPVrXQCLQfRuOnUXsjnt1gw4gbg=
-From: Ye Liu <ye.liu@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	sidhartha.kumar@oracle.com,
-	anshuman.khandual@arm.com,
-	Markus.Elfring@web.de,
-	Ye Liu <liuye@kylinos.cn>
-Subject: [PATCH v3] mm/page_alloc: Consolidate unlikely handling in page_expected_state
-Date: Wed, 26 Mar 2025 09:17:52 +0800
-Message-Id: <20250326011752.917564-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1742951938; c=relaxed/simple;
+	bh=CPs7nlHv8bn05wPtO5riFvR5OspucINfQtNa1flrPLE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ja3SpPCXby8qMNBkv7IztsMl96MMyVunHlUs2jokYPNOvk+PLH0ANFjZYZzo7mtWvWemFHiufP0nMHEV3uQIYb81qMGMdUnuWG4HfqdCNcy0nBnBUzTNx1FSZajo/Ax8gBVWVwrXV00RObicIjLjWlekGAVlxGgLS6lvQYNOJ5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=guMPy+lW; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q1GMCb026186;
+	Wed, 26 Mar 2025 01:18:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=CfMIx3
+	ORGwJ2hz+lxkbrmAjamDDwv/JEfGH1zrvjNVk=; b=guMPy+lWpWKOxGfgj1PPnx
+	urf4J/pyAE7X4lzAsFrCFU5ARz7cnzSd7ZfWngvgZkQXK//XvmXrSu3A1dPCTHXy
+	3z0YMUsWAYNStDvr52oDNPoKwXCvlvZZYAthzcCRw141jBmrULJ/jnt4NulA5Z80
+	SAun83OSbK6HKhzkWzaTkC2xDiltsJKOFhEimRRWaJJfOtd/JteTndAbanhwC4gQ
+	Mez5oiBwOayjecR7oqxkhKcwoX4AcEREgh0t+4WQ6pjU6ng+ukYyKF+5Qnzmz9Ec
+	OS0K8bpC5UAZMRKQoWEVPi1wDdapaN2M1+OkXdQpu5w0OpQjhq1f/PbZHBiyNLQQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kwwqb38g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 01:18:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52Q1FBq5014197;
+	Wed, 26 Mar 2025 01:18:41 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kwwqb38d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 01:18:41 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q03C9J030308;
+	Wed, 26 Mar 2025 01:18:40 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7hteapp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 01:18:40 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52Q1Iduj20382298
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 01:18:40 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B502B58059;
+	Wed, 26 Mar 2025 01:18:39 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9ECF658058;
+	Wed, 26 Mar 2025 01:18:38 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.99.18])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 01:18:38 +0000 (GMT)
+Message-ID: <4021363dd955236ad55b5d0c26bcf788fa782d79.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 07/13] tpm: enable bank selection for PCR extend
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen
+ <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 25 Mar 2025 21:18:38 -0400
+In-Reply-To: <20250323140911.226137-8-nstange@suse.de>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-8-nstange@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ioXZc-8Cb-DZldkmAvKpDW56HIUifhf_
+X-Proofpoint-ORIG-GUID: erQmUz1rOG8b1042QlwTjE8v94fvaqfa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 mlxlogscore=956 spamscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260004
 
-From: Ye Liu <liuye@kylinos.cn>
+On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
 
-Consolidates the handling of unlikely conditions in the
-page_expected_state function, reducing code duplication and improving
-readability.
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index dfdcbd009720..23ded8ea47dc 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -226,16 +226,34 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_id=
+x,
+>   * @chip:	TPM chip to use.
+>   * @pcr_idx:	index of the PCR.
+>   * @digests:	list of pcr banks and corresponding digest values to extend=
+.
+> + * @banks_skip_mask:	pcr banks to skip
+>   *
+>   * Return: Same as with tpm_transmit_cmd.
+>   */
+>  int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+> -		    struct tpm_digest *digests)
+> +		    struct tpm_digest *digests,
+> +		    unsigned long banks_skip_mask)
+>  {
+>  	struct tpm_buf buf;
+> +	unsigned long skip_mask;
+> +	u32 banks_count;
+>  	int rc;
+>  	int i;
+> =20
+> +	banks_count =3D 0;
+> +	skip_mask =3D banks_skip_mask;
+> +	for (i =3D 0; i < chip->nr_allocated_banks; i++) {
+> +		const bool skip_bank =3D skip_mask & 1;
+> +
+> +		skip_mask >>=3D 1;
+> +		if (skip_bank)
+> +			continue;
+> +		banks_count++;
+> +	}
 
-Previously, the check_new_page_bad function contained logic to handle
-__PG_HWPOISON flags, which was called from check_new_page. This patch
-moves the handling of __PG_HWPOISON flags into the page_expected_state
-function and removes the check_new_page_bad function. The check_new_page
-function now directly calls bad_page if the page has unexpected flags.
+Setting ima_unsupported_pcr_banks_mask used BIT(i).  Testing the bit should=
+ be
+as straight forward here and below.
 
-This change simplifies the code by reducing the number of functions and
-centralizing the unlikely condition handling in one place.
+The first TPM extend after boot is the boot_aggregate.  Afterwards the numb=
+er of
+banks being extended should always be the same.  Do we really need to re-
+calculate the number of banks needing to be extended each time?
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> +
+> +	if (banks_count =3D=3D 0)
+> +		return 0;
+> +
+>  	if (!disable_pcr_integrity) {
+>  		rc =3D tpm2_start_auth_session(chip);
+>  		if (rc)
+> @@ -257,9 +275,16 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_i=
+dx,
+>  		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
+>  	}
+> =20
+> -	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> +	tpm_buf_append_u32(&buf, banks_count);
+> =20
+> +	skip_mask =3D banks_skip_mask;
+>  	for (i =3D 0; i < chip->nr_allocated_banks; i++) {
+> +		const bool skip_bank =3D skip_mask & 1;
+> +
+> +		skip_mask >>=3D 1;
+> +		if (skip_bank)
+> +			continue;
+> +
 
----
-V3: Delete 'This patch'.
-V2: return true instead of false in the PageHWPoison branch.
----
----
- mm/page_alloc.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2842da893eea..e8b95c6a96c2 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -903,6 +903,12 @@ static inline bool page_expected_state(struct page *page,
- 			(page->flags & check_flags)))
- 		return false;
- 
-+	if (unlikely(PageHWPoison(page))) {
-+		/* Don't complain about hwpoisoned pages */
-+		if (PageBuddy(page))
-+			__ClearPageBuddy(page);
-+	}
-+
- 	return true;
- }
- 
-@@ -1586,29 +1592,15 @@ static __always_inline void page_del_and_expand(struct zone *zone,
- 	account_freepages(zone, -nr_pages, migratetype);
- }
- 
--static void check_new_page_bad(struct page *page)
--{
--	if (unlikely(PageHWPoison(page))) {
--		/* Don't complain about hwpoisoned pages */
--		if (PageBuddy(page))
--			__ClearPageBuddy(page);
--		return;
--	}
--
--	bad_page(page,
--		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
--}
--
- /*
-  * This page is about to be returned from the page allocator
-  */
- static bool check_new_page(struct page *page)
- {
--	if (likely(page_expected_state(page,
--				PAGE_FLAGS_CHECK_AT_PREP|__PG_HWPOISON)))
-+	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_PREP)))
- 		return false;
- 
--	check_new_page_bad(page);
-+	bad_page(page, page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
- 	return true;
- }
- 
--- 
-2.25.1
+>  		tpm_buf_append_u16(&buf, digests[i].alg_id);
+>  		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
+>  			       chip->allocated_banks[i].digest_size);
 
 
