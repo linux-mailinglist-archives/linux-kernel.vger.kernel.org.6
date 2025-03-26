@@ -1,269 +1,157 @@
-Return-Path: <linux-kernel+bounces-577547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09931A71E8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:40:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCC2A71E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9693B992E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712B3189268D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA822528F0;
-	Wed, 26 Mar 2025 18:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA772517B2;
+	Wed, 26 Mar 2025 18:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ex2fV3fX"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5GNfyBu"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A253724CEEE;
-	Wed, 26 Mar 2025 18:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743014430; cv=pass; b=JLUQ94V23riuhU/P408y+BgLPzkdURSeEqBp5dPSyQXMY2kdXZ1ZhRVNfmnTAuPbFdEmY/u0cIQogNeX9Cqqjn+yy4vo0bzgb0AL3fqxjjUeygW9HUedrq/iJXrS0NtSnqIfSm1U0uyBffnk4KTuSlxHPXQ+bz83rY6S3qWvE3k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743014430; c=relaxed/simple;
-	bh=wdSpG9pKEWrUXR3mxaT5h1jsNyYVPvOw9miNLdLz2vM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sE4nrHkgy3bx79yR5Cyd5bxXGwSnTgCijl/1xxi7QimdYSraWIEE67GvfylqhFwo0vlx5Dw9FzDuGLCs1/EyA/sRHl8uyP7NhA+LcWP0uL5yRWgDYsZx/OdNkmWlLebtIPOibHKh6BWuU3T9NQB/KwyOT3GJ2KWY6r3eZMgdUfo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ex2fV3fX; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743014401; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FXFptQGX4pYpP62a4MfX24346PEEtBgvXJEGKg0bqKXjNAjiL6OvMaGgDfKMQM5LLorZC2Lmd1GXLVOSdFNELLc7LpvsjLJIbl24Kflboa2m5XjaLl4KrKv24k6Pa1VBccS4LreRoFA6/5mm9b7/ThaxNuEsIuWBb5r60hsI4Ao=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743014401; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iDQo+X1Ei3V6zqm2gyyhSXHeLOFRXcPxDWMQLfLdBhU=; 
-	b=DmRNNTFeXmz3oIrJ3q98CvtUGIhIY390vcIjLWrAsao08WQAkecGPa0bFy7zklsBSQPs2I7AoQNU9ERNGPz0FbSByTFSNE9kIGv1ieceLWYHclfZ62Q6Tk8cDQROZWaAnwFN42LMD2PI3Qm7gpY3Yke6oo1LkokXuMlVUgq+xmA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743014401;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=iDQo+X1Ei3V6zqm2gyyhSXHeLOFRXcPxDWMQLfLdBhU=;
-	b=ex2fV3fXz9wZs/0ufKry7Dx1ZjuIc+keyRWBaIr5p1nBwnUBtiILSBv7g2vZLIKA
-	U9H5vC+7A4MUwiu0mzeqZTtP/vMBoaDfQyZp8Gdr9YDJs7SMmLWjr7dxjni8P7hHD/5
-	Od/XVZ19Q2ocS7QR2Sk+hLzg03E35tHU/uQiLWKg=
-Received: by mx.zohomail.com with SMTPS id 1743014398341520.5026499088717;
-	Wed, 26 Mar 2025 11:39:58 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 26 Mar 2025 15:39:33 -0300
-Subject: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
- abstraction
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60B924CEEE;
+	Wed, 26 Mar 2025 18:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743014417; cv=none; b=KNBlWwxa2DvOB/NeLIQj100iE5R2qrXk1KIhTr7u8xnuSl0c+/9xQtp4dcarz36g76qbCmKFTeVbEACU/TExK6DAMXA2GgAjQiEgPkHVQVj+GqLHXIuOWbSbdWa4iJ2EvjPhFUTmJm4DHCMAc4nkcYns5vHT+sTu7rcAZb68eww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743014417; c=relaxed/simple;
+	bh=F5Y3RF0ndf8/9azcsuLfDmtYTAz9gCrDPqNMbnYLM/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iW1MaRX1lPV3oPCjwNX5o/R5nafaUmqrkDKnEXQAPbjGx/EvsjtOkeuo1ksZHSQjWFHPVOXUx+XAyn2PswCgPRpyndarTISvCRql68426IqEOc2oRPWm5I4l770ezWlDgbEk1T1aeuOUO091AzSAKpe8cITIm3q3YQkbga+O7no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5GNfyBu; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e8be1c6ff8so246953a12.1;
+        Wed, 26 Mar 2025 11:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743014414; x=1743619214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOrtiNV+oGhM+385d+TAFbT9mzLoUCEIKut5q82hzIo=;
+        b=R5GNfyBus4A7nney46YC6LA4g0kZ5jJauSUQT2USKS0yaqq498/WbbRytLe9U63Y1v
+         C5yuP88u1TWK6Yu9GgK/78pq7Z5EoaC0G/0Ckr/tfg799viwijUpzOhFfoJRyATnZNoO
+         ft7z857N1nzDfscRqJ3hY5aGJkHDiRD+Z+42JXgQYLZkN1RRYLkPxF2MOI5DKVgdshPb
+         nNGUPsdwa+t6ULJcdeNwpJg61S9XhB7vON52aaEjLyBd4/D4xqJ0svJPlNJSxbkmNW8n
+         M0b8QDMWQntANFwGqSVLi2bOkyYe/MvVTGmYkLblhIc+BfFPotAPbozKh336vqSwSCEi
+         Ak4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743014414; x=1743619214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sOrtiNV+oGhM+385d+TAFbT9mzLoUCEIKut5q82hzIo=;
+        b=tfJWbQEq+1yeRMp/4jruCcudQQg6KzN+rKO610c3BXJDneV+4Yh/o0f/LBwkYazOuK
+         8NLkS3pZuJBLJrQY9k2iNjpgKLEcM3Pqdxl9l9BqVLeIgBc/DSB2rugTVqHwQLggQif8
+         qAZifM8b0BNqEn1AK9oyNF1I+jalxIoFxfcmeqUejxDfHoygYGW/oz7Xwx75CbNUFnei
+         kNcNSy2NvjlruwbP3vadlz7DyL3Liie7kh+UwUF5V1zTaUXZz4oUdCUQKbQUqQp9VKwR
+         I77+HkMD9/Vaor2OeD23D7DTcv401VjoWNkNq4oiRgRUPJxJOJh4URA/hDJjsSElAfqo
+         DjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXlwQcZ7Y1elfHg/qJrx0x6+88M30QCVTnmEMU1VX1iwWhUZSk4XjVnHutdDkt0aesPX0bdrE4@vger.kernel.org, AJvYcCVrjOIt5xe+BQ5rkIU7Xurr1xcLD68JVEffzvndYd3eYsMdjWtSYsB7cCTC7ijEosejKgX5JVSCRGEVWOVL@vger.kernel.org, AJvYcCXTHhknumUFIymQbN6cHXnqlyKmLiH/Y++JKRegDeji6OMsZe2TtijPCAZ0i/VMikrRgCxEdf39c4ceFpg3R5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO/tvLWCpMmTfiCXo3kPSjNgEKPSc+i2rQBa4sgZekbHMVBKdB
+	jpq8yWoGM1zdaqV4ehGaE5gmSUJZoVCSoc9phpIq676nmUPs8qhWazCnxpaeeBlOzyPHgktWcsP
+	0dqRpN8mnpdcBpwP7QG+cBS0LwsM=
+X-Gm-Gg: ASbGncuhW4he5pmh6VLHD65R2pDnBsmyY5ww+MHnXpWdtH6n69s/J+rakpjmhLth9Jv
+	kyjiM9MKjBd3nBsrJJHhAcsi1suSgeACjqKr4CCjY3tF4HpchoI+pp+MZ+WEv6kn0IlIzHSbV4+
+	B4HllRvGSNvbByRRblxahTGX59tw==
+X-Google-Smtp-Source: AGHT+IG/c8A09fmH4Hvi2r2iNvibbo0gF+QCVgYY3qZ1UUFDvGnHQ5yFC2x9sm4XWN8Ulm3xGBe6lcMopbawOHcqDlo=
+X-Received: by 2002:a17:907:3da1:b0:ac2:6bb5:413c with SMTP id
+ a640c23a62f3a-ac6faf45fbcmr48841566b.31.1743014413852; Wed, 26 Mar 2025
+ 11:40:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, lgirdwood@gmail.com, 
- broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+References: <20250326-string-add-wcslen-for-llvm-opt-v2-0-d864ab2cbfe4@kernel.org>
+ <20250326-string-add-wcslen-for-llvm-opt-v2-2-d864ab2cbfe4@kernel.org>
+In-Reply-To: <20250326-string-add-wcslen-for-llvm-opt-v2-2-d864ab2cbfe4@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 26 Mar 2025 20:39:37 +0200
+X-Gm-Features: AQ5f1JqlCAtx3V-rK5Wv2QTv2YVgCmrK0MvTDzYhi8EajWnLgB-2pLN4PzLaYE0
+Message-ID: <CAHp75Vd_mJggRRLfziWUf0tgr3K125uVBNh9VdSo9LHVJz2r_w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] lib/string.c: Add wcslen()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a bare minimum regulator abstraction to be used by Rust drivers.
-This abstraction adds a small subset of the regulator API, which is
-thought to be sufficient for the drivers we have now.
+On Wed, Mar 26, 2025 at 7:19=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> A recent optimization change in LLVM [1] aims to transform certain loop
+> idioms into calls to strlen() or wcslen(). This change transforms the
+> first while loop in UniStrcat() into a call to wcslen(), breaking the
+> build when UniStrcat() gets inlined into alloc_path_with_tree_prefix():
+>
+>   ld.lld: error: undefined symbol: wcslen
+>   >>> referenced by nls_ucs2_utils.h:54 (fs/smb/client/../../nls/nls_ucs2=
+_utils.h:54)
+>   >>>               vmlinux.o:(alloc_path_with_tree_prefix)
+>   >>> referenced by nls_ucs2_utils.h:54 (fs/smb/client/../../nls/nls_ucs2=
+_utils.h:54)
+>   >>>               vmlinux.o:(alloc_path_with_tree_prefix)
+>
+> The kernel does not build with '-ffreestanding' (which would avoid this
+> transformation) because it does want libcall optimizations in general
+> and turning on '-ffreestanding' disables the majority of them. While
+> '-fno-builtin-wcslen' would be more targeted at the problem, it does not
+> work with LTO.
+>
+> Add a basic wcslen() to avoid this linkage failure. While no
+> architecture or FORTIFY_SOURCE overrides this, add it to string.c
+> instead of string_helpers.c so that it is built with '-ffreestanding',
+> otherwise the compiler might transform it into a call to itself.
 
-Regulators provide the power needed by many hardware blocks and thus are
-likely to be needed by a lot of drivers.
+...
 
-It was tested on rk3588, where it was used to power up the "mali"
-regulator in order to power up the GPU.
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/cleanup.h>     /* for DEFINE_FREE() */
+>  #include <linux/compiler.h>    /* for inline */
+>  #include <linux/types.h>       /* for size_t */
 
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
-Changes from v1:
-  - Rebased on rust-next
-  - Split the design into two types as suggested by Alice Ryhl.
-  - Modify the docs to highlight how users can use kernel::types::Either
-    or an enum to enable and disable the regulator at runtime.
----
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   2 +
- rust/kernel/regulator.rs        | 127 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 130 insertions(+)
+> +#include <linux/nls_types.h>   /* for wchar_t */
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ccb988340df69c84a702fe39a09addcc2663aebe..374f48b5ce2a602b4d1a5791201514ed8a535844 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -30,6 +30,7 @@
- #include <linux/poll.h>
- #include <linux/property.h>
- #include <linux/refcount.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/sched.h>
- #include <linux/security.h>
- #include <linux/slab.h>
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ba0f3b0297b27dbda6a7b5d9ef8fdb8b7e6463dc..5b3228e8c80b1eb33bf36929ce3671b982efaf4a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -72,6 +72,8 @@
- pub mod prelude;
- pub mod print;
- pub mod rbtree;
-+#[cfg(CONFIG_REGULATOR)]
-+pub mod regulator;
- pub mod revocable;
- pub mod security;
- pub mod seq_file;
-diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..4ac9b6c537dff4cfc7f2f99d48aec3cecc3151e8
---- /dev/null
-+++ b/rust/kernel/regulator.rs
-@@ -0,0 +1,127 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Regulator abstractions.
-+//!
-+//! C header: [`include/linux/regulator/consumer.h`](srctree/include/linux/regulator/consumer.h)
-+//!
-+//! Regulators are modeled with two types: [`Regulator`] and
-+//! [`EnabledRegulator`].
-+//!
-+//! The transition between these types is done by calling
-+//! [`Regulator::enable()`] and [`EnabledRegulator::disable()`] respectively.
-+//!
-+//! Use an enum or [`kernel::types::Either`] to gracefully transition between
-+//! the two states at runtime if needed. Store [`EnabledRegulator`] directly
-+//! otherwise.
-+
-+use crate::{
-+    bindings,
-+    device::Device,
-+    error::{from_err_ptr, to_result, Result},
-+    prelude::*,
-+};
-+
-+use core::{mem::ManuallyDrop, ptr::NonNull};
-+
-+/// A `struct regulator` abstraction.
-+///
-+/// # Invariants
-+///
-+/// - [`Regulator`] is a non-null wrapper over a pointer to a `struct
-+///   regulator` obtained from `regulator_get()`.
-+/// - Each instance of [`Regulator`] is associated with a single count of `regulator_get()`.
-+pub struct Regulator {
-+    inner: NonNull<bindings::regulator>,
-+}
-+
-+impl Regulator {
-+    /// Obtains a [`Regulator`] instance from the system.
-+    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
-+        // SAFETY: It is safe to call `regulator_get()`, on a device pointer
-+        // received from the C code.
-+        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
-+
-+        // SAFETY: We can safely trust `inner` to be a pointer to a valid
-+        // regulator if `ERR_PTR` was not returned.
-+        let inner = unsafe { NonNull::new_unchecked(inner) };
-+
-+        Ok(Self { inner })
-+    }
-+
-+    /// Enables the regulator.
-+    pub fn enable(self) -> Result<EnabledRegulator> {
-+        // SAFETY: Safe as per the type invariants of `Regulator`.
-+        let res = to_result(unsafe { bindings::regulator_enable(self.inner.as_ptr()) });
-+        res.map(|()| EnabledRegulator { inner: self })
-+    }
-+}
-+
-+impl Drop for Regulator {
-+    fn drop(&mut self) {
-+        // SAFETY: By the type invariants, we know that `self` owns a reference,
-+        // so it is safe to relinquish it now.
-+        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
-+    }
-+}
-+
-+/// A `struct regulator` abstraction that is known to be enabled.
-+///
-+/// # Invariants
-+///
-+/// - [`EnabledRegulator`] is a valid regulator that has been enabled.
-+/// - Each instance of [`EnabledRegulator`] is associated with a single count
-+///   of `regulator_enable()`.
-+pub struct EnabledRegulator {
-+    inner: Regulator,
-+}
-+
-+impl EnabledRegulator {
-+    fn as_ptr(&self) -> *mut bindings::regulator {
-+        self.inner.inner.as_ptr()
-+    }
-+
-+    /// Disables the regulator.
-+    pub fn disable(self) -> Result<Regulator> {
-+        // Keep the count on `regulator_get()`.
-+        let regulator = ManuallyDrop::new(self);
-+
-+        // SAFETY: Safe as per the type invariants of `Self`.
-+        let res = to_result(unsafe { bindings::regulator_disable(regulator.as_ptr()) });
-+
-+        res.map(|()| Regulator {
-+            inner: regulator.inner.inner,
-+        })
-+    }
-+
-+    /// Sets the voltage for the regulator.
-+    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) -> Result {
-+        // SAFETY: Safe as per the type invariants of `Regulator`.
-+        to_result(unsafe { bindings::regulator_set_voltage(self.as_ptr(), min_uv.0, max_uv.0) })
-+    }
-+
-+    /// Gets the current voltage of the regulator.
-+    pub fn get_voltage(&self) -> Result<Microvolt> {
-+        // SAFETY: Safe as per the type invariants of `Regulator`.
-+        let voltage = unsafe { bindings::regulator_get_voltage(self.as_ptr()) };
-+        if voltage < 0 {
-+            Err(Error::from_errno(voltage))
-+        } else {
-+            Ok(Microvolt(voltage))
-+        }
-+    }
-+}
-+
-+impl Drop for EnabledRegulator {
-+    fn drop(&mut self) {
-+        // SAFETY: By the type invariants, we know that `self` owns a reference,
-+        // so it is safe to relinquish it now.
-+        unsafe { bindings::regulator_disable(self.as_ptr()) };
-+    }
-+}
-+
-+/// A voltage in microvolts.
-+///
-+/// The explicit type is used to avoid confusion with other multiples of the
-+/// volt, which can be desastrous.
-+#[repr(transparent)]
-+pub struct Microvolt(pub i32);
+I know it's not ordered, but can we at least not make it worse, i.e.
+squeeze this to be after the compiler.h? Or even somewhere after below
+the err*.h? Whatever gives a better (sparsely) ordered overall
+result...
 
----
-base-commit: e6ea10d5dbe082c54add289b44f08c9fcfe658af
-change-id: 20250326-topics-tyr-regulator-e8b98f6860d7
+>  #include <linux/stddef.h>      /* for NULL */
+>  #include <linux/err.h>         /* for ERR_PTR() */
 
-Best regards,
--- 
-Daniel Almeida <daniel.almeida@collabora.com>
+...
 
+>  #ifndef __HAVE_ARCH_STRNLEN
+>  extern __kernel_size_t strnlen(const char *,__kernel_size_t);
+>  #endif
+> +extern __kernel_size_t wcslen(const wchar_t *s);
+
+I'm wondering why we still continue putting this 'extern' keyword.
+Yes, I see that the rest is like this, but for new code do we really
+need it?
+
+>  #ifndef __HAVE_ARCH_STRPBRK
+>  extern char * strpbrk(const char *,const char *);
+>  #endif
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
