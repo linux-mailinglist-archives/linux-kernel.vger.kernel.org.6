@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-577485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2D0A71DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:48:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEBBA71DAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:49:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41BC47A354E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92150169A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8C4241676;
-	Wed, 26 Mar 2025 17:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FBC241686;
+	Wed, 26 Mar 2025 17:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IJjbYn/+"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PKe0GirU"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B323A241661
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF2B241671
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743011286; cv=none; b=BbmDLBIuzoDCL929EiPe08+NiAlG8wD1/ANYwbDZdZTLx6eto4As0jvjPpCaWuJt8Awb6P5pOuJ1l7ug/T10xm4OR+wy4V8hGmqZR15Wg0Dnbyl6zDYdurdyGmmKzsF8qcDfomfIaWbJfasWZVtpvzqMgwFj3+GwSVRbCIjeAWU=
+	t=1743011288; cv=none; b=AEO4MQNEZjf0ZT102/ep0HADqwYHhTZ9PlCgFcI19GH7YANSipYRruj0904NJDzgJZkuQ4okyv7ggFVPvnlrf6Kmlj3+M7s08zndwqzBzHHIu91bJYsN/dGL+dDLkCn1jUu00faf0f5RzOL8bs/GyFMjyU3xdygu2lmGMVyeKIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743011286; c=relaxed/simple;
-	bh=wVj1jkvJ4so519TpUDuxrZcqgBON+ZNqT1istKgOcEg=;
+	s=arc-20240116; t=1743011288; c=relaxed/simple;
+	bh=M1PS9EGn5yf+ziXSX4oI2mhubvdhMPq5M4ZYRZwjdjI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JXL7i1zaBuKI4VYg5l4IWKZN+3GV8R5286ZCPLaIIoXFCsnk5NC9mGAPd0RTae67XD+eMQyMqhIwvhsdIUvvm7EVouC1CO3MKj/hoM6O5t67l9ypnHMaCbTiPJ0nT+2ujAsdnTaHS18J/1JPJD0e0vQT+RBHWLnzg2xMUeKcTJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IJjbYn/+; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=qwVBpU46mV6XaDbCJbDLRyLG1oBOrJRahkK8sCzMwdNsMECNEjN3iEwapWfRQPgORPJ2JZUVGOIc7OXbp9MFFDEqa61Uaw0++doAqD04HomWX16r0+ARsZExGTqR+GIQ8aV0Luo6j1zYHbHukjIcw7P/ldtt1zQDg6VKMO4BfSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PKe0GirU; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF8AE44440;
-	Wed, 26 Mar 2025 17:48:00 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 474944441C;
+	Wed, 26 Mar 2025 17:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743011283;
+	t=1743011285;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=INhI5GY5KpAC1e+W0x4kcSuViX4iAnBipLvZsEs2/Fk=;
-	b=IJjbYn/+SO/mrbDC/CF08v7B3Sw2MF+noNcWTp3Wj70f/uveC5LNeuQSjierBp62340XSm
-	utadCLhc7w7zpJ1rWiD/Ixsls4qERj/rGGRi5r8wXHq00oIK8cBrwBaWFKEOSLaYkFf/zN
-	CW4nHDDytGgu9Y41d2xVlCEbyOUCXFeyV8nw4ma9At4uWOLad3vyWZ3OaigutUzCNaOc+E
-	O/04uIif1V3r0dyRr93/sWb/Kd6Ddh3pJ9CjyMtnDJlOMPyAqpQXGXPnkZVWuxaVi9BLnm
-	OXmazCgphXS2c+GnIcCm9RMqt9ZmrgkBgccfcVRNh4bkTjax3QLWI6ytn3uT+Q==
+	bh=FzCa2zrAbheOTbL7Z1DIQWacnklnFI0a1ryUn/mz7c0=;
+	b=PKe0GirU+LLt8flRiKK/pYhdiys9qYPxfgXHfHKxRrtN/m8vLr9kywoXjUzWb116szMYow
+	Mjm+IfBSzbxJMxpjJjrhzXfyPTROGis3M5LJXwmDduF3qTi2beEZ0nwEHdJuhbUqGyMkNW
+	vUZ7Bc+M1qgVDpJMT04F2LNO4xvB8I724Ymx7ytdPiiNwTQ/MdfXOohbDFrh+NywrZNYkf
+	kVCpkPXTNj9tW8x+IxOmVdLBBYTsRqTs4Xjwc9SGRPsmLWVPmYjj1EbzbJECcg87A1l8ID
+	UwMf9335RKmUXKt/Hkf6HhJiR0gAj2zqYyoxreeskxSGWreuPyxSDfp5c/sspg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 26 Mar 2025 18:47:37 +0100
-Subject: [PATCH v9 3/5] drm/bridge: make devm_drm_bridge_alloc() mandatory
- for bridge allocation
+Date: Wed, 26 Mar 2025 18:47:38 +0100
+Subject: [PATCH v9 4/5] drm/bridge: ti-sn65dsi83: use dynamic lifetime
+ management
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-drm-bridge-refcount-v9-3-5e0661fe1f84@bootlin.com>
+Message-Id: <20250326-drm-bridge-refcount-v9-4-5e0661fe1f84@bootlin.com>
 References: <20250326-drm-bridge-refcount-v9-0-5e0661fe1f84@bootlin.com>
 In-Reply-To: <20250326-drm-bridge-refcount-v9-0-5e0661fe1f84@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -87,41 +87,51 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeiudejucetufdoteggode
  hhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-All DRM bridges are now supposed to be allocated using
-devm_drm_bridge_alloc(), which is cleaner and necessary to support
-refcounting.
+Allow this bridge to be removable without dangling pointers and
+use-after-free, together with proper use of drm_bridge_get() and _put() by
+consumers.
 
-In the absence of a drm_bridge_init() or such initialization function,
-document the new mandatory alloc function on the first DRM bridge core
-function that is called after allocation, i.e. drm_bridge_add().
-
-Suggested-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
 ---
 
-Changes in v9:
-- remove sentence about old-style allocation
+Changes in v9: none
+Changes in v8: none
+Changes in v7: none
 
-This patch was added in v8.
+Changed in v6:
+ - Update to use devm_drm_bridge_alloc(), remove .destroy
+
+This patch was added in v5.
 ---
- drivers/gpu/drm/drm_bridge.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 22b459af112fd3cd2db00aa16668d270e028b307..b4c89ec01998b849018ce031c7cd84614e65e710 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -286,6 +286,9 @@ EXPORT_SYMBOL(__devm_drm_bridge_alloc);
-  * drm_bridge_add - add the given bridge to the global bridge list
-  *
-  * @bridge: bridge control structure
-+ *
-+ * The bridge to be added must have been allocated by
-+ * devm_drm_bridge_alloc().
-  */
- void drm_bridge_add(struct drm_bridge *bridge)
- {
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+index 6e0ba427c2582c33f7b95634a18dcda9ac28267f..4efb62376e196d8bb5e9f58867e5c0e1624391db 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -947,9 +947,9 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 	struct sn65dsi83 *ctx;
+ 	int ret;
+ 
+-	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	ctx = devm_drm_bridge_alloc(dev, struct sn65dsi83, bridge, &sn65dsi83_funcs);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
+ 
+ 	ctx->dev = dev;
+ 	INIT_WORK(&ctx->reset_work, sn65dsi83_reset_work);
+@@ -989,7 +989,6 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 	dev_set_drvdata(dev, ctx);
+ 	i2c_set_clientdata(client, ctx);
+ 
+-	ctx->bridge.funcs = &sn65dsi83_funcs;
+ 	ctx->bridge.of_node = dev->of_node;
+ 	ctx->bridge.pre_enable_prev_first = true;
+ 	ctx->bridge.type = DRM_MODE_CONNECTOR_LVDS;
 
 -- 
 2.49.0
