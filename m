@@ -1,122 +1,195 @@
-Return-Path: <linux-kernel+bounces-577097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CD3A7184B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:19:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F60A71857
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8393173446
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D59B3AD2F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D128B1F4177;
-	Wed, 26 Mar 2025 14:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855641F1303;
+	Wed, 26 Mar 2025 14:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hu8n+etb"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s7dybfJi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293C81F2BAE;
-	Wed, 26 Mar 2025 14:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216AD54652;
+	Wed, 26 Mar 2025 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998700; cv=none; b=AE0R0Pww0as0YbqlmYXfVbbXmaadDEtg717o+H218zEmZiKwpTNjH60HxSCjdc54Ax2bUAQyT95ZdYxGEg0xCRpz17KShBLZH8iGvHFIPwKHLEzPDigrVMVSd9PJMpdy19vuRB1BaCLjDta0xsFols5nTWLXBU51fGyKTEVCs5c=
+	t=1742998743; cv=none; b=OiYP4o53OQBAoV0KVkmjwyQJ/Geuv5JSESCjivpge15ovFQkCp8Yf78vN64HS7WY/WG/hNHTdqXVUj7JlEqtnD3udAP/NXvRAyHV+INVPwfZcpgCZW8rcw4AHDtuJpp0hGLaQSnT6QUy5Vk0/tYlqoexeCzL6hNKU8pJvHYGbzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998700; c=relaxed/simple;
-	bh=8bcK5d2/qC8I3AUmJEOcDuylXBqQR2veB+WRzdPZfSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSGrUcDUAWofmLsOfR77zqfkbGF1FkOkzpF6QYSHkx4aN+wg13b5A7nuljeDGbAtKFE8TjAItzPmiG7hCPrAHLQ5/zdWDxLARUkLebIUdxPnRND4+AjIfNjxHryZ3DXZDJwW+mCjYOnGWnUmNL7kuacyKagcKwHtBVjaOvMSx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hu8n+etb; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-225df540edcso18867765ad.0;
-        Wed, 26 Mar 2025 07:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742998694; x=1743603494; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WdfuJsHH9Fc/T6Cr0np3SRpFWTfbwtIC0r6vigC/3Dk=;
-        b=hu8n+etbuNehWE69nTiLxye4DkJyREAT3EBjej71xU7R9X+Qvu8QyZhmj1q8YFjw5v
-         Yl0lNAOgO/BKYfrclbKeX9UB4zxhXyozXHGoXvvrdMgR7UwsiapDWvONMncu50XRBNzX
-         Hf+XdgbFdGAkFOjvKR5mM6Y5bZQhfw/XT+VOx0EYAa/QniOiuIX3peM/s78X05ei7JeS
-         PO9EBxQFb6H6fC/57ZzjXBkZmluNEAuAvEvpp0uG+tazV5E6W9rJ7RD488mqku/lC9Og
-         O6j6jVCHaD7EVALpT4gk0jUcjfLTfCLAq6pAx4qyBfdgubFvrl7z8DTSTHonnJYWeng3
-         s2Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742998694; x=1743603494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WdfuJsHH9Fc/T6Cr0np3SRpFWTfbwtIC0r6vigC/3Dk=;
-        b=JgSLQodP45+j3v03bJEC3DVV8YVLjTViPrS1hAWr6GKtOOjnXFOvSf8OsnXYRyRK1U
-         VKcYegZ1YNsQLF4GcMXcSDyjaH2VJHRRL+1jAl28T4ajIWJZfwL3bBZ2GJxiNK6BEBlW
-         EFEQiavZm0h6rmYX2aQmOzQYP10ADi4gH1Rhz8O1mXs9a3A33gQwIs4rcy3M+adfSdC0
-         wChOHzPscPnF+6GH+mPED2gmmF7w+wVMNLduPaCM1ULm/jgo4qEedDyfHM+Wl7XEGcNO
-         UjdXkw6XFosK2YYv9x2LxCYLd0SzoXeVn8JrqjG4mT3uSwZtgrziHQ8A7ULqOQWD9doN
-         fOpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL7JMGy6DcptiCpxxeSLqupxAwJ8j2wtm/hnlW8x/64XXskFHEBnZ+Aj3Wr2Xp9/S42OxodFEp5BuvKVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKYSNu7XOHH+N/ng+CwjipbaLJEUwrcEeg294Vrs9Iv8O0c4P
-	e4BUuCpmFMxRC8/qZh9oUorMZIlvLOI7ErdcIjpjaqyI6F5jzKRk
-X-Gm-Gg: ASbGncvSKZLjs5GUhgH4IUxHHt9byX+AewhGmYYLU3/DqRzs17f2xb2m1zYNAzuhVnm
-	PU37pUhvq5+zJ4fCiRWFivGCvhDIxs1IJwH2aThs/+/2zZAbU0srfJH0EI20FXjA2DgGbvaosC+
-	QUyoIJLVmkP/PgZbyUMw7xU7rNimC5ZuPAAnRfuYigOUEtrb2f0m1JFefPH6MST6I2GSCG/34I+
-	2YUNAlIRJzcppiD8bbqayiOR6vSlO//j31sG8EUDxkpY6dWA+6yEQFj4Fgvb7zztWabU9dsodoI
-	QiArsDvgCJECx7tOS902i+70LnlHEVtorwPdr53GqMpsYxdn2w==
-X-Google-Smtp-Source: AGHT+IEOEN6P4Ub7FQAgAAwCVbor5mBmKHEVuSk33lHmPw4pAlsWd6k6ZtUxZsdr0hm51IOR/+fweA==
-X-Received: by 2002:a05:6a00:21c8:b0:732:1ce5:4a4c with SMTP id d2e1a72fcca58-739514f8495mr5928844b3a.1.1742998694122;
-        Wed, 26 Mar 2025 07:18:14 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fab1a3sm12236219b3a.21.2025.03.26.07.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:18:13 -0700 (PDT)
-Date: Wed, 26 Mar 2025 14:18:06 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>, Jay Vosburgh <jv@jvosburgh.net>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>,
-	linux-kernel@vger.kernel.org, Liang Li <liali@redhat.com>
-Subject: Re: [PATCH net] bonding: use permanent address for MAC swapping if
- device address is same
-Message-ID: <Z-QMniz1QK2oqZJQ@fedora>
-References: <20250319080947.2001-1-liuhangbin@gmail.com>
- <20250325062416.4d60681b@kernel.org>
- <Z-PVgs4OIDZx5fZD@fedora>
- <20250326043213.5fce3b81@kernel.org>
+	s=arc-20240116; t=1742998743; c=relaxed/simple;
+	bh=ma1YQtfpq5iTg9o3RgA0apKG26XLDszEhzGUXxMWjhU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lYm7SPa7AOy4PPcms9DxCcwz3QHqU+KtP8qH2YJbOd9T/RdAqQzWGtcFBjfpFC3KObCvhZTFoD3FdInFqnJdNtSmo0MAxxR8nIhhyECnJohaBtDJG5mM3vajJnna4Buyus9eX4MYc0lvYdtkiMpiazKD2GQnJzv8uQUFtlqekQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s7dybfJi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q95m2m032164;
+	Wed, 26 Mar 2025 14:18:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Orpqfl
+	YvLR6yQCOVp0PAhUv6AcpZGe51LgipDVS9Yg8=; b=s7dybfJi6v55ye1eZXq0Fh
+	fZBvGmumh8DG+xIN2ocriTqFOVrtF2rT8aSxfTs57BLPEGTv1xuHKKFNuQGhnepX
+	EcPmDVlkSYucqg9dfi1CL7bQR0+0ow9y+fMxjF5Ch3EwJwjf4XglwkYT3IurVvWl
+	2KDlm8hqINmv0PtdLgnUXTorQfIbqpvtskX6l1BMSpGhHkN5BdbaWU4Fb4oBrmCB
+	J+RbliiiW6ARSdEXvVz21VArUmMewP6HqJ1OevCzH1p4M5ynz1/RYT7BOAymps/W
+	vTswiKuGXmVuf03rzmGeO2f5GRWGQxfil7NVtWZr2zdIt+EiPCg5eJQOf5afqHzw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0m6jn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:18:44 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QE9tOc001099;
+	Wed, 26 Mar 2025 14:18:44 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45m3q0m6jk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:18:44 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QE0YxU030308;
+	Wed, 26 Mar 2025 14:18:43 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htgv9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:18:43 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QEIgUg28639788
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 14:18:42 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CDF4858053;
+	Wed, 26 Mar 2025 14:18:42 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E88B358043;
+	Wed, 26 Mar 2025 14:18:41 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 14:18:41 +0000 (GMT)
+Message-ID: <a4bf93f0c64f4b329e022663afecf6edf0e22884.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 26 Mar 2025 10:18:41 -0400
+In-Reply-To: <877c4cqi76.fsf@>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-4-nstange@suse.de>
+	 <e492df76d30b0b95f83b577499a25cdca2256407.camel@linux.ibm.com>
+	 <877c4cqi76.fsf@>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326043213.5fce3b81@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zmLRHcCmztHMSy7QR3Fv_a6UW3CUEQLq
+X-Proofpoint-GUID: tteIZopCLiEUccVcuGbhUcvUT64YJpwm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260085
 
-On Wed, Mar 26, 2025 at 04:32:13AM -0700, Jakub Kicinski wrote:
-> On Wed, 26 Mar 2025 10:22:58 +0000 Hangbin Liu wrote:
-> > > I don't know much about bonding, but this seems like a problem already
-> > > to me. Assuming both eth0 and eth1 are on the same segment we now have
-> > > two interfaces with the same MAC on the network. Shouldn't we override
-> > > the address of eth0 to a random one when it leaves?  
-> > 
-> > Can we change an interface mac to random value after leaving bond's control?
-> > It looks may break user's other configures.
-> 
-> Hard to speculate but leaving two interfaces with the same MAC is even
-> worse? I guess nobody hit this problem in practice.
+On Wed, 2025-03-26 at 10:01 +0100, Nicolai Stange wrote:
+> Mimi Zohar <zohar@linux.ibm.com> writes:
+>=20
+> > > diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity=
+/ima/ima_crypto.c
+> > > index 6f5696d999d0..a43080fb8edc 100644
+> > > --- a/security/integrity/ima/ima_crypto.c
+> > > +++ b/security/integrity/ima/ima_crypto.c
+> > > @@ -625,26 +625,43 @@ int ima_calc_field_array_hash(struct ima_field_=
+data *field_data,
+> > >  	u16 alg_id;
+> > >  	int rc, i;
+> > > =20
+> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+> > >  	rc =3D ima_calc_field_array_hash_tfm(field_data, entry, ima_sha1_id=
+x);
+> > >  	if (rc)
+> > >  		return rc;
+> > > =20
+> > >  	entry->digests[ima_sha1_idx].alg_id =3D TPM_ALG_SHA1;
+> > > +#endif
+> > > =20
+> > >  	for (i =3D 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
+> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+> > >  		if (i =3D=3D ima_sha1_idx)
+> > >  			continue;
+> > > +#endif
+> > > =20
+> > >  		if (i < NR_BANKS(ima_tpm_chip)) {
+> > >  			alg_id =3D ima_tpm_chip->allocated_banks[i].alg_id;
+> > >  			entry->digests[i].alg_id =3D alg_id;
+> > >  		}
+> > > =20
+> > > -		/* for unmapped TPM algorithms digest is still a padded SHA1 */
+> > > +		/*
+> > > +		 * For unmapped TPM algorithms, the digest is still a
+> > > +		 * padded SHA1 if backwards-compatibility fallback PCR
+> > > +		 * extension is enabled. Otherwise fill with
+> > > +		 * 0xfes. This is the value to invalidate unsupported
+> > > +		 * PCR banks with. Also, a non-all-zeroes value serves
+> > > +		 * as an indicator to kexec measurement restoration
+> > > +		 * that the entry is not a violation and all its
+> > > +		 * template digests need to get recomputed.
+> > > +		 */
+> > >  		if (!ima_algo_array[i].tfm) {
+> > > +#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
+> > >  			memcpy(entry->digests[i].digest,
+> > >  			       entry->digests[ima_sha1_idx].digest,
+> > >  			       TPM_DIGEST_SIZE);
+>=20
+>                                ^
+> That's been here before, just for the record for the below.
 
-It's the default behavior for bonding as bond will take the first link's
-MAC address. If release the first link, then we will have 2 interfaces (bond
-and first link) has same MAC address.
+And it is correct.
 
-Usually, People doesn't release the link after adding to bond, but it do happens.
+>=20
+> > > +#else
+> > > +			memset(entry->digests[i].digest, 0xfe, TPM_DIGEST_SIZE);
+> > > +#endif
+> >=20
+> > Using TPM_DIGEST_SIZE will result in a padded 0xfe value.
+>=20
+> Yes, but as the sysfs files for unsupported algos are gone, this will be
+> used only for extending the PCR banks. tpm[12]_pcr_extend()
+> (necessarily) truncate the digests to the correct size before sending
+> them to the TPM.
+>=20
+> But if you prefer I can absolutely replace TPM_DIGEST_SIZE by
+> hash_digest_size[ima_algo_array[i].algo].
 
-Hi Jay, any comments?
+Unlike violations, which are the full digest size, a padded sha1 is extende=
+d
+into the unsupported algos TPM banks.  I assume you'd want it to be the ful=
+l
+digest size like violations.
 
-Thanks
-Hangbin
+Mimi
+
 
