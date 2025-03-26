@@ -1,269 +1,176 @@
-Return-Path: <linux-kernel+bounces-577200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1010A719C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:07:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAEEA719C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27F43BFCC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89110840492
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8604A48;
-	Wed, 26 Mar 2025 15:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BF115381A;
+	Wed, 26 Mar 2025 15:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GIBJfaPg"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2070.outbound.protection.outlook.com [40.107.22.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLvVqDNP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B473D6F;
-	Wed, 26 Mar 2025 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001214; cv=fail; b=pxkrGe0Tco0m1uJ1D6T81HYVP2Vq/TnIRBPQRoI4l67QJiDBCl+3zoepJLuqUgO1YaqKmQJutWZHOkN2AvYSvwpr9icG1S+lwioKhyR8NRL8NSyBxafBvfxy/IuphTHLXN739o1PDAWS92P9b8I4uZOd7B4EYncC17kdY+EBY+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001214; c=relaxed/simple;
-	bh=TsJg1fZCPvDQDdEnpD4ThsMTm+DPcOkS4exCRieA7+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tbhC9rsBkRpBWYaJRu2CQi+JeOut//IO6k9p58+qJf9P24Zpe9Kol6C+Ay+GPPhqDBruJh8ce+F0inzbvlghtsT1xmLeus578NMsWUlNrH1OFNpStLr/rNe3dGauJ/4H6soN+SOhS2eg9sSxiyNzD+/u8FZkSlJtM8TdUK48yYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GIBJfaPg; arc=fail smtp.client-ip=40.107.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=olpuvxPcM5oERN5NQnG7zZPYy+Rc8PFRbuETVY/8tSN9018gFrWMV/wApJ4L8SjxqvW7CT7/bKQr/MW96ipzsg8FggYThs0DUAwc0wY1A/fUKjjLJg1WQVQ7PStVsXGAQ+/QPcgwpN4LDr/jeuK8PhPcrmQp/ELQuL18deKaoTQWWvRDkaBYG0KMnDlTnsw5vx28Zt/9tVSYIYGMp8zP1N5Km/ODCGhS6cD76qHEkjcebDSOwOdMMnDkIXtqyeHanuiVI9IvgWemOVZU6fjWuUBH05H4L6JUUuFRwsSO38UBQf9CY43qKEXoIBFFIgDB/j9S7/6BCFOdpKi6ghLSgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TbhykBVffZ9GPRzqw38C6O44BTL4036PFafeQF/sJmA=;
- b=ks/lRtNqyzt2GPAREBbLX9nFUOQAxFiNMNIkNscBZrZlrlCVRbyw0IOzIzzDH+E8xc3a8scIka9YnUX1iMWPI2F1iyYq5t4eTXOqArn3IBCi89lUHetNTrZLgmpYjanPj5vWQXmyqPD6oNOlkjP65lE+lTq4RLBwIoTKDU+vSa+kgAPxDKFzYJZTYuT5eE3AjXEF/EcGk2xmRMOXabzzU1FIldu1XeBy4B2X120Z5gmvRdENRtIbwThZgMAonPgPmpQNnj9msoMAEW+FeYxOyhWmk6vaoqZ4YhbPS5miCqclE9dwME3MZ7eSJ6dJHe3aHu/s36ccUkSJ4z16RXI35g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TbhykBVffZ9GPRzqw38C6O44BTL4036PFafeQF/sJmA=;
- b=GIBJfaPg59xsCWLae++jU8c3eIC1wHvwAn1QRnL8o2jVeeZ5osHZ+Zn702P6yBGJg8ejcAjHRaeC4mCu4X+kAmArgaTps8n9RerSY9jhb2smtdtmUC38zHfwfre1GeAOE0+og94FfYozTzUkV3AV6Nbx2Jv0YBk7San04iFxSZCieDZxH8tXhLJl0bthD5oorSsH9PqKq7ih1hqJZARLdSkraNmWsEatcqLfez5dnV++34tS5jbxIeT1hB0w9SzJm8MOjGrZ1o4USAP1sZanm5sdS8xCyvkJqPOVthW3W98Hq6BMiZMl6iZNgnjWg1SRAuPVEP1dlAHFIXpyMFjp1Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB10036.eurprd04.prod.outlook.com (2603:10a6:10:4c8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 15:00:08 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Wed, 26 Mar 2025
- 15:00:08 +0000
-Date: Wed, 26 Mar 2025 11:00:00 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] PCI: imx6: Save and restore the LUT setting for
- i.MX95 PCIe
-Message-ID: <Z+QWcMIH93mew5Al@lizhi-Precision-Tower-5810>
-References: <20250326075915.4073725-1-hongxing.zhu@nxp.com>
- <20250326075915.4073725-7-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326075915.4073725-7-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: PH1PEPF000132EE.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:518:1::36) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E9235968;
+	Wed, 26 Mar 2025 15:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743001235; cv=none; b=m7rfpxlNC7OKd7iI6QvvlR3obZloEbE2URkIE4JT6r+Vlyeacs8qvndiwsA+yb1bDcJUD2OAaIOW2Pft9vuttqF7YBMDCfdVU4PdTDufWIoZM+CLtn6z8S4IH5BnoCcdBIoGZxgmylKfv3LneXBjm5WjzIOIJozJlvl+an3zl2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743001235; c=relaxed/simple;
+	bh=2eBfpGTXDD24FL4ei3Eshn77s6yu+IfAOgKSh5SyMZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1s5XN0EZwVTQ0i6FragcIlFMC4gLQ+BhLA+c/bT2+gT8GQBSsyYDpZXhKwx20Jy8tXIu8PiLvZO42S4nIweiSvaFVdwtz69YMQTuaHbYuq9PIWnPtRA/Ug+DrrSbiMbFAyXcXRCoHi4fwgHfPYid+dFrFUsdYQSrZckOjmRPDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLvVqDNP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98978C4CEE2;
+	Wed, 26 Mar 2025 15:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743001234;
+	bh=2eBfpGTXDD24FL4ei3Eshn77s6yu+IfAOgKSh5SyMZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hLvVqDNPG/H7z6VVnoN8G1VvPThguZkSI3q9N+P80U1b5sP6vfOi2egH+S5PB7FzH
+	 MZfebzSL2SRtlOWFLNPAUgcQdp7gCTC6GUQnDSlVNxivIZckt6OpL3qUmpFHCVew7M
+	 iNbxRIiRmhdQtaYz9OiUojwhn5M/1BibdzQ/TCxXbIAORl0G3sBX1bIbd4iBoqSCT6
+	 NZ9LemcnQBCSarASuJB1ZcmgEnG6PIaV/VcyFYKBeTQFR1DuWOpUaBGOT4jRApRT0D
+	 xsgwVhQzl4yIhGl7keGYyeJJw2gcFQUcACrWY1MWxTKvpCA5qmr4kBTlvSXuLWdCbm
+	 E96sMPr+fF76g==
+Date: Wed, 26 Mar 2025 11:00:30 -0400
+From: Mike Rapoport <rppt@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Yuquan Wang <wangyuquan1236@phytium.com.cn>, dan.j.williams@intel.com,
+	akpm@linux-foundation.org, david@redhat.com, bfaccini@nvidia.com,
+	rafael@kernel.org, lenb@kernel.org, dave@stgolabs.net,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, rrichter@amd.com,
+	haibo1.xu@intel.com, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chenbaozi@phytium.com.cn
+Subject: Re: [RFC PATCH v3 2/2] ACPI: NUMA: debug invalid unused PXM value
+ for CFMWs
+Message-ID: <Z-QWjpisq8TB9s4W@kernel.org>
+References: <20250321023602.2609614-1-wangyuquan1236@phytium.com.cn>
+ <20250321023602.2609614-3-wangyuquan1236@phytium.com.cn>
+ <20250321115116.00007ae7@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB10036:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0f53289-f66f-4ac1-0df1-08dd6c76e661
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5Xm353c7GRBHcXYLQRgiT3kxBWLgq2FS+AWgcwQBZQNk2wE2+v72FDpq6bg9?=
- =?us-ascii?Q?gny1nR6x3F+VAZFzKGc892Gpz6qoqUj6F5REDbq3wH+87hQDTNaCSvNeG/sR?=
- =?us-ascii?Q?u5933PqJeHqlJIQpe4aaZaEuD5WcV1IWwoNoWdVRjvr8xOOkOmApT8zpf4jM?=
- =?us-ascii?Q?k76MKmTrwzFMncq2L+cbXg7mkb1Q1RaexdXYcEl27F1HZtYEm8yBxaFHjGlW?=
- =?us-ascii?Q?krJDwhikVRiCkRroHaOlId5XVZrafYyCgxFH7ZeebUOJdqkEyslltPehh01R?=
- =?us-ascii?Q?XtDWyNPTZqFxk4y8Q7yqCOHQx+lGyUDelslbGZb+3k2M7VZVF+rd1imE5Q3N?=
- =?us-ascii?Q?/2Xp9k5d7Pas5a/Mzk/1QyYA90mR0jqXRnRcsgBdgzhZEOADobaxX68Fsl/e?=
- =?us-ascii?Q?7DfDcgzBRJQfUjzyX5AvSSJWB0r4/MfvpiQiyHDDAZZ8ixec7kbFQaPoM/Um?=
- =?us-ascii?Q?6jBlOngsMHleDAU5AqOpfirbnYxHI6rYjQazGq+XsLuhy8kXPXy7QOH8v61C?=
- =?us-ascii?Q?lXG6xzxFQAPn1LAQ7wu0Yan7LF+j0RUHDRlMDBMIUmx03lkViELPwkHsPMk5?=
- =?us-ascii?Q?a8WMOEFXisRDqokoiv0W/L8z1cvbCL697Kz05euX3tkRHrOhL7szi7izLB1M?=
- =?us-ascii?Q?ySBKEbMT27FJh3AEYuCchsapC2R5yqM5xke26Cho8eXd7oYM3LpbSrZTSBcy?=
- =?us-ascii?Q?dxjbFySxQwjT8+xVnbYn0OdKP36qifAozS2351BdMeWXznXsYOumtMyTGI6d?=
- =?us-ascii?Q?vMxJD1Hv3gwHS7HHYGqvtz4PfW/GZGsM4DJ9sVLHbIRUDkbxk5wC17axFoGW?=
- =?us-ascii?Q?nE9qO/SQa5NeO9KfICb+pLfSbRy/EH5fYuiLeM91kHS6huBHcKm9bJG7+QoX?=
- =?us-ascii?Q?DjELi+csSSP0CFdugEADwOXYM8LhL/lSphi1cxvNuFNIiQT5GmS4005bV+UH?=
- =?us-ascii?Q?2tgfDt29/+bYkctUjGjoNgM0BfeL5d5AVv7NRWL37wGTP7z1wJpFt0PYn9dj?=
- =?us-ascii?Q?hsBakSgJ2flufhJBJ7mNFuNSQnja90wnJIZOw4LkWt12VWkhClQtz7fQKVhY?=
- =?us-ascii?Q?2EwS70rWL+FzPB/Zl/us7Raoo8hvscDTKWNdczgypFF8Id2+nUyABClke7G9?=
- =?us-ascii?Q?ZhZXdo9Cer+QcnRNHQ96pxf3TTV4yi1afy4LOEhvk9+mhW35ntKvtBSwb6NE?=
- =?us-ascii?Q?lowRLeJe0rphIneaH5G5+dRT9sUGXpQ1F8bL/c5LGojRC7FqtHa09mYa5IUy?=
- =?us-ascii?Q?k4UUu5rIGhwqRMO/O0OLbLVapN9MlMNfaQdyHXrnqLOdO4dELzsodF81U4W/?=
- =?us-ascii?Q?a96tmT2qz3NiISuudRj3avk/pNiuldUKzTdZjhIegeMjUIJ3uw4f2VFzS1ZO?=
- =?us-ascii?Q?X9a9FcoIw3nPqD4Sa4oheWIcXZEP1JMRO5BNYG19qHqFp7Yqs/WPvuhISFJl?=
- =?us-ascii?Q?pYbQoZdCPwFHU4cUIfAzU7b/OAxOfumS8azMmZ5thcciexRStg172aQWDH7u?=
- =?us-ascii?Q?eePe7pwjyURt2N4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qr+FK3CD8y9yCJZwvpCj9gOuZGjmsh0x81IXi4AcXk134/mz4xOG462k7XPl?=
- =?us-ascii?Q?xd07WbfBk01mkhZ5m5pb83Smc39Sh2bzc1SXNZhNK+VglxIjdJ8HjOcwWOys?=
- =?us-ascii?Q?zZ2EwSrEgpHxDidD9RqMP1Ua4kR2/P+hykJ/prSWLpaDCuaOecBoRa2jArd7?=
- =?us-ascii?Q?oHkuUbjhTPIVxr/gwpvhFz95nVOAacfxEF/dge08sLvUGxNIHsT4VOTyYJyz?=
- =?us-ascii?Q?lIBzMbLbNGtt1tYcAvcU2wDzOPhQc1dTPq83AcxeMvlANq/ZnqTUb7AbKGJJ?=
- =?us-ascii?Q?c/Iv3V7PrOfyaEmRbBpbJTQ2JSRnI8s1plXoyYA9Xv2k/36YGEOogpSb8Wgo?=
- =?us-ascii?Q?PYQjR0GOXyWvAq/0510OqdbyGVjrG/80c+YtKxppf/XPUlLYK/mTPIVlC4Y1?=
- =?us-ascii?Q?jV4LE395OOgI8dThGYZnMoNKwC9IZKGvjKusJjDlSqM91d/eRtGxSYH+VRTc?=
- =?us-ascii?Q?E4wGAAZpsuCErji2j0DjVJWIP1hcVwOYd49ViX3c8QEQSCwlOe+hDMkkXVEj?=
- =?us-ascii?Q?gTTzKegDMJ784Q4qkmwzeWiIkHUL/sNvVmT3XUSNM6hOOPR2SM1JzBpfzfgR?=
- =?us-ascii?Q?k76a9OGrzmbNz7B1en7KsButS2JYEnK4kPX+kUaoUglP28pciCnTYBS+Fx4o?=
- =?us-ascii?Q?xHcTnyuyWP7zYtXU4wgMNPWSJdf9l4q8Q3G77PCGqJgRMh/WcqksgjttVCYf?=
- =?us-ascii?Q?VztwV3cIVk4DXm05OgdrTi2KDl7uYTpkb7hdkg7lm3JvPeAZQVy4uLb+S7nI?=
- =?us-ascii?Q?/C2yhCWMqWkZZk/ZVXnL5/pCv/P1UFqN1qMZyhcJi+PDmjUx87vJy4E2YYIt?=
- =?us-ascii?Q?WoHBe+m9Y5UGaiV9T/jFba0iCgBeZBvZ6rBM1ZWCSu0NmkLvz9RUF5sp4u11?=
- =?us-ascii?Q?qGXsJf+B7M+FCxgEt/Mmycob3pj5QV6HoDrTYvQMiJR6Zvl73Gpin1QUQKLQ?=
- =?us-ascii?Q?RBWd04Dk+l4ecTEJHOFuTpT56DksVseFEx7+SQHzx5964UqQyl4T/ORqKZfP?=
- =?us-ascii?Q?HsmxzPKEVVe3bIVR8sWJ5NVfiGdoEnPI2Rmr9i2RJ6UD3PsuyMxN04cTdbyl?=
- =?us-ascii?Q?kHm0M8KyihOevoTYmYXjDMXpbTBrkn97ymJpNQUELFYN1kJMSMk0KsjoWQQ7?=
- =?us-ascii?Q?5EI83xHUsEWg5Zhnvvc/sA44GOo0uatn+qZKlGnSoxi3NHIxNPOW90t/PtqK?=
- =?us-ascii?Q?6qcdswz8wqTpsE2ziSCbz0EVT5Q1wUcnglpCe2eFc3BvpKnqpJT2Xo0RjzAK?=
- =?us-ascii?Q?7Ue5pzlh8mjM/Qf8/LLZduOKf7tygVO5Kid19yqFTQomD0CDI3Q9j0UWFigI?=
- =?us-ascii?Q?bfoogrOs0i2fArC4XV3A0vmfoLK29/FnOdOhfzL3Lis6QUp5fTaK51/LxVKM?=
- =?us-ascii?Q?G1jaT7Ar7TbafjxpvY7BVg1VXjlE8KoU7/zenGyFAvhHLNmwtb/xwJPJYqVc?=
- =?us-ascii?Q?VOxpN2dz2lwPXD4MO1wuipMaT2IomuhNGRvPAs0yc/L4i/FKKqZXUajsrWSp?=
- =?us-ascii?Q?qvyDrvAYSRW1SET4HcSfFVkfFgJShTo2U4REEXUAFG3/0mmhVGsBD/YH1iGo?=
- =?us-ascii?Q?y4YA92EYDOfrkLppKmWOXCFBVtol2iK0EdT2EyYB?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0f53289-f66f-4ac1-0df1-08dd6c76e661
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 15:00:08.5775
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a3YkIs/WUUAJUXKrNEajebrGm+xhE7C2Cu/YNEvaRVaO7QPx/+duQ+ftBIg5wsq1yDpKdYpX7G6tQP0qwByjCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB10036
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321115116.00007ae7@huawei.com>
 
-On Wed, Mar 26, 2025 at 03:59:15PM +0800, Richard Zhu wrote:
-> LUT(look up table) setting would be lost during PCIe suspend on i.MX95.
+Hi,
 
-The look up table (LUT) ...
+On Fri, Mar 21, 2025 at 11:51:16AM +0000, Jonathan Cameron wrote:
+> On Fri, 21 Mar 2025 10:36:02 +0800
+> Yuquan Wang <wangyuquan1236@phytium.com.cn> wrote:
+> 
+> > The absence of SRAT would cause the fake_pxm to be -1 and increment
+> > to 0, then send to acpi_parse_cfmws(). If there exists CXL memory
+> > ranges that are defined in the CFMWS and not already defined in the
+> > SRAT, the new node (node0) for the CXL memory would be invalid, as
+> > node0 is already in "used", and all CXL memory might be online on
+> > node0.
+> > 
+> > This utilizes node_set(0, nodes_found_map) to set pxm&node map. With
+> > this setting, acpi_map_pxm_to_node() could return the expected node
+> > value even if no SRAT.
+> > 
+> > If SRAT is valid, the numa_memblks_init() would then utilize
+> > numa_move_tail_memblk() to move the numa_memblk from numa_meminfo to
+> > numa_reserved_meminfo in CFMWs fake node situation.
+> 
+> I would call out that numa_move_tail_memblk() is called in
+> numa_cleanup_meminfo() which is indeed called by num_memblks_init()
+> 
+> > 
+> > If SRAT is missing or bad, the numa_memblks_init() would fail since
+> > init_func() would fail. And it causes that no numa_memblk in
+> > numa_reserved_meminfo list and the following dax_cxl driver could
+> > find the expected fake node.
+> > 
+> > Use numa_add_reserved_memblk() to replace numa_add_memblk(), since
+> > the cxl numa_memblk added by numa_add_memblk() would finally be moved
+> > to numa_reserved_meminfo, and numa_add_reserved_memblk() here could
+> > add cxl numa_memblk into reserved list directly. Hence, no matter
+> > SRAT is good or not, cxl numa_memblk could be allocated to reserved
+> > list.
+> > 
+> > Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+> 
+> This definitely wants input from Mike Rapoport.
+> Looks fine to me, but there may be some subtle corners I'm missing.
 
->
-> To let i.MX95 PCIe PM work fine, save and restore the LUT setting in
-> suspend and resume operations.
+I'm fine with exposing numa_add_reserved_memblk(), but I don't understand
+CXL discovery enough to say if adding CXL ranges directly to
+numa_reserved_meminfo.
 
-To ensure proper functionality after resume, save and restore ...
+If this is always the case that CFMW regions end up on
+numa_reserved_meminfo, adding them there in the first place does make
+sense.
+ 
+> > ---
+> >  drivers/acpi/numa/srat.c | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+> > index 00ac0d7bb8c9..50bfecfb9c16 100644
+> > --- a/drivers/acpi/numa/srat.c
+> > +++ b/drivers/acpi/numa/srat.c
+> > @@ -458,11 +458,12 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	if (numa_add_memblk(node, start, end) < 0) {
+> > +	if (numa_add_reserved_memblk(node, start, end) < 0) {
+> >  		/* CXL driver must handle the NUMA_NO_NODE case */
+> >  		pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
+> >  			node, start, end);
+> >  	}
+> > +
+> 
+> Unrelated change.  Always give patches a final look through to spot
+> things like this.  Trivial, but they all add noise to what we are focusing on.
+> 
+> >  	node_set(node, numa_nodes_parsed);
+> >  
+> >  	/* Set the next available fake_pxm value */
+> > @@ -646,8 +647,12 @@ int __init acpi_numa_init(void)
+> >  		if (node_to_pxm_map[i] > fake_pxm)
+> >  			fake_pxm = node_to_pxm_map[i];
+> >  	}
+> > -	last_real_pxm = fake_pxm;
+> > -	fake_pxm++;
+> > +
+> > +	/* Make sure CFMWs fake node >= 1 */
+> > +	fake_pxm = max(fake_pxm, 0);
+> > +	last_real_pxm = fake_pxm++;
 
-Frank
+I'd make it more explicit:
 
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 47 +++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 1c8834fbcfd5..dc98a04c2956 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -137,6 +137,11 @@ struct imx_pcie_drvdata {
->  	const struct dw_pcie_host_ops *ops;
->  };
->
-> +struct imx_lut_data {
-> +	u32 data1;
-> +	u32 data2;
-> +};
-> +
->  struct imx_pcie {
->  	struct dw_pcie		*pci;
->  	struct gpio_desc	*reset_gpiod;
-> @@ -156,6 +161,8 @@ struct imx_pcie {
->  	struct regulator	*vph;
->  	void __iomem		*phy_base;
->
-> +	/* LUT data for pcie */
-> +	struct imx_lut_data	luts[IMX95_MAX_LUT];
->  	/* power domain for pcie */
->  	struct device		*pd_pcie;
->  	/* power domain for pcie phy */
-> @@ -1507,6 +1514,42 @@ static void imx_pcie_msi_save_restore(struct imx_pcie *imx_pcie, bool save)
->  	}
->  }
->
-> +static void imx_pcie_lut_save(struct imx_pcie *imx_pcie)
-> +{
-> +	u32 data1, data2;
-> +	int i;
-> +
-> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL,
-> +			     IMX95_PEO_LUT_RWA | i);
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, &data1);
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, &data2);
-> +		if (data1 & IMX95_PE0_LUT_VLD) {
-> +			imx_pcie->luts[i].data1 = data1;
-> +			imx_pcie->luts[i].data2 = data2;
-> +		} else {
-> +			imx_pcie->luts[i].data1 = 0;
-> +			imx_pcie->luts[i].data2 = 0;
-> +		}
-> +	}
-> +}
-> +
-> +static void imx_pcie_lut_restore(struct imx_pcie *imx_pcie)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> +		if ((imx_pcie->luts[i].data1 & IMX95_PE0_LUT_VLD) == 0)
-> +			continue;
-> +
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1,
-> +			     imx_pcie->luts[i].data1);
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2,
-> +			     imx_pcie->luts[i].data2);
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, i);
-> +	}
-> +}
-> +
->  static int imx_pcie_suspend_noirq(struct device *dev)
->  {
->  	struct imx_pcie *imx_pcie = dev_get_drvdata(dev);
-> @@ -1515,6 +1558,8 @@ static int imx_pcie_suspend_noirq(struct device *dev)
->  		return 0;
->
->  	imx_pcie_msi_save_restore(imx_pcie, true);
-> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_HAS_LUT))
-> +		imx_pcie_lut_save(imx_pcie);
->  	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
->  		/*
->  		 * The minimum for a workaround would be to set PERST# and to
-> @@ -1559,6 +1604,8 @@ static int imx_pcie_resume_noirq(struct device *dev)
->  		if (ret)
->  			return ret;
->  	}
-> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_HAS_LUT))
-> +		imx_pcie_lut_restore(imx_pcie);
->  	imx_pcie_msi_save_restore(imx_pcie, false);
->
->  	return 0;
-> --
-> 2.37.1
->
+	/*
+	 * Make sure CFMWs fake nodes follow last_real_pxm, even when SRAT
+	 * is invalid
+	 */
+	last_real_pxm = max(fake_pxm, 0);
+	fake_pxm = last_real_pxm + 1;	
+
+> > +	node_set(0, nodes_found_map);
+> > +
+> >  	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
+> >  			      &fake_pxm);
+> >  
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
