@@ -1,167 +1,192 @@
-Return-Path: <linux-kernel+bounces-577510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478D3A71E0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:09:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC26BA71E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A22E7A3BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:07:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24E01895BA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13CA24FC09;
-	Wed, 26 Mar 2025 18:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FD524EF8C;
+	Wed, 26 Mar 2025 18:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV/XYyP3"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhVWxj0C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC28A24EF97;
-	Wed, 26 Mar 2025 18:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B0619E7E2;
+	Wed, 26 Mar 2025 18:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743012527; cv=none; b=WANsyt3vQViOf9iCfmIvoC/KBPA1SMdlyzoJPn15zTnJnGeHwzePgWnmIQbk5jLI9Pfa6FuPSp39/t8FMLyH05hEEfbRvDmpTI6bW3wzeQVQvIKpOleGIH3/Bk1vj/mSdWSqxXqXvBgAUmAht8YRbyNkURZz7xjixfJz1nWQo4g=
+	t=1743012566; cv=none; b=MWpSmTKPI7qtURM6/CGFf+oRHvy9jDKXufDmupkXlQTB2Hip7+mAwNen8iIhZgt6Xl6ZnL+gMvXECSQYP5WAhJyHYGPJlpQbs39ep2HD2TTYFziEHKAK0dkKyENNcRm1AmzS9LsW5CBKu1sLlzoEHJ9BuJGX1vIHfu4isX8plo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743012527; c=relaxed/simple;
-	bh=6mLDKvGM1mGH3tA7f9jvwsDAJY9XbgV3Ql/pnbhvIAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rm7BdsMwuD1CDu9y9xoS99v65vZjzi2J/JnQRujw/v9oCfluWkXLJgJSKgete9YI0TTkoDzlMiAWG4fg974UL2ACk/Uk1IzPbY7m6E6FNktIplXbg2T4Fd0wSe0skpUTqRRfY6zsSgLufpZdaZSkkyjmjdD2DK8l2HKLeKNClc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV/XYyP3; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4775ce8a4b0so2389851cf.1;
-        Wed, 26 Mar 2025 11:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743012524; x=1743617324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aol4s/GyhsDfj9Ax/+3S97UHILyRN8WTp6xA7nHsuco=;
-        b=mV/XYyP3W8XSBmlgrP4QxvKxPaCTfp90NAn9fv49s6vif+gRKuIJHbfOznS06VfjKu
-         6HXKZD/ljNynTMvLxTLV40lXWk5TQ+oJCL1oI/ArcR2q7EOVEAnjGKl37c0prfOWXYqA
-         AG3RYUnXGIgQcPzoY5BHfjSejmXuoYUr4oRH/9sloNu6w8rLkI4lzUKJi2vRWjZCno5n
-         UiRKF0TlEwpSR7MKodau7jkqzMipA3CqxSr2Shqf55+pNoK9Xyge9Cuhmjzt2ZB7Mz8v
-         2Q8WlB9kUY2n6hGWl0G8AUOSBouu7S+VY1RIUNzLkwoPwxRdi/6zIn2owno96zjjuFyo
-         OCXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743012524; x=1743617324;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Aol4s/GyhsDfj9Ax/+3S97UHILyRN8WTp6xA7nHsuco=;
-        b=iXHp2vJ1Ii9w7ulsAzlR0+HqR4i6Cth/vZac/Ob0/WtYs+/vyBpb2f4LZAzc+NKOsI
-         LeucF05/IrgccXU7yEj8nTdSEF1/63P3LZAKYNTYz3Le+FTRJVrtLUStoSWZUBfyp5l2
-         liAzvDbu6OaFK0VXAOMttcsLXHLgMe6q2QleYbbRdvbZGGPbUld/K+yw3LkRM1ZYDyQr
-         grlxZbfmTP7miIxl8icjvXg0ALprq5kjV/e6ErAKzCDnAudP5QEVHu7GRM3gNUG4tbdn
-         VEBTIIe+qGpi4AahMf07/RAdW75tTEZK3ygW2OTN0PZxsuMraG+xOOqgz0d7uQZoC6uK
-         i5ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgwVV+GSPOQ8LK2xmLHyPBNP01/n7GtYgUCqeolwqgdZDtdEAwO2cMLIgs13ZxbOBkdnPZZQ/L@vger.kernel.org, AJvYcCWzyj7iSum5EqoItRTSAOZmYBqRzRCZH8+7CEc/14KGJRla2x+SmiuQ3cIt8nMcU93bfsU1c6Q/MMtgroQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7z4gXsQ/pJ2ETS4goAtrKIl7T8pLYbKX65eIEWjD/+P930E9a
-	7qVTUfUJk06amhGzPUY8FPF0m+8uIIjpc7lfzZNRv32tv9VSbgxv
-X-Gm-Gg: ASbGnctV8IZkNnPlllK++B2LXlGJ1Q39DD+h426FFKBobLtR2qbq2+ZW5b7xB/g7x7t
-	luJQvBsBQjB986T7jFwqJg2WZ02mXuGDv5gzZE14gQO9A3snOrpeqBUst4t2cb3kbkByXfcbJOr
-	mc9bettvTKUTdxPc3wUFG/8yBBoTh7Bj6Zy/+PEgcSFV3cz6lmot5klFtwc8ul3GCqvXbTgCG2S
-	PRnvaL5MlXDGdZvYdFWcrsnAyn31DJ2OZUPt5xD+qiv0I9r12CB8k6TVJshrSsmDLnUDjdyXgFt
-	e8txhc+/B+nw0459HtK9JwLOnEqK4T9b3SMdibf+pkUEQhsLTwvBXYujIOWkCho7xNDSN/7aiMo
-	OtnG7Pt6rGA5U2AE2lPAmyYoKO8gOSycFpwA=
-X-Google-Smtp-Source: AGHT+IGQWY6oGXechStf8Ff1eNrAo42/G1GgJhoFwPQaN2dqpd7tbJQsyW5WH5wvgSS+feE4itE+Fg==
-X-Received: by 2002:a05:622a:2489:b0:476:8e88:6632 with SMTP id d75a77b69052e-4776e12b519mr9366391cf.29.1743012524247;
-        Wed, 26 Mar 2025 11:08:44 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d191ea6sm76300381cf.45.2025.03.26.11.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 11:08:43 -0700 (PDT)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5E7CA1200043;
-	Wed, 26 Mar 2025 14:08:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 26 Mar 2025 14:08:43 -0400
-X-ME-Sender: <xms:q0LkZ6mYHIz-j6sdPij8B6AR_cmGyqKxsQZs5UQacs1RjdlabrE2Vg>
-    <xme:q0LkZx3yFuvJ5aHhmH_pH1qb_dZBxPpdH3PVU-UDr9fsYXz1SlUhp5ZQ0LT8w4SPp
-    upQsvxvPPxnSo978w>
-X-ME-Received: <xmr:q0LkZ4p8ZwbOI0lycmE_BMlsn5AxGzQtZI-Gr7wtWAUvqZh8XrSb5SYSV5M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeivdduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefgteffhfehjeegtdduieffudetfeehgfegudej
-    udfhieefgfeigfevueduleduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepmhhinhhgoheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihi
-    lhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprh
-    gtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehmihhnghhosehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:q0LkZ-luD3QAMLrjuHd8JCGy1PRh78N_Ntvq7nLEV1wPyH2sfRv3Yw>
-    <xmx:q0LkZ41TR9E50ebn5bFiT5A0HBr2dk9rI1NXciMKNUFSxTADwBDS2w>
-    <xmx:q0LkZ1vdUf3zBNeujR_CiGxeT2fRpyZv5GpSYLTjX9wPevfDiq4nTg>
-    <xmx:q0LkZ0WTPNV0Temz5Z_jfc4Gamz8CtcIPwNNDuN1z_n5dIyCeK12aw>
-    <xmx:q0LkZz1_Z9m7PJfdk9zwkiyYAj9V74y4OPD3OFGRgOctvdiHxIsLTM5K>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Mar 2025 14:08:42 -0400 (EDT)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] locking: lockdep: Decrease nr_unused_locks if lock unused in zap_class()
-Date: Wed, 26 Mar 2025 11:08:30 -0700
-Message-ID: <20250326180831.510348-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1743012566; c=relaxed/simple;
+	bh=DyZC37BpernRq38cpRSS+1tvE9ZzaMZewkCDnXJtk1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mT9GDEI2d6/hqfosF9I6bh91rq9S6Y77z5/RtFddv5wVJrcA+lk8iZi+GYfSx6D8JExMk5v8Xb/KnDKLtqiRphNQUWyz/U972YJWWXbV44hW9nzeb35W8inTtWkiJg60+JbZNb1FoiEY/Zop+khjhsQ7N60uH3xaTmoz8BGvnwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhVWxj0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94025C4CEE2;
+	Wed, 26 Mar 2025 18:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743012566;
+	bh=DyZC37BpernRq38cpRSS+1tvE9ZzaMZewkCDnXJtk1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lhVWxj0Ct6jtlBV0eOTmpsqI77Ng4krl5yaHgNeK4YmGVFaREBgWPCF1oZOkxqeV5
+	 608tpeqma4zfJjWAgac4mwEGxIjq0WGl3AkjVn8TUIUkmTml5qZkdPk/q6b/JrDhGR
+	 CbhXdHRMrcjZ69U9WGeeSxLI6gIMoyiHE+ylFESwIiPOZ798lDptjWN+m7xIpDIduY
+	 vnDffboli5NbMLYkBqmEV2sZ4HMddsbhHKFdlfs7xxbZXmKyBFHWPa8WbcmncTlfRj
+	 gJRCMY1qfwP1B6Aifwn9h+7kM/FkVDDYgSyTRnccnPuLTL/f/a1Y2lFPxaAIVmkEID
+	 4yAnYriMHuYmg==
+Date: Wed, 26 Mar 2025 18:09:22 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/14] dt-bindings: regulator: Add ROHM BD96802 PMIC
+Message-ID: <20250326-candy-endocrine-2e7b2182e53b@spud>
+References: <cover.1742802856.git.mazziesaccount@gmail.com>
+ <2cb4d103d011f0d4293f6ef9307cef57709263d9.1742802856.git.mazziesaccount@gmail.com>
+ <20250325-universe-jigsaw-61da10ad3f77@spud>
+ <f8b0553d-d74d-47c5-89f1-6c61ed0951bc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WSc6Zv3nIINNi2x4"
+Content-Disposition: inline
+In-Reply-To: <f8b0553d-d74d-47c5-89f1-6c61ed0951bc@gmail.com>
 
-Currently, when a lock class is allocated, nr_unused_locks will be
-increased by 1, until it gets used: nr_unused_locks will be decreased by
-1 in mark_lock(). However, one scenario is missed: a lock class may be
-zapped without even being used once. This could result into a situation
-that nr_unused_locks != 0 but no unused lock class is active in the
-system, and when `cat /proc/lockdep_stats`, a WARN_ON() will
-be triggered in a CONFIG_DEBUG_LOCKDEP=y kernel:
 
-[...] DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused)
-[...] WARNING: CPU: 41 PID: 1121 at kernel/locking/lockdep_proc.c:283 lockdep_stats_show+0xba9/0xbd0
+--WSc6Zv3nIINNi2x4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And as a result, lockdep will be disabled after this.
+On Wed, Mar 26, 2025 at 08:15:05AM +0200, Matti Vaittinen wrote:
+> Hi Conor,
+>=20
+> Thanks for taking a look at this :)
+>=20
+> On 25/03/2025 19:23, Conor Dooley wrote:
+> > On Mon, Mar 24, 2025 at 10:54:44AM +0200, Matti Vaittinen wrote:
+> > > BD96802Qxx-C is an automotive grade configurable Power Management
+> > > Integrated Circuit supporting Functional Safety features for applicat=
+ion
+> > > processors, SoCs and FPGAs. BD96802 is controlled via I2C, provides t=
+wo
+> > > interrupt lines and has two controllable buck regulators.
+> > >=20
+> > > The BD96802 belongs to the family of ROHM Scalable PMICs and is inten=
+ded
+> > > to be used as a companion PMIC for the BD96801.
+> > >=20
+> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > >=20
+> > > ---
+> > > Revision history:
+> > >   v1 =3D> :
+> > >    - No changes
+> > > ---
+> > >   .../regulator/rohm,bd96802-regulator.yaml     | 44 ++++++++++++++++=
++++
+> > >   1 file changed, 44 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/regulator/rohm=
+,bd96802-regulator.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd96802=
+-regulator.yaml b/Documentation/devicetree/bindings/regulator/rohm,bd96802-=
+regulator.yaml
+> > > new file mode 100644
+> > > index 000000000000..671eaf1096d3
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/regulator/rohm,bd96802-regula=
+tor.yaml
+> > > @@ -0,0 +1,44 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/regulator/rohm,bd96802-regulator.=
+yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: ROHM BD96802 Power Management Integrated Circuit regulators
+> > > +
+> > > +maintainers:
+> > > +  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > +
+> > > +description:
+> > > +  This module is part of the ROHM BD96802 MFD device. For more detai=
+ls
+> > > +  see Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml.
+> > > +
+> > > +  The regulator controller is represented as a sub-node of the PMIC =
+node
+> > > +  on the device tree.
+> > > +
+> > > +  Regulator nodes should be named to buck1 and buck2.
+> >=20
+> > Is it really needed to add a new binding for this, rather than including
+> > it in the mfd binding,
+>=20
+> A valid question. I did this because that's what I've used with all the
+> other PMIC's regulator bindings. All of these have MFD counterpart:
+>=20
+> rohm,bd71815-regulator.yaml
+> rohm,bd71828-regulator.yaml
+> rohm,bd71837-regulator.yaml
+> rohm,bd71847-regulator.yaml
+> rohm,bd9576-regulator.yaml
+> rohm,bd96801-regulator.yaml
+>=20
+> Basically, none of the MFD bindings I've written for ROHM PMICs contain t=
+he
+> regulator descriptions.
+>=20
+> The thing is that users might be used to look for the regulator bindings
+> from the regulator folder. I'd like to keep this consistent, especially w=
+ith
+> the BD96801 because the BD96802 is intended to be used together with it.
+> (BD96802 is used as a companion PMIC for the BD96801 to extend it's
+> capabilities).
+>=20
+> > particularly when this isn't actually a binding
+> > for the regulator but the pattern section applies to the mfd.
+>=20
+> Hmmm? I am not sure I understand what you mean here. I know I am really b=
+ad
+> with the YAML and bindings, but if I read correctly what I've copied - the
+> pattern section describes what is inside the 'regulators' node. I think t=
+his
+> is similar to what we have with the rest of the ROHM PMIC bindings. Should
+> they all be somehow modified?
 
-Therefore, nr_unused_locks needs to be accounted correctly at
-zap_class() time.
+I just think it is weird to be honest, describing the contents of
+regulators node, rather than the individual regulators themselves, but
+if Rob and Krzysztof, which they seem to be, I will not object.
 
-Cc: stable@vger.kernel.org
-Signee-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- kernel/locking/lockdep.c | 3 +++
- 1 file changed, 3 insertions(+)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index b15757e63626..686546d52337 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6264,6 +6264,9 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 		hlist_del_rcu(&class->hash_entry);
- 		WRITE_ONCE(class->key, NULL);
- 		WRITE_ONCE(class->name, NULL);
-+		/* class allocated but not used, -1 in nr_unused_locks */
-+		if (class->usage_mask == 0)
-+			debug_atomic_dec(nr_unused_locks);
- 		nr_lock_classes--;
- 		__clear_bit(class - lock_classes, lock_classes_in_use);
- 		if (class - lock_classes == max_lock_class_idx)
--- 
-2.47.1
+--WSc6Zv3nIINNi2x4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+RC0gAKCRB4tDGHoIJi
+0g11AQDm+Ek8Qkj0AQXpAxogNSnb3nlSLz25Zh4fCd9GlJMSLwD8DXpz6Ac5Sw52
+dHLpwGD9t7pM1gXv78/WB+o4KoLxUg0=
+=DPO3
+-----END PGP SIGNATURE-----
+
+--WSc6Zv3nIINNi2x4--
 
