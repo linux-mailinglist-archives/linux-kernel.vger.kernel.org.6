@@ -1,194 +1,118 @@
-Return-Path: <linux-kernel+bounces-576788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AF8A71477
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:11:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3EF2A71479
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607C73AD4C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DEAB16E07A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5AD1B4227;
-	Wed, 26 Mar 2025 10:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9990A1B3940;
+	Wed, 26 Mar 2025 10:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="wQC9rN7V"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="eqUuyep5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="dbgKxfsT"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D046C1B412B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC81A1B0F0B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983854; cv=none; b=VaOFDyFwjQX9CchWEE7cpuVPWCUkfWC8/wwOrMO5vMD9x3KMnTt/KvqRT65wqjYMo3dQqC79fA34b383B/Hcgqav8F2J0173gz1Vnmq1Azwi2//BL4DloWhnSrrOV5fD4GgAfRz8wJJtomNdx5tGASBeJTklvJNMcPcH+zYqaq4=
+	t=1742983899; cv=none; b=MD6B4JASJy2IowPwECysuMdOPIlo60h5vXCnhwxh1oh0Oe4jrDaZYbTillkaKj/EKm4jgbxrIf1a1pH8QVGy2m1iMVR1f8YTcb5U4oj65l6bezsLvqa/n/DdnWg5ufOf1Cu+6DpJNq8FyBqZGpRY1zAQWLA2ncsKBShMUZuJ2y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983854; c=relaxed/simple;
-	bh=B6obhSwDQ91ZOtEi/oI5EJ9fhvLd/RH6E12jUGK8lCA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FKWWfDv5QCMJhjew0J4u8+cop1x/+K0GjOSFJUVws3ivAUrMbswpJhuKb9rOx2rvdEcldqULb1f0P+KPVs9yFov7yyKUp26fbgoo1qfITCLVba7zmi2BZEtE5+Ddz2gpKIem8qyZ1Gyjw6rl9BgI/oeOp0zmjOBRE2FrTXHc/6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=wQC9rN7V; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742983844; x=1743588644; i=spasswolf@web.de;
-	bh=fYWRILG8iffA09ZGB3Ffsr3Bq1E8q8ZQHvSESpTPbCA=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wQC9rN7Vz12e6LxL8YXSXVFYrMuHyKbWgt8R58QYyMAqZ4nbaeJtqXA3YplJMHXz
-	 ammPaYl+WA3T4amw6CeXIGe3iPzcDQNEH28/TP02iMW9c3RDjAeLKs0WSLonKA9yF
-	 mz0bwoOrSJkrNYzczTIyUoLzwpGvRNWkVju4jlzkI6Nc34XCD0P6K1aasnaLH7KFI
-	 Ilv3y7fvwrIlYbS8zQZPriymyD0eV99G4qMG0QqEjParpyboeAbID0pMf7r0pQueU
-	 Aj3sGFehw3cLtzu74XqbsO+zfzWhzWQOVYWC+K/BzRcKDo8JDOeD2iK1zPQkdx7XO
-	 6ecKrzZ6BrbhASPZUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLijy-1tfiLM20x6-00Hzx1; Wed, 26
- Mar 2025 11:10:44 +0100
-Message-ID: <79a263b2af01e7ed6594ca5896048bd9d7aae35e.camel@web.de>
-Subject: Re: commit 7ffb791423c7 breaks steam game
-From: Bert Karwatzki <spasswolf@web.de>
-To: Balbir Singh <balbirs@nvidia.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
-	 <christian.koenig@amd.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, Bjorn
- Helgaas	 <bhelgaas@google.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- Andy Lutomirski <luto@kernel.org>, Alex Deucher	
- <alexander.deucher@amd.com>, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, spasswolf@web.de
-Date: Wed, 26 Mar 2025 11:10:42 +0100
-In-Reply-To: <a9f37e3b-2192-42d2-8d5d-c38c0d3fe509@nvidia.com>
-References: <20250322122351.3268-1-spasswolf@web.de>
-	 <688f2757-e364-45db-ad54-daa6ff1c4f3c@nvidia.com>
-	 <6e8ad3cd27b570aaefd85395810cc90bb3120734.camel@web.de>
-	 <7cdbe06c-1586-4112-8d27-defa89c368e9@amd.com>
-	 <b1d72b95-5b5f-4954-923f-8eebc7909c4d@nvidia.com>
-	 <938c2cbd-c47f-4925-ba82-94eef54d9ebc@amd.com>
-	 <261e7069-9f65-4a89-95cb-25c224ff04f1@nvidia.com>
-	 <eb041c610719c8275d321c4c420c0b006d31d9f4.camel@web.de>
-	 <76672910-423c-4664-a1bd-da5c1d7d6afd@nvidia.com>
-	 <a9f37e3b-2192-42d2-8d5d-c38c0d3fe509@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0-1 
+	s=arc-20240116; t=1742983899; c=relaxed/simple;
+	bh=4Nnyi+PoxYAN4XPNcDNy27jX047zMPSBm9/kG0KA1OI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZI/SLhUpgZsiLEDvsLAIm3SOi/69CkfP8bfiTOl5P66BT7EF3gxlwfGJ3wB6mRmGM6Erd+yQm+qCTvxQr6Nq+3mJidgFLMD/4kbAN95TcWxYFWJJoIt/P+IPRcqUM9dfaqeYkhXPoH7uV0ATKtq4DPbK2fr2m+zab9bwnbhsjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=eqUuyep5; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=dbgKxfsT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1742983896; x=1774519896;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gcPX+MhjshuhvQyvdiQ0n7EixqOoTHSCclQvp5UsEFA=;
+  b=eqUuyep5Nc6C4WHGPQvsHeZSr1tABn1EntbusM8a/Gap8SawNJjr9itt
+   TwSkVyRpw/f8wTgahW4PnirD6Fu3OqQiMqJdyJhdlw5Wn2g0ey57uJ45B
+   dTa7xudtpo8Gd/bhIosx4DbQ4jo1VnRaW5kY5WBEyo9XuHo5dBZiOkdK9
+   hpWh8O53FjitngT1wZ5arxzqK4nO7JQOxk/bsGx8tjGtCK097jqTN9h+p
+   G1WgATahRvXpPMUPz+7j3Oo5tbys+flHmDCWAMZSdJyb1Yz199S6T8HoQ
+   Oi+pH4RF8Zt9qHF5qLpFuIKSYgnk9zITXghNAuZNhaTK90DpE9w8ISDwN
+   Q==;
+X-CSE-ConnectionGUID: vhz97e2HTFquRzcrZIGHDw==
+X-CSE-MsgGUID: peAVOKBtQWmqrIvCUMu0ZQ==
+X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
+   d="scan'208";a="43167020"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 26 Mar 2025 11:11:33 +0100
+X-CheckPoint: {67E3D2D4-3A-2417938-F0170C2B}
+X-MAIL-CPID: 6A3CDC2D590C636681E70A4B03ACA4A3_2
+X-Control-Analysis: str=0001.0A006396.67E3D2CC.0093,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DAD48166EFA;
+	Wed, 26 Mar 2025 11:11:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1742983888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gcPX+MhjshuhvQyvdiQ0n7EixqOoTHSCclQvp5UsEFA=;
+	b=dbgKxfsTjezsKLfDY5Gzv+v2w5Q0ipknSkPV7sC5ZDaz0s6BxuAIhLb3smJVHAwM6thDPw
+	ApQVdxLPk2fttq26zUP4KY8+dCrzz1FB7tsoL94nXklcD335CeO9HWcrMbZRhCX8JTapVY
+	qTn2LKM/+E0uQrpqWxxr0zbUmlAWjyycq7LecR9PWradZhgRJAVzzlZIhq5Wac7EVYkFY4
+	wMICdbFJNFPqNi+UAroGqxf6rZgT7tGhCMymGicVHd5fKOAlrqQih0ikEQoC+JFP1jWUgf
+	HR2gJ8GvN4cap47f2nHmDHWuoZMSlhdzgnVPPRt67bG0VkEVHabXuHCL9jobJw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] drm/bridge: sii902x: Set bridge type
+Date: Wed, 26 Mar 2025 11:11:23 +0100
+Message-ID: <20250326101124.4031874-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:G3OrBDdIcdKY3cXunfGtkb2MUbAOlzqr/8fqw2GvafE4WJO4vE6
- Yq6StZN0RCSHw50ggGJM2m+EQFKtfgplAxofMPzQMZprhrwsbgkjCsI9I5H2GOa830nUmGW
- Me++yMhyKQ78wbjbv21W3U19HMxa5eKuxA4QIFEOnswgu5NNANN2cYqKXZDge/pGObzCC6j
- af3By3y6xY3dAsRvZ83cA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zw9F0MhW690=;W4AbIuOp7MedvgHnKd9JBaHoyFH
- rSg4DdXalF9TmCDKbq79qaWzp3fu3ee0rXzxSmZ+Ks9eN5539yizAZgGOKDP644c5FN97WX6f
- 2QCIq55Ffg4rW1j+sKPmTYrsLYUoLiMT1ChFtQP2dhU3jsoFv3xI0vJyq32CgH0t4arDszKeg
- ZQqDaXqZU8IWIR8CIXyOulUw9jk57cDGYzLsJ/qctxdexKJBh2/iyNK04BfstOskz/Vir/JAW
- zqPIYfzsEaiKKFgHetKMc9ynf0Dn/H8GeGHbVAbDmbAG6gVEYyIjAiNgmdyShBQ0S++noDKcY
- sSchTp9kR7VLs6RE6l/IrpK3l/DLI2bkw4HTXc/4YdLhfYnpGXxK4msNBlZhhUwzGb37YYACo
- IHuvvfUqkE3+iiGz6AqBproXLa5JeT2PcVoF0grpFZyuLLtVup8V+RP9oi2LDCZbUs9N8iW6Q
- 2bJaKaWd8QqFzlJG9n3UKokEZ+j/Zve9wr1mEG+t0SPTWeYT4+IWh+6Giv4tKbBcf8G3UvHY7
- DiCNVD6S0+qH/5g7YkBuDtORLF85dY5r13vwo+nwb+qHR2wefeVaKl/smEP5vkdHdI6Z8Vyv4
- mC0v+xhmQkrnz9x7LXfZwpaJFz+E+9oE69WQTXTTjJaYD7jYgY+QQP6FsrrtMMp6tXmPsiCtf
- 0ewYoT/KSiT5EtVWyuiBvuhhBGImEkLt7D1/SCledvEi7KSiuTF72+uSF0I7vpeCWaUkPzwQT
- +xre86dDV6EQHNb3XXx0efytYKsYRLNGLAPFhYvQpVZdSeHJr+hlIzXxDJC3YG8Z5W42XtEFK
- 5LR2vTsFU3NnGqe9M3SIJCI+Iev9cVLP/1pxsO+4mUDIaelbTuXAMWdilQw4Un6bABBhUoJeF
- mgWt00F0E/4p80CfXjjpq/eI4bpoK25xRmIDaJoZ9KPp2NLcvaHQxvMf6yhyg3CrzmeDbbts/
- WAt16KXHp9/d9BBoms/FD+2B1y3LoZTeMEwJt1WNBqoapqKZSenk0XodxzTxhf3PU9azbePVq
- gX18fA4leqT6yyxxC5ktjpNqXJdoLX+mdCtcfTJOR6G8ZEfuHfOLr6jUpgTxcpkUBnyHJO5Hn
- PvdvYlKs+j2xbnyFYWCsRF9okq4I9t16MEquFv2Rwm4v8YPn17UiTldn+k5jAf1+z7OtR3rIx
- xDmhHrR73KlQVTvS4cnSjmQYFAqXLW2yNx+01L5mT/DdKxuzP/4AJu/Zy6oBXOpoxtDFg/qDS
- uR+hrcJYImXKlYmt/eeZqIMWjiKSQQBU+BGHpkq0imu6RqehUKNypit6OZTY4D42BKVSsHSJX
- 6n7KoqqOlhFhEMYmc3GZAZbb398BubjDBnYPwUQePm1hwRIIzeCSORQMA6Q4+E3TpZVPDkubR
- u7srnFZA42W2QP4MD+jI1S00C81/30IpmoETTLyQyvWsW7pQh0zndPmtm1Hwts1aMYa0qCpka
- hdWngCw==
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am Mittwoch, dem 26.03.2025 um 12:50 +1100 schrieb Balbir Singh:
-> On 3/26/25 10:43, Balbir Singh wrote:
-> > On 3/26/25 10:21, Bert Karwatzki wrote:
-> > > Am Mittwoch, dem 26.03.2025 um 09:45 +1100 schrieb Balbir Singh:
-> > > >
-> > > >
-> > > > The second region seems to be additional, I suspect that is HMM ma=
-pping from kgd2kfd_init_zone_device()
-> > > >
-> > > > Balbir Singh
-> > > >
-> > > Good guess! I inserted a printk into kgd2kfd_init_zone_device():
-> > >
-> > > diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> > > b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> > > index d05d199b5e44..201220e2ac42 100644
-> > > --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> > > +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> > > @@ -1049,6 +1049,8 @@ int kgd2kfd_init_zone_device(struct amdgpu_dev=
-ice *adev)
-> > >                 pgmap->range.end =3D res->end;
-> > >                 pgmap->type =3D MEMORY_DEVICE_PRIVATE;
-> > >         }
-> > > +       dev_info(adev->dev, "%s: range.start =3D 0x%llx ranges.end =
-=3D 0x%llx\n",
-> > > +                       __func__, pgmap->range.start, pgmap->range.e=
-nd);
-> > >
-> > >         pgmap->nr_range =3D 1;
-> > >         pgmap->ops =3D &svm_migrate_pgmap_ops;
-> > >
-> > >
-> > > and get this in the case without nokaslr:
-> > >
-> > > [    T367] amdgpu 0000:03:00.0: kfd_migrate: kgd2kfd_init_zone_devic=
-e:
-> > > range.start =3D 0xafe00000000 ranges.end =3D 0xaffffffffff
-> > >
-> > > and this in the case with nokaslr:
-> > >
-> > > [    T365] amdgpu 0000:03:00.0: kfd_migrate: kgd2kfd_init_zone_devic=
-e:
-> > > range.start =3D 0x3ffe00000000 ranges.end =3D 0x3fffffffffff
-> > >
-> >
-> > So we should ignore the second region then for the purposes of this is=
-sue.
-> >
-> > I think this now boils down to
-> >
-> > Why is the dma_get_required_mask set to all of addressable memory (46 =
-bits)
-> > when we have nokaslr
-> >
->
-> I think I know the root cause of the required_mask going up and hence th=
-e
-> use of DMA32
->
-> 1. HMM calls add_pages()
-> 2. add_pages calls update_end_of_memory_vars()
-> 3. This updates max_pfn and that causes required_mask to go up to 46 bit=
-s
->
-> Do you have CONFIG_HSA_AMD_SVM enabled? Does turning it off, fix the iss=
-ue?
->
-> The actual issue is the update of max_pfn.
->
-> Balbir Singh
->
+This is a RGB to HDMI bridge, so set the bridge type accordingly.
 
-Yes, turning off CONFIG_HSA_AMD_SVM fixes the issue, the strange memory
-resource=C2=A0
-afe00000000-affffffffff : 0000:03:00.0
-is gone.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/gpu/drm/bridge/sii902x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If one would add a max_pyhs_addr argument to devm_request_free_mem_region(=
-)
-(which return the resource addr in kgd2kfd_init_zone_device()) one could k=
-eep
-the memory below the 44bit limit with CONFIG_HSA_AMD_SVM enabled.
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 914a2609a685f..ab70df3b60eb8 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -1138,6 +1138,7 @@ static int sii902x_init(struct sii902x *sii902x)
+ 	sii902x->bridge.of_node = dev->of_node;
+ 	sii902x->bridge.timings = &default_sii902x_timings;
+ 	sii902x->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID;
++	sii902x->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+ 
+ 	if (sii902x->i2c->irq > 0)
+ 		sii902x->bridge.ops |= DRM_BRIDGE_OP_HPD;
+-- 
+2.43.0
 
-Bert Karwatzki
 
