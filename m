@@ -1,92 +1,209 @@
-Return-Path: <linux-kernel+bounces-577082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5982A7181D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:10:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D907A71825
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9AFF7A4151
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92B31891FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A18C1F153C;
-	Wed, 26 Mar 2025 14:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459AF1F0E5B;
+	Wed, 26 Mar 2025 14:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="GUcuf7q/"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXBzmOFU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304EE1E1DEE;
-	Wed, 26 Mar 2025 14:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9282918EB0;
+	Wed, 26 Mar 2025 14:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998196; cv=none; b=S5JPTD/R6uncc3nd2K/ZPUwVLUtoaxX4RKFE0c/WuWfGD823IGIJKjnWYhkgVGffCp35jczGM5PQx2KhNfC3eB0Pa/OiUtEhxOiRIwIP/xLErj1tAiaDHWWxS2A2WK9Odaom7Y3y9K/ftYvwMmcKDkNvJ84ksZtsG5Toyieh/v0=
+	t=1742998173; cv=none; b=Lv4CZz1f0Boty050vk+LzngbJfHXJ9kQODKDuvhJ6VP4tlId10+DVh4fqXeYbRJ9g7R1rMP1qBUis1QnfosQkakcMsasOivJOluqxGsHIO83c+dO72Nr/UchA0cYRmtCK/6Ltr+zF8xIt1OyBA50xi18mDQBZ09PZjiEb0cNYJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998196; c=relaxed/simple;
-	bh=x0BhWl/XGa0eCjf2xd9Q9Sf3A7THwh85OBqQMQrv1KU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BMMovM8lV93igpC2IKvJ8NIuECWOl0eSm96XDDwwSlr/tSGTyZEGRqLaBEbjlKMoP7IgIJIafYJbXKaq25sAI700/6Eli4YVyKhFIJZCs95Sk2JBkgqOnU0rxhqoy8PxoiwvQqCS1904XkaSoDC6CGaCcuJRf/p6jIYENmAG6GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=GUcuf7q/; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B1FBB10246DA9;
-	Wed, 26 Mar 2025 15:09:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742998192; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=wNc55uWXBq2CDe26PN6TZH3LTiWbpWVuLcLwZfaCHlQ=;
-	b=GUcuf7q/DQr3fKy6ZSqb6Qq9kMsqAdxwVuafqpVDGArdGaUtqyB8/D8gkGnc5d0I5Tw+/A
-	zzuLKmkyx4fjS39HtcQmwI5L4ve+NHgKHE9wt72eVcsTltuDvxrpIn9sSQdvC/LDF13YYE
-	0FKJgb9ITZDc/82G8tSN4/Uq8+R+8Sfv1JKHiOlvCjIo3Gnt5Vdurr4XuqjraT4HenptW6
-	4iEeLzF/YxHz8cEOQkDs8YoFEiAip6aAdLV6xpN/+yWR0F4QpsWW7NDOsE4E/9W2mw12pG
-	GE9upDIw/klBrGc/PI5yA0SdXaqpMPyughrSade+BLlv6Wqow4ZYgQ8rRat5sg==
-From: Lukasz Majewski <lukma@denx.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH RESEND] dt-bindings: trivial-devices: Document SPI measurement on LWE boards
+	s=arc-20240116; t=1742998173; c=relaxed/simple;
+	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEtJbUgpRChcHUc8EebtktiLqW7PMjaSHgXkKVI7RDY8IUVV2aLjWPxU0fmr9Ef/J15hNQtghlvUs+JXrhhAx6MnLnJngSMo1FcV8xAgNVZN9uqNRNTEPMa4dHJ+EviHv0FPa8kxl9d4oalmsgdkdhvoPDFw6SnzjG8qWdgsc0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXBzmOFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7301C4CEE2;
+	Wed, 26 Mar 2025 14:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742998173;
+	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BXBzmOFUR3LEoBqvb4sSfmlEaTxaSZjaMhi68DJCV0IX0NCxCH8QstXwUY0pQ6kjr
+	 P/Fw2CeJ87thzb+X+1z7JH+IH5qnxbKb3lCPO5CcVn5f/Tz5Vy/RpNIm/DkKZs1sF4
+	 wa7mEc+Jx6JegU+CmQ88tEp8SLQ3dUQgEEfga0ORbTL3M4rMGz3zkmtaHhVYrT08ET
+	 zXSVHjQC5U3RoKVv4mhHbIvbzX5XJ6g0iIFov+Ugw75W2kbE+t6b4G2VtJpm7lh58b
+	 13IYrXCle8F9A+EXghbWtbIqg6iMauisWdg+Gw2+TOir3L57JesT6aQLbVKnqRAsHe
+	 I2uQ0SjxySMzA==
 Date: Wed, 26 Mar 2025 15:09:30 +0100
-Message-Id: <20250326140930.2587775-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, song@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [RFC 3/6] fs: add automatic kernel fs freeze / thaw and remove
+ kthread freezing
+Message-ID: <20250326-hochnehmen-hiebe-99baf5409aa2@brauner>
+References: <20250326112220.1988619-1-mcgrof@kernel.org>
+ <20250326112220.1988619-4-mcgrof@kernel.org>
+ <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
 
-The measurement device on Liebherr's (LWE) boards is used to monitor
-the overall state of the device. It does have SPI interface to
-communicate with Linux host via spidev driver. Document the SPI DT
-binding as trivial SPI device.
+On Wed, Mar 26, 2025 at 07:53:10AM -0400, James Bottomley wrote:
+> On Wed, 2025-03-26 at 04:22 -0700, Luis Chamberlain wrote:
+> > Add support to automatically handle freezing and thawing filesystems
+> > during the kernel's suspend/resume cycle.
+> > 
+> > This is needed so that we properly really stop IO in flight without
+> > races after userspace has been frozen. Without this we rely on
+> > kthread freezing and its semantics are loose and error prone.
+> > For instance, even though a kthread may use try_to_freeze() and end
+> > up being frozen we have no way of being sure that everything that
+> > has been spawned asynchronously from it (such as timers) have also
+> > been stopped as well.
+> > 
+> > A long term advantage of also adding filesystem freeze / thawing
+> > supporting during suspend / hibernation is that long term we may
+> > be able to eventually drop the kernel's thread freezing completely
+> > as it was originally added to stop disk IO in flight as we hibernate
+> > or suspend.
+> > 
+> > This does not remove the superfluous freezer calls on all
+> > filesystems.
+> > Each filesystem must remove all the kthread freezer stuff and peg
+> > the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
+> > flag.
+> > 
+> > Subsequent patches remove the kthread freezer usage from each
+> > filesystem, one at a time to make all this work bisectable.
+> > Once all filesystems remove the usage of the kthread freezer we
+> > can remove the FS_AUTOFREEZE flag.
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  fs/super.c             | 50
+> > ++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/fs.h     | 14 ++++++++++++
+> >  kernel/power/process.c | 15 ++++++++++++-
+> >  3 files changed, 78 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/super.c b/fs/super.c
+> > index 9995546cf159..7428f0b2251c 100644
+> > --- a/fs/super.c
+> > +++ b/fs/super.c
+> > @@ -2279,3 +2279,53 @@ int sb_init_dio_done_wq(struct super_block
+> > *sb)
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static bool super_should_freeze(struct super_block *sb)
+> > +{
+> > +	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
+> > +		return false;
+> > +	/*
+> > +	 * We don't freeze virtual filesystems, we skip those
+> > filesystems with
+> > +	 * no backing device.
+> > +	 */
+> > +	if (sb->s_bdi == &noop_backing_dev_info)
+> > +		return false;
+> 
+> 
+> This logic won't work for me because efivarfs is a pseudofilesystem and
+> will have a noop bdi (or simply a null s_bdev, which is easier to check
+> for).  I was thinking of allowing freeze/thaw to continue for a s_bdev
+> == NULL filesystem if it provided a freeze or thaw callback, which will
+> cover efivarfs.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Filesystem freezing isn't dependent on backing devices. I'm not sure
+where that impression comes from. The FS_AUTOFREEZE shouldn't be
+necessary once all filesystems have been fixed up (which I guess this is
+about). The logic should just be similar to what we do for the freeze
+ioctl.
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index fadbd3c041c8..5d736a9792c2 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -161,6 +161,8 @@ properties:
-           - jedec,spd5118
-             # Linear Technology LTC2488
-           - lineartechnology,ltc2488
-+            # Liebherr on-board measurement SPI device
-+          - lwe,btt
-             # 5 Bit Programmable, Pulse-Width Modulator
-           - maxim,ds1050
-             # 10 kOhm digital potentiometer with I2C interface
--- 
-2.39.5
+IOW, we skip filesystems without any freeze method. That excludes any fs
+that isn't prepared to be frozen:
 
+The easiest way is very likely to give efivarfs a ->freeze_super() and
+->thaw_super() method since it likely doesn't all of the fanciness that
+freeze_super() adds.
+
+Then we have two approaches:
+
+(1) Change the iterator to take a reference while holding the super_lock() and
+    then calling a helper to freeze the fs.
+(2) Pass the information that s_umount is held down to the freeze methods.
+
+For example (2) would be something like:
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index be3ad155ec9f..7ad515ad6934 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2272,6 +2272,7 @@ enum freeze_holder {
+        FREEZE_HOLDER_KERNEL    = (1U << 0),
+        FREEZE_HOLDER_USERSPACE = (1U << 1),
+        FREEZE_MAY_NEST         = (1U << 2),
++       FREEZE_SUPER_LOCKED     = (1U << 3),
+ };
+
+ struct super_operations {
+
+static int freeze_super_locked(struct file *filp)
+{
+	/* If filesystem doesn't support freeze feature, return. */
+	if (sb->s_op->freeze_fs == NULL && sb->s_op->freeze_super == NULL)
+		return 0;
+
+	if (sb->s_op->freeze_super)
+		return sb->s_op->freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
+	return freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
+}
+
+Why do you care about efivarfs taking part in system suspend though?
+
+> 
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
+> > +{
+> > +	int error = 0;
+> > +
+> > +	if (!super_should_freeze(sb))
+> > +		goto out;
+> > +
+> > +	pr_info("%s (%s): freezing\n", sb->s_type->name, sb->s_id);
+> > +
+> > +	error = freeze_super(sb, false);
+> 
+> This is actually not wholly correct now.  If the fs provides a sb-
+> >freeze() method, you should use that instead of freeze_super() ... see
+> how fs_bdev_freeze() is doing it.
+
+> 
+> Additionally, the first thing freeze_super() does is take the
+> superblock lock exclusively.  Since you've already taken it exclusively
+> in your iterate super, how does this not deadlock?
+
+It will deadlock.
 
