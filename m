@@ -1,167 +1,142 @@
-Return-Path: <linux-kernel+bounces-576491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA5AA70FED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:41:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C241FA70FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 05:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795C5189C50F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1203BCFA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBA617A58F;
-	Wed, 26 Mar 2025 04:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E7417A2F8;
+	Wed, 26 Mar 2025 04:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2pdFxL3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pJMddc46"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8042F17A2F1;
-	Wed, 26 Mar 2025 04:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408174A05;
+	Wed, 26 Mar 2025 04:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742964003; cv=none; b=Bjd405tTa9rQwJ0Y7vmL8gBTs2TptwN8d3EqWjsEGSQowjyvkVPVR9u8L/XK/IeYP6RqyYV/zplRk7ObOo7JogpzRBzZ+bSOa8sW0gcZlPk+eKXjToumweRMH9JTzY7F7Xj0S/PeFrJNkRIO1BmZYPdJdy25IIAqbAvniTghsbU=
+	t=1742964238; cv=none; b=nv3vw7lGXgHDotvdRNVxdwpCdPTmsEDkJkG6ifous3UJae1nO2a95NSgmU54Qf5JblYjYRPe+IyWSN9+4ZLgR9IX9BLPKiZ65bwx0zOK3ydHKeRqBDP/fnN2XLyAT5WhvvsDn6fY+plVdfuAwCclX/4pE8jVAtgiYaKUUWl8Nzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742964003; c=relaxed/simple;
-	bh=upsD70LPNN2yPXKSeT2E0dGUq2NzcC5mUkscKaqKeRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m77B1gQXigdrGKYvKYpAMBBfqZQ3YYirr9OlOUzb3lwFReqSIRH9Pte08tbkE7Rs/bK26O/CdARsS6RycK8ieH3KqGe3LDDZrc6OuonD7SehEDyWyPfklDvi2DCtSoGMKNqeQ0ezX0+S8tBaAqKZglbK+3gXVBRWEPdhAoGZigc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2pdFxL3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9122BC4AF09;
-	Wed, 26 Mar 2025 04:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742964003;
-	bh=upsD70LPNN2yPXKSeT2E0dGUq2NzcC5mUkscKaqKeRM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m2pdFxL301HQ1EkJ5vFBsNcjHEr7ku37P1x96bK1RCKU327xfd5WwPsp3ipoCMTTF
-	 EWN9V0fqNv8A4EK6a49VneIQVm+FhoRBz9n1lfQ/SzB7INg4fkqX8LpDtSQbc3fbth
-	 t0ZKs+2X8y2usZWA/e1+amgBiIciJ9ek6351MLAsJKhGEs0j3lMkRIs1rxIbQy4F7y
-	 gjyZvtPGBQ6R6REcuJ1SPwGBRt5mg+q+4EBNzevyZoMYGRw8t3PcHxpzI6BzWhIJYZ
-	 dIkbYgP88wYSPhMNPfwOa2mCO31eQDATx/zU8lWYR3RDQvuGLngtjr5+5rLoqjeG4Q
-	 AtoLJ6hGpxkVw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH v4 2/2] perf test: Add perf trace summary test
-Date: Tue, 25 Mar 2025 21:40:01 -0700
-Message-ID: <20250326044001.3503432-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250326044001.3503432-1-namhyung@kernel.org>
-References: <20250326044001.3503432-1-namhyung@kernel.org>
+	s=arc-20240116; t=1742964238; c=relaxed/simple;
+	bh=LE0p3PimDXlac2M63hkm7f6IveA9A05ueG1ZF8/JK2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c16JhnvD1Wul8eaWukSZZPisRM0BHhbQ6imFtUSSg+bt8TRBCBdouNpo8T3DZ46WyGMGuQsN7lP0fnw5L7TTiFMoBpNwQJlZuH/BWoD8FV3dqNCrQdi+y0bgOm+up9znkb/Qz9sl6nWrg23TFvRg7pq0AmZN6HlPBJFj7Y9NHWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pJMddc46; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q4XbXE023552;
+	Wed, 26 Mar 2025 04:43:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ordMkqhPURoJANwH3hW5zg5e3kC1S+uEc5nh5B32xAY=; b=pJMddc46Sbrx4PRY
+	PaT1C7P9CDYlP4ha2yn4gQshzS6byxHd0lV6i2Wa5EmzZriSykW33nRWTrQElk2S
+	S0YHavkeUNvSjpw2bS3PpNxoGqdyL6Pz45ST0PtteSAWLYZoyLoYHp0SqWE4AU8h
+	wgb52PHJ1Oy4BVk0PAoUH6ePlXdmZVm6UEYPY0pO8oU7kJ2E3DIK7ySRd+3NwF/x
+	GUCCoBSWgf2DmbBCw7jXh19J4HvibBd5SohGmJlbwrg6bekGc0y6of1YeImWJhaO
+	4YN8ez/PzOT6lpasOl8s+lIAu8wUFU5pvFeska7m4mrJ9bUtblzxreyi7ysNWZhB
+	aC+bOA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj00p5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 04:43:33 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q4hWp2001689
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 04:43:32 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
+ 2025 21:43:28 -0700
+Message-ID: <ced540e5-7804-4569-9805-991a12d43c22@quicinc.com>
+Date: Wed, 26 Mar 2025 10:13:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] i2c: npcm: Add clock toggle recovery
+To: <mohammed.0.elbadry@gmail.com>
+CC: Tali Perry <tali.perry1@gmail.com>, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Andi
+ Shyti <andi.shyti@kernel.org>, <openbmc@lists.ozlabs.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250324203233.1266772-2-mohammed.0.elbadry@gmail.com>
+ <20250324205901.1274708-1-mohammed.0.elbadry@gmail.com>
+ <20250324205901.1274708-2-mohammed.0.elbadry@gmail.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20250324205901.1274708-2-mohammed.0.elbadry@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MHwPG1N0QwuRxFb7A_k0yYQtV68e-Nqt
+X-Proofpoint-ORIG-GUID: MHwPG1N0QwuRxFb7A_k0yYQtV68e-Nqt
+X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e385f5 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=pGLkceISAAAA:8 a=XycGwPUB66WHHuA_nGUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 clxscore=1011 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260025
 
-  $ sudo ./perf test -vv 'trace summary'
-  109: perf trace summary:
-  --- start ---
-  test child forked, pid 3501572
-  testing: perf trace -s -- true
-  testing: perf trace -S -- true
-  testing: perf trace -s --summary-mode=thread -- true
-  testing: perf trace -S --summary-mode=total -- true
-  testing: perf trace -as --summary-mode=thread --no-bpf-summary -- true
-  testing: perf trace -as --summary-mode=total --no-bpf-summary -- true
-  testing: perf trace -as --summary-mode=thread --bpf-summary -- true
-  testing: perf trace -as --summary-mode=total --bpf-summary -- true
-  testing: perf trace -aS --summary-mode=total --bpf-summary -- true
-  ---- end(0) ----
-  109: perf trace summary                                              : Ok
 
-Cc: Howard Chu <howardchu95@gmail.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/trace_summary.sh | 65 +++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100755 tools/perf/tests/shell/trace_summary.sh
 
-diff --git a/tools/perf/tests/shell/trace_summary.sh b/tools/perf/tests/shell/trace_summary.sh
-new file mode 100755
-index 0000000000000000..4d98cb212dd9de0b
---- /dev/null
-+++ b/tools/perf/tests/shell/trace_summary.sh
-@@ -0,0 +1,65 @@
-+#!/bin/sh
-+# perf trace summary
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Check that perf trace works with various summary mode
-+
-+# shellcheck source=lib/probe.sh
-+. "$(dirname $0)"/lib/probe.sh
-+
-+skip_if_no_perf_trace || exit 2
-+[ "$(id -u)" = 0 ] || exit 2
-+
-+OUTPUT=$(mktemp /tmp/perf_trace_test.XXXXX)
-+
-+test_perf_trace() {
-+    args=$1
-+    workload="true"
-+    search="^\s*(open|read|close).*[0-9]+%$"
-+
-+    echo "testing: perf trace ${args} -- ${workload}"
-+    perf trace ${args} -- ${workload} >${OUTPUT} 2>&1
-+    if [ $? -ne 0 ]; then
-+        echo "Error: perf trace ${args} failed unexpectedly"
-+        cat ${OUTPUT}
-+        rm -f ${OUTPUT}
-+        exit 1
-+    fi
-+
-+    count=$(grep -E -c -m 3 "${search}" ${OUTPUT})
-+    if [ "${count}" != "3" ]; then
-+	echo "Error: cannot find enough pattern ${search} in the output"
-+	cat ${OUTPUT}
-+	rm -f ${OUTPUT}
-+	exit 1
-+    fi
-+}
-+
-+# summary only for a process
-+test_perf_trace "-s"
-+
-+# normal output with summary at the end
-+test_perf_trace "-S"
-+
-+# summary only with an explicit summary mode
-+test_perf_trace "-s --summary-mode=thread"
-+
-+# summary with normal output - total summary mode
-+test_perf_trace "-S --summary-mode=total"
-+
-+# summary only for system wide - per-thread summary
-+test_perf_trace "-as --summary-mode=thread --no-bpf-summary"
-+
-+# summary only for system wide - total summary mode
-+test_perf_trace "-as --summary-mode=total --no-bpf-summary"
-+
-+# summary only for system wide - per-thread summary with BPF
-+test_perf_trace "-as --summary-mode=thread --bpf-summary"
-+
-+# summary only for system wide - total summary mode with BPF
-+test_perf_trace "-as --summary-mode=total --bpf-summary"
-+
-+# summary with normal output for system wide - total summary mode with BPF
-+test_perf_trace "-aS --summary-mode=total --bpf-summary"
-+
-+rm -f ${OUTPUT}
--- 
-2.49.0.395.g12beb8f557-goog
+On 3/25/2025 2:28 AM, mohammed.0.elbadry@gmail.com wrote:
+> From: Tali Perry <tali.perry1@gmail.com>
+> 
+> During init of the bus, the module checks that the bus is idle.
+> If one of the lines are stuck try to recover them first before failing.
+> Sometimes SDA and SCL are low if improper reset occurs (e.g., reboot).
+> 
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> Signed-off-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>
+> ---
+>   drivers/i2c/busses/i2c-npcm7xx.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
+> index 3ad6124be80f..78c85015d955 100644
+> --- a/drivers/i2c/busses/i2c-npcm7xx.c
+> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
+> @@ -2043,10 +2043,14 @@ static int npcm_i2c_init_module(struct npcm_i2c *bus, enum i2c_mode mode,
+>   
+>   	/* Check HW is OK: SDA and SCL should be high at this point. */
+>   	if ((npcm_i2c_get_SDA(&bus->adap) == 0) || (npcm_i2c_get_SCL(&bus->adap) == 0)) {
+> -		dev_err(bus->dev, "I2C%d init fail: lines are low\n", bus->num);
+> -		dev_err(bus->dev, "SDA=%d SCL=%d\n", npcm_i2c_get_SDA(&bus->adap),
+> -			npcm_i2c_get_SCL(&bus->adap));
+> -		return -ENXIO;
+> +		dev_warn(bus->dev, " I2C%d SDA=%d SCL=%d, attempt recover\n", bus->num,
+> +				 npcm_i2c_get_SDA(&bus->adap), npcm_i2c_get_SCL(&bus->adap));
+> +		if (npcm_i2c_recovery_tgclk(&bus->adap)) {
+> +			dev_err(bus->dev, "I2C%d init fail: lines are low\n", bus->num);
+> +			dev_err(bus->dev, "SDA=%d SCL=%d\n", npcm_i2c_get_SDA(&bus->adap),
+> +				npcm_i2c_get_SCL(&bus->adap));
+Should combine logging into one line. First line you say they are low, 
+second line you are printing the actual status, may be conflicting ?
+> +			return -ENXIO;
+> +		}
+>   	}
+>   
+>   	npcm_i2c_int_enable(bus, true);
 
 
