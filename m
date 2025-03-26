@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-576813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEC7A714BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:24:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB670A714BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62D3189EAFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C713B34DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7CB1EDA3F;
-	Wed, 26 Mar 2025 10:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PeFvgVGw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE25D1E835A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9D81B78F3;
+	Wed, 26 Mar 2025 10:21:14 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E4415E5AE;
+	Wed, 26 Mar 2025 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984418; cv=none; b=Cu5ErghlgqnPgCpUOvPX05d1zZNcC1FPqsWh3pwi/PMfr59p4HQ9c8XAllK9Boj0arbF/BJWFMABPInRrpx1zXWLnfD/EAzycjEQhu5xnIuua6eOk9Bzp6kgvix+KHWbyg+5fXv6O/sWfrUKMyKEWhaZwmGeNTT3OYl1bURFPqY=
+	t=1742984474; cv=none; b=LtDHa7mmjYan4RHM2VDjNxDuSBpF7mc89ttgLoaI0YN3U7Obm+PP+11Oam3cvUec3ABkVPwy8GoDkgU6wUwrlGhB9EQ12vkpPT0i9MoKIV9aPSBWQvpzhLtrx+hWadx8CjSbUMoVT45MzRSnHtCUNZJ774vYHyfWjBWRiz1b1U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984418; c=relaxed/simple;
-	bh=emC1Ap/GyYEiZF9+ueiI+N364GJu+ISfmPEzU6k0TqQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aaQLADJLlSdTsVAKRq3q/dwps+n89mrcQJf1BaA8yWvvxvYElfAEpsS/16v3OodzMrlJAh21Y63EbgMf53TEXdZGVMl27vunjTYYYUvRvw1rWjcG0Ph33m2zzFvUB/vQguyQPLg8YO4oYng9aABNxseZovWSAXLCk9YJxBXuecU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PeFvgVGw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742984415;
-	bh=emC1Ap/GyYEiZF9+ueiI+N364GJu+ISfmPEzU6k0TqQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PeFvgVGwyQafHYULtLhzNKltRkaaXKtNVebk1xbetqan/Vrtx+36b2Gr4iPNWz8q0
-	 5a1YbJP4mgYNbYSVq2Ljafn4w3HG61/Vp4rQz6SAkF727EXBi1RLF74OcauNY59kV7
-	 jxPKTr6ksm58egQBpEz3Vii8w/SnyK7inuYcTu6n4kydUgzFw7iu0IfPCqP+82Op3V
-	 UjLB2uPkEm4++sroyAEdprGB/+tNOQ7bWQfdz6sZ65eZ5iyA5wHgLWIQlhIGkXR/Ph
-	 4Kpow6g3aqpAmRJDbFbcFiTBsPw9Z6L5ENLCHYlsLarXL25D5uxEOLVJ79z8NuXxqI
-	 QthgN9lBAU4lA==
-Received: from localhost (unknown [84.232.140.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 5736A17E0B9D;
-	Wed, 26 Mar 2025 11:20:15 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Wed, 26 Mar 2025 12:20:04 +0200
-Subject: [PATCH v3 15/15] drm/tests: hdmi: Add test for unsuccessful forced
- fallback to YUV420
+	s=arc-20240116; t=1742984474; c=relaxed/simple;
+	bh=IvOKAsn08B3ShbzuaKcFNHFzZEOgIQqjw5V6wsRAbHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tnKSsOc+uXsVO5aE1oD3aHwocTfeyVpyNen6fYzHRRjywPuc8BIYiLhVvKu/0yKyiaYVFQkYue6j7uyF+N3y6V8QLXBOx1/c/1O0qj+QeXXHboK+DTgbtdUYNuHPXDuIpmFTm+1HpkgD6Gro7VX/xpEMmiv/bjdmg3KLrGkUkmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.198])
+	by gateway (Coremail) with SMTP id _____8CxvOIO1eNnkvKmAA--.19153S3;
+	Wed, 26 Mar 2025 18:21:02 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.198])
+	by front1 (Coremail) with SMTP id qMiowMBxWsQK1eNnUVJhAA--.26182S2;
+	Wed, 26 Mar 2025 18:21:01 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: [PATCH] LoongArch: Increase ARCH_DMA_MINALIGN to 16
+Date: Wed, 26 Mar 2025 18:20:51 +0800
+Message-ID: <20250326102051.2313133-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-hdmi-conn-yuv-v3-15-294d3ebbb4b2@collabora.com>
-References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
-In-Reply-To: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxWsQK1eNnUVJhAA--.26182S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrKFyrXF4DGryrKw47KrW7trc_yoWkCFg_Wa
+	47Ww4DGr18Jw47twsFq393Wr4jg3yxXF9Y9r9aqr1aya43twn8X3yrC343Ar4YkrWDCFs5
+	ZayrtF9YkryY9osvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbVkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
+	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1l
+	Yx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrw
+	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWU
+	AwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
+	AFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xII
+	jxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
+	A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI
+	43ZEXa7IU8hiSPUUUUU==
 
-Provide test to verify a forced fallback to YUV420 output cannot succeed
-when driver doesn't advertise YUV420 support.
+ARCH_DMA_MINALIGN is 1 by default, but some LoongArch-specific devices
+(such as APBDMA) require 16 bytes alignment. When the data buffer length
+is too small, the hardware may make an error writing cacheline. Thus, it
+is dangerous to allocate a small memory buffer for DMA. It's always safe
+to define ARCH_DMA_MINALIGN as L1_CACHE_BYTES but unnecessary (kmalloc()
+need small memory objects). Therefore, just increase it to 16.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: stable@vger.kernel.org
+Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 ---
- drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/loongarch/include/asm/cache.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-index 99bedb2d6f555b3b140256000dfa7491d2a8f515..c2976b42aa2aacd2a68a871bffe97e795ca713d4 100644
---- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-@@ -1493,6 +1493,51 @@ static void drm_test_check_max_tmds_rate_format_fallback_yuv420(struct kunit *te
- 	drm_modeset_acquire_fini(&ctx);
- }
+diff --git a/arch/loongarch/include/asm/cache.h b/arch/loongarch/include/asm/cache.h
+index 1b6d09617199..aa622c754414 100644
+--- a/arch/loongarch/include/asm/cache.h
++++ b/arch/loongarch/include/asm/cache.h
+@@ -8,6 +8,8 @@
+ #define L1_CACHE_SHIFT		CONFIG_L1_CACHE_SHIFT
+ #define L1_CACHE_BYTES		(1 << L1_CACHE_SHIFT)
  
-+/*
-+ * Test that if a driver supports only RGB, but the chosen mode can be
-+ * supported by the screen only in YUV420 output format, we end up with
-+ * an unsuccessful forced fallback attempt.
-+ */
-+static void drm_test_check_driver_unsupported_fallback_yuv420(struct kunit *test)
-+{
-+	struct drm_atomic_helper_connector_hdmi_priv *priv;
-+	struct drm_modeset_acquire_ctx ctx;
-+	struct drm_display_info *info;
-+	struct drm_display_mode *yuv420_only_mode;
-+	struct drm_connector *conn;
-+	struct drm_device *drm;
-+	struct drm_crtc *crtc;
-+	int ret;
++#define ARCH_DMA_MINALIGN	(16)
 +
-+	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
-+				BIT(HDMI_COLORSPACE_RGB),
-+				12,
-+				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
-+	KUNIT_ASSERT_NOT_NULL(test, priv);
-+
-+	drm = &priv->drm;
-+	crtc = priv->crtc;
-+	conn = &priv->connector;
-+	info = &conn->display_info;
-+	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
-+	KUNIT_ASSERT_FALSE(test, conn->ycbcr_420_allowed);
-+
-+	yuv420_only_mode = drm_kunit_display_mode_from_cea_vic(test, drm, 95);
-+	KUNIT_ASSERT_NOT_NULL(test, yuv420_only_mode);
-+	KUNIT_ASSERT_TRUE(test, drm_mode_is_420_only(info, yuv420_only_mode));
-+
-+	drm_modeset_acquire_init(&ctx, 0);
-+
-+	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
-+						     crtc, conn,
-+						     yuv420_only_mode,
-+						     &ctx);
-+	KUNIT_EXPECT_LT(test, ret, 0);
-+
-+	drm_modeset_drop_locks(&ctx);
-+	drm_modeset_acquire_fini(&ctx);
-+}
-+
- /*
-  * Test that if a driver and screen supports RGB and YUV formats, and we
-  * try to set the VIC 1 mode, we end up with 8bpc RGB even if we could
-@@ -1884,6 +1929,7 @@ static struct kunit_case drm_atomic_helper_connector_hdmi_check_tests[] = {
- 	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback_yuv420),
- 	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv422),
- 	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv420),
-+	KUNIT_CASE(drm_test_check_driver_unsupported_fallback_yuv420),
- 	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_changed),
- 	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_not_changed),
- 	KUNIT_CASE(drm_test_check_output_bpc_dvi),
-
+ #define __read_mostly __section(".data..read_mostly")
+ 
+ #endif /* _ASM_CACHE_H */
 -- 
-2.49.0
+2.47.1
 
 
