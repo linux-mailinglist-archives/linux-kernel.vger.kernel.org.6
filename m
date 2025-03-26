@@ -1,178 +1,79 @@
-Return-Path: <linux-kernel+bounces-576640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1F8A71240
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:12:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F92A7124D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F2F189A886
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37DC816B2F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C8A1B4240;
-	Wed, 26 Mar 2025 08:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9133F19DF53;
+	Wed, 26 Mar 2025 08:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTJsqd6S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmVrElu2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8481A3164;
-	Wed, 26 Mar 2025 08:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F9A1A072C;
+	Wed, 26 Mar 2025 08:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742976664; cv=none; b=epbfSKH48mcs5/6e521+xkpxib+uWg39I1ztBxl15TitIn6DF5OQVNjoCSRbLYWARw5Fa23pJ1bQjpTp2jWWfrZooQxlffi624gHRx4uYLL/oicEExlsg9KVE7PPiFu4eoKv1gMmug+UCHRf2nUp5OeT1b1n2VOx2JVbgbQazCE=
+	t=1742976822; cv=none; b=DNanHUuYLR++gHognPbzV72N7XPD65Y/+zQ1VTuaJadbawOl+9dJuLYcWhqcN/g11QOouy4OG1d6Y6GeoW+BN3Yyrfe2Nq4ExOZCOO7wM8ZMe064DWn+RPUAzEwvbGvmtSdZjtmdguyLuFF3q54RofJYq20PkglSb3xI1tXy/bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742976664; c=relaxed/simple;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NNCwvkkKscTVkjUd86vM5QRJVCfASUZRqbavUuVJ6gGWtq468AuGkyO108m8qkEdI/gqlvK7MMM5QJY+bHfafD1HJB/k4Yj8PZlrYjBYq0dPtiT/6rL5IiPT1egYDGq38wk5YVYMon4/XeyRwYrdFmkezGqon7wih5WpBOdI3Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTJsqd6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E8FEC2BC86;
-	Wed, 26 Mar 2025 08:11:04 +0000 (UTC)
+	s=arc-20240116; t=1742976822; c=relaxed/simple;
+	bh=mxd9NklVcoOr+WMrk13jMbsMArO4Lmm6XiRTjoB62+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSuClFrf31T5qMyPlKbhsh1ViFXbFStxuVEB7OMECIUXTCCIJBByRAlL8+Yy93CQ3CiGfXn8FqMqx5T26HuNpbXJmjjKevpIva5LP/ZqxLopXk0QLlPFZkl1kBr28A5B4EIul4/K+eTKdrnDirHSBjLXGnOpQE5uHpXs2lg3+UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmVrElu2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E82C4CEE2;
+	Wed, 26 Mar 2025 08:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742976664;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VTJsqd6Su6ExmfRB6upU29+8pFoan9fbDwvFlz/p5cTUJMv71kNhh19ulmKM3/DMv
-	 9BXidMtPHHHLtQXWu1QCbapzfNKQOREMG2tz/z9RucMX9HsA7FKy1AmWLY8HvCoQD8
-	 hgIcLpRw+VCDaoy57HyCJdFTxQV7JbHE9HYPN8PcP5S2XnAuezatg/9IjmllXajx/d
-	 Q4L7FoWL6dvTvrQAsuI1zuGYA1a4RJjf5xeiK6sFrXZWbAxPJVgu5pd51Jz3DE9AMQ
-	 wRGBYLTaskDQPJQ9OIpkAkEHrfxPW4BtrD4GfzqihQ4QRBLo474UMfdoaKaIwRBbF1
-	 FhkTPPYt6WL3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D2AC36010;
-	Wed, 26 Mar 2025 08:11:04 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 26 Mar 2025 12:11:00 +0400
-Subject: [PATCH v7 6/6] arm64: dts: qcom: ipq5018: Enable PCIe
+	s=k20201202; t=1742976820;
+	bh=mxd9NklVcoOr+WMrk13jMbsMArO4Lmm6XiRTjoB62+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WmVrElu2k6+b07kci6agVxrhNtwTVcVrEHwz/uJwdd0/tcqZu3PYR7K0pIxoWl9A4
+	 S1EmzqUUWkuuqtwPl44MWn4f4nwp/JpsEsR6XfFfAmWWsULn85BPrsrRrKqDgX8PSj
+	 qzw7LiC3GI2jy75clApJmZvt/jA9QNXEDmiqVLHDbMnd7QgMTAOBAnuIlzV06Xr/9T
+	 0ELkZRKuy0hzXjYf3r27PByyt8rtI0hDyz5iBhgOmip+M8s2xm8hi7Oc7Vr1HLdGtG
+	 V1ea5RHwiVek0BJ+ZwXlu7lmx+LXItRDH+djAwsdKWd7KzRbv13/29NFkbCag7lxyz
+	 iU2A/+Hj5cf6w==
+Date: Wed, 26 Mar 2025 09:13:36 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Hu Ziji <huziji@marvell.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: mmc: marvell,xenon-sdhci: Allow
+ "dma-coherent" and "iommus"
+Message-ID: <20250326-accurate-remarkable-caiman-a73cd6@krzk-bin>
+References: <20250320-dt-marvell-mmc-v1-0-e51002ea0238@kernel.org>
+ <20250320-dt-marvell-mmc-v1-1-e51002ea0238@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-ipq5018-pcie-v7-6-e1828fef06c9@outlook.com>
-References: <20250326-ipq5018-pcie-v7-0-e1828fef06c9@outlook.com>
-In-Reply-To: <20250326-ipq5018-pcie-v7-0-e1828fef06c9@outlook.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nitheesh Sekar <quic_nsekar@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Praveenkumar I <quic_ipkumar@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
- 20250317100029.881286-1-quic_varada@quicinc.com, 
- 20250317100029.881286-2-quic_varada@quicinc.com, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742976660; l=2062;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=OKmTrcmt0ksiQwz9dz8aVIs/K+GfvvlMVFo78Mfk/ZA=;
- b=R8864Q3jSMy5CJI5tbESukf0aiOmCd8LsHj2rv+3Q7yzjSwArSn95riZx5X2BDe0bL7voz296
- T4Q3eFT6wJTDPiWOhty/o7WwnBE8TO6A5YYCujLFOXBw13PIOlaPwU5
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250320-dt-marvell-mmc-v1-1-e51002ea0238@kernel.org>
 
-From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+On Thu, Mar 20, 2025 at 04:35:46PM -0500, Rob Herring (Arm) wrote:
+> The Marvell xenon-sdhci block can be cache-coherent and needs the
+> "dma-coherent" property. It can also be behind an IOMMU and needs the
+> "iommus" property.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Enable the PCIe controller and PHY nodes for RDP 432-c2.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 40 ++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-index 8460b538eb6a3e2d6b971bd9637309809e0c0f0c..43def95e9275258041e7522ba4098a3767be3df1 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-@@ -9,6 +9,8 @@
- 
- #include "ipq5018.dtsi"
- 
-+#include <dt-bindings/gpio/gpio.h>
-+
- / {
- 	model = "Qualcomm Technologies, Inc. IPQ5018/AP-RDP432.1-C2";
- 	compatible = "qcom,ipq5018-rdp432-c2", "qcom,ipq5018";
-@@ -28,6 +30,20 @@ &blsp1_uart1 {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	pinctrl-0 = <&pcie0_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 16 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc_default_state>;
- 	pinctrl-names = "default";
-@@ -43,6 +59,30 @@ &sleep_clk {
- };
- 
- &tlmm {
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio14";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio15";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio16";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio9";
-
--- 
-2.49.0
-
+Best regards,
+Krzysztof
 
 
