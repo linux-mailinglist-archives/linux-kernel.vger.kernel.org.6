@@ -1,64 +1,70 @@
-Return-Path: <linux-kernel+bounces-576445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA70A70F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:21:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE72EA70F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59CE6189B63F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:20:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF97C17018F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12FA16132F;
-	Wed, 26 Mar 2025 03:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7C51624C9;
+	Wed, 26 Mar 2025 03:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlaUKX45"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEV/afXo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA29199BC;
-	Wed, 26 Mar 2025 03:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36DB13AA31
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742959241; cv=none; b=jYHUuWYLnGO83yEUBGCkcDOoT2WwvGY+EHpFOIIBUSn65eBjByBsq0HOg/jhvAm7QGlS6V/FKx3el3MFXaPuSlbg2wKifaG8PRrazjjxMWMyOEGF21qzEGcC17wsBvUJBiS6X6pu82Kq/Msy0apKkOIDh+AMjEqLSQQEdtudYLM=
+	t=1742959424; cv=none; b=AyXrotCKoQFEBIzjs/s2MbZJ4qgo3g3gMsiSFUNxax7JRqKV+UFMHKD9T0fcjL8GMRW4if+wkN3uPDhzT4XfR2+YOxL5sAkRiCKrqS7ru/wmcokAkeTxY6vH6JvIKzgPNFJ7K17LuAq5UcZopESOCuAcT14BHHjxTxiSaQn6nzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742959241; c=relaxed/simple;
-	bh=AEfTpgYqz7rbvkoQLqqzMr/kEwROFLPRB/7sfHUJZn8=;
+	s=arc-20240116; t=1742959424; c=relaxed/simple;
+	bh=P7bn55wXeMJPRDexynDBgsAbS8ColbNNzj/tf2ULPp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDzX1IaejFv59Hem7bAzkXYrAn4/IsrC6STqCzsWZa5AkV39Bpk/uPn3FTC/KRqxJZVaNuv5QcGe/dRujAVjg+Si6mwH/Lw9QbyZ8xH47hMScm9cMTwP6nRMiOT0sZHo+6Ab4Cp/dsbrx7zS+V+9X/bR1SzRT+kGJ+jtmrlum88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlaUKX45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE8DC4CEE2;
-	Wed, 26 Mar 2025 03:20:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742959240;
-	bh=AEfTpgYqz7rbvkoQLqqzMr/kEwROFLPRB/7sfHUJZn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TlaUKX45TkpooZBUAIcKyrfesQJ8YOrHoip6qelVgCbe73v9KGB7AMkWSesHNKzIe
-	 oZ4gWnOPGCh+nveRrjBgKBApFxixhqLLPr9g72zO9kzALr4GSKxLMmCTYoNrdCl5ge
-	 C3294vzO3FIT14N7GRaK1E8UgPDoQFYx7s/4y/JENT5Cy3TwhBpxuLm4X1eK0tk48a
-	 +9whsePnuW3LjQJqXeDnAfLAyBlaekKiI7dH96D0GF2P/aTyQcUGUX9JUVqAB+zUOn
-	 G/EQlIxpYYTKJ9VtHtdF2yBRtVA9DMMhDTslv3eSQItfHWAiU3OgJp152oJGFKRLyu
-	 bW7743bkQv7Eg==
-Date: Tue, 25 Mar 2025 20:20:38 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [GIT PULL] Crypto Update for 6.15
-Message-ID: <20250326032038.GC1661@sol.localdomain>
-References: <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
- <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
- <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
- <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
- <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
- <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
- <20250325152541.GA1661@sol.localdomain>
- <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOPR3XwE8S5BOmM+hW/I72fwYsn9WdszmtXBa9d3g8+bNn28fwkFpciZihOsyIX3DM5U7gLO8JA1lKzclGKmc0ExG4GP0nmjFvOvyCXupWatPg9ff57BfE9BzFe+j1Hk8TKNbPYGSpbDzcn1NQhxT2wfz9pS4PxUQ2F2cMHHlBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEV/afXo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742959421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yvJPKTJxAPUCtWXz9c2dQUbgpghpe71N28GKAt2voe4=;
+	b=UEV/afXohzG5cxbvMYqFrCO00VZQssBiPLmoiK9S7Raosa0iP7Gk0lR3c/te2n4IANG/qg
+	zveKgXsam7iE8uWuCf6Bd41C710xSfJVAF67H9RuU2IqGAcWDfSbeYbbCJs0pGtaHmQsu3
+	Ifnk8O0yzM9pGlmuinLCFv+DZ11gp40=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-47-vIRBQndDMFKmhT5UKMO_cQ-1; Tue,
+ 25 Mar 2025 23:23:38 -0400
+X-MC-Unique: vIRBQndDMFKmhT5UKMO_cQ-1
+X-Mimecast-MFC-AGG-ID: vIRBQndDMFKmhT5UKMO_cQ_1742959417
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 114911956067;
+	Wed, 26 Mar 2025 03:23:37 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.18])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9069180B48D;
+	Wed, 26 Mar 2025 03:23:31 +0000 (UTC)
+Date: Wed, 26 Mar 2025 11:23:25 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] selftests: ublk: kublk: ignore SIGCHLD
+Message-ID: <Z-NzLbW0nAIAUdIN@fedora>
+References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
+ <20250325-ublk_timeout-v1-3-262f0121a7bd@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,127 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+In-Reply-To: <20250325-ublk_timeout-v1-3-262f0121a7bd@purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Mar 26, 2025 at 09:49:14AM +0800, Herbert Xu wrote:
-> On Tue, Mar 25, 2025 at 08:25:41AM -0700, Eric Biggers wrote:
-> > 
-> > Herbert didn't mention that I have nacked this patch, which he is insisting on
-> > pushing for some reason instead of my original version that is much better.
+On Tue, Mar 25, 2025 at 04:19:33PM -0600, Uday Shankar wrote:
+> SIGCHLD from exiting children can arrive during io_uring_wait_cqe and
+> cause it to return early with -EINTR. Since we don't have a handler for
+
+Probably -EINTR needs to be handled, and libublksrv retry in case of -EINTR.
+
+> SIGCHLD, avoid this issue by ignoring SIGCHLD.
 > 
-> Let's see how your version is so much better:
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> ---
+>  tools/testing/selftests/ublk/kublk.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> https://lore.kernel.org/all/20250212154718.44255-6-ebiggers@kernel.org/
-> 
-> -	/* Up to 1 + FS_VERITY_MAX_LEVELS pages may be mapped at once */
-> -	BUILD_BUG_ON(1 + FS_VERITY_MAX_LEVELS > KM_MAX_IDX);
-> +	/*
-> +	 * Up to FS_VERITY_MAX_PENDING_DATA_BLOCKS + FS_VERITY_MAX_LEVELS pages
-> +	 * may be mapped at once.
-> +	 */
-> +	BUILD_BUG_ON(FS_VERITY_MAX_PENDING_DATA_BLOCKS +
-> +		     FS_VERITY_MAX_LEVELS > KM_MAX_IDX);
-> 
-> This arbitrary limit is a direct result of your welded-on commitment
-> to an API that supports virtually mapped addresses only.  Make no
-> mistake, virtual addresses are simple and easy to use, but the kernel
-> added more complicated constructs for real reasons.
+> diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+> index ded1b93e7913011499ae5dae7b40f0e425982ee4..064a5bb6f12f35892065b8dfacb6f57f6fc16aee 100644
+> --- a/tools/testing/selftests/ublk/kublk.c
+> +++ b/tools/testing/selftests/ublk/kublk.c
+> @@ -890,6 +890,7 @@ static int cmd_dev_add(struct dev_ctx *ctx)
+>  		exit(-1);
+>  	}
+>  
+> +	signal(SIGCHLD, SIG_IGN);
 
-Umm, so you think someone is going to do multibuffer hashing with more buffers
-than kmap_local supports (16)?  Why?  Regardless of the exact API, that case
-would require kmap() to support.  It's hard to see how it would ever be worth
-it, even if theoretically a CPU was capable of taking advantage of that much
-instruction-level parallelism (this is implausible with SHA-256 instructions)
-and ignoring the other issues like code size bloat and increased memory usage
-that a very high interleaving factor would cause.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Of course, in practice this is just going to be used with 2x, which is what CPUs
-can actually do with the SHA-256 instructions and avoids the various downsides
-of overly-large interleaving factors.
+BTW, the SIGCHLD signal is ignored by default, looks it is good
+to do it explicitly, if the -EINTR from io_uring_enter() can be avoided
+in this way.
 
-> I've gone through your use-case in fsverity/dm-verity, and they
-> never touch the data at all so the only reason for it to kmap the
-> data at all is to feed it to the Crypto API, which is capable of
-> doing its own kmap but you elected not to use that because you
-> hate the interface.
 
-Which is incorrect and just shows that you still haven't even read the code.
-Take a look at cf715f4b7eb521a5bf67d391387b754c2fcde8d2.  Switching dm-verity to
-always "map" the data blocks significantly simplified the dm-verity code (-138
-line diffstat), *even before switching to shash*.  So we really want to just
-pass virtual addresses to the crypto API too.  It's much simpler.
+Thanks,
+Ming
 
-> In fact it's a recurring theme, the zswap code jumps through multiple
-> hoops to map the data they're working on so that they can feed it to
-> the Crypto API as a virtually mapped pointer, even though they never
-> touch the mapped data at all.
-
-Compression and hashing are not the same and use different APIs.  So this is a
-straw man.  But I think you are on the wrong track for compression too.  What
-zswap needs is relatively limited: only the compressed data (not the
-uncompressed data) can be split across pages, and only 2 pages.  A complex API
-with source and destination scatterlists isn't needed for this use case either,
-even assuming that the best solution is to make all the compression algorithms
-support this "natively" (most don't yet, or don't support it efficiently).
-Other solutions that could be faster include just continuing to linearize the
-data, or rethinking zswap to not create non-linear compressed data in the first
-place, e.g. by putting compressed data only in large folios.
-
-And yes, the zswap patchset is using request chaining, but that's because you
-forced the zswap people to use it.  It wasn't their original proposal.  And
-based on the discussions and various versions of the patchset, they've been
-having quite a bit of trouble making sense of your API.
-
-But again, this is compression, not hashing.  They don't use the same API.
-
-> which I managed to simplify by switching away from kmapped pointers:
-> 
-> https://patchwork.kernel.org/project/linux-crypto/patch/99ae6a15afc1478bab201949dc3dbb2c7634b687.1742034499.git.herbert@gondor.apana.org.au/
-> 
-
-"Simplify" by a +90 line diffstat.  Sure.
-
-> > Let me reiterate why "request chaining" is a bad idea and is going to cause
-> > problems.
-> 
-> I'm more than willing to discuss with you the implementation details
-> of how the chaining is done and improving it. However, if you proceed
-> to only issue blanket nacks without providing any constructive feedback,
-> then the only thing I can do is ignore you.
-
-I've given you extensive constructive feedback over the past year, while you've
-continued to nack my patches for inconsistent and bogus reasons.
-
-> > In contrast, my patchset
-> > https://lore.kernel.org/r/20250212154718.44255-1-ebiggers@kernel.org/ supports
-> > multibuffer hashing in a much better way and has been ready for a year already.
-> > It actually works; it has a smaller diffstat; it is faster; it has a much
-> > simpler API; and it actually includes all needed pieces including x86 and arm64
-> > support, dm-verity and fs-verity support, and full documentation and tests.
-> 
-> Everybody wants to sratch their itch but my job as the maintainer is
-> to ensure that the subsystem doesn't collapse into an unmaintainable
-> hodgepodge of individual contributions.
-
-But when there is only one such contribution, why overengineer it with something
-that is slower, more complex, more error-prone, and harder to maintain?
-Especially when this is a kernel-internal API that we can change whenever we
-want to suit what is actually being used in the kernel.
-
-And your vague plan to use multibuffer hashing in IPsec doesn't count.  I keep
-explaining why it doesn't actually make sense, and how I've *actually* been
-optimizing IPsec in other ways that actually matter and actually work, but you
-haven't been listening.
-
-> This pull request doesn't even contain the meat of the hash changes
-> since I've been busy with the compression work.  So this is simply
-> a pre-emptive strike to stop further work from rendering your patches
-> obsolete.
-
-I'd love for your work to make my patches obsolete, but unfortunately your
-version is just worse.  And besides it being very incomplete, the main issue is
-fundamental with the design.  So it doesn't really make sense to use it,
-especially when I'm going to get stuck cleaning up your mess again.
-
-- Eric
 
