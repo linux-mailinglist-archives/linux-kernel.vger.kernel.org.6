@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-576561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D85A71115
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:07:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1357BA71116
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F941720C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E233D189681E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979D119CC28;
-	Wed, 26 Mar 2025 07:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29201199230;
+	Wed, 26 Mar 2025 07:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="hS11gAWa"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lh99sghZ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230ED195B1A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314061BC41
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972823; cv=none; b=IhfW3ZRFK9gGvlsVQ/rXJ262hmQDzsah0j7jplSyy8vMmM9DhlmgEq57hclmspDHLYgPvrFPGYNaNSoLRbuaf97VgUH4OfPHoBhlncJLvTxJLeqZTQDfpvQ1tGlFW949CC760QGx3LoYFoxvCqxZF7bv+5YzeTlNajJ+74I/rHQ=
+	t=1742972878; cv=none; b=ZJROAucHiB0WHISlwgjD/KgyvIYqrFpKSGwHG0LGYiUd9MoFZxCIWV/1WQtdi9d4J2OWlwvc0baTuSGrEZGbppx/RR0IomRBCXitViJUxhmv/L9HtP3eHryK+dloODTdqsdFeCsTHPH5/39UxxNfGu7rQfqNRsQovYwG001QkrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972823; c=relaxed/simple;
-	bh=43wDT1wis9+uXBD5diH2XwPs8DcYKUXCAE571UDtSUE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BrzeW71DJsE8HorhfUApp102YyFVLRhzjPmTeyxFZAsgx88Zeb3rRNXjTQFMotv+5xGHMgizDoRfLr78pg1/CrKKh7T/GanA9Y//fRvrArnB6zuVILoM2ujDqTWzDWzp07GGBJ8wHt/ZvatMOXFWJTj06jCnL7CBZ5rKajJdeo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=hS11gAWa; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1742972878; c=relaxed/simple;
+	bh=Gd0mImLluDP6Cvk/FrTC+0noLz6pSCm35L7gw+NTMDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HZXS3lJPaODpuE/QlKy9OA4VJe2kb0FC3XoG4WY51b9O8gJtnSqu2dwNMYKg07mz997GNc2MvfJ5/jV6tv5nwL15Y0YxT46o6uiTC8NJOvjYAMLyr8RFWUlm7pMGXKNTL/B1pNUGuTHfNSVGhsq+KNItaB8tv+a8rTfjo5nW8Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lh99sghZ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2264c9d0295so146195ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ydj8XjXk7OtlDAEPWNWByX3+n+1MkIvRWl+Tl/yKavU=;
-  b=hS11gAWaixvYKpOp7RNEzXAue8Au60KWNyTSCkQre/GXe8XOGgeDSIJz
-   7PE4IEm5TFSoK2K/xbWO4iwAs+E1mnj+fKqxiRMSY2Iu1h+KjitQwOZhI
-   7Cs56UnQfno/SDFHSa2Fu2BMBaMv3g2YoR5RxWXpcyIVE+Q1nVprKFDFY
-   o=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
-   d="scan'208";a="214775295"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:06:52 +0100
-Date: Wed, 26 Mar 2025 08:06:52 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Erick Karanja <karanja99erick@gmail.com>
-cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
-    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8723bs: Rename variables v2
-In-Reply-To: <20250326064647.8380-1-karanja99erick@gmail.com>
-Message-ID: <alpine.DEB.2.22.394.2503260805440.3488@hadrien>
-References: <20250326064647.8380-1-karanja99erick@gmail.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=google.com; s=20230601; t=1742972876; x=1743577676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MJisumMKd+kkKe315+7CndG23adICIh++toXRWniJ+o=;
+        b=lh99sghZTnx30UUx6aEKvowkHZ182R55BEwv6axm7X4GQjvURdjyXVS8CBP/DHAJTD
+         R3DzEzBgw2XxpdFw7Qj4qjRJtFX9VyCa+djNkXHH/m1F/w+kRH5rdMor9MqiBZwi4WXu
+         raxJDmMQ6DlSLQu5VliwTuZeQVlBVtTjyqivq55iT4vDud5InC5sdHMuuXIAP/9au5PB
+         EWaWl9JQjQ4kxnTvcUQvcYkG8jB+s1zKXzRaLNYYDjRHS0a2AhnDlwvUxeWNmehXOndn
+         M8kM9t6IzV+43UnQxMsJciUuOCtd0jGaB8bjXo3SDvqtD+WpRqpI7ZvavyuefxhDq9h5
+         g09w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742972876; x=1743577676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MJisumMKd+kkKe315+7CndG23adICIh++toXRWniJ+o=;
+        b=WGk8rRBhboWFhnsoCp4uufxn6EnYgbEOLaAadU6m5mv/jQCmGkag2K4EGzZQMacJCB
+         hJf1xNgjr4ipXvnqYF9v7hZkozgtJNmLQSlFAca0cWOlOVOD3RI3X1vXm4nTF810OYQ5
+         Jb1+zkWZuXW7OCEoVIvTO17sl27GKdktv0dv7QxTBZGSWqoknR7+6K5OEQItt4/Wc4PY
+         Oi0BbHMNi1lgUmfTSyPyP4FZx5/We8QtphWRcaCvDOIBgbE5yV2OZZPzO2escjv9njLh
+         cJL20e8KL6VVmukCDQalUDFcdsCPUQWUiCh0mZjyZ2kzdCH7SF2PETFWd+eYeWOKREEU
+         Plhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoaYXehnZ9Dt2zWEAHBdNxBOvS25Qzpat/Yty5wVp6qtl4J+b3m1v90r+fRNT2A8zfn7M+lbmWptcmQng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxqA1qVScCoYTUjzmS6KPK7iYxo4gQFca+B3zvVaenYaxy103p
+	8ky+CsSikIMXeAPwktmkhkkPYG72GnSBycmNfYFrDxUcFGQpbyzbT6d+v8Uv3xyz8EMXh2F1w8q
+	hZ/jWEhsm6UCb2WHzqP+MZ9OaejG/Fe1J6EguLTSSuzhvKKNEnVuXSw==
+X-Gm-Gg: ASbGncv3jN9IDptxNdKjgRPtLfaB9hA44KgZIx4bt2mWv/mrvazdCvEAOGNXPhVxaz1
+	r29/+a5370Ug/hu2liBund7N/jF9cUWKeXkkKRA0QbOTXLuyAjCfH/AZ6OF9aTQ7I1ERgWVgL+k
+	92QVnu9CQ3Qi6lcq6fOn/ilQJJe0uvh7XloKLQHYJJIREf8g092jWqFo8=
+X-Google-Smtp-Source: AGHT+IHFuBdQbnSm1QY+8RaydACf/B8hSWUfGR8m1pnm1w1E620d/hVwUiqnuYBiH3d3U88jpcFUcVep41JzI4Ngvwc=
+X-Received: by 2002:a17:903:2341:b0:223:7f8f:439b with SMTP id
+ d9443c01a7336-227f444238bmr1210395ad.29.1742972875832; Wed, 26 Mar 2025
+ 00:07:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250325034210.3337080-1-senozhatsky@chromium.org>
+ <Z-MlsM2Gmxdvl_1D@google.com> <CALC_0q8Mv_UWvFjo3HW_gRsG2N8P--R1OqDj7=2x_98XiRXy4w@mail.gmail.com>
+ <5l4pjqlgu4afndn3ysa7ynecjmvepkfjlh56ycm5jt5e4mioqm@dujakwaomhlk>
+In-Reply-To: <5l4pjqlgu4afndn3ysa7ynecjmvepkfjlh56ycm5jt5e4mioqm@dujakwaomhlk>
+From: Richard Chang <richardycc@google.com>
+Date: Wed, 26 Mar 2025 15:07:43 +0800
+X-Gm-Features: AQ5f1JodS1gUsAqWkoTHUMKUb6CqHtXBCYvEl3pJo7gIT-Ni-JuVJFo-mS9ERvY
+Message-ID: <CALC_0q9hRAX=46Zd+qh5Pq1myXx+=9gSTT5hu7t1s_Ko4xd_Og@mail.gmail.com>
+Subject: Re: [PATCH] zram: modernize writeback interface
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Minchan Kim <minchan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Brian Geffon <bgeffon@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sergey,
 
+On Wed, Mar 26, 2025 at 12:16=E2=80=AFPM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> Hi,
+>
+> On (25/03/26 12:03), Richard Chang wrote:
+> > Hi Sergey,
+> > Since the input buffer length is only PAGE_SIZE long, can we reduce
+> > the duplicated "page_index_range=3D" strings?
+> > Eg:
+> > Turn
+> > echo page_index_range=3D100-200 \
+> >          page_index_range=3D500-700 > zram0/writeback
+> > To:
+> > echo page_index_range=3D100-200,500-700 > zram0/writeback
+>
+> Do you expect to ever have so many ranges that PAGE_SIZE buffer
+> would be too small?  I didn't want to put a list parser into
+> the kernel, I wanted to keep arguments parsing as simple as
+> possible.  But if you really need to writeback that many pages
+> then I guess I can implement it as a list of ranges.
+>
+> Alternatively:
+> We don't necessarily need to use page_index_range key, which is a
+> little long, but can use page_indices=3D/page_indexes=3D or just pages=3D=
+?
 
-On Wed, 26 Mar 2025, Erick Karanja wrote:
+I am just counting how many pages we could writeback per syscall.
+In a worst case, page_index_range with several two-adjacent indices:
+Assume PAGE_SIZE is 4k and index range is around 10000,
 
-> Rename the variable `mediaStatus` to `media_status` and variable
-> `lpsVal` to `lps_val` to adhere to Linux kernel coding
-> standards by using snake_case instead of CamelCase.
->
-> changes in v2:
->   reverted double blank line changes committed earier ensuring
->   my patch contains uniform changes.
+page_index_range allows 272 pages per syscall:
+page_index_range=3D10000-10001 page_index_range=3D10003-10004...
 
-This v2 information belongsbelow the ---.  It's not meaningful to people
-who look at the gi log in the future, because they don't see the previous
-version of the patch.  The part below the --- isdiscarded when the patch
-is applied.
+List_range allows 678 pages per syscall:
+page_index_range=3D10000-10001,10003-10004...
 
-julia
+page_indices allows 314 pages per syscall:
+page_indices=3D10000-10001 page_indices=3D10003-10004...
 
->
-> Fixes checkpatch.pl warning:
-> 	CHECK: Avoid CamelCase: <mediaStatus>
-> 	CHECK: Avoid CamelCase: <lpsVal>
->
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_btcoex.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> index d54095f50113..f4b19ef7b341 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> @@ -8,14 +8,14 @@
->  #include <rtw_btcoex.h>
->  #include <hal_btcoex.h>
->
-> -void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
-> +void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
->  {
-> -	if ((mediaStatus == RT_MEDIA_CONNECT)
-> +	if ((media_status == RT_MEDIA_CONNECT)
->  		&& (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
->  		rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
->  	}
->
-> -	hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
-> +	hal_btcoex_MediaStatusNotify(padapter, media_status);
->  }
->
->  void rtw_btcoex_HaltNotify(struct adapter *padapter)
-> @@ -52,14 +52,14 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
->  void rtw_btcoex_LPS_Enter(struct adapter *padapter)
->  {
->  	struct pwrctrl_priv *pwrpriv;
-> -	u8 lpsVal;
-> +	u8 lps_val;
->
->
->  	pwrpriv = adapter_to_pwrctl(padapter);
->
->  	pwrpriv->bpower_saving = true;
-> -	lpsVal = hal_btcoex_LpsVal(padapter);
-> -	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
-> +	lps_val = hal_btcoex_LpsVal(padapter);
-> +	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
->  }
->
->  void rtw_btcoex_LPS_Leave(struct adapter *padapter)
-> --
-> 2.43.0
->
->
->
+It's the worst case so the actual world might not be that bad.
+
+Another alternative thought, how about page_index supporting both
+single instance and ranges?
+The key is shorter and the parser is relatively simpler.
+Eg: page_index=3D500 page_index=3D10000-10001
 
