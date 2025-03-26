@@ -1,227 +1,130 @@
-Return-Path: <linux-kernel+bounces-576913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0862A715EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:39:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE47A715F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D0317109C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B473B70B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E9E1DDA3E;
-	Wed, 26 Mar 2025 11:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAD1DE3DE;
+	Wed, 26 Mar 2025 11:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4DTD7Y4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pGjXBoVE"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88F1B4139
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6384415C15F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989140; cv=none; b=NNfrTMKDO+mz4ZcHwh1U1A/Q0DDF6JhNVVRgYGCtlhQzdH2+pstNl1b4xqnbNy1yn62VDISCSjpGsJuncdAw6kliiu50zfJ1Nq/AvvR6tOdJZbXVmIdurScMI3CTtOapB0gpreL3UosI7ZeIPkXlBQ4YtdAvAes0sQZwpvmXTAY=
+	t=1742989148; cv=none; b=S77Eb9Rdkye6OzB/U3sibr64SndQjh1vo+g/E5CkPu/eMv3n4+s+9GUJUbYyhNlPD22gR+5TKMwfkHZ1wajBYVy+1TCPRdSGTPFFJ7mTly+0ZUG5oScumUgXDJK7cdr+nKO4gCIpb5MSxpQPzr9bgaqdJ6UPbc+i6m6L+LYftRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989140; c=relaxed/simple;
-	bh=XnplYuVML4RH+JsPqgWSH/ztbX4Jjen6uimGimavSLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmrZtGHOsngBDW84E5UeCaa3fQ0eDqGeb7k7JF99JgWA/CEX5sUEfGabYvIkeqScPKwco1ZcaOCnWanPmva4DdrBZDbmZtZzUZIf9HZvtKj7ZgLacfZGZ3zaVf+v1lJZW72zXpYuS0Hipt3i8emIN8ivjINMbako4CX7x/1HavQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H4DTD7Y4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742989136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1TSW2IN1ookhorbSOR1YQnOJVtR5fBLnVFeapHcNk0=;
-	b=H4DTD7Y4G7MksAOaN6TvHWQPsS8WHq0tmi3PfbvZ6ORtC+Kh8M+tPaIuxNtnOBTNLGPzvw
-	YpFf+G6XEM4CzO/f89idHSUOmlcs8C5qIvPpCXJDVBFLZidtLDm2LDVdWvbMLA/aZcEmi0
-	Zp5No1kstw+QNOIQd43FNwQTnzNN3eM=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-617-g3zaVbH8Mi6wugCOFy1Pfw-1; Wed, 26 Mar 2025 07:38:54 -0400
-X-MC-Unique: g3zaVbH8Mi6wugCOFy1Pfw-1
-X-Mimecast-MFC-AGG-ID: g3zaVbH8Mi6wugCOFy1Pfw_1742989133
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5d9e4d33f04so5517061a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:38:53 -0700 (PDT)
+	s=arc-20240116; t=1742989148; c=relaxed/simple;
+	bh=IuSEcVY+XQgcWWiKyPKuUnqqYJm+G9BasCoqCLzldog=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KWtWqZgfdDCvMTMEhqg3pBRX8OP8BS7qNgbeWoCkwK1TbCkj80mbaeFjMJskqzVLcX9hisZ8cMCU1h61vP1/W6QtOtNq0SN4qWoMrivd6NK/SE2yTxAV/nD9DstkdTu4/RD+3zKJan8xwzUWSQlOWX5Zb/y0tVWDL4SUZkFkZII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pGjXBoVE; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so52311485e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742989145; x=1743593945; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fAUrsz9OdOg3wQLEmYa5D4cgvz4ST0mmGNxgNjOcyeU=;
+        b=pGjXBoVEsvg3PfnZJq3/Lnne5Oe6YI4NqAdHyxSnvLw8jdqMB1MAFEM8yhIBUrOFrJ
+         QcTtuEDzj+pB4ldkbiZew6E0TIzzcft3hrn4C39D2nbdj6OCqawJV0byzdRK1uVgKG0F
+         qIYGegswmv6tm0JY7Nw4KpZQGDW8xv7dH4lGSA80Q/eObmIJNohc4SVtt86FgdCAU7Af
+         RQVvNw8AZitRIWd7SKTB7fquM4nSOAknGUt9JOcKaT0c2q5OQvgrml4/k03BVCkfBvAt
+         7DcEXNaE9LxZcNTC+sjPJG2BjXYw7ulfzD/DKV9aaNi/p8AMWqtdsRoEslz9fAIoxbwA
+         SYIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742989133; x=1743593933;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1TSW2IN1ookhorbSOR1YQnOJVtR5fBLnVFeapHcNk0=;
-        b=rnUyQT8lVhKbkjKIQARyuQgyMfoofDMiUP4bXPu0yHhqEVhwjbPS3h4musCSOWOdpD
-         CIitYEsMoijriAd7f0cuBHTPIcDk7zmSuAxB8WjNGa7Q/fpfYH/Aq4arLx5iPPyvJZMi
-         EsuvbuvEpbAcbpKGMK91ytR+opEnb/Ch/nOFeYSI/Tg0ZR55jS4/cm68PJ+NqDmQRm7K
-         z5gHmikkpJYOszn/U4duDrs+FRszWK2A/O06+6ZuKHg2oQP3WU7YY0eO1WZpyb1ACSHz
-         WlRon6AHAs3xLjjwDBADQPoA2v5Wdg575NYWtD64IEEUthiUKSvTI18/tRY0EVvmYHWT
-         7b1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcQoUw681wJ3k763vSGpd4GyG99E4LQS2r+HVZmA7tdoX7H5sk7UY6apHx/ayrnsJLwDR5z2OF8BHMyQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy19A3PZBrf8hf72tsTN3+gvHeZNtQKES1pnTOjB3MM0gmgFejP
-	MgYFzVhw7M0oeuTPeuGXbVj9hgXFO0Sv1J7jjvggtXYh/2fdt1pnMkmOw7jLEn8FaaPpHpsF8z3
-	Puw6Raseqq/lsA2hnYZ3e5tSE16jqUyITED/TPDcuzEhYn+95/3Lk142BCTsxeA==
-X-Gm-Gg: ASbGncusdwTPtPtapvOLhOa2s2SK5qZCMTh8staqO7bpsZds1Hh4J7BKjEtuVDpy92W
-	6tGwXvO395iKqgWCTTUXAxAXUfFFO/R6/hL7vzLsEctyxpevTazdLy6J3vbjirrz3jynWhFc05w
-	iw41jmijaYLk2pwW2O6xYhQURiFoJpqHP7iv6LTPYskaGsbV38Mcu3pnqODIpzenFM06dMjkXyW
-	gqMB7DaWDM2Gzj+gLdextv3PVs1qmu0MD6p1Hc1j84cRK6PB1lseqB7BZdToDGvaK8edvBRjB8h
-	EANic/InRv2867/DbJAgqD1OS1Jfv/kkk6xxuXDoh7gKMLJrT9uSBG/a25uidFClJrbUhb+HXrV
-	KZt8rn3rZ8I1h5/xAjqdg4RIQT5mLb35JCiIbTO8xZ9adbbrLdyj8dd5qVEOTn5MxAg==
-X-Received: by 2002:a05:6402:1d4a:b0:5e8:bced:9ee5 with SMTP id 4fb4d7f45d1cf-5ebcd4677eemr17580333a12.18.1742989132654;
-        Wed, 26 Mar 2025 04:38:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4LIDH0+/cfzodfLAMwdwoMvesHVwPnzapymDBeoYaycgFvHYk1U8+6k//KJH9mqcFoMsF6w==
-X-Received: by 2002:a05:6402:1d4a:b0:5e8:bced:9ee5 with SMTP id 4fb4d7f45d1cf-5ebcd4677eemr17580314a12.18.1742989132088;
-        Wed, 26 Mar 2025 04:38:52 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfb049csm9457044a12.42.2025.03.26.04.38.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 04:38:51 -0700 (PDT)
-Message-ID: <b7a9585e-d02d-4a73-b294-ee78eade3ffa@redhat.com>
-Date: Wed, 26 Mar 2025 12:38:50 +0100
+        d=1e100.net; s=20230601; t=1742989145; x=1743593945;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fAUrsz9OdOg3wQLEmYa5D4cgvz4ST0mmGNxgNjOcyeU=;
+        b=MikVf6rTnnUcXUE/KBjXukwWT+4/bOpdldD38vk00SdKuk3BScKg//sl6Mj5Wrm8qM
+         hjFsD0bgAvcrjvLRbM3ESzx5BNGBzJg9jKDAKCFNaRgIWYbMgHddMxsXXC+OvHLFuhJR
+         gtNbC4PqFOb9CDLCjrFaXA0QOfeemgdZezVaqvc/mcC+V4uI26O9sMHiiob6CoiQPhK8
+         V4/IFHQFj5RPFkiOepV9pGsh+kkPIAoGnHZmeNzb2qm0KB3/MziJOUX1lnRlWqPLiocv
+         nV7vCsnlUBxoGKNPttoOqvEvbHyCzweU2zGiIsBYHXDoV4M/QmsEVMNk4hLW97uFkn52
+         kvow==
+X-Forwarded-Encrypted: i=1; AJvYcCVNOikZVwMzI+XfuNQrYWDqjAFlHw8uv3G4YIU/Bbn3LdhxllDpytHytTrlnb2BYT81u3Q7dSDyWT4XkY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsk4evW9fk6GGrqWF7nUFW+gAOH61XLdreGYLcRSFxX8z62aqe
+	lI5ZY89642CxNh1ovZyIRz6kV6nnhKiT1QHwG+xwV92hLnqTkq1KDxMrM3Vbwxf0DWjrKhbs/HB
+	JJ7a1XKEUE7+v49VZkG0qtG5Upw==
+X-Google-Smtp-Source: AGHT+IGHwZHepscP8ejJ/xKjHvWMmfkRYj/uDkAFERn0R3gk+2OvGbhbfX9XWEWX38kk7ftW0gGcZ4p7ZxAAjcKTqDs=
+X-Received: from wmpz15.prod.google.com ([2002:a05:600c:a0f:b0:43c:ef1f:48d8])
+ (user=sebastianene job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5021:b0:43c:ea1a:720c with SMTP id 5b1f17b1804b1-43d509f6307mr221896365e9.18.1742989144752;
+ Wed, 26 Mar 2025 04:39:04 -0700 (PDT)
+Date: Wed, 26 Mar 2025 11:38:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5] platform/x86: asus-wmi: Add quirk for ASUS Vivobook S14
-To: Kevin Robert Stravers <kevin@stravers.net>, linux-kernel@vger.kernel.org
-Cc: Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones"
- <luke@ljones.dev>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,
- "open list:ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS"
- <platform-driver-x86@vger.kernel.org>
-References: <20250326113157.2341184-1-kevin@stravers.net>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250326113157.2341184-1-kevin@stravers.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250326113901.3308804-1-sebastianene@google.com>
+Subject: [PATCH v4 0/3] KVM: arm64: Separate the hyp FF-A buffers init from
+ the host
+From: Sebastian Ene <sebastianene@google.com>
+To: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org, 
+	oliver.upton@linux.dev, sebastianene@google.com, snehalreddy@google.com, 
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com, 
+	will@kernel.org, yuzenghui@huawei.com, qperret@google.com
+Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Kevin,
+Hello,
 
-On 26-Mar-25 12:31 PM, Kevin Robert Stravers wrote:
-> The ASUS Vivobook S14 will have wifi disabled on boot as well as
-> resumption from suspend if the asus-wmi driver invokes rfkill functions.
-> 
-> This patch disables asus-wmi's rfkill usage to prevent the wifi card
-> from being software disabled.
+This moves the initialization of the hypervisor FF-A buffers
+away from the host FF-A map calling path. If the hypervisor
+cannot map the buffers with Trustzone, it rejects any FF-A call
+when it runs under protected mode. 
+Other than that it moves the definitions of the ffa_to_linux_err
+map from the arm_ffa driver to the ffa header so that the hyp code
+can make use of it.
 
-Your patch is still missing a Signed-off-by line in the commit-message.
-We can only accept patches with a Signed-off-by line in the commit-message
-like this:
+*** Changelog ***
 
-Signed-off-by: Your Real Name <email@your.domain>
+v3 -> this version:
 
-By adding this line you indicate that you are the author of the code and
-are submitting it under the existing license for the file which you are
-modifying (typically GPL-2.0) or that you have permission from the author
-to submit it under this license. See:
+- moved the definition of PARTITION_INFO_GET_RETURN_COUNT_ONLY from
+  the driver code to the arm_ffa header and dropped the definition
+  from the last patch. 
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+v2 -> v3:
 
-Please resend your patch with a valid Signed-off-by added.
+- dropped the "Map the hypervisor FF-A buffers on ffa init" patch
+- added ack & reviewed-by tags
+- don't release the ownership of the RX buffer if the flag from
+ FFA_GET_PARTITION is (1)
 
-Unrelated to the S-o-b problem I wonder if you've tried setting
-asus_nb_wmi.wapf=4 on the kernel commandline instead of adding
-a new mechanism to disable rfkill support all together, see:
+v1 -> v2:
 
-/*
- * WAPF defines the behavior of the Fn+Fx wlan key
- * The significance of values is yet to be found, but
- * most of the time:
- * Bit | Bluetooth | WLAN
- *  0  | Hardware  | Hardware
- *  1  | Hardware  | Software
- *  4  | Software  | Software
- */
-static int wapf = -1;
-module_param(wapf, uint, 0444);
-MODULE_PARM_DESC(wapf, "WAPF value");
+Split the patch that maps the ff-a buffers of ffa init and introduce
+"Move the ffa_to_linux definition to the ffa header".
 
-This would still require a quirk to do this automatically
-on your model, but it would avoid the need to add a new
-type of quirk.
+Thanks,
 
-Regards,
+Sebastian Ene (3):
+  KVM: arm64: Use the static initializer for the version lock
+  firmware: arm_ffa: Move the ffa_to_linux definition to the ffa header
+  KVM: arm64: Release the ownership of the hyp rx buffer to Trustzone
 
-Hans
+ arch/arm64/kvm/hyp/nvhe/ffa.c     | 12 +++++++-----
+ drivers/firmware/arm_ffa/driver.c | 26 --------------------------
+ include/linux/arm_ffa.h           | 27 +++++++++++++++++++++++++++
+ 3 files changed, 34 insertions(+), 31 deletions(-)
 
-> ---
->  drivers/platform/x86/asus-nb-wmi.c | 13 +++++++++++++
->  drivers/platform/x86/asus-wmi.c    |  5 +++++
->  drivers/platform/x86/asus-wmi.h    |  1 +
->  3 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-> index 3f8b2a324efd..1e6fb9308560 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -150,6 +150,10 @@ static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
->  	.ignore_key_wlan = true,
->  };
->  
-> +static struct quirk_entry quirk_asus_vivobook_s14 = {
-> +	.skip_rfkill = true,
-> +};
-> +
->  static int dmi_matched(const struct dmi_system_id *dmi)
->  {
->  	pr_info("Identified laptop model '%s'\n", dmi->ident);
-> @@ -530,6 +534,15 @@ static const struct dmi_system_id asus_quirks[] = {
->  		},
->  		.driver_data = &quirk_asus_zenbook_duo_kbd,
->  	},
-> +	{
-> +		.callback = dmi_matched,
-> +		.ident = "ASUS VivoBook S14",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "S5406SA"),
-> +		},
-> +		.driver_data = &quirk_asus_vivobook_s14,
-> +	},
->  	{},
->  };
->  
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 38ef778e8c19..42e58a28c3e2 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -2138,6 +2138,8 @@ static int asus_new_rfkill(struct asus_wmi *asus,
->  
->  static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
->  {
-> +	if (asus->driver->quirks->skip_rfkill)
-> +		return;
->  	if (asus->driver->wlan_ctrl_by_user && ashs_present())
->  		return;
->  
-> @@ -2188,6 +2190,9 @@ static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
->  
->  static int asus_wmi_rfkill_init(struct asus_wmi *asus)
->  {
-> +	if (asus->driver->quirks->skip_rfkill)
-> +		return 0;
-> +
->  	int result = 0;
->  
->  	mutex_init(&asus->hotplug_lock);
-> diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
-> index 018dfde4025e..3692de24e326 100644
-> --- a/drivers/platform/x86/asus-wmi.h
-> +++ b/drivers/platform/x86/asus-wmi.h
-> @@ -41,6 +41,7 @@ struct quirk_entry {
->  	bool wmi_ignore_fan;
->  	bool filter_i8042_e1_extended_codes;
->  	bool ignore_key_wlan;
-> +	bool skip_rfkill;
->  	enum asus_wmi_tablet_switch_mode tablet_switch_mode;
->  	int wapf;
->  	/*
+-- 
+2.49.0.395.g12beb8f557-goog
 
 
