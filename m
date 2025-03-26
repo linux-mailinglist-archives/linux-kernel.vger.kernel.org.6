@@ -1,250 +1,513 @@
-Return-Path: <linux-kernel+bounces-577636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22CDA71FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:56:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE92A71FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:56:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF863AB449
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:56:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B391C176B62
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFCC23E226;
-	Wed, 26 Mar 2025 19:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD77424C08E;
+	Wed, 26 Mar 2025 19:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="MzIUJ+U3"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020114.outbound.protection.outlook.com [52.101.191.114])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E/6UXai8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IFceABE8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01863CB;
-	Wed, 26 Mar 2025 19:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018985; cv=fail; b=IQXe2ney0VDQIhIXlC1zknKgiYZ/LGVhlVhHG+2kviQ5I+BMR9pYta1ZfiBU29EyPgPeQObxuDGAeUnF5vSdin/2/U4n8nbUbMjcBKxuclxKcf6Z8MMojW2+1imYx4X6hz1GBpYaU3SlQu1K5MF/J59MhW4Ge8JX+irliYcPYWQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018985; c=relaxed/simple;
-	bh=NHtR5AlamXQyrbab0QBRQLTwn9si89/q+PSv+sUxSnI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=t4mwidCSIeh7PhdBqcqTTt8r+A9Y/ABmNu93bGwHiUiXTjj6ild2zIGyBYnOWlvoYV6eBlBDRHuNuAfaDA/N+7j/uZIbS+BzCODOd1QfIrTu8aT1jjtJlaRaFU7bXeGmslz1MmhFVbRA4IIB6hczI4y+k6p+NkUWPrWoUwPItBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=MzIUJ+U3; arc=fail smtp.client-ip=52.101.191.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jx96z/Ldt8HsWj19PLTEDK7aHeHL0MR0jf+/79lNYdeoV0s4WwMUOnVo5+50XJ3NwVFWLbsopPWYSIi7TPwrRbwsE1Y3Te9DHHH19vOY7/6PT/IehgbGZW8qbs/b35hOTnUN3SXlAiiF3S+1Q1cn5OwNZrBifSTHl669evfSCQ6NfKj+1K8rFDe3X2xjR3OswxlXWfwjhejk8aLfIF4O/qGh0i6DSeDZ2q1f7a7xdh+fjs/M46oXogcYWnTRzOpTjXWQeo21LCy0QDQvS1OLvWGRphllR6Xgbjlph0A46IgulV2mwPSSW5pLDWXfVCb72un7KBEAE6Fye0fGUx+Cgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=btfdolz2huqbkRDWzeh+Fyv2BpAYoyTpZgwSBP1e+30=;
- b=L7uv1Di/d63GvJ/I6cfflorINZDVwcrTZNzYDkua7yW8KEEfwDeccfv2m4Jco/TXoPxVPPATNi3D5s+ZTB2ZIyFU0BlhxtSefisbl2SF7nM99P6P+CmfzLK8P0JdfK8tHWXDyqvzZesuGz7UbRffZMwHIjWwQrioQHNy+Gda8NSL5xmVIE59Qk4CUpbicBxRGGLRIsidrmAC42eqU2FT6Gd3UfBWxVD5Nrv17aCql2bCKp2iKY2hZRdpTVYcVSotMKXEkhHmwcJwWGkzPNlWCkN/DYdjyUoZMAFGf9go+cWZ4cEQSvSEYqcqkTanhPJBBl16n9Cdpgxg+i/fYaiaYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=btfdolz2huqbkRDWzeh+Fyv2BpAYoyTpZgwSBP1e+30=;
- b=MzIUJ+U3WPDqdsiUsLXmEchKSmKdkAZP3+sRZetzr6gWu6SDzNeusupWKul2+EKLTvPVpmxq9Q0rCQos7ttlr1eijotBm4OOzL/o3chqwOmQMF4T0QjpwUEw2pfObHlh6Ayca2WXzvm2J6u/VziZFP1UToIMLhUXM3aRarppKXOhM7kFwRPq4LHFUfOgeCBuHsqn1z/4gssNM4zToiK8sHq+lgKT/VYgrjuNke2kVspaeKsfY43ASmRMRSdVsf9juQZa6ppOGyl33+uZRbRwskzjvvQjqiePIfSuEf2uVX555Mxfh2/TEsKek63ejqZhijSpqXGz5cJcq2rEPfcuXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by QB1PPFFF56697F8.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c08::2af) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 19:56:19 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 19:56:19 +0000
-Message-ID: <67e2a6a1-8c9b-43d0-b960-10cd47c08873@efficios.com>
-Date: Wed, 26 Mar 2025 15:56:15 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: use per-numa-node atomics instead of percpu_counters
-To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
- Martin Liu <liumartin@google.com>, David Rientjes <rientjes@google.com>,
- Jani Nikula <jani.nikula@intel.com>, Sweet Tea Dorminy
- <sweettea@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
- Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
- paulmck <paulmck@kernel.org>
-Cc: Yu Zhao <yuzhao@google.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- Greg Thelen <gthelen@google.com>
-References: <20250325221550.396212-1-sweettea-kernel@dorminy.me>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250325221550.396212-1-sweettea-kernel@dorminy.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0371.namprd13.prod.outlook.com
- (2603:10b6:208:2c0::16) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDD11F6664
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743019012; cv=none; b=ml8i6PfFR9y833gWqWzsSX4V7m3WiLLPtPkOGwGFYXKoQD0+P7Pp84NvlROTNzwBeBQhVnoaQrISt6qeoREuiKxtF4C3uLwRGVGEKv+zKuuozv1eVJbGLY7Dky8MglQGqUh5aSQtJdzGKKZ1snTns2dDBfCb+nYt+6fBhteCSNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743019012; c=relaxed/simple;
+	bh=m03reCLvFnqQVCX01Imnr2eEvpW2q5X0O6GQmV+ax64=;
+	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=muW3hzaRH6kUUiZVfTnrQ2/b/uSLvwFWWSC7lHqIey3zOhg9sGW8u7nf8Bx6DMkhLjxvQ4lwOC2ySnH+BUHAALGkiV5K5VJ3S6suMxRh9l0QNtFyyEJDJlQBlPsEA+aaxOCKlQNXHhBJasJDbbT0hvzzRcfeUFrBCdxrgGBYhj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E/6UXai8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IFceABE8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743019008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ExHLePYOH4snhFWvF2qHldvL7sVko7NOLFHpBdqPZZ0=;
+	b=E/6UXai8Fb1xaLI0NWOmH3fccToHDFJGCTh/BhcZk4cbhMl/ZZ1DkagpRb7ryc+5mup4sQ
+	x/7uZPDaD885TS/YdwI7RgjU6DgUUO4nidkMY7KUX0cGRJTGjbmuWkjwCbiw+e/BVKwIQr
+	8YnRzP+zofDlp2JIMGbrcHmsKZ1AW3yUFU3x9r4HovcLGIUaOnsp++vGlq4N4SJELmuPju
+	Tr7RhYNB+LfvbuHpawoQMtGt3pTZg/QUkN4d25fvgVKlt2Ybf5ANCx8aoQRPQE4AH+QjkA
+	saOVdvPwTyAUbQTyb9HZuMAdIEjLWvUQ8y/6pHARjMA45wC6nnMos3RqXy8iyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743019008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ExHLePYOH4snhFWvF2qHldvL7sVko7NOLFHpBdqPZZ0=;
+	b=IFceABE8bwwMkTr7DwfC/yArXvZ81q8itenIrK5KU41l6GYSxj4uJFaAhqYFOPuzpNLbY/
+	/ITj7h4ppVRUx7DQ==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] timers/clocksource for v6.15-rc1
+Message-ID: 
+ <174301899918.1664839.7260897179786919327.tglx@xen13.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|QB1PPFFF56697F8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9eeca7c7-9794-4c45-f54a-08dd6ca0466d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QjlVV1Jla09tZlpXNFlCRVh1SFZPQkxYTXRpR2xVd3U1M0ZoNm5FS1psSU1W?=
- =?utf-8?B?N1I2ZnViS3Uyc0RVRW5xR2JRNjlqdS8wZm1xTzVGa1dvWEpKcElhQkcyRWFM?=
- =?utf-8?B?QWZBVkgwRitLNlQyQ1hqQjZiUXRSRkE3UFhsa1NKOVpqejdyUmMvT2ZJTWFJ?=
- =?utf-8?B?dHFjNjM2MDMyTExvbFNqUno4VVpOOUpoM0FnbEh2czR5SDkreUpGaXR6OEtJ?=
- =?utf-8?B?eWpaQXRRMG9QZEp3Y3k3TDMyT2toQTlJWHpXblJheFlUMmdRbWZUNURPVWFS?=
- =?utf-8?B?enI0clFjYk5yMzlJVVpKVzJCZ0lNbXhaenlpekh1Zms5dGw0RFlRWmRsNCsw?=
- =?utf-8?B?a1NBR2JVbVFNMkN2NVEvWXVsTEZOWHFuUENoMjdpYi9zZTdidmpHS1M0MHlu?=
- =?utf-8?B?em1aY1IwNldzRkRwZFNiN1F0cGdmZ3U3ZEozVUJnQm5jT3o2aElXWEZIdm9N?=
- =?utf-8?B?K3NHMkhCaHp0WUZycGljVlNDNUZaTENuQVZ2RFluOCtBTk1NMWE2SDBvZURF?=
- =?utf-8?B?OU1hNnpiazBDYW5CUnZvR0VKb21zY2I5VW1XS1VXZEtMaHBRVko1R25pQ3FK?=
- =?utf-8?B?VEVVRkx3UzM4YThHQ25nZnJrSE5ZN292Nk5XbVRpbzNnbmt5MDdwY0N1Yldy?=
- =?utf-8?B?ZW9PZGg3dzdnd2pybDN0SktyaUxDL241Q2lYMXlOUTNwbmVmMVA4cmh2NnFO?=
- =?utf-8?B?RjBKajZjWHBQT2hsSk1aUzl2bTNyU0JiVGgzTmkwVzVJTEVjRnpOd1pVa2RE?=
- =?utf-8?B?QjNqM3lSNmgrV3BWS3I5eFcxdWkyOHNBZlV3NFArRjh5V1FqZXhBN3R6bWlD?=
- =?utf-8?B?dnY0SWI0NGxxSC80Qkl2R3dXMEZ6TDVYdFRaZzBjSmFOTjE2NE1zVTF2NVVP?=
- =?utf-8?B?WWFOcmN3czBGb1dXckZ2UElEQU5yMkIvNnVESHFMM3dYMHk3SUlOU0xuMVEx?=
- =?utf-8?B?MklxL3h5M1k3bm1CcC9uU3YvMEVsSmh0VlJYWUF0ODhGbFJuQTgzZDVMOHdF?=
- =?utf-8?B?djlOQUhFT2JQTndKZythOUhHRFR1cGhRanNWdWdpQ0tnODliOUVHSXFsdGVw?=
- =?utf-8?B?VlJ5RUh4MXAwU1BEY0I4eDViZGJiZGZRUDQ3MHJCeWN1R0RBbWlEOEpmZGxm?=
- =?utf-8?B?Zjk1bk52YjgxYWN5dlpZRjMxVXBnV1hsMm50ZEU5SkZnd1g0WFFSTVpEU2or?=
- =?utf-8?B?c3N2djlwTVl2TUh1MEViSE8rbS9DQ2NPZkZNUk45dXE4NUMwVnUxMmx4d2tL?=
- =?utf-8?B?WnE5aWlscEVVZDlhaHhpOU42cHYrQlhoaXo3akMwdlYxSFFmV1pBOTQ3TDNy?=
- =?utf-8?B?N0p6SkxpY3hxT0VheXNML0p2WHdCaVlTNTdIenlNaXZVaEU5Wkh0ZnoxdGVw?=
- =?utf-8?B?bEloektRa2wyV21YcE1ZS3p1REptUWdMc2g5OVNSRFJRdEhvUk5CVjRUQ0Fp?=
- =?utf-8?B?Z2x4WnNyblVmMERBekNzUUE4SUJnUmV0dkQ4bTl2SldSaUd1L3VDT2hBNXNJ?=
- =?utf-8?B?TnNKTGJuOXozZVZNdWdTWlFIQlMyTGhuM2dKak0vVCtIM3VFdnkwRytIT0t0?=
- =?utf-8?B?S2RJVWpQVktzcWY0NjRrV0wrdGUyM3M4MXZCU2dJZThEcDZQMzNqbzV5Uldy?=
- =?utf-8?B?UmV5VW12YjlUNFowWXh0dUZXWmVUVlllVlBXaEZSMXl5cXFnU050VWM5SXlQ?=
- =?utf-8?B?d1g3NFRqU0R5bC9sbUF5aUNNbGdPSkJsdlBHTFhZblJocGpYU0F0QVFvZElT?=
- =?utf-8?B?QzhKc2M5T3kwR3kzT1p2bi8xNis5Rk0zZmZ6RE9kVld6a0dsK25kN2dJaE9h?=
- =?utf-8?B?SHRhTStNK0F4TU04d0VLckxjYk5QdVpkckVFNjBvMWZGSFUyZ25YWE4wZldj?=
- =?utf-8?Q?hPMi1CdSUCnhs?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K3ppZWMxbERQRDF0MkZjK0xHYmJOamFGbUdlQXJRWkxuSkQ2TTM1c2RtN1pI?=
- =?utf-8?B?Z3I4bzhNTlFLa2RDMTR6Q2c5ZWNidmloWnpmYnpySFdsL2NOVCs2TDdIczl3?=
- =?utf-8?B?WnZXaG0vN0VtaVFjOERCanptQ0VHVThIaGxEL2h6d3Y3bXZmM1J3M05Sc0ZO?=
- =?utf-8?B?YVpMbEJqL0p5a2h1SXlSYjIvdE1pUCs4OWVReWhwbHE5VXU4VzFmdTZUdmFx?=
- =?utf-8?B?UmVHTkZ1Mm9VV3pZd2FwSDNxVUhTbWJuVGcydzlsNm1UVzNmeW5MQWdtbnd0?=
- =?utf-8?B?Zjg0MkIxa3V4SXA0cjJoS1lqdWtyY25veGxCem9pdy9TMXZYcngyTE1HUFBn?=
- =?utf-8?B?V1F2S3BRbzlGMnRWNFdIWlF1RnBySHdCWmRUQjFVOHRNdFZoVWJoUmI0dUFI?=
- =?utf-8?B?RFJXbTBZczlMelBzVFkwN2IyS3ZDTFU0ZDRFNXl0NG84SG5KSDFseGRiSHBS?=
- =?utf-8?B?L2JOZ2U5M25EWG1oTjBpZTVBa2c3Vm9kZmFOOSt0dUxzNGhpTWptSVg3ZnFx?=
- =?utf-8?B?V0h0Z01ENmVXR3NHMnFxWVk5ZWdTTjIwWEtXK2tMSVN1dXV4L2VuaDc0ZzR6?=
- =?utf-8?B?T2FIazRGMDFPenpUL2t2OEl5cVFUQWl5dUx3ZS9MMWlOcnZBQXU5MUZQa3lZ?=
- =?utf-8?B?ZmZUaENBR2QxMVBtOHZXRzNFQ1lSbXZGSjhMWFFhYmR6QlprK2pmOFhOMHhF?=
- =?utf-8?B?OVV2OEpGcVBqUHFteGR1Q2pVaXNEUWI1aWg2SUx6UldOWjZQNW9KNytjZGMv?=
- =?utf-8?B?T1RrcXRrM01tRWRMZWpkNHd0K1pKRnlQS0c0Wm9BcWJUdCtocU9sem0rVnhC?=
- =?utf-8?B?cjZjdWlmamFLUnM5Y2JDTVpHampaVXZFUWZIczVCeUFOUzZxdzRyRHpQQnp6?=
- =?utf-8?B?UWxwSHZBOHVYSkl2c29sZHhnSUhyWEpONTNVQTZvWnRZaVpZd1FEUVJlSlJa?=
- =?utf-8?B?WEFkak1vVmFZK3Robk9zSWhZd2d4RmhVMlczSUI4S3l6Ykdmd2hOZys0NW82?=
- =?utf-8?B?SXlraHZGNUZqYmVxeWttUlg1L29yTGhNVGYvUUpiTVlGeTJpSDJXU3pLWS9H?=
- =?utf-8?B?Tmt1dkZlSTZOb0pNTXdMQzNXSWlDNGJwQitUczZQaExnWEpFWEtXTnZJNG92?=
- =?utf-8?B?SHplQXc2SE93aU5NS25BekZJcmZ4ZVp6Uk9TZEM0MWo5a3FPRFR5eEdPcFND?=
- =?utf-8?B?eHBHVVF3SXFwU2g4WmJVMWdlRGh2Z0VCN2V2S2ROU3dzaEpQdFFFNCtnZEJn?=
- =?utf-8?B?NnhFVEpCWEZJb3QzbERZUVdOVmw3aGZGWk4rK05sU0NIM0VtckJla2VHMC95?=
- =?utf-8?B?bXMvWng4UnRLdVloTVFqZnNIcVlxRmlNNDVjVnZLRUZ2TXA2RGlmSmNJa1lX?=
- =?utf-8?B?d1dLVWNNZlh4UmlNMnZLNFVOSjd3QklmNkVXNGY3eGJCRUZDYlRZeHdsRG1H?=
- =?utf-8?B?aXNLMU9EMzFMWDBWUFF2NWp4T1pFcDNwNHRTVnI4OGtnMTh0MnA4QTVZOHNM?=
- =?utf-8?B?VmVFWFltYmJkNGttNEJ6b25qa2E3REJ2MjNqNFErM2NGZWk1UGlnZGE0dUFO?=
- =?utf-8?B?T0lTM1dMalNmVi9MOXBpcnNvTHpoY0xNaTYrZGZsYVdla3lQMkxMT1FPUXlD?=
- =?utf-8?B?M0YxRVNFRjRWaUhlWjNvZ1o0eHpvRGxIb05CVzlkeEcvT0V6cGVTNVVpYnds?=
- =?utf-8?B?dU5zbGo0UXRoaklVazc2SVNkbzZnNjg3VCs4SjR5UmZBS0xqYjBwbWZxbnRK?=
- =?utf-8?B?SVZJOFM0eEZRQ2pjaE9wcnFoRW9xY0Jpb0U1dVhrNnVBS0gwanM5OGRSRzl4?=
- =?utf-8?B?WFYyUk14bzZnb1lQalhiS1lmdnJGTDRHTUpiaUJiSWs4aVl0b1pFbEJYaVNR?=
- =?utf-8?B?M2JUZm1IWXk2VFBsUHZYUERWb1lBUVNFVUhmTnJ2Y0JremRkaTU0WHNoT1Vp?=
- =?utf-8?B?U2JrV0lzd1dyb0V0NHVWd3FCZDBQMGJiUVdXS3J5NW5qazMwbSs2UXV2cjNM?=
- =?utf-8?B?RldYSExBbytsQ1dKb0ZGVlNtbDZrY1dGMVBIOGVpZzJ0dEkwRmV5ZzdLdUpi?=
- =?utf-8?B?d3haaS9yckxzUlJEZEdwdUt5RWovVFd0YitJQTRueUFuaTFDbC9DOXFLKzBj?=
- =?utf-8?B?YmhwZ0RENFdRTjFiN05vdFd5M0dyME1yZzJnMzBxQzFwUUtkOHl3Z2NMcmN1?=
- =?utf-8?B?VkE9PQ==?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eeca7c7-9794-4c45-f54a-08dd6ca0466d
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 19:56:19.2021
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vULFCyeplCHMP6Q1IEgsyek8N9cLZQtgjGFUTwvzagZrMbQC+yG+JaxLEmpJXgYyD5RbpanZTs4u/dANx2gkj/EUpjeYghFrlvN5+FOmzvU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: QB1PPFFF56697F8
+Date: Wed, 26 Mar 2025 20:56:48 +0100 (CET)
 
-On 2025-03-25 18:15, Sweet Tea Dorminy wrote:
-> From: Sweet Tea Dorminy <sweettea@google.com>
-> 
-> Recently, several internal services had an RSS usage regression as part of a
-> kernel upgrade. Previously, they were on a pre-6.2 kernel and were able to
-> read RSS statistics in a backup watchdog process to monitor and decide if
-> they'd overrun their memory budget. Now, however, a representative service
-> with five threads, expected to use about a hundred MB of memory, on a 250-cpu
-> machine had memory usage tens of megabytes different from the expected amount
-> -- this constituted a significant percentage of inaccuracy, causing the
-> watchdog to act.
-> 
+Linus,
 
-I suspect the culprit sits here:
+please pull the latest timers/clocksource branch from:
 
-int percpu_counter_batch __read_mostly = 32;
-EXPORT_SYMBOL(percpu_counter_batch);
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-clocksour=
+ce-2025-03-26
 
-static int compute_batch_value(unsigned int cpu)
-{
-         int nr = num_online_cpus();
+up to:  abfa6d6fe2e9: Merge tag 'timers-v6.15-rc1' of https://git.linaro.org/=
+people/daniel.lezcano/linux into timers/clocksource
 
-         percpu_counter_batch = max(32, nr*2);
-         return 0;
-}
 
-So correct me if I'm wrong, but in this case the worse-case
-inaccuracy for a 256 cpu machine would be
-"+/- percpu_counter_batch" within each percpu counter,
-thus globally:
+Updates for clocksource/event drivers:
 
-+/- (256 * 2) * 256, or 131072 pages, meaning an inaccuracy
-of +/- 512MB with 4kB pages. This is quite significant.
+  - Add support for suspend/resume in the STM32 LP-Timer driver with a
+    follow up fix, which uses the proper method to setup the timer as a
+    optional wakeup source instead of trying to force it as mandatory
+    wakeup source.
 
-So I understand that the batch size is scaled up as the
-number of CPUs increases to minimize contention on the
-percpu_counter lock. Unfortunately, as the number of CPUs
-increases, the inaccuracy increases with the square of the
-number of cpus.
+  - The usual device tree updates to enable new SoC models in existing
+    drivers.
 
-Have you tried decreasing this percpu_counter_batch value on
-larger machines to see if it helps ?
+  - Trivial spelling, style and indentation fixes
 
 Thanks,
 
-Mathieu
+	tglx
 
-[...]
+------------------>
+Alexandre Torgue (1):
+      clocksource/drivers/stm32-lptimer: Use wakeup capable instead of init w=
+akeup
 
-> 
-> base-commit: b0cb56cbbdb4754918c28d6d7c294d56e28a3dd5
-> prerequisite-patch-id: b7b47d1b9aa3fd887dd718ab276581f120e516e6
+Anindya Sundar Gayen (1):
+      clocksource/drivers/exynos_mct: Fixed a spelling error
 
-[...][ cutting the gazillions prerequisite-patch-id, please review you use
-   of tooling when preparing/sending patches. ]
+Fabrice Gasnier (1):
+      clocksource/drivers/stm32-lptimer: Add support for suspend / resume
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Igor Belwon (1):
+      dt-bindings: timer: exynos4210-mct: Add samsung,exynos990-mct compatible
+
+Ivaylo Ivanov (1):
+      dt-bindings: timer: exynos4210-mct: add samsung,exynos2200-mct-peris co=
+mpatible
+
+Krzysztof Kozlowski (1):
+      dt-bindings: timer: Correct indentation and style in DTS example
+
+Nick Hu (1):
+      dt-bindings: timer: Add SiFive CLINT2
+
+
+ .../devicetree/bindings/timer/arm,twd-timer.yaml   |  6 +--
+ .../devicetree/bindings/timer/renesas,cmt.yaml     | 44 +++++++++++---------=
+--
+ .../devicetree/bindings/timer/renesas,em-sti.yaml  | 10 ++---
+ .../devicetree/bindings/timer/renesas,mtu2.yaml    | 14 +++----
+ .../devicetree/bindings/timer/renesas,ostm.yaml    | 10 ++---
+ .../devicetree/bindings/timer/renesas,tmu.yaml     | 22 +++++------
+ .../devicetree/bindings/timer/renesas,tpu.yaml     |  8 ++--
+ .../bindings/timer/samsung,exynos4210-mct.yaml     |  4 ++
+ .../devicetree/bindings/timer/sifive,clint.yaml    | 24 +++++++++++-
+ drivers/clocksource/exynos_mct.c                   |  2 +-
+ drivers/clocksource/timer-stm32-lp.c               | 36 +++++++++++++++---
+ 11 files changed, 115 insertions(+), 65 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/timer/arm,twd-timer.yaml b/Doc=
+umentation/devicetree/bindings/timer/arm,twd-timer.yaml
+index 5684df6448ef..eb1127352c7b 100644
+--- a/Documentation/devicetree/bindings/timer/arm,twd-timer.yaml
++++ b/Documentation/devicetree/bindings/timer/arm,twd-timer.yaml
+@@ -50,7 +50,7 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+=20
+     timer@2c000600 {
+-            compatible =3D "arm,arm11mp-twd-timer";
+-            reg =3D <0x2c000600 0x20>;
+-            interrupts =3D <GIC_PPI 13 0xf01>;
++        compatible =3D "arm,arm11mp-twd-timer";
++        reg =3D <0x2c000600 0x20>;
++        interrupts =3D <GIC_PPI 13 0xf01>;
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.yaml b/Docum=
+entation/devicetree/bindings/timer/renesas,cmt.yaml
+index 5e09c04da30e..260b05f213e6 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.yaml
+@@ -178,29 +178,29 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     #include <dt-bindings/power/r8a7790-sysc.h>
+     cmt0: timer@ffca0000 {
+-            compatible =3D "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
+-            reg =3D <0xffca0000 0x1004>;
+-            interrupts =3D <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+-            clocks =3D <&cpg CPG_MOD 124>;
+-            clock-names =3D "fck";
+-            power-domains =3D <&sysc R8A7790_PD_ALWAYS_ON>;
+-            resets =3D <&cpg 124>;
++        compatible =3D "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
++        reg =3D <0xffca0000 0x1004>;
++        interrupts =3D <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++        clocks =3D <&cpg CPG_MOD 124>;
++        clock-names =3D "fck";
++        power-domains =3D <&sysc R8A7790_PD_ALWAYS_ON>;
++        resets =3D <&cpg 124>;
+     };
+=20
+     cmt1: timer@e6130000 {
+-            compatible =3D "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
+-            reg =3D <0xe6130000 0x1004>;
+-            interrupts =3D <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+-            clocks =3D <&cpg CPG_MOD 329>;
+-            clock-names =3D "fck";
+-            power-domains =3D <&sysc R8A7790_PD_ALWAYS_ON>;
+-            resets =3D <&cpg 329>;
++        compatible =3D "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
++        reg =3D <0xe6130000 0x1004>;
++        interrupts =3D <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++        clocks =3D <&cpg CPG_MOD 329>;
++        clock-names =3D "fck";
++        power-domains =3D <&sysc R8A7790_PD_ALWAYS_ON>;
++        resets =3D <&cpg 329>;
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,em-sti.yaml b/Do=
+cumentation/devicetree/bindings/timer/renesas,em-sti.yaml
+index 233d74d5402c..a7385d865bca 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,em-sti.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,em-sti.yaml
+@@ -38,9 +38,9 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     timer@e0180000 {
+-            compatible =3D "renesas,em-sti";
+-            reg =3D <0xe0180000 0x54>;
+-            interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
+-            clocks =3D <&sti_sclk>;
+-            clock-names =3D "sclk";
++        compatible =3D "renesas,em-sti";
++        reg =3D <0xe0180000 0x54>;
++        interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
++        clocks =3D <&sti_sclk>;
++        clock-names =3D "sclk";
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,mtu2.yaml b/Docu=
+mentation/devicetree/bindings/timer/renesas,mtu2.yaml
+index 15d8dddf4ae9..e56c12f03f72 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,mtu2.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,mtu2.yaml
+@@ -66,11 +66,11 @@ examples:
+     #include <dt-bindings/clock/r7s72100-clock.h>
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     mtu2: timer@fcff0000 {
+-            compatible =3D "renesas,mtu2-r7s72100", "renesas,mtu2";
+-            reg =3D <0xfcff0000 0x400>;
+-            interrupts =3D <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-            interrupt-names =3D "tgi0a";
+-            clocks =3D <&mstp3_clks R7S72100_CLK_MTU2>;
+-            clock-names =3D "fck";
+-            power-domains =3D <&cpg_clocks>;
++        compatible =3D "renesas,mtu2-r7s72100", "renesas,mtu2";
++        reg =3D <0xfcff0000 0x400>;
++        interrupts =3D <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names =3D "tgi0a";
++        clocks =3D <&mstp3_clks R7S72100_CLK_MTU2>;
++        clock-names =3D "fck";
++        power-domains =3D <&cpg_clocks>;
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml b/Docu=
+mentation/devicetree/bindings/timer/renesas,ostm.yaml
+index e8c642166462..9ba858f094ab 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+@@ -71,9 +71,9 @@ examples:
+     #include <dt-bindings/clock/r7s72100-clock.h>
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     ostm0: timer@fcfec000 {
+-            compatible =3D "renesas,r7s72100-ostm", "renesas,ostm";
+-            reg =3D <0xfcfec000 0x30>;
+-            interrupts =3D <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
+-            clocks =3D <&mstp5_clks R7S72100_CLK_OSTM0>;
+-            power-domains =3D <&cpg_clocks>;
++        compatible =3D "renesas,r7s72100-ostm", "renesas,ostm";
++        reg =3D <0xfcfec000 0x30>;
++        interrupts =3D <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
++        clocks =3D <&mstp5_clks R7S72100_CLK_OSTM0>;
++        power-domains =3D <&cpg_clocks>;
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml b/Docum=
+entation/devicetree/bindings/timer/renesas,tmu.yaml
+index 75b0e7c70b62..b1229595acfb 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
+@@ -122,15 +122,15 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     #include <dt-bindings/power/r8a7779-sysc.h>
+     tmu0: timer@ffd80000 {
+-            compatible =3D "renesas,tmu-r8a7779", "renesas,tmu";
+-            reg =3D <0xffd80000 0x30>;
+-            interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
+-                         <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+-            interrupt-names =3D "tuni0", "tuni1", "tuni2", "ticpi2";
+-            clocks =3D <&mstp0_clks R8A7779_CLK_TMU0>;
+-            clock-names =3D "fck";
+-            power-domains =3D <&sysc R8A7779_PD_ALWAYS_ON>;
+-            #renesas,channels =3D <3>;
++        compatible =3D "renesas,tmu-r8a7779", "renesas,tmu";
++        reg =3D <0xffd80000 0x30>;
++        interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names =3D "tuni0", "tuni1", "tuni2", "ticpi2";
++        clocks =3D <&mstp0_clks R8A7779_CLK_TMU0>;
++        clock-names =3D "fck";
++        power-domains =3D <&sysc R8A7779_PD_ALWAYS_ON>;
++        #renesas,channels =3D <3>;
+     };
+diff --git a/Documentation/devicetree/bindings/timer/renesas,tpu.yaml b/Docum=
+entation/devicetree/bindings/timer/renesas,tpu.yaml
+index 01554dff23d8..7a473b302775 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,tpu.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,tpu.yaml
+@@ -49,8 +49,8 @@ additionalProperties: false
+ examples:
+   - |
+     tpu: tpu@ffffe0 {
+-            compatible =3D "renesas,tpu";
+-            reg =3D <0xffffe0 16>, <0xfffff0 12>;
+-            clocks =3D <&pclk>;
+-            clock-names =3D "fck";
++        compatible =3D "renesas,tpu";
++        reg =3D <0xffffe0 16>, <0xfffff0 12>;
++        clocks =3D <&pclk>;
++        clock-names =3D "fck";
+     };
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.y=
+aml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+index 02d1c355808e..10578f544581 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -27,6 +27,7 @@ properties:
+           - enum:
+               - axis,artpec8-mct
+               - google,gs101-mct
++              - samsung,exynos2200-mct-peris
+               - samsung,exynos3250-mct
+               - samsung,exynos5250-mct
+               - samsung,exynos5260-mct
+@@ -34,6 +35,7 @@ properties:
+               - samsung,exynos5433-mct
+               - samsung,exynos850-mct
+               - samsung,exynos8895-mct
++              - samsung,exynos990-mct
+               - tesla,fsd-mct
+           - const: samsung,exynos4210-mct
+=20
+@@ -130,11 +132,13 @@ allOf:
+             enum:
+               - axis,artpec8-mct
+               - google,gs101-mct
++              - samsung,exynos2200-mct-peris
+               - samsung,exynos5260-mct
+               - samsung,exynos5420-mct
+               - samsung,exynos5433-mct
+               - samsung,exynos850-mct
+               - samsung,exynos8895-mct
++              - samsung,exynos990-mct
+     then:
+       properties:
+         interrupts:
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Docu=
+mentation/devicetree/bindings/timer/sifive,clint.yaml
+index 76d83aea4e2b..653e2e0ca878 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -36,6 +36,12 @@ properties:
+               - starfive,jh7110-clint   # StarFive JH7110
+               - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
++      - items:
++          - {}
++          - const: sifive,clint2        # SiFive CLINT v2 IP block
++        description:
++          SiFive CLINT v2 is the HRT that supports the Zicntr. The control o=
+f sifive,clint2
++          differs from that of sifive,clint0, making them incompatible.
+       - items:
+           - enum:
+               - allwinner,sun20i-d1-clint
+@@ -62,6 +68,22 @@ properties:
+     minItems: 1
+     maxItems: 4095
+=20
++  sifive,fine-ctr-bits:
++    maximum: 15
++    description: The width in bits of the fine counter.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: sifive,clint2
++then:
++  required:
++    - sifive,fine-ctr-bits
++else:
++  properties:
++    sifive,fine-ctr-bits: false
++
+ additionalProperties: false
+=20
+ required:
+@@ -77,6 +99,6 @@ examples:
+                             <&cpu2intc 3>, <&cpu2intc 7>,
+                             <&cpu3intc 3>, <&cpu3intc 7>,
+                             <&cpu4intc 3>, <&cpu4intc 7>;
+-       reg =3D <0x2000000 0x10000>;
++      reg =3D <0x2000000 0x10000>;
+     };
+ ...
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mc=
+t.c
+index e6a02e351d77..da09f467a6bb 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -238,7 +238,7 @@ static cycles_t exynos4_read_current_timer(void)
+ static int __init exynos4_clocksource_init(bool frc_shared)
+ {
+ 	/*
+-	 * When the frc is shared, the main processer should have already
++	 * When the frc is shared, the main processor should have already
+ 	 * turned it on and we shouldn't be writing to TCON.
+ 	 */
+ 	if (frc_shared)
+diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer=
+-stm32-lp.c
+index a4c95161cb22..928da2f6de69 100644
+--- a/drivers/clocksource/timer-stm32-lp.c
++++ b/drivers/clocksource/timer-stm32-lp.c
+@@ -24,7 +24,9 @@ struct stm32_lp_private {
+ 	struct regmap *reg;
+ 	struct clock_event_device clkevt;
+ 	unsigned long period;
++	u32 psc;
+ 	struct device *dev;
++	struct clk *clk;
+ };
+=20
+ static struct stm32_lp_private*
+@@ -120,6 +122,27 @@ static void stm32_clkevent_lp_set_prescaler(struct stm32=
+_lp_private *priv,
+ 	/* Adjust rate and period given the prescaler value */
+ 	*rate =3D DIV_ROUND_CLOSEST(*rate, (1 << i));
+ 	priv->period =3D DIV_ROUND_UP(*rate, HZ);
++	priv->psc =3D i;
++}
++
++static void stm32_clkevent_lp_suspend(struct clock_event_device *clkevt)
++{
++	struct stm32_lp_private *priv =3D to_priv(clkevt);
++
++	stm32_clkevent_lp_shutdown(clkevt);
++
++	/* balance clk_prepare_enable() from the probe */
++	clk_disable_unprepare(priv->clk);
++}
++
++static void stm32_clkevent_lp_resume(struct clock_event_device *clkevt)
++{
++	struct stm32_lp_private *priv =3D to_priv(clkevt);
++
++	clk_prepare_enable(priv->clk);
++
++	/* restore prescaler */
++	regmap_write(priv->reg, STM32_LPTIM_CFGR, priv->psc << CFGR_PSC_OFFSET);
+ }
+=20
+ static void stm32_clkevent_lp_init(struct stm32_lp_private *priv,
+@@ -134,6 +157,8 @@ static void stm32_clkevent_lp_init(struct stm32_lp_privat=
+e *priv,
+ 	priv->clkevt.set_state_oneshot =3D stm32_clkevent_lp_set_oneshot;
+ 	priv->clkevt.set_next_event =3D stm32_clkevent_lp_set_next_event;
+ 	priv->clkevt.rating =3D STM32_LP_RATING;
++	priv->clkevt.suspend =3D stm32_clkevent_lp_suspend;
++	priv->clkevt.resume =3D stm32_clkevent_lp_resume;
+=20
+ 	clockevents_config_and_register(&priv->clkevt, rate, 0x1,
+ 					STM32_LPTIM_MAX_ARR);
+@@ -151,11 +176,12 @@ static int stm32_clkevent_lp_probe(struct platform_devi=
+ce *pdev)
+ 		return -ENOMEM;
+=20
+ 	priv->reg =3D ddata->regmap;
+-	ret =3D clk_prepare_enable(ddata->clk);
++	priv->clk =3D ddata->clk;
++	ret =3D clk_prepare_enable(priv->clk);
+ 	if (ret)
+ 		return -EINVAL;
+=20
+-	rate =3D clk_get_rate(ddata->clk);
++	rate =3D clk_get_rate(priv->clk);
+ 	if (!rate) {
+ 		ret =3D -EINVAL;
+ 		goto out_clk_disable;
+@@ -168,9 +194,7 @@ static int stm32_clkevent_lp_probe(struct platform_device=
+ *pdev)
+ 	}
+=20
+ 	if (of_property_read_bool(pdev->dev.parent->of_node, "wakeup-source")) {
+-		ret =3D device_init_wakeup(&pdev->dev, true);
+-		if (ret)
+-			goto out_clk_disable;
++		device_set_wakeup_capable(&pdev->dev, true);
+=20
+ 		ret =3D dev_pm_set_wake_irq(&pdev->dev, irq);
+ 		if (ret)
+@@ -191,7 +215,7 @@ static int stm32_clkevent_lp_probe(struct platform_device=
+ *pdev)
+ 	return 0;
+=20
+ out_clk_disable:
+-	clk_disable_unprepare(ddata->clk);
++	clk_disable_unprepare(priv->clk);
+ 	return ret;
+ }
+=20
+
 
