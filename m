@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-576984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EEFA716FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:57:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC07A71701
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05887A3188
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A85189B04C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4391E51EC;
-	Wed, 26 Mar 2025 12:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2331E25F7;
+	Wed, 26 Mar 2025 12:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="WjfcLfDt"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TySHglpC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655BA1DE2A1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280DC1E505
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742993811; cv=none; b=inKd3SIyCY14FEaqdBGjqdbkOx/cgQQWplfPy1Fa20xgsbIrhSARVnruGYKXktx+y9NKCKrV57kVdIeMskN81Fp9RykKYUcpm3FBodPXVn37xGbOtKWoLv4fKwOjosRO3c9JrhrOiqNclBt16P/d4Pmw0zK71muPrfI1LsB8DNg=
+	t=1742993873; cv=none; b=hFLimu3MD83g/t1MfcHvLGtBLTqxGcX5te+QEsbHX2boUOvwt2h+0rya6lIQvAMQhTHZzwtXI6BASA34ikzhQ8gd3GcGiCN88W97t6TipXvxqA0ICdcFwfRhkl2USGU5hJJ1NkFvKGTBTHWTPfkAprmoVdZb+PJB1LlpNCHj06w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742993811; c=relaxed/simple;
-	bh=xvdRNCWSoMb4LFMgO8nhLmxtocYZrWldrhUAbUspffI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kPvSlEt8ZZap/Sv7WEcQw0ekEWrGhlHf5nz9QmMo353beWno4OFkoCOvx/LSG4rK5ffXuCTivuibWLGxRA9gV2Es9aHeOXvl6sK+PsSutsUqoGmOSw4EZNcRD9weqKBm15Lcos5Fabn+WbbRK7pkdWGwLNug4TOtGRK0LVAjLyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=WjfcLfDt; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3018e2d042bso8262209a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 05:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1742993809; x=1743598609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dRQTudAEXM13GUB8NKDUowp/QnTU6FFua+8YuPXk7Rs=;
-        b=WjfcLfDthWyohLKliE5IJApO0G4dYpBvNwIlZUDZx+Zh1w14DPLUfCZVSeapDnUfj0
-         Z9M9Cish/3QTFlkIGtiOJU/Q3tGGT5m2ODDVOlyWo2bDnV1IzCZe0zz23Fx6gzUiFQIq
-         wRSEbursI2uvzdrU6QrBryyjVKTsQANZf5Uyhdg9bMimckPmF5c9SS+00BhxluwX5Ad9
-         TNzMLLXMOL05m5xwk3uBMs3vLUumLW7hZhNwe0oGV6NehT7M/6gAHvKLmicN01P9wAKo
-         IA2VBYATDTrOgqUM0kDuAAXl7KvMFEzDgxvl8mir3xxapsd8Fvj4iMIvh/ILT0Koymdt
-         knZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742993809; x=1743598609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dRQTudAEXM13GUB8NKDUowp/QnTU6FFua+8YuPXk7Rs=;
-        b=xOlhpBslppdx1sLy4n3Tx1ofAvAspuJbUmlRRxhFgFTEL+EOKv8AtbxkWWq4dGbnUh
-         x69EEDseaspUxBqel4BfvdNRBqbAA2CqLT+1FzPZRRc6BCGohEqFI7rxKzzI8iL4Hlc2
-         7eYFz0OZF8HU/owLt6Suivl2jaFuVf7p9mKfsCuLPRkFOQaYS//KG7TgDKmH9NvqeFri
-         NvJEl/sXKJWQVUP4gGmaRJTyZc2pM7/jyT5QmP2hOWvuN4h0HuqwVJiofln8C9IAdBCt
-         YrHquu7PQy7gYGAQJ0JwNyGPq/GWLZiajkWlYElMWwuKdMNLKOkFLlLHnN+1kNL+exHg
-         7kAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXP1JRw3EpGtRFRNzk7hG96P3bapBJlgSnrA83O8T2PtW/ySjYoMv3hAv+6OjEwfWWcTFuAEn8+9p++HM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBsLgj4O82y0ZFu6EXeKHePdZSR+PBmFFVsv5EjN3cuvA0TStC
-	fnEgqCBD3X2UPuWTWqtxjh97K94BisXlzkn6TH78+q5+UBNfR8cFuqqBEBsctxpBQaoE2sHW00G
-	4x7WXkbXDiL3HRCwSMKll7vA8yT66QxXZLnUDIg==
-X-Gm-Gg: ASbGncvSjL2Zrwr4ORKJyLZEdKNsw8869QFL3JBg0x2Q3GeLOO4PfFKHtZWFs0D7xHF
-	8sqEMoljeVWO5A8xtLw191aTE7yXxbHrncTxtKLYQPgGfiGaMPxvtepWq//a01iNXuzbh4Uajyf
-	hTAaaXbOI9Wi8bvo1BJDFXVbypJw==
-X-Google-Smtp-Source: AGHT+IEHnIi6oFcX3sSPTlCWyPe5+ORCR0E86AOeljuBB1GhwoNwr9EkT7VwDALSkS463AkNJD21fbYSqSYAoxTdCy0=
-X-Received: by 2002:a17:90b:554e:b0:2fa:228d:5af2 with SMTP id
- 98e67ed59e1d1-3030fea0d35mr35976364a91.15.1742993809451; Wed, 26 Mar 2025
- 05:56:49 -0700 (PDT)
+	s=arc-20240116; t=1742993873; c=relaxed/simple;
+	bh=fMfWkXzrzG6b2b7FJDG+sP3cB3Nluk75FDYwaksyX+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rLyjFOHKKJLSC2OQs6oSsiiaCG60L0SiwSllFAwi8RDCLoUul0mCc7y4bFznpXQS8ip/fSIWjZrqxstqO+07OcuBX3eBYqBoyBS7RzhUhrCW6s/95lCSC96fzMOaOqYJfManvUts7r8fgXazCVqma72INs6cVg6G4HkSqbau2SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TySHglpC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q2aajM027823;
+	Wed, 26 Mar 2025 12:57:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fUL5kU
+	Pao1qlI7NeuB9QYIUz5zCNvVxpyyXsrRJII9Y=; b=TySHglpCKSBIrbNycBRkN4
+	km/yaMOZC3MMbPWk/XTrelgWH8JGyYuGuzDjh55XgwilEThBoM4fzaSr0RMQxNxz
+	GWC8Xv4V4bh2DIR40qQU3/i3Rh5O8KJwIvtL1+LVUwdKP3BbobLx+64jtS6oeLnd
+	hGRBmljCs1FI2bwKCn8wTf6W3BaVLnEcJYPdYHa1klX7fR4kHtHdYaTCtli4Lvpy
+	BxzRr3JilXj4PbMOCyQAvlmDFNA14PUS3nxRlFUL4F1bhmRl3Y8PvX+60CSo7mDM
+	RkbaDmqeYvcqs0QXznJuX8eQkEKJX8dXgVLzrw6eKs2Qtgtb5p9lccvQ0+HloI2g
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx2wrm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 12:57:37 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q9QV96030321;
+	Wed, 26 Mar 2025 12:57:25 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htgk5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 12:57:25 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QCvNSc42533140
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 12:57:23 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 632FB20043;
+	Wed, 26 Mar 2025 12:57:23 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 114AF20040;
+	Wed, 26 Mar 2025 12:57:21 +0000 (GMT)
+Received: from [9.124.217.36] (unknown [9.124.217.36])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 12:57:20 +0000 (GMT)
+Message-ID: <4d0059f1-d834-44d5-bc57-7425980f5a97@linux.ibm.com>
+Date: Wed, 26 Mar 2025 18:27:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325122149.058346343@linuxfoundation.org>
-In-Reply-To: <20250325122149.058346343@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Wed, 26 Mar 2025 21:56:32 +0900
-X-Gm-Features: AQ5f1JoR9ImdCw0Rs5T9hQLB-tj_Cg1W61XlOGDrmHp1wfzXHUlPxH1S6OVVqCA
-Message-ID: <CAKL4bV66BuvB=-qkecDrkRw9AwOxv7pF6CGz_pLX28DQ+Dgdfg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 20/21] futex: Implement FUTEX2_NUMA
+To: Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <20250312151634.2183278-21-bigeasy@linutronix.de>
+ <fc3a6902-a845-4b11-ace8-514f10194288@linux.ibm.com>
+ <20250325225600.GP36322@noisy.programming.kicks-ass.net>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250325225600.GP36322@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: i7wHBrpXkj4opd2FgNFTB970h7W7bhkx
+X-Proofpoint-ORIG-GUID: i7wHBrpXkj4opd2FgNFTB970h7W7bhkx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=524 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260079
 
-Hi Greg
 
-On Tue, Mar 25, 2025 at 10:13=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.9 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.9-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-6.13.9-rc1 tested.
+On 3/26/25 04:26, Peter Zijlstra wrote:
+> On Wed, Mar 26, 2025 at 01:22:19AM +0530, Shrikanth Hegde wrote:
+> 
+>>> +	return &futex_queues[node][hash & futex_hashmask];
+> 
+>                              ^^^^^^^
+> 
+>>> +	hashsize = 256 * num_possible_cpus();
+>>> +	hashsize /= num_possible_nodes();
+>>
+>> Wouldn't it be better to use num_online_nodes? each node may get a bigger
+>> hash bucket which means less collision no?
+> 
+> No. There are two problems with num_online_nodes, and both are evident
+> above.
+> 
+> Consider the case of a sparse set.
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
-
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
-
-[    0.000000] Linux version 6.13.9-rc1rv-g3d21aad34dfa
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
-Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Wed Mar 26 21:01:17 JST 2025
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+I am sorry, i didn't understand. Could you please explain?
 
