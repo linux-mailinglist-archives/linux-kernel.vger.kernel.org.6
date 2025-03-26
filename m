@@ -1,77 +1,90 @@
-Return-Path: <linux-kernel+bounces-576759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7272CA71414
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:49:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423AEA71416
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA50171940
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571CD3B3A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D7217A2EF;
-	Wed, 26 Mar 2025 09:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB971A7262;
+	Wed, 26 Mar 2025 09:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fndLlXfR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Os6QRL5+"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852F2157A48;
-	Wed, 26 Mar 2025 09:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6BB189919
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982542; cv=none; b=ckyFocqrPGKD63HTEajX4r6m/+j8exPB4hOMf1l3afwJGRTKl9zYw81XVXgWZkm2JCCjsNF5aDL4qRrHjUyzShLEKtoXJp7lw2RqUAKWZmRxazBCtwdgbR4+ZT2m8O1ihT7+q6UMEPYZ27r/1IREYSTD/5583FiJmuiuEiXCF4w=
+	t=1742982556; cv=none; b=e8R1SsjNJCIvrKJrgnrrDcV45Yn8a8ai6OKTCssRDjZMTKgOIXD/BaOZPybPZU9Byl0EGkYoeZSmpWQ4OTD5PeZQ9KZL62NRSEpgnX0AV8js9dIjWpo2FjwWt73GYJ7afqG4iELyQxmd4GtO4cbBfOxJ01762Mn/lFg4jBSKbOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982542; c=relaxed/simple;
-	bh=iTmKVXNVrbXmkoY13hcoVf2uIStc1QDurP/RRq9AHYs=;
+	s=arc-20240116; t=1742982556; c=relaxed/simple;
+	bh=blgLyvcFFzX3lL2NYcAaYVnF+2egtRAqz36Nl4gpGqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ET49v21futqekhJtmgDOoJrSSXwUqK+YNYOtZ0y9zeI2PLTuEMOV2jo2fmTu47NurVyYaYk3yo137hJjlZJrScpiWKsJ8z1EwXBlK7GhepfhGN2duY8FrQOdoSBGdV13qnMoHLaP0xAbGRuszQuD4SatnAidsflAUbHoGREIqtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fndLlXfR; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742982541; x=1774518541;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iTmKVXNVrbXmkoY13hcoVf2uIStc1QDurP/RRq9AHYs=;
-  b=fndLlXfRXxLVn/OTetBX1uFL+DShV9rsCcuG2xUtJGvOnh3KP4VA9a8M
-   2V6xfZ0k9deTrOVc7nwc1/GGW/9nd3FtV5YccdBVLaHeXi3LzzCdZ1Jia
-   uTlM1xaTsiXPdBsBz7ee+3jvVLtnqy3adHJ6nBabbxNQgcL1A6uvbz/2b
-   2/EGnHAH6y4Z3r4Ez/pTceY/vTwqqxYCRDsVZlJ+w9L98oFe5au+igJgg
-   mwPOlo0Ti9loLN0SUUyNOpLjrQWoaDfyYZ1z+nlMl/Dt1+h8gR6JxlcjB
-   WfvohxIgk+BiYQJDGbipmJpinxpnSKiEduP0yVKwqJwmH3Hrejownx5Ke
-   w==;
-X-CSE-ConnectionGUID: tkC0kEdKRrOWiu+axYGblw==
-X-CSE-MsgGUID: IvZhKJNGRQmgTxkyVtoiPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="66717803"
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="66717803"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 02:49:00 -0700
-X-CSE-ConnectionGUID: xVWDOTWSSmm7Zbir545NcA==
-X-CSE-MsgGUID: x02ymUKXTLCQ55lKwv7TNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="125227193"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 02:48:59 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1txNNY-000000061zb-1DJo;
-	Wed, 26 Mar 2025 11:48:56 +0200
-Date: Wed, 26 Mar 2025 11:48:56 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v1 0/4] Input: Increase size of phys in the drivers
-Message-ID: <Z-PNiLByle1-9dib@smile.fi.intel.com>
-References: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
- <Z8bulFaTKJ06YLrL@smile.fi.intel.com>
- <Z8f63ImfQMB-Wp5R@google.com>
- <Z8giINd3FySw44UO@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFAvHOv8JFngSUC2cdD8AafdOFP2Ji3xZKzcShIDGyFqNjSqaCosUzY2UYnrCN3dhfysZgC5rSpL9NgMy1koFnmmZkAKpfR3+fUCslYAGghyD8Gmcx6olijFv+SS5lle+UNWrv+LlpY1CTSueFqrKmNXH7beAYSXFPVipng6Ksg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Os6QRL5+; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso44584935e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742982552; x=1743587352; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMf8LZah20pBW0IGNKJCh7GjeqLh0QSKun39aHvg0gk=;
+        b=Os6QRL5+gdIuPCGaNWS4H+v4ko4JUHImORsYKgMf/LG+q+UXaleWXEe9Er2HEnAfv/
+         pUM9JRKnDQLZGOf8zpFU3M8if7gPeTy1fxOFqlfAGz/S2Dkgyh5U4Q311UFFcBtBToMK
+         YquaEi0nRNJI+e3uHSFsOMgk9oGgkIxZiXeGoScbDZOF060Sat7zlx01sLL5XEDlqkGY
+         Wg5d6zULGnBb/9HMWkL+RsOBlC8QSJcbeSuWCiCTSamnS1QJrOJ+IauMqXVNxLQADfM7
+         6vjD51SzaPMEL+B+MqRnOgSql2gPhOo/ggD3wkB9IeoYJ368PO2A2WjwZp0g4RoaEk5p
+         52ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742982552; x=1743587352;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AMf8LZah20pBW0IGNKJCh7GjeqLh0QSKun39aHvg0gk=;
+        b=vfwdhqfEpCUUUvmvzKytytySSsyrhLTnDWVcjBbKYX4dAp8yU46FhyyJlMoItldUir
+         44Cl6yHye7znsz+t6ig4WmTdwrZyP0NkTYGjSpe15VKmi95vOpo1UNWZEV74l648TIeH
+         inOX9V8MkuObACwP9Jzdk1wwuGBN3/gDEkDZUHj80rruDZ3ybW5e0yVNXmk4J0uDhpR0
+         2VbMktoAL/sxXeLqew9gGWt4l9iiIR46hsp6NIHURrgaGBmR1sN6ZmJ0WxssdA12uKky
+         PkGGQFLHPPAcSpPBelFTCUz/FDXg1+SwRtAFbttMkfXyXMS3l+rNwgiBy6ydYUZH0YGL
+         UXWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSte68fePeNGQWFKXzlv1Ix3ckQ3YhOL92Y3Sq8WapzQbfPK1aLeAQgSQbvQeDXoiCuqVQvmcnCsPHchc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfKSUfh1w2ouhNGWnaF7J1aUZ+wWwbHwKcRR7J2zeJP3IB2gVR
+	BMOjagjauBwS3+ssopfQGuQ2oWTHDGghwG/4lFJ1yOLgOnmyeIzIudYUr/Mbhfc=
+X-Gm-Gg: ASbGncsAMjSrGbyiyaTzSLNSnAShPBIzbKwBZNkzFKPuRamIwLimOaMdebEVmzBkP3y
+	RXTfbo5llHgOq/jQgchipKd0YNcS5FPr57zmGGEVHSH/3qeyOPZfbEFLol6buA8Qy1w1qgxZKH/
+	PRaCG+TfxBBOvpxes4vo6np49Q7MXvdpX/MQfK+5eDUKIs+nlDalQibTo9Y85gd1NMV7kaYlOsk
+	bJ9R053QpYkp2lw3aZlGEXmjS4vmx0eU05+24GnVOhXDybvxgrFmWF1YLH5QjFDhnkCy4dIUlep
+	XjWszkpPn/XgyVYkoYk6YmLFqBbjP8ay7T9Uf3/DmMy6WxQ6Nl4NcTUSpA==
+X-Google-Smtp-Source: AGHT+IGRViDMKK6wKXb6OhyBa/rHykXthCXSj7KFfLD1Z+8vJvxSt4VQhKgttI4B1gO+tM6LXwgGbw==
+X-Received: by 2002:a05:600c:1d81:b0:43d:10a:1b90 with SMTP id 5b1f17b1804b1-43d509f8691mr195871375e9.16.1742982552228;
+        Wed, 26 Mar 2025 02:49:12 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd27b59sm176543075e9.23.2025.03.26.02.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 02:49:11 -0700 (PDT)
+Date: Wed, 26 Mar 2025 10:49:10 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
+	jikos@kernel.org, mbenes@suse.cz, joe.lawrence@redhat.com,
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
+ live-patching
+Message-ID: <Z-PNll7fJQzCDH35@pathway.suse.cz>
+References: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,54 +93,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8giINd3FySw44UO@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
 
-On Wed, Mar 05, 2025 at 12:06:25PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 04, 2025 at 11:18:52PM -0800, Dmitry Torokhov wrote:
-> > On Tue, Mar 04, 2025 at 02:14:12PM +0200, Andy Shevchenko wrote:
-> > > On Fri, Feb 28, 2025 at 02:07:43PM +0200, Andy Shevchenko wrote:
-> > > > The drivers are using local member of 32 bytes to hold up to 40 (one-byte)
-> > > > characters. GCC complains on that. This series fixes the issue in the affected
-> > > > input drivers. Note, this is currently the biggest part of the warnings that
-> > > > are being treated as errors with the default configurations on x86. With this
-> > > > being applied we become quite close to enable CONFIG_WERROR=y (which is default
-> > > > and basically reverted) in CIs. Clang, OTOH, has currently no issues with that.
-> > > 
-> > > Would be nice to have a comment on this rather sooner as this impacts
-> > > the compilation by `make W=1` with WERROR=y (which is default).
-> > 
-> > I do not like the change.
+On Mon 2025-03-24 14:49:09, Peter Zijlstra wrote:
 > 
-> Independently on your opinion in this case GCC is correct.
-> We are trying to squeeze up to 40 bytes into 32-byte storage.
-> I.o.w. GCC can't prove that and reader of the code can't prove
-> that either.
+> With the goal of deprecating / removing VOLUNTARY preempt, live-patch
+> needs to stop relying on cond_resched() to make forward progress.
 > 
-> > There are no bugs, only GCC being paranoid.
-> 
-> I'm not so sure. But probably it works because the user space is parsing full
-> "inputX" string in the names
-> 
-> > Are there any other ways to shut it up? In [1] Jeff says that switching
-> > to scnprintf() shuts GCC up...
-> 
-> I do not like this, because it's just a hiding the problem and not solving it.
-> At some point GCC may start issuing warning on those cases as well when it
-> realizes the above. If you like that solution, please fix in that way. We have
-> 4 drivers break the compilation currently.
+> Instead, rely on schedule() with TASK_FREEZABLE set. Just like
+> live-patching, the freezer needs to be able to stop tasks in a safe /
+> known state.
 
-Actually looking closer, the better fix (and which I'm not against) is to check
-for returned value of snprintf() and act accordingly. What do you think?
-
-> > [1] https://lore.kernel.org/r/Z3rIvp0hzS+yzvJA@nixie71
+> Compile tested only.
 > 
-> So, consider this series as a bug report that prevents compilation.
-> I would expect somebody to fix this rather sooner than later.
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  include/linux/livepatch_sched.h | 15 +++++--------
+>  include/linux/sched.h           |  6 -----
+>  kernel/livepatch/transition.c   | 30 ++++++-------------------
+>  kernel/sched/core.c             | 50 +++++++----------------------------------
+>  4 files changed, 21 insertions(+), 80 deletions(-)
+> 
+> diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
+> index 013794fb5da0..7e8171226dd7 100644
+> --- a/include/linux/livepatch_sched.h
+> +++ b/include/linux/livepatch_sched.h
+> @@ -3,27 +3,24 @@
+>  #define _LINUX_LIVEPATCH_SCHED_H_
+>  
+>  #include <linux/jump_label.h>
+> -#include <linux/static_call_types.h>
+> +#include <linux/sched.h>
+> +
+>  
+>  #ifdef CONFIG_LIVEPATCH
+>  
+>  void __klp_sched_try_switch(void);
+>  
+> -#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+> -
+>  DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+>  
+> -static __always_inline void klp_sched_try_switch(void)
+> +static __always_inline void klp_sched_try_switch(struct task_struct *curr)
+>  {
+> -	if (static_branch_unlikely(&klp_sched_try_switch_key))
+> +	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
+> +	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
+>  		__klp_sched_try_switch();
+>  }
 
--- 
-With Best Regards,
-Andy Shevchenko
+Do we really need to check the TASK_FREEZABLE state, please?
 
+My understanding is that TASK_FREEZABLE is set when kernel kthreads go into
+a "freezable" sleep, e.g. wait_event_freezable().
 
+But __klp_sched_try_switch() should be safe when the task is not
+running and the stack is reliable. IMHO, it should be safe anytime
+it is being scheduled out.
+
+Note that wait_event_freezable() is a good location. It is usually called in
+the main loop of the kthread where the stack is small. So that the chance
+that it is not running a livepatched function is higher than on
+another random schedulable location.
+
+But we actually wanted to have it in cond_resched() because
+it might take a long time to reach the main loop, and sleep there.
+
+Best Regards,
+Petr
 
