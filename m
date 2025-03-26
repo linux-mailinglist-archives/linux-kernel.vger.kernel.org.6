@@ -1,155 +1,86 @@
-Return-Path: <linux-kernel+bounces-576456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13641A70F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:39:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA9FA70FA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 04:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3B2179486
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276EC3B9A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1A161321;
-	Wed, 26 Mar 2025 03:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE3145B25;
+	Wed, 26 Mar 2025 03:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mz6fdK0n"
-Received: from out199-18.us.a.mail.aliyun.com (out199-18.us.a.mail.aliyun.com [47.90.199.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbZmNViN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B1114B96E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 03:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03310E4;
+	Wed, 26 Mar 2025 03:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742960326; cv=none; b=FxbvAHswRl7n7Cn7zHsLSTFy2TtRnWlGAEU6XA1xIH50JvIUZGskjgpC+rxN3KciuaEQpPhSeTrAFwmKk56kgbIJ/y3nYYZvnBeGsUP+ZM/B18XRro4qpWUdHe+80GOmrrOyi1bSS+Wte5/lAHtDf6zD3SnwqrB3StGYvn/db5c=
+	t=1742960866; cv=none; b=PONRSmXqBX6PIn5VY3EcJ+VLK5AfhQDAAfLqlnHTNaETeNrdyolVqlRsGuGUCbNB872U90QhOvhbJhFPoSh1Z+lbEvSUy52qxoa4D7ILQO2064bBv5kug54Hqm/6NzN8+CTDYO4meo0BW+Wh/Lex5TmPGWLbQHwLrZ2ftYM0teE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742960326; c=relaxed/simple;
-	bh=kzuBG+mctN9JNDwceI3PhK/fkfhKbsz2BUjJMajn7ew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ODjrqhvGOJFduxW3WMDTeTVpPDfj6whad69tS11WGJW+aCCtPipjpDVUi21rKYCNTJl1oUOXltv5Af0+kk71Nn/WKtkvn8vcQmDg4KHw6qzfeO7tDqeM5mg+pMmzudy6PTkHSUOwjLJAob7ZJRQt/dyrGlrAKlrMk9LOv7xaCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mz6fdK0n; arc=none smtp.client-ip=47.90.199.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742960304; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=5NwoAahKKVIW1jwVHjfRD7hDZG4CMMysDy/7TbSbzCE=;
-	b=mz6fdK0n95h+NiUBpVWdTyhVY16F6o1CJAgKqSbaVRiSrqXLg8LNHIv2fVHQa+k7accuCfN5sxOMotAnJQLLYugr54kgBklCjmCqWq4XHXt1GN3Iyf6pWACy12g6HHekujqMzW9a9cK0vdm35TDnzVZAXWc4zrIoVj7i2tQf3CE=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WT1p3x3_1742960303 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 26 Mar 2025 11:38:24 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1742960866; c=relaxed/simple;
+	bh=bYXS2SsX/Qi2gSv2wWb1FHs98/UR/lhfVEIgUK70Scw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Miezrr+5VJhMW2neW/C4KdN2UBEkO/Bayp5NgwJKy/S4xt3ncO+kqOb/3F0nEKF9n78zSNZZaC25bA3MkkpK214FjvqpBAWuyhgvxap0DANDnSAFGicauY0APzsA0KHcq9gCn2xV1QNVad1JmBK/AcDH4YJNAGOpQRxV2y+Rz7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbZmNViN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433C9C4CEE2;
+	Wed, 26 Mar 2025 03:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742960866;
+	bh=bYXS2SsX/Qi2gSv2wWb1FHs98/UR/lhfVEIgUK70Scw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nbZmNViNSaeDldYLoMtg6puSuGB8XRZJuZOaotC6DrFrEcGt8+NgPrqr7L57ALNIh
+	 siTD5bPIdv3l/wPCfUQ//c/DW4Xl3lnAU793oMQV0TpPfeT8TM//QBmuJCVRUWA246
+	 KxjFrrOydPctMiqAJyKUtMC+U4BzyQAGqqZFVsaIRG7I9+eE905tR1O0a+d3oWJAGh
+	 306sAM2cm94t+6+x5S8yCHrvZALSWQ1sCpCBOHAwolLsY8RzZolfWWMdYWBR+cxYuU
+	 Q0AD9+cT0nGqZNzV+4au+QGwXE19tkcQS5s6O+ZkDx2I9iCdBH81TMiwuB3kp/XCD6
+	 d7nk7XuoWRMRQ==
+Date: Tue, 25 Mar 2025 23:47:43 -0400
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Xinyu Zhang <xizhang@purestorage.com>,
+	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process large folios
-Date: Wed, 26 Mar 2025 11:38:11 +0800
-Message-ID: <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
-References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v3 0/3] nvme_map_user_request() cleanup
+Message-ID: <Z-N439fyHEyweXq0@kbusch-mbp>
+References: <20250324200540.910962-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324200540.910962-1-csander@purestorage.com>
 
-When I tested the mincore() syscall, I observed that it takes longer with
-64K mTHP enabled on my Arm64 server. The reason is the mincore_pte_range()
-still checks each PTE individually, even when the PTEs are contiguous,
-which is not efficient.
+On Mon, Mar 24, 2025 at 02:05:37PM -0600, Caleb Sander Mateos wrote:
+> The first commit removes a WARN_ON_ONCE() checking userspace values.
+> The last 2 move code out of nvme_map_user_request() that belongs better
+> in its callers, and move the fixed buffer import before going async.
+> As discussed in [1], this allows an NVMe passthru operation submitted at
+> the same time as a ublk zero-copy buffer unregister operation to succeed
+> even if the initial issue goes async. This can improve performance of
+> userspace applications submitting the operations together like this with
+> a slow fallback path on failure. This is an alternate approach to [2],
+> which moved the fixed buffer import to the io_uring layer.
+> 
+> There will likely be conflicts with the parameter cleanup series Keith
+> posted last month in [3].
+> 
+> The series is based on block/for-6.15/io_uring, with commit 00817f0f1c45
+> ("nvme-ioctl: fix leaked requests on mapping error") cherry-picked.
 
-Thus we can use folio_pte_batch() to get the batch number of the present
-contiguous PTEs, which can improve the performance. I tested the mincore()
-syscall with 1G anonymous memory populated with 64K mTHP, and observed an
-obvious performance improvement:
-
-w/o patch		w/ patch		changes
-6022us			1115us			+81%
-
-Moreover, I also tested mincore() with disabling mTHP/THP, and did not
-see any obvious regression.
-
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/mincore.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
-
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 832f29f46767..88be180b5550 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -21,6 +21,7 @@
- 
- #include <linux/uaccess.h>
- #include "swap.h"
-+#include "internal.h"
- 
- static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
- 			unsigned long end, struct mm_walk *walk)
-@@ -105,6 +106,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pte_t *ptep;
- 	unsigned char *vec = walk->private;
- 	int nr = (end - addr) >> PAGE_SHIFT;
-+	int step, i;
- 
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
-@@ -118,16 +120,31 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 		walk->action = ACTION_AGAIN;
- 		return 0;
- 	}
--	for (; addr != end; ptep++, addr += PAGE_SIZE) {
-+	for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
- 		pte_t pte = ptep_get(ptep);
- 
-+		step = 1;
- 		/* We need to do cache lookup too for pte markers */
- 		if (pte_none_mostly(pte))
- 			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
- 						 vma, vec);
--		else if (pte_present(pte))
--			*vec = 1;
--		else { /* pte is a swap entry */
-+		else if (pte_present(pte)) {
-+			if (pte_batch_hint(ptep, pte) > 1) {
-+				struct folio *folio = vm_normal_folio(vma, addr, pte);
-+
-+				if (folio && folio_test_large(folio)) {
-+					const fpb_t fpb_flags = FPB_IGNORE_DIRTY |
-+								FPB_IGNORE_SOFT_DIRTY;
-+					int max_nr = (end - addr) / PAGE_SIZE;
-+
-+					step = folio_pte_batch(folio, addr, ptep, pte,
-+							max_nr, fpb_flags, NULL, NULL, NULL);
-+				}
-+			}
-+
-+			for (i = 0; i < step; i++)
-+				vec[i] = 1;
-+		} else { /* pte is a swap entry */
- 			swp_entry_t entry = pte_to_swp_entry(pte);
- 
- 			if (non_swap_entry(entry)) {
-@@ -146,7 +163,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- #endif
- 			}
- 		}
--		vec++;
-+		vec += step;
- 	}
- 	pte_unmap_unlock(ptep - 1, ptl);
- out:
--- 
-2.43.5
-
+Thanks, I've queued these up internally for 6.15; the next nvme pull
+request will need to rebase once the upstream branches sync with the
+existing outstanding pulls, so this series will be included in the next
+one for this merge window after that happens.
 
