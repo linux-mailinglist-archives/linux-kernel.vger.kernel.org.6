@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-576840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475F2A71504
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:39:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5065A71509
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B3417423B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:39:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352013B6375
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9981C84C9;
-	Wed, 26 Mar 2025 10:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C15A1B6D08;
+	Wed, 26 Mar 2025 10:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J5BQnGxL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jKoNWX/3"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928F41B424A;
-	Wed, 26 Mar 2025 10:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390151C6FF5;
+	Wed, 26 Mar 2025 10:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742985567; cv=none; b=QFQOYESphpRfrYokrKyqf5m7+3Ghy5Eaj+1JgG3ar0xKUH/JokyY/irJszVnqIE1N2LZLWppkidlXh1ya9jE92dQnK3JCX7/qOeFXvsO7gmaG6Y+kyEZjAKkXMaIB4vuY684gGUj6JtSE4olw6E4xGLtgeeTNS2GjhcoMEix1XQ=
+	t=1742985609; cv=none; b=gCIX7EyxWPwNdJKapZNLMQc5RlcLMKFAX0XkQf9053Aux1o2IbeA2WRgUZaemQr3r96lgLc06WPXipHphhYCw6Xb6TdW48HpqoYDUMpNNQm/tRTpe2X/kg0trDAlik0rwqi4gY4crMpTR/xEaczsKUf33eTTAqJY5F8OP06x5og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742985567; c=relaxed/simple;
-	bh=jzGCBkutBgzfiA+VlgU2fbb9z16gst/HAke89+6OrwA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BuBj82+cE0qcOuvL+zgznFqWPYuPisJ85ljlJJ6sZyV+yZsydeJI8BCZTHJlIFRQ//OdDYKPWilE9SjBuPkTlNQQMWgGGBZTVTXDNO/Q8MUQInN4kv5LNGmGcefaXxgeVxuRWcIZGJtaSS/8aPXTSIw0cGagSalA3wxIUb9AGb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J5BQnGxL; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742985566; x=1774521566;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jzGCBkutBgzfiA+VlgU2fbb9z16gst/HAke89+6OrwA=;
-  b=J5BQnGxLvpZXYXzxcSin+RHftXe9JR8PqMa4cUduh3FGdV1Bo6XeWJQB
-   au1XkPJLrYPLtz7QKUorNKM1u4fjtEo8n6cVa0unKGGwuvvo3DcEkwnnY
-   BDLp5Gc2c3eIrwAYQzWyKvTcBde6kVO8oboyPlI19Ro55XzlZHWMZXB8a
-   KXIOgIZUTgu1R/J+dIO8U7YJ4N/5uHG5T0EOScVNc8f9gAUwW+vutQ9VO
-   pdDQn8Rnc0RP87pv7Rsl2sDLHqE7+itPUmfLt5PDex57toRdC/ZMCvt9c
-   8t8ETrPU9jLHZaJPftrQVhWIrHV9VeiVw85Eqt7aL1qQEaQ4Y5s6FgM5Y
-   A==;
-X-CSE-ConnectionGUID: g9ny3ka3SNm450JQR0ZL2A==
-X-CSE-MsgGUID: +Hn+qYKwQoyj9NszBVoYeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44144992"
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="44144992"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:39:24 -0700
-X-CSE-ConnectionGUID: 8tQtKnKxS7yJ/BafNRrroA==
-X-CSE-MsgGUID: R2XbqdYXSyS3ofmm/GBCqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="124896092"
-Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.210])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:39:18 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Lyude Paul <lyude@redhat.com>, Maxime Ripard <mripard@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno
- Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "open
- list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/2] drm/edid: Use unsigned int in drm_add_modes_noedid()
-In-Reply-To: <20250325212823.669459-2-lyude@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250325212823.669459-1-lyude@redhat.com>
- <20250325212823.669459-2-lyude@redhat.com>
-Date: Wed, 26 Mar 2025 12:39:15 +0200
-Message-ID: <87wmcc6ppo.fsf@intel.com>
+	s=arc-20240116; t=1742985609; c=relaxed/simple;
+	bh=RYG3GvKpPm0CCjt7UlMCORi74Y9C4BgsN1oxmH9nSXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GtwOKCNay/3CPMaEewLFZT/X/P6+giIL4tObeY4QIgQLLDlq4GJw+XqE89u031T7Dhl1su28dvP63e/de5YQ/BNwWWUFgLPFtv6LQlizS8Lv//iNjkRaahIjSGTJIfDzUYIoPrLy2pPtw8jY/24E53KhPZ0KWehj1ZcZeFWzK6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jKoNWX/3; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZN3Fs0mb1zm0yQB;
+	Wed, 26 Mar 2025 10:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742985599; x=1745577600; bh=u+WrZRiDxBHkaSi9rgxzaHuw
+	fSAuRnMVMR5t3aCZTWA=; b=jKoNWX/33oTD9bFaDCMkQEr5ARI18RCAybsb3n3A
+	8oI3SQeA3aXTaax3AaSSVyh54Gh4F9ae0c/zJ47b+wNvNNLYa5PoeLeadsQUnCqD
+	Sw6uQdV6eiiZwT6xN0GzVPqefWME1d8lLSydlGYjsfGdzcpjMNllPdDYKUy5wIdp
+	qFiX4i9MZDvR2Y1i5uUJ+8Is1Hdue9rovDgVm8CZncSBD0SZZ4ectC0xUx8Guubq
+	Efn0rwXN61sa9RAkF0tSxsnZlCxm74PXY/anfYiiggkdb1JMRUoNuGEBGlxPt+ZI
+	/wg0WKJE7UaddB68Efo6ztlW8HIPEwQmrGKFx/mxPnuUag==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id SdE-fRP6IFbp; Wed, 26 Mar 2025 10:39:59 +0000 (UTC)
+Received: from [172.22.32.156] (unknown [99.209.85.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZN3Fg6WY5zm1Hbr;
+	Wed, 26 Mar 2025 10:39:50 +0000 (UTC)
+Message-ID: <e5c5ea82-2103-4616-8bcf-e21be5952f4c@acm.org>
+Date: Wed, 26 Mar 2025 06:39:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ufs: qcom: Add quirks for Samsung UFS devices
+To: MANISH PANDEY <quic_mapa@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+ quic_bhaskarv@quicinc.com, quic_rampraka@quicinc.com, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com
+References: <20250325083857.23653-1-quic_mapa@quicinc.com>
+ <c0691392-1523-4863-a722-d4f4640e4e28@acm.org>
+ <33c03e94-5e8b-44cf-be32-fb571ca73a17@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <33c03e94-5e8b-44cf-be32-fb571ca73a17@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025, Lyude Paul <lyude@redhat.com> wrote:
-> A negative resolution doesn't really make any sense, no one goes into a TV
-> store and says "Hello sir, I would like a negative 4K TV please", that
-> would make everyone look at you funny.
+On 3/26/25 5:53 AM, MANISH PANDEY wrote:
+> The QUIRK_PA_HIBER8TIME may also be necessary for other SoC vendors host 
+> controllers. For instance, the ufs-exynos.c file implements a similar 
+> approach in the fsd_ufs_post_link() function:
+> 
+> ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A7), max_rx_hibern8_time_cap + 1);
+> 
+> https://lore.kernel.org/lkml/001101d874c1$3d850eb0$b88f2c10$@samsung.com/
+> 
+> Should we consider moving the QUIRK_PA_HIBER8TIME quirk to the ufshcd 
+> driver? Please advise.
 
-That is largely the point, though. You know something fishy is going on
-when you have a negative resolution. Nobody blinks an eye when you ask
-for 4294963K telly, but it's still just as bonkers as that negative 4K.
+That would be appreciated.
 
-I think the change at hand is fine, but please let's not pretend using
-unsigned somehow protects us from negative numbers.
+Thanks,
 
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel
+Bart.
 
