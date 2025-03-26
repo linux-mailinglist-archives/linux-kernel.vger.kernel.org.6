@@ -1,142 +1,296 @@
-Return-Path: <linux-kernel+bounces-577584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884E6A71F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:28:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0D7A71F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48BB7A35ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7E53ACEBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEEA253B68;
-	Wed, 26 Mar 2025 19:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5350C253347;
+	Wed, 26 Mar 2025 19:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="MonWK9k/"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXf0FDmd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0661253340;
-	Wed, 26 Mar 2025 19:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743017293; cv=none; b=Vyv+yj/tXgTqihm4S8U+qplUwl891VWQiXR7XYk+z8um9vKwnCpYN/vjj83RltFrOaGJhO6P9JIfU3Q7DTQPiJkJAwRwK3xYVy78ftr980yAby/SHg48pOx3YhHBngNIP58SP816bAmA7XgyzkSTNM/j1kaKupfAN25FzZCOKWw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743017293; c=relaxed/simple;
-	bh=qPuud6hQtUOpq0TI0kySy61SAsgR3IbvzwnPgGwUfOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dT0FCIuvbuhmPZeuKmps9O8xr47fpIR0eTPJW2BrXCYsXXaQ+/3+iHjTRa6TlLvvELslE5uPMeGqaW70535n8W3hS/ki8sf5Pq1S7VSQ6ihK1jGNDhdgBY4IRcfjkujDH61r7VOVaPegcdhD6ANHLSO7izTM6Me8QFh2Yvka3XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=MonWK9k/; arc=none smtp.client-ip=217.72.192.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1743017282; x=1743622082; i=christian@heusel.eu;
-	bh=cC0SZP7Q4aEIS3+NUzVkYwY2u4HQnTUh3X+v+jKFAgQ=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MonWK9k/1PAumiE9Z2jZeDQa10q4Am54K5UXjqinvtCWYGuo1Vzx2fCMKGIwitoS
-	 HWCPM2oS1xpeVSpyBUElzSuH76oEVXdCgka0YdrHfYBkZTfRrK9uyFM4XD7w4xTFY
-	 qg2Sqn/mZ0bYETN5TnUYmacl3eUPrxEUQPiDOVQmM/EGOGeejWe00Q99E1jt9BjGL
-	 FFgqG0vnez/0BwCpTqYqXlCwDi9rgar3SPvB1RP2RelFn1l/RzpFLefjo6Kz/fVjl
-	 aZK6DI8gnX+ZFx0Uk1+hhnecJBTlET4f9qViblTKfjDBJEpZbXr2lZ8xeFTfUFyWP
-	 w0PKFl3rgfgI1q67Fg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([80.187.64.202]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M8xsm-1u1M4k3Nqw-00Fyj0; Wed, 26 Mar 2025 20:21:36 +0100
-Date: Wed, 26 Mar 2025 20:21:34 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
-Message-ID: <f2b079f7-d666-48c1-bfc9-0155dcc9b4a5@heusel.eu>
-References: <20250325122149.058346343@linuxfoundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9F2250C12
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743017012; cv=fail; b=bJ88aMIlen9OezS6aeWKjJBqYlJtIJLkdTjXe+A9E8o19jURyIcYVoBmCm/rB+yom70VyxC22fdBd6+7cBoc4PIMne26EQ9MFPRb8g98cPY/ylfUsZHBz1qOwvGAZl0WZaKtcctpKqPG4m2PedNPlX/ZGmmOawvB2T/tKw7YUk8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743017012; c=relaxed/simple;
+	bh=nNmb1LTcQOZ2ZhENk4o6cdnSOK0+OhXkkDNLft4pZlQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bYqySO925UF2AyvriP5c1BGutRBEu+mvabBKXODSNfTaBNKwpX1jUkRjOibO95pu71PJ+s/bc51rBvCocdmobG3Bc515ZztvnBw/1vqIkhyNJVRG4/FN+HfxTjJQF0kzXclzmepuAx0+ni1AhK5nFC0dkep9NZRYC4tMR7M+Dns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXf0FDmd; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743017010; x=1774553010;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=nNmb1LTcQOZ2ZhENk4o6cdnSOK0+OhXkkDNLft4pZlQ=;
+  b=QXf0FDmdkmJX1mcLJvkGEK9RflIT4iR+L+kDYAny5ETAsZmrnP4MmsCs
+   2Av36mKJfjEXMlv/Ci+ab3oTf5FvxSJZT/AWM4duG+fmQy2rcPb79uYzQ
+   49yQMMogeRVymWHAS4FQhMo5nhRZAljFMOI6vDLFrYb+UlIiDXnPYH1Jc
+   szjoLeSUtYvxRqVCBYhGwBohKzQ0Si5meDazoXnyI/RjvMjEfJFQYuJv8
+   uLzKn4ZoTRAxeV1TCb7Q4uHg9xvzOZDKnU1BWctg6yppxg0sEFi6nhuxI
+   uXkcI0A4z1ySeu0JumDY4zobDm+v9RuWcDPc/RZ5oQmABuUrztyz8lPGR
+   Q==;
+X-CSE-ConnectionGUID: mVDWax5ASD6w50eHp/DduA==
+X-CSE-MsgGUID: BgeFCY2ERRqAetEHA484Gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="69690569"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="69690569"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 12:23:29 -0700
+X-CSE-ConnectionGUID: ht41HiuUTnWntNx3JRu1eg==
+X-CSE-MsgGUID: osnlNbebRk2jlV4/pHMWxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="125095218"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 12:23:28 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 26 Mar 2025 12:23:27 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 26 Mar 2025 12:23:27 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 26 Mar 2025 12:23:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q04b8FqzWczRWsVJaDqWPrwa/o6p34QcA7nMvoChjsp8PCdKlVb1q9nt8Sz4qIANWb5X2VT44qLeQJF2ay5Gzg3fhgTWkIO+VjqySZ4QmWlj8CsXZu3WlaGYnQrFX0rW2/fJDhjOx2rLAvOqwyfBUQBzjXa6vXLEqCmQg7eBYhg+VXD5AgCZ5YrvjTKJInZ8th85/rW2pyTOiluWlihqVhOaB5ABsJPo+NrQ0baQa2AJc3DtJq4JVSd8rzOHld58qjQSRYZ5G7P+kDVmYnatK90oAaOpkV8T5jPFYl4oX6ApT/M7xqrUXvpdFYSJxdCGtRm0oWyQgkyhqQzcJ8V7cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lU6RnGoiUD27mmrtV9zA+Oe9e493R/Hqsou66q7Q3r8=;
+ b=MKeODorj8DodK/L3kuiu2Dqh1/0Ph/xARRq7ympaasQ8QyLVC2G3LgElborNHXmNFmUGJiwygJJ5WLZhccKXT9OysV3xwBTP03a5YzBtibot9topM7DAvk83b1pjz4NBoYulLPZNa4KLY7xYsnZYOJqNrCJGQ+712kIhkIV7PE5PpZpKGMXdEpSPM9ZrIa415Jp2bhtusV9llINHQq/A0ST2nf5ul/sNPh6NPPHEalGjsEzvFluXpOK3b4qqhgSRIykOQx1e8dBsjNiqEi03k4UVV8ybLw9aYMaSGFd8mnbWhUB13C/G52qWEiQd7GG+VV3xXRK3idtLkD64dImn1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
+ by PH0PR11MB7660.namprd11.prod.outlook.com (2603:10b6:510:26f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 19:23:07 +0000
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563%4]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
+ 19:23:06 +0000
+Date: Wed, 26 Mar 2025 15:22:57 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+CC: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?iso-8859-1?Q?Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, Karthik Poosa <karthik.poosa@intel.com>, "Reuven
+ Abliyev" <reuven.abliyev@intel.com>, Oren Weil <oren.jer.weil@intel.com>,
+	<linux-mtd@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
+	<intel-gfx@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 00/12] mtd: add driver for Intel discrete graphics
+Message-ID: <Z-RUEVrst6WWzDUa@intel.com>
+References: <20250326152623.3897204-1-alexander.usyskin@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250326152623.3897204-1-alexander.usyskin@intel.com>
+X-ClientProxiedBy: MW4PR04CA0333.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::8) To CYYPR11MB8430.namprd11.prod.outlook.com
+ (2603:10b6:930:c6::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qrugcju3lf3vwyjc"
-Content-Disposition: inline
-In-Reply-To: <20250325122149.058346343@linuxfoundation.org>
-X-Provags-ID: V03:K1:HpQe7Dut4b0aICmrtZlF2dG1x9jQ8/S/5haSr79leaLIkettg+9
- eI2bfciN7c2GW7ds+YwYouBbaS/4jGgagQSwKGuTCyBtF1+AwGxQDNW36oIlWDcA70uJwI9
- WFypvTi22lwsD9heSsYU01BRQfOE1e5MxVFrSwSK4hh0RbJCQIiMIuWt6t/SalEWdLOq56O
- Q5+3RdYZI+4VOvPuRNRXA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:W9n4chH9dQc=;Bn0KuvoPImKhPVdunsFnOE9+VmO
- UdaXA3sqHyXooaKge5snmAF6QxJaM4WuKYhWMBfI8HSHnphghQSttiY8Szh6n+KWabMPQMGt5
- 7MjdbAztV8N2fWGuCSI/EOHpdpO/NThekqcHT1jlb5Ks95/iI+td8wKoOgTk/eOukVVpL4UCy
- PgsHpKz9ShYl23A17lVpsDO8+E9D1Yngg1r3bXiPXhrsNFTWSXBNYAgrzyYVqaMsA93A9uTyP
- ElcBbvmMDXgHwQF0usb3Qhq18nKUyNsAiiPDIiZOyg3lQ6CBhRDlZ2hyZBTy/sgmhQjUFGuPT
- z9z9gSc6JSDcKFmNv/R7Kuj/+3wvssw3K8gnSDYfWpLtBcHE14JOebHRSBP2XUP5posKKIS+T
- Yza5qnmnaQM96o9QWLZJAT/UWUqnG8D/M3MztPQg3EEYa4Y4ZVDXtRiIkTlHtvCN6VxZ5wiS4
- apdNh/5yBeQCoUPyzs4E/r+14HR+0OZpMsYsTPdRFuCPHxWSTSI1P3IPqILyU9aYzCHEcuu6N
- gGWrdLIbqmo7v/SSW7mRKIEGXmMBH0VuUY5aSSX5c5X6EgirXlj8ySnDw2lOz7dUyxoiFLqoy
- 3PHPOyz+HEFfTO4RSD3v/NOgYOGxzzi80WXb/2bTUnu6CQ/JwxdkNjG9J+0mxU5wtLTqOmWqu
- MJBaQoKz3ZQnN7P3clsAux2VEuujzdpEV2LoUYORu3mKx3H3KoY2WghWThiaYNS1b4SScqMGW
- QY2T79uZVCquNgcMkxFFfj8RQWDz126XniYDxNJpW+4WmU5ADaJoC+LmhiDHiD1TfnlGEBeDR
- t1Dk7QX/a7mtcS7FeulHEhn8IFr5ZNSFUIWvqCr3135bUCvA0BRN9wCffakQfmW3n6g5kSm+v
- WlvGmkKjuOj3V2fTpO6Tqi1oCu1z3YbGta51ttxEwG0z6p0vJxvd8UzsLcvQiTW1XtO2QCkHi
- 4yQ3HVoMf8bN9oXRwS17KtpKbBjM6sfVRYhEBUJirtosQ79AXpTMyAN+gZEUHATufcJQ5LYn+
- ao4u/bsR2ZGUuZVvESgPEXXTKJcZjib9vw/M5ez8cUCcq5gpZFYqs5tFLAZBUCwndxZWoSsoQ
- 2pXpvOeNcIYWrSO2Fx9kJS7b3b+gICv4s4jEja+ldNuTmOiDghCo5wo3Qfc4NWA6FDMtqvtnY
- MYCA/Dt+wyj203z+/gwXeFYfy4ccawX7dYiK4wxF9gcPG7jDN1UXNhFR77tADO5OAkhK53lro
- oXEjc+u74lUBZ3KPGVMy7EsvT5/ciOAIfbfTZrT+OLObdqQ1h1pJitCyk8JBBGN26Tlo5PNVB
- wuirkJ5Zy3vKGeDHcAiFBa711XfGlJzhTakTTiDybUx7DhKm0hPqlV/LFbcAOWWxpP1L7ZLUz
- H52ttxLXR8zb1vv0qkrXdk4QUryP0RjarxEKg=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|PH0PR11MB7660:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57dfc2d4-b0bb-489e-0878-08dd6c9ba2e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TdR+uRZNrqB5UZSRzRZKcFK32z/1VOhZI3e17u9N8oWwscP+xmkYCFrZgyN8?=
+ =?us-ascii?Q?twLS2AsL+doGP2JF7YZMrHifTe1Ry7camVxhDMhQq7d6mY32bZETCgYsfqbX?=
+ =?us-ascii?Q?vSTG666D4J+4V9KlOfrkW0gCvyFP7fF3SYGbBZwjm8g9E+coFtGo7nYlDu8Z?=
+ =?us-ascii?Q?7JMmWRcw89nQ2Cj8k16SBy3bVAGr9vfyJ5vYHqyCFPPJrYNPIUSTtEcPK9ty?=
+ =?us-ascii?Q?XJXnrEgdM5kNVdET0zb58dwJ+Z9r/Hjz1Kun6Cs24UsBsgizKw1+oIYjjVkA?=
+ =?us-ascii?Q?ckNY3/Ps19hP77w3n0tB9BnmZxQtyX5/w7t3DswzOz7eHRXFbjK6Z09qDdDb?=
+ =?us-ascii?Q?Uhg83Uflqlr9q1RoolTGjMvtz5eanBf+9v/V03dxmPjExh1t3fouJoWLbvPm?=
+ =?us-ascii?Q?/knNqwfW/PjAi6lc2JgdNxoZQ8L5H60V+f39A+5T/b7Kn68M3V0yvaKoWm6/?=
+ =?us-ascii?Q?h2uen84lZk+bInM/a6nmcqd+gPXFkaG/NJY1Z4xoMtu9Eq9xq54KOAtz2GUn?=
+ =?us-ascii?Q?dX8GfZWRslCQPLqZciaaj5JhZHKvGqT0WraBot4xKVM9/l1O4zI//ogKCL8/?=
+ =?us-ascii?Q?9hUHYgfWidROHCD4OVb9aLgMiUP7q4wwlHJudyS/ICgAT7psQnUKUBL90xcy?=
+ =?us-ascii?Q?I/Jle0SfyiOoIXCGOCIArna+anxl3uM3tLgNaS9jXZqUhkdoDuH9FERhkHr4?=
+ =?us-ascii?Q?/PmHpbL2GI5x088HnqsEy8wfQYEds8oe1qbbhEUPb4fWAD+v7ENMKp27lCFI?=
+ =?us-ascii?Q?98eVEmPN1+dCom5Y+TkSioMpGk0RGauXsfP5uzqmt3PUA94F/F/EqvUODa4M?=
+ =?us-ascii?Q?yM5I/FOv5zRGMffx6KKo8gYOccGtfF3FkSKn17cyllCQDhFPzLB38zOGPUTR?=
+ =?us-ascii?Q?s4CgIKmwKogXK//97VcSN3XgJaEUiPrhkw6xKhjFjcCXTddQ37vTS4S1KHY0?=
+ =?us-ascii?Q?mFQ8KPoIMCk5JnjJHaafkrGYwA7pW/G0WWMi7XZrKFu24rkDNmrBNpTwyRlY?=
+ =?us-ascii?Q?8HwVRCdbkDO0fI5O33scGxD9HxIB4ciY9WFSiGBl0kY2J0JcffmWq6eaZxy2?=
+ =?us-ascii?Q?bhgeMFIlDFcbEQv2iNNzK4MpJPShwUZTeP4QmBCKEpvCfCMIjKZqosoABmz2?=
+ =?us-ascii?Q?LYuoc5bVhIU4wMessl9aq9V6JewFaU4Z8QvfjOhiqhRRmGw7ZPynyim0K21I?=
+ =?us-ascii?Q?5CZmdhJ7eR5y2Bh8V5pZWCgTM/kZUG1Qf+wtShYrzxzdE8r1Wbie+gL/M/QC?=
+ =?us-ascii?Q?abAJWfDhwjxGAreMyIhvORknUrwgKAX/taBZNtLwA/FV9zRRoEdK7c3wYAlW?=
+ =?us-ascii?Q?399iA3KihbEr1vc92zqnLKjKHF+5WmuAOOfNNMx1gARt7Q=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Zzmvk8jA4knJYSIGwn3+oRzBB98x6tbYVCrFro2mI/gcXbBahZPJIKBIm7Hk?=
+ =?us-ascii?Q?s1uzA0PIVJQXuQ0lpRiL7Ay6PsNxMwm5jo+bDaQfH3SkF4DMawBhfKeQIHTM?=
+ =?us-ascii?Q?/ONob8ZCLviUEqNGA+Bp0PuMiTy6Ws2OMiEHVgp+aNn+trqHHIDsxOIuFz0S?=
+ =?us-ascii?Q?NpHFnAbavAvM5yEPOIB5rxy4/Pjgur4ZriN1XBh7ZqgdBlWq3ctbpc01SCBg?=
+ =?us-ascii?Q?7k7Nrq/MKQ5cEJlGT4dzdBm6HxdYkZH2O+H7UucDkoXpE6x1+H8BqJwEDj/9?=
+ =?us-ascii?Q?R8Gigel41ggGsQtIP9B98v2OR2NsMYlCqTA0AWQz8+ccJWKwCNyNvLfaI0BP?=
+ =?us-ascii?Q?AHIeODv43PoVgmsbguvAL44TKvBKjPvR1Bp9l0Ai8iUI0K1ilJ9cWLuRJHH7?=
+ =?us-ascii?Q?mfTbDG1DmmaAXjyuaJPWxR8Lptxk7NHlfIhn5RaCE/NMs1Zb1EycHWRaQ3kr?=
+ =?us-ascii?Q?za2VZUePSpT1UID3Vum/RoTMu8jGqV+q4cyYFhdbU2lv4j8pBv95z4Ficu95?=
+ =?us-ascii?Q?lEu3BE0+uPYtkkgCAeDS0t9a9I1+HUSu8ZUNs2e2qJfU4u5KIHsXXs0O5+3k?=
+ =?us-ascii?Q?Ye0QWmCp5SYyChgpn8YjCQqD+5JoEtaOSxa03KIftbG0JCCBJV97tsoJetFj?=
+ =?us-ascii?Q?PJtWdbGfX4/oi6AyO8Nae9n0NOhEN2Wb9v4evFxrhldUjjX9e1W4yxb+A1Cd?=
+ =?us-ascii?Q?652evElyZf7fWpV1CQBZefuPGfO5wNMBykBLjxKVZWuDjiIzGdbmFXTwDnhu?=
+ =?us-ascii?Q?rTsdpXTG2jATMkOIp2XB4JpbwwnTY8M4DPdJAH1laHLLOhbM8GTqdE+3X67h?=
+ =?us-ascii?Q?GoWxhaG333U3u/OYq0JBfXX8tQJmw9nbqcMOrQGl9kDbMAE5zNVp9Ui4rTKn?=
+ =?us-ascii?Q?/1SHlj70AjbxpLWN2twrIdZYStxRrqkN/wsM68ODuqK3NDnNTLmVQLl6XPx5?=
+ =?us-ascii?Q?IJSG8KnwsQbWjvmi4x6Jp+BnO8ICOn+2i3G3uPW2aXS4U4bT9+tBrLOMwYCH?=
+ =?us-ascii?Q?MAMQQbLLac8Bp2appsc0TfAkSFuJM0vEOCWA17+/izzDnbt4jZIBPuM/qOMb?=
+ =?us-ascii?Q?iAjes+Y2qhwLM9msd/F/pVZ4iPJUeCOZ8GMoSAoxoA9jW4QrE2wJ3CLmNm5X?=
+ =?us-ascii?Q?vaaZXoQAyDqTYeL67bPZ1yoqHwiYhm+0Rbt1k+AKU8dlePuitnNKokgumQri?=
+ =?us-ascii?Q?LmabBDNf4QTPo2egmGLJJfkrHLVmpDfF6tWd1r8V1o948Cjda7cKdbJyuSMJ?=
+ =?us-ascii?Q?f3YLqDSpo7Ja1kCXfAKdY2Pwnk5Csg1CsWe8vUr0IFMTzvNC1Ya+71swRbQf?=
+ =?us-ascii?Q?KvmeHylvYWm3N/uf2I8eGNzLSgcxYB1kAvOwNNqBknn3TrzCdkW7rDOzbQ84?=
+ =?us-ascii?Q?rE8+7Kv9pdhtJ8F/0i5ZIgtAEV54eOeerocqvWWuGXrStiGCNYcKj4OIl46a?=
+ =?us-ascii?Q?kSS8qMHT7VAj+HUAW+ao6O5ObfJShDBgOLr9Y4aT4y9rQXVKUhZ8AQSDF7NN?=
+ =?us-ascii?Q?yOCaw4LCe00Y+vNGb9FZet91MDUmlQqk2IFqPWQVdysRTTQmsNKDDOtwcrO+?=
+ =?us-ascii?Q?lTxQNsT4wYFCF6qqzwCVEhrNP98easb4spk1NNuH0a9ukCXJsuT2ScoxVEDz?=
+ =?us-ascii?Q?Xw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57dfc2d4-b0bb-489e-0878-08dd6c9ba2e3
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 19:23:06.8802
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: geratsmdGNuQ9KjblhlLoEQnD4t1hH4RSLtAom0z8u51LTI7M5moaurW6k9bTnkZhiOI49AhBL3SW5qObh1rBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7660
+X-OriginatorOrg: intel.com
 
+On Wed, Mar 26, 2025 at 05:26:11PM +0200, Alexander Usyskin wrote:
+> Add driver for access to Intel discrete graphics card
+> internal NVM device.
+> Expose device on auxiliary bus by i915 and Xe drivers and
+> provide mtd driver to register this device with MTD framework.
+> 
+> This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+> and "spi: add driver for Intel discrete graphics"
+> series with connection to the Xe driver and splitting
+> the spi driver part to separate module in mtd subsystem.
+> 
+> This series intended to be pushed through drm-xe-next.
+> 
+> V2: Replace dev_* prints with drm_* prints in drm (xe and i915) patches.
+>     Enable NVM device on Battlemage HW (xe driver patch)
+>     Fix overwrite register address (xe driver patch)
+>     Add Rodrigo's r-b
+> 
+> V3: Use devm_pm_runtime_enable to simplify flow.
+>     Drop print in i915 unload that was accidentally set as error.
+>     Drop HAS_GSC_NVM macro in line with latest Xe changes.
+>     Add more Rodrigo's r-b and Miquel's ack.
+> 
+> V4: Add patch that always creates mtd master device
+>     and adjust mtd-intel-dg power management to use this device.
+> 
+> V5: Fix master device creation to accomodate for devices without
+>     partitions (create partitoned master in this case)
+>     Rebase over latest drm-xe-next
+>     Add ack's
+> V6: Fix master device release (use rigth idr in release)
+>     Rebase over latest drm-xe-next
+>     Grammar and style fixes
+> 
+> V7: Add patch with non-posted erase support (fix hang on BMG)
+>     Rebase over latest drm-xe-next
 
---qrugcju3lf3vwyjc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
-MIME-Version: 1.0
+There are 2 things that I should had noticed earlier and mentioned to you.
+I'm sorry for forgetting that.
 
-On 25/03/25 08:20AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.9 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
-> Anything received after that time might be too late.
+1. Rebase on drm-tip branch of this repo: https://gitlab.freedesktop.org/drm/tip
+We merge to drm-xe-next, but development and CI happens on drm-tip.
 
-Tested-by: Christian Heusel <christian@heusel.eu>
+2. Please also send to intel-xe@lists.freedesktop.org Xe CI only runs on that
+mailing list. intel-gfx is for i915.
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
-Steam Deck (LCD variant) aswell as a Framework Desktop.
+No need to rebase or resend right now. Let's wait for a few reviews,
+then we rebase and resend.
 
---qrugcju3lf3vwyjc
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Rodrigo.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmfkU74ACgkQwEfU8yi1
-JYXu9g//R27iUOFq4JnHuIVIxt0JYN/uwQZwLB+hUTkCU00fal/OOKai9pRfG1HM
-mZRj2nC+e5spYiQ4104WsLP1ZvwRqPTNZ6nzzGTW65F3ejZADNoJbBUA1C2yr9r0
-R7nwQ3Cz0Vfi15JeSHnj5rSo2+OPf1hV6U6uJgk+7cF/vKiVkBw3VIWqEyPO5o1W
-/zBQCTrmnIp8ksqWaR1wevSYuaC781d64RCaBHyfoRw/wuKdw/qCwmFut6knqx49
-Rlr+5NSjz3eeWlK77zD5KBMTIzBdJLhlmylZn2IJoPx5lSPpIxVRfZdbXBodECSB
-iRBaDqnQ83Kw9+U3sRae1zRwTHcDYAygSw9R3Ghjrbl9oLQ8Plc91RdMv5qsGGe8
-4Ne+hdybWh9HvT2eeU0JP8UF1q24JqaDzQzJYWx0QSgItnG3Hrt9gv3AoyHzvCJg
-sWvz3VSNnQ5HeYfjs7dppozgGFuGVpbitqIS4TPnIrm+jpGyOqt/LGM8FG1p3qKL
-cqyFnv/LStdhtUrSFNLeeKlkHseIcgMzLmOHQ4LSog+TCMTR1PPghjc4G6Bu5/06
-9HigW7KXcc4aQiQamKhR7HXlFTWHXmFytjCrZm6k78c/MyapvBqiAt4F3/3bEkC/
-29Aimt0mPaFiNSKx6nmYE06urulqztt7J638Ja8h17WioT/uB4k=
-=Fnl+
------END PGP SIGNATURE-----
-
---qrugcju3lf3vwyjc--
+> 
+> Abliyev, Reuven (1):
+>   drm/xe/nvm: add support for non-posted erase
+> 
+> Alexander Usyskin (11):
+>   mtd: core: always create master device
+>   mtd: add driver for intel graphics non-volatile memory device
+>   mtd: intel-dg: implement region enumeration
+>   mtd: intel-dg: implement access functions
+>   mtd: intel-dg: register with mtd
+>   mtd: intel-dg: align 64bit read and write
+>   mtd: intel-dg: wake card on operations
+>   drm/i915/nvm: add nvm device for discrete graphics
+>   drm/i915/nvm: add support for access mode
+>   drm/xe/nvm: add on-die non-volatile memory device
+>   drm/xe/nvm: add support for access mode
+> 
+>  MAINTAINERS                           |   7 +
+>  drivers/gpu/drm/i915/Makefile         |   4 +
+>  drivers/gpu/drm/i915/i915_driver.c    |   6 +
+>  drivers/gpu/drm/i915/i915_drv.h       |   3 +
+>  drivers/gpu/drm/i915/i915_reg.h       |   1 +
+>  drivers/gpu/drm/i915/intel_nvm.c      | 115 ++++
+>  drivers/gpu/drm/i915/intel_nvm.h      |  15 +
+>  drivers/gpu/drm/xe/Makefile           |   1 +
+>  drivers/gpu/drm/xe/regs/xe_gsc_regs.h |   4 +
+>  drivers/gpu/drm/xe/xe_device.c        |   5 +
+>  drivers/gpu/drm/xe/xe_device_types.h  |   6 +
+>  drivers/gpu/drm/xe/xe_heci_gsc.c      |   5 +-
+>  drivers/gpu/drm/xe/xe_nvm.c           | 161 +++++
+>  drivers/gpu/drm/xe/xe_nvm.h           |  15 +
+>  drivers/gpu/drm/xe/xe_pci.c           |   6 +
+>  drivers/mtd/devices/Kconfig           |  11 +
+>  drivers/mtd/devices/Makefile          |   1 +
+>  drivers/mtd/devices/mtd_intel_dg.c    | 884 ++++++++++++++++++++++++++
+>  drivers/mtd/mtdcore.c                 | 141 ++--
+>  drivers/mtd/mtdcore.h                 |   2 +-
+>  drivers/mtd/mtdpart.c                 |  17 +-
+>  include/linux/intel_dg_nvm_aux.h      |  29 +
+>  22 files changed, 1385 insertions(+), 54 deletions(-)
+>  create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
+>  create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
+>  create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+>  create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+>  create mode 100644 drivers/mtd/devices/mtd_intel_dg.c
+>  create mode 100644 include/linux/intel_dg_nvm_aux.h
+> 
+> -- 
+> 2.43.0
+> 
 
