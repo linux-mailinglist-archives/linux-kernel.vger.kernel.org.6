@@ -1,129 +1,172 @@
-Return-Path: <linux-kernel+bounces-577046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054E8A717AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:41:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CD4A717AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DC21892106
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5926176819
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B38B1EB5DA;
-	Wed, 26 Mar 2025 13:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9531A0BDB;
+	Wed, 26 Mar 2025 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFl3hxgg"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R3PccR2g"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E471A0BDB;
-	Wed, 26 Mar 2025 13:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CAB1DE3DE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742996372; cv=none; b=eFII0J4zA0NowMqI1AOUT3NCzhx0lOrxvENwKK0/p0QPbRi8C88Dg2gNIh8DrfpqSceDqNgz6OtaS/UQHNdH7BYEZFWjDXPnWqyjS/QFPRpZhSnZqsG3UE5ynz+NFxZZ5d00U3ZqKFyHP1yeJiuuW+hKavZ0l4+7xQhYu8Ih9Io=
+	t=1742996388; cv=none; b=hwnhfG3FHrBYxPBHyWEjjJzR+EG3ihZyNPF5rd3vKKev/b8DxzZ0P638dUOFypxq5uclI3sv/m/M2sfV/h3qLVYQkMG2zL8Of6RYU/I6PwPVNcZCIDn/ZeXsrpZv5uEv8mMQLTP8b5XhGOkdkeZpS3chscbV06VOn3Ivh9Mv8wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742996372; c=relaxed/simple;
-	bh=G+1bPq00pfcw5FfGpQnUUBW55ek4LCDQ4SLjYNHQC1U=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=kSF5iodjGxhEQEZzafBUWag3dtT8RTVjC6T93E/8aWPWgWL+QPtvvb76hydVRGKuEu4fnaK1OnYDd5jthF91IJncOUgs1RDXrd/y5mWEn0E3zrwg70tiFvFhckSTTaiH94JUEYXt4oO/+YxAk4XhwgjNUchfTbOUgNtmFwFh8Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFl3hxgg; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e5dc299deb4so6561974276.1;
-        Wed, 26 Mar 2025 06:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742996370; x=1743601170; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G+1bPq00pfcw5FfGpQnUUBW55ek4LCDQ4SLjYNHQC1U=;
-        b=nFl3hxgg4qtS8MhKp5uVKlhmZzxOFb7EjRHyA6uricrrz9KDIGLyRVOvH39GFdLVRn
-         bHvSBoTL7wwtPweK6wzEx2Tw8C4eh5OdpNCbAccTLAO91jN8HhHiPTee0t0KmSMDma4h
-         pwinCF+QAeTvXN/YarCQb+FVZnxf/rRlpdW8W5bVW8z929XJwcy3Lzr96M4SiQ1CkNAX
-         oPZBgEvMGMZohHBPqDm2Oe1rtwb7P0V4LrbWw/JUIvgP7dJqU4FZV401/a62+MNXC9Jr
-         I9ZEDOlu3qFv4huBO0UaeFvwyb6EymcGBJMqLpn2wgAEhuGa/o4i+jeEpbPp1fmgQouc
-         84yQ==
+	s=arc-20240116; t=1742996388; c=relaxed/simple;
+	bh=kf/F+jkny4YZ6AMu9z2yztZ4555sxMojDJfUc3bbQ5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAjDM4VrG/UXiJytDRqrT5mJLPw8aajGVVScOT+tbnndRe56/znF4JsxH0G5VdkAMe0KfO3ySUzwb3W38o7pEdF9N+XA+GRzU+fNfk0lCG4WrtFhJ28g5IHMe5dc0ag80hbES0UdbSd2FXM940j+GgVNxozHG/ldDSTzFv9b4e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R3PccR2g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73ExJ009030
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:39:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yY+54IoSFwl5DkXlueEGcXHNH/dGPmMQZUEhf3D4Gz8=; b=R3PccR2g11AvGt3A
+	9gd63yRUAp/h48xNAnlloqI0zkkYwDcN9vRC1rqwG562XZU60YcRH6p0475rMSKk
+	SdZoSv7CETHygqiAoKYCJWMpBNOzQtnkospRlzx3YiasVCjS6uEXCJ/KQblMa/ZQ
+	cFhRr4mGRNuL+KOPWTgCZX/lueI/LjewtiSLsYy8/jjKoxCIAN5zyRU9xunYe7Ob
+	sGPhdkYcd6jVLUZd0aOb/v1tYJxHt7w4NB6ENnwrc5Ja/VCTF5Pqz13xzIvYnk54
+	71mXSuYGbJGWGXFA7Uwxck1/Z4lOGj+AFoVOY5QNJvD1lbQ5fR6s+OxQoYp+OdUJ
+	JP7Uaw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd4n4rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:39:46 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c54734292aso166122185a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 06:39:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742996370; x=1743601170;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G+1bPq00pfcw5FfGpQnUUBW55ek4LCDQ4SLjYNHQC1U=;
-        b=GV+mHxskOiDhtPmOHh+uf+Ptoeed0qfej9VSkKHSYrzOqsC++3H0SD5m3eHck6EiAN
-         bdd2+SpjthsFmyIWFfExUPWdpd/vdp1rr0mwcfV2ySBqvm9laLvIRyzpYkPiEexODzaq
-         kDYvzqEoJWL5ubAO9d5QxQgVwJ3DJtfbNCIq5NTTa9feG47+f6ra5E2kks+6mht+6GTz
-         yTa6OTLi0/yCHox78DF+Br+5FzX/2YcvlyvekoSSFElJ9NFHFGfLlh2cgng6rG1ftzjx
-         Ug/bSULGFGZDZ7uO7WwyYrLR3BDzuHD14WVNA+eEN3S9YgH7mNMUQ+YA6YIh9Rx7MoRy
-         4ZcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuIAtsjJsCRmhtwWWRYrg2++ky3sjwSiExsVFvJ2bFRDQO6r33YdRtNoqV4Bv0eA5bercyb7rcJZbgsMrY@vger.kernel.org, AJvYcCVfTf6mgowzB+W6B1jMZYZTTTmU6j5XtoVVLnMx3gqlBQnwUDHtUypNXUiWtkwd9p+MsDthTj7B8DFcqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz4NvPn5Z46Aa12O//62LMvpGy17x7f5nSU3wV9+1bPsdumLXV
-	LqfDTgjULAYsDHvfHpx6QZfRvX5KcvjQbWy2vwQ1+y29VG9vN85oZsMT9dFE
-X-Gm-Gg: ASbGncu/iU0vQL7iSA026smPey1uyvpYpI+6YXmcdZJBmooP5m0eRx1/IxmnytX6494
-	sC0xOlynGbPez2se1DIfON5OXdkyuirVzViaVx+w+OGTAmtrZYKehLqTfNzhmoH1LVHa9vOaFJL
-	ObYB53dzFOpi6MqVjLLzN+5u4+CC6VAinYbDESFQBP9asw1NX+PDDrXIuyRgT8ZJ+XkGaUeROp6
-	/wImWtHyYeZk5v7zLiNywwzh/GcJS+YPq/u8HFPvMlm4quXapCYtxYZw8ibbmH5RHiZO+XMzztb
-	zLPieq3cMUWe6oFG+CwtVqxsYolBFZX4B8vrswbSoO4Zq7r6CIyRt0HnIH7TqbLfTil6CIxkFjr
-	f
-X-Google-Smtp-Source: AGHT+IG86fcKoiR1bNMN+dvMrq8PLxwv5hDITg/IDjKGisvGVwDdZViNu+LxypbQ2NlHjGuuF8VcNQ==
-X-Received: by 2002:a05:690c:c14:b0:700:a988:59dc with SMTP id 00721157ae682-700bad227e3mr277562707b3.31.1742996370017;
-        Wed, 26 Mar 2025 06:39:30 -0700 (PDT)
-Received: from smtpclient.apple ([2401:4900:5fb3:22d:130:8957:5645:7f3c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-700ba76cb4fsm25124437b3.43.2025.03.26.06.39.28
+        d=1e100.net; s=20230601; t=1742996385; x=1743601185;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yY+54IoSFwl5DkXlueEGcXHNH/dGPmMQZUEhf3D4Gz8=;
+        b=g0DaJPL5BwUUGJ4OAsxJRSiAfxNrhTcuqN1q6x8zjNkHsF2Y0IhuCqYLGiju1O81c6
+         01a8HI/ZHqCay0oWS61JXzP4W5jHAaT2bWpOJTC0OGn8P43oNPU3HWTWwmkGZS3MKAC+
+         waGj3VUxwGg7BzTOp0K47ga38m82tzhahdafAQaaYSsx+6PfxgkmeU0aLV2WvA3uykvJ
+         BoLGWisos/2cykSBYSpg+1Xlf1/8WQAyKNK4mmqHBC7wnv2TdfLMdb23YGCfBce9456a
+         0XFRzOSTG3G/J7tMDHTO2OXJH+Cfvtr5WQgdcyiKd/FXd+VqQBgayl4tqgDxZMr3ZLVG
+         cCJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuELPF7G5dCyomR/ytJToxvIJ5Ic/38oG/VvQbzfTDSYTqg76N8hXD9qbuBweZFNsrNdJxAsHNIku51ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlXLK67+ewEg/g5t50Uej88qwX44EeFPLqfpHfetmTzKg/Pud6
+	rmcEXg6Vj9PxzveyFTk5TnX+m9kI4QqYR+40N6UQqk+skhUb5l5ySefjniOMWNweTI9U6YOJE46
+	9Lz2fL9CQTC6KXYb9UgKN+EmMBSH97nH08vQTZN0E0kxYC+uP2Kr9g4ODnHsJFdk=
+X-Gm-Gg: ASbGncsS4N7LIix0Uxp2/u9t64Xs+/O7TojyjGNnfAaGVz9Uh1s6pYKkza/wOH7NkO+
+	j+HFAnqWmOIeL+IydEef7Dw5XXYE8p4k9NUUkD3GD7H6VC4PHyjVd7C8pT2sxa+B5gp8qO5J/B4
+	6d/We4UL7NrCvSP5osZ1NpPuyNb18PTlhuZYwjrsm0fQjzEqeAxOLMBO50liXibNn1OkvQdw08I
+	4n3Ajp0+tLylePAXUHbVf/3TvmQ13gqqgRrOsx5j/eV+VDsc/t055Ekdx9ctKpT5KwTKBmxw9iw
+	KOiD+oVIHpct3ZgnpiuS42Sfr/lOkY1Bs2Mj31FD6Tt3Y3VG/SOjrYUaAVlDKNsM3f9+Jg==
+X-Received: by 2002:a05:620a:390a:b0:7c3:c4ba:d8a6 with SMTP id af79cd13be357-7c5ba1e9ba0mr1272912185a.14.1742996384575;
+        Wed, 26 Mar 2025 06:39:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHE30qP9JMblwOKR3SHMweTnCiZ7e3Na7JTC5GCduH+gUlOFCJ52ha4yHx4d11pPVez2ptf/w==
+X-Received: by 2002:a05:620a:390a:b0:7c3:c4ba:d8a6 with SMTP id af79cd13be357-7c5ba1e9ba0mr1272909685a.14.1742996384033;
+        Wed, 26 Mar 2025 06:39:44 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfb004fsm9514631a12.40.2025.03.26.06.39.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 06:39:29 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Aditya Garg <adityagarg1208@gmail.com>
+        Wed, 26 Mar 2025 06:39:43 -0700 (PDT)
+Message-ID: <0ca929c6-6ff5-4ab0-8ebf-aed3cc5f350b@oss.qualcomm.com>
+Date: Wed, 26 Mar 2025 14:39:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple Touch Bar
-Date: Wed, 26 Mar 2025 19:09:15 +0530
-Message-Id: <CB167906-8D50-44AE-B873-DDEA9A370066@gmail.com>
-References: <7rsn5334-npo6-408r-8442-6o3qo3qp05q7@xreary.bet>
-Cc: Aditya Garg <gargaditya08@live.com>,
- Benjamin Tissoires <bentiss@kernel.org>, admin@kodeit.net,
- benjamin.tissoires@redhat.com, kekrby@gmail.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, orlandoch.dev@gmail.com
-In-Reply-To: <7rsn5334-npo6-408r-8442-6o3qo3qp05q7@xreary.bet>
-To: Jiri Kosina <jikos@kernel.org>
-X-Mailer: iPad Mail (22D82)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] soc: qcom: llcc-qcom: Add support for LLCC V6
+To: Melody Olvera <quic_molvera@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250324-sm8750_llcc_master-v3-0-2afd5c0fdbde@quicinc.com>
+ <20250324-sm8750_llcc_master-v3-2-2afd5c0fdbde@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250324-sm8750_llcc_master-v3-2-2afd5c0fdbde@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: WRmIXzYS90z-AvYHai39TDkTuLGU10sR
+X-Proofpoint-GUID: WRmIXzYS90z-AvYHai39TDkTuLGU10sR
+X-Authority-Analysis: v=2.4 cv=QLZoRhLL c=1 sm=1 tr=0 ts=67e403a2 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=cgwDF5ybabLtFIHcvScA:9 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_06,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260083
 
+On 3/24/25 9:29 PM, Melody Olvera wrote:
+> Add support for LLCC V6. V6 adds several additional usecase IDs,
+> rearrages several registers and offsets, and supports slice IDs
+> over 31, so add a new function for programming LLCC V6.
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
 
+[...]
 
-> On 26 Mar 2025, at 3:24=E2=80=AFPM, Jiri Kosina <jikos@kernel.org> wrote:
->=20
-> =EF=BB=BFOn Tue, 25 Mar 2025, Aditya Garg wrote:
->=20
->>>>> Yes I can move hid_find_field to the original location as well. But,
->>>>> I would not want to devm_kzalloc as well unnecessarily if the
->>>>> touchbar is in the basic mode instead of drm mode which will cause
->>>>> this -ENODEV to be executed right?
->>>>=20
->>>> It shouldn't matter. hid_core calls devres_open_group() before calling
->>>> .probe(), and calls devres_release_group() on failure. So yes, we'll
->>>> allocate a piece of memory and release it after, but it's not something=
+> +
+> +	if (config->parent_slice_id && config->fixed_size) {
+> +		attr2_val |= FIELD_PREP(ATTR2_PARENT_SCID_MASK, config->parent_slice_id);
+> +		attr2_val |= ATTR2_IN_A_GROUP_MASK;
+> +	}
 
->>>> uncommon.
->>>=20
->>> Fair. I'll send a v2
->>=20
->> I've sent a v2 from my gmail address. Outlook is being too fussy these
->> days, so hopefully I don't have to sign off twice using gmail as well as
->> outlook.
->=20
-> Thanks. Please always make sure that either in the cover letter or in the
-> individual patches you otline the differences between individual patch
-> submissions.
->=20
-Sorry about that. I recently switched to git send-email and it took time for=
- me to get familiar with it. Such minor mistakes do happen in such cases. In=
- case a v3 is needed, I'll share the Changelog. For v2 that I sent, changelo=
-g is:
+This is fragile if parent_slice_id == 0, but let's say this is not an issue
+for now..
 
-v2: keep parse at original location in patch 5 as suggested by Benjamin
+> +
+> +	attr3_val = MAX_CAP_TO_BYTES(config->max_cap);
+> +	attr3_val /= drv_data->num_banks;
+> +	attr3_val >>= CACHE_LINE_SIZE_SHIFT;
+> +
+> +	ret = regmap_write(drv_data->bcast_regmap, attr0_cfg, attr0_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(drv_data->bcast_regmap, attr1_cfg, attr1_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(drv_data->bcast_regmap, attr2_cfg, attr2_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(drv_data->bcast_regmap, attr3_cfg, attr3_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	slice_offset = config->slice_id % 32;
+> +	reg_offset = (config->slice_id / 32) * 4;
+> +
+> +	wren = config->write_scid_en << slice_offset;If I'm reading the wrappers right, you should be able to drop both the
+shifting and intermediate variables with regmap_assign_bits()
+
+Looks good otherwise
+
+Konrad
 
