@@ -1,181 +1,114 @@
-Return-Path: <linux-kernel+bounces-576769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4393A7143D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DE7A7141A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450D0176C54
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021BD176F82
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5FC2A1B2;
-	Wed, 26 Mar 2025 09:56:03 +0000 (UTC)
-Received: from outgoing.selfhost.de (mordac.selfhost.de [82.98.82.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F251AD403;
+	Wed, 26 Mar 2025 09:50:02 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE8B1A5B9E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.98.82.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D05189919;
+	Wed, 26 Mar 2025 09:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982962; cv=none; b=n7oLAoA/C4utEWZ7CmpoOabSAdXCumED70cqkuWNEsyO2dzGPGywHvmAxx55IiSvvLV2vTw6y9Z1CWhHQRrXBscuNbpGPi1RJnrwbkDG7bArKKyJxtkFItvCJS0Ai3w/I70+p+DlFE+/LhDs4Bm0l2hXeDa0GvHS5p4npIwjhnE=
+	t=1742982602; cv=none; b=E+Lpo7vIwfhDs793/NRRc8LQdVa7sNGPt2ibDVbfWN3Zr/y+BclJZWVuCG55bi+YIzgyNH2VUCvJSNEKkH5e9g9G2lViNCmSnpM9rvDzfGQmgt0S4RjMUCb78L3s0FtJF7qAQjkwoXVscZdZzXM4/vXKSGkmZUIUrbICtl2Lask=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982962; c=relaxed/simple;
-	bh=er2HelVBoveQdXB4Nb5dCWiFbOMaE9jAfWDMC7GExGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ad+Zk2M4TfTE4+hPOCtOS5eLcAphlxR0gIdU56rEKlk8bh4/id6mmgQtv0l0RbA7JecgMIhFChiFsJLO6Dem9BoNlTlzgWXKVX4gJSZL4LaHkRBDiRsauGJwKLGyvsodqQIEu7zij1zbt8nTZGnmA13ZsUCFuHalwsVAxf3FOd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de; spf=none smtp.mailfrom=afaics.de; arc=none smtp.client-ip=82.98.82.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=afaics.de
-Received: (qmail 7748 invoked from network); 26 Mar 2025 09:49:15 -0000
-Received: from unknown (HELO mailhost.afaics.de) (postmaster@xqrsonfo.mail.selfhost.de@62.158.99.252)
-  by mailout.selfhost.de with ESMTPA; 26 Mar 2025 09:49:15 -0000
-X-Spam-Level: 
-X-Spam-Report: 
-	*  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-	*  0.0 DMARC_MISSING Missing DMARC policy
-	*  0.4 KHOP_HELO_FCRDNS Relay HELO differs from its IP's reverse DNS
-Received: from afaics.de (p200300e31f37680288658ffffeb7694d.dip0.t-ipconnect.de [2003:e3:1f37:6802:8865:8fff:feb7:694d])
-	by marvin.afaics.de (OpenSMTPD) with ESMTPS id 4cd3143b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 26 Mar 2025 10:49:14 +0100 (CET)
-Received: from localhost (afaics.de [local])
-	by afaics.de (OpenSMTPD) with ESMTPA id 50e07105;
-	Wed, 26 Mar 2025 09:49:13 +0000 (UTC)
-From: Harald Dunkel <harri@afaics.de>
-To: linux-kernel@vger.kernel.org
-Cc: 
-Subject: 6.12.12 Debian backports kernel: RIP
-Date: Wed, 26 Mar 2025 10:49:13 +0100
-Message-ID: <87zfh8m89y.fsf@tweety.afaics.de>
+	s=arc-20240116; t=1742982602; c=relaxed/simple;
+	bh=SmXL+JiIJjhi5GvCwXWqvq1ZakYPzIcHbkmSh7WHMLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JKo3h38TsQA96ucclLZowTDT1GcSN8pq+zrBVvFOMh8loqp879nEuj0RtruVRizVD0BOaowwJ+2TToWZk4VPi2UmNVcVJefnqw5jpIcN1CWiOVQSN8+11JmItmRw6D88VBk+pv/w9TAajj9JDprAb1B98O5NKG440e7XeGifROc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86feb84877aso513510241.3;
+        Wed, 26 Mar 2025 02:50:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742982599; x=1743587399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jKQO23Cx9d0LvjJBqoaXpMi995oqQPpXgcgXRWzNSKQ=;
+        b=ADLWTlo8YZDaSS948sCm8e+MlWzfP4pFPNqeIVYV60krTcufcL1KM6HOy8AAWqQqkI
+         XqAKp9b1EYuLeLyVvopLrxZlyaC+EWdNi7tV0zM5XxX7rPuGf9p54OxZ6lQPwvnBPpeE
+         nPIz25FZys2liBljn1Jxymkc6NhK/MnA1nwPns8Eoa6NfbxvnCcqNJgHlqfYbRrF4uUA
+         Z9IHve25bSbf2mUoc7YEjxItQK1QzC/NPEGnrt4fTSjdU/padKmFvjGllRfqeHWKg7iX
+         MqX0dquWfSn7ZLmpE7g9Z87N2skPnd9fEBoMOOgQ3RKGPGPgUlUrPSH0Q/eQvQJlUd0t
+         6w6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWiUf7bhsymNEHP9g6b3STyv1Kl5IzrWa/FIe8dm8sxOPWKj1XH4RjHeg7n2gbxgy+vee6OEgGmhITyEfPEqEn0DJE=@vger.kernel.org, AJvYcCX0DULBs0c9Fzkvceu/fdDamMu9McCnm78FZZuFJ//DnQZgQ8TwJdEpiz5cWjZzhglR7SXqoyhQSXjW1KU=@vger.kernel.org, AJvYcCXmHQ3SLgenj6UhU45vygkaibwV7/hY1CusF71wya5oEPKWK0HzA5geik4ievXwVbrr7Z90HdTGtFYXAgb0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJy9znsgjGTLxCOPWvapx0Q93vMlDSRgHMQ2el2OjivB/n6vfS
+	V4L3W3+vQgXCiL5c14gjI6Or3/hqVtezB0RAnn4ioV27+AIWXOI9625ITd/YgPE=
+X-Gm-Gg: ASbGnctFAorLFlGFJI8sZEArxPNDL/UVVjjHHp/jqUBtEr4h43sDC6AaH6dr/L63iCW
+	Z6pBhEK+JG/ALV/rorp8vk4UioVdM6TYYwHAR35fZouzSv93QaAikCdZedDtfM+FB+bA7OdOlmO
+	eVYadurGAhRMo56/7nw+dCUkf7e+em3QFC5ukdBhcVVs62GTw1b4AW0nNYvhISc3K0ZsFb4eDVj
+	UjJsYIDBfv2Wuy4okgUsNfKHX92nbrA3b5OtPMVGHrtaIGzxpS5G4VFaf6aa0yJlgmkJ4GWfy+9
+	6HkpXUYIhI3U+uKaKt7ic5pejVpei6abrV8vwc5mPNyeIW6uL+kYIrst25op3+GViCK8mRSimrp
+	RoaeRgSHxGYz1yVuxwg==
+X-Google-Smtp-Source: AGHT+IGSIQIrLPlJ1yxx0QKt6Drz5lBprJ8+ZBSCsuZtGJ/IGUo9ksb8HCdhUOdXwD3vkDSjKrcy/Q==
+X-Received: by 2002:a05:6102:5091:b0:4bb:e8c5:b172 with SMTP id ada2fe7eead31-4c50d4d117emr14592193137.8.1742982599060;
+        Wed, 26 Mar 2025 02:49:59 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86f9f3c2d01sm2469491241.16.2025.03.26.02.49.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 02:49:58 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86feb84877aso513501241.3;
+        Wed, 26 Mar 2025 02:49:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBtWlt2/NfzxGNjZxm/7Xcte/2jUpc8s32AqEwHqn6i74YKW/psMz5VTuiBB59QMcnbiHtbcablLmfybT6AQmELzk=@vger.kernel.org, AJvYcCV/eYUv9K9r88Xcje1N5dqjIw81frbfYqK4gkkIKxxFHtKXmb5kZxO2dfdZMPMDj9EJnfYTq7ndOHvK+Tc5@vger.kernel.org, AJvYcCWabhW8L4xXG++WNszBgtMDLIwFuXffa83ZKb63oJokPsxWKBfLEAr8GH00zivBSxuT/rYLTRyUpkcZbDY=@vger.kernel.org
+X-Received: by 2002:a05:6102:a51:b0:4c4:e018:326f with SMTP id
+ ada2fe7eead31-4c50d513aa4mr14555149137.10.1742982598730; Wed, 26 Mar 2025
+ 02:49:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com> <20250325160904.2688858-8-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250325160904.2688858-8-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Mar 2025 10:49:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUsdk+qDDwE_4vJrLRqK9Dhb8Mc_tDEXMHeLL9P_u3XuQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrSAYUiq-6TpwJ18nNff1QGHnNZxD4aPKNO7SMpE-lLvCcSuM5mkMeIRhQ
+Message-ID: <CAMuHMdUsdk+qDDwE_4vJrLRqK9Dhb8Mc_tDEXMHeLL9P_u3XuQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/13] serial: sh-sci: Fix a comment about SCIFA
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi folks,
+On Tue, 25 Mar 2025 at 17:09, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> The comment was correct when it was added, at that time RZ/T1 was
+> the only SoC in the RZ/T line. Since then, further SoCs have been
+> added with RZ/T names which do not use the same SCIFA register
+> layout and so the comment is now misleading.
+>
+> So we update the comment to explicitly reference only RZ/T1 SoCs.
+>
+> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-I got this on a pretty new Tuxedo notebook:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[   64.286892] ------------[ cut here ]------------
-[   64.286939] WARNING: CPU: 11 PID: 0 at kernel/workqueue.c:2257 delayed_w=
-ork_timer_fn+0x55/0x80
-[   64.286983] Modules linked in: rfcomm snd_seq_dummy snd_hrtimer snd_seq =
-snd_seq_device nvme_fabrics nvme_keyring xe drm_gpuvm drm_exec gpu_sched dr=
-m_suballoc_helper drm_ttm_helper snd_hda_codec_hdmi snd_hda_codec_conexant =
-snd_hda_codec_generic ip6t_REJECT nf_reject_ipv6 xt_hl ip6t_rt ipt_REJECT n=
-f_reject_ipv4 nft_limit xt_limit xt_addrtype snd_sof_pci_intel_mtl snd_sof_=
-intel_hda_generic soundwire_intel soundwire_generic_allocation soundwire_ca=
-dence xt_tcpudp cmac snd_sof_intel_hda_common xt_conntrack algif_hash nf_co=
-nntrack snd_soc_hdac_hda algif_skcipher snd_sof_intel_hda_mlink af_alg snd_=
-sof_intel_hda snd_sof_pci qrtr nf_defrag_ipv6 bnep snd_sof_xtensa_dsp uinpu=
-t nf_defrag_ipv4 iwlmvm nft_compat snd_sof nf_tables i915 snd_sof_utils snd=
-_hda_ext_core snd_soc_acpi_intel_match binfmt_misc nfnetlink intel_rapl_msr=
- snd_soc_acpi intel_rapl_common mac80211 snd_soc_core intel_uncore_frequenc=
-y intel_uncore_frequency_common x86_pkg_temp_thermal intel_powerclamp coret=
-emp nls_ascii nls_cp437 snd_compress vfat snd_pcm_dmaengine
-[   64.287050]  soundwire_bus fat uvcvideo snd_hda_intel kvm_intel btusb vi=
-deobuf2_vmalloc uvc videobuf2_memops snd_intel_dspcfg libarc4 videobuf2_v4l=
-2 btrtl snd_intel_sdw_acpi iwlwifi videodev btintel snd_hda_codec kvm btbcm=
- videobuf2_common btmtk drm_buddy drm_display_helper mc snd_hda_core cpufre=
-q_powersave cec bluetooth uniwill_wmi(OE) rapl snd_hwdep rc_core clevo_wmi(=
-OE) cfg80211 tuxedo_io(OE) intel_cstate intel_vpu iTCO_wdt snd_pcm intel_pm=
-c_bxt ucsi_acpi tuxedo_keyboard(OE) asus_wmi ttm tuxedo_compatibility_check=
-(OE) drm_shmem_helper intel_uncore snd_timer typec_ucsi iTCO_vendor_support=
- platform_profile led_class_multicolor pcspkr mei_me snd spd5118 wmi_bmof y=
-t6801(OE) watchdog drm_kms_helper intel_pmc_core typec mei soundcore i2c_al=
-go_bit rfkill roles igen6_edac button intel_vsec int3403_thermal acpi_tad i=
-nt340x_thermal_zone intel_hid pmt_telemetry sparse_keymap pmt_class acpi_pa=
-d ac evdev joydev serio_raw msr parport_pc ppdev lp parport loop efi_pstore=
- configfs ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2
-[   64.287462]  btrfs blake2b_generic dm_crypt dm_mod efivarfs raid10 raid4=
-56 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq =
-libcrc32c crc32c_generic raid1 raid0 md_mod hid_multitouch hid_generic xhci=
-_pci i2c_hid_acpi crct10dif_pclmul sdhci_pci i2c_hid xhci_hcd crc32_pclmul =
-cqhci crc32c_intel drm nvme sdhci ghash_clmulni_intel intel_lpss_pci sha512=
-_ssse3 thunderbolt usbcore nvme_core mmc_core intel_lpss sha256_ssse3 i2c_i=
-801 hid sha1_ssse3 video nvme_auth idma64 usb_common i2c_smbus battery fan =
-wmi pinctrl_meteorlake aesni_intel gf128mul crypto_simd cryptd
-[   64.288034] CPU: 11 UID: 0 PID: 0 Comm: swapper/11 Tainted: G           =
-OE      6.12.12+bpo-amd64 #1  Debian 6.12.12-1~bpo12+1
-[   64.288083] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
-[   64.288105] Hardware name: TUXEDO TUXEDO InfinityBook Pro Intel Gen9/GXx=
-MRXx, BIOS N.1.10A12 11/18/2024
-[   64.288144] RIP: 0010:delayed_work_timer_fn+0x55/0x80
-[   64.288169] Code: e2 48 89 de 89 ef 5b 5d 41 5c e9 66 f3 ff ff 65 f7 05 =
-b3 31 b4 74 00 01 ff 00 75 0e 65 48 8b 3d a1 31 b4 74 f6 47 2c 20 75 0b <0f=
-> 0b 5b 5d 41 5c c3 cc cc cc cc e8 8b 6e 00 00 48 85 c0 74 eb 48
-[   64.288247] RSP: 0018:ffffa04ec06acdb0 EFLAGS: 00010006
-[   64.288271] RAX: 0000000000000000 RBX: ffff8d59c0057600 RCX: ffff8d687fa=
-a3940
-[   64.288300] RDX: 00000000ffff19c0 RSI: ffffffff8b4f1fd0 RDI: ffff8d59429=
-cf220
-[   64.288329] RBP: 0000000000002000 R08: 0000000000000009 R09: ffffa04ec06=
-ace18
-[   64.288358] R10: 0000000000000200 R11: 0000000000000000 R12: ffff8d59429=
-cf200
-[   64.288387] R13: ffffffff8b4f1fd0 R14: ffff8d59429cf220 R15: ffffa04ec06=
-ace10
-[   64.288416] FS:  0000000000000000(0000) GS:ffff8d687fb80000(0000) knlGS:=
-0000000000000000
-[   64.288449] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   64.288473] CR2: 000055b658914440 CR3: 0000000f9ba22002 CR4: 0000000000f=
-72ef0
-[   64.288503] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[   64.288532] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 00000000000=
-00400
-[   64.288561] PKRU: 55555554
-[   64.288573] Call Trace:
-[   64.288587]  <IRQ>
-[   64.288601]  ? __warn+0x89/0x130
-[   64.288620]  ? delayed_work_timer_fn+0x55/0x80
-[   64.288641]  ? report_bug+0x164/0x190
-[   64.288662]  ? handle_bug+0x58/0x90
-[   64.288680]  ? exc_invalid_op+0x17/0x70
-[   64.288698]  ? asm_exc_invalid_op+0x1a/0x20
-[   64.288720]  ? __pfx_delayed_work_timer_fn+0x10/0x10
-[   64.288744]  ? __pfx_delayed_work_timer_fn+0x10/0x10
-[   64.288769]  ? delayed_work_timer_fn+0x55/0x80
-[   64.288791]  ? __pfx_delayed_work_timer_fn+0x10/0x10
-[   64.288814]  call_timer_fn+0x27/0x120
-[   64.288834]  __run_timers+0x18b/0x280
-[   64.288853]  timer_expire_remote+0x4a/0x70
-[   64.288875]  tmigr_handle_remote+0x3d6/0x480
-[   64.288899]  handle_softirqs+0xcd/0x2c0
-[   64.288918]  __irq_exit_rcu+0x91/0xb0
-[   64.288935]  sysvec_apic_timer_interrupt+0x71/0x90
-[   64.288959]  </IRQ>
-[   64.288970]  <TASK>
-[   64.288980]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[   64.289003] RIP: 0010:cpuidle_enter_state+0xcc/0x420
-[   64.289026] Code: 3a 5e 48 ff e8 75 f1 ff ff 8b 53 04 49 89 c5 0f 1f 44 =
-00 00 31 ff e8 b3 3c 47 ff 45 84 ff 0f 85 aa 01 00 00 fb 0f 1f 44 00 00 <45=
-> 85 f6 0f 88 81 01 00 00 49 63 d6 48 8d 04 52 48 8d 04 82 49 8d
-[   64.289098] RSP: 0018:ffffa04ec0207e90 EFLAGS: 00000246
-[   64.289121] RAX: ffff8d687fb80000 RBX: ffff8d687fbc05b0 RCX: 00000000000=
-0001f
-[   64.289150] RDX: 000000000000000b RSI: 000000002abc2bc2 RDI: 00000000000=
-00000
-[   64.289179] RBP: 0000000000000003 R08: 0000000000000000 R09: 00000000000=
-02db2
-[   64.289208] R10: 0000000000000018 R11: ffff8d687fbb4764 R12: ffffffff8d1=
-b6d00
-[   64.289237] R13: 0000000ef7cb93da R14: 0000000000000003 R15: 00000000000=
-00000
-[   64.290975]  cpuidle_enter+0x2d/0x40
-[   64.292117]  do_idle+0x1e7/0x240
-[   64.293255]  cpu_startup_entry+0x29/0x30
-[   64.294398]  start_secondary+0x11e/0x140
-[   64.295548]  common_startup_64+0x13e/0x141
-[   64.296710]  </TASK>
-[   64.297889] ---[ end trace 0000000000000000 ]---
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
-Regards
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Harri
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
