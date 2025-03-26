@@ -1,667 +1,255 @@
-Return-Path: <linux-kernel+bounces-577332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63452A71BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:20:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B48A71BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F7DF7A6F4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA46171B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686F91F63F9;
-	Wed, 26 Mar 2025 16:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB951F5612;
+	Wed, 26 Mar 2025 16:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq7N9B/R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aaKZ8p1O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4E31F4288;
-	Wed, 26 Mar 2025 16:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F241F5839
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743006037; cv=none; b=uOon1wssGpW42h32aUyWw1SKIlXqoP61YGLhEgrgZzD5v+6Xas4Vwqi4KFLHeOPo7PNvb7w20A8ay6gjpQwwOSwFrnuaIEuczqWFh9lrL5AFrAjfZu1oOrnNm2hMIWNCRNosNc7lPhTQXkL1RXcV/ec1RMSGLmUUwiNwL5mMhz0=
+	t=1743006075; cv=none; b=Qmq6j/y6wG2iJ+Qe+npHgEiDqu2dg7/YCQJrCrF83v1D4vQCj0EtV4GxJrsrkMuxWCahyuuFY61rfbz+k2QXicYq7QNN2PR2rn0f8QDWCq/ESKDOgxdjDSar4xzsnQ3/pahs1hCnhUBTsO1glbCJ11qh0bfDtikDarJzPahFep0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743006037; c=relaxed/simple;
-	bh=fT6vyJWXrJFHw+WHik05GpC0tIuzAUjJrqq+9ioaJ28=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VFDeQyNMT2iZjGb6pqpkF28K1lGWT6KDSyt+ZRPcmKMWoj/JYk9od6CB6m81guQeYYrjcXdd+n98sPzrPobYF1kLj3J0vOQudyyRNTbnTyQVF/zyR9v46nHsREuAUzvJTtsCjKfOTnPRnR41skc6CUO9fQ9YSO6FkpaGz1qY6Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq7N9B/R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935AEC4CEE2;
-	Wed, 26 Mar 2025 16:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743006036;
-	bh=fT6vyJWXrJFHw+WHik05GpC0tIuzAUjJrqq+9ioaJ28=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Wq7N9B/RN+ANt1/83FYQTcsxpMqD8FjnMwsi2/GwKCQenlhzYe12JWTXPJO0fSv+K
-	 /6mXFtTaA/QCXveVjhmlMnq+K40++8pYS1dNaQsaDw+I1Moe56VHtViyXWqe3ec68J
-	 f6/6A/uleeb7hRRqgDTmIGSnfDXEn1o+QT1ZCjLmLPq9tteZxA4URWT80cbgh43yt0
-	 GHfJYVo7OdmhMHsYMdrPpe76tDYXqmw9gXjdIecuSvsHnK6rYv2IIie2Vdh/MG9cJH
-	 B5VeIP5EZa9Cn9rBIIx2l0qAiLTRDND1xYw4ZKND3awO+5gWskDKm1mTMiT9UVq22n
-	 noLgx7B+gxgew==
-Date: Wed, 26 Mar 2025 10:20:33 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Alison Schofield <alison.schofield@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Cc: nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] acpi: nfit: intel: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z-QpUcxFCRByYcTA@kspp>
+	s=arc-20240116; t=1743006075; c=relaxed/simple;
+	bh=xejv/BHNYIpVxEwvi1agd8alfJnmDYOHhuQeSbz9TdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ixu/ezuGjpgpROz2VF4FasDEXYUWWzexIuHmnevuWHdf7Iyqtj8g1xXSpzgKBZcgN3Ae1KX9bQa/Mdge2CJVwLjKtdGg2Y/Lotz/MnazRslToYVhuQr3ApD8goNRc/AoTXhBDjt8L7Gqqzpgfq5AmsGIAIXN7koUu/mpu/B614A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aaKZ8p1O; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743006072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7rhDUOfYTdvyvV/eFaMDlyCyK0NwjyAggH/NGIgz/Q8=;
+	b=aaKZ8p1O/38HRcje+X7dOQqacFQscNz/V6iLrEQWynnJayrRYsZyrDvzbTk0ba7Ohsp74W
+	FwLxhWn2N5OG8dH98TwglFKDBA7UtccFwATkd5jFG43+hQAUzB8es7QyzP3O4oYLxQg99d
+	Jt7QZ9T6aQe/URFqY+AGAi2vbFg1bOc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-669-ULwPe55JNySpiKppj3RZhQ-1; Wed, 26 Mar 2025 12:21:10 -0400
+X-MC-Unique: ULwPe55JNySpiKppj3RZhQ-1
+X-Mimecast-MFC-AGG-ID: ULwPe55JNySpiKppj3RZhQ_1743006069
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4394c489babso171795e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:21:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743006069; x=1743610869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7rhDUOfYTdvyvV/eFaMDlyCyK0NwjyAggH/NGIgz/Q8=;
+        b=XUiUrZDQ08x46nf5KTvr3r3vK0sX+KeTdvNJzdzJLwMJawhH9GCur7cAkH3BhWddhT
+         +JcYFepLYsg30pRxmqgkjB7K+ep2kK3IgLG3+3CZ982QsxHbvEYLkoFBK6zlAaqDWVBv
+         M5ojTxqPbtNNeV5dU08tz2BSiuoQIKF6grMfWi3S7Y0K7undte0S4Q2vxBjez/eZNJE8
+         hwF2XR2Oi3FRCp2NFU2JjRLX3KcvSErAuhUwqcqoIDYjUF+13uqE5L5VmigW61taZwi/
+         2EwQ59fv0j7h7IYsSY+Fm5Nk4LGXk1sW2vykwfullxH85FHLLHByarScLt8llooUvDAa
+         /i/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXtW3x4QpJMX+Qem0Yr+s02o8V5DEAMv/1OliSFRKm8SAE0wp0CSWHzWH+EiXDrxK9521GKkQYq8fwIDXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxToxOSULTmmlvyWefUKUedOtL2/WTyWqz97xaqrmvcSutDchsZ
+	V8/eoXK/vvLQMj0BBqulY9HCGH+cKwTGPwsofyoUARWfbIkHSRh7+DwmofAq7VjZDL25am0rWXW
+	71BWbDGqXW0GKcCAn3rSHXuJCE5IhWDSTynD77PU4fKUsyk8cO2eP7OQ3Nmk8ZA==
+X-Gm-Gg: ASbGncvR2Q3jpxAyNKdDnjrKb3Gcwr1kNcUSV4q/rhQ41sEwd7zR1vDAqPPtp2EaDh4
+	qnTktzJWso1018Q+L3YlcZPPmRCobPO124qpWYTIeLYqP6efC2NxnSYdh6OiUP/WECoaAhqALeh
+	tK2Se2ucFDMXADyWY/UQMkFSGWWYuC6Vqka4qylku7++19V/EtYSJ65eArvCQ2e5WntVK9r9WXe
+	M5i/7hyB6mm4k4RdAlm8DvPzd6QfAG3Ufvec1QXJIFef3abLzGirycGN3CNW9HgYYANGsjm6T4d
+	2Ob/81iBvb+WsowTLE++jwE49smqvta4sx8+KrgrVP4sRTsSITHbDvhhdKuujLK6
+X-Received: by 2002:a05:600c:5126:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43d84fb9f22mr885725e9.18.1743006069143;
+        Wed, 26 Mar 2025 09:21:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx8/eCeBPFFtCPoCe1ZXCccXEQdNSFsGJQ/ayYaSjeZ5wE7SFAm2rdiOMf/B0yRu5sY+HFTg==
+X-Received: by 2002:a05:600c:5126:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43d84fb9f22mr885245e9.18.1743006068534;
+        Wed, 26 Mar 2025 09:21:08 -0700 (PDT)
+Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6445sm17341376f8f.71.2025.03.26.09.21.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 09:21:07 -0700 (PDT)
+Date: Wed, 26 Mar 2025 17:21:03 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Luigi Leonardi <leonardi@redhat.com>
+Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Hyunwoo Kim <v4bel@theori.io>
+Subject: Re: [PATCH net-next v2] vsock/test: Add test for null ptr deref when
+ transport changes
+Message-ID: <qp67w36nyzgyd45wi7oosxe6syx7dzcifc5s2eg47engirtrnf@ewnk6ngqw7h3>
+References: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
+ <85a034b7-a22d-438f-802e-ac193099dbe7@rbox.co>
+ <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
+In-Reply-To: <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Wed, Mar 26, 2025 at 04:14:20PM +0100, Luigi Leonardi wrote:
+>Hi Michal,
+>
+>On Wed, Mar 19, 2025 at 01:27:35AM +0100, Michal Luczaj wrote:
+>>On 3/14/25 10:27, Luigi Leonardi wrote:
+>>>Add a new test to ensure that when the transport changes a null pointer
+>>>dereference does not occur[1].
+>>>
+>>>Note that this test does not fail, but it may hang on the client side if
+>>>it triggers a kernel oops.
+>>>
+>>>This works by creating a socket, trying to connect to a server, and then
+>>>executing a second connect operation on the same socket but to a
+>>>different CID (0). This triggers a transport change. If the connect
+>>>operation is interrupted by a signal, this could cause a null-ptr-deref.
+>>
+>>Just to be clear: that's the splat, right?
+>>
+>>Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] PREEMPT SMP KASAN NOPTI
+>>KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
+>>CPU: 2 UID: 0 PID: 463 Comm: kworker/2:3 Not tainted
+>>Workqueue: vsock-loopback vsock_loopback_work
+>>RIP: 0010:vsock_stream_has_data+0x44/0x70
+>>Call Trace:
+>>virtio_transport_do_close+0x68/0x1a0
+>>virtio_transport_recv_pkt+0x1045/0x2ae4
+>>vsock_loopback_work+0x27d/0x3f0
+>>process_one_work+0x846/0x1420
+>>worker_thread+0x5b3/0xf80
+>>kthread+0x35a/0x700
+>>ret_from_fork+0x2d/0x70
+>>ret_from_fork_asm+0x1a/0x30
+>>
+>
+>Yep! I'll add it to the commit message in v3.
+>>>...
+>>>+static void test_stream_transport_change_client(const struct test_opts *opts)
+>>>+{
+>>>+	__sighandler_t old_handler;
+>>>+	pid_t pid = getpid();
+>>>+	pthread_t thread_id;
+>>>+	time_t tout;
+>>>+
+>>>+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
+>>>+	if (old_handler == SIG_ERR) {
+>>>+		perror("signal");
+>>>+		exit(EXIT_FAILURE);
+>>>+	}
+>>>+
+>>>+	if (pthread_create(&thread_id, NULL, test_stream_transport_change_thread, &pid)) {
+>>>+		perror("pthread_create");
+>>
+>>Does pthread_create() set errno on failure?
+>It does not, very good catch!
+>>
+>>>+		exit(EXIT_FAILURE);
+>>>+	}
+>>>+
+>>>+	tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
+>>
+>>Isn't 10 seconds a bit excessive? I see the oops pretty much immediately.
+>Yeah it's probably excessive. I used because it's the default timeout 
+>value.
+>>
+>>>+	do {
+>>>+		struct sockaddr_vm sa = {
+>>>+			.svm_family = AF_VSOCK,
+>>>+			.svm_cid = opts->peer_cid,
+>>>+			.svm_port = opts->peer_port,
+>>>+		};
+>>>+		int s;
+>>>+
+>>>+		s = socket(AF_VSOCK, SOCK_STREAM, 0);
+>>>+		if (s < 0) {
+>>>+			perror("socket");
+>>>+			exit(EXIT_FAILURE);
+>>>+		}
+>>>+
+>>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
+>>>+
+>>>+		/* Set CID to 0 cause a transport change. */
+>>>+		sa.svm_cid = 0;
+>>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
+>>>+
+>>>+		close(s);
+>>>+	} while (current_nsec() < tout);
+>>>+
+>>>+	if (pthread_cancel(thread_id)) {
+>>>+		perror("pthread_cancel");
+>>
+>>And errno here.
+>>
+>>>+		exit(EXIT_FAILURE);
+>>>+	}
+>>>+
+>>>+	/* Wait for the thread to terminate */
+>>>+	if (pthread_join(thread_id, NULL)) {
+>>>+		perror("pthread_join");
+>>
+>>And here.
+>>Aaand I've realized I've made exactly the same mistake elsewhere :)
+>>
+>>>...
+>>>+static void test_stream_transport_change_server(const struct test_opts *opts)
+>>>+{
+>>>+	time_t tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
+>>>+
+>>>+	do {
+>>>+		int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
+>>>+
+>>>+		close(s);
+>>>+	} while (current_nsec() < tout);
+>>>+}
+>>
+>>I'm not certain you need to re-create the listener or measure the time
+>>here. What about something like
+>>
+>>	int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
+>>	control_expectln("DONE");
+>>	close(s);
+>>
+>Just tried and it triggers the oops :)
 
-Use the `DEFINE_RAW_FLEX()` helper for on-stack definitions of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+If this works (as I also initially thought), we should check the result 
+of the first connect() in the client code. It can succeed or fail with 
+-EINTR, in other cases we should report an error because it is not 
+expected.
 
-So, with these changes, fix a dozen of the following warnings:
+And we should check also the second connect(), it should always fail, 
+right?
 
-drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+For this I think you need another sync point to be sure the server is 
+listening before try to connect the first time:
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Use DEFINE_RAW_FLEX() instead of __struct_group().
+client:
+     // pthread_create, etc.
 
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
+     control_expectln("LISTENING");
 
- drivers/acpi/nfit/intel.c | 388 ++++++++++++++++++--------------------
- 1 file changed, 179 insertions(+), 209 deletions(-)
+     do {
+         ...
+     } while();
 
-diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
-index 3902759abcba..114d5b3bb39b 100644
---- a/drivers/acpi/nfit/intel.c
-+++ b/drivers/acpi/nfit/intel.c
-@@ -55,21 +55,17 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	unsigned long security_flags = 0;
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_get_security_state cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_out =
--				sizeof(struct nd_intel_get_security_state),
--			.nd_fw_size =
--				sizeof(struct nd_intel_get_security_state),
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_get_security_state));
-+	struct nd_intel_get_security_state *cmd =
-+			(struct nd_intel_get_security_state *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_command = NVDIMM_INTEL_GET_SECURITY_STATE;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_out = sizeof(struct nd_intel_get_security_state);
-+	nd_cmd->nd_fw_size = sizeof(struct nd_intel_get_security_state);
-+
- 	if (!test_bit(NVDIMM_INTEL_GET_SECURITY_STATE, &nfit_mem->dsm_mask))
- 		return 0;
- 
-@@ -81,33 +77,34 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
- 	if (nvdimm_in_overwrite(nvdimm) && ptype == NVDIMM_USER)
- 		return BIT(NVDIMM_SECURITY_OVERWRITE);
- 
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
--	if (rc < 0 || nd_cmd.cmd.status) {
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
-+	if (rc < 0 || cmd->status) {
- 		pr_err("%s: security state retrieval failed (%d:%#x)\n",
--				nvdimm_name(nvdimm), rc, nd_cmd.cmd.status);
-+				nvdimm_name(nvdimm), rc, cmd->status);
- 		return 0;
- 	}
- 
- 	/* check and see if security is enabled and locked */
- 	if (ptype == NVDIMM_MASTER) {
--		if (nd_cmd.cmd.extended_state & ND_INTEL_SEC_ESTATE_ENABLED)
-+		if (cmd->extended_state & ND_INTEL_SEC_ESTATE_ENABLED)
- 			set_bit(NVDIMM_SECURITY_UNLOCKED, &security_flags);
- 		else
- 			set_bit(NVDIMM_SECURITY_DISABLED, &security_flags);
--		if (nd_cmd.cmd.extended_state & ND_INTEL_SEC_ESTATE_PLIMIT)
-+		if (cmd->extended_state & ND_INTEL_SEC_ESTATE_PLIMIT)
- 			set_bit(NVDIMM_SECURITY_FROZEN, &security_flags);
- 		return security_flags;
- 	}
- 
--	if (nd_cmd.cmd.state & ND_INTEL_SEC_STATE_UNSUPPORTED)
-+	if (cmd->state & ND_INTEL_SEC_STATE_UNSUPPORTED)
- 		return 0;
- 
--	if (nd_cmd.cmd.state & ND_INTEL_SEC_STATE_ENABLED) {
--		if (nd_cmd.cmd.state & ND_INTEL_SEC_STATE_FROZEN ||
--		    nd_cmd.cmd.state & ND_INTEL_SEC_STATE_PLIMIT)
-+	if (cmd->state & ND_INTEL_SEC_STATE_ENABLED) {
-+		if (cmd->state & ND_INTEL_SEC_STATE_FROZEN ||
-+		    cmd->state & ND_INTEL_SEC_STATE_PLIMIT)
- 			set_bit(NVDIMM_SECURITY_FROZEN, &security_flags);
- 
--		if (nd_cmd.cmd.state & ND_INTEL_SEC_STATE_LOCKED)
-+		if (cmd->state & ND_INTEL_SEC_STATE_LOCKED)
- 			set_bit(NVDIMM_SECURITY_LOCKED, &security_flags);
- 		else
- 			set_bit(NVDIMM_SECURITY_UNLOCKED, &security_flags);
-@@ -120,26 +117,25 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
- static int intel_security_freeze(struct nvdimm *nvdimm)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_freeze_lock cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_FREEZE_LOCK,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_freeze_lock));
-+	struct nd_intel_freeze_lock *cmd =
-+			(struct nd_intel_freeze_lock *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_command = NVDIMM_INTEL_FREEZE_LOCK;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
-+
- 	if (!test_bit(NVDIMM_INTEL_FREEZE_LOCK, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
--	if (nd_cmd.cmd.status)
-+	if (cmd->status)
- 		return -EIO;
- 	return 0;
- }
-@@ -153,32 +149,31 @@ static int intel_security_change_key(struct nvdimm *nvdimm,
- 	unsigned int cmd = ptype == NVDIMM_MASTER ?
- 		NVDIMM_INTEL_SET_MASTER_PASSPHRASE :
- 		NVDIMM_INTEL_SET_PASSPHRASE;
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_set_passphrase cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE * 2,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--			.nd_command = cmd,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_set_passphrase));
-+	struct nd_intel_set_passphrase *cmd_pp =
-+			(struct nd_intel_set_passphrase *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = ND_INTEL_PASSPHRASE_SIZE * 2;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_command = cmd;
-+
- 	if (!test_bit(cmd, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	memcpy(nd_cmd.cmd.old_pass, old_data->data,
--			sizeof(nd_cmd.cmd.old_pass));
--	memcpy(nd_cmd.cmd.new_pass, new_data->data,
--			sizeof(nd_cmd.cmd.new_pass));
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	memcpy(cmd_pp->old_pass, old_data->data,
-+			sizeof(cmd_pp->old_pass));
-+	memcpy(cmd_pp->new_pass, new_data->data,
-+			sizeof(cmd_pp->new_pass));
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
- 
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd_pp->status) {
- 	case 0:
- 		return 0;
- 	case ND_INTEL_STATUS_INVALID_PASS:
-@@ -195,29 +190,28 @@ static int __maybe_unused intel_security_unlock(struct nvdimm *nvdimm,
- 		const struct nvdimm_key_data *key_data)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_unlock_unit cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_UNLOCK_UNIT,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_unlock_unit));
-+	struct nd_intel_unlock_unit *cmd =
-+			(struct nd_intel_unlock_unit *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_command = NVDIMM_INTEL_UNLOCK_UNIT;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = ND_INTEL_PASSPHRASE_SIZE;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
-+
- 	if (!test_bit(NVDIMM_INTEL_UNLOCK_UNIT, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	memcpy(nd_cmd.cmd.passphrase, key_data->data,
--			sizeof(nd_cmd.cmd.passphrase));
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	memcpy(cmd->passphrase, key_data->data,
-+			sizeof(cmd->passphrase));
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd->status) {
- 	case 0:
- 		break;
- 	case ND_INTEL_STATUS_INVALID_PASS:
-@@ -234,29 +228,28 @@ static int intel_security_disable(struct nvdimm *nvdimm,
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_disable_passphrase cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_DISABLE_PASSPHRASE,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_disable_passphrase));
-+	struct nd_intel_disable_passphrase *cmd =
-+			(struct nd_intel_disable_passphrase *)nd_cmd->nd_payload;
-+
-+	nd_cmd->nd_command = NVDIMM_INTEL_DISABLE_PASSPHRASE;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = ND_INTEL_PASSPHRASE_SIZE;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
- 
- 	if (!test_bit(NVDIMM_INTEL_DISABLE_PASSPHRASE, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	memcpy(nd_cmd.cmd.passphrase, key_data->data,
--			sizeof(nd_cmd.cmd.passphrase));
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	memcpy(cmd->passphrase, key_data->data,
-+			sizeof(cmd->passphrase));
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
- 
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd->status) {
- 	case 0:
- 		break;
- 	case ND_INTEL_STATUS_INVALID_PASS:
-@@ -277,29 +270,28 @@ static int __maybe_unused intel_security_erase(struct nvdimm *nvdimm,
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	unsigned int cmd = ptype == NVDIMM_MASTER ?
- 		NVDIMM_INTEL_MASTER_SECURE_ERASE : NVDIMM_INTEL_SECURE_ERASE;
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_secure_erase cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--			.nd_command = cmd,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_secure_erase));
-+	struct nd_intel_secure_erase *cmd_se =
-+			(struct nd_intel_secure_erase *)nd_cmd->nd_payload;
-+
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = ND_INTEL_PASSPHRASE_SIZE;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_command = cmd;
- 
- 	if (!test_bit(cmd, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	memcpy(nd_cmd.cmd.passphrase, key->data,
--			sizeof(nd_cmd.cmd.passphrase));
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	memcpy(cmd_se->passphrase, key->data,
-+			sizeof(cmd_se->passphrase));
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
- 
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd_se->status) {
- 	case 0:
- 		break;
- 	case ND_INTEL_STATUS_NOT_SUPPORTED:
-@@ -318,26 +310,25 @@ static int __maybe_unused intel_security_query_overwrite(struct nvdimm *nvdimm)
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_query_overwrite cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_QUERY_OVERWRITE,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_query_overwrite));
-+	struct nd_intel_query_overwrite *cmd =
-+			(struct nd_intel_query_overwrite *)nd_cmd->nd_payload;
-+
-+	nd_cmd->nd_command = NVDIMM_INTEL_QUERY_OVERWRITE;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
- 
- 	if (!test_bit(NVDIMM_INTEL_QUERY_OVERWRITE, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
- 
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd->status) {
- 	case 0:
- 		break;
- 	case ND_INTEL_STATUS_OQUERY_INPROGRESS:
-@@ -354,29 +345,28 @@ static int __maybe_unused intel_security_overwrite(struct nvdimm *nvdimm,
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_overwrite cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_OVERWRITE,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE,
--			.nd_size_out = ND_INTEL_STATUS_SIZE,
--			.nd_fw_size = ND_INTEL_STATUS_SIZE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_overwrite));
-+	struct nd_intel_overwrite *cmd =
-+			(struct nd_intel_overwrite *)nd_cmd->nd_payload;
-+
-+	nd_cmd->nd_command = NVDIMM_INTEL_OVERWRITE;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = ND_INTEL_PASSPHRASE_SIZE;
-+	nd_cmd->nd_size_out = ND_INTEL_STATUS_SIZE;
-+	nd_cmd->nd_fw_size = ND_INTEL_STATUS_SIZE;
- 
- 	if (!test_bit(NVDIMM_INTEL_OVERWRITE, &nfit_mem->dsm_mask))
- 		return -ENOTTY;
- 
--	memcpy(nd_cmd.cmd.passphrase, nkey->data,
--			sizeof(nd_cmd.cmd.passphrase));
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	memcpy(cmd->passphrase, nkey->data,
-+			sizeof(cmd->passphrase));
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 	if (rc < 0)
- 		return rc;
- 
--	switch (nd_cmd.cmd.status) {
-+	switch (cmd->status) {
- 	case 0:
- 		return 0;
- 	case ND_INTEL_STATUS_OVERWRITE_UNSUPPORTED:
-@@ -407,24 +397,18 @@ const struct nvdimm_security_ops *intel_security_ops = &__intel_security_ops;
- static int intel_bus_fwa_businfo(struct nvdimm_bus_descriptor *nd_desc,
- 		struct nd_intel_bus_fw_activate_businfo *info)
- {
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_bus_fw_activate_businfo cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE_BUSINFO,
--			.nd_family = NVDIMM_BUS_FAMILY_INTEL,
--			.nd_size_out =
--				sizeof(struct nd_intel_bus_fw_activate_businfo),
--			.nd_fw_size =
--				sizeof(struct nd_intel_bus_fw_activate_businfo),
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_bus_fw_activate_businfo));
- 	int rc;
- 
--	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd),
--			NULL);
--	*info = nd_cmd.cmd;
-+	nd_cmd->nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE_BUSINFO;
-+	nd_cmd->nd_family = NVDIMM_BUS_FAMILY_INTEL;
-+	nd_cmd->nd_size_out = sizeof(struct nd_intel_bus_fw_activate_businfo);
-+	nd_cmd->nd_fw_size = sizeof(struct nd_intel_bus_fw_activate_businfo);
-+
-+	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_CALL, nd_cmd,
-+			    __struct_size(nd_cmd), NULL);
-+	*info = *(struct nd_intel_bus_fw_activate_businfo *)nd_cmd->nd_payload;
- 	return rc;
- }
- 
-@@ -518,33 +502,28 @@ static enum nvdimm_fwa_capability intel_bus_fwa_capability(
- static int intel_bus_fwa_activate(struct nvdimm_bus_descriptor *nd_desc)
- {
- 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_bus_fw_activate cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE,
--			.nd_family = NVDIMM_BUS_FAMILY_INTEL,
--			.nd_size_in = sizeof(nd_cmd.cmd.iodev_state),
--			.nd_size_out =
--				sizeof(struct nd_intel_bus_fw_activate),
--			.nd_fw_size =
--				sizeof(struct nd_intel_bus_fw_activate),
--		},
--		/*
--		 * Even though activate is run from a suspended context,
--		 * for safety, still ask platform firmware to force
--		 * quiesce devices by default. Let a module
--		 * parameter override that policy.
--		 */
--		.cmd = {
--			.iodev_state = acpi_desc->fwa_noidle
--				? ND_INTEL_BUS_FWA_IODEV_OS_IDLE
--				: ND_INTEL_BUS_FWA_IODEV_FORCE_IDLE,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_bus_fw_activate));
-+	struct nd_intel_bus_fw_activate *cmd =
-+			(struct nd_intel_bus_fw_activate *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE;
-+	nd_cmd->nd_family = NVDIMM_BUS_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = sizeof(cmd->iodev_state);
-+	nd_cmd->nd_size_out = sizeof(struct nd_intel_bus_fw_activate);
-+	nd_cmd->nd_fw_size = sizeof(struct nd_intel_bus_fw_activate);
-+
-+	/*
-+	 * Even though activate is run from a suspended context,
-+	 * for safety, still ask platform firmware to force
-+	 * quiesce devices by default. Let a module
-+	 * parameter override that policy.
-+	 */
-+	cmd->iodev_state = acpi_desc->fwa_noidle
-+				? ND_INTEL_BUS_FWA_IODEV_OS_IDLE
-+				: ND_INTEL_BUS_FWA_IODEV_FORCE_IDLE;
-+
- 	switch (intel_bus_fwa_state(nd_desc)) {
- 	case NVDIMM_FWA_ARMED:
- 	case NVDIMM_FWA_ARM_OVERFLOW:
-@@ -553,8 +532,8 @@ static int intel_bus_fwa_activate(struct nvdimm_bus_descriptor *nd_desc)
- 		return -ENXIO;
- 	}
- 
--	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd),
--			NULL);
-+	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_CALL, nd_cmd,
-+			    __struct_size(nd_cmd), NULL);
- 
- 	/*
- 	 * Whether the command succeeded, or failed, the agent checking
-@@ -582,23 +561,18 @@ const struct nvdimm_bus_fw_ops *intel_bus_fw_ops = &__intel_bus_fw_ops;
- static int intel_fwa_dimminfo(struct nvdimm *nvdimm,
- 		struct nd_intel_fw_activate_dimminfo *info)
- {
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_fw_activate_dimminfo cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_FW_ACTIVATE_DIMMINFO,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_out =
--				sizeof(struct nd_intel_fw_activate_dimminfo),
--			.nd_fw_size =
--				sizeof(struct nd_intel_fw_activate_dimminfo),
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_fw_activate_dimminfo));
- 	int rc;
- 
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
--	*info = nd_cmd.cmd;
-+	nd_cmd->nd_command = NVDIMM_INTEL_FW_ACTIVATE_DIMMINFO;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_out = sizeof(struct nd_intel_fw_activate_dimminfo);
-+	nd_cmd->nd_fw_size = sizeof(struct nd_intel_fw_activate_dimminfo);
-+
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
-+	*info = *(struct nd_intel_fw_activate_dimminfo *)nd_cmd->nd_payload;
- 	return rc;
- }
- 
-@@ -688,27 +662,22 @@ static int intel_fwa_arm(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arm)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	struct acpi_nfit_desc *acpi_desc = nfit_mem->acpi_desc;
--	struct {
--		struct nd_cmd_pkg pkg;
--		struct nd_intel_fw_activate_arm cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_FW_ACTIVATE_ARM,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = sizeof(nd_cmd.cmd.activate_arm),
--			.nd_size_out =
--				sizeof(struct nd_intel_fw_activate_arm),
--			.nd_fw_size =
--				sizeof(struct nd_intel_fw_activate_arm),
--		},
--		.cmd = {
--			.activate_arm = arm == NVDIMM_FWA_ARM
--				? ND_INTEL_DIMM_FWA_ARM
--				: ND_INTEL_DIMM_FWA_DISARM,
--		},
--	};
-+	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-+			sizeof(struct nd_intel_fw_activate_arm));
-+	struct nd_intel_fw_activate_arm *cmd =
-+			(struct nd_intel_fw_activate_arm *)nd_cmd->nd_payload;
- 	int rc;
- 
-+	nd_cmd->nd_command = NVDIMM_INTEL_FW_ACTIVATE_ARM;
-+	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-+	nd_cmd->nd_size_in = sizeof(cmd->activate_arm);
-+	nd_cmd->nd_size_out = sizeof(struct nd_intel_fw_activate_arm);
-+	nd_cmd->nd_fw_size = sizeof(struct nd_intel_fw_activate_arm);
-+
-+	cmd->activate_arm = arm == NVDIMM_FWA_ARM
-+					? ND_INTEL_DIMM_FWA_ARM
-+					: ND_INTEL_DIMM_FWA_DISARM;
-+
- 	switch (intel_fwa_state(nvdimm)) {
- 	case NVDIMM_FWA_INVALID:
- 		return -ENXIO;
-@@ -733,7 +702,8 @@ static int intel_fwa_arm(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arm)
- 	acpi_desc->fwa_state = NVDIMM_FWA_INVALID;
- 	nfit_mem->fwa_state = NVDIMM_FWA_INVALID;
- 
--	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, &nd_cmd, sizeof(nd_cmd), NULL);
-+	rc = nvdimm_ctl(nvdimm, ND_CMD_CALL, nd_cmd, __struct_size(nd_cmd),
-+			NULL);
- 
- 	dev_dbg(acpi_desc->dev, "%s result: %d\n", arm == NVDIMM_FWA_ARM
- 			? "arm" : "disarm", rc);
--- 
-2.43.0
+     control_writeln("DONE");
+
+server:
+     int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
+     control_writeln("LISTENING");
+     control_expectln("DONE");
+     close(s);
+
+Thanks,
+Stefano
 
 
