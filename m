@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-577648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A778A71FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA74A71FE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39B61888122
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81BF1890F9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC541BD03F;
-	Wed, 26 Mar 2025 20:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFB5254AF6;
+	Wed, 26 Mar 2025 20:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTS0sTLn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYsG9+uS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E86D1F4736;
-	Wed, 26 Mar 2025 20:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2D21CD1F;
+	Wed, 26 Mar 2025 20:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743019749; cv=none; b=nWbkbS574CN/rBqWEEamyM94LSh3SXX1QZwugGvJAcy7tZ7MZT5/R0YubCN6w+oJj4vf8olFoyTiMF4pS1032dUnZTM+qo6STeyukvw6SPZXuSeXK5hlZ9vHp76Bv0O+hb49C8eNujhvzo8wMXFMWkqP5UxQaiKws1Kt6UNGcYg=
+	t=1743019792; cv=none; b=KhiIUC6H27MOl33tizM8El8dea6y87PAq0yqo/PTw3dmH6ueNkBnnuJ+a45H8c41uSTLwkZ8l83d+FFiSikZ4fouiHG/nFdyZ6CKTtj4arPTJNIhhIGXKCleMGxsFoYmvzg39tXeFAu6Jl09jC3XmWHMLQEO0L0orMK7inXb63Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743019749; c=relaxed/simple;
-	bh=bc3DKkJ/3ho9CogsZhj5BhBJLmQCTRULVqyGxLmmRs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6E0o5k/YB3NBx59ht2k4UDmLxDJXXNCcEp8Y5yu6EVUk9XzXnNhuyZbTnjcyUIncxVl8BO8+A8iyMSlP12v2qYRCKqOu+WTnfKdA5msMuM8zRtPJK5NI2jspxTFuObUiJeV2SJ5nYxmYpZAZnSWXv0ig2/oUbsAFhpix31cNUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTS0sTLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AB1C4CEE2;
-	Wed, 26 Mar 2025 20:09:08 +0000 (UTC)
+	s=arc-20240116; t=1743019792; c=relaxed/simple;
+	bh=32KmifOOGoqSmOn9dvxSLSt7llFi98ixPAQF7D8wpcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTqyBoDh01k/isxrfRKRCNZHekgnktDcYIUhKDUrlkVzoQu0+8GiIA8Y9aLwNsFUsb0f9mYDZTJAs2rhaNP0zNnFRAEYbQKsBF1GfmidimYXDtSLxw4WNJ+jhXxOMDcFMPUGjCEy5u9khQonr8NIsJCvThcHvIw6RRaUKXb8ENA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYsG9+uS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B221C4CEE2;
+	Wed, 26 Mar 2025 20:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743019749;
-	bh=bc3DKkJ/3ho9CogsZhj5BhBJLmQCTRULVqyGxLmmRs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KTS0sTLnOS5ScYgfJtL6Uo3VKHyQd16srCfN7E/U7T47f3vEt3CaoUCiFIrh3QwmK
-	 W5uTuGM4Ux6ctIrMc58SIxWEXAenmlPOXyTXzE+BpF5oFO9ljmOTPbAP6ZL//Rf/Ay
-	 D3WHpcaCImc2/mPrbpsYrwlHAp8WrcpKopYRyENBbSNPy7sRgknL1Bs3AAWFkk0kj6
-	 KX8hO2xFTTYdHjiYEhOrJp5jvCHaqlXchGFI7Bi5bx0xmd+kykeOF/Vj3g4nEnsKgL
-	 HO8LdlbLbPll3opT4GUKY/OzUancYV2x3dBV0tW4DAe6tNRUeb6auoNkZfiOdOoxma
-	 zdCSGbEtujSXQ==
-Date: Wed, 26 Mar 2025 22:09:06 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"Cai, Chong" <chongc@google.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"Annapurve, Vishal" <vannapurve@google.com>,
-	"dionnaglaze@google.com" <dionnaglaze@google.com>,
-	"bondarn@google.com" <bondarn@google.com>,
-	"Raynor, Scott" <scott.raynor@intel.com>,
-	"Zhang, Cathy" <cathy.zhang@intel.com>
-Subject: Re: [PATCH 3/4] x86/sgx: Define error codes for ENCLS[EUPDATESVN]
-Message-ID: <Z-Re4gqcCh0GSvKC@kernel.org>
-References: <20250321123938.802763-1-elena.reshetova@intel.com>
- <20250321123938.802763-4-elena.reshetova@intel.com>
- <Z98wDd_eMCFE40Z7@kernel.org>
- <DM8PR11MB575028B19C9C23E6EF31357FE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+	s=k20201202; t=1743019792;
+	bh=32KmifOOGoqSmOn9dvxSLSt7llFi98ixPAQF7D8wpcc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tYsG9+uSmMlzNU68yDKOcPAH/hj4JOWVzXq05wujHeibPJoBIVKL9S4yYHTODlzDZ
+	 IFRTG+PnoqYA4Usbc8NG/aNQxHO+STrtC1ZigYa9nImSe+EuSCEfE6Lv7BDfKg/bj/
+	 T42+jYO2l3TzER4JMJPgChcE2/Hok1jo4irdYvYk95WAIYfM71aS9Fk2aOEmC9V924
+	 X5wytt6w5QY+/0Ae0U73HRphlb9IfP5UU5UauAiat2suKcckK4SGgodnCaIbhZjDrL
+	 BfTaYU3OD6AkHIGKpk4uJ7solP3YUGpggOYVG0TX9L/emUKA5aiC5bJDF22zQLWd1V
+	 RDPL6mrJABKrQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	stable@vger.kernel.org,
+	David Binderman <dcb314@hotmail.com>
+Subject: [PATCH] arm64/crc-t10dif: fix use of out-of-scope array in crc_t10dif_arch()
+Date: Wed, 26 Mar 2025 13:09:18 -0700
+Message-ID: <20250326200918.125743-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM8PR11MB575028B19C9C23E6EF31357FE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 24, 2025 at 12:21:14PM +0000, Reshetova, Elena wrote:
-> 
-> 
-> > On Fri, Mar 21, 2025 at 02:34:42PM +0200, Elena Reshetova wrote:
-> > > Add error codes for ENCLS[EUPDATESVN], then SGX CPUSVN update
-> > > process can know the execution state of EUPDATESVN.
-> > >
-> > 
-> > Enumerate the error codes. 
-> 
-> You mean in the commit message or? 
+From: Eric Biggers <ebiggers@google.com>
 
-I'm not really sure how kernel uses them.
+Fix a silly bug where an array was used outside of its scope.
 
-> 
-> 
-> > Do we need all of the three added?
-> 
-> Yes, we do. They are all valid error codes that can be received as a result of
-> execution of EUPDATESVN. 
-> 
-> Best Regards,
-> Elena.
+Fixes: 2051da858534 ("arm64/crc-t10dif: expose CRC-T10DIF function through lib")
+Cc: stable@vger.kernel.org
+Reported-by: David Binderman <dcb314@hotmail.com>
+Closes: https://lore.kernel.org/r/AS8PR02MB102170568EAE7FFDF93C8D1ED9CA62@AS8PR02MB10217.eurprd02.prod.outlook.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/arm64/lib/crc-t10dif-glue.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-BR, Jarkko
+diff --git a/arch/arm64/lib/crc-t10dif-glue.c b/arch/arm64/lib/crc-t10dif-glue.c
+index a007d0c5f3fed..bacd18f231688 100644
+--- a/arch/arm64/lib/crc-t10dif-glue.c
++++ b/arch/arm64/lib/crc-t10dif-glue.c
+@@ -43,13 +43,11 @@ u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+ 
+ 			kernel_neon_begin();
+ 			crc_t10dif_pmull_p8(crc, data, length, buf);
+ 			kernel_neon_end();
+ 
+-			crc = 0;
+-			data = buf;
+-			length = sizeof(buf);
++			return crc_t10dif_generic(0, buf, sizeof(buf));
+ 		}
+ 	}
+ 	return crc_t10dif_generic(crc, data, length);
+ }
+ EXPORT_SYMBOL(crc_t10dif_arch);
+
+base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+-- 
+2.49.0
+
 
