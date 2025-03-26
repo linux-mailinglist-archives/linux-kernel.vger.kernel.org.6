@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-577645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F95A71FDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:07:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258E8A71FDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFDB3B8FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203581888FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CCD253B79;
-	Wed, 26 Mar 2025 20:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AA9254877;
+	Wed, 26 Mar 2025 20:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk8Tgp+D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnmk5jtR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE421CD1F;
-	Wed, 26 Mar 2025 20:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94418253B6A;
+	Wed, 26 Mar 2025 20:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743019638; cv=none; b=SaWEp5L+ZgxRoiF5XvH7HV7yHRlSp7tvH4Ch5IqbPtF8xhpt9RT5RidntoV7FJeCI891Tsjr2EYEc+E3hb6KaAEWLU8Rwv/Q7AyL4W0nP9FSeb9+Dk/R5ZmCv5c7M/hOqDboH3vEMWfn+UybINRKcxHJFZTfyOgdv6OsNEsh8FE=
+	t=1743019736; cv=none; b=KxKZHuwzvIjZ1VD0w1ZgWurO40ieT9M90KS2NmnrDeGwmAq0KsouQhAt12jVmZNR91D6pbebsru/brxodL470RNDsUQm5uKAUKTPt1JuAGP7K0I/j0JJbB59PKqoO4yMvdTUBeD8cVxl3RYZpDMBVD7cMWc7XtQUOESxODEbGTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743019638; c=relaxed/simple;
-	bh=dkdZ3vEHDyKADLROiHfl7/jsXqBJ6A27l9gxZgrup+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0i9BhcCSHMt29VypJQ8fQeO7HWfXzdapnk+wPc7uXhPF9ID4gkH+OSwMdnZuqi1gDvC7+id/GnJAjNE+BnF2m8dAq7qQbIO7qKsUjko1245OtwxCCcQwARu0MkHxmtG8VYuP6MQNPwphi8H4JBwcUWrk8gQdQarhCMaJLupMb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk8Tgp+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 321B6C4CEE2;
-	Wed, 26 Mar 2025 20:07:16 +0000 (UTC)
+	s=arc-20240116; t=1743019736; c=relaxed/simple;
+	bh=JMrDTh2NrkPqeRepEnKBT577obBBPYQ5/itD6gkKEWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cN6h3HvEd9i930sQb4Pf0yjr1ReTHYLePHpeVSYeAxJekr+0rFBhnftXYv6+zpRtUjmBlg5oWb6J7Ilu9mnKiXae0FakWBigXdKijtdmFoF31FleRGwBnz3o4zOuyVQyZKmY2fCGd+spYC0KL3NM+JD5XECjjPdaQe0eq/khLSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnmk5jtR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4FFC4CEE2;
+	Wed, 26 Mar 2025 20:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743019636;
-	bh=dkdZ3vEHDyKADLROiHfl7/jsXqBJ6A27l9gxZgrup+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yk8Tgp+D0TAKartaO2I8NjzcWrErOi9D1n9yvUrZnYNvzdro8izuSA+o43dTBq+Uc
-	 vV3e25D3G6UsovHm5fFsYfE8NiSYyKr8KQNSo+PMv58wJCJRGReYIpi1PkogISzFOi
-	 X5HIbaZ/T1ELyRxUtQT8Idd9UKhCKjJLhQ/sezbYDt9qRLjXLHI47+81G7ShwgtAmt
-	 krTkJubC9UDy5zzeuXcAC+hx38VoCOMFQrm+sHspbocFFyDE9TrAFkOS7j++PAUMKW
-	 JlZMvtbzlkPPrKZVS/l8sxRfp4UeCLA58VNll6Wp421W3A5ninDbDKMIBfshSXGDvo
-	 0SfKPH6Rfoqww==
-Date: Wed, 26 Mar 2025 22:07:12 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"Cai, Chong" <chongc@google.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"Annapurve, Vishal" <vannapurve@google.com>,
-	"dionnaglaze@google.com" <dionnaglaze@google.com>,
-	"bondarn@google.com" <bondarn@google.com>,
-	"Raynor, Scott" <scott.raynor@intel.com>
-Subject: Re: [PATCH 2/4] x86/sgx: Change counter sgx_nr_free_pages ->
- sgx_nr_used_pages
-Message-ID: <Z-RecEZhXshD6yma@kernel.org>
-References: <20250321123938.802763-1-elena.reshetova@intel.com>
- <20250321123938.802763-3-elena.reshetova@intel.com>
- <Z981ciAqpknQ3hRF@kernel.org>
- <DM8PR11MB5750B9CBBB7A51CE3A0F006AE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+	s=k20201202; t=1743019735;
+	bh=JMrDTh2NrkPqeRepEnKBT577obBBPYQ5/itD6gkKEWY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dnmk5jtRR/g+K3In1vGVEL3D4xR6trCdgNs4LotylIoGdZR7K5ZNvSdbpUWQmS0Hr
+	 rRU56SxbKry0Pg8FBAhpmuL3CugyqasjqfwLJcgDU2elbTUz2qRhO1LsfGxrRnH4uR
+	 V5PnL1ybx/Sl+De7RmQ1CBQqwA5n0FTVNSSQSflFc9/XuPtbZPPQK3Rx+WpCqJpv23
+	 TH/00pWBZ1L9+4E+OehW31Fe6+dcBJUqFhj/W+oj+E44A5rkKn6adok+Swk6eSoz6t
+	 jKIAxN6XmGrxILvn/NpBR0pvUZV4Y5CQ4eBCovVJowm67JDoeHGyueeSVSW9H9xamV
+	 Z/k/V6AnC1PBg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	stable@vger.kernel.org,
+	David Binderman <dcb314@hotmail.com>
+Subject: [PATCH] arm/crc-t10dif: fix use of out-of-scope array in crc_t10dif_arch()
+Date: Wed, 26 Mar 2025 13:08:12 -0700
+Message-ID: <20250326200812.125574-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM8PR11MB5750B9CBBB7A51CE3A0F006AE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 
-On Mon, Mar 24, 2025 at 12:19:37PM +0000, Reshetova, Elena wrote:
->  
-> > On Fri, Mar 21, 2025 at 02:34:41PM +0200, Elena Reshetova wrote:
-> > > sgx_nr_free_pages is an atomic that is used to keep track of
-> > > free EPC pages and detect whenever page reclaiming should start.
-> > > Since successful execution of ENCLS[EUPDATESVN] requires empty
-> > > EPC and a fast way of checking for this, change this variable
-> > > around to indicate number of used pages instead. The subsequent
-> > > patch that introduces ENCLS[EUPDATESVN] will take use of this change.
-> > 
-> > s/subsequent patch//
-> 
-> Ok
-> 
-> > 
-> > You should rather express how EUPDATESVN trigger will depend on the
-> > state of sgx_nr_used_pages and sgx_nr_free_pages.
-> 
-> How about this explanation:
-> 
-> "By counting the # of used pages instead of #of free pages, it allows the
-> EPC page allocation path execute without a need to take the lock in all
-> but a single case when the first page is being allocated in EPC. This is
-> achieved via a fast check in atomic_long_inc_not_zero."
+From: Eric Biggers <ebiggers@google.com>
 
-Yep, whole a lot more sense.
+Fix a silly bug where an array was used outside of its scope.
 
-> 
-> Also, if you think that it is hard to interpret the patch 2/4 without 4/4
-> I can also squeeze them together and then it becomes right away clear
-> why the change was done. 
-> 
-> 
-> > 
-> > >
-> > > No functional changes intended.
-> > 
-> > Not really understanding how I should interpret this sentence.
-> 
-> Just as usual: this patch itself doesn’t bring any functional changes
-> to the way as current SGX code works. I only needed this change to
-> implement patch 4/4 in more lockless way. 
-> 
-> > 
-> > The commit message does not mention sgx_nr_used_pages, and neiher it
-> > makes a case why implementing the feature based on sgx_nr_free_pages is
-> > not possible.
-> 
-> It is possible to implement it, in fact I did exactly this in the beginning instead,
-> but as mentioned previously this would have resulted in taking a lock for each
-> case the page is being allocated. 
+Fixes: 1684e8293605 ("arm/crc-t10dif: expose CRC-T10DIF function through lib")
+Cc: stable@vger.kernel.org
+Reported-by: David Binderman <dcb314@hotmail.com>
+Closes: https://lore.kernel.org/r/AS8PR02MB102170568EAE7FFDF93C8D1ED9CA62@AS8PR02MB10217.eurprd02.prod.outlook.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/arm/lib/crc-t10dif-glue.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Have you benchmarked this (memory barrier vs putting the whole thing
-inside spinlock)?
+diff --git a/arch/arm/lib/crc-t10dif-glue.c b/arch/arm/lib/crc-t10dif-glue.c
+index f3584ba70e57b..6efad3d78284e 100644
+--- a/arch/arm/lib/crc-t10dif-glue.c
++++ b/arch/arm/lib/crc-t10dif-glue.c
+@@ -42,13 +42,11 @@ u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+ 
+ 			kernel_neon_begin();
+ 			crc_t10dif_pmull8(crc, data, length, buf);
+ 			kernel_neon_end();
+ 
+-			crc = 0;
+-			data = buf;
+-			length = sizeof(buf);
++			return crc_t10dif_generic(0, buf, sizeof(buf));
+ 		}
+ 	}
+ 	return crc_t10dif_generic(crc, data, length);
+ }
+ EXPORT_SYMBOL(crc_t10dif_arch);
 
-I have doubts that this would even show in margins given how much e.g.,
-ELDU takes.
+base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+-- 
+2.49.0
 
-> 
-> Best Regards,
-> Elena.
-> 
-> 
-
-BR, Jarkko
 
