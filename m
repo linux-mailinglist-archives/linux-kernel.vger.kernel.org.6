@@ -1,233 +1,224 @@
-Return-Path: <linux-kernel+bounces-577299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AC0A71B13
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:51:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54B0A71B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F375170A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:51:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2B6A7A7123
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22EA1F4629;
-	Wed, 26 Mar 2025 15:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OQXwbfj+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yKnBvMRS"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A191F4196;
+	Wed, 26 Mar 2025 15:50:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B81D3A1BA;
-	Wed, 26 Mar 2025 15:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004281; cv=fail; b=nEnXEyLbYJEmmxEZFcQIbwBILm4aQlde+14zfSyEB8ncAt/xoFrqj4Q7oLpDIsUbkWZyv3NuQxLYhF1p+LNil9FX6/xrTaUcF19nPMJ3/YeL8LQCqgcKjg8rHDL+Gjfvc5YCQWrVw5FsoIlaSSkddfNoUGBh77g2FlWwpOMaRCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743004281; c=relaxed/simple;
-	bh=5aFymzzJk2cpn0cwBY5AVcjPCqwXjSsrNPGxxlK3G2w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lf7k+cNH7aSnxxtwtxn8jLssMWIfBikF2wNCCBYVifYfKVzZ4I8NwL4vJPPGfGUkO9vC8J4AegRD4hpkuwjjUqge7qlQSMQgUZeBQTEnWdvmw8ikQ2RR/cgB1/lkgE7BQyAN+O2ZCkIoIpwigHd1DqGe0zQLd534dpu64k7KWd4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OQXwbfj+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yKnBvMRS; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QEg8JA025212;
-	Wed, 26 Mar 2025 15:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=nG2eF77ESMBFsrY1FL9HSe5s+QvwbnNzTnVod/AII9M=; b=
-	OQXwbfj+EUH27QUlkGVdhLvGE9KmcFdSW+hAc1+uCtPoHSr49YQIx5mQhiP7vcp/
-	4KtHoAGIyTuHB85fSW/83v4amfpTeLqYrHzmcuB4uG2rQi3TDoJujMKBhvFFYNxi
-	5ZXZ3ctHq8x7Ejl/FShr+Mrap+wqSEZuDuWW9vZegTxbhoJDeJcOYAORyJY4qFbm
-	NOF9WfLhcktt8mynJRo5QINveTl0hjujFaMPFSqCed3pS+vk132KmGBOaLHdS24x
-	iaI21j4NOkPjuSNsyWDQaHuSaVZQEs/rzBku1wxHHZ+1aGYBrKXKs3bhbPDW7naA
-	Bfwj+mnQkCPHw9pjhq79OA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45hn871nxu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 15:50:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52QFTr2K036466;
-	Wed, 26 Mar 2025 15:50:54 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2040.outbound.protection.outlook.com [104.47.51.40])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45jj5e2efp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 15:50:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vYGe7xzs6sDi4hb7IfUXb98pSI5v8GBZtUAwFryJG1cy+PkBbTApBv7zNGTktMrQTrwFbupPvkl17+UtKfJCmilBiepCmdAXVl31S0pO1i+99HV27HxlUjghTOOb7BlG0mFUEyBFoNjNkbw6gPCZFvm396Snqp+bHYELlxIGV0Xu58AEDjXVedrivY/Yr6OauAbW4zI7ghpmeyxfFF2FQyO9b6EOz5aCvzcwZeNNE5O8yVF7hfmYpM+MO5hi9lsMlJSii3xmNULvwMWYBbTJ8ksmjaRVcfdaUmXWd3Op1wMjdXOnOcUEDvGD+P6Kr6yQ25/rKMpRTTovGhKk0ShjOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nG2eF77ESMBFsrY1FL9HSe5s+QvwbnNzTnVod/AII9M=;
- b=hvuEGkZv1AojYwRIUFJhY44P4CwHNHbSNVl9NhsrvLgzyJpu13QTgQBH4j2HNOD7sFy18Gjbw4+pA6astIPcEdmciZ08oN3UFhgSmDNWziOj61BpSJpqlvQiL1uTmIw3vEPi7La5G+CqwE5lcaEReK7I2bWC6J9dZ4BISoahrnHoVI4DIiuDk5YNdJsdh/3ILsDRSi2rWrw/9khHXy2iLoNKcPlh0VVIdPxm0Pk6erEyGWk2shQVy308M8/0q3MfcUc290muCuQPNx3g3cqLHnbkJncGUda20HOj5lkTMemxB1ImEK8Tm/kvo1P5Zslot3WfakeQF8tZBwJwWW5L2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nG2eF77ESMBFsrY1FL9HSe5s+QvwbnNzTnVod/AII9M=;
- b=yKnBvMRSN315KZHQ6L+nd64YU9l6XDP2Mves5LNaOm2t1X7bYYILrLbL73wYU6e6UHPOf5LNEjaMEHZdOrvYnO6c/E/JtjQLT0Iviv4mt9KiKooHq4z5aybldDmgLYiBSmtP5OvtAkluzOyUGJO4QR6Qn6rn3nSHbE69PVVpe28=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SA2PR10MB4442.namprd10.prod.outlook.com (2603:10b6:806:11a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 15:50:51 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 15:50:51 +0000
-Message-ID: <8377df78-42fe-486c-acd9-3bcfbbc43cf3@oracle.com>
-Date: Wed, 26 Mar 2025 15:50:42 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] iomap: rework IOMAP atomic flags
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        dchinner@redhat.com, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
-References: <20250320120250.4087011-1-john.g.garry@oracle.com>
- <20250320120250.4087011-4-john.g.garry@oracle.com> <87cye8sv9f.fsf@gmail.com>
- <20250323063850.GA30703@lst.de> <87bjtrsw2d.fsf@gmail.com>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <87bjtrsw2d.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR05CA0061.namprd05.prod.outlook.com
- (2603:10b6:208:236::30) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8271F416B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743004224; cv=none; b=Y2+X+ZNMO3BHk6u7tbzPBsGJNGDhz90zw0m8I+0GmhBKWKdNAucVjRkflDef/D+KqRZC41W72GGuXvNgPnGcn34CWG+o2Gx1rilPeR2wvRXmZL5sc+kC3Fggc/NimrHWZk9jk7yViAVyW+7HZnEAYyK+PRbwWmz6xRDDidVLSeU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743004224; c=relaxed/simple;
+	bh=LzbKBR9wIboXNKQE+6dzB2GsBy+0kqdV+lC+GtAyOlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eS3Dc2JBid6w7YYkU0JwGJmkgLT9q0FdeJvVMJDBtUHYDBIqZo8l/0i/cDnbQb3r0RxVdBFXIUwZjALqcup6AxSLIhqjtRqMTD+OBDk+jtwLjUwaxlJt9rx0vkXNkGJ8Pf1p6AHDuqNoziUpReM0UTxo9OcxHEvLlr2PM4EokAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2097BC4CEE2;
+	Wed, 26 Mar 2025 15:50:23 +0000 (UTC)
+Date: Wed, 26 Mar 2025 11:51:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar
+ <tglozar@redhat.com>
+Subject: [GIT PULL] latency tracing: Updates for 6.15
+Message-ID: <20250326115109.32b69701@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA2PR10MB4442:EE_
-X-MS-Office365-Filtering-Correlation-Id: e041e851-c416-4454-8e5a-08dd6c7dfc38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aTZUVDdOTkpVdnRsdGtsWmR5Q01BcUk0L1R1a2FSREFUVVZzVUE1amM4K1ht?=
- =?utf-8?B?V3F1OEtiNDlqOTBzelZSNUVwUjdsdWlRUGRGSytwTHZRWjhmU1o1M2RYNnZO?=
- =?utf-8?B?Njk4R29XZ1hqWjJWMVhuNERaM2IrSE8ra01uMjdMVmEzcDJzQitUUVJVUEVt?=
- =?utf-8?B?SkNFMitzRVMrMGF0U05ZaWYzUlJzbDd0aWdhWE9tUVBNUzVVcGtTTWw4NHcw?=
- =?utf-8?B?TnB5cFNrbitwNHlSc1FtcXdOZlE5VmNIWFRpNkk4Y25mcXQ3K2VsY1NyWVFo?=
- =?utf-8?B?WTZWWk1NcXhjdVZRdk9yWnIzVkF5STNaRGJmUmxzTWpsZU1KQTZQSUlsSnBq?=
- =?utf-8?B?djBQdEJuL2NyNm8wTGFlVjF6ZDZRWGxwQWR1RVJ2Z2F3OUdOV0lsV3JZYXZn?=
- =?utf-8?B?Mi92amN3V1V6Sm4vYnNtcEd0QlA3VFRIYzE3YW9KN2kvRXpSbjUvVFlKV0s3?=
- =?utf-8?B?UjArTGZ6cG8vOHJmRWM5Q3J4ZnFMUUsvQk5hRjBvV2FZbXRvbkNRc3FXL1pD?=
- =?utf-8?B?ZmhtTkEyWlkydlkzZlVoK0hTNnZReVR4dDJhWDcxdlFnVGF2cFltV3hBZ1li?=
- =?utf-8?B?VkR3eDR4V25kckF0NGlvS2x5Wm5GWkhWbWVxdzhWYzhGT29Od3ZSVnhGNCtp?=
- =?utf-8?B?U2hQYUpOOUN4eHRESXVpcnhKMG94Rk9PbG5UbTNKMXAydXZjdEZMSjZFY3VQ?=
- =?utf-8?B?eFQ0VTlnS1MrdVhvVDNYS1dHOWZRWTcza3ZBcjYxMGRGYTZ3WjlqbkRqSzRN?=
- =?utf-8?B?RU5DeVdnS25PaHNycnkzTXRLbmRibFFiZm5tOEtHVm96NGUzZGw3OWh0NVFR?=
- =?utf-8?B?eC9pYkM3VWhvMWJGNlNFSlBzeE1RSUpSdXljODMyU2xtZGpnakJZUUZhSjVs?=
- =?utf-8?B?NzBrU1VlTUhMWWd0V0ZqWjlza0hsYWJabVliZTVqaVpTS0ZMNkRZSEM5SG5i?=
- =?utf-8?B?cDJibHpzd0NIU0NQNTlnazk1WHZJOWRQMjJBUlhaZWVCeHJvMzU4VXNkS2Vm?=
- =?utf-8?B?SWpad1FuZFZ3TEp3ZVNtaVJNeWpnL05CTDJpVFJ6eXVFTWxxRFNRcFU5cXAz?=
- =?utf-8?B?TTdPWG0vL0p1TWJCcTRpbnJGZ0MvUDRiTFRlUU56UldJaVNoNDdxaVVLSE5H?=
- =?utf-8?B?TFZiKzczekZHWTRpNkVTSWtLT1lRRXRUbTBkZGJsOFh3c0kyMVFKbWszaXgx?=
- =?utf-8?B?SStPMFh4eExGazJFeWJXOFdxc0xvSSs4UStKV01RTTlrb1l0UU1sUGpWSFk2?=
- =?utf-8?B?NVhPbWxVR3BMWnhSM3hub2ZjK0t5WVVoMmVJOENmWVBkeFU3MXNVN0NrcDhN?=
- =?utf-8?B?TjhyREJwbEcrdGNrK3ZxSHBTeGVwcXhSMGpBN2hwNGNlbGk5RVFYRXVLdENx?=
- =?utf-8?B?Rm9hWThkUFM5VW41T2laZUhuUTQ1RkV2b1ZDbktMa1VadUFrZkR6TGx5bld0?=
- =?utf-8?B?QlF2M0ltRUlkUnRqQTM5eG4raWFTcENFYUt6bHAzYzJXMzBoaEhpSVRrS0Iv?=
- =?utf-8?B?SGpkNDQ2b3Q5ekF2eHNDTnUrTFRWT3g4RXRtWEtNTk1qZnhzWFZ3Rm0zSCtC?=
- =?utf-8?B?anFnTVdzZDh6NW1UUkt0bzNoa1RpTVRVVnRmZFJ4MzV0VTljRUU4OGpyOHhp?=
- =?utf-8?B?RVF4VkUyOHFtZ1FLNnhBSThacHdlelNLZmNqWmcvc2c3cm5peldQT3g0ajU5?=
- =?utf-8?B?dUxjbzNUNERSUTM0cXVVc1JvRnBieDh6UXdBVXpWZXdNQmxBc2cxTEthQUlq?=
- =?utf-8?B?T1ByTHBCUmN3V25ZUGRYOTFDck43QXZHOVAyRFIzM3ovTVF1ZXovOEhHOXNZ?=
- =?utf-8?B?Qk1BN2I5NXE4NnZxaDhrYXhXdHQ2c0taalBNUktVblM2KzV5SkVvVmdNRGVL?=
- =?utf-8?Q?p3o0vL5yzQo0x?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cS9oYVp4QTRlMXpaU3NvdUxWdXRuY0JpUnk3R2ZBY0NvU1E0a3B4WkZXR3E1?=
- =?utf-8?B?U0pscGVLcHduMTF0R2ZzeTF0M1hMd1o1MUxSWUpRMkFBcHROZ2dMZEZnN1Bp?=
- =?utf-8?B?UGVjeVZXd3hYZVRWeVlqUzFOZjFqRzB6U1lhNE5xVkFFcHg3MXpoMFBNVlQr?=
- =?utf-8?B?ZCt0V2tWUU0wRms3L3Q1VDlaZUlMQ1o4a1kzb3QwdDdhSDdtTlFXTmllMzJz?=
- =?utf-8?B?cGpHVW93dkRhRktRUVZVRFB3MXFLaVFQekorRUR4cDhmMWo4U3pVSmczdWp5?=
- =?utf-8?B?d2pIUjd4WFZRblBWQ29tNVo1Q25rMUlSNzA1N3h5U3NmbU1nbCtUeHlDUU9p?=
- =?utf-8?B?N2FFbWFkdkptN3M2YWQwYjBpWWZkZHV5WTB3YzBEcmVYb29Ray9vTENyY2Yy?=
- =?utf-8?B?bUszNFBhZFlTek11cmVLWE9YNSt0UXU0WUNQUHIyZFA3UjVqVmkrZWJLWW1X?=
- =?utf-8?B?ckpxSDJ1R3JadFJDRnAxTVo2b1IwRVhqSHA3c2R1TWJOR2RxaVZUUWZIc3Fr?=
- =?utf-8?B?bUxHY1kyc0F6ZXp0S2RNWEZMUVlkNlhMb1RqaTFKNW5FRXllUk5uS2lLYzRs?=
- =?utf-8?B?TEVKYkJlNk4wR3lsaFBERnZkaEViZzZvcmlScXN5MXNHd1JPelBteGhGSGtX?=
- =?utf-8?B?STNzUHA4ZTdZS2xyai9XTFRhaDBoRTJ3NHRYT2hYakJ5UGNvNndjVXhSZE0r?=
- =?utf-8?B?NkhLZThOYlZBMFlyZzBHb1o3UVFKSWxRc0haenRZK09samlhRnV5c1RXV0dt?=
- =?utf-8?B?MWgvTFM5UldNL2dWQjE5SThwT0djK3VmS3hQaUF3azMwcWRIY2ZNYU1VRWJV?=
- =?utf-8?B?OVdpc0VZejFsMXRiTTE2N2xmQmNwUThsYVVxd01LTzlOMTZ6eUk2bXVqZFZF?=
- =?utf-8?B?c2dMRVo4R0dVRlN3dk1WYW9uVklzZW4zdkh6eFhpc3NTdEV5RG9xYk90WGRj?=
- =?utf-8?B?aXF1eUdtYlhqbzM2OVF1OEQ4TzZYV0hXR1M4a2xLcjBrak1aa3Nhc2s3Z05K?=
- =?utf-8?B?YVpPc1JBZFhha1NTNG51YmdBanI4ZmpxZWhaZHoyaXkwU1JaTEphUmhtVmZ2?=
- =?utf-8?B?SldwOFBUZEVCL1NxZ0dSWFRLQWM3R212WVNKUkdaMWlMblFEUmlqQ0R4MnRP?=
- =?utf-8?B?SkNVREE4U0tHZTNiZDQxMmpidGc0RFFFTXAyRjM0MFhRZ2xOZXNSNVBkVVJT?=
- =?utf-8?B?Kzg5RjVnTzhrYlljdDlyMjVzMVp4UzNyRWJ2eDYvNGR5ay9lblA0Q0ppcExs?=
- =?utf-8?B?UXp4c1dNU0VWaWZIdGtLK01aNy9rLzlxRUtHWDZPczl1bmNPWkRISFRsTEVC?=
- =?utf-8?B?eG5UcjF3bEFxT28vQ01pSEhqT0c3YUlXdTNYUktXdDExYVBUcjFkY0pKVVY2?=
- =?utf-8?B?NW9TMnU0dm9uVThVK2FuSSt5c01CQzNIVXQ1NUxTTFBkQVJMaFB4V0I3SVNN?=
- =?utf-8?B?VGI1dEgvS2prZ2FGbk9TTFNwcDJtNnFnQnd4UU5xMXJDcUY3U2tLVnhWOVRm?=
- =?utf-8?B?NFBYdVZXSWxtZ3hSTW12VHhmWXNsTURaamJDaHdiS3NxdjJVR1ZTdnZ5UTVh?=
- =?utf-8?B?cjRqZFZKK2VITThZVnc4UUpmZ1JqTlo5Q3FhSXdBUGFJeUoyWnArZW5zem0w?=
- =?utf-8?B?Q2c1R0E5QlhSMWZOR1d1cFRwcm9paU1UQWtvT25uY29GSlZvQXBLWEk4TXll?=
- =?utf-8?B?dkVwY3A3Nk1MOHIrbVRWclBuVW9Qc3Ntd05hbGNnL01WRTZkYjNiaExObnoy?=
- =?utf-8?B?c2RmZXF6QUpMKzd2aWorTUt1d3ZMeGxIK0xoOUl4VG05MzVxN2hKVVRBYjV4?=
- =?utf-8?B?b3FmS0o3bjViZ3hTZGRQQkVWZjNhdkIyUU9lYnBHNS9YSWxGNWhuODRVQ1Ny?=
- =?utf-8?B?TGFQR1RDY3h4QVVoV2xyWlhLcGZVbnI5cndVQVAwVnJjS3hVcDNTVHFvZ1Fy?=
- =?utf-8?B?Z0V3THBsQWNTQmhxeWlEYmhqZlJwc1ZLTmladEhDMTZmQ3lrR2ZYSnVEOTc2?=
- =?utf-8?B?bnVUVXFhT0tIakVNTHM0TzEwc2F2RG9nV3ViVXp1cHFBZXphMUM3c3FSdk1o?=
- =?utf-8?B?dHROSlNYUTVCOHdwMVl3WXlyLzRQeFZpcTVHalc5MzB6dStyTnc4ZngzVzRY?=
- =?utf-8?Q?3BokAahUTU+pKzngbednZObn8?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	5snjEE32JVzZYXK/afRGugwPGUkMuGom61H7d5YFCZweXti2YKvCsNAotzbF397SrDEv8ctLpMGgngeQxu/Cv8Dep3oItSTRd/IMe07s4PK3EUJ5rFP7UVLN8UJ1Xtv+bJD2A8nmzInoPLLrjWgrMKYRM0gT14MXor3wlYMrh7EX0imm1LYpbWiuoknhpiEltwQIy0Cbv8qDYDHqoWubtV5gWh/RswUz/WxLTvVYWzZFyCdTH0Kvb71j7jnPUyv2CGxfD7UUOkdCAlCWPjivH2S9/zV6ddh1ZeBX4ACScGI8tapWV9wDOccqMDvBpIb8tXcXhzAzyCUSUtMi5joE/r0+D95JSCzQ0slzB+zUoPbOP/iMl/CiLulZBIKjz1k11QEZSCqbG0x8yEpdaNdEYQM8hGxAVwNNN/BYJtnvK/MrvkCTBlY3yQ8TYeAfM3uuPHn0EsjDjV6rr+9H0XNYnVpo93bF34gwOL5DW1dSHyGq/mSZG/WRSAwWtWf0ZOdmlF9Qf/5kjzcZyc+Ig/llfhKahEzeKfBeK+eQxaowgqXv0rnGjJrEnAYpC+nb2Vl2S2FteIF1i+ceS+VgN17/X0UXwGba+eMQZG6r/3Ab7yg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e041e851-c416-4454-8e5a-08dd6c7dfc38
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 15:50:51.6929
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GCwlweXZPYxvZQFwkKaqDLE1ttqKmaPyTvkjvGntQfxPbAbEI2QB1i4CQfOrzGtbPpyPXz7L6IJhjAECc64gWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4442
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 bulkscore=0
- malwarescore=0 mlxlogscore=999 suspectscore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2503260096
-X-Proofpoint-GUID: C1HVWOsoUmYnEQqPpC-qJX-avWbJbtad
-X-Proofpoint-ORIG-GUID: C1HVWOsoUmYnEQqPpC-qJX-avWbJbtad
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->>> So, I guess we can shift IOMAP_F_SIZE_CHANGED and IOMAP_F_STALE by
->>> 1 bit. So it will all look like..
->>
->> Let's create some more space to avoid this for the next round, e.g.
-> 
-> Sure, that make sense.
-> 
->> count the core set flags from 31 down, and limit IOMAP_F_PRIVATE to a
->> single flag, which is how it is used.
-> 
-> flags in struct iomap is of type u16. So will make core iomap flags
-> starting from bit 15, moving downwards.
-> 
-> Here is a diff of what I think you meant - let me know if this diff
-> looks good to you?
 
-This is still outstanding, and it would be nice to fix this ASAP.
+Linus,
 
-How about we go to 32b and change IOMAP_F_PRIVATE for v6.16, while just 
-fix as suggested originally (by renumbering) for v6.15?
+Latency tracing changes for v6.15:
+
+- Add some trace events to osnoise and timerlat sample generation
+
+  This adds more information to the osnoise and timerlat tracers as well as
+  allows BPF programs to be attached to these locations to extract even more
+  data.
+
+- Fix to DECLARE_TRACE_CONDITION() macro
+
+  It wasn't used but now will be and it happened to be broken causing the
+  build to fail.
+
+- Add scheduler specification monitors to runtime verifier (RV)
+
+  This is a continuation of Daniel Bristot's work.
+
+  RV allows monitors to run and react concurrently. Running the cumulative
+  model is equivalent to running single components using the same
+  reactors, with the advantage that it's easier to point out which
+  specification failed in case of error.
+
+  This update introduces nested monitors to RV, in short, the sysfs
+  monitor folder will contain a monitor named sched, which is nothing but
+  an empty container for other monitors. Controlling the sched monitor
+  (enable, disable, set reactors) controls all nested monitors.
+
+  The following scheduling monitors are added:
+
+  * sco: scheduling context operations
+      Monitor to ensure sched_set_state happens only in thread context
+  * tss: task switch while scheduling
+      Monitor to ensure sched_switch happens only in scheduling context
+  * snroc: set non runnable on its own context
+      Monitor to ensure set_state happens only in the respective task's context
+  * scpd: schedule called with preemption disabled
+      Monitor to ensure schedule is called with preemption disabled
+  * snep: schedule does not enable preempt
+      Monitor to ensure schedule does not enable preempt
+  * sncid: schedule not called with interrupt disabled
+      Monitor to ensure schedule is not called with interrupt disabled
+
+
+Please pull the latest trace-latency-v6.15 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-latency-v6.15
+
+Tag SHA1: 8b5e36dd7793df531fdf118ea07c1e7a9389d044
+Head SHA1: 4ffef9579ffc51647c5eb55869fb310f3c1e2db2
+
+
+Gabriele Monaco (11):
+      tracing: Fix DECLARE_TRACE_CONDITION
+      rv: Add license identifiers to monitor files
+      sched: Add sched tracepoints for RV task model
+      rv: Add option for nested monitors and include sched
+      rv: Add sco and tss per-cpu monitors
+      rv: Add snroc per-task monitor
+      rv: Add scpd, snep and sncid per-cpu monitors
+      tools/rv: Add support for nested monitors
+      verification/dot2k: Add support for nested monitors
+      Documentation/rv: Add docs for the sched monitors
+      tools/rv: Allow rv list to filter for container
+
+Tomas Glozar (1):
+      trace/osnoise: Add trace events for samples
+
+----
+ Documentation/tools/rv/rv-mon-sched.rst            |  69 ++++++
+ Documentation/trace/rv/monitor_sched.rst           | 171 ++++++++++++++
+ include/linux/rv.h                                 |   4 +-
+ include/linux/sched.h                              |  16 ++
+ include/trace/define_trace.h                       |   7 +
+ include/trace/events/osnoise.h                     |  96 ++++++++
+ include/trace/events/sched.h                       |  13 ++
+ kernel/sched/core.c                                |  23 +-
+ kernel/trace/rv/Kconfig                            |   7 +
+ kernel/trace/rv/Makefile                           |   7 +
+ kernel/trace/rv/monitors/sched/Kconfig             |  11 +
+ kernel/trace/rv/monitors/sched/sched.c             |  38 +++
+ kernel/trace/rv/monitors/sched/sched.h             |   3 +
+ kernel/trace/rv/monitors/sco/Kconfig               |  14 ++
+ kernel/trace/rv/monitors/sco/sco.c                 |  88 +++++++
+ kernel/trace/rv/monitors/sco/sco.h                 |  47 ++++
+ kernel/trace/rv/monitors/sco/sco_trace.h           |  15 ++
+ kernel/trace/rv/monitors/scpd/Kconfig              |  15 ++
+ kernel/trace/rv/monitors/scpd/scpd.c               |  96 ++++++++
+ kernel/trace/rv/monitors/scpd/scpd.h               |  49 ++++
+ kernel/trace/rv/monitors/scpd/scpd_trace.h         |  15 ++
+ kernel/trace/rv/monitors/sncid/Kconfig             |  15 ++
+ kernel/trace/rv/monitors/sncid/sncid.c             |  96 ++++++++
+ kernel/trace/rv/monitors/sncid/sncid.h             |  49 ++++
+ kernel/trace/rv/monitors/sncid/sncid_trace.h       |  15 ++
+ kernel/trace/rv/monitors/snep/Kconfig              |  15 ++
+ kernel/trace/rv/monitors/snep/snep.c               |  96 ++++++++
+ kernel/trace/rv/monitors/snep/snep.h               |  49 ++++
+ kernel/trace/rv/monitors/snep/snep_trace.h         |  15 ++
+ kernel/trace/rv/monitors/snroc/Kconfig             |  14 ++
+ kernel/trace/rv/monitors/snroc/snroc.c             |  85 +++++++
+ kernel/trace/rv/monitors/snroc/snroc.h             |  47 ++++
+ kernel/trace/rv/monitors/snroc/snroc_trace.h       |  15 ++
+ kernel/trace/rv/monitors/tss/Kconfig               |  14 ++
+ kernel/trace/rv/monitors/tss/tss.c                 |  91 ++++++++
+ kernel/trace/rv/monitors/tss/tss.h                 |  47 ++++
+ kernel/trace/rv/monitors/tss/tss_trace.h           |  15 ++
+ kernel/trace/rv/monitors/wip/Kconfig               |   2 +
+ kernel/trace/rv/monitors/wip/wip.c                 |   2 +-
+ kernel/trace/rv/monitors/wip/wip.h                 |   1 +
+ kernel/trace/rv/monitors/wwnr/Kconfig              |   2 +
+ kernel/trace/rv/monitors/wwnr/wwnr.c               |   2 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.h               |   1 +
+ kernel/trace/rv/rv.c                               | 154 +++++++++++--
+ kernel/trace/rv/rv.h                               |   4 +
+ kernel/trace/rv/rv_reactors.c                      |  28 ++-
+ kernel/trace/rv/rv_trace.h                         |   6 +
+ kernel/trace/trace_osnoise.c                       |  55 ++---
+ tools/verification/dot2/dot2k                      |  27 ++-
+ tools/verification/dot2/dot2k.py                   |  80 +++++--
+ tools/verification/dot2/dot2k_templates/Kconfig    |   3 +
+ tools/verification/dot2/dot2k_templates/main.c     |   4 +-
+ .../dot2/dot2k_templates/main_container.c          |  38 +++
+ .../dot2/dot2k_templates/main_container.h          |   3 +
+ tools/verification/models/sched/sco.dot            |  18 ++
+ tools/verification/models/sched/scpd.dot           |  18 ++
+ tools/verification/models/sched/sncid.dot          |  18 ++
+ tools/verification/models/sched/snep.dot           |  18 ++
+ tools/verification/models/sched/snroc.dot          |  18 ++
+ tools/verification/models/sched/tss.dot            |  18 ++
+ tools/verification/rv/include/in_kernel.h          |   2 +-
+ tools/verification/rv/include/rv.h                 |   3 +-
+ tools/verification/rv/src/in_kernel.c              | 256 ++++++++++++++++-----
+ tools/verification/rv/src/rv.c                     |  38 +--
+ 64 files changed, 2135 insertions(+), 166 deletions(-)
+ create mode 100644 Documentation/tools/rv/rv-mon-sched.rst
+ create mode 100644 Documentation/trace/rv/monitor_sched.rst
+ create mode 100644 kernel/trace/rv/monitors/sched/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sched/sched.c
+ create mode 100644 kernel/trace/rv/monitors/sched/sched.h
+ create mode 100644 kernel/trace/rv/monitors/sco/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sco/sco.c
+ create mode 100644 kernel/trace/rv/monitors/sco/sco.h
+ create mode 100644 kernel/trace/rv/monitors/sco/sco_trace.h
+ create mode 100644 kernel/trace/rv/monitors/scpd/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd.c
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd.h
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sncid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid_trace.h
+ create mode 100644 kernel/trace/rv/monitors/snep/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/snep/snep.c
+ create mode 100644 kernel/trace/rv/monitors/snep/snep.h
+ create mode 100644 kernel/trace/rv/monitors/snep/snep_trace.h
+ create mode 100644 kernel/trace/rv/monitors/snroc/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc.c
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc.h
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc_trace.h
+ create mode 100644 kernel/trace/rv/monitors/tss/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ create mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 kernel/trace/rv/monitors/tss/tss_trace.h
+ create mode 100644 tools/verification/dot2/dot2k_templates/main_container.c
+ create mode 100644 tools/verification/dot2/dot2k_templates/main_container.h
+ create mode 100644 tools/verification/models/sched/sco.dot
+ create mode 100644 tools/verification/models/sched/scpd.dot
+ create mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/snep.dot
+ create mode 100644 tools/verification/models/sched/snroc.dot
+ create mode 100644 tools/verification/models/sched/tss.dot
+---------------------------
 
