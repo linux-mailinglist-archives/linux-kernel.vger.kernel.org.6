@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-577217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298AEA71A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:18:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE795A71A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2975684155A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2B8189705F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8111F3BB9;
-	Wed, 26 Mar 2025 15:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5601F3BBB;
+	Wed, 26 Mar 2025 15:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq8aBQw7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WSLLPe4l"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A8C1E1E0D;
-	Wed, 26 Mar 2025 15:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66A71F1908
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001875; cv=none; b=cR5FQoIgdPWkAQNzFfnV+ZBpImewyco4ilIuAwU3W+n9KWI+JzoIf4yBPhksfPzBIV66QRhTWAzKwPCdofow2MrNCx2ySEXd4DGLmP+u9YbM2BsNP2xLsHe2F5joxdhZk6zwgLQ8SGSw3zlk1qLKHX9OVej/C2UHVWS9dZ3ab7Y=
+	t=1743001879; cv=none; b=AfIV3es7O1TFsnPKwJBgaq23XZEJf4VhfH2cRuQ+D23Fxtztj2tcknh44qJcM1OLYDmTNLdoIWeyfbqN/XW12341yqMnxEb8LsLSlWj3zs9Y12IVqZm3/mBSfbcS9KjoYglGfmNw72Fw7n1TUrpGVuWIbCMt3hIogefTavu6n+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001875; c=relaxed/simple;
-	bh=T2vj5fs1lJoyIJWe3E0BaCVb+RTTxO7rAjHyemXklF4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DPPnN6WdW7lFwM4pEOXmDIytWTcuJavj+plC0SXdVKDJ8qlfEmqpPNiyMarHgjrjLIINlhq0LFxxzviEh8dkNY3i2pr/XyIbgwitZZvMftH4oIbYdWTnDq9x64tOXylyTJ1rOa5qr1nXaOHR8kyGmpx2Car+KytSD8PfD6Dp3wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq8aBQw7; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743001874; x=1774537874;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=T2vj5fs1lJoyIJWe3E0BaCVb+RTTxO7rAjHyemXklF4=;
-  b=Oq8aBQw7iP613k3oZiIej3oM8swD6n6gKht7OmfR0JYkctGaEHRizwla
-   XXhTfoo3WHXp6ayYO2Kn0XfM1CFFi6VomoUrMYvPCCnbUvSBAcY7/dvSQ
-   iaXVfa3+OZ35ToGEET/aBivEzsQJ7P3t6grgVqIPyRmlKGxvQICAngs4I
-   kWugprTk0TZOo1oocQceAVwFSYzt6IMC2fwug1BzhJ9sn/HqlvMF+WaFb
-   2kwfKndsJv/2PZb/Tre8fBaUzcL7p/COLxxMAR7tnH2io9CzPZiA9WALk
-   2CHHMNzNMjzTL8qYg9067piKK+Q0uaR9Rkm6yLW4HAtzLllIv40ISFieC
-   A==;
-X-CSE-ConnectionGUID: H16PUm1KSgOY5w4iRecgAw==
-X-CSE-MsgGUID: UZwYrOIMRmyTdmzuSrC/dQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="47950122"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="47950122"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:11:14 -0700
-X-CSE-ConnectionGUID: xuZCinpVSzu60sPZ4LJ70g==
-X-CSE-MsgGUID: ZI+qmaGRThuotURKYdK1wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="124817289"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:11:08 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 26 Mar 2025 17:11:04 +0200 (EET)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v6 4/6] PCI/IOV: Check that VF BAR fits within the
- reservation
-In-Reply-To: <20250320110854.3866284-5-michal.winiarski@intel.com>
-Message-ID: <4959d675-edd8-a296-661c-6a7bd22fbc0d@linux.intel.com>
-References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-5-michal.winiarski@intel.com>
+	s=arc-20240116; t=1743001879; c=relaxed/simple;
+	bh=sv85XQzO0TXPvwiRXPzN4MFChKpVzgRuVPWPDiqf3LE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5oTpRSkib7YGxufNsddmwzcdeFqpKir6KF2qkHdId1u+brzkc2MyRi0jyWdKmDXysW3W8IhxA9cNKXFnd7jFrxWkt3yh3B253RRxEKepHvqqsww4E8tENSK8PX4zdZOHQbR27R3Y/lSuA0bdgEv/93jm1UVSDx/n5uThsv3HKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WSLLPe4l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q737WB028951
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:11:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	faRdspgYwzNPUBRC1MsrViHX8yDM7tqPfymKZ9E42yM=; b=WSLLPe4lZpCUWClN
+	ur1YDs8noWh8CR+Hgz9H1bOhdfDN1PDeKZoL+pBgak9WSS4E4k2ioWuvDT7ybb1q
+	UOBrafs18Lp2cPQbjQsi5GYCXuaGpywq/lI+U9jTCOso4HR4cCqtboIHO8sYjIW3
+	Mfo/bCGZovQvZU42tzCr57Bb4scDK/OfleHtS6NaT2nD6gOOpv2oWhhx7RD3GIPi
+	vvuL4RHTt8XfczE+YdHP4lYCnr1TDreX4eJRsV9TJ5rfT24wAmYsM8yvG1yzdL0x
+	n7ab78cTCGqI0fvHkpVp/7jvv5ukM6BY48v5RUNndxWmwzgnEiOv1PZSi+bLD9wL
+	lqV4AQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ktenc7hw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:11:16 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2242ca2a4a5so85915175ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:11:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743001875; x=1743606675;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=faRdspgYwzNPUBRC1MsrViHX8yDM7tqPfymKZ9E42yM=;
+        b=Y6WqIwK4XivVDo1lYjFDSaD04Zjraz3BF2vnr6JSV375nekN9qUD8YR6eJ8jzYTddi
+         IVOYI9++rFremEOFfRtbIn1wHvyrovcD+C5Pp1ZLZ9M0P7KTJGXp4iTVCQHt3+Wk3Dc5
+         4blJaVZEijC9ArqDaUcTzD619q4kyKnQ7ELgDbKMUVHEGOq+lqZ7Y99JvRC/0uPBNjY+
+         1lbHDjNsjlYY1hNDC1vq8Ue5S/24YgcC8LSWViD3XFFu7ojCnDdh2/OijDP8mlWVMgoN
+         NVvY++RzKmfFNLDzvX2g/FgcF533GMLf/lYHZApSwhAqKUNywE6P0bX0K5v7PUPY26hW
+         nHnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Xvjd0+xTXscVbPEB4Wn27YTzW1oL7FTucIO6KdcCDYKuire+NW78RwiG95RWSSslBSJGnYKh5fqSbDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOkwy2V5oIYQPjvq7fre75E6I8moGVul7XY+WExwfrXpebBZB2
+	xOubcIln8hj3+ddcjnqiKNqNMNKZSo5olkBvpNGgU3+KtQEfRdm8ZfI9HPx5PE1mrCQ+dLLKofh
+	kXK+LcAbeFnlSlQzM85hv9ARCR610BDOVIcG8jZQ9+B3AVc2y2HXOvty+xLo/vwrwgGsmBYU=
+X-Gm-Gg: ASbGnctg5/bIIkLnR7SEccOYyKGm/lYCXFeLch6ZV83xyTBhP8vEXo8s9PYo83C5axS
+	MYAwttyyenHXVxibNGdeP9csTk8lwZsDFGj2RmBUrahasdfXPi50P7wPXfmGEgk/6x6/qZD1bfI
+	Ks57ASjqFI0cUCBYu34hj4H6z+82EzKM7w5ucJ6PH68mtynFHrLN+/YTuqtp3eaGvwvh4sNT5Dv
+	+ffIh/DrWNesm2g8UtGZtXeu8Q1spfR+VOSNZL6F4+7jYaLAXaig5b1vb45/Fb9tYmm5JKX+YZ9
+	qgtUAGtHhAmrim0kWcHUu1K2O8TgqDoi1lch5wLHL97cdt05iVoZ/qhoI/WshgxGpDxhI8M=
+X-Received: by 2002:a17:902:dacd:b0:220:d257:cdbd with SMTP id d9443c01a7336-22780e2a4c4mr364017885ad.48.1743001874733;
+        Wed, 26 Mar 2025 08:11:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYZ0XI95E0L/5NYf6WJHkBEt4e1Xda2uFeWGiePRSJhve/Jd7oj9b0xjAQVL5MNlyD6vuNHw==
+X-Received: by 2002:a17:902:dacd:b0:220:d257:cdbd with SMTP id d9443c01a7336-22780e2a4c4mr364017345ad.48.1743001874179;
+        Wed, 26 Mar 2025 08:11:14 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b28e3sm110858775ad.156.2025.03.26.08.11.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 08:11:13 -0700 (PDT)
+Message-ID: <8edf77d9-1afd-402a-b966-d1b3e5b4ba1b@oss.qualcomm.com>
+Date: Wed, 26 Mar 2025 08:11:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1797840117-1743001864=:942"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1797840117-1743001864=:942
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath12k: extend dma mask to 36 bits
+To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20250321162331.19507-1-johan+linaro@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250321162331.19507-1-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=TuvmhCXh c=1 sm=1 tr=0 ts=67e41914 cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=K3_Uot4QyE093sgO9NIA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: A-XUgSV1Qfix2AwE0wXClAOPOFZ7b7xB
+X-Proofpoint-ORIG-GUID: A-XUgSV1Qfix2AwE0wXClAOPOFZ7b7xB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=746
+ malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 adultscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260091
 
-On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
-
-> When the resource representing VF MMIO BAR reservation is created, its
-> size is always large enough to accommodate the BAR of all SR-IOV Virtual
-> Functions that can potentially be created (total VFs). If for whatever
-> reason it's not possible to accommodate all VFs - the resource is not
-> assigned and no VFs can be created.
->=20
-> The following patch will allow VF BAR size to be modified by drivers at
-
-"The following patch" sounds to be like you're referring to patch that=20
-follows this description, ie., the patch below. "An upcoming change" is=20
-alternative that doesn't suffer from the same problem.
-
-> a later point in time, which means that the check for resource
-> assignment is no longer sufficient.
->=20
-> Add an additional check that verifies that VF BAR for all enabled VFs
-> fits within the underlying reservation resource.
-
-So this does not solve the case where the initial size was too large to=20
-fix and such VF BARs remain unassigned, right?
-
-> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+On 3/21/2025 9:23 AM, Johan Hovold wrote:
+> Extend the DMA mask to 36 bits to avoid using bounce buffers on machines
+> without an iommu (under OS control) similar to what was done for ath11k
+> in commit dbd73acb22d8 ("wifi: ath11k: enable 36 bit mask for stream
+> DMA").
+> 
+> This specifically avoids using bounce buffers on Qualcomm Snapdragon X
+> Elite machines like the Lenovo ThinkPad T14s when running at EL1.
+> 
+> Note that the mask could possibly be extended further but unresolved DMA
+> issues with 64 GiB X Elite machines currently prevents that from being
+> tested.
+> 
+> Also note that the driver is limited to 32 bits for coherent
+> allocations and that there is no need to check for errors when setting
+> masks larger than 32 bits.
+> 
+> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
->  drivers/pci/iov.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> index cbf335725d4fb..861273ad9a580 100644
-> --- a/drivers/pci/iov.c
-> +++ b/drivers/pci/iov.c
-> @@ -646,8 +646,13 @@ static int sriov_enable(struct pci_dev *dev, int nr_=
-virtfn)
-> =20
->  =09nres =3D 0;
->  =09for (i =3D 0; i < PCI_SRIOV_NUM_BARS; i++) {
-> +=09=09resource_size_t vf_bar_sz =3D
-> +=09=09=09pci_iov_resource_size(dev,
-> +=09=09=09=09=09      pci_resource_num_from_vf_bar(i));
 
-Please add int idx =3D pci_resource_num_from_vf_bar(i);
+Please make sure to include linux-wireless for all ath.git patches so that
+they are processed by patchwork.kernel.org
 
->  =09=09bars |=3D (1 << pci_resource_num_from_vf_bar(i));
->  =09=09res =3D &dev->resource[pci_resource_num_from_vf_bar(i)];
-> +=09=09if (vf_bar_sz * nr_virtfn > resource_size(res))
-> +=09=09=09continue;
-
-Not directly related to this patch, I suspect this could actually try to=20
-assign an unassigned resource by doing something like this (perhaps in own=
-=20
-patch, it doesn't even need to be part of this series but can be sent=20
-later if you find the suggestion useful):
-
-=09=09/* Retry assignment if the initial size didn't fit */
-=09=09if (!res->parent && pci_assign_resource(res, idx))
-=09=09=09continue;
-
-Although I suspect reset_resource() might have been called for the=20
-resource and IIRC it breaks the resource somehow but it could have been=20
-that IOV resources can be resummoned from that state though thanks to=20
-their size not being stored into the resource itself but comes from iov=20
-structures.
-
->  =09=09if (res->parent)
->  =09=09=09nres++;
->  =09}
->=20
-
---=20
- i.
-
---8323328-1797840117-1743001864=:942--
+/jeff
 
