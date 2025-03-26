@@ -1,207 +1,92 @@
-Return-Path: <linux-kernel+bounces-577630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00988A71FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:54:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D93A71FB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AEEE3BC896
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEE83B9F93
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636E124C08E;
-	Wed, 26 Mar 2025 19:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A02C63CB;
+	Wed, 26 Mar 2025 19:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5fAo7U5"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CYtCvibk"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C2863CB;
-	Wed, 26 Mar 2025 19:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2085E18E34A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018738; cv=none; b=VnO6ggO+c4Kgi0b+ab3fPR/rLR2GMPfaF7mIMXIjFEuoPdi97QZKOWUzmwaYSTEBrEIEvwbxmGuDn0dGthoOxoZXv1I2ICWzB/hUujXjI3vriRilmLbjaUDchql/V16mWP/wiM6VnxKL8Q6XFpA2epiFgU5fyWztNmRP4L7Jv/8=
+	t=1743018760; cv=none; b=Dq7Qobt/0HihWRaJBUyvrEs47YtIhWDd4bK7SrszuqR0j0OxYZ7Vbvyn2wYEX+OH6IpNOmoGAG950ZQwk9gzjPvY0P9oqeqcnErGx3zFvOIsEb24Ty5QwEZn5VR3TB9JLU53Bnyu1cjDRHurEItcKZEvbF9bQ9h0We2ZsRUaBNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018738; c=relaxed/simple;
-	bh=CPuFfzVeIhlkyMWiI/9xY4iRTrwxRccvN+haIaYX/nw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6lc4ytVbMdiTZCAEUR/1z6R60qQOvzTTnbAW5PzvHj3QjHJKqPkBnC3esTxpUYTovVi8rMZGS7SZI32FKfCAzyginTpsRc2ToorOOZ9KJl+aay1QHEVwO84pldoOaG25FomaKpOvnLPx5+2Czt7K/E0fFpahvdvvzd9LQSfLq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5fAo7U5; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e63c966fe37so232865276.0;
-        Wed, 26 Mar 2025 12:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743018736; x=1743623536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOTsap/6W6leMw5tfK0HHvDtFAAN+8slmLSduLz/a7I=;
-        b=m5fAo7U5bpdda1Pi2wuWEf7eEv4xGuS/0mxA/WOvT16ESohKYfsRRyjp2wvRX/w+aZ
-         ok2RiKU17zlixdcvve6s8DkPPAWFllDdqB++aoUwINg6IoFvR6zSVrjN61zowNSPt0fq
-         Dr1LkoJDBGeDWvuZxeKSjO+BgPWbxAZ5l0mjKu5jeVeI28tOVQxH+X+tK3keNu8x08tM
-         iMruofhwsIDAkQJXHzsBVji2Kb/5eMMMKVwmh32zGZUU+tB1jaRv4L0jMztkrWi1PonL
-         FDZuRNAhZQGZZG4tx4Z2b9mPG9mX6oxR8nif8udwCwamJxJD8Vjh+PpiHNe6m8AdqR3D
-         84vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743018736; x=1743623536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TOTsap/6W6leMw5tfK0HHvDtFAAN+8slmLSduLz/a7I=;
-        b=g6uPjBVLZCUdbCrdOX1n1cnEbgu3SHINJHTTPv2mhKF32+o2ed2liTTkz7Y1tmXSW5
-         vv0br3s4gu3D2UuMv3QEAqQpWCGEjr4r4mRGDorE3It2Xkc8oI/wgSzfc8t+ZXe3I3sr
-         iAq9E8Egm9l1s5mSl3eibgOw0mmfUPi9FcdIH5qXLCPKXFmoN9uKm6im4tgVz20m2XPH
-         ikGUa2Vn0KdiUwRZPUCztltRDwQpwLmwlEy06KCz5TOcmbnVauDpqrkjHX1wBWpeD+Zl
-         06nTWUuDrK7UvkmZ+gMY6jH4iatWqBYOi7MhnsvcBeywOmqTM+0aPK4OlV/S3wtZVFs6
-         Bywg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5WY5+ixTtLiAh56ENcbkpihvj3qlLllbxEDWWzGTcKlZy+qXM2/fNM7647NwK+WSBvbdoEJAbBQFzt3w=@vger.kernel.org, AJvYcCWtrOb3CS2WL2i21tL4sbcm9Ndsg+Ar3ARnT0n4Yenw0eQ0PrT3jTihph+8wwsoll9dsXJmlTjX4yF4PU3clyMokA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVxNYtJ/xO5igesV7ncbjn4Xlqa+MO8QY4yv5Wo5SFrO2UGuPN
-	wVmkrr6s8f3+HNp9JKlEgSfEOl8tXNnrm3t9hm8p4r++yrYnUaJDi8Yvi0nw2BgRq270ExxnY35
-	PvovrL3I9DzFahF/3wyoQlyLUrLQ=
-X-Gm-Gg: ASbGnctq7FN3ezcKRXAhpPK/b8gUJIXkT8VdUt7VmR/o/UGzkDMC07m5zhRgbS48n+Q
-	TOHbCp4gHyjPbs8VVv+pt3SIWKmlVl1Wy/f/qP3srP2fe9fxRYiG1s+gO97Z2+K8541+9qyU1fI
-	ToSGHFRo5hparaJzPjaOE0aDoZ
-X-Google-Smtp-Source: AGHT+IFsRkpNyRdE1OYNC3KWakM70vLpWNGTGN8ecp+nDlUO5DnWanJpEWTRVzJdbBYiBIEsIff3uFV/vntxIu7yb58=
-X-Received: by 2002:a05:6902:2412:b0:e69:371d:6849 with SMTP id
- 3f1490d57ef6-e69430b0aadmr1243866276.0.1743018735841; Wed, 26 Mar 2025
- 12:52:15 -0700 (PDT)
+	s=arc-20240116; t=1743018760; c=relaxed/simple;
+	bh=8j/pMZObftENplg4deoaM1S6jWxUldrn0AWjkmEiUcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJZsY6GtikvLL1QR+47AI6BmnK7tH6loWsmCTPxYmaQFc/yhCdA8T1B5iYX95N8rpKFJggsv4e31pmxV5u6z2E91Jwf6tMDLOI3FikcHWUk9Rxdx2XK8EKUeMBKCkrGQdYp1pw6vk2NVq5KWcIUqqDMpa/4xCh2eZ/jt/9v8U1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CYtCvibk; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Mar 2025 19:52:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743018747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zzUfRFRmyA5Roo3UjviLOYKBv7xMeHy4PTNRPVwZ90I=;
+	b=CYtCvibkcPwHarZgZ5JQ81lUW0Ke/is/DxOPkUeE1GMRy7rkw2Q5eGydsPtSw1x1uIz/7B
+	cFfiV1yR3LKkExx+jhN4J4rcwc3R1nTXe0xAKMyoH6UhZ2wNO8pyTGie+uoZdMXHMMONGX
+	V7e9fm/G5SLrDPuEDgdm5JhcU2uRb+w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	David Kaplan <David.Kaplan@amd.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Unify IBRS virtualization
+Message-ID: <Z-Ra9FYKP_xX4UBm@google.com>
+References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
+ <Z9NMxr0Ri7VUlJzM@google.com>
+ <Z-RaJVo1MKuI90G0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324235245.613063-1-howardchu95@gmail.com>
- <Z-RFu_PLmKMq8YFU@google.com> <CAH0uvoi-uxLNOoZ8P1g--jBZUnax_1vCu42SjFCNS7mdAH6Ozg@mail.gmail.com>
- <Z-RZM7X_XCSCxpJV@google.com>
-In-Reply-To: <Z-RZM7X_XCSCxpJV@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 26 Mar 2025 12:52:03 -0700
-X-Gm-Features: AQ5f1Jqp6EnPWFLkqNiucvMODf4-xc-3UC-nld-hmyCxxeMPEGiwEcSmoUzlItM
-Message-ID: <CAH0uvogMRnMVO=7169kSWJzFuTTTJ_r2uUTH6vaFuJDgvN8Q6g@mail.gmail.com>
-Subject: Re: [PATCH v1] perf trace: Fix possible insufficient allocation of
- argument formats
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, mingo@redhat.com, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, peterz@infradead.org, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-RaJVo1MKuI90G0@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello Namhyung,
+On Wed, Mar 26, 2025 at 12:48:53PM -0700, Sean Christopherson wrote:
+> On Thu, Mar 13, 2025, Yosry Ahmed wrote:
+> > On Fri, Feb 21, 2025 at 04:33:49PM +0000, Yosry Ahmed wrote:
+> > > To properly virtualize IBRS on Intel, an IBPB is executed on emulated
+> > > VM-exits to provide separate predictor modes for L1 and L2.
+> > > 
+> > > Similar handling is theoretically needed for AMD, unless IbrsSameMode is
+> > > enumerated by the CPU (which should be the case for most/all CPUs
+> > > anyway). For correctness and clarity, this series generalizes the
+> > > handling to apply for both Intel and AMD as needed.
+> > > 
+> > > I am not sure if this series would land through the kvm-x86 tree or the
+> > > tip/x86 tree.
+> > 
+> > Sean, any thoughts about this (or general feedback about this series)?
+> 
+> No feedback, I just you and Jim to get mitigation stuff right far more than I
+> trust myself :-)
+> 
+> I'm planning on grabbing this for 6.16.
 
-On Wed, Mar 26, 2025 at 12:44=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Wed, Mar 26, 2025 at 11:30:11AM -0700, Howard Chu wrote:
-> > Hello Namhyung,
-> >
-> > LGTM. This is better. :)
->
-> Great, can you please resend it with my Suggested-by?
-
-Sure.
-
-Thanks,
-Howard
->
-> Thanks,
-> Namhyung
->
-> >
-> > On Wed, Mar 26, 2025 at 11:21=E2=80=AFAM Namhyung Kim <namhyung@kernel.=
-org> wrote:
-> > >
-> > > On Mon, Mar 24, 2025 at 04:52:45PM -0700, Howard Chu wrote:
-> > > > In my previous fix of runtime error(Link:
-> > > > https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-ho=
-wardchu95@gmail.com/),
-> > > > I made a mistake of decrementing one unconditionally, regardless of
-> > > > whether an extra 'syscall_nr' or 'nr' field was present in
-> > > > libtraceevent's tp_format. This may cause perf trace to allocate on=
-e
-> > > > fewer arg_fmt entry than needed for the accurate representation of =
-syscall
-> > > > arguments.
-> > > >
-> > > > This patch corrects the mistake by checking the presence of'syscall=
-_nr' or
-> > > > 'nr', and adjusting the length of arg_fmt[] accordingly.
-> > >
-> > > Thanks for the fix.  I've noticed this too but I feel like we can mak=
-e
-> > > syscall__alloc_arg_fmts() a bit simpler.
-> > >
-> > > How about this?
-> > >
-> > > Thanks,
-> > > Namhyung
-> > >
-> > >
-> > > ---8<---
-> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > > index 6ac51925ea4249c2..b9bdab52f5801c3a 100644
-> > > --- a/tools/perf/builtin-trace.c
-> > > +++ b/tools/perf/builtin-trace.c
-> > > @@ -2022,9 +2022,6 @@ static int syscall__alloc_arg_fmts(struct sysca=
-ll *sc, int nr_args)
-> > >  {
-> > >         int idx;
-> > >
-> > > -       if (nr_args =3D=3D RAW_SYSCALL_ARGS_NUM && sc->fmt && sc->fmt=
-->nr_args !=3D 0)
-> > > -               nr_args =3D sc->fmt->nr_args;
-> > > -
-> > >         sc->arg_fmt =3D calloc(nr_args, sizeof(*sc->arg_fmt));
-> > >         if (sc->arg_fmt =3D=3D NULL)
-> > >                 return -1;
-> > > @@ -2034,7 +2031,6 @@ static int syscall__alloc_arg_fmts(struct sysca=
-ll *sc, int nr_args)
-> > >                         sc->arg_fmt[idx] =3D sc->fmt->arg[idx];
-> > >         }
-> > >
-> > > -       sc->nr_args =3D nr_args;
-> > >         return 0;
-> > >  }
-> > >
-> > > @@ -2176,14 +2172,9 @@ static int syscall__read_info(struct syscall *=
-sc, struct trace *trace)
-> > >                 return err;
-> > >         }
-> > >
-> > > -       /*
-> > > -        * The tracepoint format contains __syscall_nr field, so it's=
- one more
-> > > -        * than the actual number of syscall arguments.
-> > > -        */
-> > > -       if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fiel=
-ds - 1))
-> > > -               return -ENOMEM;
-> > > -
-> > >         sc->args =3D sc->tp_format->format.fields;
-> > > +       sc->nr_args =3D sc->tp_format->format.nr_fields;
-> > > +
-> > >         /*
-> > >          * We need to check and discard the first variable '__syscall=
-_nr'
-> > >          * or 'nr' that mean the syscall number. It is needless here.
-> > > @@ -2194,6 +2185,9 @@ static int syscall__read_info(struct syscall *s=
-c, struct trace *trace)
-> > >                 --sc->nr_args;
-> > >         }
-> > >
-> > > +       if (syscall__alloc_arg_fmts(sc, sc->nr_args))
-> > > +               return -ENOMEM;
-> > > +
-> > >         sc->is_exit =3D !strcmp(name, "exit_group") || !strcmp(name, =
-"exit");
-> > >         sc->is_open =3D !strcmp(name, "open") || !strcmp(name, "opena=
-t");
-> > >
-> > > --
-> > > 2.49.0.395.g12beb8f557-goog
-> > >
+Awesome, thanks!
 
