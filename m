@@ -1,235 +1,188 @@
-Return-Path: <linux-kernel+bounces-576540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8604CA710B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:44:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E856A710B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4C11728CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1583B1C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 06:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C891917F9;
-	Wed, 26 Mar 2025 06:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707D518DB19;
+	Wed, 26 Mar 2025 06:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGexHaIg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CYnczo+S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F13823DE;
-	Wed, 26 Mar 2025 06:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5742E3370;
+	Wed, 26 Mar 2025 06:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742971491; cv=none; b=pkuZUmLSglBQjuEtK0BR0NkpOCSz9AOaDlilSAwqswd9YBDw7V082I6+F436L4PuWuPt9FGI3R7Zcg+9p2qVvpdaCoz+BN9ChWw7JECGb4fGC48WzUDBNSHUqbtLnVu7YOGXMi8RJvlI8J0kCFqcczMrgr4ZcEoYxmHCIjjpGTQ=
+	t=1742971526; cv=none; b=ugTISm/jaQyt5yi4/7vqrYzNE+kOmJ8uYItQs/CZke39ZYse4vg8ebqmpx3bkSafbs7a27cEoxhiMHkmLLwxQIkT99ZRklakGu4TVWPl5ohI7kcDc/LonZoRpurm12nK8WvMG7UAIecHOYmsVgRIiyIZTRy4N5e/L9tMezZyTkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742971491; c=relaxed/simple;
-	bh=N+Le9MFtc/k1LZ1LVkIPmZk2oGdIyqo4T5HKb+AHZPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qUT15Ve5bPs/JkfsZl+Xe1j0zLM4JT4Dof5SrRG7BubS+VRqM15ohoiDIv/lIgkp4OJqhOHMQjBIZmqECFn22dVpRABz61K04O8qWC0kB2NgzdKSOVudimx6xy8Eta/41KjjWKWfrHGMgFCqlx7LHxfXPcYcI4nC/Sy2gAxUW+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGexHaIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 876BAC4CEED;
-	Wed, 26 Mar 2025 06:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742971490;
-	bh=N+Le9MFtc/k1LZ1LVkIPmZk2oGdIyqo4T5HKb+AHZPQ=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=mGexHaIgLbSTRVHs1aAeFQlPGcyoCZW7ra4H38PmdGzDelCOcdKx1PSXmCzV7zHg4
-	 t4BXlaPJZl4M++7SmdtJc6OS8JjvQRphtWZwBCWtmx/alHR1Io5/u7TZToVoyJOSou
-	 96VjLRob86BRO7cjMzROfgRLhBnxIvMMr+R4vtlIUeOGTcng2xdyftnauroj5ZowGD
-	 xzqLtB/oFZyge5ZZJr/oxGRcBJ2TtgorNnVd6M4vPVwtA8/remvhxw2JO6w5AmNBGW
-	 LWfgRtD9plTNy/EtRrTL21OA4Ltzhsl8gLg9J9a66/mPT8tJvI+frlHwy6w6//C7jk
-	 Cj6THAiU6V/PQ==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so66700351fa.2;
-        Tue, 25 Mar 2025 23:44:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrmuqXy0K9cajr0azmFL4+Pf6aBWNe3qYxGW0g2O/hfr5Lcj66UTi8OLbcqOmB7DfRjc364FcBdqT0@vger.kernel.org, AJvYcCVzTu2309+2Q4uD9wIfI0yq+XWdKBq62p4IY1yhlVgcrkjs4Un9AgSf6K+qZdYcbD250UTVuZaDIL+hAmrm@vger.kernel.org, AJvYcCX22mXorEkFKLJ0KozHNYfK+7KjiR4EBG+qA1xn9QhQlKOXnXQtUG8QdEHbLtbg6PPMdD3QsDhmvpMIDy2o2w==@vger.kernel.org, AJvYcCXYa84ydnApj4NIDQwClnlzVJFosKZsXWTnNOmUfwvoEU0a4sWVpF75yBx/u8AoGKfUlIbOOopmxiNh5S8cz+gpAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw67eBUdY2FzEQWUbBU42acRzwWpawS/ryPLQQDkLkF/ciZTNz
-	TqXDmz9tVm++JqWhZNtWsy7wowpNTCfQlT1Hyhh5q25YpcDoM2rLyc6HqKjshjkIcQeaM53LvlU
-	9ZZ8DqpW8UUdaVRffXvNXDqT7qpk=
-X-Google-Smtp-Source: AGHT+IGMF6j2X+Jr6WCvccPSUBNATvTU7YZt+i3mWvl9VVSwRgH7cCtIrbRrCInxLepNvpLKepp5tmas4mw+ODC5pdo=
-X-Received: by 2002:a05:651c:201c:b0:30b:f924:3554 with SMTP id
- 38308e7fff4ca-30d7e236c49mr59160551fa.21.1742971488912; Tue, 25 Mar 2025
- 23:44:48 -0700 (PDT)
+	s=arc-20240116; t=1742971526; c=relaxed/simple;
+	bh=oiypN598uF6V6jJVYKswR75CGS8EvahQEBQfXkQIPG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bEGx5n57jIKl1jdVNSBQxolrdrE88uAuQubZJu5a4+opWA9F0vCoelswKj9FCyk2Uq/bJt3aUcSV+O62qFvxDbXJY7OSdmlTjECbEKzii1a40rU86eJU6z0cAnF93gJQqcDHCNWN8mkrhFVypPpqNRk4wDZYOlgRf4weuQHelfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CYnczo+S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q64GBL026608;
+	Wed, 26 Mar 2025 06:45:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d//EkLK8NlNhrMxANYCpSXjTkPzJKf9XO3dDZrPjyb4=; b=CYnczo+StkThpktw
+	v/OqgyADRy3nZv1CHyRHSpAeWT5DN9ThhTw5OfNVcY9+k5KOtcC005gShLvx5hqG
+	aUAT9ys0k2q3FhZ0SgF11+j5UaWGkEQz9FcywnPXkQw9a0M+ByZ6nOoTASQ6hAeE
+	ji3Rmw5oCoDqYUunU6l0LUhfHeKKkuDD0ylC241psTlQ7iwJ4VDfT6wPF0eo7j9X
+	ly6cHIG+ftuTVHrBm8Q8xtuIxMut1Or6me6WB2EY3nkZ4AxO+b7UF84pYvpdE/tQ
+	H0acLYQKeywEFr7JL8eY+5sTzouXDfjyH54JyII+5v1vn+XM8aGYaqSUz26B1L8g
+	9dE1Gg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcybwy4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 06:45:07 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q6j6U1011352
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 06:45:06 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
+ 2025 23:45:03 -0700
+Message-ID: <8c624cf0-febc-4ab9-8141-2372bfe4d577@quicinc.com>
+Date: Wed, 26 Mar 2025 12:15:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-3-robh@kernel.org>
-In-Reply-To: <20250317232426.952188-3-robh@kernel.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 26 Mar 2025 14:44:36 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq6AIDujd8iNXwgSFrroWq7EbdFM1zyiw-quoSbfHrKnBQnEEqsHIIoRaI
-Message-ID: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Mar 18, 2025 at 7:29=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> Simplify of_dma_set_restricted_buffer() by using of_property_present()
-> and of_for_each_phandle() iterator.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/of/device.c | 34 +++++++++++++---------------------
->  1 file changed, 13 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/of/device.c b/drivers/of/device.c
-> index edf3be197265..bb4a47d58249 100644
-> --- a/drivers/of/device.c
-> +++ b/drivers/of/device.c
-> @@ -35,44 +35,36 @@ EXPORT_SYMBOL(of_match_device);
->  static void
->  of_dma_set_restricted_buffer(struct device *dev, struct device_node *np)
->  {
-> -       struct device_node *node, *of_node =3D dev->of_node;
-> -       int count, i;
-> +       struct device_node *of_node =3D dev->of_node;
-> +       struct of_phandle_iterator it;
-> +       int rc, i =3D 0;
->
->         if (!IS_ENABLED(CONFIG_DMA_RESTRICTED_POOL))
->                 return;
->
-> -       count =3D of_property_count_elems_of_size(of_node, "memory-region=
-",
-> -                                               sizeof(u32));
->         /*
->          * If dev->of_node doesn't exist or doesn't contain memory-region=
-, try
->          * the OF node having DMA configuration.
->          */
-> -       if (count <=3D 0) {
-> +       if (!of_property_present(of_node, "memory-region"))
->                 of_node =3D np;
-> -               count =3D of_property_count_elems_of_size(
-> -                       of_node, "memory-region", sizeof(u32));
-> -       }
->
-> -       for (i =3D 0; i < count; i++) {
-> -               node =3D of_parse_phandle(of_node, "memory-region", i);
-> +       of_for_each_phandle(&it, rc, of_node, "memory-region", NULL, 0) {
->                 /*
->                  * There might be multiple memory regions, but only one
->                  * restricted-dma-pool region is allowed.
->                  */
-> -               if (of_device_is_compatible(node, "restricted-dma-pool") =
-&&
-> -                   of_device_is_available(node)) {
-> -                       of_node_put(node);
-> -                       break;
-> +               if (of_device_is_compatible(it.node, "restricted-dma-pool=
-") &&
-> +                   of_device_is_available(it.node)) {
-> +                       if (!of_reserved_mem_device_init_by_idx(dev, of_n=
-ode, i)) {
-> +                               of_node_put(it.node);
-> +                               return;
-> +                       }
->                 }
-> -               of_node_put(node);
-> +               i++;
->         }
->
-> -       /*
-> -        * Attempt to initialize a restricted-dma-pool region if one was =
-found.
-> -        * Note that count can hold a negative error code.
-> -        */
-> -       if (i < count && of_reserved_mem_device_init_by_idx(dev, of_node,=
- i))
-> -               dev_warn(dev, "failed to initialise \"restricted-dma-pool=
-\" memory node\n");
-> +       dev_warn(dev, "failed to initialise \"restricted-dma-pool\" memor=
-y node\n");
-
-This changes the behavior. Before this patch, it was:
-
-    if a restricted dma pool was found, but initializing it failed, print
-    a warning.
-
-Whereas now it has become:
-
-     print a warning unless a restricted dma pool was found and successfull=
-y
-     initialized.
-
-This change causes the kernel to print out the warning for devices that
-don't even do DMA:
-
-simple-pm-bus soc: failed to initialise "restricted-dma-pool" memory node
-simple-pm-bus 10006000.syscon: failed to initialise
-"restricted-dma-pool" memory node
-mtk-tphy soc:t-phy@11c80000: failed to initialise
-"restricted-dma-pool" memory node
-mtk-tphy soc:t-phy@11ca0000: failed to initialise
-"restricted-dma-pool" memory node
-mediatek-mipi-tx 11cc0000.dsi-phy: failed to initialise
-"restricted-dma-pool" memory node
-mediatek-mipi-tx 11cc0000.dsi-phy: can't get nvmem_cell_get, ignore it
-clk-mt8186-apmixed 1000c000.syscon: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-topck 10000000.syscon: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-infra-ao 10001000.syscon: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-cam 1a000000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-cam 1a04f000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-cam 1a06f000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-img 15020000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-img 15820000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-imp_iic_wrap 11017000.clock-controller: failed to
-initialise "restricted-dma-pool" memory node
-clk-mt8186-ipe 1c000000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-mcu c53a000.syscon: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-mdp 1b000000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-mfg 13000000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-vdec 1602f000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-venc 17000000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-clk-mt8186-wpe 14020000.clock-controller: failed to initialise
-"restricted-dma-pool" memory node
-mt-pmic-pwrap 1000d000.pwrap: failed to initialise
-"restricted-dma-pool" memory node
-platform 1000d000.pwrap:pmic: failed to initialise
-"restricted-dma-pool" memory node
-mtk-svs 1100bc00.svs: failed to initialise "restricted-dma-pool" memory nod=
-e
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] i3c: Fix read from unreadable memory at
+ i3c_master_queue_ibi()
+To: Frank Li <Frank.li@nxp.com>,
+        Manjunatha Venkatesh
+	<manjunatha.venkatesh@nxp.com>
+CC: <alexandre.belloni@bootlin.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <bbrezillon@kernel.org>,
+        <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <rvmanjumce@gmail.com>, <stable@vger.kernel.org>
+References: <20250325102332.2435069-1-manjunatha.venkatesh@nxp.com>
+ <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e3a273 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=8AirrxEcAAAA:8 a=v-MiteamF9m1uwOrjlcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-ORIG-GUID: L2jECwzCxSH8wi0t7I2AstVutKQazjYD
+X-Proofpoint-GUID: L2jECwzCxSH8wi0t7I2AstVutKQazjYD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0 phishscore=0
+ adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260039
 
 
-ChenYu
->  }
->
->  /**
-> --
-> 2.47.2
->
->
+
+On 3/25/2025 8:13 PM, Frank Li wrote:
+> Subject should be
+> 
+> i3c: Add NULL pointer check in i3c_master_queue_ibi()
+> 
+yes, Aligned.
+> On Tue, Mar 25, 2025 at 03:53:32PM +0530, Manjunatha Venkatesh wrote:
+>> As part of I3C driver probing sequence for particular device instance,
+>> While adding to queue it is trying to access ibi variable of dev which is
+>> not yet initialized causing "Unable to handle kernel read from unreadable
+>> memory" resulting in kernel panic.
+>>
+>> Below is the sequence where this issue happened.
+>> 1. During boot up sequence IBI is received at host  from the slave device
+>>     before requesting for IBI, Usually will request IBI by calling
+>>     i3c_device_request_ibi() during probe of slave driver.
+>> 2. Since master code trying to access IBI Variable for the particular
+>>     device instance before actually it initialized by slave driver,
+>>     due to this randomly accessing the address and causing kernel panic.
+>> 3. i3c_device_request_ibi() function invoked by the slave driver where
+>>     dev->ibi = ibi; assigned as part of function call
+>>     i3c_dev_request_ibi_locked().
+>> 4. But when IBI request sent by slave device, master code  trying to access
+>>     this variable before its initialized due to this race condition
+>>     situation kernel panic happened.
+> 
+> How about commit message as:
+> 
+> The I3C master driver may receive an IBI from a target device that has not
+> been probed yet. In such cases, the master calls `i3c_master_queue_ibi()`
+> to queue an IBI work task, leading to "Unable to handle kernel read from
+> unreadable memory" and resulting in a kernel panic.
+> 
+> Typical IBI handling flow:
+> 1. The I3C master scans target devices and probes their respective drivers.
+> 2. The target device driver calls `i3c_device_request_ibi()` to enable IBI
+>     and assigns `dev->ibi = ibi`.
+> 3. The I3C master receives an IBI from the target device and calls
+>     `i3c_master_queue_ibi()` to queue the target device driver’s IBI handler
+>     task.
+> 
+> However, since target device events are asynchronous to the I3C probe
+> sequence, step 3 may occur before step 2, causing `dev->ibi` to be `NULL`,
+> leading to a kernel panic.
+> 
+> Add a NULL pointer check in `i3c_master_queue_ibi()` to prevent accessing
+> an uninitialized `dev->ibi`, ensuring stability.
+> 
+>>
+>> Fixes: 3a379bbcea0af ("i3c: Add core I3C infrastructure")
+>> Cc: stable@vger.kernel.org
+>> Link: https://lore.kernel.org/lkml/Z9gjGYudiYyl3bSe@lizhi-Precision-Tower-5810/
+>> Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+>> ---
+>> Changes since v4:
+>>    - Fix added at generic places master.c which is applicable for all platforms
+>>
+>>   drivers/i3c/master.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+>> index d5dc4180afbc..c65006aa0684 100644
+>> --- a/drivers/i3c/master.c
+>> +++ b/drivers/i3c/master.c
+>> @@ -2561,6 +2561,9 @@ static void i3c_master_unregister_i3c_devs(struct i3c_master_controller *master)
+>>    */
+>>   void i3c_master_queue_ibi(struct i3c_dev_desc *dev, struct i3c_ibi_slot *slot)
+>>   {
+>> +	if (!dev->ibi || !slot)
+>> +		return;
+>> +
+1. Shouldn't this be a Logical AND ? what if slot is non NULL but the 
+IBI is NULL ?
+
+2. This being void function, it doesn't say anything to caller if it's 
+successful or failed ? Should we make this non void function ?
+if not, i am thinking it may run into multiple attempts, no log too.
+>>   	atomic_inc(&dev->ibi->pending_ibis);
+>>   	queue_work(dev->ibi->wq, &slot->work);
+>>   }
+>> --
+>> 2.46.1
+>>
+> 
+
 
