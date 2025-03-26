@@ -1,233 +1,144 @@
-Return-Path: <linux-kernel+bounces-576730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C1AA713B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:30:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED3AA713B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036A8188F08F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6437817125C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BB1ACEAD;
-	Wed, 26 Mar 2025 09:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A24187872;
+	Wed, 26 Mar 2025 09:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QGtMg2U0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xxv2O7WJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QGtMg2U0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xxv2O7WJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ak7uKRbT"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D8C161310
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE40B78F5F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981383; cv=none; b=pYKysQNgwKiZj8/jdu1DihqlSSsGT0Z+sgs+4YGHyjngGCfhWoJmn5kwwwuazHshNFoGNa9yHMoQT3SjPwCzG6oD6x3mXexlKFloJQLRZHUMfz0BiA+JEfSRvgb9bTm41bebjqcmtRjQRlfL/anS6OO3i/oCOltvM48FESnGnrk=
+	t=1742981483; cv=none; b=B8xnms10G0HXDvbCTMeCpcE3YvX3PK9LKJXkC9mXs5Z6RDOTdFfybMI00kJenr8u64rDLYbXCHVDOxKelzuST6Bhv6b5f5CyV2sBB2M9JKmqMDWcWDaCfPn7vibyP1os/TfGzUOlBj5QXP8W8UagSEB0bTtbxDQgcQvvUaZejSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981383; c=relaxed/simple;
-	bh=XNxiDXdUii5+6jtcVssnK0QG/NSun2SoqoNA+Q5kiMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nx5qv9DcflmC5j1KE8bLwhyR1DubSjKcR02llGgIyCXznIZrdpqlCnC8iJi/NaI0n91P16XKXTCuSbqQOZc5pNT2cM1hkcq8ZJJzUyzu7+RymdoR4+VcmxaWXww+k54DhcB68AiwEzLL0m7B3+fTiNWMoBh4XlSo3W/mcsI2ze0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QGtMg2U0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xxv2O7WJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QGtMg2U0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xxv2O7WJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 47AD81F391;
-	Wed, 26 Mar 2025 09:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742981380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NBb0DLxbZ1Xy8lV9iYYVobxQWtWXO/9x6FdnTg4oeN8=;
-	b=QGtMg2U0W13REvRyAO6iDul3Ln6Bx540Pebz0AnigxAlctpaW5tnp/Tr9s107PyFC16lzg
-	rNczVYQsyqUn7Lp9J6TfMsoKosduFhkUL+TGCCal108Z0OOnYWlOGcjC+qmxevt3TRpvn+
-	1eB1Zj9AhorFqlWNVmDZb6rn7c5Y+JU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742981380;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NBb0DLxbZ1Xy8lV9iYYVobxQWtWXO/9x6FdnTg4oeN8=;
-	b=Xxv2O7WJ45F+uM7cVwGdJbh1i6TGufa2DOjjrVXsA7xVB5GzhRyBVfpnYRhe0Nx1K4Zjqx
-	Bu2fT1EhfApvJlCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742981380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NBb0DLxbZ1Xy8lV9iYYVobxQWtWXO/9x6FdnTg4oeN8=;
-	b=QGtMg2U0W13REvRyAO6iDul3Ln6Bx540Pebz0AnigxAlctpaW5tnp/Tr9s107PyFC16lzg
-	rNczVYQsyqUn7Lp9J6TfMsoKosduFhkUL+TGCCal108Z0OOnYWlOGcjC+qmxevt3TRpvn+
-	1eB1Zj9AhorFqlWNVmDZb6rn7c5Y+JU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742981380;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NBb0DLxbZ1Xy8lV9iYYVobxQWtWXO/9x6FdnTg4oeN8=;
-	b=Xxv2O7WJ45F+uM7cVwGdJbh1i6TGufa2DOjjrVXsA7xVB5GzhRyBVfpnYRhe0Nx1K4Zjqx
-	Bu2fT1EhfApvJlCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DC3061374A;
-	Wed, 26 Mar 2025 09:29:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eRKQNAPJ42fQZAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Mar 2025 09:29:39 +0000
-Message-ID: <65cd8976-3e07-4886-8eaa-f9a6094f6f1e@suse.de>
-Date: Wed, 26 Mar 2025 10:29:39 +0100
+	s=arc-20240116; t=1742981483; c=relaxed/simple;
+	bh=loPqL4Kzk/Oo6HnpyrF71a3w3MxQR6gpLCL+cbTzRKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5+WQj7pbZG1xJzrkyRWYdIzJ0/FBGAMiNrIX6CmfMF3QnWi5VLR7IIO/i2QmzKjJDlAOd+jlrbjCzOmvSuPcXtGC7Tklgac3V99w+gi0sZngupLEcO4GrfFIzNJYG29sJeIuHMHjkYYBWvGK6bj7E1iTGoOANqApDabuw9mBaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ak7uKRbT; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2260c915749so89199075ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742981481; x=1743586281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zC3l3dK9o93j7uA3wfBStTjnTsQtN1PCfhsmAuTgrmU=;
+        b=Ak7uKRbTtTgC7Hq4pm9SAA05RF9vX6Kt5YrjYW6Scfq3pVJdN81X4oIvtEaxglPVV7
+         tBEXuZQXwSz4LOHedLBWWALESitu9VKx+vmBEOjMui9xag9JcSfvsHdfFN8SEo1pMGSd
+         lbwG6P9sKzskJXTi7XtoGTUNPRMF/JAmq9B3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742981481; x=1743586281;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zC3l3dK9o93j7uA3wfBStTjnTsQtN1PCfhsmAuTgrmU=;
+        b=AFH5HL+oPCKa1HNILWgjy4MmyQtPcIWgzKFCe1lUnELEa62N2EaZGmX61YDwkwH1Jl
+         Ehfuf65HmRpFIJ6HLbM5NxBM2JAqjzX97HacjScqPvizB1g5J422QEgDRnUD2eliyJlZ
+         cHF9JIXJiBx/zoPi5g6uCjZ/RUhVYOlvKkGCZEi5vf0c8ZhKy92GhuBjQ3mAtxSUs5kR
+         Ua3qncOM/zdvbk8jC8TfdigEIaC9b+JklpWpN8k9MAlTeDVZaALt8shxPUjw0bBe/Vvf
+         F14A8kfkBOk4gnjqR18QTKWpSG7Jq2we0GvTZRM+qXrg6LuQF+wyN1BVzIWO7+WEPxQx
+         iFRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ+2PpmM8anf0fWOiz56lqLfHm/DtUXeVsDIqDmzGuyWjyPl3y8AXMKs3Tyy73efAt67CpqOgeypQosKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy70MAxd8RY/I/hEQUXNrTW2I1uNVcAu2jZ0S/+/IrHIZu/rJW9
+	X0CWQ713cXVrHqAwQdTxFiRmsARn6zu2wll/n25nasltNozqrWrdRL8G9bMc3A==
+X-Gm-Gg: ASbGncvJJXDbGOSqxIAUejFxNVHW+XdAVq2XEgsScf3iqqYW5pBny31xqkvi1kWtiGJ
+	FeGgSGaCRkEC1H/GpzyEQgEJXNekQMw7Juahtz46syxbGZcsyAxDKNd+HeC6elXaAYpfkUX0yWf
+	I1B+eowUNzSxgy5m4k5uTNjlhBmbk9uN/zwqeaUPB7xCFgd5mZ9DWX0P6lwns2nke4MTdbmUs+M
+	sGw3CLJuNHErlVo3B9NBQWMehPxsiIzFZdML5Sey5k6boVgKyUDIDxX3FZRGJAZ74BP2YhH32Vr
+	rKKuGEwFyixveYfV6vRcQlax8knUhOv+rnD2S/w89Nvrh0+B
+X-Google-Smtp-Source: AGHT+IF7i1ahIIFG+ik/yENr8XywdSg6HK7u19YXC7FIIEwyAHubTe0q6NcRcbnoWVAjzdyzxTa+hw==
+X-Received: by 2002:a17:902:f609:b0:224:78e:4eb4 with SMTP id d9443c01a7336-22780e121bfmr351614025ad.39.1742981480992;
+        Wed, 26 Mar 2025 02:31:20 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:d343:29c5:4565:9d95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da9dbsm105511135ad.179.2025.03.26.02.31.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 02:31:20 -0700 (PDT)
+Date: Wed, 26 Mar 2025 18:31:14 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Richard Chang <richardycc@google.com>
+Cc: Minchan Kim <minchan@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Brian Geffon <bgeffon@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] zram: modernize writeback interface
+Message-ID: <oc53hpg3st6v3okm5nbaolx6wpnw5tgsat2g4ycgkzze4yxwdv@7brgfyi7jynh>
+References: <20250325034210.3337080-1-senozhatsky@chromium.org>
+ <Z-MlsM2Gmxdvl_1D@google.com>
+ <CALC_0q8Mv_UWvFjo3HW_gRsG2N8P--R1OqDj7=2x_98XiRXy4w@mail.gmail.com>
+ <5l4pjqlgu4afndn3ysa7ynecjmvepkfjlh56ycm5jt5e4mioqm@dujakwaomhlk>
+ <CALC_0q9hRAX=46Zd+qh5Pq1myXx+=9gSTT5hu7t1s_Ko4xd_Og@mail.gmail.com>
+ <iiav3vvvvu7lzcl3e2rzfh4kyz6kwymqurncjdsv62wvlge63k@ewgbdmzdnb2p>
+ <awuyw4jfm2nwxxunchaxazc27m6gqkcyn7zx4gkin7fqg3ogrc@uq55swn7atrx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/edid: Use unsigned int in drm_add_modes_noedid()
-To: Lyude Paul <lyude@redhat.com>, Maxime Ripard <mripard@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- "open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
-References: <20250325212823.669459-1-lyude@redhat.com>
- <20250325212823.669459-2-lyude@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250325212823.669459-2-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,ffwll.ch,kernel.org,garyguo.net,protonmail.com,proton.me,google.com,umich.edu,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,bootlin.com:url]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awuyw4jfm2nwxxunchaxazc27m6gqkcyn7zx4gkin7fqg3ogrc@uq55swn7atrx>
 
-Hi
+On (25/03/26 17:45), Sergey Senozhatsky wrote:
+> On (25/03/26 17:15), Sergey Senozhatsky wrote:
+> > On (25/03/26 15:07), Richard Chang wrote:
+> > [..]
+> > > Another alternative thought, how about page_index supporting both
+> > > single instance and ranges?
+> > > The key is shorter and the parser is relatively simpler.
+> > > Eg: page_index=500 page_index=10000-10001
+> > 
+> > I probably can look into it.
+> 
+> Can't say I really like that "index" will mean both index and
+> a range of indexes.  But let me think more.
 
-Am 25.03.25 um 22:27 schrieb Lyude Paul:
-> A negative resolution doesn't really make any sense, no one goes into a TV
-> store and says "Hello sir, I would like a negative 4K TV please", that
-> would make everyone look at you funny.
->
-> So, let's make these parameters a bit more reasonable and ensure that
-> they're unsigned - which makes the resulting rust bindings for this
-> function a bit easier to understand and work with.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/drm_edid.c | 2 +-
->   include/drm/drm_edid.h     | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 13bc4c290b17d..2e2e1d2347397 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -7099,7 +7099,7 @@ EXPORT_SYMBOL(drm_add_edid_modes);
->    * Return: The number of modes added or 0 if we couldn't find any.
->    */
->   int drm_add_modes_noedid(struct drm_connector *connector,
-> -			int hdisplay, int vdisplay)
-> +			 unsigned int hdisplay, unsigned int vdisplay)
+We can permit multiple page_index= as well
 
-You should also remove these branches:
+	page_index=1000 page_index=2000 page_indexes=5000-6000
 
-  https://elixir.bootlin.com/linux/v6.13.7/source/drivers/gpu/drm/drm_edid.c#L7109
+because one element range (N-N+1) can easily waste more space
+than page_index.  (historically zram permitted only one page_index
+per call.)
 
-Best regards
-Thomas
+And plural for index comes at two extra bytes, which seems fine.
 
->   {
->   	int i, count, num_modes = 0;
->   	struct drm_display_mode *mode;
-> diff --git a/include/drm/drm_edid.h b/include/drm/drm_edid.h
-> index eaac5e665892a..b38409670868d 100644
-> --- a/include/drm/drm_edid.h
-> +++ b/include/drm/drm_edid.h
-> @@ -437,7 +437,7 @@ bool drm_detect_monitor_audio(const struct edid *edid);
->   enum hdmi_quantization_range
->   drm_default_rgb_quant_range(const struct drm_display_mode *mode);
->   int drm_add_modes_noedid(struct drm_connector *connector,
-> -			 int hdisplay, int vdisplay);
-> +			 unsigned int hdisplay, unsigned int vdisplay);
->   
->   int drm_edid_header_is_valid(const void *edid);
->   bool drm_edid_is_valid(struct edid *edid);
+I'll wait for more opinions.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+---
 
+                if (!strcmp(param, "page_index")) {
+                        err = parse_page_index(val, nr_pages, &lo, &hi);
+                        if (err) {
+                                ret = err;
+                                goto release_init_lock;
+                        }
+
+                        scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+                        continue;
+                }
+
+                if (!strcmp(param, "page_indexes")) {
+                        err = parse_page_indexes(val, nr_pages, &lo, &hi);
+                        if (err) {
+                                ret = err;
+                                goto release_init_lock;
+                        }
+
+                        scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+                        continue;
+                }
 
