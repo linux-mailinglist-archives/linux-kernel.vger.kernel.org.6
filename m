@@ -1,189 +1,275 @@
-Return-Path: <linux-kernel+bounces-577563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE33A71ED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:08:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0DBA71ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B7316F332
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6776D3B50E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A9E253331;
-	Wed, 26 Mar 2025 19:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EBB253B67;
+	Wed, 26 Mar 2025 19:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pl1+jBgA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aB1rHemM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="isPKEazh"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41428F4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51324EF75
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743016101; cv=none; b=qCFs+gnlViQ8HntnTHiUpd3QsrQnI3rfxlqwITuzszC1PxtRGmzRjTaJD9OFCzO5OyTaytKdpIPfkB/DV91eKv6Rjnzv7DKRKlFxKc7vMvKgwUr4jgaOA9XYalBGXMnzFlCFge7DRDZF0Ec/bh8zKy/UpIc7uZhbsPmZo2kHCYY=
+	t=1743016168; cv=none; b=Mfw5nWIPKj9JqPfr2c8TQnt2gAZf0ebrxtS3IMfLQqJ3slh+/LJXpbAvwX+W8aVjLkq37UzOuf6wD4SgnKvsO5JpYYFgi8RdM+G3Dk4Nsq5iIZd8Kd51RoFcZMCvBo/g/tkgmJOUiCnRUAoGd+bSwgwBV/t71eXEoT9Ekt4W4tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743016101; c=relaxed/simple;
-	bh=rKdARyh/7xryL4FsuGnOvUqeotsKtYkn3PCl5CZv6FI=;
-	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=Q8qWIbN0QUw1XN9k0NuiiXGdXjQHTOgbrQ5PFkBZeZ9evnplaAPZ1iTXVuzI6WlaSqDxw9IYgumU1/UgbKI20XRwaP9y5dxW0qngkC0APmigI1H1c9/Ur4w5rt6koaoB+4aXEjff3SSBT8CvkhWd4sNYmfm0XnySgC5Zd9QX62M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pl1+jBgA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aB1rHemM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743016097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+IdcU6v6hXvGncvboKhgsEuWCinXYfrSAGQG0YPOv8w=;
-	b=pl1+jBgAwXboMC9Tluxh2R2NbQXv1l248iaoGTC2W9JNv0I7BlCT2mVERYSnfWgEOwjpXg
-	cW/AiR6hyfe4FVeXWUAIFHbM4PzzlQqNFHRFzZoyUU2kK3wa4cuqSiQvNyBzqya1sLEhvD
-	wAnixdFLE78WnZgfoFP5+x/mILhhU3AzV6m3zt23WUwTsOoFusyTNSe389JyuiWNj/Nqzl
-	K+2+YnPV6BAcwq2tJ8v1NtDEIzWC0ojEDxb3A00JeOWSdoXVKnKIaBSlh8uZGlyCP7FlD4
-	zZU81xM6R5FRVWn5W98PwMq96K6cBA8BTvzeAMY+Cl4ROyT1frUpsHwqPnOSxA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743016097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+IdcU6v6hXvGncvboKhgsEuWCinXYfrSAGQG0YPOv8w=;
-	b=aB1rHemMOKycZS69dptG9Y9VWiNvMOyqyeRnXREw7zePV4jZI7NL2IAupRsHaEHFiHHek6
-	PQTepRO3iVXA7xCA==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] irq/urgent for v6.15-rc1
-Message-ID: 
- <174301605628.1660948.615494869949872320.tglx@xen13.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1743016168; c=relaxed/simple;
+	bh=SnxqBHAaltx681NZ6h4C7XLUHuRErqtlcGYrugl0ZpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5AAnpExSWae4gChuLVKXXmN5BmtwY5QsaTaxKqvtM98rQq2Jh+jHEecXwConZ8uwfMo1Ygf2wZ1QMNCEEFR4MW4IASgLXGNPggWyYDyKrqNEV9nydKtbEmTxQVFYOXjZzSVcE93cahc11ndLhLBzIzVTZrzRVojEO2CNPrm+dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=isPKEazh; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e637669ef11so203690276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:09:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743016164; x=1743620964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C8MnphgMdhV2hzqeZDJ8boc8PiycAb0YUE6JIcjZLIU=;
+        b=isPKEazhhKoxTLgIMOojOR3HLVqf9zOtkdSAaCeXsOteWpV2JgFZVZGJH/iKm1sjPv
+         hTw48vV9j7HCiZlR+3BCTenYffO0paXQX1+EiA1rzPZRPLF7CNXmMIipHxVst90H5ACC
+         oEZ0ZvJ48sgl+HjD6g79LL32QapA3V5x/CXacf30Rl+1lBNkP8UGOipx2pS1jK5K6ppQ
+         JWMgnYKqgESL+OzN29s6jijM7GTYTXDiPfHppM6i+1wTMVYWnRgvlFl0gCsGZvHWbv/e
+         vesNuauoRJuXnbp1aetXmgOaKal7dUs9ngxEFPcczLexpxcVYzBr+DWE/DMoIfiIu9HR
+         g2rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743016164; x=1743620964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C8MnphgMdhV2hzqeZDJ8boc8PiycAb0YUE6JIcjZLIU=;
+        b=UlZ6Rm4VxuqPQ1zZjR46iHbSHqRjCfXuiZMAgolXjX0jGQgUQGh+8GAqxkzxl2HWtY
+         abti2R8HQqLwNtbxDc2ABT188qJzAKDPCzPnzpAl60XRk74YgihGdFrTbqaJj2l+HI7a
+         uRhnt2WH5nBT4EAVUXX9RAzoTKHshLsjjJrRhX0F1cL940h/+oal+TytM0wtRuB5tw0D
+         RT7KnfEZpvM9v66HJN3DWbao1DlNeEPSqeW2OA9Bh0HoioYDclpvF4tsdpZmqEKTUouD
+         T3eBV0P+qQGU0bJXTLivraf1C4ty97QsB8EbL/nvBz8TEjvDAz/K3rJZ14NUZscc5zFF
+         V00w==
+X-Forwarded-Encrypted: i=1; AJvYcCXd3+ojLVCWQ3FxiSxTS3TBYe6kQ3wHehpdrNVPXUu8k7DxY1pBf16PuMV7GH9R9j4IaFD7RPyVc0CAvKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSmfc+RTEiuv0xF7KT+p+2X1sP0V9pvbLTFdXzD/dCL+edl2N+
+	0S00+A3ylfzif08MpGzzwxkaDdPdvUwwDfJC4Wq4bBOXW2oi+/CLBc+rhv1mtGzH6B8oKRVIDP/
+	rwgFiJd/UlPNonLQO+rFdVvLryUD8KRfBBQoWKMW+SJQWNOQXiw==
+X-Gm-Gg: ASbGnctahZiNzTIqliLPznUBLTUZ7RIXH0cRoXZd6MCiqZ4+B/17Dwu3sP6r3MgGEyC
+	iEuHuQzWsKu/vUn17VQsS9Qx8UnDNU7uk40jlQ4pzTqOMYsPxTSxeLPDoF+6VMvCivZMtO8WFvs
+	/tND+1o+sA+13PhPlFne1SvP5Qs9eKzaD4+Z79rCUoA/yJbkWT43iRPRo=
+X-Google-Smtp-Source: AGHT+IGMj/MnYE+d7H2+zYVj3Bj0Tce8hkBUUFJhdk3M26qxeAz0lDP7fu7jhLIoEdjL+mhczTy8wN8UEXxeZS0sQ9Y=
+X-Received: by 2002:a05:6902:e09:b0:e61:1c18:3f36 with SMTP id
+ 3f1490d57ef6-e69437b140emr1046333276.44.1743016163664; Wed, 26 Mar 2025
+ 12:09:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Mar 2025 20:08:16 +0100 (CET)
+References: <20250325015741.2478906-1-mlevitsk@redhat.com> <20250325015741.2478906-3-mlevitsk@redhat.com>
+ <CADrL8HWrgbV+coEod_EUnvG27HX3WtJDMua3FPiReCRCtXaNhw@mail.gmail.com> <Z-RKZsQngjEgcfVU@google.com>
+In-Reply-To: <Z-RKZsQngjEgcfVU@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 26 Mar 2025 12:08:47 -0700
+X-Gm-Features: AQ5f1Jok2UyoVjwN5Xfj4AvvUukl9Vy59LiBy7m0vyaov2dDIAzXM7qt0VVIOd8
+Message-ID: <CADrL8HV=ERo3dB7u-24VhjVQ6muBHEXeAfZYY7cuE7cxALRRRA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] KVM: selftests: access_tracking_perf_test: add
+ option to skip the sanity check
+To: Sean Christopherson <seanjc@google.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-kselftest@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Wed, Mar 26, 2025 at 11:41=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
+>
+> On Tue, Mar 25, 2025, James Houghton wrote:
+> > On Mon, Mar 24, 2025 at 6:57=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat=
+.com> wrote:
+> > >
+> > > Add an option to skip sanity check of number of still idle pages,
+> > > and set it by default to skip, in case hypervisor or NUMA balancing
+> > > is detected.
+> > >
+> > > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> >
+> > Thanks Maxim! I'm still working on a respin of this test with MGLRU
+> > integration, like [1]. Sorry it's taking me so long. I'll apply my
+> > changes on top of yours.
+> >
+> > [1]: https://lore.kernel.org/kvm/20241105184333.2305744-12-jthoughton@g=
+oogle.com/
+> >
+> > > ---
+> > >  .../selftests/kvm/access_tracking_perf_test.c | 33 ++++++++++++++++-=
+--
+> > >  .../testing/selftests/kvm/include/test_util.h |  1 +
+> > >  tools/testing/selftests/kvm/lib/test_util.c   |  7 ++++
+> > >  3 files changed, 37 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c =
+b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> > > index 3c7defd34f56..6d50c829f00c 100644
+> > > --- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> > > +++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> > > @@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VC=
+PUS];
+> > >  /* Whether to overlap the regions of memory vCPUs access. */
+> > >  static bool overlap_memory_access;
+> > >
+> > > +static int warn_on_too_many_idle_pages =3D -1;
+> > > +
+> > >  struct test_params {
+> > >         /* The backing source for the region of memory. */
+> > >         enum vm_mem_backing_src_type backing_src;
+> > > @@ -184,11 +186,10 @@ static void mark_vcpu_memory_idle(struct kvm_vm=
+ *vm,
+> > >          * are cached and the guest won't see the "idle" bit cleared.
+> > >          */
+> > >         if (still_idle >=3D pages / 10) {
+> > > -#ifdef __x86_64__
+> > > -               TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
+> > > +               TEST_ASSERT(warn_on_too_many_idle_pages,
+> >
+> > I think this assertion is flipped (or how warn_on_too_many_idle_pages
+> > is being set is flipped, see below).
+> >
+> > >                             "vCPU%d: Too many pages still idle (%lu o=
+ut of %lu)",
+> > >                             vcpu_idx, still_idle, pages);
+> > > -#endif
+> > > +
+> > >                 printf("WARNING: vCPU%d: Too many pages still idle (%=
+lu out of %lu), "
+> > >                        "this will affect performance results.\n",
+> > >                        vcpu_idx, still_idle, pages);
+> > > @@ -342,6 +343,8 @@ static void help(char *name)
+> > >         printf(" -v: specify the number of vCPUs to run.\n");
+> > >         printf(" -o: Overlap guest memory accesses instead of partiti=
+oning\n"
+> > >                "     them into a separate region of memory for each v=
+CPU.\n");
+> > > +       printf(" -w: Skip or force enable the check that after dirtyi=
+ng the guest memory, most (90%%) of \n"
+> > > +              "it is reported as dirty again (0/1)");
+> > >         backing_src_help("-s");
+> > >         puts("");
+> > >         exit(0);
+> > > @@ -359,7 +362,7 @@ int main(int argc, char *argv[])
+> > >
+> > >         guest_modes_append_default();
+> > >
+> > > -       while ((opt =3D getopt(argc, argv, "hm:b:v:os:")) !=3D -1) {
+> > > +       while ((opt =3D getopt(argc, argv, "hm:b:v:os:w:")) !=3D -1) =
+{
+> > >                 switch (opt) {
+> > >                 case 'm':
+> > >                         guest_modes_cmdline(optarg);
+> > > @@ -376,6 +379,11 @@ int main(int argc, char *argv[])
+> > >                 case 's':
+> > >                         params.backing_src =3D parse_backing_src_type=
+(optarg);
+> > >                         break;
+> > > +               case 'w':
+> > > +                       warn_on_too_many_idle_pages =3D
+> > > +                               atoi_non_negative("1 - enable warning=
+, 0 - disable",
+> > > +                                                 optarg);
+> >
+> > We still get a "warning" either way, right? Maybe this should be
+> > called "fail_on_too_many_idle_pages" (in which case the above
+> > assertion is indeed flipped). Or "warn_on_too_many_idle_pages" should
+> > mean *only* warn, i.e., *don't* fail, in which case, below we need to
+> > flip how we set it below.
+>
+>
+> Agreed.  I like the "warn" terminology,  Maybe this?
+>
+>         printf(" -w: Control whether the test warns or fails if more than=
+ 10%\n"
+>                "     of pages are still seen as idle/old after accessing =
+guest\n"
+>                "     memory.  >0 =3D=3D warn only, 0 =3D=3D fail, <0 =3D=
+=3D auto.  For auto\n"
+>                "     mode, the test fails by default, but switches to war=
+n only\n"
+>                "     if NUMA balancing is enabled or the test detects it'=
+s running\n"
+>                "     in a VM.");
 
-please pull the latest irq/urgent branch from:
+LGTM.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2025-=
-03-26
+>
+> And let the user explicitly select auto:
+>
+>                 case 'w':
+>                         warn_only =3D atoi_paranoid(optarg);
+>                         break;
+>
+> Then the auto resolving works as below, and as James pointed out, the ass=
+ert
+> becomes
+>
+>                 TEST_ASSERT(!warn_only, ....);
 
-up to:  3ece3e8e5976: PCI/MSI: Handle the NOMASK flag correctly for all PCI/M=
-SI backends
+I think the auto-resolving below needs to be flipped, and the
+TEST_ASSERT should be for `warn_only`, not `!warn_only`.
 
-A urgent fix for the XEN related PCI/MSI changes:
+If warn_only =3D=3D 1, the assert should pass.
 
-  XEN used a global variable to disable the masking of MSI interrupts as
-  XEN handles that on the hypervisor side. This turned out to be a problem
-  with VMD as the PCI devices behind a VMD bridge are not always handled
-  by the hypervisor and then require masking by guest.
+>
+> >
+> > > +                       break;
+> > >                 case 'h':
+> > >                 default:
+> > >                         help(argv[0]);
+> > > @@ -386,6 +394,23 @@ int main(int argc, char *argv[])
+> > >         page_idle_fd =3D open("/sys/kernel/mm/page_idle/bitmap", O_RD=
+WR);
+> > >         __TEST_REQUIRE(page_idle_fd >=3D 0,
+> > >                        "CONFIG_IDLE_PAGE_TRACKING is not enabled");
+> > > +       if (warn_on_too_many_idle_pages =3D=3D -1) {
+> > > +#ifdef __x86_64__
+> > > +               if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
+> > > +                       printf("Skipping idle page count sanity check=
+, because the test is run nested\n");
+> > > +                       warn_on_too_many_idle_pages =3D 0;
+> > > +               } else
+> > > +#endif
+> > > +               if (is_numa_balancing_enabled()) {
+> > > +                       printf("Skipping idle page count sanity check=
+, because NUMA balance is enabled\n");
+> > > +                       warn_on_too_many_idle_pages =3D 0;
+> > > +               } else {
+> > > +                       warn_on_too_many_idle_pages =3D 1;
+> > > +               }
+> > > +       } else if (!warn_on_too_many_idle_pages) {
+> > > +               printf("Skipping idle page count sanity check, becaus=
+e this was requested by the user\n");
+>
+> Eh, I vote to omit this.  The sanity check is still there, it's just degr=
+aded to
+> a warn.  I'm not totally against it, just seems superfluous and potential=
+ly confusing.
 
-  To solve this the global variable was replaced by a interrupt domain
-  specific flag, which is set by the generic XEN PCI/MSI domain, but not by
-  VMD or any other domain in the system.
+I agree, it's not adding much.
 
-  So far, so good. But the implementation (and the reviewer) missed the
-  fact, that accessing the domain flag cannot be done directly because
-  there are at least two situations, where this fails. Legacy architectures
-  are not providing interrupt domains at all. The new MSI parent domains do
-  not require to have a domain info pointer. Both cases result in a
-  unconditional NULL pointer derefence.
+Separately: I've finished the MGLRU version of this test. It uses
+MGLRU if it is available, and marking pages as idle is much faster
+when using it. If MGLRU is enabled but otherwise not usable, the test
+fails, as the idle page bitmap is no longer usable for this test.
 
-  The PCI/MSI code already has a function to query the MSI domain specific
-  flag in a safe way, which handles all possible cases of PCI/MSI backends.
-
-  So the fix it simply to replace the open coded checks by invoking the
-  safe helper to query the flag.
-
-Note: This is hot of the press, but has been tested and validated. As it
-      affects a lot of people, I fast tracked it.
-
-Thanks,
-
-	tglx
-
------------------->
-Thomas Gleixner (1):
-      PCI/MSI: Handle the NOMASK flag correctly for all PCI/MSI backends
-
-
- drivers/pci/msi/msi.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index d74162880d83..7058d59e7c5f 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -285,8 +285,6 @@ static void pci_msi_set_enable(struct pci_dev *dev, int e=
-nable)
- static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
- 			      struct irq_affinity_desc *masks)
- {
--	const struct irq_domain *d =3D dev_get_msi_domain(&dev->dev);
--	const struct msi_domain_info *info =3D d->host_data;
- 	struct msi_desc desc;
- 	u16 control;
-=20
-@@ -297,7 +295,7 @@ static int msi_setup_msi_desc(struct pci_dev *dev, int nv=
-ec,
- 	/* Lies, damned lies, and MSIs */
- 	if (dev->dev_flags & PCI_DEV_FLAGS_HAS_MSI_MASKING)
- 		control |=3D PCI_MSI_FLAGS_MASKBIT;
--	if (info->flags & MSI_FLAG_NO_MASK)
-+	if (pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY))
- 		control &=3D ~PCI_MSI_FLAGS_MASKBIT;
-=20
- 	desc.nvec_used			=3D nvec;
-@@ -604,20 +602,18 @@ static void __iomem *msix_map_region(struct pci_dev *de=
-v,
-  */
- void msix_prepare_msi_desc(struct pci_dev *dev, struct msi_desc *desc)
- {
--	const struct irq_domain *d =3D dev_get_msi_domain(&dev->dev);
--	const struct msi_domain_info *info =3D d->host_data;
--
- 	desc->nvec_used				=3D 1;
- 	desc->pci.msi_attrib.is_msix		=3D 1;
- 	desc->pci.msi_attrib.is_64		=3D 1;
- 	desc->pci.msi_attrib.default_irq	=3D dev->irq;
- 	desc->pci.mask_base			=3D dev->msix_base;
--	desc->pci.msi_attrib.can_mask		=3D !(info->flags & MSI_FLAG_NO_MASK) &&
--						  !desc->pci.msi_attrib.is_virtual;
-=20
--	if (desc->pci.msi_attrib.can_mask) {
-+
-+	if (!pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY) &&
-+	    !desc->pci.msi_attrib.is_virtual) {
- 		void __iomem *addr =3D pci_msix_desc_addr(desc);
-=20
-+		desc->pci.msi_attrib.can_mask =3D 1;
- 		desc->pci.msix_ctrl =3D readl(addr + PCI_MSIX_ENTRY_VECTOR_CTRL);
- 	}
- }
-@@ -715,8 +711,6 @@ static int msix_setup_interrupts(struct pci_dev *dev, str=
-uct msix_entry *entries
- static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entr=
-ies,
- 				int nvec, struct irq_affinity *affd)
- {
--	const struct irq_domain *d =3D dev_get_msi_domain(&dev->dev);
--	const struct msi_domain_info *info =3D d->host_data;
- 	int ret, tsize;
- 	u16 control;
-=20
-@@ -747,7 +741,7 @@ static int msix_capability_init(struct pci_dev *dev, stru=
-ct msix_entry *entries,
- 	/* Disable INTX */
- 	pci_intx_for_msi(dev, 0);
-=20
--	if (!(info->flags & MSI_FLAG_NO_MASK)) {
-+	if (!pci_msi_domain_supports(dev, MSI_FLAG_NO_MASK, DENY_LEGACY)) {
- 		/*
- 		 * Ensure that all table entries are masked to prevent
- 		 * stale entries from firing in a crash kernel.
-
+I'm happy to post a new version of Maxim's patch with the MGLRU
+patches too, Maxim, if you're okay with that.
 
