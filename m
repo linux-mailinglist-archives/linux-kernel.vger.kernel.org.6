@@ -1,255 +1,436 @@
-Return-Path: <linux-kernel+bounces-576430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20EAA70F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:42:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3201BA70F27
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 03:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6033A81BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200B43AB391
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C00813C8EA;
-	Wed, 26 Mar 2025 02:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DRr2V6c1"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011040.outbound.protection.outlook.com [52.101.65.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D537129A78;
+	Wed, 26 Mar 2025 02:43:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B853D6F;
-	Wed, 26 Mar 2025 02:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742956937; cv=fail; b=N2HkzHFkiniTpQxwE21Eu4qto34RFOd3c8QHQ/ZEw37Pdys9R7JyxBH0Q+gvZ4sODENi1nR+Ql6ljtwSajTM9DKEo2aoSCpV9eY0Ys4QBW+X0fKQmKlAJ+aMijF5kJItGkLSxM37l9+Z+aVDRlobFNPmBkJHCq5JWlizNdRfYRU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742956937; c=relaxed/simple;
-	bh=pem+AYfYXi1lH2LURvcYq2fhwZoN9SDT9Mxz0PC7xys=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cweG6XsU0n5mz8zp3badme0T5pPJE4pHHMmp94vuxlWq4ivksqEo1T+JvXyH2OENXklB5KPyEPm6Lc+chT+8A/4paa9JrRZ5SM7wUVe09j7cKpSqQSPkNk6UnSLg8MrdB+10eytiZbxD3r3NhFMXb4ZjvvdBoKnAo8Sbpn4LQb4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DRr2V6c1; arc=fail smtp.client-ip=52.101.65.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YXY78RyZRPNlAipXxBKJOu6L++FEt8Tk9DnrL0XRfLmQhYR+8abioDUXn+U1/9m9tiJgNXL/y/ub9xNIY92JEQqwF2uOXjbsuAkxvMbgTfLutOUzf6HUNAOPT7pub/EE7JZIH+SO/+eXJ6bsAWeVmhS93lOks9H6Wcvo4d6O/Soc8SNZ4nCjD5ru4Nt1x9Bie+VHLOH6M2aszePrTXsZ77or2DZhZn56BgIjHkeQPCXn312p2FwmL2CxsXhuF9Y9Ty5nf9zlssZzEQduu0cLyzmTiQmurtOmjGWmgtAYKQP1HvAsuBB7BbKyVewnREgfj/41RrZmUGxpQ3eoORJKsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pem+AYfYXi1lH2LURvcYq2fhwZoN9SDT9Mxz0PC7xys=;
- b=fW1+GF4awxRt8/WLDw9HQtOUHCZJw5JUvvJIpTCxPSnhnE8WR/z+J/d9N++WEDrY39lwoda/gcrHoY5x5Duzsi/V/0Xq2CMk2S5CIk1TSJ2b9AgI1p7C6MA14wYUCPGQ3tMWkQ8E9I3HHTZhNENPVBtVIN13FhHrK/aubLBm+kd9JiVS5rzMfQgF736jFxonn0fF2TWFA9FlaLDM4jF++9WDPBTtUeAjHv7hh5sP4WeafhO1WsEcsucAWrEeYC2mxeCmwFlYhJg8ZWJ4cYNbblhfZsU84sV8Or3fKKsQ9A9riD85djo+s8OZpWxLMDlrTLPZEBRxpz6MLtptoJoa4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pem+AYfYXi1lH2LURvcYq2fhwZoN9SDT9Mxz0PC7xys=;
- b=DRr2V6c1r2UMNWIXpOMeomoUaXmjqd2hjQcWsDfQNCPl0kqjiVxhgMCcaytxa6TPbw4I7od+46U9UJOApW91jUTMJeBM7NpX7BOc2jVYc/nq1G8+78nhHd82EOhqYFAVSMtui9WuUSuFL5D3aURt84HiRF/DU+RJOmOgqnP4xdnmVh5EmLjcBxjp2HF4ZngHff5Y/AAXNRqFN6+tQlbxyikfDYlqOMZv8iEfe763rlK00cOyxX1m1ME9DyKClW0aOGeqKldPwNmhJUR0TkzGcWzXKnmXuTbzGCOOqI91nh5s6Oh96EgXXH1OsAkoNZOOoaA1iJAAykaRSI2ViHjWwg==
-Received: from VI1PR04MB10049.eurprd04.prod.outlook.com
- (2603:10a6:800:1db::17) by PAWPR04MB9813.eurprd04.prod.outlook.com
- (2603:10a6:102:391::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Wed, 26 Mar
- 2025 02:42:12 +0000
-Received: from VI1PR04MB10049.eurprd04.prod.outlook.com
- ([fe80::d09c:4c82:e871:17ee]) by VI1PR04MB10049.eurprd04.prod.outlook.com
- ([fe80::d09c:4c82:e871:17ee%4]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 02:42:12 +0000
-From: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
-To: Frank Li <frank.li@nxp.com>
-CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"arnd@arndb.de" <arnd@arndb.de>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "bbrezillon@kernel.org"
-	<bbrezillon@kernel.org>, "linux-i3c@lists.infradead.org"
-	<linux-i3c@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "rvmanjumce@gmail.com"
-	<rvmanjumce@gmail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v5] i3c: Fix read from unreadable memory at
- i3c_master_queue_ibi()
-Thread-Topic: [PATCH v5] i3c: Fix read from unreadable memory at
- i3c_master_queue_ibi()
-Thread-Index: AQHbnW/7PXTpawcfAEm3Y/HvAU7//7OD7ZIAgADIFJA=
-Date: Wed, 26 Mar 2025 02:42:11 +0000
-Message-ID:
- <VI1PR04MB10049D3A51688C4C7F42EAD798FA62@VI1PR04MB10049.eurprd04.prod.outlook.com>
-References: <20250325102332.2435069-1-manjunatha.venkatesh@nxp.com>
- <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
-In-Reply-To: <Z+LA/GASTPMMcVpC@lizhi-Precision-Tower-5810>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VI1PR04MB10049:EE_|PAWPR04MB9813:EE_
-x-ms-office365-filtering-correlation-id: 3379d48f-49d2-4c2d-d86d-08dd6c0fcf94
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|7053199007;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MnJNM3VRSmxoTnQ4ajR6UldST0hlall5RFpDcitMaGJ0alk2TXpCOFJ4UmRp?=
- =?utf-8?B?RDhQUWV5S2VTa0RhZ05tWFc0Q0xjaDZIdVEzQkNURjNDTUlZVDVBVGhiU1pM?=
- =?utf-8?B?NDlVN0tRTjBTR1NrS1R3cE10cDFnbldPSUZ3UzVZUUFVNmtoRDBLOGtFVVl3?=
- =?utf-8?B?MUJJbWNuMTl0Vm0rRDFKZzJ5KytEaVRXWmN0b2RMczV2RjlNTzNTOEgrKzNT?=
- =?utf-8?B?dC9KV3JBellpWFdobjR0REU1d3BEUy8xUTZOcDQrblJxeU5FRVV3SzZiRE4y?=
- =?utf-8?B?UnFkT1BZWkZuZVB3MFU3VGJTSkRpMVM0NEs4TnhDTVBXNnB0YkRuMkFwSjUr?=
- =?utf-8?B?YVhTZWk3cjYyQXlmOE4rYUhsZm9iSDlmQkY1UjVuaCtGdHdVdnlraGR4a0dt?=
- =?utf-8?B?aWdhVllzaGRJT3hMTW0rTCt2WG9kY3JNeEl0MklBekUyV3pzV3U4b1orQWRF?=
- =?utf-8?B?ZldnZldxTVdGRlo0akp1UHlHMlpQU0o5VGFuQ3IwMkdIZkE0VU9Za3hNY3NC?=
- =?utf-8?B?dXhNeG5pUEREdjNGdXRFanIxaXg0UDNpZlVYRW1NUTJlVjM4ZWVqRkVSQ2JH?=
- =?utf-8?B?cm0zVWxvSHAvUmNyY3ZjWm9LUTljd3pVR1lmT3VoRk9kOFdRNUliakxaWEx6?=
- =?utf-8?B?bjdNRXQzYzdkTllLM0IrT096bTNSSzVRendKMGpsd3daVll0T0JoemVHNGxB?=
- =?utf-8?B?SkordE85QmVkK3NMV0hUM0MwOXpINmJscXRXZkJQeVhlR3R5VE1PSmsrck9v?=
- =?utf-8?B?U0Q5Nk14RnZnbzFvQUNrRjl6Zm1vR0tyYUt2SzRrSjJ1YTczL1ZnSGU2MEZn?=
- =?utf-8?B?SUtEYXBzaWgxblFOVmdOaHhKcjZZaW9CMnVDYTJnN1REMUtwUy9ETkY0cDNj?=
- =?utf-8?B?cGJaa20wTVltQ1YxME9rbk1VTDhxSVh1NjVSQ2liSm9ENVpnQ3I3a3JBSFgr?=
- =?utf-8?B?NWJoeXU4NVg4UjN1OTd5bzdkTlZUWHgzbEFNWkQvemp4Uzl6T0MwVzUxbzl6?=
- =?utf-8?B?NXdaaktiMnZ4QWpxY2h5aGlEMHVCajFOSXV0Q1ZJeW1vTm1VYS9kYUVGZkpa?=
- =?utf-8?B?N2hFZkdNVm5PTzdLS1FzU2UyNERnSGNVU0dRZ2NHOU4waXJQSmtPNzdua3dj?=
- =?utf-8?B?VlJRZWNicThoR2xrd2wwa29UaDlQZVJFQ016SjliSFVMUnVENUtnTnc1bDZj?=
- =?utf-8?B?WVJuNXNYdjQ5UmVmZlB6RWpLTTlnQTBpU2ZpbjRFU1NTODlaUzRIWkZmeisz?=
- =?utf-8?B?b1BHZnBnd0pFNVZpdjgxUmQrbWNDUEhWdUdrZHc2MDlHeFJ0ejhNbzBaWCtF?=
- =?utf-8?B?Z3k3bFZQeFRIQXl4Nit0bVZoV0ZBUzVkdWpTekpSaDg5VWJRY2grZmVTOTJX?=
- =?utf-8?B?VWR5RlVDM3ZEM2kreXBUa1p0eGlxM0RGdHc4aVBBSnp5M0FRZ2w4T09XaXRM?=
- =?utf-8?B?Y0tHQ0VhaHB0OHR3YzYrWHNKakV4elFDdmtJMnRKVTR4cHFDNFlXZWg2Mlhz?=
- =?utf-8?B?aitQVkt2NFVsVnBBUkFRb2hiZnZQRWFlZTRaQVhrTk1oN0pSbDNqb1BZZlhJ?=
- =?utf-8?B?c3hkQ0R1eWJLZVFGZVZjYnBpaTE1YUZ1OFg0bDBkdjdoTlBKNzZXNGwwQmFN?=
- =?utf-8?B?VWJybXFnMmFIcnhuTnR4eEJBNFU3dHpLalZMT3JObG1WT3kxWlJFRkFzQ3NE?=
- =?utf-8?B?ZE1BSW9RNmoySFBvTDkydmQ3dXhVVW9IdkU1TFFKNjlWOUVTN1pUaDRpTmVx?=
- =?utf-8?B?aHVqeEFkeXQwYWxGT21hSEtTaDAvamprbDhqeWJCci9tQ0JaNVVSakp4NGtL?=
- =?utf-8?B?dGsvQzV0dDgrTzZpU2JuTk1JbEhFcDYybUVHOWJ4bEI2Wk1KUEdvamREbnlM?=
- =?utf-8?B?QkNFam00VTBlM0RkazNvK3hJbURrZGhHR0pSVm1uWXBmeGljVGdjczJKRTN1?=
- =?utf-8?Q?/5IfkmTPLnh2MLyvBWDmVy4GclbVXQfv?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB10049.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cmhTbkdPcnJXbzdualNOa0I1djd0dDd3cHp4YmdBTEtKUGZZR25ERS9GMGJa?=
- =?utf-8?B?R3dnVVRocWYzNmRzN1dGdFlMamtONDZDclU1Zk9iTEdWUjdibWRmU2M5MUV1?=
- =?utf-8?B?a0RDY2dxbnBwb05OWFR6ei83bFB2WFVKeUVuYzR6VjRPSEwxQWhPNzduYkpD?=
- =?utf-8?B?Nys2bVczZjNjTXdCcHVoR3JzOGxGUTZUY1FQdXVrTzRsbUVGUG0ycmJZQ2lC?=
- =?utf-8?B?djR6Nk1EakRkWXg0d0tQT2xsWnR6VUtYVkx2SVJPbTNrQ0NlYUlkdlhkbDI0?=
- =?utf-8?B?bldSZ3RQTktWSnhHVXA1a0FJVkVxRTRPZ3RFS1BtSU8wMlJJNFV5QTJnTDEz?=
- =?utf-8?B?UVRYTDhPQzNzV2pXVFV1ZFJ3emd5WnYwWXcrQ01MMUR1MnZzNm02a3RKZHds?=
- =?utf-8?B?UnFXak02eFFPMm96Ymc1ck96WndPWUtzdVpVTndmRU5lN05UTURYVWkxQkJE?=
- =?utf-8?B?S0JKK2FXZU9IamFoRUhDSVZ4VXhYcEhwUi9SZ21JSHRNckFrbFozaVJGLzcw?=
- =?utf-8?B?SElXbkFYbkZsaWVJK0RPUXplckpQaVkycldSQVd1SXFpcitoV2FqdTlLZ0Z0?=
- =?utf-8?B?Q2JNMjBxTkFmTG5rbFk3UURteDBuUDJrMGlhcHhvRG5mcmpuVElRdy9OMkVM?=
- =?utf-8?B?dEE5b01OYzNpUXFraXpXV0lsN1JhSStBUGtCeVkrWG9FampyVnJxWWZvczN4?=
- =?utf-8?B?dWEzMkM4MFk2YTlGMXQ3c1NCNjIxZW5YL1ZrRTVJNHc5OXYwSWRTNjZoNkpR?=
- =?utf-8?B?eE1FWVdiUTgyZnQ3bGJDY21PeitsZzFUazBHUnd3WmZlYzhHajVyZGdkWWJl?=
- =?utf-8?B?QWplMlRkb3FYQ0IwUWxHNDIxRzF5Nm9HNXA3c2t2TEpoK1Jsa1dOQTJHS2xE?=
- =?utf-8?B?Qldlc21jcEFUNENJRFZFeVlva1BVSjFIOStqWXFnYVAzT2N4VHVyNXBxaFZr?=
- =?utf-8?B?ZHZmT1c0aWhlSDN0RmZhbEdjSmMwQzFmS3FuSDdOTGN2OHZKVW94bXg4SlZ3?=
- =?utf-8?B?UC9UK1pYNERFa0ZJZ09RRXhHb2ovbG5GcUM2M3ArNkhETG40T3lyVS9kZGU5?=
- =?utf-8?B?NjViUWhTVmc3ZDNoK0FBRVZvbklnaFRkNU1tZUM3alBSbnIxVXFQTmZZc0hx?=
- =?utf-8?B?akFPOE1NWmRUSTlWV3lUYXZHajYwdFdSY1hrZlMzU3VtcmVJcG5EWmUrQXlM?=
- =?utf-8?B?WS9yVHRxQlhUWVVkUk04Tm4rSEpYVkZPeTF3aFlJS2tzZXY3VitpWktmQm1i?=
- =?utf-8?B?VW5tR1ZtbXJFYjZTZGdSZVpTam9kaThxVlZ0NGVJRVYwSmVQNGxBVGpMdXgv?=
- =?utf-8?B?ZkFjS1pXN2hkcmw4UXNjMXpUSWJqcnpLVTZlYzNWZDBhMDFHWDIzUFAwNmdG?=
- =?utf-8?B?NHV2eWkvUjdrVFE0QklBQlJQVHpMYWZ1cGNDK2d4ZDFtbFptTlF3MlNhdEd3?=
- =?utf-8?B?dFNjVmRjUEtMYXYrdXVkdDJHSHozUnBSR1J6aFF0Zm12Mk9EampCK2pZamE0?=
- =?utf-8?B?QkFzUlR5LzhhTUxmc0ptNDhOei9kR1d3bE56S1EwQXlDKzdUNVNRYnpnb3F1?=
- =?utf-8?B?blRpeHVJZWxpRXhQS05QTFdRQVVndkN3VEVMbCtWV0FFVXJIdXhkOUF1K2dp?=
- =?utf-8?B?YlNmNFM3UFJobkRoWGc5VTBJVENBalR4ckl4eGFQa1o1NUNIcEo2RnJZNlZF?=
- =?utf-8?B?R0dxSmdVSXd5TndKS21RMllsazdpLzJ3T0hGWklhbUpEWUtUVWMxUWlqZStk?=
- =?utf-8?B?d3U5eUErd3RzWTlER3JmcVBlM3NWbnZGYmlTZ3hYS2tETUxjK1YzbkhXVzFR?=
- =?utf-8?B?OE9jL29hVk9Ic2FKSDd3MUJHOWs4S1Vhb2xES0xwTnV5ZGMyZWRZamtJUzNr?=
- =?utf-8?B?c1FUMXhxU0xIOXBLTkR2WlJMTmtBRDlmZm9rcmszZ3gzdVRPNjdZbzU3eVFE?=
- =?utf-8?B?bEhlR3BqcS9ESC8xQ2NtU25idlhvT0xKS1FYdDI4MFNhLytyZ1hNT1UxSnZF?=
- =?utf-8?B?SG12MEQ3a1p6THBBUTFleThPUEMva2VpdEdJMWVjZFh6Q29UOWpsdXpIdExl?=
- =?utf-8?B?QzdQRjQ1MmFDSzlFUEd1eFZRN09Kb3hwWVVDQlNHTlF3ZUlqZWtLdU9PV1dM?=
- =?utf-8?B?YnZvYitwUGk0TEx2Z1BGaVdpdTZqM1VFdHYvMTE0VFRUNWk5NzVxQm80Q3NH?=
- =?utf-8?B?RVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3F23D6F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742956985; cv=none; b=H4/hFcifn/0loAj9T+MgpjJiMe9FF4tu5sqBvJk3f+2kjZTcrl0uC8WcmXfA9jKBnTub5YXFr5TjHG0FnTFBx27cJWnbvSzGc4Q3E9908sROzn9rtcnegd23fge+Idc6dZFj8w0EsMeKdyZ0KaJE6EPN+15O9hCGYjvrvveBb28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742956985; c=relaxed/simple;
+	bh=6APY7jnpXVbE3kVslyQY5khmIaFEUbRBCulfmoeO5gM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NNPfUZiyBSn/2vrNNi9hrTf9oagTlJmqDUve7QEK2JNZRRWTqRHS6YVQSF2mHuE6SEWMRJLDVlMILOtgs0lzfL8fxhY3JkCFljbtm1+5VfLmocu9MQj75aQ7zpvUUD8BGhzUIbjFxO2dx3O3461x3HgPgeGSU5U8a0C6YDgegD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b3a6c37e2so665535839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:43:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742956982; x=1743561782;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sX8mpJPpI043L6+3dwCJM9mFzxl5RCqu5al8okhVkaU=;
+        b=IfCudCa+JxQHXf3ViNiD5YcL1F3WnAIqdlIjx8vl7TM95sWvY4vzbzkNYzdeRHcshe
+         T8Mqp7AtwN9/Ha5RactX+n4V0Azy88QNhtYOg1P1YVuwOIeH7049wavzzj5U0cgRbJzW
+         dTTaOIcqYbsdRTUpF4G1V1z8gR6Tf2ITIXdaCW3D1BgFkKy7mQ/vrTX34T7XktE+y1r6
+         rmN+AnAhILQySL8om61AM1VWOl5isx8xNz3Lvyya+lxsOVIHzHboRiqiecX7mTGYbw4B
+         8qEi+XRX39GFeUH9+DAb9BzfBz7VPkmtWznP8SG2LckUEcET6l0zqbPFNXdAH9GcxEyu
+         j+9g==
+X-Gm-Message-State: AOJu0Ywmyx7Woh7+Fu/2s/ohnMDxfHgbde9FTxh3t8vdirxoxstF1l5L
+	afXnsrpY03STImCc/pXr7YuhQFYZhKirq/Vn6VCX2jkpROYquJmteAr3iIGWiKPHrHVWz7vZG43
+	nvReOIkTafNrITJ04nnLWJz6RC1tlv2aohTYYxrUviB/iGpl4L3Whzr4=
+X-Google-Smtp-Source: AGHT+IHRZ1ZxBixGHFQf3A26Yg7li0/Z0Fvw6yx8cfbnHwBMi+Gf3tJGmRn8DjbpzZ/kwNZ3d9VfD39x/HrPcN2TwqDWwnnZ0CuO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB10049.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3379d48f-49d2-4c2d-d86d-08dd6c0fcf94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2025 02:42:11.9139
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: N2j17dsWd3k+1tiIxGeDbNACwzeQ3HAdYP/rZPalkxhdsHJlYF8hRs7nGN1mRBdKX4+jRHdmDuEti/691uyPt6BogvQJFKz/8SWjoht9TSk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9813
+X-Received: by 2002:a05:6e02:3207:b0:3d3:dece:3dab with SMTP id
+ e9e14a558f8ab-3d5960cd012mr191184065ab.1.1742956982510; Tue, 25 Mar 2025
+ 19:43:02 -0700 (PDT)
+Date: Tue, 25 Mar 2025 19:43:02 -0700
+In-Reply-To: <20250326021914.49794-1-richard120310@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e369b6.050a0220.1ec46.0005.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, richard120310@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRnJhbmsgTGkgPGZyYW5r
-LmxpQG54cC5jb20+DQo+IFNlbnQ6IFR1ZXNkYXksIE1hcmNoIDI1LCAyMDI1IDg6MTMgUE0NCj4g
-VG86IE1hbmp1bmF0aGEgVmVua2F0ZXNoIDxtYW5qdW5hdGhhLnZlbmthdGVzaEBueHAuY29tPg0K
-PiBDYzogYWxleGFuZHJlLmJlbGxvbmlAYm9vdGxpbi5jb207IGFybmRAYXJuZGIuZGU7DQo+IGdy
-ZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBiYnJlemlsbG9uQGtlcm5lbC5vcmc7IGxpbnV4LQ0K
-PiBpM2NAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsN
-Cj4gcnZtYW5qdW1jZUBnbWFpbC5jb207IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVj
-dDogUmU6IFtQQVRDSCB2NV0gaTNjOiBGaXggcmVhZCBmcm9tIHVucmVhZGFibGUgbWVtb3J5IGF0
-DQo+IGkzY19tYXN0ZXJfcXVldWVfaWJpKCkNCj4gDQo+IFN1YmplY3Qgc2hvdWxkIGJlDQo+IA0K
-PiBpM2M6IEFkZCBOVUxMIHBvaW50ZXIgY2hlY2sgaW4gaTNjX21hc3Rlcl9xdWV1ZV9pYmkoKQ0K
-PiANCltNYW5qdW5hdGhhIFZlbmthdGVzaF0gOiBJIHdpbGwgdXBkYXRlIHRoZSBzdWJqZWN0IGxp
-bmUgaW4gdGhlIG5leHQgY29tbWl0Lg0KDQo+IE9uIFR1ZSwgTWFyIDI1LCAyMDI1IGF0IDAzOjUz
-OjMyUE0gKzA1MzAsIE1hbmp1bmF0aGEgVmVua2F0ZXNoIHdyb3RlOg0KPiA+IEFzIHBhcnQgb2Yg
-STNDIGRyaXZlciBwcm9iaW5nIHNlcXVlbmNlIGZvciBwYXJ0aWN1bGFyIGRldmljZSBpbnN0YW5j
-ZSwNCj4gPiBXaGlsZSBhZGRpbmcgdG8gcXVldWUgaXQgaXMgdHJ5aW5nIHRvIGFjY2VzcyBpYmkg
-dmFyaWFibGUgb2YgZGV2IHdoaWNoDQo+ID4gaXMgbm90IHlldCBpbml0aWFsaXplZCBjYXVzaW5n
-ICJVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCByZWFkIGZyb20NCj4gPiB1bnJlYWRhYmxlIG1lbW9y
-eSIgcmVzdWx0aW5nIGluIGtlcm5lbCBwYW5pYy4NCj4gPg0KPiA+IEJlbG93IGlzIHRoZSBzZXF1
-ZW5jZSB3aGVyZSB0aGlzIGlzc3VlIGhhcHBlbmVkLg0KPiA+IDEuIER1cmluZyBib290IHVwIHNl
-cXVlbmNlIElCSSBpcyByZWNlaXZlZCBhdCBob3N0ICBmcm9tIHRoZSBzbGF2ZSBkZXZpY2UNCj4g
-PiAgICBiZWZvcmUgcmVxdWVzdGluZyBmb3IgSUJJLCBVc3VhbGx5IHdpbGwgcmVxdWVzdCBJQkkg
-YnkgY2FsbGluZw0KPiA+ICAgIGkzY19kZXZpY2VfcmVxdWVzdF9pYmkoKSBkdXJpbmcgcHJvYmUg
-b2Ygc2xhdmUgZHJpdmVyLg0KPiA+IDIuIFNpbmNlIG1hc3RlciBjb2RlIHRyeWluZyB0byBhY2Nl
-c3MgSUJJIFZhcmlhYmxlIGZvciB0aGUgcGFydGljdWxhcg0KPiA+ICAgIGRldmljZSBpbnN0YW5j
-ZSBiZWZvcmUgYWN0dWFsbHkgaXQgaW5pdGlhbGl6ZWQgYnkgc2xhdmUgZHJpdmVyLA0KPiA+ICAg
-IGR1ZSB0byB0aGlzIHJhbmRvbWx5IGFjY2Vzc2luZyB0aGUgYWRkcmVzcyBhbmQgY2F1c2luZyBr
-ZXJuZWwgcGFuaWMuDQo+ID4gMy4gaTNjX2RldmljZV9yZXF1ZXN0X2liaSgpIGZ1bmN0aW9uIGlu
-dm9rZWQgYnkgdGhlIHNsYXZlIGRyaXZlciB3aGVyZQ0KPiA+ICAgIGRldi0+aWJpID0gaWJpOyBh
-c3NpZ25lZCBhcyBwYXJ0IG9mIGZ1bmN0aW9uIGNhbGwNCj4gPiAgICBpM2NfZGV2X3JlcXVlc3Rf
-aWJpX2xvY2tlZCgpLg0KPiA+IDQuIEJ1dCB3aGVuIElCSSByZXF1ZXN0IHNlbnQgYnkgc2xhdmUg
-ZGV2aWNlLCBtYXN0ZXIgY29kZSAgdHJ5aW5nIHRvIGFjY2Vzcw0KPiA+ICAgIHRoaXMgdmFyaWFi
-bGUgYmVmb3JlIGl0cyBpbml0aWFsaXplZCBkdWUgdG8gdGhpcyByYWNlIGNvbmRpdGlvbg0KPiA+
-ICAgIHNpdHVhdGlvbiBrZXJuZWwgcGFuaWMgaGFwcGVuZWQuDQo+IA0KPiBIb3cgYWJvdXQgY29t
-bWl0IG1lc3NhZ2UgYXM6DQo+IA0KPiBUaGUgSTNDIG1hc3RlciBkcml2ZXIgbWF5IHJlY2VpdmUg
-YW4gSUJJIGZyb20gYSB0YXJnZXQgZGV2aWNlIHRoYXQgaGFzIG5vdA0KPiBiZWVuIHByb2JlZCB5
-ZXQuIEluIHN1Y2ggY2FzZXMsIHRoZSBtYXN0ZXIgY2FsbHMgYGkzY19tYXN0ZXJfcXVldWVfaWJp
-KClgIHRvDQo+IHF1ZXVlIGFuIElCSSB3b3JrIHRhc2ssIGxlYWRpbmcgdG8gIlVuYWJsZSB0byBo
-YW5kbGUga2VybmVsIHJlYWQgZnJvbQ0KPiB1bnJlYWRhYmxlIG1lbW9yeSIgYW5kIHJlc3VsdGlu
-ZyBpbiBhIGtlcm5lbCBwYW5pYy4NCj4gDQo+IFR5cGljYWwgSUJJIGhhbmRsaW5nIGZsb3c6DQo+
-IDEuIFRoZSBJM0MgbWFzdGVyIHNjYW5zIHRhcmdldCBkZXZpY2VzIGFuZCBwcm9iZXMgdGhlaXIg
-cmVzcGVjdGl2ZSBkcml2ZXJzLg0KPiAyLiBUaGUgdGFyZ2V0IGRldmljZSBkcml2ZXIgY2FsbHMg
-YGkzY19kZXZpY2VfcmVxdWVzdF9pYmkoKWAgdG8gZW5hYmxlIElCSQ0KPiAgICBhbmQgYXNzaWdu
-cyBgZGV2LT5pYmkgPSBpYmlgLg0KPiAzLiBUaGUgSTNDIG1hc3RlciByZWNlaXZlcyBhbiBJQkkg
-ZnJvbSB0aGUgdGFyZ2V0IGRldmljZSBhbmQgY2FsbHMNCj4gICAgYGkzY19tYXN0ZXJfcXVldWVf
-aWJpKClgIHRvIHF1ZXVlIHRoZSB0YXJnZXQgZGV2aWNlIGRyaXZlcuKAmXMgSUJJIGhhbmRsZXIN
-Cj4gICAgdGFzay4NCj4gDQo+IEhvd2V2ZXIsIHNpbmNlIHRhcmdldCBkZXZpY2UgZXZlbnRzIGFy
-ZSBhc3luY2hyb25vdXMgdG8gdGhlIEkzQyBwcm9iZQ0KPiBzZXF1ZW5jZSwgc3RlcCAzIG1heSBv
-Y2N1ciBiZWZvcmUgc3RlcCAyLCBjYXVzaW5nIGBkZXYtPmliaWAgdG8gYmUgYE5VTExgLA0KPiBs
-ZWFkaW5nIHRvIGEga2VybmVsIHBhbmljLg0KPiANCj4gQWRkIGEgTlVMTCBwb2ludGVyIGNoZWNr
-IGluIGBpM2NfbWFzdGVyX3F1ZXVlX2liaSgpYCB0byBwcmV2ZW50IGFjY2Vzc2luZyBhbg0KPiB1
-bmluaXRpYWxpemVkIGBkZXYtPmliaWAsIGVuc3VyaW5nIHN0YWJpbGl0eS4NCj4NCltNYW5qdW5h
-dGhhIFZlbmthdGVzaF0gOiBUaGlzIGNvbW1pdCBtZXNzYWdlIGxvb2tzIGJldHRlciwgd2lsbCB1
-c2UgdGhlIHNhbWUgaW4gdGhlIG5leHQgY29tbWl0LiANCiANCj4gPg0KPiA+IEZpeGVzOiAzYTM3
-OWJiY2VhMGFmICgiaTNjOiBBZGQgY29yZSBJM0MgaW5mcmFzdHJ1Y3R1cmUiKQ0KPiA+IENjOiBz
-dGFibGVAdmdlci5rZXJuZWwub3JnDQo+ID4gTGluazoNCj4gPiBodHRwczovL2xvcmUua2VybmVs
-Lm9yZy9sa21sL1o5Z2pHWXVkaVl5bDNiU2VAbGl6aGktUHJlY2lzaW9uLVRvd2VyLTU4DQo+ID4g
-MTAvDQo+ID4gU2lnbmVkLW9mZi1ieTogTWFuanVuYXRoYSBWZW5rYXRlc2ggPG1hbmp1bmF0aGEu
-dmVua2F0ZXNoQG54cC5jb20+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlcyBzaW5jZSB2NDoNCj4gPiAg
-IC0gRml4IGFkZGVkIGF0IGdlbmVyaWMgcGxhY2VzIG1hc3Rlci5jIHdoaWNoIGlzIGFwcGxpY2Fi
-bGUgZm9yIGFsbA0KPiA+IHBsYXRmb3Jtcw0KPiA+DQo+ID4gIGRyaXZlcnMvaTNjL21hc3Rlci5j
-IHwgMyArKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTNjL21hc3Rlci5jIGIvZHJpdmVycy9pM2MvbWFzdGVyLmMg
-aW5kZXgNCj4gPiBkNWRjNDE4MGFmYmMuLmM2NTAwNmFhMDY4NCAxMDA2NDQNCj4gPiAtLS0gYS9k
-cml2ZXJzL2kzYy9tYXN0ZXIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvaTNjL21hc3Rlci5jDQo+ID4g
-QEAgLTI1NjEsNiArMjU2MSw5IEBAIHN0YXRpYyB2b2lkIGkzY19tYXN0ZXJfdW5yZWdpc3Rlcl9p
-M2NfZGV2cyhzdHJ1Y3QNCj4gaTNjX21hc3Rlcl9jb250cm9sbGVyICptYXN0ZXIpDQo+ID4gICAq
-Lw0KPiA+ICB2b2lkIGkzY19tYXN0ZXJfcXVldWVfaWJpKHN0cnVjdCBpM2NfZGV2X2Rlc2MgKmRl
-diwgc3RydWN0DQo+ID4gaTNjX2liaV9zbG90ICpzbG90KSAgew0KPiA+ICsJaWYgKCFkZXYtPmli
-aSB8fCAhc2xvdCkNCj4gPiArCQlyZXR1cm47DQo+ID4gKw0KPiA+ICAJYXRvbWljX2luYygmZGV2
-LT5pYmktPnBlbmRpbmdfaWJpcyk7DQo+ID4gIAlxdWV1ZV93b3JrKGRldi0+aWJpLT53cSwgJnNs
-b3QtPndvcmspOyAgfQ0KPiA+IC0tDQo+ID4gMi40Ni4xDQo+ID4NCg==
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+d00-0xffff window]
+[    6.656788][    T1] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bff=
+ff window]
+[    6.658493][    T1] pci_bus 0000:00: resource 7 [mem 0xc0000000-0xfebfef=
+ff window]
+[    6.665366][    T1] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    6.668676][    T1] PCI: CLS 0 bytes, default 64
+[    6.670292][    T1] PCI-DMA: Using software bounce buffering for IO (SWI=
+OTLB)
+[    6.672676][    T1] software IO TLB: mapped [mem 0x00000000bbffd000-0x00=
+000000bfffd000] (64MB)
+[    6.675325][    T1] ACPI: bus type thunderbolt registered
+[    6.803712][    T1] RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters=
+, 10737418240 ms ovfl timer
+[    6.838838][   T62] kworker/u8:3 (62) used greatest stack depth: 11960 b=
+ytes left
+[    6.921338][   T61] kworker/u8:3 (61) used greatest stack depth: 10624 b=
+ytes left
+[    6.950433][    T1] kvm_amd: CPU 0 isn't AMD or Hygon
+[    6.951845][    T1] clocksource: tsc: mask: 0xffffffffffffffff max_cycle=
+s: 0x1fb6ebe4598, max_idle_ns: 440795211488 ns
+[    7.032367][    T1] clocksource: Switched to clocksource tsc
+[   28.149270][    T1] Initialise system trusted keyrings
+[   28.159166][    T1] workingset: timestamp_bits=3D40 max_order=3D21 bucke=
+t_order=3D0
+[   28.170925][    T1] DLM installed
+[   28.184821][    T1] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[   28.206648][    T1] NFS: Registering the id_resolver key type
+[   28.213155][    T1] Key type id_resolver registered
+[   28.219287][    T1] Key type id_legacy registered
+[   28.224463][    T1] nfs4filelayout_init: NFSv4 File Layout Driver Regist=
+ering...
+[   28.233124][    T1] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Drive=
+r Registering...
+[   28.270691][    T1] Key type cifs.spnego registered
+[   28.277562][    T1] Key type cifs.idmap registered
+[   28.290673][    T1] ntfs3: Enabled Linux POSIX ACLs support
+[   28.296967][    T1] ntfs3: Read-only LZX/Xpress compression included
+[   28.303976][    T1] efs: 1.0a - http://aeschi.ch.eu.org/efs/
+[   28.310453][    T1] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
+[   28.317169][    T1] QNX4 filesystem 0.2.3 registered.
+[   28.322689][    T1] qnx6: QNX6 filesystem 1.0.0 registered.
+[   28.330316][    T1] fuse: init (API version 7.42)
+[   28.341243][    T1] orangefs_debugfs_init: called with debug mask: :none=
+: :0:
+[   28.350107][    T1] orangefs_init: module version upstream loaded
+[   28.358335][    T1] JFS: nTxBlock =3D 8192, nTxLock =3D 65536
+[   28.399230][    T1] SGI XFS with ACLs, security attributes, realtime, qu=
+ota, no debug enabled
+[   28.425334][    T1] 9p: Installing v9fs 9p2000 file system support
+[   28.433158][    T1] NILFS version 2 loaded
+[   28.437605][    T1] befs: version: 0.9.3
+[   28.442821][    T1] ocfs2: Registered cluster interface o2cb
+[   28.450015][    T1] ocfs2: Registered cluster interface user
+[   28.457650][    T1] OCFS2 User DLM kernel interface loaded
+[   28.478095][    T1] gfs2: GFS2 installed
+[   28.520991][    T1] ceph: loaded (mds proto 32)
+[   32.625706][    T1] NET: Registered PF_ALG protocol family
+[   32.631717][    T1] xor: automatically using best checksumming function =
+  avx      =20
+[   32.639844][    T1] async_tx: api initialized (async)
+[   32.645219][    T1] Key type asymmetric registered
+[   32.650713][    T1] Asymmetric key parser 'x509' registered
+[   32.656758][    T1] Asymmetric key parser 'pkcs8' registered
+[   32.663044][    T1] Key type pkcs7_test registered
+[   32.669091][    T1] Block layer SCSI generic (bsg) driver version 0.4 lo=
+aded (major 238)
+[   32.679411][    T1] io scheduler mq-deadline registered
+[   32.685026][    T1] io scheduler kyber registered
+[   32.690920][    T1] io scheduler bfq registered
+[   32.709039][    T1] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN=
+:00/input/input0
+[   32.729404][    T1] ACPI: button: Power Button [PWRF]
+[   32.737352][    T1] input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN=
+:00/input/input1
+[   32.748217][    T1] ACPI: button: Sleep Button [SLPF]
+[   32.774787][    T1] ioatdma: Intel(R) QuickData Technology Driver 5.00
+[   32.863966][    T1] ACPI: \_SB_.LNKC: Enabled at IRQ 11
+[   32.871214][    T1] virtio-pci 0000:00:03.0: virtio_pci: leaving for leg=
+acy driver
+[   32.945814][    T1] ACPI: \_SB_.LNKD: Enabled at IRQ 10
+[   32.951577][    T1] virtio-pci 0000:00:04.0: virtio_pci: leaving for leg=
+acy driver
+[   33.026375][    T1] ACPI: \_SB_.LNKB: Enabled at IRQ 10
+[   33.032191][    T1] virtio-pci 0000:00:06.0: virtio_pci: leaving for leg=
+acy driver
+[   33.089460][    T1] virtio-pci 0000:00:07.0: virtio_pci: leaving for leg=
+acy driver
+[   34.226900][    T1] N_HDLC line discipline registered with maxframe=3D40=
+96
+[   34.234889][    T1] Serial: 8250/16550 driver, 4 ports, IRQ sharing enab=
+led
+[   34.249802][    T1] 00:03: ttyS0 at I/O 0x3f8 (irq =3D 4, base_baud =3D =
+115200) is a 16550A
+[   34.284139][    T1] 00:04: ttyS1 at I/O 0x2f8 (irq =3D 3, base_baud =3D =
+115200) is a 16550A
+[   34.313774][    T1] 00:05: ttyS2 at I/O 0x3e8 (irq =3D 6, base_baud =3D =
+115200) is a 16550A
+[   34.345912][    T1] 00:06: ttyS3 at I/O 0x2e8 (irq =3D 7, base_baud =3D =
+115200) is a 16550A
+[   34.395124][    T1] Non-volatile memory driver v1.3
+[   34.407451][    T1] BUG: kernel NULL pointer dereference, address: 00000=
+00000000000
+[   34.415494][    T1] #PF: supervisor read access in kernel mode
+[   34.416986][    T1] #PF: error_code(0x0000) - not-present page
+[   34.416986][    T1] PGD 0 P4D 0=20
+[   34.416986][    T1] Oops: Oops: 0000 [#1] SMP PTI
+[   34.416986][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.1=
+4.0-syzkaller-02023-gee6740fd34eb-dirty #0 PREEMPT(undef)=20
+[   34.416986][    T1] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 02/12/2025
+[   34.416986][    T1] RIP: 0010:msix_capability_init+0x95c/0x18c0
+[   34.416986][    T1] Code: ff ff ff 48 89 9d 60 fe ff ff 48 89 9d 08 ff f=
+f ff 48 83 bd 30 ff ff ff 00 4c 8b 75 c8 0f 85 1d 02 00 00 48 8b bd 58 ff f=
+f ff <44> 8b 27 b8 00 00 40 00 41 21 c4 e8 e4 a8 ad fb 8b 18 44 8b 3a 41
+[   34.416986][    T1] RSP: 0000:ffff888100642fb0 EFLAGS: 00010246
+[   34.416986][    T1] RAX: ffff8880bba43080 RBX: ffffc90000b3f008 RCX: 000=
+0000100243080
+[   34.416986][    T1] RDX: ffff888100243080 RSI: ffff88813fffacc0 RDI: 000=
+0000000000000
+[   34.506029][    T1] RBP: ffff888100643178 R08: ffffea000000000f R09: 000=
+0000000000000
+[   34.506029][    T1] R10: ffff8880bba43020 R11: ffffffff86cfc5e9 R12: 000=
+0000000000000
+[   34.506029][    T1] R13: 0000000000000000 R14: ffff8881408d0b58 R15: 000=
+000000000000b
+[   34.506029][    T1] FS:  0000000000000000(0000) GS:ffff8881ab2b0000(0000=
+) knlGS:0000000000000000
+[   34.506029][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   34.506029][    T1] CR2: 0000000000000000 CR3: 0000000011a80000 CR4: 000=
+00000003526f0
+[   34.556031][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
+0000000000000
+[   34.556031][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
+0000000000400
+[   34.556031][    T1] Call Trace:
+[   34.556031][    T1]  <TASK>
+[   34.556031][    T1]  ? show_trace_log_lvl+0x268/0x3d0
+[   34.556031][    T1]  ? __pci_enable_msix_range+0xad9/0xc40
+[   34.556031][    T1]  ? __die_body+0xce/0x1a0
+[   34.556031][    T1]  ? __die+0x20f/0x270
+[   34.556031][    T1]  ? page_fault_oops+0xe58/0xfb0
+[   34.605985][    T1]  ? exc_page_fault+0x56c/0x700
+[   34.605985][    T1]  ? asm_exc_page_fault+0x2b/0x30
+[   34.605985][    T1]  ? __pci_enable_msix_range+0xad9/0xc40
+[   34.605985][    T1]  ? msix_capability_init+0x95c/0x18c0
+[   34.605985][    T1]  __pci_enable_msix_range+0xad9/0xc40
+[   34.605985][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.605985][    T1]  ? kmsan_internal_set_shadow_origin+0x6c/0x100
+[   34.605985][    T1]  pci_alloc_irq_vectors_affinity+0x111/0x3a0
+[   34.605985][    T1]  vp_find_vqs_msix+0x84d/0x1560
+[   34.656028][    T1]  ? kmsan_internal_unpoison_memory+0x14/0x20
+[   34.656028][    T1]  vp_find_vqs+0x6c/0xa80
+[   34.656028][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.656028][    T1]  ? __pfx_vp_find_vqs+0x10/0x10
+[   34.656028][    T1]  probe_common+0x3b4/0x970
+[   34.656028][    T1]  ? __pfx_random_recv_done+0x10/0x10
+[   34.656028][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.656028][    T1]  virtrng_probe+0x2d/0x40
+[   34.656028][    T1]  ? __pfx_virtrng_probe+0x10/0x10
+[   34.656028][    T1]  virtio_dev_probe+0x1640/0x19a0
+[   34.706032][    T1]  ? __pfx_virtio_dev_probe+0x10/0x10
+[   34.706032][    T1]  really_probe+0x4dc/0xd90
+[   34.706032][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.706032][    T1]  __driver_probe_device+0x2ab/0x5d0
+[   34.706032][    T1]  driver_probe_device+0x72/0x890
+[   34.706032][    T1]  __driver_attach+0x7ea/0xb50
+[   34.706032][    T1]  bus_for_each_dev+0x350/0x540
+[   34.706032][    T1]  ? __pfx___driver_attach+0x10/0x10
+[   34.706032][    T1]  driver_attach+0x51/0x70
+[   34.755983][    T1]  bus_add_driver+0x74c/0xdb0
+[   34.755983][    T1]  driver_register+0x3fb/0x660
+[   34.755983][    T1]  __register_virtio_driver+0xf1/0x120
+[   34.755983][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
+[   34.755983][    T1]  virtio_rng_driver_init+0x2e/0x40
+[   34.755983][    T1]  do_one_initcall+0x228/0xbf0
+[   34.755983][    T1]  ? kmsan_internal_set_shadow_origin+0x6c/0x100
+[   34.755983][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
+[   34.755983][    T1]  ? advisor_target_scan_time_store+0x120/0x180
+[   34.805996][    T1]  ? irqentry_enter+0x37/0x60
+[   34.805996][    T1]  ? sysvec_apic_timer_interrupt+0x52/0x90
+[   34.805996][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.805996][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.805996][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.805996][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.805996][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.805996][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.805996][    T1]  ? parameq+0x43a/0x470
+[   34.856033][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.856033][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.856033][    T1]  ? parse_args+0xfde/0x10a0
+[   34.856033][    T1]  ? kmsan_get_metadata+0x13e/0x1c0
+[   34.856033][    T1]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[   34.856033][    T1]  ? __pfx_virtio_rng_driver_init+0x10/0x10
+[   34.856033][    T1]  do_initcall_level+0x140/0x350
+[   34.856033][    T1]  do_initcalls+0x1a6/0x2f0
+[   34.856033][    T1]  ? __pfx_native_smp_prepare_cpus+0x10/0x10
+[   34.906320][    T1]  do_basic_setup+0x22/0x30
+[   34.906320][    T1]  kernel_init_freeable+0x306/0x4c0
+[   34.906320][    T1]  ? __pfx_kernel_init+0x10/0x10
+[   34.906320][    T1]  kernel_init+0x2f/0x800
+[   34.906320][    T1]  ? __pfx_kernel_init+0x10/0x10
+[   34.906320][    T1]  ret_from_fork+0x6d/0x90
+[   34.906320][    T1]  ? __pfx_kernel_init+0x10/0x10
+[   34.906320][    T1]  ret_from_fork_asm+0x1a/0x30
+[   34.906320][    T1] RIP: 1f0f:0x0
+[   34.906320][    T1] Code: Unable to access opcode bytes at 0xfffffffffff=
+fffd6.
+[   34.956009][    T1] RSP: 0000:0000000000000000 EFLAGS: 841f0f2e66 ORIG_R=
+AX: 1f0f2e6600000000
+[   34.956009][    T1] RAX: 0000000000000000 RBX: 1f0f2e6600000000 RCX: 2e6=
+6000000000084
+[   34.956009][    T1] RDX: 0000000000841f0f RSI: 000000841f0f2e66 RDI: 008=
+41f0f2e660000
+[   34.956009][    T1] RBP: 00841f0f2e660000 R08: 00841f0f2e660000 R09: 000=
+000841f0f2e66
+[   34.956009][    T1] R10: 0000000000841f0f R11: 2e66000000000084 R12: 000=
+000841f0f2e66
+[   34.997502][    T1] R13: 0000000000841f0f R14: 2e66000000000084 R15: 1f0=
+f2e6600000000
+[   35.005965][    T1]  </TASK>
+[   35.005965][    T1] Modules linked in:
+[   35.005965][    T1] CR2: 0000000000000000
+[   35.005965][    T1] ---[ end trace 0000000000000000 ]---
+[   35.005965][    T1] RIP: 0010:msix_capability_init+0x95c/0x18c0
+[   35.005965][    T1] Code: ff ff ff 48 89 9d 60 fe ff ff 48 89 9d 08 ff f=
+f ff 48 83 bd 30 ff ff ff 00 4c 8b 75 c8 0f 85 1d 02 00 00 48 8b bd 58 ff f=
+f ff <44> 8b 27 b8 00 00 40 00 41 21 c4 e8 e4 a8 ad fb 8b 18 44 8b 3a 41
+[   35.005965][    T1] RSP: 0000:ffff888100642fb0 EFLAGS: 00010246
+[   35.056178][    T1] RAX: ffff8880bba43080 RBX: ffffc90000b3f008 RCX: 000=
+0000100243080
+[   35.056178][    T1] RDX: ffff888100243080 RSI: ffff88813fffacc0 RDI: 000=
+0000000000000
+[   35.056178][    T1] RBP: ffff888100643178 R08: ffffea000000000f R09: 000=
+0000000000000
+[   35.056178][    T1] R10: ffff8880bba43020 R11: ffffffff86cfc5e9 R12: 000=
+0000000000000
+[   35.056178][    T1] R13: 0000000000000000 R14: ffff8881408d0b58 R15: 000=
+000000000000b
+[   35.056178][    T1] FS:  0000000000000000(0000) GS:ffff8881ab2b0000(0000=
+) knlGS:0000000000000000
+[   35.106029][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   35.106029][    T1] CR2: 0000000000000000 CR3: 0000000011a80000 CR4: 000=
+00000003526f0
+[   35.106029][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
+0000000000000
+[   35.106029][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
+0000000000400
+[   35.106029][    T1] Kernel panic - not syncing: Fatal exception
+[   35.106029][    T1] Kernel Offset: disabled
+[   35.106029][    T1] Rebooting in 86400 seconds..
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1566228150=3D/tmp/go-build -gno-record-gc=
+c-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 22a6c2b175
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D22a6c2b1752ef57d8d612e233d35f6be8c3bf7df -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250318-101307'" -o ./b=
+in/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"22a6c2b1752ef57d8d612e233d35f6be8c=
+3bf7df\"
+/usr/bin/ld: /tmp/ccyWCt6N.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D1492a804580000
+
+
+Tested on:
+
+commit:         ee6740fd Merge tag 'crc-for-linus' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D28ae396b18d2fa0=
+2
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D7ea0b96c4ddb49fd1=
+a70
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1294024c5800=
+00
+
 
