@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-576987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A60EA71707
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:02:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F25BA7170C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C754173ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160563ACDC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31FF1DE3DE;
-	Wed, 26 Mar 2025 13:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E01E51E4;
+	Wed, 26 Mar 2025 13:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YOny279i"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SA4zxPUO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9235A1A0BDB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 13:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5331A0BDB;
+	Wed, 26 Mar 2025 13:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742994135; cv=none; b=CgNzPkaH/LivKPs6jp3Cb2T3xE1bfecWgu4dFOv4CZyxA2zgpBAP9Nai/v9sxFx+8TdHQ3jQIyTh7Nf2I6wcVc4mCIc3N7psA6Fogiztby+NDEeOT/4q7IV9rOLszJ1Y6sk6Rpbl9Y9+qsNNmPapoDJOEmsCx0fpXMHuAPxXVII=
+	t=1742994178; cv=none; b=bOhIlYbcH0SJbDLoE/WgVXivuIpvwAioaj77lPTeyLtIWRoAwvTXzF0Cke9azwyN55IV6bjRE/m05DlrUOSTOgaOIbYxHx6zplAQQNnseizKulBbuFAiSvJCJNfMoD8NMEJwEuAfGZJQPfXvTsixHeMYvLnSmtaQp5R7kLGiF08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742994135; c=relaxed/simple;
-	bh=+WeT361C4uR48LN35vN4a+HUmWx8jcf5h+0zSnm1M6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DaAoW4gH/Mhxi+qY8YLg/CFxwiD2rtuGsBm0WOif4po4YR2VgJ2uDY3Qe+qFGRSlFhRw0kiKVddhTVVTDMKity1zQpcsgFj3+k7h2Yv5BTfW+NrMd96y9Vx5hygR30eD/EcsS13krp4I8o00HhNffnwhx0p+4po8WzhBmhGh+1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YOny279i; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E3E35475;
-	Wed, 26 Mar 2025 14:00:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742994019;
-	bh=+WeT361C4uR48LN35vN4a+HUmWx8jcf5h+0zSnm1M6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YOny279iADliXfqra7JdMO6WTE2NfjdvOyeWIVpjsn923WV339UWfktp/b0H6UOV0
-	 u68Ad7+7gM9pTlY+1mrr/vL6eRDeAD+4em30a2wMjN607obCnpvhhbA7EjslX2hziV
-	 RP5s3IgXYeCL06NyW2fvxe4nxPOt9sV4b/BdOKOk=
-Message-ID: <35675e0e-f717-4727-9e5c-4ef837219f30@ideasonboard.com>
-Date: Wed, 26 Mar 2025 15:02:02 +0200
+	s=arc-20240116; t=1742994178; c=relaxed/simple;
+	bh=rXIFR/R8SHfXktzrfprxQJFu2B4i2waRkFsCXkleVr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5cTZ3N00y7ZMrb6qfw/jzxjEj2tmd8ZxV1o+noM5KYIxYc2QHAVVoQEzWmaK5UR5EphusRaB8jcjogaQb2Gw9nclemZGyDApEVKvQQ1rSNcb0gM6ddjQsOL1KMjMnEb/eWFPy5KriuubK+hePVbzLaQvKTn9EIIx9IOyJ2nrTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SA4zxPUO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298E9C4CEE2;
+	Wed, 26 Mar 2025 13:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742994178;
+	bh=rXIFR/R8SHfXktzrfprxQJFu2B4i2waRkFsCXkleVr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SA4zxPUOxJzl9g1Cmp/0+e2JUkdFRgNYywGxSkueu66VsIAbuB8K5Bnhmn+CEnWvz
+	 WeAE2HPkmhwW2HRYhyR0+nlwxB1Zmez0MvJ67MRxA0P50WiimtWqld0eGstw2rtZJZ
+	 GKSzc2cSg8h1nk/MejxVsuh15qlIngtvhIugUtrOB6c/kNpucIrGMThg5ngCFfF6dq
+	 paBbr2nTLv8fT6z6jlmuNyFsaIpljulhdt/Zbx6I8Ro1MbcfmZ+LidjISgZVYotX50
+	 jbypfa9kWmLphmoPZ8mXIk6zCc4QHQNb8K9XCKVP5hP5pJD1F1p4sfF1ms6ifqEXS1
+	 ME6rqxgJomHgw==
+Date: Wed, 26 Mar 2025 13:02:50 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Lutomirski <luto@kernel.org>, Willy Tarreau <w@1wt.eu>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 12/16] selftests: vDSO: parse_vdso: Use UAPI headers
+ instead of libc headers
+Message-ID: <c7bea938-ee3b-477e-9ed0-db29ca02a538@sirena.org.uk>
+References: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
+ <20250226-parse_vdso-nolibc-v2-12-28e14e031ed8@linutronix.de>
+ <af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/11] drm/fourcc: Add DRM_FORMAT_XV15/XV20
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vishal Sagar <vishal.sagar@amd.com>,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-2-90d0fe106995@ideasonboard.com>
- <e5ujn5lhj5vuvkbavoc3oppt3cpxnr7mm2vwh6liojmpxkfy2d@grpmckvbl5h4>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <e5ujn5lhj5vuvkbavoc3oppt3cpxnr7mm2vwh6liojmpxkfy2d@grpmckvbl5h4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wNTtUR/e22jNGr//"
+Content-Disposition: inline
+In-Reply-To: <af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk>
+X-Cookie: Don't get mad, get interest.
 
-Hi,
 
-On 17/02/2025 22:00, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 04:56:06PM +0200, Tomi Valkeinen wrote:
->> Add two new pixel formats:
->>
->> DRM_FORMAT_XV15 ("XV15")
->> DRM_FORMAT_XV20 ("XV20")
->>
->> The formats are 2 plane 10 bit per component YCbCr, with the XV15 2x2
->> subsampled whereas XV20 is 2x1 subsampled.
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->> ---
->>   drivers/gpu/drm/drm_fourcc.c  | 8 ++++++++
->>   include/uapi/drm/drm_fourcc.h | 8 ++++++++
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
->> index 1e9afbf6ef99..bb0a2294573b 100644
->> --- a/drivers/gpu/drm/drm_fourcc.c
->> +++ b/drivers/gpu/drm/drm_fourcc.c
->> @@ -346,6 +346,14 @@ const struct drm_format_info *__drm_format_info(u32 format)
->>   		{ .format = DRM_FORMAT_P030,            .depth = 0,  .num_planes = 2,
->>   		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
->>   		  .hsub = 2, .vsub = 2, .is_yuv = true},
->> +		{ .format = DRM_FORMAT_XV15,		.depth = 0,
->> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
->> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
->> +		  .vsub = 2, .is_yuv = true },
->> +		{ .format = DRM_FORMAT_XV20,		.depth = 0,
->> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
->> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
->> +		  .vsub = 1, .is_yuv = true },
-> 
-> It might be beneficial to use the same formatting as previous entries,
-> it simplifies reviewing. If the patchset is resent, it would be nice to
-> get that fixed..
+--wNTtUR/e22jNGr//
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But which formatting... The previous entry (singular) is indeed a bit 
-different. But many formats before DRM_FORMAT_P030 are formatted as 
-these new entries (but then it again changes in earlier entries). It's a 
-bit messy list...
+On Thu, Mar 20, 2025 at 01:23:47PM +0000, Mark Brown wrote:
+> On Wed, Feb 26, 2025 at 12:44:51PM +0100, Thomas Wei=DFschuh wrote:
+> > To allow the usage of parse_vdso.c together with a limited libc like
+> > nolibc, use the kernels own elf.h and auxvec.h headers.
 
-But maybe the style in DRM_FORMAT_P030 is better than the style used in 
-the new entries, so I could just go with that style.
+> The vDSO selftests currently fail build for at least arm64 in -next:
 
-  Tomi
+=2E..
 
+> a bisect points at this patch, it looks like that's due to the switch to
+> use TOOLS_INCLUDES but I didn't dig into the specifics.
+
+This bug is now in mainline.  A fix was posted by Thomas the day after
+the original report:
+
+   https://lore.kernel.org/r/20250321-uapi-consistency-v1-1-439070118dc0@li=
+nutronix.de
+
+but it has apparently slipped through the cracks.
+
+--wNTtUR/e22jNGr//
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfj+voACgkQJNaLcl1U
+h9BSMwf+OsWYshguAPVfP5dQO8s2eY4aQLLauAOAK9BYf5penC9o9X79UTjc4YEL
+/LYnie2aWsE4jrp8BhOvEY+OWAc80G8iwyuGi76TOEuPggmK06ql6Qb/7Giuh6Xx
+MuwkE4/k4SvcGsLuQHDTvyf73Kyu4/Oagu8NSrsBLctlWOIMThNgDkF9AcF4W526
+1Fe9pnkH1+xgexfieaJ0rr/FMQgHSp5+7ehXZ39lvySqknLvZi8SHZc7iX21Puj6
+wJRb8qR0Qgfdh8Nnde+LYqE74V1wZrpFBT/HTY9CXCbcx8EsP55xLsgMO7RRLeFs
+bCG7NmKf02mLDsa4mbDkpiRjuK4rbA==
+=Dy6e
+-----END PGP SIGNATURE-----
+
+--wNTtUR/e22jNGr//--
 
