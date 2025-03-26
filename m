@@ -1,112 +1,194 @@
-Return-Path: <linux-kernel+bounces-577166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA31A71947
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:49:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6D9A71968
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950947A4CF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA1A177D6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6811F2B8B;
-	Wed, 26 Mar 2025 14:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB1D1F30CC;
+	Wed, 26 Mar 2025 14:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AsUx8/vw"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzvUdXHd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA721DEFD7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959681F17E8;
+	Wed, 26 Mar 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000490; cv=none; b=TcvuwVtqmHqwto2RE1KbWudO90WhktfqK7vbwDs6VRVAlAAcp7LZ5PkaDh3a9mfiumDIQY0Wi5LafoJ9AcJCT53EQUP+E90lacfl/FzQiyMDaJ4pTAVYMGitqUAnwMVwBZa98dRLGlzKnpFiRzNTD8pLJJ1KX9HZqM92y6OxP/Y=
+	t=1743000503; cv=none; b=GfHUDBqjDfY1XAY/HeCaBOoa4WeRpaqiE12x4eNhjmaRLf2ImBVeIKzPrwDu5IWoJdnqCqqLDTHT6f9sr6SEqNYYOJpoO5B5KSsjUut16Srev1bNBKKsOSkfVtDv+zZ719BuQ1i/OQc3ZVKLjIQfZ2LD516dquGU5yTZYMTATm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000490; c=relaxed/simple;
-	bh=P/YGDyAuI5cdqgreFYOTvG0r4vimRMchc6eat/dWEEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6Bl991+jqTb73bUNRm2fVLbDGRxsB1b7RVh5OSbjSUe+X+YD9AxYr1eYfUkd5OW0v4yQEKcxMSZQUaMUail1WqeOE1A8BLCCgI9SVXu9WdXAjetE9kB3G0jQgdJtODa3j420PrwpCO5ky+9rKubySS86APMZ5pQ51pE8zlKjl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AsUx8/vw; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Mar 2025 10:47:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743000484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xeUr8pi1jeRPBjVWF8zaOS4IrJNw7MAtgeOuC7rRdTo=;
-	b=AsUx8/vwPjbbb4SPcOLAD1Oyq5bVqDikcrp620Zrw4gKD3QGFetMyFo6CRasIMl3bXHQz6
-	TrN5ndV4i5L7PFkQ3iDhcySCDh+O5JQNe7wrH8hdIyO3oSlNRL4aUaYEM7iBxyQDHk78/3
-	eLaBuqebdZPxWlf1gTkU9Ze1r5ohBNc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-Cc: Alan Huang <mmpgouride@gmail.com>, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] bcachefs: replace deprecated strncpy() with strscpy()
-Message-ID: <wdagx2vwyv7s2t2tcndwmambwdhmoitvhmnzcopdl3xkfq6ct2@evmzpxnuhi4e>
-References: <20250326094449.16473-1-nicolescu.roxana@protonmail.com>
- <5F3AB2BC-43DA-47A6-A07A-72540B327D11@gmail.com>
- <bmjvipermsvb454mdh5zmlmw4gv4oub5fgh4eowedlit75gqei@3or3va3e52ce>
- <MnHJR6KH9EcCqnLtdxKf3XYBSQQbvXWJafG28O2C2itnS_eETVFoDMfVvFva3dkLMZ-LPRWUhG2g_5HBY_lPZkWOYW2aOg_T4YWTrzXmVZ0=@protonmail.com>
+	s=arc-20240116; t=1743000503; c=relaxed/simple;
+	bh=UAEk/9kPjvmga7GcKmw9nqNKziWIzKa6VIdrotiYH1Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WIA87rseTzqH4uG7tX14Imkyc4SkFhAM//RheGSkF/6RHqqGWkVvMH6hDJZ2HjEndLN9Hck+PXiuTnNKxaId9dHnRVfeVKkH2NsPJ0UqzcauRZFm4dYRgIm28akh0gaf1BJhPL1rLuT35azLDIAEhiWdrLEz1TmVHQTVxyyRrxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzvUdXHd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QC54MX027698;
+	Wed, 26 Mar 2025 14:48:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ra3A8m
+	93pQeCibvdnnrnUW2lYYCiD9gyKANCUrrYnd4=; b=rzvUdXHdZYW3ij3j5uSmJJ
+	JHB6vAdmcXjefkYQyhAiR1gNhH25z+9O0Rr2UuChClLwUMHbmaCruylVa+NVkt+y
+	SLiYd5Eyu6Nyxp8awe76V6qWmkrwKSveHCSPgn2KvfmPxYbXxqNTNfbmJ6RjNPaT
+	CY0MYHkYmvtIbwa/MDYBVC8HkySZOTbo9DAr0FCRLTzX9p2Vt9s18yFimJhIypkg
+	VeNsvT210FOXmHieH3+KOzXqklff9DF/gE7+tQC4Vv2R4hvytRzvCQuBH5hSRbFr
+	3OPWW3hVzLYWZjThQV3LZHAszgb3NncE5bBRzeDFUeGif+d8Iurp/nXZRcCeJL/Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:04 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QElRYA028748;
+	Wed, 26 Mar 2025 14:48:03 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:03 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QEjtUf020639;
+	Wed, 26 Mar 2025 14:48:02 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hp0s9c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:02 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QEm2Q929557450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 14:48:02 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B46758065;
+	Wed, 26 Mar 2025 14:48:02 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7DAB358056;
+	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
+Message-ID: <4efc3cd7521eb1aef435af2b02a9a112f049c0f2.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
+ sysfs file for ima_hash
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 26 Mar 2025 10:48:01 -0400
+In-Reply-To: <87wmcboqg4.fsf@>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-3-nstange@suse.de>
+	 <35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
+	 <fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
+	 <87wmcboqg4.fsf@>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <MnHJR6KH9EcCqnLtdxKf3XYBSQQbvXWJafG28O2C2itnS_eETVFoDMfVvFva3dkLMZ-LPRWUhG2g_5HBY_lPZkWOYW2aOg_T4YWTrzXmVZ0=@protonmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5zsxOVmxvPCqrxxr9yrGke_BeyLFpOQa
+X-Proofpoint-ORIG-GUID: JcTprj394txHKd6TmrZrvg7pEjc3SURu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260088
 
-On Wed, Mar 26, 2025 at 02:40:22PM +0000, Roxana Nicolescu wrote:
-> On Wednesday, March 26th, 2025 at 1:19 PM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
-> > On Wed, Mar 26, 2025 at 06:02:31PM +0800, Alan Huang wrote:
-> > 
-> > > On Mar 26, 2025, at 17:44, Roxana Nicolescu nicolescu.roxana@protonmail.com wrote:
-> > > 
-> > > > strncpy() is deprecated for NUL-terminated destination buffers. Use
-> > > > strscpy() instead.
-> > > > 
-> > > > Link: https://github.com/KSPP/linux/issues/90
-> > > > Signed-off-by: Roxana Nicolescu nicolescu.roxana@protonmail.com
-> > > > ---
-> > > > fs/bcachefs/btree_trans_commit.c | 2 +-
-> > > > 1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/fs/bcachefs/btree_trans_commit.c b/fs/bcachefs/btree_trans_commit.c
-> > > > index c4f524b2ca9a..7ab25b425d11 100644
-> > > > --- a/fs/bcachefs/btree_trans_commit.c
-> > > > +++ b/fs/bcachefs/btree_trans_commit.c
-> > > > @@ -364,7 +364,7 @@ static noinline void journal_transaction_name(struct btree_trans *trans)
-> > > > struct jset_entry_log *l =
-> > > > container_of(entry, struct jset_entry_log, entry);
-> > > > 
-> > > > - strncpy(l->d, trans->fn, JSET_ENTRY_LOG_U64s * sizeof(u64));
-> > > > + strscpy(l->d, trans->fn, JSET_ENTRY_LOG_U64s * sizeof(u64));
-> > > 
-> > > The last time I asked Kent about this line, he didn’t want this.
-> > 
-> > 
-> > Yes, the destination buffer isn't required to be nul terminated.
-> > 
-> > But it seems we should add a comment explaining that :)
-> 
-> I should have checked the mailing list before, but I will keep this in mind for my next contributions.
-> I wonder if we should use memcpy in this case. This is also recommended by the security team here https://github.com/KSPP/linux/issues/90
-> This will also prevent other people from trying to send a similar patch in the future.
+On Wed, 2025-03-26 at 14:46 +0100, Nicolai Stange wrote:
+> Mimi Zohar <zohar@linux.ibm.com> writes:
+>=20
+> > On Wed, 2025-03-26 at 09:21 +0100, Nicolai Stange wrote:
+> > > Mimi Zohar <zohar@linux.ibm.com> writes:
+> > >=20
+> > > > On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+>=20
+> > > > "ima_hash" is the default file hash algorithm.  Re-using it as the =
+default
+> > > > complete measurement list assumes that the subsequent kexec'ed kern=
+els configure
+> > > > and define it as the default file hash algorithm as well, which mig=
+ht not be the
+> > > > case.
+> > >=20
+> > > I don't really see why the ima_hashes would have to match between kex=
+ecs
+> > > for this to work -- all events' template hashes are getting recreated
+> > > from scratch anyway after kexec (ima_restore_measurement_list() ->
+> > > ima_calc_field_array_hash()).
+> > >=20
+> > > That is, if ima_hash=3Dsha256 first, and ima_hash=3Dsha384 after kexe=
+c, one
+> > > would have *runtime_measurements_sha256 first and
+> > > *runtime_measurements_sha384 after kexec. And both had exclusively
+> > > template hashes of their respective algo in them each.
+> > >=20
+> > > What am I missing?
+> >=20
+> > Your solution would work nicely, if the "ima_hash" algorithm could be g=
+uaranteed
+> > to be built into the kernel.  It's highly unlikely someone would choose=
+ a hash
+> > algorithm not built into kernel, but it is possible.  hash_setup() only=
+ verifies
+> > that the hash algorithm is a valid name.
+>=20
+> But ima_init_ima_crypto(), hence the whole IMA __init, would fail if
+> ima_hash was unavailable at __init time?
 
-Or better, a new helper: when we're copying to a fixed size buffer we
-really want to zero out the rest of the buffer - we don't just want a
-single terminating nul.
+Thanks for pointing that out!  Now I understand why just selecting SHA256 i=
+s
+sufficient.
 
-This has come up in other places in bcachefs, see __bch2_fs_log_msg() in
-btree_update.c, and I would imagine the code for updating superblock
-labels as well.
+Mimi
+
+>=20
+> > Either fix hash_setup() to guarantee that the chosen hash algorithm is =
+built
+> > into the kernel or use the CONFIG_IMA_DEFAULT_HASH and add a Kconfig to=
+ select
+> > the hash algorithm.  This would be in lieu of v2 05/13.
+> >=20
+> > > > Drop this patch.
+> > >=20
+> > > Fine by me, but just to confirm, in case there's no TPM attached and
+> > > SHA1 was disabled, there would be no /sys/*/*runtime_measurement* at =
+all
+> > > then. Is that Ok?
+> >=20
+> > Of course not.  :)
+> >=20
+> > > ima_hash was chosen here only, because after this series, it will be =
+the
+> > > only single algorithm guaranteed to be available.
+> >=20
+> > With the proposed changes to "[RFC PATCH v2 05/13] ima: select CRYPTO_S=
+HA256
+> > from Kconfig', SHA256 would be added to the "extra" measurements if the=
+ TPM
+> > SHA256 bank is disabled.
+>=20
+>=20
+
 
