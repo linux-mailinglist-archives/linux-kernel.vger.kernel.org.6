@@ -1,227 +1,179 @@
-Return-Path: <linux-kernel+bounces-577088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE14A71835
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD67A7182D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2335A189AAED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A889C188B9D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA911EA7F3;
-	Wed, 26 Mar 2025 14:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72F41F1303;
+	Wed, 26 Mar 2025 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NbJCwTwh"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoYsjU+a"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B651E51EC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF10E1E505;
+	Wed, 26 Mar 2025 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998518; cv=none; b=AhQd6nDT7cFsCD5jLCofSRZeYWDHTQwomhZvMbhZk2p4EzQTphHL3JFERXefM2hXP28+9ZfWB9BVoLh5spzxvmqEEH/CGITKqQ6c9UjuF+Uuh88eF6cmMVUnPPxC8Ks2T2BmT0/Znu+xSEJqwFAi2NdafQ8UOvPk9s1g/TimAfg=
+	t=1742998304; cv=none; b=Owu4Ajk7j/jNFdnX6b+jD3oTa8LIqsKB59V0ANIkldVDtH68MviavJGDYVQ+eqHcVaNaz9QhBMi9ioyGPAlXoO3oAzRhmBsP/uW/uhjdl0wj7WrUpkMHgI7uDRyLTXoDwSgRspBpgdIEywH6U4d7r85GDIGKhYD6KeM/9nMrEyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998518; c=relaxed/simple;
-	bh=IqTeGFLyHBBNW8YPueDOnwUjBToOaDQ9KfO6ITNgP00=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=G7w/5+LMMIG7kFxzSkeCi89moXVGRXbsAxJi+WHdejSBMvr36BKAANzjAsOmInRIYLIHi6VauUb1/rbGHJXYXUIdvUqbHharOlU8ueam7oFRLCnfTUha03mSMYmsNkk54y5ntw0L/xUMNHEfe1s2IQ+o9NuuO+xb4WlrYZHXr2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NbJCwTwh; arc=none smtp.client-ip=43.163.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742998187; bh=IqTeGFLyHBBNW8YPueDOnwUjBToOaDQ9KfO6ITNgP00=;
-	h=From:To:Cc:Subject:Date;
-	b=NbJCwTwhHNaKnfnHtXDgRFHsDB32fTmi/xCLvpYlDVGY4T0dctj03wR8+uQaDvDZr
-	 22EXGRAyEDhd1alQTk+40dDIUayMe6JWqOps6a7/82flJvzByYkBP4cW850D2PYHEM
-	 WhAH0cK3EVqqnAebeXZKYasOetAFmklhynLENAmI=
-X-QQ-FEAT: oHWrrGTW1dCGJEu1CuC8+nIWkvSYK6n9
-X-QQ-SSF: 00000000000000F0000000000000
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-XMAILINFO: NSJPTvnisrLjfK1zQ9xfrvFOzmwczunsnPudjfZLa3m603iptk9oihQfMBZ/8T
-	 dx5wwEIbdms8lTY9FyoDOcWCBw9eEnrgrotGsRtqXJlTkd7BD784hwDUrGG3eMLYmo4cX1HMlGrSj
-	 2yme7wwB0k3wXm41mczWxuGF/6UzamsDYra94bDgS8oAIPaAAUolkyBSXal3KOWCxoQRPvDP4/Exz
-	 MMSkxfjlLCyShkU/DQdOTW12Xh9zxf0YQIFlLLlmAmu1v8bY0eTjGFPNMa/UJB3hIjyXha0NmhTTR
-	 IkutdCzh2FTgRzsFJ3q0VUfiGKUExJkLemKdi/MzT7NVqTqkPAPrDZbbqaDWR3RbvrO2T0eW0EMBI
-	 BN6loWzvc7SGmQSFo5i5aV4dretT2j+HdlEL8NSeVmxfwBpFza5Z5otnUT4rS/XyQvcDsMFkJaPEc
-	 X1gSDWDGSRaNV2N4PDnp+TLKznG6NDJLFzng205F0oDzpEmdRZSVCtWIzFYzBTya2Qg/5/sPZEMQl
-	 E/sv1p8JVIeOZp8bY1VOYNxFC0vJRuoXpegGqMQ+QLRBgdaL4KHmozjhZ/eLFEvCqV7zyLmMRm/Bj
-	 fyUytsp8ih+naM8gTrntuLySarRfgNl99tfpZe5B/NAFGg55OCNcu6eSiX/Lun6uH1+9mEhhIFhEo
-	 Iltt2eDrRj7wnJ1xlmpJWWTbZnpQc+h0+MnvJ038todcrziIounfXPR5+bHSL6BMNxUvrk46Qf7vP
-	 ZXb+LwIWoCZeUIUwFEBRzlVQAsGTOt+zbXrwGJPt/wkau7ZAxdRzbPZRczvLH/ZKYbmE70MjJNal3
-	 1xzrmadcz7f/4U9Wpm/clu8Sm/3+w8Tg2nEQ7CEqJM69PJGdMghAxmNiHpJOK77z3FcjYu7gQVqTC
-	 Ly1ZcsPTDTeGyx15LI5A65PTpPUSlNejRqPe81zGcPYw23Kl1R53TbD+VLZ4z5DAGjfjQzXgomrYt
-	 QOsJgMaiHS5QAe5hOsW9bBzTVAxaJkL5wfTM4wgA==
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-STYLE: 
-X-QQ-mid: webmail284t1742998186t9931401
-From: "=?ISO-8859-1?B?ZmZoZ2Z2?=" <xnxc22xnxc22@qq.com>
-To: "=?ISO-8859-1?B?dml0YWx5Lndvb2w=?=" <vitaly.wool@konsulko.com>, "=?ISO-8859-1?B?bGlubWlhb2hl?=" <linmiaohe@huawei.com>, "=?ISO-8859-1?B?YWtwbQ==?=" <akpm@linux-foundation.org>
-Cc: "=?ISO-8859-1?B?bGludXgtbW0=?=" <linux-mm@kvack.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Linux6.14-rc5 BUG: spinlock bad magic in z3fold_zpool_free
+	s=arc-20240116; t=1742998304; c=relaxed/simple;
+	bh=s6f9kbEJrcHVk1C4n8PlU3JWvNoRMWWc7lpV4Xs/ZFU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=LCQz/VSXHuRMjAzSEHE4AvzRByETBsPUUdrmMdGi95e9GlVZH+4lcmkdtpUq6lmnpkSImdpdGngQ9woWLVCGgw8mbSHE5NXTxHDFW7Tlf39Ubye8UCeA6qOIn+Q7osgFnqwTchUQ/DrigreQF5B5vP4Pt8CRYYnuWCpKkOqtvbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoYsjU+a; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so1845878a91.1;
+        Wed, 26 Mar 2025 07:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742998302; x=1743603102; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nn9CeCREC2ry0DlbKdz0wfSVQ0WW3pjZuN5c2VFSAqQ=;
+        b=JoYsjU+aBHsuQjLPGWb/V9u3Abb94G1Q+HNAEoZc0l2gjIVpQd+/YnylssvQKgaaKy
+         NLcf3xAW3ntZcqrkvU2RaVwQ9jIkHfELaSTJXEM4RzUNyGNEQoAJZnJtvIdxcVoLBhEj
+         uCBaqWQQdN9oTDLZ28pOZLIDJKxD99o+G6ZBLU6SpvFEpRK7jQtREio26A6fCe42s0nF
+         7TMtMU2OVUNAylxfDnOczHN1vnQOEWa7EHFMIKoX3Nvsrj17SnHmh15d7G9G63+d2hOY
+         5AeilBHfUvTszfGwUeBxghkHUzfeJs+6y0PSqxYm0uXQTBIt7bBDeB8s5pI2YxdoD3oR
+         3X9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742998302; x=1743603102;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nn9CeCREC2ry0DlbKdz0wfSVQ0WW3pjZuN5c2VFSAqQ=;
+        b=i3jKLPIrlugIB5z3ztWBnbeFF3ekZWAys//j+uQZoLw7fr5i/faDEHGL4lDgG+fVTW
+         2bK7lBldq180e8EisD6RosQnLsucaDqs3EmGrkrIs+BiLLPIan1lzaIS5Rgt3wsviHPu
+         4+u4iLtrg4zZfBhgADlji0mMVGv8d81DXPzvtM4GfqSSSTzJ9Xv1p35zG7ViXEl1y1FQ
+         n6wKm+mACenGLArZeshDZ52FMmYBCrBd2DBdwvx5Mz5awXJJa9347p5+EENtLaB5agaG
+         0lrOucKVbzRiNiM/6B2XrbOZAYDIr1yD9Rv0laNTS4AJMWdUW2rSjyhKjwpyIQxWmBEF
+         CGDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU57XeN8zKJA6XsZm5vp5nXpsVf2MDS+VNqNHo82SexoipeWlLu29XdG1RjkQ++qyJn2qaKJ+7X2NvH44qG@vger.kernel.org, AJvYcCUfCFJ13+4K4Ht7vc34RneK0soWhSDJ3avK8YxmqWUzY6VKwCthzZQ6VP0unumyeszHW2DoN36ihavBtat1VqIQLmVd6A==@vger.kernel.org, AJvYcCUh1MDFJArXqpwmqoa6GcBw6afE3G/Pi7bA17WVyPwAMJl59ajc1ShXhut5Vu45Z2eqNpOnFVpYt3HLew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtSKCA/Q+Iuce4cIhJpxc7SiqfzCk/Bbxo7L0r8GKo1jWutJUt
+	PNCRJZRdWxTlfENmPTVZZ+L/sqTXtiCnB5NGTO/qYCAPWlLj8Rjh
+X-Gm-Gg: ASbGnct/9ZpRSZYMODuf980WLEDx23Y0eWlXw1OYPW3JEW2F/ukD0XodIWsuctwyDy0
+	YXv7fKqee2wN6/kXSc/800Omxb+tQcXDMPMfV6he1s6O57xR8VMRWns3KlR6+KtnRcl8M6uLXmY
+	Bt4FN5cu7LNjPKpNaEltWmiU9Qmk5tl7pjH3obs4Qu6Da28xjNrwqzF7mTARGn1YX8OyNeZEWfu
+	WF+iWdUdSreZ7fD9bdxAkmeMrcI6+ENfjHKQcaNYx88uxrQHEz3kMSAoVwVZF2ilCPNZTz1p1lJ
+	VedjeC7+qBRUltPAdbBLdtSjczqRQTfhGmVCRw==
+X-Google-Smtp-Source: AGHT+IEy1LFInOX/PuskLuvPaKjlDPucXAb7MH0QA60Wl2zBfVZVL5upjQJ122F9ZhqKss7fCJ4Urw==
+X-Received: by 2002:a05:6a21:101a:b0:1f3:20be:c18a with SMTP id adf61e73a8af0-1fe9389e62cmr6045583637.10.1742998301727;
+        Wed, 26 Mar 2025 07:11:41 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a23c31sm10945425a12.54.2025.03.26.07.11.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 07:11:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ISO-8859-1"
-Content-Transfer-Encoding: base64
-Date: Wed, 26 Mar 2025 10:09:46 -0400
-X-Priority: 3
-Message-ID: <tencent_2C3830CD73C3B917ECA59895C90CB43BF009@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Mar 2025 11:11:37 -0300
+Message-Id: <D8Q9BVX71OXS.3LT6V7AR5EGR5@gmail.com>
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Armin Wolf" <W_Armin@gmx.de>, "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
+ "LKML" <linux-kernel@vger.kernel.org>, "Guenter Roeck"
+ <linux@roeck-us.net>, "Jean Delvare" <jdelvare@suse.com>,
+ <linux-hwmon@vger.kernel.org>, "Bagas Sanjaya" <bagasdotme@gmail.com>
+Subject: Re: [PATCH v6 00/12] platform/x86: alienware-wmi-wmax: HWMON
+ support + DebugFS + Improvements
+From: "Kurt Borja" <kuurtb@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
+ <D8PMFDWIJJUB.196935MS2OZ7J@gmail.com>
+ <32a05292-aaa0-15f0-8bdf-dae645b452f3@linux.intel.com>
+In-Reply-To: <32a05292-aaa0-15f0-8bdf-dae645b452f3@linux.intel.com>
 
-SGVsbG8sIEkgZm91bmQgYSBidWcgdGl0bGVkICIgQlVHOiBzcGlubG9jayBiYWQgbWFnaWMg
-aW4gejNmb2xkX3pwb29sX2ZyZWUgICAiIHdpdGggbW9kaWZpZWQgc3l6a2FsbGVyIGluIHRo
-ZSBMaW51eDYuMTQtcmM1LgpJZiB5b3UgZml4IHRoaXMgaXNzdWUsIHBsZWFzZSBhZGQgdGhl
-IGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDogIFJlcG9ydGVkLWJ5OiBKaWFuemhvdSBa
-aGFvIDx4bnhjMjJ4bnhjMjJAcXEuY29tPiwgICAgeGluZ3dlaSBsZWUgPHhyaXZlbmRlbGw3
-QGdtYWlsLmNvbT4sIFpoaXpodW8gVGFuZyA8c3RyZm9yZXhjdHp6Y2hhbmdlQGZveG1haWwu
-Y29tPgoKSSB1c2UgdGhlIHNhbWUga2VybmVsIGFzIHN5emJvdCBpbnN0YW5jZSB1cHN0cmVh
-bTogN2ViMTcyMTQzZDU1MDhiNGRhNDY4ZWQ1OWVlODU3YzZlNWUwMWRhNgprZXJuZWwgY29u
-ZmlnOiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS90ZXh0P3RhZz1LZXJuZWxDb25m
-aWcmYW1wO3g9ZGE0YjA0YWU3OThiN2VmNgpjb21waWxlcjogZ2NjIHZlcnNpb24gMTEuNC4w
-Ci0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCiBUSVRMRTogICAgIEJVRzogc3BpbmxvY2sgYmFkIG1hZ2ljIGluIHoz
-Zm9sZF96cG9vbF9mcmVlCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpCVUc6IHNwaW5sb2NrIGJhZCBtYWdpYyBv
-biBDUFUjMCwgc3l6LWV4ZWN1dG9yLzE2OTA3CiBsb2NrOiAweGZmZmY4ODgwNWE5ZGUwMTAs
-IC5tYWdpYzogMDAwMDAwMDAsIC5vd25lcjogPG5vbmU+Ly0xLCAub3duZXJfY3B1OiAwCkNQ
-VTogMCBVSUQ6IDAgUElEOiAxNjkwNyBDb21tOiBzeXotZXhlY3V0b3IgTm90IHRhaW50ZWQg
-Ni4xNC4wLXJjNS1kaXJ0eSAjMTcKSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAo
-aTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xNS4wLTEgMDQvMDEvMjAxNApDYWxsIFRy
-YWNlOgogPHRhc2s+CiBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo5NCBbaW5saW5l
-XQogZHVtcF9zdGFja19sdmwrMHgxODAvMHgxYjAgbGliL2R1bXBfc3RhY2suYzoxMjAKIHNw
-aW5fYnVnIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6NzggW2lubGluZV0KIGRl
-YnVnX3NwaW5fdW5sb2NrIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6MTAwIFtp
-bmxpbmVdCiBkb19yYXdfc3Bpbl91bmxvY2srMHgyMDEvMHgyNzAga2VybmVsL2xvY2tpbmcv
-c3BpbmxvY2tfZGVidWcuYzoxNDEKIF9fcmF3X3NwaW5fdW5sb2NrIGluY2x1ZGUvbGludXgv
-c3BpbmxvY2tfYXBpX3NtcC5oOjE0MiBbaW5saW5lXQogX3Jhd19zcGluX3VubG9jaysweDFl
-LzB4NTAga2VybmVsL2xvY2tpbmcvc3BpbmxvY2suYzoxODYKIHNwaW5fdW5sb2NrIGluY2x1
-ZGUvbGludXgvc3BpbmxvY2suaDozOTEgW2lubGluZV0KIHozZm9sZF9wYWdlX3VubG9jayBt
-bS96M2ZvbGQuYzoyMzUgW2lubGluZV0KIGdldF96M2ZvbGRfaGVhZGVyIG1tL3ozZm9sZC5j
-OjI2MCBbaW5saW5lXQogZ2V0X3ozZm9sZF9oZWFkZXIgbW0vejNmb2xkLmM6MjM5IFtpbmxp
-bmVdCiB6M2ZvbGRfZnJlZSBtbS96M2ZvbGQuYzoxMTAwIFtpbmxpbmVdCiB6M2ZvbGRfenBv
-b2xfZnJlZSsweDZmLzB4ZTQwIG1tL3ozZm9sZC5jOjEzOTIKIHpzd2FwX2VudHJ5X2ZyZWUr
-MHgyMzUvMHhhODAgbW0venN3YXAuYzo4MDYKIHpzd2FwX2ludmFsaWRhdGUrMHgxMWYvMHgx
-OTAgbW0venN3YXAuYzoxNjgyCiBzd2FwX3JhbmdlX2ZyZWUgbW0vc3dhcGZpbGUuYzoxMTMz
-IFtpbmxpbmVdCiBzd2FwX2VudHJ5X3JhbmdlX2ZyZWUrMHgzMGEvMHg4MzAgbW0vc3dhcGZp
-bGUuYzoxNTEyCiBfX3N3YXBfZW50cnlfZnJlZSBtbS9zd2FwZmlsZS5jOjE0NDAgW2lubGlu
-ZV0KIF9fc3dhcF9lbnRyaWVzX2ZyZWUgbW0vc3dhcGZpbGUuYzoxNDc4IFtpbmxpbmVdCiBm
-cmVlX3N3YXBfYW5kX2NhY2hlX25yKzB4NWI5LzB4YmEwIG1tL3N3YXBmaWxlLmM6MTc5Nwog
-emFwX25vbnByZXNlbnRfcHRlcyBtbS9tZW1vcnkuYzoxNjM2IFtpbmxpbmVdCiBkb196YXBf
-cHRlX3JhbmdlIG1tL21lbW9yeS5jOjE3MDIgW2lubGluZV0KIHphcF9wdGVfcmFuZ2UgbW0v
-bWVtb3J5LmM6MTc0MiBbaW5saW5lXQogemFwX3BtZF9yYW5nZSBtbS9tZW1vcnkuYzoxODM0
-IFtpbmxpbmVdCiB6YXBfcHVkX3JhbmdlIG1tL21lbW9yeS5jOjE4NjMgW2lubGluZV0KIHph
-cF9wNGRfcmFuZ2UgbW0vbWVtb3J5LmM6MTg4NCBbaW5saW5lXQogdW5tYXBfcGFnZV9yYW5n
-ZSsweDEyMGMvMHg0YWYwIG1tL21lbW9yeS5jOjE5MDUKIHVubWFwX3NpbmdsZV92bWErMHgx
-OWEvMHgyYjAgbW0vbWVtb3J5LmM6MTk1MQogdW5tYXBfdm1hcysweDFmZS8weDQ1MCBtbS9t
-ZW1vcnkuYzoxOTk1CiBleGl0X21tYXArMHgxYjQvMHhiZjAgbW0vbW1hcC5jOjEyODQKIF9f
-bW1wdXQga2VybmVsL2ZvcmsuYzoxMzU2IFtpbmxpbmVdCiBtbXB1dCsweDE3OC8weDQ1MCBr
-ZXJuZWwvZm9yay5jOjEzNzgKIGV4aXRfbW0ga2VybmVsL2V4aXQuYzo1NzAgW2lubGluZV0K
-IGRvX2V4aXQrMHg5NGIvMHgzMDgwIGtlcm5lbC9leGl0LmM6OTI1CiBkb19ncm91cF9leGl0
-KzB4ZDMvMHgyYTAga2VybmVsL2V4aXQuYzoxMDg3CiBnZXRfc2lnbmFsKzB4MjYxZi8weDI3
-OTAga2VybmVsL3NpZ25hbC5jOjMwMzYKIGFyY2hfZG9fc2lnbmFsX29yX3Jlc3RhcnQrMHg4
-MS8weDhiMCBhcmNoL3g4Ni9rZXJuZWwvc2lnbmFsLmM6MzM3CiBleGl0X3RvX3VzZXJfbW9k
-ZV9sb29wIGtlcm5lbC9lbnRyeS9jb21tb24uYzoxMTEgW2lubGluZV0KIGV4aXRfdG9fdXNl
-cl9tb2RlX3ByZXBhcmUgaW5jbHVkZS9saW51eC9lbnRyeS1jb21tb24uaDozMjkgW2lubGlu
-ZV0KIF9fc3lzY2FsbF9leGl0X3RvX3VzZXJfbW9kZV93b3JrIGtlcm5lbC9lbnRyeS9jb21t
-b24uYzoyMDcgW2lubGluZV0KIHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHgyMjgvMHgy
-YTAga2VybmVsL2VudHJ5L2NvbW1vbi5jOjIxOAogZG9fc3lzY2FsbF82NCsweGRjLzB4MjUw
-IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjg5CiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3
-ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmNWJmN2I5Zjg2YQpDb2RlOiBVbmFibGUg
-dG8gYWNjZXNzIG9wY29kZSBieXRlcyBhdCAweDdmNWJmN2I5Zjg0MC4KUlNQOiAwMDJiOjAw
-MDA3ZmZjZWMwOGZkMDggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAwMDAw
-MDAzZApSQVg6IGZmZmZmZmZmZmZmZmZlMDAgUkJYOiAwMDAwMDAwMDAwMDA0MjNhIFJDWDog
-MDAwMDdmNWJmN2I5Zjg2YQpSRFg6IDAwMDAwMDAwNDAwMDAwMDAgUlNJOiAwMDAwN2ZmY2Vj
-MDhmZDE0IFJESTogMDAwMDAwMDBmZmZmZmZmZgpSQlA6IDAwMDA3ZmZjZWMwOGZkMTQgUjA4
-OiAwMDAwMDAwMDAwMDA0MjNhIFIwOTogMDAwMDAwMDA4MDAwMDAwMApSMTA6IDAwMDAwMDAw
-MDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAwYwpS
-MTM6IDAwMDAwMDAwMDAwMDAwMDMgUjE0OiAwMDAwN2Y1YmY3YzRlODgxIFIxNTogMDAwMDAw
-MDAwMDAwMDAwMgogPC90YXNrPgotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0t
-LS0KcHZxc3BpbmxvY2s6IGxvY2sgMHhmZmZmODg4MDVhOWRlMDEwIGhhcyBjb3JydXB0ZWQg
-dmFsdWUgMHgwIQpXQVJOSU5HOiBDUFU6IDAgUElEOiAxNjkwNyBhdCBrZXJuZWwvbG9ja2lu
-Zy9xc3BpbmxvY2tfcGFyYXZpcnQuaDo1MDQgX19wdl9xdWV1ZWRfc3Bpbl91bmxvY2tfc2xv
-d3BhdGgrMHgyMzgvMHgzNDAga2VybmVsL2xvY2tpbmcvcXNwaW5sb2NrX3BhcmF2aXJ0Lmg6
-NTA0Ck1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDAgVUlEOiAwIFBJRDogMTY5MDcgQ29tbTog
-c3l6LWV4ZWN1dG9yIE5vdCB0YWludGVkIDYuMTQuMC1yYzUtZGlydHkgIzE3CkhhcmR3YXJl
-IG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9TIDEu
-MTUuMC0xIDA0LzAxLzIwMTQKUklQOiAwMDEwOl9fcHZfcXVldWVkX3NwaW5fdW5sb2NrX3Ns
-b3dwYXRoKzB4MjM4LzB4MzQwIGtlcm5lbC9sb2NraW5nL3FzcGlubG9ja19wYXJhdmlydC5o
-OjUwNApDb2RlOiAwMiA0YyA4OSBlMCA4MyBlMCAwNyA4MyBjMCAwMyAzOCBkMCA3YyAwOCA4
-NCBkMiAwZiA4NSA4YSAwMCAwMCAwMCA0MSA4YiAxNCAyNCA0YyA4OSBlNiA0OCBjNyBjNyAw
-MCA1MiA2ZCA4YiBlOCA4OSAwNyAxZSBmNiA5MCAmbHQ7MGYmZ3Q7IDBiIDkwIDkwIGU5IDY0
-IGZmIGZmIGZmIDkwIDBmIDBiIGU4IGY3IGZiIGMxIGY2IGU5IDFlIGZmIGZmIGZmClJTUDog
-MDAxODpmZmZmYzkwMDA2NWNmMjYwIEVGTEFHUzogMDAwMTAyODYKUkFYOiAwMDAwMDAwMDAw
-MDAwMDAwIFJCWDogZmZmZjg4ODAyYWZhNzE4OCBSQ1g6IGZmZmZmZmZmODE3OWVjN2EKUkRY
-OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZjg4ODAyMDU1ODAwMCBSREk6IDAwMDAwMDAw
-MDAwMDAwMDIKUkJQOiBmZmZmODg4MDVhOWRlMDEwIFIwODogZmZmZmZiZmZmMWMwYjgwMCBS
-MDk6IGZmZmZlZDEwMDU3MDUxODIKUjEwOiBmZmZmZWQxMDA1NzA1MTgxIFIxMTogZmZmZjg4
-ODAyYjgyOGMwYiBSMTI6IGZmZmY4ODgwNWE5ZGUwMTAKUjEzOiBmZmZmODg4MDVhOWRlMDIw
-IFIxNDogZmZmZjg4ODA1YTlkZTAxMCBSMTU6IGZmZmZlYTAwMDE2YTc3YTgKRlM6ICAwMDAw
-MDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgwMmI4MDAwMDAoMDAwMCkga25sR1M6MDAw
-MDAwMDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
-MDgwMDUwMDMzCkNSMjogMDAwMDU1NWY3Y2FhNGZlMCBDUjM6IDAwMDAwMDAwNGY1YjQwMDAg
-Q1I0OiAwMDAwMDAwMDAwNzUyZWYwCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAw
-MDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwCkRSMzogMDAwMDAwMDAwMDAwMDAw
-MCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwClBLUlU6IDgw
-MDAwMDAwCkNhbGwgVHJhY2U6CiA8dGFzaz4KIF9fcmF3X2NhbGxlZV9zYXZlX19fcHZfcXVl
-dWVkX3NwaW5fdW5sb2NrX3Nsb3dwYXRoKzB4MTUvMHgzMAogLnNsb3dwYXRoKzB4OS8weDE4
-CiBwdl9xdWV1ZWRfc3Bpbl91bmxvY2sgYXJjaC94ODYvaW5jbHVkZS9hc20vcGFyYXZpcnQu
-aDo1ODIgW2lubGluZV0KIHF1ZXVlZF9zcGluX3VubG9jayBhcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS9xc3BpbmxvY2suaDo1NyBbaW5saW5lXQogZG9fcmF3X3NwaW5fdW5sb2NrKzB4MTc0LzB4
-MjcwIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6MTQyCiBfX3Jhd19zcGluX3Vu
-bG9jayBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrX2FwaV9zbXAuaDoxNDIgW2lubGluZV0KIF9y
-YXdfc3Bpbl91bmxvY2srMHgxZS8weDUwIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrLmM6MTg2
-CiBzcGluX3VubG9jayBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6MzkxIFtpbmxpbmVdCiB6
-M2ZvbGRfcGFnZV91bmxvY2sgbW0vejNmb2xkLmM6MjM1IFtpbmxpbmVdCiBnZXRfejNmb2xk
-X2hlYWRlciBtbS96M2ZvbGQuYzoyNjAgW2lubGluZV0KIGdldF96M2ZvbGRfaGVhZGVyIG1t
-L3ozZm9sZC5jOjIzOSBbaW5saW5lXQogejNmb2xkX2ZyZWUgbW0vejNmb2xkLmM6MTEwMCBb
-aW5saW5lXQogejNmb2xkX3pwb29sX2ZyZWUrMHg2Zi8weGU0MCBtbS96M2ZvbGQuYzoxMzky
-CiB6c3dhcF9lbnRyeV9mcmVlKzB4MjM1LzB4YTgwIG1tL3pzd2FwLmM6ODA2CiB6c3dhcF9p
-bnZhbGlkYXRlKzB4MTFmLzB4MTkwIG1tL3pzd2FwLmM6MTY4Mgogc3dhcF9yYW5nZV9mcmVl
-IG1tL3N3YXBmaWxlLmM6MTEzMyBbaW5saW5lXQogc3dhcF9lbnRyeV9yYW5nZV9mcmVlKzB4
-MzBhLzB4ODMwIG1tL3N3YXBmaWxlLmM6MTUxMgogX19zd2FwX2VudHJ5X2ZyZWUgbW0vc3dh
-cGZpbGUuYzoxNDQwIFtpbmxpbmVdCiBfX3N3YXBfZW50cmllc19mcmVlIG1tL3N3YXBmaWxl
-LmM6MTQ3OCBbaW5saW5lXQogZnJlZV9zd2FwX2FuZF9jYWNoZV9ucisweDViOS8weGJhMCBt
-bS9zd2FwZmlsZS5jOjE3OTcKIHphcF9ub25wcmVzZW50X3B0ZXMgbW0vbWVtb3J5LmM6MTYz
-NiBbaW5saW5lXQogZG9femFwX3B0ZV9yYW5nZSBtbS9tZW1vcnkuYzoxNzAyIFtpbmxpbmVd
-CiB6YXBfcHRlX3JhbmdlIG1tL21lbW9yeS5jOjE3NDIgW2lubGluZV0KIHphcF9wbWRfcmFu
-Z2UgbW0vbWVtb3J5LmM6MTgzNCBbaW5saW5lXQogemFwX3B1ZF9yYW5nZSBtbS9tZW1vcnku
-YzoxODYzIFtpbmxpbmVdCiB6YXBfcDRkX3JhbmdlIG1tL21lbW9yeS5jOjE4ODQgW2lubGlu
-ZV0KIHVubWFwX3BhZ2VfcmFuZ2UrMHgxMjBjLzB4NGFmMCBtbS9tZW1vcnkuYzoxOTA1CiB1
-bm1hcF9zaW5nbGVfdm1hKzB4MTlhLzB4MmIwIG1tL21lbW9yeS5jOjE5NTEKIHVubWFwX3Zt
-YXMrMHgxZmUvMHg0NTAgbW0vbWVtb3J5LmM6MTk5NQogZXhpdF9tbWFwKzB4MWI0LzB4YmYw
-IG1tL21tYXAuYzoxMjg0CiBfX21tcHV0IGtlcm5lbC9mb3JrLmM6MTM1NiBbaW5saW5lXQog
-bW1wdXQrMHgxNzgvMHg0NTAga2VybmVsL2ZvcmsuYzoxMzc4CiBleGl0X21tIGtlcm5lbC9l
-eGl0LmM6NTcwIFtpbmxpbmVdCiBkb19leGl0KzB4OTRiLzB4MzA4MCBrZXJuZWwvZXhpdC5j
-OjkyNQogZG9fZ3JvdXBfZXhpdCsweGQzLzB4MmEwIGtlcm5lbC9leGl0LmM6MTA4NwogZ2V0
-X3NpZ25hbCsweDI2MWYvMHgyNzkwIGtlcm5lbC9zaWduYWwuYzozMDM2CiBhcmNoX2RvX3Np
-Z25hbF9vcl9yZXN0YXJ0KzB4ODEvMHg4YjAgYXJjaC94ODYva2VybmVsL3NpZ25hbC5jOjMz
-NwogZXhpdF90b191c2VyX21vZGVfbG9vcCBrZXJuZWwvZW50cnkvY29tbW9uLmM6MTExIFtp
-bmxpbmVdCiBleGl0X3RvX3VzZXJfbW9kZV9wcmVwYXJlIGluY2x1ZGUvbGludXgvZW50cnkt
-Y29tbW9uLmg6MzI5IFtpbmxpbmVdCiBfX3N5c2NhbGxfZXhpdF90b191c2VyX21vZGVfd29y
-ayBrZXJuZWwvZW50cnkvY29tbW9uLmM6MjA3IFtpbmxpbmVdCiBzeXNjYWxsX2V4aXRfdG9f
-dXNlcl9tb2RlKzB4MjI4LzB4MmEwIGtlcm5lbC9lbnRyeS9jb21tb24uYzoyMTgKIGRvX3N5
-c2NhbGxfNjQrMHhkYy8weDI1MCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo4OQogZW50cnlf
-U1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzcvMHg3ZgpSSVA6IDAwMzM6MHg3ZjViZjdi
-OWY4NmEKQ29kZTogVW5hYmxlIHRvIGFjY2VzcyBvcGNvZGUgYnl0ZXMgYXQgMHg3ZjViZjdi
-OWY4NDAuClJTUDogMDAyYjowMDAwN2ZmY2VjMDhmZDA4IEVGTEFHUzogMDAwMDAyNDYgT1JJ
-R19SQVg6IDAwMDAwMDAwMDAwMDAwM2QKUkFYOiBmZmZmZmZmZmZmZmZmZTAwIFJCWDogMDAw
-MDAwMDAwMDAwNDIzYSBSQ1g6IDAwMDA3ZjViZjdiOWY4NmEKUkRYOiAwMDAwMDAwMDQwMDAw
-MDAwIFJTSTogMDAwMDdmZmNlYzA4ZmQxNCBSREk6IDAwMDAwMDAwZmZmZmZmZmYKUkJQOiAw
-MDAwN2ZmY2VjMDhmZDE0IFIwODogMDAwMDAwMDAwMDAwNDIzYSBSMDk6IDAwMDAwMDAwODAw
-MDAwMDAKUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6
-IDAwMDAwMDAwMDAwMDAwMGMKUjEzOiAwMDAwMDAwMDAwMDAwMDAzIFIxNDogMDAwMDdmNWJm
-N2M0ZTg4MSBSMTU6IDAwMDAwMDAwMDAwMDAwMDIKIDwvdGFzaz4KCj09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoK
-CgoKSSBob3BlIGl0IGhlbHBzLgpCZXN0IHJlZ2FyZHMKSmlhbnpob3UgWmhhbzwvbm9uZT48
-L3N0cmZvcmV4Y3R6emNoYW5nZUBmb3htYWlsLmNvbT48L3hyaXZlbmRlbGw3QGdtYWlsLmNv
-bT48L3hueGMyMnhueGMyMkBxcS5jb20+
+On Wed Mar 26, 2025 at 5:34 AM -03, Ilpo J=C3=A4rvinen wrote:
+> On Tue, 25 Mar 2025, Kurt Borja wrote:
+>> On Thu Mar 13, 2025 at 11:29 AM -03, Kurt Borja wrote:
+>> > Hi all,
+>> >
+>> > This set mainly adds hwmon and manual fan control support (patches 7-8=
+)
+>> > to the alienware-wmi driver, after some improvements.
+>> >
+>> > Thank you for your feedback :)
+>> >
+>> > ---
+>> > Changes in v6:
+>> >
+>> > [08/12]
+>> >   - Define dev_pm_ops statically (kernel test robot)
+>> >
+>> > Link to v5: https://lore.kernel.org/r/20250312-hwm-v5-0-deb15ff8f3c6@g=
+mail.com
+>> >
+>> > ---
+>> > Kurt Borja (12):
+>> >       platform/x86: alienware-wmi-wmax: Rename thermal related symbols
+>> >       platform/x86: alienware-wmi-wmax: Refactor is_awcc_thermal_mode(=
+)
+>> >       platform/x86: alienware-wmi-wmax: Improve internal AWCC API
+>> >       platform/x86: alienware-wmi-wmax: Modify supported_thermal_profi=
+les[]
+>> >       platform/x86: alienware-wmi-wmax: Improve platform profile probe
+>> >       platform/x86: alienware-wmi-wmax: Add support for the "custom" t=
+hermal profile
+>> >       platform/x86: alienware-wmi-wmax: Add HWMON support
+>> >       platform/x86: alienware-wmi-wmax: Add support for manual fan con=
+trol
+>> >       platform/x86: alienware-wmi-wmax: Add a DebugFS interface
+>> >       Documentation: wmi: Improve and update alienware-wmi documentati=
+on
+>> >       Documentation: admin-guide: laptops: Add documentation for alien=
+ware-wmi
+>> >       Documentation: ABI: Add sysfs platform and debugfs ABI documenta=
+tion for alienware-wmi
+>> >
+>> >  Documentation/ABI/testing/debugfs-alienware-wmi    |   44 +
+>> >  .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
+>> >  .../admin-guide/laptops/alienware-wmi.rst          |  128 +++
+>> >  Documentation/admin-guide/laptops/index.rst        |    1 +
+>> >  Documentation/wmi/devices/alienware-wmi.rst        |  383 +++-----
+>> >  MAINTAINERS                                        |    3 +
+>> >  drivers/platform/x86/dell/Kconfig                  |    1 +
+>> >  drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1023 +++++++++++=
+++++++---
+>> >  8 files changed, 1187 insertions(+), 410 deletions(-)
+>> > ---
+>> > base-commit: f895f2493098b862f1ada0568aba278e49bf05b4
+>> > change-id: 20250305-hwm-f7bd91902b57
+>> >
+>> > Best regards,
+>>=20
+>> Hi Ilpo,
+>>=20
+>> Is there still a chance for this to go into v6.15? or are you planning
+>> to review it on the next cycle?
+>
+> Hi,
+>
+> I'm almost there to make the main PR for 6.15 from what's in for-next=20
+> currently, so no, this won't be part of it.
+>
+> In general, I don't usually take large series after -rc6 timeframe to giv=
+e=20
+> time for things to settle and problems to be brought to surface.
+> Especially if the series is interfacing with other subsystems which is=20
+> prone to lack of select/depends on clauses, etc. so more likely to break=
+=20
+> the build than changes that seem immune to the .config variations.
 
+Oh - I'll keep in mind this in the future. Thank you!
+
+--=20
+ ~ Kurt
 
