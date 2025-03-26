@@ -1,216 +1,100 @@
-Return-Path: <linux-kernel+bounces-576941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4913AA7164C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF67CA7164F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 13:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CDB16BEC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCAC3B2A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7181ADFFB;
-	Wed, 26 Mar 2025 12:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008511DED42;
+	Wed, 26 Mar 2025 12:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/8F9qsy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5oQwf1X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D849C1A2632
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 12:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2B1A2632;
+	Wed, 26 Mar 2025 12:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742991048; cv=none; b=sHYBd+/7w1pVuZhVDI3v+/jiz9hdt9pkXU5NVfNQ0tyh8d8qGo5z2ENQhJMmYbqw3TGqtRJeTvveNvacIUyqtV68PSuiLSA4H7MB0MrIxaAkL2la2Tv6qrYL+ZdgQe6irQy9Q/pndTNLFlyKI0iOIF3A2Pz0dP99MkWhlwsHVFw=
+	t=1742991079; cv=none; b=QILVDNOmA59aFOX/5leh+TWo+wyb8tjLOSfntzij+OU2asKWil2b2yPV7/LwMd3nyXeOHY3OpO6jjgfFwOBrDpoyITlO++gn5/6CeJnaxWCv+DMNa8mXALy3ohXnIXiKWDmeFMQKVEOChxV5YTXE5qNcApwQm4F/pW6ypv1pLUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742991048; c=relaxed/simple;
-	bh=4ZIa5R+hLRKNLLa+f5ExAc1PekNs6AAe+hmDktSX6fY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LdFcZ4tWFKnS9FaJI1FHV+otXvNDNbHX1QsC9Llit1fNGx7WO+vsQZY9CAGc+AFdr2Wd4/dhwK1xtYi4SN2//1jqvxlLkSc17RxC2Tw2K8+vnphjjuc20dY5UB5nU6St3hPGdSTet6I4J1xRLUU7WQ/LL5RUsU08V/30y5hqu/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/8F9qsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D32C4CEEA;
-	Wed, 26 Mar 2025 12:10:46 +0000 (UTC)
+	s=arc-20240116; t=1742991079; c=relaxed/simple;
+	bh=I4aAtoXcp4D+di0R3eD2oZvCXhk++HNE6yAkPHEq7+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZrG+l7gKSnSQL/pctoQxSJ0S65mUjh5aqX0qoyPAJwM5kb1sYma4qBP9Ukq2SNQf0QacBwCwIgnuZ7Dn31wIrYzhVY1PbJOeZ6Ut/5TUZrkffnI5xhfHc2R1Ss+l+hZT8Rrfgu1Ejx/My/WqQJQRqvzlYAmavLF7qRjS1NyZKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5oQwf1X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BF3C4CEE2;
+	Wed, 26 Mar 2025 12:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742991048;
-	bh=4ZIa5R+hLRKNLLa+f5ExAc1PekNs6AAe+hmDktSX6fY=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Y/8F9qsykijVDCBysLKBo/2uRXwbgP4qAo5atqcTLs88ubalJCvnk3mAQa41fPUUb
-	 CVN+sC/Sakb6dDSOmqXyM7Dml4uwkjCCrQjjSP2ywOHSd1keJCLLQ4wLZJS21oIMIZ
-	 tu7QedmFr8Ou9irWGEWDJ6vBAOITGE1BaM4qJiU6MvCpndqRmENH2s06Fy0yf5MHGA
-	 OLx5FAfdRzLlE4HL2LwCFFes+e8pAAoDUQTkSb85qmwzYs83DuQC+hzJUu8MwKcdzJ
-	 mfHniUHpEHuj55dgL0VrLaYTWtPWABd+QBQ9IPiYohZDe6g3vl/PjBequN2plVupEb
-	 zs+bxNFHLRecA==
-Message-ID: <8a72691e-28ef-4b6b-a855-62fd6c2743dc@kernel.org>
-Date: Wed, 26 Mar 2025 20:10:44 +0800
+	s=k20201202; t=1742991075;
+	bh=I4aAtoXcp4D+di0R3eD2oZvCXhk++HNE6yAkPHEq7+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e5oQwf1XGe1elkMMxGis5jNX7zG9LFWzC1bkKtp6S5KEtRMhTkYA5KMzp9Bbe2CR7
+	 qbclLpHlDO8HYVxtKkDDlUdFPgwY9nwNeohCHK5vfqSC3EFbL52uc2R61c99IWaUf1
+	 9CJtK4PCbAr+Ua5zv1tQGw8DFumUQRtN3y54vP87e4RjbWMLgTLmCx+ULtH+F09EDi
+	 yHDI51Jn/G/k9RGGUAyVx24F3T8SgiYw5g8h7PI3w4uyHC2OBWkQ1mxmrsuobUxR7I
+	 Y9FQx17iPrPdeyAC2DobiIf7uZHsJF8dVJ/T+IFT2nEDC+n/PVdA7g+2t8JhZaMm6Z
+	 sfQfNcFfV74bg==
+Date: Wed, 26 Mar 2025 14:11:12 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
+Message-ID: <Z-Pu4FhcntnKii61@kernel.org>
+References: <20250320152433.144083-1-sgarzare@redhat.com>
+ <20250320152433.144083-3-sgarzare@redhat.com>
+ <Z-I86tWMcD6b_YeM@sumit-X1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Zhiguo Niu <zhiguo.niu@unisoc.com>,
- daehojeong@google.com, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-Subject: Re: [RFC PATCH] f2fs: remove some redundant flow about
- FI_ATOMIC_DIRTIED
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1742978761-16264-1-git-send-email-zhiguo.niu@unisoc.com>
- <e4fb11ea-a97b-4ba0-aa28-f6f93e5a6134@kernel.org>
- <CAHJ8P3JWABsntymD3u5=0YR7=0it5x0PP49S4ftwBEjC1UreOA@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3JWABsntymD3u5=0YR7=0it5x0PP49S4ftwBEjC1UreOA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-I86tWMcD6b_YeM@sumit-X1>
 
-On 3/26/25 18:51, Zhiguo Niu wrote:
-> Chao Yu <chao@kernel.org> 于2025年3月26日周三 17:26写道：
->>
->> On 3/26/25 16:46, Zhiguo Niu wrote:
->>> Commit fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
->>> adds the processing of FI_ATOMIC_DIRTIED in the following two positions,
->>> [1]
->>> f2fs_commit_atomic_write
->>>  - __f2fs_commit_atomic_write
->>>   - sbi->committed_atomic_block += fi->atomic_write_cnt;
->>>   - set_inode_flag(inode, FI_ATOMIC_COMMITTED);
->>>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->>>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>>   -    f2fs_mark_inode_dirty_sync(inode, true);
->>>   - }
->>> [2]
->>> f2fs_abort_atomic_write
->>>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->>>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>>   -    f2fs_mark_inode_dirty_sync(inode, true);
->>>   - }
->>>
->>> but [1] seems to be redundant:
->>> The atomic file flag FI_ATOMIC_FILE is still set here, so f2fs_mark_inode_dirty_sync
->>> still does not set the dirty state to vfs. If FI_ATOMIC_DIRTIED was originally set
->>> when atomic file is committing, then FI_ATOMIC_DIRTIED is just cleared here, and
->>> then do the repeating action of setting FI_ATOMIC_DIRTIED?
->>> So is it enough to do this only in [2]?
->>
->> Hi Zhiguo,
->>
->> I checked the code again, finally, I got this, could you please take
->> a look?
->>
->> Ping Daeho as well.
->>
->> Subject: [PATCH] f2fs: fix to set atomic write status more clear
->>
->> 1. After we start atomic write in a database file, before committing
->> all data, we'd better not set inode w/ vfs dirty status to avoid
->> redundant updates, instead, we only set inode w/ atomic dirty status.
->>
->> 2. After we commit all data, before committing metadata, we need to
->> clear atomic dirty status, and set vfs dirty status to allow vfs flush
->> dirty inode.
->>
-> Hi Chao,
-> these looks more clear.
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>  fs/f2fs/inode.c   |  4 +++-
->>  fs/f2fs/segment.c | 10 ++++++----
->>  fs/f2fs/super.c   |  4 +++-
->>  3 files changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index 5c8634eaef7b..f5991e8751b9 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -34,7 +34,9 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
->>         if (f2fs_inode_dirtied(inode, sync))
->>                 return;
->>
->> -       if (f2fs_is_atomic_file(inode))
->> +       /* only atomic file w/ FI_ATOMIC_COMMITTED can be set vfs dirty */
->> +       if (f2fs_is_atomic_file(inode) &&
->> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
->>                 return;
->>
->>         mark_inode_dirty_sync(inode);
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index dc360b4b0569..28659a71891a 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -376,10 +376,12 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
->>         } else {
->>                 sbi->committed_atomic_block += fi->atomic_write_cnt;
->>                 set_inode_flag(inode, FI_ATOMIC_COMMITTED);
->> -               if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->> -                       clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->> -                       f2fs_mark_inode_dirty_sync(inode, true);
->> -               }
->> +
->> +               f2fs_bug_on(sbi, !is_inode_flag_set(inode, FI_ATOMIC_DIRTIED));
-> but FI_ATOMIC_DIRTIED may  not be set when atomic file is committing?
-> thanks!
+On Tue, Mar 25, 2025 at 10:49:38AM +0530, Sumit Garg wrote:
+> On Thu, Mar 20, 2025 at 04:24:33PM +0100, Stefano Garzarella wrote:
+> > From: Stefano Garzarella <sgarzare@redhat.com>
+> > 
+> > This driver does not support interrupts, and receiving the response is
+> > synchronous with sending the command.
+> > 
+> > It used an internal buffer to cache the response when .send() is called,
+> > and then return it when .recv() is called.
+> > 
+> > Let's simplify the driver by implementing the new send_recv() op, so that
+> > we can also remove the 4KB internal buffer used to cache the response.
+> > 
+> > Tested-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> > v1:
+> > - added Jens' T-b
+> > ---
+> >  drivers/char/tpm/tpm_ftpm_tee.h |  4 --
+> >  drivers/char/tpm/tpm_ftpm_tee.c | 86 ++++++++-------------------------
+> >  2 files changed, 21 insertions(+), 69 deletions(-)
+> >
+> 
+> Reviewed-by: Sumit Garg <sumit.garg@kernel.org>
 
-inc_valid_block_count() will set FI_ATOMIC_DIRTIED for inode at least?
+I've knowingly even peeked at these patches because of stuff
+in-flight.
 
-- __f2fs_commit_atomic_write
- - __replace_atomic_write_block
-  - inc_valid_block_count
-   - f2fs_i_blocks_write
-    - f2fs_mark_inode_dirty_sync
+Generally speaking I don't see enough value in complicating
+callback interface. It's better to handle complications in
+the leaves (i.e. dictatorship of majority ;-) ).
 
-Thanks,
-
->> +
->> +               /* clear atomic dirty status and set vfs dirty status */
->> +               clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->> +               f2fs_mark_inode_dirty_sync(inode, true);
->>         }
->>
->>         __complete_revoke_list(inode, &revoke_list, ret ? true : false);
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 9a42a1323f42..a5cc9f6ee16a 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1532,7 +1532,9 @@ int f2fs_inode_dirtied(struct inode *inode, bool sync)
->>         }
->>         spin_unlock(&sbi->inode_lock[DIRTY_META]);
->>
->> -       if (!ret && f2fs_is_atomic_file(inode))
->> +       /* if atomic write is not committed, set inode w/ atomic dirty */
->> +       if (!ret && f2fs_is_atomic_file(inode) &&
->> +                       !is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
->>                 set_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>
->>         return ret;
->> --
->> 2.48.1
->>
->>
->>>
->>> Cc: Daeho Jeong <daehojeong@google.com>
->>> Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
->>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>> ---
->>>  fs/f2fs/segment.c | 4 ----
->>>  1 file changed, 4 deletions(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 396ef71..d4ea3af 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -376,10 +376,6 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
->>>       } else {
->>>               sbi->committed_atomic_block += fi->atomic_write_cnt;
->>>               set_inode_flag(inode, FI_ATOMIC_COMMITTED);
->>> -             if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->>> -                     clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>> -                     f2fs_mark_inode_dirty_sync(inode, true);
->>> -             }
->>>       }
->>>
->>>       __complete_revoke_list(inode, &revoke_list, ret ? true : false);
->>
-
+BR, Jarkko
 
