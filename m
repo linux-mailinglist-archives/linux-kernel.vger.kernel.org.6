@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-577518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1FFA71E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:21:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403BBA71E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB02716FFEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7623A1A93
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA562517B5;
-	Wed, 26 Mar 2025 18:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683C92517BE;
+	Wed, 26 Mar 2025 18:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBlAVG0w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="b4KIhiSm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBC21F7561;
-	Wed, 26 Mar 2025 18:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE0F1F7561;
+	Wed, 26 Mar 2025 18:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013310; cv=none; b=hZ3F03S6lDUXAIDn0ZyqDr03aWargiK51A1hiRmSIKV2pRs6Z4IZjnJNGeWDHXG9nsjrIwuxEwoXRHXOYp+AF3k5pwMdYhcdr3cO54XgwFDVY5x3EC65S3c4zftRDcqxLWZGrcXbyP8+5wdlHtvj/mAMzCWuscsV1WTDqcoXu6g=
+	t=1743013346; cv=none; b=uP3ltXuL8G4ZAofarbHbwHuyugQWUjM19uojiV22pKmaSl0TeZ2XNT3Mba40itdOr45RsfWJwUid1GOfb0rRDFg6l/X7NkZQsgJX+A4m+v5Hm+/WPMiWshMfherBGFlGmKFsNP7YKoQgkmlXEW7bKhK2zOVzLB7MiyN4z7AlQEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013310; c=relaxed/simple;
-	bh=KzXSavSeEQvSYOYQr3q8Tb6HTNl/rJqVxIkNxLAVrV0=;
+	s=arc-20240116; t=1743013346; c=relaxed/simple;
+	bh=SaH4BztDb3GjFrot+1JCJfrrotQrNoVEQSHTmGL0ymU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+MMgrR5byfp7BoyRksbkkduvlbSTkevXGtNxT+ShzUInXOSh4P79+25yhvNtLPNBvSlKUOHSo6g9Otj9QxrSv8zwn0jblmno54pS2jkomZivqRfnE3YioWbHZP235t7ipQGm5zNcpEuKr91azzZ3WcDp6eRRICOWOXX+WtP+Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBlAVG0w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5A2C4CEE2;
-	Wed, 26 Mar 2025 18:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743013309;
-	bh=KzXSavSeEQvSYOYQr3q8Tb6HTNl/rJqVxIkNxLAVrV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vBlAVG0wBZM7HF9+mEoNEcVtcrgGer1vv+lAbs+H57fQy+LRHpt9LGCB1h5UrrB3t
-	 fVNF+hyWjEo7LBywTU7CSmfv660NbadZllILZgr6ghpdRF3lybdO25La4elmQirge6
-	 iTy7AtT4j043KvIs9VfUGcMMJb5iHZpiKuSFOljQHHkIiMURhCoi58/SOO/feoj0FH
-	 G3wygWD5pjaqdTqwIXcUPCZx7NsAou+eIeBHUL7Qg99reIe/TR831/lRXxleRW0oZ0
-	 NRrk3rZRicbA8ljqs/+mbKdghedRT9T6pttbWK3tFtTiFTxg4+iG6q0mnIkEIWxLAa
-	 7wwP+/aZnvDAA==
-Date: Wed, 26 Mar 2025 11:21:47 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, peterz@infradead.org,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf trace: Fix possible insufficient allocation of
- argument formats
-Message-ID: <Z-RFu_PLmKMq8YFU@google.com>
-References: <20250324235245.613063-1-howardchu95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SY8uBY/UEC4ezx4aERg7Bb4FxJPevJI6ZOZm6ZfQa14Y+R6ZiVSZKjmLjHHeS2XtrPYECdkInWYNiGsKv83s7USjs8qU6PdRdb2GVdMKY7sKFuFeSgN0tTf3izn/hw8FUrJyOiWbE7VHvj2Xnjb8390rlT58FtaIlnoR50D34so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=b4KIhiSm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=S6UG/g4kXeJWqIlOD8zLxKVyyrfJXLskZtm4wFYt/e0=; b=b4KIhiSmAz644dnh2O+PXMCFbM
+	EqvuM6CRqwEQ3AHAw9PJfersALKfcMxBz1x9aX4k7dLwhfS6l+0EdsI2kudPfZuDnu3crB7lx1cLH
+	fSxUM+VPvKUwpnJ6MucJLvlF8s5AO4jUK0uee5LjijIOuXf4UBLUIN80h/1vvOTQF7k0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1txVOB-007Cct-RF; Wed, 26 Mar 2025 19:22:07 +0100
+Date: Wed, 26 Mar 2025 19:22:07 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] net: dsa: felix: check felix_cpu_port_for_conduit() for
+ failure
+Message-ID: <dc85eb72-cdec-43a1-8ad7-6cd7db9c6b25@lunn.ch>
+References: <20250326161251.7233-1-v.shevtsov@mt-integration.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324235245.613063-1-howardchu95@gmail.com>
+In-Reply-To: <20250326161251.7233-1-v.shevtsov@mt-integration.ru>
 
-On Mon, Mar 24, 2025 at 04:52:45PM -0700, Howard Chu wrote:
-> In my previous fix of runtime error(Link:
-> https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-howardchu95@gmail.com/),
-> I made a mistake of decrementing one unconditionally, regardless of
-> whether an extra 'syscall_nr' or 'nr' field was present in
-> libtraceevent's tp_format. This may cause perf trace to allocate one
-> fewer arg_fmt entry than needed for the accurate representation of syscall
-> arguments.
+On Wed, Mar 26, 2025 at 09:12:45PM +0500, Vitaliy Shevtsov wrote:
+> felix_cpu_port_for_conduit() can return a negative value in case of failure
+> and then it will be used as a port index causing buffer underflow. This can
+> happen if a bonding interface in 802.1Q mode has no ports. This is unlikely
+> to happen because the underlying driver handles IFF_TEAM, IFF_MASTER,
+> IFF_BONDING bits and ports populating correctly, it is still better to
+> check this for correctness if somehow it fails.
 > 
-> This patch corrects the mistake by checking the presence of'syscall_nr' or
-> 'nr', and adjusting the length of arg_fmt[] accordingly.
+> Check if cpu_port is non-negative before using it as an index.
+> Errors from change_conduit() are already handled and no additional changes
+> are required.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Svace.
+> 
+> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+> ---
+>  drivers/net/dsa/ocelot/felix.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
+> index 0a4e682a55ef..1495f8e21f90 100644
+> --- a/drivers/net/dsa/ocelot/felix.c
+> +++ b/drivers/net/dsa/ocelot/felix.c
+> @@ -523,6 +523,7 @@ static int felix_tag_npi_change_conduit(struct dsa_switch *ds, int port,
+>  {
+>  	struct dsa_port *dp = dsa_to_port(ds, port), *other_dp;
+>  	struct ocelot *ocelot = ds->priv;
+> +	int cpu;
+>  
+>  	if (netif_is_lag_master(conduit)) {
+>  		NL_SET_ERR_MSG_MOD(extack,
+> @@ -546,7 +547,12 @@ static int felix_tag_npi_change_conduit(struct dsa_switch *ds, int port,
+>  	}
+>  
+>  	felix_npi_port_deinit(ocelot, ocelot->npi);
+> -	felix_npi_port_init(ocelot, felix_cpu_port_for_conduit(ds, conduit));
+> +	cpu = felix_cpu_port_for_conduit(ds, conduit);
+> +	if (cpu < 0) {
+> +		dev_err(ds->dev, "Cpu port for conduit not found\n");
+> +		return -EINVAL;
+> +	}
 
-Thanks for the fix.  I've noticed this too but I feel like we can make
-syscall__alloc_arg_fmts() a bit simpler.
+If i'm reading the code correctly you mean ocelot_bond_get_id()
+returns -ENOENT?
 
-How about this?
+If so, you should return the ENOENT, not replace it by EINVAL.
 
-Thanks,
-Namhyung
-
-
----8<---
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 6ac51925ea4249c2..b9bdab52f5801c3a 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2022,9 +2022,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
- {
- 	int idx;
- 
--	if (nr_args == RAW_SYSCALL_ARGS_NUM && sc->fmt && sc->fmt->nr_args != 0)
--		nr_args = sc->fmt->nr_args;
--
- 	sc->arg_fmt = calloc(nr_args, sizeof(*sc->arg_fmt));
- 	if (sc->arg_fmt == NULL)
- 		return -1;
-@@ -2034,7 +2031,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
- 			sc->arg_fmt[idx] = sc->fmt->arg[idx];
- 	}
- 
--	sc->nr_args = nr_args;
- 	return 0;
- }
- 
-@@ -2176,14 +2172,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
- 		return err;
- 	}
- 
--	/*
--	 * The tracepoint format contains __syscall_nr field, so it's one more
--	 * than the actual number of syscall arguments.
--	 */
--	if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields - 1))
--		return -ENOMEM;
--
- 	sc->args = sc->tp_format->format.fields;
-+	sc->nr_args = sc->tp_format->format.nr_fields;
-+
- 	/*
- 	 * We need to check and discard the first variable '__syscall_nr'
- 	 * or 'nr' that mean the syscall number. It is needless here.
-@@ -2194,6 +2185,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
- 		--sc->nr_args;
- 	}
- 
-+	if (syscall__alloc_arg_fmts(sc, sc->nr_args))
-+		return -ENOMEM;
-+
- 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
- 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
- 
--- 
-2.49.0.395.g12beb8f557-goog
-
+	Andrew
 
