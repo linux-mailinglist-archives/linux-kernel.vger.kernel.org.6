@@ -1,96 +1,273 @@
-Return-Path: <linux-kernel+bounces-576740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20818A713D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:36:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E35AA713DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1617526D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE8D18883E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C801AB52F;
-	Wed, 26 Mar 2025 09:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4631624E5;
+	Wed, 26 Mar 2025 09:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQpLvIQJ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h+Sj0hvG"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D70815381A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF2E1ACED5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742981794; cv=none; b=A0R2RlyQRILxCjH50UCONcVfCwZMLXqo3k4C7Gu0cjtKU68nYaI1SWO+x7JM0ANLgIYrXvfTUxByg9slB64zY0FLD36afiRhMxTVMLRirxAvHs6POH3GdiiHYizQ3zLDxqMYLEwupy0wuei55mptnq+aOhYXO/yK1Clk9NAkFg8=
+	t=1742981936; cv=none; b=Y425tQRwHQoNG3nlUXDEuN7PH85Dx2Y1YQKCM67tc4nyGqNZ916sozsHv2dLc6Bv9z6zVVR+QzVwJf3mb7rJi/SNdrpQqf2R3TfMg+WUQd+Un2WqliKwaTf6lqm+882i3/SmZ4Ph4CzxdYuLf/qCDTnu7EVtwU7Xhhx+z6RZoV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742981794; c=relaxed/simple;
-	bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=c++IYU7Q93DfV27ORz4YInu0zQAFIb20uK/9j+lxSUyu6GmEqgR4BQiNlfclUcaV1UXpiD9JlEAM4Hqqyn8fDRLJkaFdWcsRMQgcGJVudGI2/qRrpVkfSFqtudopHQWl5hqQOiVM/dopcQ/P5wLyGRFLJEheSpFrSyDoi+SVctI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQpLvIQJ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30c05fd126cso58056121fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742981791; x=1743586591; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
-        b=LQpLvIQJvOpRHI0JUPHJCIHI7JDzQ7+ABfJREVxZngmtulE2ceFo2gWUTgCuCqzlRN
-         i9PT6m650YRk3nJiLtwo4MBKJD24eIyqmKG6etaFVG1X5I9HbjllixfYbNX7jX5YkvBv
-         OcDqIrIErxc9OiIkGu+0luNZMTWeQOnGuxYC6OE3oOrljntpDUJpk6MQsGorx0GgLPl9
-         8SdG+kaZmhDEKPPuO3ZB/56Dvvr6t8CvUDBB8oF5UnbaiAfHY8ShexxRisMMLZ4QDjGB
-         Wtqq1OKD9g+v2hoak0QshA/GJNmG3O+p4j5kQ+gpirtXVGcW7gPPKJAQ/zzP9OUWO0ag
-         94JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742981791; x=1743586591;
-        h=cc:to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41XofzCZDdQ3muIFfZrbxCbfYMdS/sULdl7mKTywH1I=;
-        b=LedeAjj2hQ00zPAlbVOQRulEcpg19YdRUlMW+u8AzPTDOyJR9y8OO1BlrM5eBpLz9w
-         Z4O+Uwus7VO6r7ykWubMAtGLY1hfgpm0PezRbgpPOLtA9urzfjyU21NvxEgV6zA0EOtz
-         XjuGUi9eRByAej6NRJit/S+/FS9yo5QS2/+lrLJ2vyfwBP4NAS7FsonSasL/c1fqp86P
-         cKktjoYRqlkaxIpFeNg/IUUqhux/sndbdMe/n2d0Fk4ndbKKWKt6ML8+OJXgvSLMxUor
-         BZgCoGuFpNNm+T7tAUEPZTJWMK0J5wYMGcf0D+Judd7c2nlhhe2WbCp+ofMQGHu+2rFT
-         PAaw==
-X-Gm-Message-State: AOJu0YzwIugu8HnXdireQHPQTvO239JRSfcPnhw3jXjQ/9dHvAD9pgmq
-	SMQekDBJdxyk5IMA4X2B+5ZQAvVdDYZB/F0HrprU+ucTfzA/R7f0RrftmchkJ3wngeeajR3yFtk
-	dCUz/FjyIQfs1Rbec4Bv1ha01cWc=
-X-Gm-Gg: ASbGncsuRTkQB32bUuUAM/uUM8K2DiethQ+XBhTFPU4qrdkBYmHb9g/h3zKpPIe6IQJ
-	CbeqrbnKByrCYOj7qaUNRtmldISPQ8VwcPXpMVtsPaS+dPcuq25bzKSq6fDk+4K3hKarD9K9hlh
-	LBjarc8iTo59VjghrVCrmdAW1IoC1h
-X-Google-Smtp-Source: AGHT+IHVCVzJywQtI7xUtqkGya9R/4lk2Ir0ez0fQvOEygus1ZrNZ+sgrT4TS9VuoYrh4vsQS36mgSGK1NMzGPByF1U=
-X-Received: by 2002:a05:6512:350f:b0:54a:fa47:b2a5 with SMTP id
- 2adb3069b0e04-54afa47b3bdmr1105871e87.23.1742981790917; Wed, 26 Mar 2025
- 02:36:30 -0700 (PDT)
+	s=arc-20240116; t=1742981936; c=relaxed/simple;
+	bh=4LXRlbnuuDZLdMndfdcCH6fUiIvF12mtNGW3sm9sfaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9vhGplZFjtMkaSZ5mQwwABFFK+WG4j5+mymSPJV95sqAB56lHSlMHqoBczQS+DB3jYhEaxYVT6QT7wYWFfPf4pNfJTy+MDoBfGoLVyM64q/S6JPvPotNiFwxJfJnCbIbp5oPNWj9AnT6yUjilkw3Za8ZVrODL61jzKUpwzf+LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h+Sj0hvG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eNv9mMIh5gRZ49sudkh3oNDYG55yOzH3foD73Ycykj4=; b=h+Sj0hvGbM2aHd479JbUuf3fzF
+	KhmpbyVQngwZStdWu2zRLbP3kqPQIyIMGNs2zS6p7w489h2yr2W6ZpHiZKdk8QrVforpBlnywiXHm
+	uGOcLSYDQ8S1xUqx0IujV8gHz8V3qCuolrdNAzoPftIg1m4+xaIv9xvH3kVFhjZuwmqN9TiDmwNJF
+	YD4xBBa7oI5aJ+jep40AGbKmgLveLSJ34cNp1qeuR6+eevXNB32BAmMuljHz5YJHNlX0IMXt2rj+J
+	cWlta4y88apCPjiO3DeJU5aft1sh6C0Vj7IB7X9cxfB7doiv85nQrp+5LOPaY6/eycmhCOmigeyyk
+	rGyD5oAQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txNDd-0000000HKa3-2jW5;
+	Wed, 26 Mar 2025 09:38:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 286EA3004AF; Wed, 26 Mar 2025 10:38:41 +0100 (CET)
+Date: Wed, 26 Mar 2025 10:38:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	tim.c.chen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
+	gautham.shenoy@amd.com, mingo@kernel.org, kprateek.nayak@amd.com,
+	yu.chen.surf@foxmail.com
+Subject: Re: [RFC][PATCH] sched: Cache aware load-balancing
+Message-ID: <20250326093841.GC25239@noisy.programming.kicks-ass.net>
+References: <20250325120952.GJ36322@noisy.programming.kicks-ass.net>
+ <4cd8ba54-8b9e-4563-8fbc-1d6cd6699e81@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Wed, 26 Mar 2025 10:35:53 +0100
-X-Gm-Features: AQ5f1Joiar9OLwlwiBbZuWU3M4o3psZUGdRn779I-qQ8NF6j2dddDvL3o0PDvto
-Message-ID: <CA+icZUV6dLN3qBgzZFFq2gcG3Bssp6UShafLF-3A3BLpGAGt6g@mail.gmail.com>
-Subject: [Linus Git] nginx - 403 Forbidden
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, helpdesk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cd8ba54-8b9e-4563-8fbc-1d6cd6699e81@intel.com>
 
-Hi Konstantin,
+On Tue, Mar 25, 2025 at 11:19:52PM +0800, Chen, Yu C wrote:
 
-I see several ERRORs when reading Linus Git online.
+> > +static void task_tick_cache(struct rq *rq, struct task_struct *p)
+> > +{
+> > +	struct callback_head *work = &p->cache_work;
+> > +	struct mm_struct *mm = p->mm;
+> > +
+> > +	if (!mm || !mm->pcpu_sched)
+> > +		return;
+> > +
+> > +	if (mm->mm_sched_epoch == rq->cpu_epoch)
+> > +		return;
+> > +
+> 
+> [1]
+> 
+> > +	guard(raw_spinlock)(&mm->mm_sched_lock);
+> > +
+> > +	if (mm->mm_sched_epoch == rq->cpu_epoch)
+> > +		return;
+> 
+> Remove above duplicated [1] and keep the check here?
 
-Example:
+Why? That just adds locking overhead for no reason.
 
-Merge tag 'x86_cache_for_v6.15' of git://git.kernel.org/pub/scm/linux/kernel/...
+> > +
+> > +	if (work->next == work) {
+> > +		task_work_add(p, work, TWA_RESUME);
+> > +		WRITE_ONCE(mm->mm_sched_epoch, rq->cpu_epoch);
+> > +	}
+> > +}
+> > +
+> > +static void task_cache_work(struct callback_head *work)
+> > +{
+> > +	struct task_struct *p = current;
+> > +	struct mm_struct *mm = p->mm;
+> > +	unsigned long m_a_occ = 0;
+> > +	int cpu, m_a_cpu = -1;
+> > +	cpumask_var_t cpus;
+> > +
+> > +	WARN_ON_ONCE(work != &p->cache_work);
+> > +
+> > +	work->next = work;
+> > +
+> > +	if (p->flags & PF_EXITING)
+> > +		return;
+> > +
+> > +	if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
+> > +		return;
+> > +
+> > +	scoped_guard (cpus_read_lock) {
+> > +		cpumask_copy(cpus, cpu_online_mask);
+> > +
+> > +		for_each_cpu(cpu, cpus) {
+> > +			/* XXX sched_cluster_active */
+> > +			struct sched_domain *sd = per_cpu(sd_llc, cpu);
+> > +			unsigned long occ, m_occ = 0, a_occ = 0;
+> > +			int m_cpu = -1, nr = 0, i;
+> > +
+> > +			for_each_cpu(i, sched_domain_span(sd)) {
+> > +				occ = fraction_mm_sched(cpu_rq(i),
+> > +							per_cpu_ptr(mm->pcpu_sched, i));
+> > +				a_occ += occ;
+> > +				if (occ > m_occ) {
+> > +					m_occ = occ;
+> > +					m_cpu = i;
+> > +				}
+> > +				nr++;
+> > +				trace_printk("(%d) occ: %ld m_occ: %ld m_cpu: %d nr: %d\n",
+> > +					     per_cpu(sd_llc_id, i), occ, m_occ, m_cpu, nr);
+> > +			}
+> > +
+> > +			a_occ /= nr;
+> 
+> 
+> In systems with a larger number of CPUs within a single LLC, the division
+> may lose accuracy.
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2899aa3973efa3b0a7005cb7fb60475ea0c3b8a0
+May, sure, but does it actually matter? We're tracking occupancy in ns
+per EPOCH_PERIOD, which is 1e7. Lets assume 'large' here is something
+daft like 100 CPUs per LLC (lets just really hope nobody actually goes
+and do that, please), then you're still only loosing like 1e2 ns from
+your average.
 
-^^ This one is reproducible.
+> Can we either use multiplication for comparison, or just use the accumulated
+> total CPU occupancy
+> of that LLC for comparison (by removing a_occ /= nr)?
 
-Best regards,
--Sedat-
+You can't remove the devision, you get into trouble when the LLCs do not
+have equal number of CPUs. You can carry that multiplication around ofc,
+but again, why bother?
+
+> > +			if (a_occ > m_a_occ) {
+> > +				m_a_occ = a_occ;
+> > +				m_a_cpu = m_cpu;
+> > +			}
+> > +
+> > +			trace_printk("(%d) a_occ: %ld m_a_occ: %ld\n",
+> > +				     per_cpu(sd_llc_id, cpu), a_occ, m_a_occ);
+> > +
+> > +			for_each_cpu(i, sched_domain_span(sd)) {
+> > +				/* XXX threshold ? */
+> > +				per_cpu_ptr(mm->pcpu_sched, i)->occ = a_occ;
+> > +			}
+> > +
+> > +			cpumask_andnot(cpus, cpus, sched_domain_span(sd));
+> > +		}
+> > +	}
+> > +
+> > +	/*
+> > +	 * If the max average cache occupancy is 'small' we don't care.
+> > +	 */
+> > +	if (m_a_occ < (NICE_0_LOAD >> EPOCH_OLD))
+> > +		m_a_cpu = -1;
+> > +
+> > +	mm->mm_sched_cpu = m_a_cpu;
+> 
+> There might be an issue with mm_sched_cpu bouncing. Perhaps adding a
+> threshold to compare the old a_occ of mm->mm_sched_cpu with the new a_occ of
+> m_a_cpu could help. For example, if the latter (new_a_occ) is twice larger
+> than the former (old a_occ), we can update mm->mm_sched_cpu to the new
+> m_a_cpu. Otherwise, we keep the old value.
+
+Some hysteresis might make sense, but I don't think waiting for it to
+double makes sense, that might be too agressive.
+
+> > +#ifdef CONFIG_SCHED_CACHE
+> > +static long __migrate_degrades_locality(struct task_struct *p, int src_cpu, int dst_cpu, bool idle);
+> > +
+> > +static int select_cache_cpu(struct task_struct *p, int prev_cpu)
+> > +{
+> > +	struct mm_struct *mm = p->mm;
+> > +	int cpu;
+> > +
+> > +	if (!mm || p->nr_cpus_allowed == 1)
+> > +		return prev_cpu;
+> > +
+> > +	cpu = mm->mm_sched_cpu;
+> > +	if (cpu < 0)
+> > +		return prev_cpu;
+> > +
+> 
+> 
+> We observed frequent task migrations during some highly context-switch
+> benchmarks, which led to performance regression when the LLC was saturated.
+> Could we avoid task migration in cases where the previous CPU and the
+> preferred CPU are within the same LLC?
+> 
+> if (cpus_share_cache(prev_cpu, cpu))
+> 	return prev_cpu;
+
+Sure.
+
+> > +
+> > +	if (static_branch_likely(&sched_numa_balancing) &&
+> > +	    __migrate_degrades_locality(p, prev_cpu, cpu, false) > 0) {
+> > +		/*
+> > +		 * XXX look for max occupancy inside prev_cpu's node
+> > +		 */
+> > +		return prev_cpu;
+> > +	}
+> > +
+> 
+> Tim found that spreading tasks within the preferred LLC might help avoid
+> task stacking:
+> 
+> sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> if (likely(sd))
+> 	return cpumask_any(sched_domain_span(sd));
+
+You know that cpumask_any() is implemented using cpumask_first(), right?
+You're causing stacking if anything with that.
+
+> > @@ -9288,6 +9556,17 @@ static int task_hot(struct task_struct *p, struct lb_env *env)
+> >   	if (sysctl_sched_migration_cost == 0)
+> >   		return 0;
+> > +#ifdef CONFIG_SCHED_CACHE
+> > +	if (p->mm && p->mm->pcpu_sched) {
+> > +		/*
+> > +		 * XXX things like Skylake have non-inclusive L3 and might not
+> > +		 * like this L3 centric view. What to do about L2 stickyness ?
+> > +		 */
+> > +		return per_cpu_ptr(p->mm->pcpu_sched, env->src_cpu)->occ >
+> > +		       per_cpu_ptr(p->mm->pcpu_sched, env->dst_cpu)->occ;
+> 
+> This might encourage more task migration within the preferred LLC, leading
+> to some performance regression. Is it possible to raise the threshold for
+> task migration within the preferred LLC and use the original delta time to
+> determine whether a task is cache-hot?
+> 
+> if (p->mm && p->mm->pcpu_sched &&
+>     cpus_share_cache(env->dst_cpu, env->src_cpu))
+> 	return  2*per_cpu_ptr(p->mm->pcpu_sched, env->src_cpu)->occ >
+> 		  per_cpu_ptr(p->mm->pcpu_sched, env->dst_cpu)->occ;
+> }
+
+Nah, the saner thing to do is to preserve the topology averages and look
+at those instead of the per-cpu values.
+
+Eg. have task_cache_work() compute and store averages in the
+sched_domain structure and then use those.
 
