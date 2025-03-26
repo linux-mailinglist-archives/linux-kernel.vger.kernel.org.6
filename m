@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-576692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A500A71312
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:51:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA2EA7130F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B1C189C753
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F26164FB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB641A4F2F;
-	Wed, 26 Mar 2025 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7B8C8FE;
+	Wed, 26 Mar 2025 08:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="k38PEtqH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="em4EobGm"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="05oq96x1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Slg6KHW/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E102E3D6A;
-	Wed, 26 Mar 2025 08:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0788E3D6A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742979022; cv=none; b=KU58YRE+bHCjxcFMUi94fGy79FusxoFr7UYs/4yguhRhEqg8sndkMe6Dt7oxbeTWYgyR0fhE6vNxTx6mFoNqDvLX8D1z5JrHeB50nGBag4qPkdJaq+QLCG+8b8ULmdo8/W0ZH4lU9S7aKTJfDnEdkAKd8AgMV+6w9mcOaeygb20=
+	t=1742978991; cv=none; b=VG7DKqru5h6F8+VwbhJwFONb6UqYNnd0V+8pOENuTy0ornxB5OsVF8v46vyUlsRNSu4bTPSYsQao2E8dQJtfezOlihTfRc8ELMb69LdAxdr/t09315A49XsxFv4HJVd9DX8zK/G4Xvow/Hmh3uuRDisTA6yTZWH3p68VNFXwE5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742979022; c=relaxed/simple;
-	bh=zckyWCR8co9b4ewG7tpvLex3uvCol9oBpbVIwzyjzag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q5L0iLQX2AaXiCK7C0Tvs2ZmO3oD2HaaAtr/htZTl4662PcI/1u2lJUp/Fv3BpPgqff0sSj1BEjUsP9C7Pzqkm3kf3JvXNLl2xiNd0rMb2lcB+Y7vpgl7411NFgyS0tFtHcpFhjeGoW7i4QQWtzOrvdLHMPzDDNLQuJc7pfp9cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=k38PEtqH; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=em4EobGm reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1742979019; x=1774515019;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZP0l56nxJaRM6ya5wloLaFklD8MUTQmVk56fPxgwkqI=;
-  b=k38PEtqHQa4FtgjmkFzE5l8gZ4o9xLKE0M3sXYwcTpkEuWtfwZwcJRvd
-   Fy2ghc8PMpbPUfFUxE8VjP7hE3ZcrGLnB+3DZWicWEDrl7HXIlQ+3nrZO
-   AfLmWvfoDpEq5NKoJFU3ndDL1SVrdsGYI9uFflvs0BDYHUJ0R6ytan2GO
-   11rMhAkE2w6yvOEDXB5kr5uiTs8lxcbbrBVfgeSCXfaXGT6bQLq0PUt4F
-   LQLW3B9GOuu0dflJw54GxVExN7xAlEEQHZGUvsS9Mx11DLlCvoYeWKGJI
-   W6ZVkvuUuT53MccGFfixZTVPgX9V5/2B6T02Pn0kilWvbe6l6UO4XWVXM
-   Q==;
-X-CSE-ConnectionGUID: MfDwbYMlScqJ+JJEsYNc2Q==
-X-CSE-MsgGUID: QpMB02+nQjmsFCzLs9HGZA==
-X-IronPort-AV: E=Sophos;i="6.14,277,1736809200"; 
-   d="scan'208";a="43164243"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Mar 2025 09:50:15 +0100
-X-CheckPoint: {67E3BFC7-37-903EAEAC-E04C76C8}
-X-MAIL-CPID: F04AAAF7416FCDBA5B861161D3D6F77C_5
-X-Control-Analysis: str=0001.0A006368.67E3BFCE.0036,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95F75166EFA;
-	Wed, 26 Mar 2025 09:50:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1742979011;
+	s=arc-20240116; t=1742978991; c=relaxed/simple;
+	bh=LmVzw6P+iwvxitQOaKzKJxAmqr4PJZaBYQK11RdBHps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Af9sPDsxoHgG/rOoFERtyrCZfI0BNXVO0nsGHaUoQQ9wkJJeWbDM2jHOv2zX+MV0cD0DucWZHFchaWRCzuoGjudD4DmqbxIe7aQIsib7adeI4/rI1frkTn5frp/7zWqlckyILqvCyXd62Z5t3SsGFlhpIUd485QnDtC/nwZ0190=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=05oq96x1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Slg6KHW/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Mar 2025 09:49:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742978987;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZP0l56nxJaRM6ya5wloLaFklD8MUTQmVk56fPxgwkqI=;
-	b=em4EobGmpORctKzGb651E+9YPDv0naO9NFFUwMSq7jZ9NonsqAQMfMPyCACKdSXs8EsPNC
-	5/3FYn0z+iyPvaoayosYcCwpUhYzVgUGZoxC83kijimQdRdmWSiyYN3ZJ0hbr5gpH9UlNT
-	kMw3gIs0lIvqbswdrIMXItqebsaOmmva2IMPdUZ6u3F83JGxBK5QU3UNTe0/mP2fD1eT+2
-	+E5YGY6y3FZqWzUegymx+CzAaoRcFq6l7iysU23V+MHx6VdtTlOnmjdpOVqVYoYkzL5O3m
-	/cNTer68kHH7+HGNffpgKuNMo/FBqvLUCfD1KDiAcZOTfc59mbVlYpROxflPDw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] i2c: imx: add some dev_err_probe calls
-Date: Wed, 26 Mar 2025 09:49:36 +0100
-Message-ID: <20250326084937.3932383-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gz8F9ltzV/QRdNcarKMp9yp/7xAhXEuaj3rVo3/1kgY=;
+	b=05oq96x1+nxFYWli3nQBqNN1Dhyn5StuiNIn5WjpITSSj7gXMmiph4yVDhJcvoWX9m6mOS
+	WI6V11g1KBvy2jU3u9Or5OPthwboAg/czmQUJGqDGp6fvs3vloAyQddoZ9R/71PX+F5bMf
+	eyKDUJKKkxy+FnJ2bNf+fHGnDvjuHfPQu4xbxVUJFJbpgzHKdiENArwW/yWKLbrNg97YLg
+	5ITySVgn/Ff4gARvc8l+vXElHEAiWKiTVwhZIfdmUZWv0UHY6e0fIVTVoL0f+lKYOkv+uW
+	IuUQqhTgSEvLjowYR5MMaD3DwvgYprdF7jNZ/EJPaE79GAiZ+7pfejmXX5VmPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742978987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gz8F9ltzV/QRdNcarKMp9yp/7xAhXEuaj3rVo3/1kgY=;
+	b=Slg6KHW/MP0RLMPnd8SjXrz/MMgDQvf4NZ2S+DRUSASkMgqXUgDKdR3oDlw5DCwRFJz1aJ
+	585i+j0L52DcgwAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+Message-ID: <20250326084946.VyD9JdIt@linutronix.de>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
 
-Especially DMA channels might not be available. Add some deferred probe
-messages accordingly.
+On 2025-03-18 18:54:22 [+0530], Shrikanth Hegde wrote:
+> I tried this in one of our systems(Single NUMA, 80 CPUs), I see significant reduction in futex/hash.
+> Maybe i am missing some config or doing something stupid w.r.t to benchmarking.
+> I am trying to understand this stuff.
+> 
+> I ran "perf bench futex all" as is. No change has been made to perf.
+> =========================================
+> Without patch: at 6575d1b4a6ef3336608127c704b612bc5e7b0fdc
+> # Running futex/hash benchmark...
+> Run summary [PID 45758]: 80 threads, each operating on 1024 [private] futexes for 10 secs.
+> Averaged 1556023 operations/sec (+- 0.08%), total secs = 10   <<--- 1.5M
+> 
+> =========================================
+> With the Series: I had to make PR_FUTEX_HASH=78 since 77 is used for TIMERs.
+> 
+> # Running futex/hash benchmark...
+> Run summary [PID 8644]: 80 threads, each operating on 1024 [private] futexes for 10 secs.
+> Averaged 150382 operations/sec (+- 0.42%), total secs = 10   <<-- 0.15M, close to 10x down.
+> 
+> =========================================
+> 
+> Did try a git bisect based on the futex/hash numbers. It narrowed it to this one.
+> first bad commit: [5dc017a816766be47ffabe97b7e5f75919756e5c] futex: Allow automatic allocation of process wide futex hash.
+> 
+> Is this expected given the complexity of hash function change?
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/i2c/busses/i2c-imx.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+So with 80 CPUs/ threads you should end up with roundup_pow_of_two(80 *
+4) = 512 buckets. Before the series you should have
+roundup_pow_of_two(80 * 256) = 32768 buckets. This is also printed at
+boot.
+_Now_ you have less buckets so a hash collision is more likely to
+happen. To get to the old numbers you would have increase the buckets
+and you get the same results. I benchmark a few things at
+	https://lore.kernel.org/all/20241101110810.R3AnEqdu@linutronix.de/
 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index 9e5d454d8318e..e6e09d5a2bbd4 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -1711,11 +1711,13 @@ static int i2c_imx_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
--		return irq;
-+		return dev_err_probe(&pdev->dev, irq,
-+				     "can't get IRQ\n");
- 
- 	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(base))
--		return PTR_ERR(base);
-+		return dev_err_probe(&pdev->dev, PTR_ERR(base),
-+				     "can't get IO memory\n");
- 
- 	phy_addr = (dma_addr_t)res->start;
- 	i2c_imx = devm_kzalloc(&pdev->dev, sizeof(*i2c_imx), GFP_KERNEL);
-@@ -1810,13 +1812,15 @@ static int i2c_imx_probe(struct platform_device *pdev)
- 	 */
- 	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
- 	if (ret) {
--		if (ret == -EPROBE_DEFER)
-+		if (ret == -EPROBE_DEFER) {
-+			dev_err_probe(&pdev->dev, ret, "can't get DMA channels\n");
- 			goto clk_notifier_unregister;
--		else if (ret == -ENODEV)
-+		} else if (ret == -ENODEV) {
- 			dev_dbg(&pdev->dev, "Only use PIO mode\n");
--		else
-+		} else {
- 			dev_warn(&pdev->dev, "Failed to setup DMA (%pe), only use PIO mode\n",
- 				 ERR_PTR(ret));
-+		}
- 	}
- 
- 	/* Add I2C adapter */
--- 
-2.43.0
+This looks like the series makes it worse. But then those buckets are
+per-task so you won't collide with a different task. This in turn should
+relax the situation as a whole because different tasks can't block each
+other. If two threads block on the same bucket then they might use the
+same `uaddr'. 
 
+The benchmark measures how many hash operations can be performed per
+second. This means hash + lock + unlock. In reality you would also
+queue, wait and wake. It is not very use-case driven.
+The only thing that it measures is hash quality in terms of distribution
+and the time spent to perform the hashing operation. If you want to
+improve any of the two then this is the micro benchmark for it.
+
+> Also, is there a benchmark that could be run to evaluate FUTEX2_NUMA, I would like to
+> try it on multi-NUMA system to see the benefit.
+
+Let me try to add that up to the test tool.
+
+Sebastian
 
