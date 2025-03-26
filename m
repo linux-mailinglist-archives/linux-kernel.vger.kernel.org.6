@@ -1,216 +1,113 @@
-Return-Path: <linux-kernel+bounces-576669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E0AA712C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:37:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C2BA712F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:44:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38FD417584D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:37:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9183A1882129
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCBA1A76AE;
-	Wed, 26 Mar 2025 08:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99941AB6C8;
+	Wed, 26 Mar 2025 08:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKnjiw2o"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="J8Dtg6pm"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131C81A3160
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 08:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921F91A5BA2;
+	Wed, 26 Mar 2025 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978199; cv=none; b=iI3QlqCqeViZOomOyapKL2G9N/HFb7TsMELDEmBFbh8O4FE9TC8dbWRiURGTuRtABgt7tbg4aqpMtsC1IhAUZIlWehE//czJ5u2Ed0gcLmBzEYW7SGlTWBqWgIqRKeq4ctv+9ktEtNrh5eybKMg1YdrLeXf1Nm/HHgmaHWikTYo=
+	t=1742978602; cv=none; b=ngyIiuNLxUhiQ1rKHCzpNmLSUIpA89Dd2hJY4BQ5CsW2XgulyZiks5WBM10OBb5HvNloFTvBut+DCedVTwPoSM7ASIsls3VyUmQvAeKVlAEuaz+yiCraqwxudmWnxUsb0zb41yc7Dwe5Z5tFt8gEKQIvL7uBeA6gPvaObvbYGWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742978199; c=relaxed/simple;
-	bh=wE8gm9EgRvG/eMhMjuvwanQvEYBa02D0Xd2GnqsJRZE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g1693lUqAeN3LX3elLfxvHhkgyuvESG/zfEh8xxffGS81qQTQ+z78Tkl+Wqx/qp4428FpbkzwzGi/8R1jApBW557sHOssE574iEUnUxc0E7oDyTYxY+3Cy0yLSgSu007d5r9MvMZoqeHPojE+8B8p+CnoOCNVRupOWDXRkTfT14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKnjiw2o; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43690d4605dso46013935e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742978196; x=1743582996; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9sXhQr7pB1oHUL5QRg4aIUf1ZBqM0s1gNre1HeSuBZY=;
-        b=tKnjiw2ob3bcCxOku+5sP6cqjtbUsuglW7ot0NaXlxRRIkCvtxEQBbZ07oyAbdtVy1
-         5Nx1oYCVuiUvWV1jtsMKwXGGG4QFiPyQ/HlVpDEeP1OtsmLhU93nUpyCQn6bUG0Mg/BX
-         IT2RTNrEwmA0wq04Zs3FKi0J2tP+wjOyW2Gw8ADEzV3IQBlVRbqrA2TNhXq18QYlEj/6
-         z/S+AWqSyv3MSQcIu12cw7nyXevNrZoqFxJxTvdzjg+gf2NEhsb0aXyRTbh0Js9F0xnj
-         v3QTgtFqvF9XerVPaLNz4wTj32Mg8Md8vJgic1HDQMQQnkKwafCVdl4INd8d9wxC/R7/
-         7/kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742978196; x=1743582996;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sXhQr7pB1oHUL5QRg4aIUf1ZBqM0s1gNre1HeSuBZY=;
-        b=VwMducc6BPTbXtX88TgCaE5YX2Vgmcx3nc07CkS0WK8lJshMJvgditKMNtz8cpywbu
-         PbQZ2fzWy0xEoPWs0r4qf/VIOfeh/ZRXlSR0HtkJIxpzeupjC1pu5ouzGNzCe7p9tFF9
-         /b9y0AuNzlcErdEkf295Ng7AoaVHXYgCqG0m51mXKtjSIefVe2ybEK2Cp7pvPUzmdIxl
-         Gh13isrcwUaU26BVsYwtXFcap5z60QgsLqxb/AJH5mr8fq3vTwMgOJJH3xRHjyUP3SfF
-         Rw4CqGdJzStg/MwHY2qJlRG6NnLugkHMIm4Bs00d1zv1HC/uWEf867HZFMRsjjKEWfnv
-         Lkww==
-X-Forwarded-Encrypted: i=1; AJvYcCVc8J5P431Qu7p3uo2O26y2Fmi6p79h25XxeWEmZtW+wpa0LQp7Vr8GClou8HTOgTezkKdLriw78SF9YD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJtM1ylp6w2R+H8PNN5iokjBvqpwIg4xx+hwfDis4YtbN8mAn1
-	HimTEGI1rTiEit6Zvje8IqwI9fH5pEZEK5YXxxUaE96n2YsK58jc4/Xf7qA4UiI=
-X-Gm-Gg: ASbGnct0fqNpEWOI0AcWb7gvTQjSN0llBhfOG/71kGQ3IAwBcltnxn0wrCr5SqoTUUZ
-	trUDHQ1hYnn+aELRNVdSFczcpkE/tGo92iL6nw75Epeu58fi2hw7xwEhPSrI4EFkVB32PL0t0W7
-	ZYJ2ccUdi2KJl4QTX6ycaubjhzOM4ci8QN10aeQr9dKkjF8PO6/ZuYwjOdJwpuNUW9MjLlz9JLC
-	55EphndKHcOdgA0AvQIUTx7b1IuyLAmrRH7lucKgUWtwS4TO9I+PGQzGEFHrQBOT/6Va3rXSoiB
-	hl6rm6aXzQHfxITtLJb4mbLUX9PdpEkHH2X1IDLSCkH+w/iAbX2+9CqF8i6jgV1fgA==
-X-Google-Smtp-Source: AGHT+IG1Q4B0jZrBWVEeQlwx58g1s02zlaV9ZCA48T2H2C8bquy4+GUMl9fJnB7E3asz6f++aEx6jw==
-X-Received: by 2002:a05:600c:1e18:b0:43c:eea9:f45d with SMTP id 5b1f17b1804b1-43d509f64b8mr212933905e9.18.1742978196325;
-        Wed, 26 Mar 2025 01:36:36 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fcea400sm176823365e9.2.2025.03.26.01.36.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 01:36:36 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 26 Mar 2025 09:36:33 +0100
-Subject: [PATCH RFC v2 2/2] ufs: core: delegate the interrupt service
- routine to a threaded irq handler
+	s=arc-20240116; t=1742978602; c=relaxed/simple;
+	bh=ovNgZuY+NbD7763M/eaicHEHxCeaOSZ/OXBWloOm7vM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gias1lcIWmY2EUZ87J/alNjOlC4pa7dBx9pTbhTt6M8HehzS/S+kTn+VLvgbZAdkb5hkfuhNDgVa/qaUeya8lHX/SqqZG19R3mK1ja5CrooqAx2AdKZb96S0gBhaRBe25+IJkphdHx6NfQya6+l+8CHr2uDnvvwa90M7tDYpH48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=J8Dtg6pm; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q8R0E7020083;
+	Wed, 26 Mar 2025 09:42:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=hAJu0kdEpj3Z9zT+qLxNZn
+	npfIMphhCV7QLcQTbwNUM=; b=J8Dtg6pmvhuECRvoHhoHnqlFiH1NWuvQEt+p56
+	fwnlYMh7vnreS690X/P4lUsCjB5UtyD5PNaLJyNezb1BoeIP52sLpBlcXQRQuXTG
+	64DcznkJqhSUKPAPdzIUlidew4n6HLZxfjYBoTdtrhCg8MaVexfSDD3L8oepicg6
+	rTXEJaJD2uIxKk4FrxXQKSKgSxTowKJwbsFbpoJrfxrPfvmRxMfIGk1hSeC4yre6
+	kJfIoo5XfdlFC7LzvzwMyPo0PBuIlCj+Uu5rakrGKt1WfZmD4q473sVzGEtBkDJx
+	ihbPjK6IlIEu3XfUGJo48/Cg1aOVRPmvsdJv4vOTK2VAqStg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45me348488-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 09:42:49 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A145440058;
+	Wed, 26 Mar 2025 09:41:50 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4728787F421;
+	Wed, 26 Mar 2025 09:40:01 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
+ 2025 09:40:01 +0100
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
+ 2025 09:40:00 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 0/2] stm32-rproc: Add firmware-name DT property support
+Date: Wed, 26 Mar 2025 09:39:10 +0100
+Message-ID: <20250326083912.12714-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-topic-ufs-use-threaded-irq-v2-2-7b3e8a5037e6@linaro.org>
-References: <20250326-topic-ufs-use-threaded-irq-v2-0-7b3e8a5037e6@linaro.org>
-In-Reply-To: <20250326-topic-ufs-use-threaded-irq-v2-0-7b3e8a5037e6@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4010;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=wE8gm9EgRvG/eMhMjuvwanQvEYBa02D0Xd2GnqsJRZE=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBn47yRna6KR2O+2/McFt5fyFm0PMrm1cbhH9l1pHzK
- g1qu/BeJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ+O8kQAKCRB33NvayMhJ0TzYD/
- 0eCpa3SlSIbYqvFInXTVu4P0tKFO3IpuJhif3hUszZLZetR+HXaSpZKfrRCjmQbbIVxUmFxkir2lc0
- B/y1uC1O77OOUw2+2QGhyVgepk+Z1H5hCvNmz+U0N9xhumCSMjD1fiKk2u2Qn5YDzHxmENz5ap+pcK
- D4USQvC7aXT5UJJvMuVgs/LR6a6eLEziEhQmJ2bQeKIJNiWXv/Yt+10WDTtC3JDyqigA8QpvN1eo9R
- 3wy+FhxmwGMD9xAZX+wtjzP/qXaiYH+lq/NVU3+VdyAGh+k3ibtrk3N4e1Nsxtu780N8qsIqFefvUM
- zNGPy8+kliMuo8zaAKcyJ3VrSiH1AOYFV7JP7KiKkVLZ/CT02XHBWFgapI0GA7mm0GqQqkJrZbU8NN
- QMvY4GsfK5NROXjz5UlvcLZ2Bkx5SzzmBc1T9A8RCL1Dsd/RKARu9GROm3Dci0ftdG3eKZLtdTb42X
- hiQTrs/zkrCjq6QWAsmZBVzA4M+HKdUke2p2WUqpLQIXdoVsv73qRyZIwkEiV4sxrKKuRNoE+nwR1m
- 9RBHJV6za9v2FIEJm24BCSkfnes/Dg5/g0sdKKmrbAHA92DDWqKpnGB0HljD+V2ieMF1mcI3Aew/di
- gYn0CgM29pNf7KK2jkQbcYzIT3YPYuMgsanfBbBGmfT4k0b5kluyjMp2syqw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_02,2025-03-26_02,2024-11-22_01
 
-On systems with a large number request slots and unavailable MCQ,
-the current design of the interrupt handler can delay handling of
-other subsystems interrupts causing display artifacts, GPU stalls
-or system firmware requests timeouts.
+Add flexibility by supporting the optional "firmware-name" property.
 
-Since the interrupt routine can take quite some time, it's
-preferable to move it to a threaded handler and leave the
-hard interrupt handler save the status and disable the irq
-until processing is finished in the thread.
+This allows specifying in the device tree the firmware that needs to
+be loaded on boot, if the "st,auto-boot" DT property is set.
 
-When MCQ & Interrupt Aggregation are supported, the interrupt
-are directly handled in the "hard" interrupt routine to
-keep IOPs high since queues handling is done in separate
-per-queue interrupt routines.
+Arnaud Pouliquen (2):
+  dt-bindings: remoteproc: stm32-rproc: Add firmware-name property
+  drivers: remoteproc: stm32_rproc: Allow to specify firmware default
+    name
 
-This fixes all encountered issued when running FIO tests
-on the Qualcomm SM8650 platform.
+ .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml    | 5 +++++
+ drivers/remoteproc/stm32_rproc.c                          | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Example of errors reported on a loaded system:
- [drm:dpu_encoder_frame_done_timeout:2706] [dpu error]enc32 frame done timeout
- msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1: hangcheck detected gpu lockup rb 2!
- msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     completed fence: 74285
- msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     submitted fence: 74286
- Error sending AMC RPMH requests (-110)
 
-Reported bandwidth is not affected on various tests.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/ufs/core/ufshcd.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 5e73ac1e00788f3d599f0b3eb6e2806df9b6f6c3..5de25fc978dd7c4c1ac3b9ccbca2ab3f13d6aa65 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -6971,7 +6971,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
- }
- 
- /**
-- * ufshcd_intr - Main interrupt service routine
-+ * ufshcd_threaded_intr - Threaded interrupt service routine
-  * @irq: irq number
-  * @__hba: pointer to adapter instance
-  *
-@@ -6979,7 +6979,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
-  *  IRQ_HANDLED - If interrupt is valid
-  *  IRQ_NONE    - If invalid interrupt
-  */
--static irqreturn_t ufshcd_intr(int irq, void *__hba)
-+static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
- {
- 	u32 last_intr_status, intr_status, enabled_intr_status = 0;
- 	irqreturn_t retval = IRQ_NONE;
-@@ -7018,6 +7018,33 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
- 	return retval;
- }
- 
-+/**
-+ * ufshcd_intr - Main interrupt service routine
-+ * @irq: irq number
-+ * @__hba: pointer to adapter instance
-+ *
-+ * Return:
-+ *  IRQ_HANDLED     - If interrupt is valid
-+ *  IRQ_WAKE_THREAD - If handling is moved to threaded handled
-+ *  IRQ_NONE        - If invalid interrupt
-+ */
-+static irqreturn_t ufshcd_intr(int irq, void *__hba)
-+{
-+	struct ufs_hba *hba = __hba;
-+
-+	/*
-+	 * Move interrupt handling to thread when MCQ is not supported
-+	 * or when Interrupt Aggregation is not supported, leading to
-+	 * potentially longer interrupt handling.
-+	 */
-+	if (!is_mcq_supported(hba) || !ufshcd_is_intr_aggr_allowed(hba))
-+		return IRQ_WAKE_THREAD;
-+
-+	/* Directly handle interrupts since MCQ handlers does the hard job */
-+	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-+				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
-+}
-+
- static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
- {
- 	int err = 0;
-@@ -10576,7 +10603,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
- 
- 	/* IRQ registration */
--	err = devm_request_irq(dev, irq, ufshcd_intr, IRQF_SHARED, UFSHCD, hba);
-+	err = devm_request_threaded_irq(dev, irq, ufshcd_intr, ufshcd_threaded_intr,
-+					IRQF_ONESHOT | IRQF_SHARED, UFSHCD, hba);
- 	if (err) {
- 		dev_err(hba->dev, "request irq failed\n");
- 		goto out_disable;
-
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
 -- 
-2.34.1
+2.25.1
 
 
