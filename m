@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-577517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A413A71E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:20:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1FFA71E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EAC93B274F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB02716FFEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96934252904;
-	Wed, 26 Mar 2025 18:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA562517B5;
+	Wed, 26 Mar 2025 18:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSz+5m5Z"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBlAVG0w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654221F7561;
-	Wed, 26 Mar 2025 18:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBC21F7561;
+	Wed, 26 Mar 2025 18:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013099; cv=none; b=G1oM0da44Y4qFiT8jZyDf/V0cvF4gGWzK4gRCW4ONMWSNv2iHXku6Y+ZGxuElTH8HRDtLWAVIKHswkP8LK6XvHQlR0fT31Me+NcU/mhvnBWFGjNNoQQSZQTmF/haCEX/LOyawGSo1Xiiac8PPQovcd5fn/kgCQRSScM2Uh3pZD0=
+	t=1743013310; cv=none; b=hZ3F03S6lDUXAIDn0ZyqDr03aWargiK51A1hiRmSIKV2pRs6Z4IZjnJNGeWDHXG9nsjrIwuxEwoXRHXOYp+AF3k5pwMdYhcdr3cO54XgwFDVY5x3EC65S3c4zftRDcqxLWZGrcXbyP8+5wdlHtvj/mAMzCWuscsV1WTDqcoXu6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013099; c=relaxed/simple;
-	bh=BCcusAiZcAMHVSpBfkVYYDvlZnORz0u1WzBhrdpt5Ek=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHmpADEYXLC0sH7yZHIWjXWXNQWZNMOBWN9C55cYMvuTGc9kCiI1vngnFn01UEK1P4G/P/JibZcgccm7EghJLDCRJ6TQKELLrNRcx+MbSi7Ohcq9dRb9a4ZtXarDsQjsYzc9wci+B1uylahTnJsCu2uv+u6ZQgwMJlnNxXtf9Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSz+5m5Z; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso74460f8f.0;
-        Wed, 26 Mar 2025 11:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743013096; x=1743617896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+OYzJdahmjkb1uM2uwDmxOrko89EeT2kB7mZ5ExR2w=;
-        b=cSz+5m5ZQiWief4kYJKcjABIqS9nQB1puBb7V10vYvm+IcqOgrh/XsUFUer1HeeCMk
-         iBNobf4W1rpAkbsa8U7zyLXHd50045UaKGalziFgICYdzgTnWkt7hpnAflvry6jWd2c7
-         GYkSb58nc4mDstZsW3xgGX+xHy5TJuJwGZ4aBC5/MJYkOca1eXhBcK0FmHSmGEreQXSv
-         KAmhD8IL64V8kOVeozQyXlPWPRP/73wRAXh/Z43bzQR3Lun48WmHBZ+9TleWldVwukhu
-         zt+TA23xPwWw5bQDGer2NOYsiWjvdX6oxMg1cTkpJaPCNlORFTQUc38CK6srepQQi+me
-         P7FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743013096; x=1743617896;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h+OYzJdahmjkb1uM2uwDmxOrko89EeT2kB7mZ5ExR2w=;
-        b=B9Ct4H1I6Irbzhtzmhz49r6YAeHwM7lVfpCXEB2q8HLAQzvO0nD6338ZlSKDK8pv3q
-         KKSCQrr9VPPgBMbLy9s0rjManqJP5mfalvHPvCEUDZ99c3kA9b/NdgPjCStU6athKAgY
-         /N/1RTjwBHdc9eEwCr6PxzDtTOxOm3STTSXhNdu5Ocu9lkyhEhpoBEw5MIMpdLv9jPJW
-         bhA5BChzq3TctmW2adOKuvmdpg7C0/idl3jl/mPlLtDIEEDnWgVT/0LEoVOawlTyBbj2
-         6Alke+HA5FV3zfDM2gY5rmNT3IqYNbkALypVHE9JGiy+5r8zvYoFcLrv0xlr/XCjyXL7
-         ueOw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6x6Y/2dE8cs1E1gkYo1NzvN7n7r/UqopzM7sfJY+XUwQc6i/n3IMsjvC/G/62B9BA4w60EbkIkCrF@vger.kernel.org, AJvYcCVrOwB19vBEGRLA8Y4EeVbaNk/LFiTG88P2DbJoN2IgJKG5hDuQFM6fNyUvvVwkXqBeoZHhlw9Zu8d5sBEH@vger.kernel.org, AJvYcCXF8SRCLDWnA1LiGUwkZV/wYobazTVkDIyAXOiH7Qha4MwqB+aQy0Iuw0qMMIPXnL/jDJ6zF6K6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFIqr8Ke85cTTS6oWibGobVmw2ZcRPAsdNSh8Nve9cGvtWLF18
-	5cQ20YDv+3uenTs/DBuC9NIa9DF1kRzTn0bZaLPruoOy0G9++t6o
-X-Gm-Gg: ASbGncukMAeAAEkcEsAtxxVwdTBa6TzuRfV0tM0EVi4+XGdFgsUUp8i+30wTusciwu4
-	mjtdaZVBS+XR83jSkrMBi1BaEdUZpOTLPwlJS4IwYzd5kI0ld1zyc6xbkogUgY+6+nYTcr9YPvx
-	ffaVdIl36L/KDpPpxzBFlkAxHRmCEc+9WwYd9QJFqXOnQX4A/Y0/XtGaTAG7aAxk6B5slvwvca9
-	6M6+mLHgxXxMiWdUP8idAWBSx4g875pEmjpzXuX3IX2Vo4Xa/mrqWzTFIgQ2pdxQorelcoQ8GRe
-	0susBUH4F40JHjfIbA3QKrEPd6J5Ipm2nQS3aMNSTz1aIMdH0BJLOVHlVZ2IQHwdfq4Wt80Itux
-	t
-X-Google-Smtp-Source: AGHT+IHbLlrFdmSIcrPT6c3gVNy3Gg0+ecoorqwfqJv6yTpwt3N7gCX+tGY77Wakr5GU6+aKMH/Aig==
-X-Received: by 2002:a05:6000:2912:b0:391:30b9:556c with SMTP id ffacd0b85a97d-39ad1743cd8mr466272f8f.21.1743013095347;
-        Wed, 26 Mar 2025 11:18:15 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efc9bsm17258861f8f.87.2025.03.26.11.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 11:18:14 -0700 (PDT)
-Message-ID: <67e444e6.050a0220.81044.004e@mx.google.com>
-X-Google-Original-Message-ID: <Z-RE5O_FKEY3y3Vt@Ansuel-XPS.>
-Date: Wed, 26 Mar 2025 19:18:12 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
- AS21xxx PHYs
-References: <20250326002404.25530-1-ansuelsmth@gmail.com>
- <20250326002404.25530-3-ansuelsmth@gmail.com>
- <dfa78876-d4a6-4226-b3d4-dbf112e001ee@lunn.ch>
- <Z-RCiWzRWbv7RlHJ@shell.armlinux.org.uk>
+	s=arc-20240116; t=1743013310; c=relaxed/simple;
+	bh=KzXSavSeEQvSYOYQr3q8Tb6HTNl/rJqVxIkNxLAVrV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+MMgrR5byfp7BoyRksbkkduvlbSTkevXGtNxT+ShzUInXOSh4P79+25yhvNtLPNBvSlKUOHSo6g9Otj9QxrSv8zwn0jblmno54pS2jkomZivqRfnE3YioWbHZP235t7ipQGm5zNcpEuKr91azzZ3WcDp6eRRICOWOXX+WtP+Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBlAVG0w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5A2C4CEE2;
+	Wed, 26 Mar 2025 18:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743013309;
+	bh=KzXSavSeEQvSYOYQr3q8Tb6HTNl/rJqVxIkNxLAVrV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vBlAVG0wBZM7HF9+mEoNEcVtcrgGer1vv+lAbs+H57fQy+LRHpt9LGCB1h5UrrB3t
+	 fVNF+hyWjEo7LBywTU7CSmfv660NbadZllILZgr6ghpdRF3lybdO25La4elmQirge6
+	 iTy7AtT4j043KvIs9VfUGcMMJb5iHZpiKuSFOljQHHkIiMURhCoi58/SOO/feoj0FH
+	 G3wygWD5pjaqdTqwIXcUPCZx7NsAou+eIeBHUL7Qg99reIe/TR831/lRXxleRW0oZ0
+	 NRrk3rZRicbA8ljqs/+mbKdghedRT9T6pttbWK3tFtTiFTxg4+iG6q0mnIkEIWxLAa
+	 7wwP+/aZnvDAA==
+Date: Wed, 26 Mar 2025 11:21:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com, peterz@infradead.org,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf trace: Fix possible insufficient allocation of
+ argument formats
+Message-ID: <Z-RFu_PLmKMq8YFU@google.com>
+References: <20250324235245.613063-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z-RCiWzRWbv7RlHJ@shell.armlinux.org.uk>
+In-Reply-To: <20250324235245.613063-1-howardchu95@gmail.com>
 
-On Wed, Mar 26, 2025 at 06:08:09PM +0000, Russell King (Oracle) wrote:
-> On Wed, Mar 26, 2025 at 03:56:15PM +0100, Andrew Lunn wrote:
-> > After the firmware download, the phylib core will still have the wrong
-> > ID values. So you cannot use PHY_ID_MATCH_EXACT(PHY_ID_AS21011JB1).
-> > But what you can do is have a .match_phy_device function. It will get
-> > called, and it can read the real ID from the device, and perform a
-> > match. If it does not match return -ENODEV, and the core will try the
-> > next entry.
+On Mon, Mar 24, 2025 at 04:52:45PM -0700, Howard Chu wrote:
+> In my previous fix of runtime error(Link:
+> https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-howardchu95@gmail.com/),
+> I made a mistake of decrementing one unconditionally, regardless of
+> whether an extra 'syscall_nr' or 'nr' field was present in
+> libtraceevent's tp_format. This may cause perf trace to allocate one
+> fewer arg_fmt entry than needed for the accurate representation of syscall
+> arguments.
 > 
-> Before it returns -ENODEV, it could re-read the ID values and fill
-> them into struct phy_device. This would allow phylib's matching to
-> work.
->
+> This patch corrects the mistake by checking the presence of'syscall_nr' or
+> 'nr', and adjusting the length of arg_fmt[] accordingly.
 
-Is it ok for PHY driver to change values in phy_device ""externally"" to
-phy_device.c ? Maybe you still have to read the other response but a
-bool with needs_rescan to handle this internally? 
+Thanks for the fix.  I've noticed this too but I feel like we can make
+syscall__alloc_arg_fmts() a bit simpler.
 
-> > You either need N match_phy_device functions, one per ID value, or you
-> > can make use of the .driver_data in phy_driver, and place the matching
-> > data there.
-> 
-> An alternative would be to change the match_phy_device() method to
-> pass the phy_driver, which would allow a single match_phy_device
-> function to match the new hardware ID values against the PHY IDs in
-> the phy_driver without needing to modify the IDs in phy_device.
-> 
+How about this?
 
-I also considered extending the function with additional stuff but then
-I considered that would mean rework each PHY driver and destroy PHY
-driver downstream, not something we should care but still quite a big
-task. If the -ENODEV path is not OK, I feel an additional OP is better
-than tweaking match_phy_device.
+Thanks,
+Namhyung
 
+
+---8<---
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 6ac51925ea4249c2..b9bdab52f5801c3a 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2022,9 +2022,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ {
+ 	int idx;
+ 
+-	if (nr_args == RAW_SYSCALL_ARGS_NUM && sc->fmt && sc->fmt->nr_args != 0)
+-		nr_args = sc->fmt->nr_args;
+-
+ 	sc->arg_fmt = calloc(nr_args, sizeof(*sc->arg_fmt));
+ 	if (sc->arg_fmt == NULL)
+ 		return -1;
+@@ -2034,7 +2031,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ 			sc->arg_fmt[idx] = sc->fmt->arg[idx];
+ 	}
+ 
+-	sc->nr_args = nr_args;
+ 	return 0;
+ }
+ 
+@@ -2176,14 +2172,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
+ 		return err;
+ 	}
+ 
+-	/*
+-	 * The tracepoint format contains __syscall_nr field, so it's one more
+-	 * than the actual number of syscall arguments.
+-	 */
+-	if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields - 1))
+-		return -ENOMEM;
+-
+ 	sc->args = sc->tp_format->format.fields;
++	sc->nr_args = sc->tp_format->format.nr_fields;
++
+ 	/*
+ 	 * We need to check and discard the first variable '__syscall_nr'
+ 	 * or 'nr' that mean the syscall number. It is needless here.
+@@ -2194,6 +2185,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
+ 		--sc->nr_args;
+ 	}
+ 
++	if (syscall__alloc_arg_fmts(sc, sc->nr_args))
++		return -ENOMEM;
++
+ 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+ 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+ 
 -- 
-	Ansuel
+2.49.0.395.g12beb8f557-goog
+
 
