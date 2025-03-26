@@ -1,194 +1,85 @@
-Return-Path: <linux-kernel+bounces-576920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E52A71600
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:45:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A538A71601
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35AE3B6904
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005D2170C84
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA701DE3B6;
-	Wed, 26 Mar 2025 11:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733211DF993;
+	Wed, 26 Mar 2025 11:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxcEXp+q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmxnGNa/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845B01DDC2C;
-	Wed, 26 Mar 2025 11:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E981DDC2C;
+	Wed, 26 Mar 2025 11:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989504; cv=none; b=BseEasOa5g+fZVDl/ehPFfhwNmOfolQXJQGh/WK/4nInFNQcPfqHWYvBKnAcUWY8ds4RnBedChZmGnK6+z8Tq9bMSlnENOS1ePGhLbwvSHkMrCJEUR3GxR9JMfv8o3qdLPEBCeY2wumVdTgWFuYqXV2vmBTnk5dLkcJ2J/VhV7M=
+	t=1742989509; cv=none; b=CqlTS87KjnzBehcI3T4zaAgJQg1ljcNTJRp99nr3FB5fGcTAMMPN8sCK4QVXn2alFXimsVWhGELtOTWvX/aR0Mwx9PYiJNNaMPZhBUdbLMpxjNdwG5hxKsHNe/NLLMlWuRqO42aHSjbDbmMcCmjuKAU+2RFxS/l/2RGO/LuDn0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989504; c=relaxed/simple;
-	bh=IDlQ1pxue6ivR6VV71fMEuxnvU0Ny+O/VjCAHOK8J34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eoncoC8ZlNYGQj5Fq9XgO5d1yJkVVZEFmUd4b4AlUDjdCDyY5ASR8hSlqiVRlbmZD7YGCp6hsWOrpTZavBJ/vX44DriRwDCKztJA9DlyyJsBQvEDRmx/6LqOljbU0wm+VnjHfZBdEDrCBxQC++i8v6Dkyl/s9NSUxqhvFVayJDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxcEXp+q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F968C4CEE2;
-	Wed, 26 Mar 2025 11:45:03 +0000 (UTC)
+	s=arc-20240116; t=1742989509; c=relaxed/simple;
+	bh=mN2/sZry5ObgSjPvAI0YAPvG+Q/yLfCuYPbOELw04VQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CIZ1rgiRHOz8mXuLKrDkEhasOdclTP/nlARzJmPqVi0c1EFuEvy797zuZ8yi4E5mBl6YDd0cQsmUOMbyF63RO0rs76T16Rrw8QGdBK6sg8B+h81OGrk/JC0ZgLAgHWoyIbUm1ul+03nbG3sZfJmNsIZJ2nP6HYDaxjDv+bhv6kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmxnGNa/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E49C4CEE2;
+	Wed, 26 Mar 2025 11:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742989504;
-	bh=IDlQ1pxue6ivR6VV71fMEuxnvU0Ny+O/VjCAHOK8J34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DxcEXp+qKRnTXEJt95LjmCsudiz/X07xCwCivfrS/7yo+ugNyNUczt1FtN5uCzsD3
-	 d9Av49Lyf2wwszBnfhqUofGj/PYZk8YEiIzLH3bho+dV2xGvqf1KHfKuNIoXe0UJr2
-	 CctRAwo5Haq8kVdPhxQqyop+9M9xrYSuEEqktSHOg9E33FbUZCrNnhG/sJ3nV4CqVd
-	 oaY29Y1FmOnZN5SCd6dYWb20PQnJZWLfwiYpgcVaI/12ZB+FaWgqrCDB59zee0LIiJ
-	 wMYnnkiefPcHWA5tIbYxUJOBzsD5YFxLOyiSrUkjS7SND2ZdhWY1F4z5rf/7QKMAnx
-	 d2a6Q7JkGivmw==
-Date: Wed, 26 Mar 2025 12:45:01 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] pwm: ehrpwm: ensure clock and runtime PM are
- enabled if hardware is active
-Message-ID: <lhqi2eqfj5eyc67yriezvwwiyusenyohvqzbfrwjkjfjvxxb7a@xwvhrgmer4a7>
-References: <20250207213234.1026-1-rafael.v.volkmer@gmail.com>
- <20250207213424.1117-1-rafael.v.volkmer@gmail.com>
+	s=k20201202; t=1742989509;
+	bh=mN2/sZry5ObgSjPvAI0YAPvG+Q/yLfCuYPbOELw04VQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hmxnGNa/zznFeRBCtXfgYLetZcZ9IhjGT+N/TPCFBPLDepvMNKFeFoxnOKtmxZoyc
+	 QgGrl+fcU02e6MbIl0oAztwdeX5eFvNWjTwgCi13A3B7lMnYYLfP6goLjWT5m2MeeD
+	 GEMJdtBVu0oCd1ZYD/8oymwH8m6KDCWz652lNTWJ2OjlgHey8sq5yuvKS1ejRGLHwv
+	 Y606t7V0VlQb3JuiOWlmU3WTbgOB1pmFPa5JmjeSW1fWAoi/YyNmf4Ed+LMIgMhqti
+	 hZ+FAvXldyBPpfyXI92OZwnY+epdG3Vlzk1brFjvAarRl6tTyZkPlAdQX2hcLxzV7X
+	 IjrNGUNluQSEw==
+Date: Wed, 26 Mar 2025 04:45:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <xie.ludan@zte.com.cn>
+Cc: <davem@davemloft.net>, <gerhard@engleder-embedded.com>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <horms@kernel.org>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <ye.xingchen@zte.com.cn>
+Subject: Re: [PATCH linux-next v2] net: atm: use
+ sysfs_emit()/sysfs_emit_at() instead of scnprintf().
+Message-ID: <20250326044508.30a9e5cb@kernel.org>
+In-Reply-To: <20250325102805210eUc7-ji7GineR0TUNA9Nn@zte.com.cn>
+References: <20250325102805210eUc7-ji7GineR0TUNA9Nn@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ttpxce4gkzgjb3i3"
-Content-Disposition: inline
-In-Reply-To: <20250207213424.1117-1-rafael.v.volkmer@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 25 Mar 2025 10:28:05 +0800 (CST) xie.ludan@zte.com.cn wrote:
+> From: XieLudan <xie.ludan@zte.com.cn>
+> 
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
 
---ttpxce4gkzgjb3i3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 3/3] pwm: ehrpwm: ensure clock and runtime PM are
- enabled if hardware is active
-MIME-Version: 1.0
+## Form letter - net-next-closed
 
-Hello Rafael,
+The merge window for v6.15 has begun and therefore net-next is closed for
+new drivers, features, code refactoring and optimizations. We are currently
+accepting bug fixes only.
 
-On Fri, Feb 07, 2025 at 06:34:24PM -0300, Rafael V. Volkmer wrote:
-> During probe, if the hardware is already active, it is not guaranteed
-> that the clock is enabled. To address this, ehrpwm_pwm_probe() now
-> checks whether the PWM is enabled and ensures that the necessary
-> resources are initialized.
->=20
-> Changes:
-> - Call ehrpwm_get_state() during probe to check if the PWM is active.
-> - If the PWM is enabled, call clk_prepare_enable() to ensure the clock
-> is active.
-> - If the clock is successfully enabled, call pm_runtime_get_sync() to
-> manage power state.
-> - Handle failure cases by properly disabling and unpreparing the clock.
+Please repost when net-next reopens after Apr 7th.
 
-This is too detailed, just drop the changes list.
+RFC patches sent for review only are obviously welcome at any time.
 
-> This ensures that the driver correctly handles cases where the hardware
-> is already in use at the time of initialization, preventing potential
-> failures due to uninitialized resources.
->=20
-> Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
-> ---
->  drivers/pwm/pwm-tiehrpwm.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-> index 52527136c507..30beaf7d1721 100644
-> --- a/drivers/pwm/pwm-tiehrpwm.c
-> +++ b/drivers/pwm/pwm-tiehrpwm.c
-> @@ -633,8 +633,10 @@ static int ehrpwm_pwm_probe(struct platform_device *=
-pdev)
->  {
->  	struct device_node *np =3D pdev->dev.of_node;
->  	struct ehrpwm_pwm_chip *pc;
-> +	struct pwm_state state;
->  	struct pwm_chip *chip;
->  	struct clk *clk;
-> +	bool tbclk_enabled;
->  	int ret;
-> =20
->  	chip =3D devm_pwmchip_alloc(&pdev->dev, NUM_PWM_CHANNEL, sizeof(*pc));
-> @@ -676,6 +678,18 @@ static int ehrpwm_pwm_probe(struct platform_device *=
-pdev)
->  		return ret;
->  	}
-> =20
-> +	ehrpwm_get_state(chip, &chip->pwms[0], &state);
-
-ehrpwm_get_state() does some things that are not needed here given that
-you only evaluate state.enabled. I suggest to just read the one (or
-two?) registers you need to determine if the PWM is on.
-
-> +	if (state.enabled =3D=3D true) {
-> +		ret =3D clk_prepare_enable(pc->tbclk);
-
-pc->tbclk is already prepared, so clk_enable() should be enough. After
-all this should match what ehrpwm_pwm_enable() does.
-
-> +		if (ret) {
-> +			dev_err_probe(&pdev->dev, ret, "clk_prepare_enable() failed");
-> +			goto err_pwmchip_remove;
-> +		}
-> +
-> +		tbclk_enabled =3D true;
-> +	}
-> +
->  	ret =3D pwmchip_add(chip);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
-> @@ -685,10 +699,22 @@ static int ehrpwm_pwm_probe(struct platform_device =
-*pdev)
->  	platform_set_drvdata(pdev, chip);
->  	pm_runtime_enable(&pdev->dev);
-> =20
-> +	if (state.enabled =3D=3D true) {
-> +		ret =3D pm_runtime_get_sync(&pdev->dev);
-> +		if (ret < 0) {
-> +			dev_err_probe(&pdev->dev, ret, "pm_runtime_get_sync() failed");
-> +			clk_disable_unprepare(pc->tbclk);
-> +			goto err_pwmchip_remove;
-> +		}
-
-It feels a bit strange to do this here. I think technically it's fine
-here, but doing pm_runtime_get_sync() before pwmchip_add() would make
-that a bit clearer.
-
-> +	}
-> +
->  	return 0;
-> =20
-> +err_pwmchip_remove:
-> +	pwmchip_remove(chip);
->  err_clk_unprepare:
-> -	clk_unprepare(pc->tbclk);
-> +	if (tbclk_enabled)
-> +		clk_unprepare(pc->tbclk);
-
-I think this is wrong an keeping the unconditional clk_unprepare() is
-right. Might be easier to convert the driver to use
-devm_clk_get_enabled().
-
-Best regards
-Uwe
-
---ttpxce4gkzgjb3i3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfj6LsACgkQj4D7WH0S
-/k6QfwgAlGnueFvwoFNQOQPepk1zo9DerzX7xNnwYpc2tDjtAAyiaG2NoL8FWBAy
-HtzE5a2fY5GebeD6O1cLPd4GWkIvLBjhVGmAZN29yyGoeUVvTydet8QXEARSAa5V
-wNotfZAs4Jvod0IhIFAUD0PTQDOSrTu+Tyvg8ranSM26H9EDU7RdascBp8oeDGcA
-7EZZqO62jSMYSeFLuYbhwQkAQgDe4Zr2gdGenV+RI01E33OYEZzIPlm3mFMxrPFx
-1bQHbk0MzLIlQBIrPE+vf3RXp++lFkufwJgJ7Oue7Q4dR/I4nIriyy/iLU33t+wd
-iPJOpkODSWGwFDAgtoLQVq1S3SxVhA==
-=C9jI
------END PGP SIGNATURE-----
-
---ttpxce4gkzgjb3i3--
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+-- 
+pw-bot: defer
+pv-bot: closed
 
