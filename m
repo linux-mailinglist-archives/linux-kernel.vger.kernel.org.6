@@ -1,137 +1,166 @@
-Return-Path: <linux-kernel+bounces-576557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32804A71101
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:04:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C01A71107
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 08:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE33A188ADFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E6B3B9694
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 07:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F7119924D;
-	Wed, 26 Mar 2025 07:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB16197A76;
+	Wed, 26 Mar 2025 07:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILOc0YmL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmBQwGOT"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23A22AF0A;
-	Wed, 26 Mar 2025 07:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F1F19597F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972678; cv=none; b=sYiDK+lGx6ZwpOtDOkOnSC6vnW133Vv9p9r42YDVsixfHDlX6P5FHciVMGn/pKsQVqYnvu/lMKOFmqlq34pqp6bUageGJjvXlHHuriJ1Id6bf9WSifTnTUs3g3YH0bveZ0w7I8UeiM0wWMkU9SJ/p8S3B3sJedx2F17aqLu5HwQ=
+	t=1742972716; cv=none; b=mq/PHggEHGR0qwbgFFfrHBE/FzKznTF9Z/TsaGvKWB6wxZyRIG2a18vibVeeejqO8hSJQoW9G8k1dEkd4JmOr0w6dQBEQ8IFyyb9m/pSiScnFhkKRKM5GBek25p7FVVNodArcltPA9IffiXpmOuZxxbvxLrXByJNrRe2kO0vEkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972678; c=relaxed/simple;
-	bh=H0hAgv2dinYgXS1a0/TZMvvY6z6fWOXveHrCP7S3UJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vkp6gT/SAIaUaEo08C6grGYUKNPNUXNoQT9xDWBWImygaQ2NaoFMsUGPe97sCqB8FSyqOsrC8iyArWtxNnvanB8pezP5E7glsUjLN66RzPXyeMzycmYYvmyEMoP0U+VPbyRvE48CSD21NBHQNzObtzyt9SQDQywDiJdB0ndJenc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILOc0YmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83789C4CEE2;
-	Wed, 26 Mar 2025 07:04:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742972678;
-	bh=H0hAgv2dinYgXS1a0/TZMvvY6z6fWOXveHrCP7S3UJw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ILOc0YmLKOIvk4BRcl79Bv+qKI5Vigz7Bz5KWoEzATa5wBkEUuRNH2as7dWqDgmFT
-	 niJuiYc50bFRmh+wS46Uezu1dfbyZP4CIlAezK0eOE4Y8jgD59NiUrnqRP86xh3/LT
-	 AXGecM4vco6Wv6vxkMEXBXliscLH0X7LMnn1nrC5w3ImZOLt08Hl75P+wDLsKWnLTA
-	 RF69Bw4pTpmovMzm8UQ+iH84VdleF42IH0ixwkyfCkNbcXqYMQVMKQNRbhewk3lchJ
-	 1xqvtXZRwXAsw1xKA7VGpVBaQkM5vop+aDw0A2Q0juk1YQWbPHAl8TpmTrx+o8Zg1N
-	 8jbqCPwLebtwQ==
-Message-ID: <627a0335-4ceb-4107-a4d7-78308c9ee217@kernel.org>
-Date: Wed, 26 Mar 2025 08:04:27 +0100
+	s=arc-20240116; t=1742972716; c=relaxed/simple;
+	bh=2WLUTCYOQF1rf4u3l0DB20z6JBwEjZtBoLWLQO24+wo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KFwHN4f60DVJOFg6a76i2Y59f7ouxiODgSYX6Ejok2hCiZRbF8X4qaLaUIxd8/Cfdn3te4oyXftPI3KqeFZUlzhGGSufV7hPXPTssFOj2PmtpuXPpGvKknV8fYsDe9BwqZGTP2Z2QxosclCRkIdr4K/Qf/8Nk2v1Spex9ofKYoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmBQwGOT; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2264aefc3b5so15556845ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 00:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742972714; x=1743577514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5M1dmQ51OWKbmNdrtMEljTJB1EZHsX1ujWaE7KOrUU=;
+        b=nmBQwGOT58X+SJ9iALoI4L4ye9QJmn5WyrxgqVR5/ZEWO8crlC3OeiBGLmN1Ts0N0e
+         Wx/prBpAdLu1HbGqbmUK6/7r6pG8d7ak9St7BMjPdVCPKnPNLoASI8pENFeQr4q5YW46
+         1els66suDvTpHKT6x2nx5jCw8ah8xZuOs/GNX9Wc4WhvyAEJpSc8YgyCG/WV9rk2cEZI
+         ZJrhiyqwSsKk17SMLI/eFo+NDavEHO4vob51RLYFD8P0WWMRIB0yQUTqgLr4AyCYq9zq
+         ldwsmgSoRxoVOPaVATAa6RZl7rJjzHVpQiP/oL1Ie4CurKf5PEGZbNWArlep7tqkkaRH
+         bRGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742972714; x=1743577514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y5M1dmQ51OWKbmNdrtMEljTJB1EZHsX1ujWaE7KOrUU=;
+        b=vdbEzHMEHW0BUU5vsU2omMgg6hHzAD16qyHWN7cRB5ycxcqhkUhZOMSul5MLwYK8DM
+         jeXD5OuJxdne77/OLKpTKd5bnFADQuN+YNE0ZKr5GZUrqi/J95n4GSZp4ndpYGI0DB78
+         yLYLAhorgMWa/eORnssrKoZFJizSC1oSevbCO/UA6rlUC40tsNnsdGiRYvhIlwp45yn8
+         2TwTHP622LF7CL95fgarpBv7Ipe6BXWJYX0PbN8x2J2RsLEmzEkKs6wtek6GFRgmmn2A
+         RhMxSCeFG/L495LyVeE0frXWKTee9EYQj3UKYTC4aka4lB7MRkxV+qXfg1TorL9yNlNn
+         QLFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPlqkZaxm2JXDCQKmDWZ6Plp7g0F2x3M6VyZnF+LmxuYmmxELQCSYv/dd5I+QSbPK3dV43DC3yyXTZ0PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQBd0/6P23/VJF24v2QqYNRF1MgYj8jwf0iwDtHonBKi6a1aDc
+	f/n/nBSptidf82bfKaV3zvzNk0uxMBsJF7BB1THnEZw1YNwBMHIWiuckXA==
+X-Gm-Gg: ASbGncusFC07nSrj0spghMdeqqeu9+1L8M90+QpptKSYYWjfUs0Gw8eEtlrC7mS5mPc
+	b3BbRLE5dz3W9DGVkBWwqJONVxmvkI+2Iy5ljs8fCsXzER1gcXgbMpwYN4wUSEsvwkzBskwfTms
+	g6KYTVNT4tVvsDrgm7igGlnZNSaHLkst6OCENi750a3cXdYTzGUoxLMtNj1H0M9vL6n8Y7FGFMr
+	rM3rObxSdm24pcsr7v1ulilOr0Wvhtr4+t7OA2pgT++WdiFdcaxoaY9MY4dTy8T2UXK/Rby/lE3
+	vyOE6CTxArRYleull1+sIN0XG0WGTQVUnCaE9bFh3kUQea23/MkFGNrEhXgZWxkHc5aHO9q36qe
+	JwCFdUNrgiB+orOJWO/3fDQ==
+X-Google-Smtp-Source: AGHT+IGpzx6/Khs0/BUqQJij9lRr0pXhV1cXF3zLYPm7lfJcElBkqaLch5KGQ0T2Kt93pE8sp5FCrw==
+X-Received: by 2002:a05:6a20:2d26:b0:1ee:cab3:4287 with SMTP id adf61e73a8af0-1fe4300f32bmr11293700637.7.1742972714237;
+        Wed, 26 Mar 2025 00:05:14 -0700 (PDT)
+Received: from localhost.localdomain (210-61-187-171.hinet-ip.hinet.net. [210.61.187.171])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576c65sm15709455a91.10.2025.03.26.00.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 00:05:13 -0700 (PDT)
+From: Qianyi Liu <liuqianyi125@gmail.com>
+To: phasta@mailbox.org,
+	airlied@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	dakr@kernel.org,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	matthew.brost@intel.com,
+	mripard@kernel.org,
+	phasta@kernel.org,
+	tzimmermann@suse.de
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	liuqianyi125@gmail.com
+Subject: [PATCH] drm/sched: Add return value for drm_sched_entity_push_job
+Date: Wed, 26 Mar 2025 15:04:41 +0800
+Message-Id: <20250326070441.1515428-1-liuqianyi125@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/34] mfd: sec: move private internal API to internal
- header
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-7-d08943702707@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250323-s2mpg10-v1-7-d08943702707@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/03/2025 23:39, André Draszik wrote:
-> sec_irq_init() is an internal API for the core driver, and doesn't
-> belong into the public header.
-> 
-> Due to an upcoming split of the driver into a core and i2c driver,
-> we'll also be adding more internal APIs, which again shouldn't be in
-> the public header.
-> 
-> Move it into a new internal include.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
+Currently drm_sched_entity_push_job() has no return value to indicate
+operation status. This makes it difficult for callers to handle error
+conditions properly.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Add a int return value to drm_sched_entity_push_job() that returns 0 on
+success or a negative error code (e.g., -EINVAL) on failure. This allows
+callers to:
 
-Best regards,
-Krzysztof
+1. Detect when job submission fails
+2. Perform proper cleanup (e.g., release job and fence allocations)
+3. Avoid potential memory leaks in error paths
+
+Signed-off-by: Qianyi Liu <liuqianyi125@gmail.com>
+---
+ drivers/gpu/drm/scheduler/sched_entity.c | 8 ++++++--
+ include/drm/gpu_scheduler.h              | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
+index bd39db7bb240..f31964e76062 100644
+--- a/drivers/gpu/drm/scheduler/sched_entity.c
++++ b/drivers/gpu/drm/scheduler/sched_entity.c
+@@ -579,8 +579,10 @@ void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
+  * fence sequence number this function should be called with drm_sched_job_arm()
+  * under common lock for the struct drm_sched_entity that was set up for
+  * @sched_job in drm_sched_job_init().
++ *
++ * Returns 0 on success or a negative error code on failure.
+  */
+-void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
++int drm_sched_entity_push_job(struct drm_sched_job *sched_job)
+ {
+ 	struct drm_sched_entity *entity = sched_job->entity;
+ 	bool first;
+@@ -609,7 +611,7 @@ void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
+ 			spin_unlock(&entity->lock);
+ 
+ 			DRM_ERROR("Trying to push to a killed entity\n");
+-			return;
++			return -EINVAL;
+ 		}
+ 
+ 		rq = entity->rq;
+@@ -626,5 +628,7 @@ void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
+ 
+ 		drm_sched_wakeup(sched);
+ 	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL(drm_sched_entity_push_job);
+diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+index 50928a7ae98e..48a263571bab 100644
+--- a/include/drm/gpu_scheduler.h
++++ b/include/drm/gpu_scheduler.h
+@@ -589,7 +589,7 @@ int drm_sched_job_init(struct drm_sched_job *job,
+ 		       struct drm_sched_entity *entity,
+ 		       u32 credits, void *owner);
+ void drm_sched_job_arm(struct drm_sched_job *job);
+-void drm_sched_entity_push_job(struct drm_sched_job *sched_job);
++int drm_sched_entity_push_job(struct drm_sched_job *sched_job);
+ int drm_sched_job_add_dependency(struct drm_sched_job *job,
+ 				 struct dma_fence *fence);
+ int drm_sched_job_add_syncobj_dependency(struct drm_sched_job *job,
+-- 
+2.25.1
+
 
