@@ -1,255 +1,148 @@
-Return-Path: <linux-kernel+bounces-577333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B48A71BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:21:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5445BA71BB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA46171B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC4E3B8885
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB951F5612;
-	Wed, 26 Mar 2025 16:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A921F63E8;
+	Wed, 26 Mar 2025 16:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aaKZ8p1O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="aaQ1J2Xv"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F241F5839
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF81F4E2F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743006075; cv=none; b=Qmq6j/y6wG2iJ+Qe+npHgEiDqu2dg7/YCQJrCrF83v1D4vQCj0EtV4GxJrsrkMuxWCahyuuFY61rfbz+k2QXicYq7QNN2PR2rn0f8QDWCq/ESKDOgxdjDSar4xzsnQ3/pahs1hCnhUBTsO1glbCJ11qh0bfDtikDarJzPahFep0=
+	t=1743006233; cv=none; b=pCF83ug5CPDRZmZfJmpDmSkEDI4K58zG3VZVilzORLG7twcZY59fXAqkOrv6JKXUf0KsQDMvM7ZCw6VoZUrW9dnlvQ9g65pllQHF1jI/mYoplkF9d1o9+v4n/J2883x4wxsJq9OB6l8d7UsshIdZ7aSr+Yy9gPjT6U1AgWqmrns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743006075; c=relaxed/simple;
-	bh=xejv/BHNYIpVxEwvi1agd8alfJnmDYOHhuQeSbz9TdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ixu/ezuGjpgpROz2VF4FasDEXYUWWzexIuHmnevuWHdf7Iyqtj8g1xXSpzgKBZcgN3Ae1KX9bQa/Mdge2CJVwLjKtdGg2Y/Lotz/MnazRslToYVhuQr3ApD8goNRc/AoTXhBDjt8L7Gqqzpgfq5AmsGIAIXN7koUu/mpu/B614A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aaKZ8p1O; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743006072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7rhDUOfYTdvyvV/eFaMDlyCyK0NwjyAggH/NGIgz/Q8=;
-	b=aaKZ8p1O/38HRcje+X7dOQqacFQscNz/V6iLrEQWynnJayrRYsZyrDvzbTk0ba7Ohsp74W
-	FwLxhWn2N5OG8dH98TwglFKDBA7UtccFwATkd5jFG43+hQAUzB8es7QyzP3O4oYLxQg99d
-	Jt7QZ9T6aQe/URFqY+AGAi2vbFg1bOc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-ULwPe55JNySpiKppj3RZhQ-1; Wed, 26 Mar 2025 12:21:10 -0400
-X-MC-Unique: ULwPe55JNySpiKppj3RZhQ-1
-X-Mimecast-MFC-AGG-ID: ULwPe55JNySpiKppj3RZhQ_1743006069
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4394c489babso171795e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:21:10 -0700 (PDT)
+	s=arc-20240116; t=1743006233; c=relaxed/simple;
+	bh=O/r8gbGACCdKsQpd9YaJGrSlEj//D5Z8hvnF0c8Mbxo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YZJFUscgudV+bX3uXYjL3D18Wm55ThGT+xeGgV5A3MhjAx9h2MEZRHE0CXQwdVLmZJvdYsIE39YxTN6zcYEqIRD2JtCu8pVbekvk52ffSPxxYCQzfKia+MiC0OCFb7C7jI8mOxy0qimAkY1mJDz4HxqqFgdjfxbPx5SLEb67Lgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=aaQ1J2Xv; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso12760609a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1743006229; x=1743611029; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fKYanQIfYCncszgpyLAY2Jfcp3L50T71jyYK0/4Yps0=;
+        b=aaQ1J2Xv/kKn9m8lRKyeMZvTwyLiN0Fc61PmVzA9H4mufDlqqtGz5IwOxqRILCrI9+
+         amfw4dS3kGaMPBJwKnr20qI1rdaeULirbqG7KU01UMTGINRYhRf9RZ5Nzm8YXEkhHK06
+         I6UTvp5sxlmkPPcpz2JYfaH5at0NxcsxMiFyo6VuqymDPonhj8uKYh7aHQfpGXIdImjs
+         O27PwlMjAoZEj7cBBM5NHnWk6f9hgO8pFsqtBkdy0MuIq9iWRpZLhwCRkn3Ep8S2EzGU
+         +51K7FZRqoVdAjWYxZbQBCOkGtNMGk/1rgsF1tCSZ+Qo1L9FWEn8btuPYhq8oiqs4ZGa
+         YKmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743006069; x=1743610869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7rhDUOfYTdvyvV/eFaMDlyCyK0NwjyAggH/NGIgz/Q8=;
-        b=XUiUrZDQ08x46nf5KTvr3r3vK0sX+KeTdvNJzdzJLwMJawhH9GCur7cAkH3BhWddhT
-         +JcYFepLYsg30pRxmqgkjB7K+ep2kK3IgLG3+3CZ982QsxHbvEYLkoFBK6zlAaqDWVBv
-         M5ojTxqPbtNNeV5dU08tz2BSiuoQIKF6grMfWi3S7Y0K7undte0S4Q2vxBjez/eZNJE8
-         hwF2XR2Oi3FRCp2NFU2JjRLX3KcvSErAuhUwqcqoIDYjUF+13uqE5L5VmigW61taZwi/
-         2EwQ59fv0j7h7IYsSY+Fm5Nk4LGXk1sW2vykwfullxH85FHLLHByarScLt8llooUvDAa
-         /i/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtW3x4QpJMX+Qem0Yr+s02o8V5DEAMv/1OliSFRKm8SAE0wp0CSWHzWH+EiXDrxK9521GKkQYq8fwIDXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxToxOSULTmmlvyWefUKUedOtL2/WTyWqz97xaqrmvcSutDchsZ
-	V8/eoXK/vvLQMj0BBqulY9HCGH+cKwTGPwsofyoUARWfbIkHSRh7+DwmofAq7VjZDL25am0rWXW
-	71BWbDGqXW0GKcCAn3rSHXuJCE5IhWDSTynD77PU4fKUsyk8cO2eP7OQ3Nmk8ZA==
-X-Gm-Gg: ASbGncvR2Q3jpxAyNKdDnjrKb3Gcwr1kNcUSV4q/rhQ41sEwd7zR1vDAqPPtp2EaDh4
-	qnTktzJWso1018Q+L3YlcZPPmRCobPO124qpWYTIeLYqP6efC2NxnSYdh6OiUP/WECoaAhqALeh
-	tK2Se2ucFDMXADyWY/UQMkFSGWWYuC6Vqka4qylku7++19V/EtYSJ65eArvCQ2e5WntVK9r9WXe
-	M5i/7hyB6mm4k4RdAlm8DvPzd6QfAG3Ufvec1QXJIFef3abLzGirycGN3CNW9HgYYANGsjm6T4d
-	2Ob/81iBvb+WsowTLE++jwE49smqvta4sx8+KrgrVP4sRTsSITHbDvhhdKuujLK6
-X-Received: by 2002:a05:600c:5126:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43d84fb9f22mr885725e9.18.1743006069143;
-        Wed, 26 Mar 2025 09:21:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGx8/eCeBPFFtCPoCe1ZXCccXEQdNSFsGJQ/ayYaSjeZ5wE7SFAm2rdiOMf/B0yRu5sY+HFTg==
-X-Received: by 2002:a05:600c:5126:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43d84fb9f22mr885245e9.18.1743006068534;
-        Wed, 26 Mar 2025 09:21:08 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6445sm17341376f8f.71.2025.03.26.09.21.07
+        d=1e100.net; s=20230601; t=1743006229; x=1743611029;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fKYanQIfYCncszgpyLAY2Jfcp3L50T71jyYK0/4Yps0=;
+        b=ihJ0ECm8Uh8GTKCTFADiFvgUybGY2F3vbRb39RBjJRI0+E0oPW+GesID5bMVKNiBm5
+         SZvndqiATuxzJfxEl7frmNPdrG99YNhsXW/moqlf+96D1EEzNdXJfTAdVKF/r/uYxkxC
+         50axE3JujbpJwwRKA8lsvp7HZbyZeBZW4RGk8VDbrJ0C0wCkkdM8sgRiGRbwaX4GmU+9
+         AfvvRM6IUjK1aakz8nB3q0dW9QNkiUDu+BT9cyFSREvpqhNgR0EW2AzaQDkc863Ug/q6
+         cyUhOovELzfRfiOPDYLYkW5xvHwC2qoMh5PS2th8H7QqPb5Br1X3jSCuFXkH0beaUY33
+         WF3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZJGVG0bMVEj+QCyVslt9gEnXrzOezDSSmgfHoWdYT1KcvlOT6jbgMOZfGp8BEkXe6RVs50XU1qecCC7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7CYCNTxOXkqX8tT2QoRw8eIHUcCtbxyE69CgzFxoRJv1mwfBn
+	MYEQL4AFV6cxXADOYRWFJ7sPSxjD1KRQWuFj2seOdVmcc0fYl0sZoWo1Rf/EzB0=
+X-Gm-Gg: ASbGncvZrDSETvrP1rAYN0VKREaY63mT6ARNuibHk3kmEz0wSWNAstgvfqchJREIIvo
+	+saFQ+7c9p/9NHDiCaOYN8l6c6jLFoa6qQAqi7omgCC8zmLFpu0S7AhdpW9k/f/cf9nsotz74CL
+	bxEKEYx0/eyBxdxX8r9KqBKjbkEkgrBOvav/xWdRS2iLENrwdGChArhh0kAaCOj4LQlkUkYb1+G
+	PEKpYXqqx3hIV3GQ05042gBkLHa01LoaOE2+rQ+q9sG2eR5d/MRfzRJYKAcM5EMFI4QkMhWG8RG
+	Pm0qImRJfTewmMND3oe+OCmbJ7Ap4aaXZzGTksfBK0Vt01HhcKxpwgMdKg==
+X-Google-Smtp-Source: AGHT+IHTxPRGm5mNkyz/LXIEUO2w8nqKfRSkk2yHl8zPEU3IqZLbPjnGdEzUK5cPc1Bb6wHgkTIrlA==
+X-Received: by 2002:a17:906:7949:b0:abf:3cb2:1c04 with SMTP id a640c23a62f3a-ac6fae428c5mr5377966b.9.1743006229345;
+        Wed, 26 Mar 2025 09:23:49 -0700 (PDT)
+Received: from [127.0.1.1] ([91.90.172.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6f0f498ecsm76678866b.135.2025.03.26.09.23.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 09:21:07 -0700 (PDT)
-Date: Wed, 26 Mar 2025 17:21:03 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Luigi Leonardi <leonardi@redhat.com>
-Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Hyunwoo Kim <v4bel@theori.io>
-Subject: Re: [PATCH net-next v2] vsock/test: Add test for null ptr deref when
- transport changes
-Message-ID: <qp67w36nyzgyd45wi7oosxe6syx7dzcifc5s2eg47engirtrnf@ewnk6ngqw7h3>
-References: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
- <85a034b7-a22d-438f-802e-ac193099dbe7@rbox.co>
- <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
+        Wed, 26 Mar 2025 09:23:49 -0700 (PDT)
+From: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+Subject: [PATCH 0/5] Fix onboard USB hub instability on RK3399 Puma SoM
+Date: Wed, 26 Mar 2025 17:22:55 +0100
+Message-Id: <20250326-onboard_usb_dev-v1-0-a4b0a5d1b32c@thaumatec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN8p5GcC/x3MQQqAIBBA0avIrBPUsKKrRMSUU81GY6QIorsnL
+ d/i/wcyCVOGXj0gdHHmFAtspWDZMW6kORSDM86b2jU6xTmhhOnM8xTo0tgupqmxQ289lOoQWvn
+ +j8P4vh/3hyZEYQAAAA==
+To: Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Benjamin Bara <benjamin.bara@skidata.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Klaus Goger <klaus.goger@theobroma-systems.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, 
+ quentin.schulz@cherry.de, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
-On Wed, Mar 26, 2025 at 04:14:20PM +0100, Luigi Leonardi wrote:
->Hi Michal,
->
->On Wed, Mar 19, 2025 at 01:27:35AM +0100, Michal Luczaj wrote:
->>On 3/14/25 10:27, Luigi Leonardi wrote:
->>>Add a new test to ensure that when the transport changes a null pointer
->>>dereference does not occur[1].
->>>
->>>Note that this test does not fail, but it may hang on the client side if
->>>it triggers a kernel oops.
->>>
->>>This works by creating a socket, trying to connect to a server, and then
->>>executing a second connect operation on the same socket but to a
->>>different CID (0). This triggers a transport change. If the connect
->>>operation is interrupted by a signal, this could cause a null-ptr-deref.
->>
->>Just to be clear: that's the splat, right?
->>
->>Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] PREEMPT SMP KASAN NOPTI
->>KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
->>CPU: 2 UID: 0 PID: 463 Comm: kworker/2:3 Not tainted
->>Workqueue: vsock-loopback vsock_loopback_work
->>RIP: 0010:vsock_stream_has_data+0x44/0x70
->>Call Trace:
->>virtio_transport_do_close+0x68/0x1a0
->>virtio_transport_recv_pkt+0x1045/0x2ae4
->>vsock_loopback_work+0x27d/0x3f0
->>process_one_work+0x846/0x1420
->>worker_thread+0x5b3/0xf80
->>kthread+0x35a/0x700
->>ret_from_fork+0x2d/0x70
->>ret_from_fork_asm+0x1a/0x30
->>
->
->Yep! I'll add it to the commit message in v3.
->>>...
->>>+static void test_stream_transport_change_client(const struct test_opts *opts)
->>>+{
->>>+	__sighandler_t old_handler;
->>>+	pid_t pid = getpid();
->>>+	pthread_t thread_id;
->>>+	time_t tout;
->>>+
->>>+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
->>>+	if (old_handler == SIG_ERR) {
->>>+		perror("signal");
->>>+		exit(EXIT_FAILURE);
->>>+	}
->>>+
->>>+	if (pthread_create(&thread_id, NULL, test_stream_transport_change_thread, &pid)) {
->>>+		perror("pthread_create");
->>
->>Does pthread_create() set errno on failure?
->It does not, very good catch!
->>
->>>+		exit(EXIT_FAILURE);
->>>+	}
->>>+
->>>+	tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->>
->>Isn't 10 seconds a bit excessive? I see the oops pretty much immediately.
->Yeah it's probably excessive. I used because it's the default timeout 
->value.
->>
->>>+	do {
->>>+		struct sockaddr_vm sa = {
->>>+			.svm_family = AF_VSOCK,
->>>+			.svm_cid = opts->peer_cid,
->>>+			.svm_port = opts->peer_port,
->>>+		};
->>>+		int s;
->>>+
->>>+		s = socket(AF_VSOCK, SOCK_STREAM, 0);
->>>+		if (s < 0) {
->>>+			perror("socket");
->>>+			exit(EXIT_FAILURE);
->>>+		}
->>>+
->>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->>>+
->>>+		/* Set CID to 0 cause a transport change. */
->>>+		sa.svm_cid = 0;
->>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->>>+
->>>+		close(s);
->>>+	} while (current_nsec() < tout);
->>>+
->>>+	if (pthread_cancel(thread_id)) {
->>>+		perror("pthread_cancel");
->>
->>And errno here.
->>
->>>+		exit(EXIT_FAILURE);
->>>+	}
->>>+
->>>+	/* Wait for the thread to terminate */
->>>+	if (pthread_join(thread_id, NULL)) {
->>>+		perror("pthread_join");
->>
->>And here.
->>Aaand I've realized I've made exactly the same mistake elsewhere :)
->>
->>>...
->>>+static void test_stream_transport_change_server(const struct test_opts *opts)
->>>+{
->>>+	time_t tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->>>+
->>>+	do {
->>>+		int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->>>+
->>>+		close(s);
->>>+	} while (current_nsec() < tout);
->>>+}
->>
->>I'm not certain you need to re-create the listener or measure the time
->>here. What about something like
->>
->>	int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->>	control_expectln("DONE");
->>	close(s);
->>
->Just tried and it triggers the oops :)
+The RK3399 Puma SoM contains the internal Cypress CYUSB3304 USB
+hub, that shows instability due to improper reset pin configuration.
+Currently reset pin is modeled as a vcc5v0_host regulator, that
+might result in too short reset pulse duration.
+Starting with the v6.6, the Onboard USB hub driver (later renamed
+to Onboard USB dev) contains support for Cypress HX3 hub family.
+It can be now used to correctly model the RK3399 Puma SoM hardware.
 
-If this works (as I also initially thought), we should check the result 
-of the first connect() in the client code. It can succeed or fail with 
--EINTR, in other cases we should report an error because it is not 
-expected.
+The first commits in this series fix the onboard USB dev driver to
+support all HX3 hub variants, including the CYUSB3304 found in
+the RK3399 Puma SoM. 
+This allows to introduce fix for internal USB hub instability on
+RK3399 Puma, by replacing the vcc5v0_host regulator with
+cy3304_reset, used inside the hub node.
+Please be aware that the patch that fixes USB hub instability in
+arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi can me merged only
+after updating the Onboard USB dev driver, otherwise the hub
+will not work. 
 
-And we should check also the second connect(), it should always fail, 
-right?
+Two last commits in the series disable unrouted USB controllers
+and PHYs on RK3399 Puma SOM and Haikou carrier board, with no
+intended functional changes.
 
-For this I think you need another sync point to be sure the server is 
-listening before try to connect the first time:
+Signed-off-by: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+---
+Lukasz Czechowski (3):
+      usb: misc: onboard_usb_dev: fix support for Cypress HX3 hubs
+      dt-bindings: usb: cypress,hx3: Add support for all variants
+      arm64: dts: rockchip: fix internal USB hub instability on RK3399 Puma
 
-client:
-     // pthread_create, etc.
+Quentin Schulz (2):
+      arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma
+      arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma with Haikou
 
-     control_expectln("LISTENING");
+ .../devicetree/bindings/usb/cypress,hx3.yaml       |  6 +++
+ .../arm64/boot/dts/rockchip/rk3399-puma-haikou.dts |  8 ----
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      | 43 ++++++++++------------
+ drivers/usb/misc/onboard_usb_dev.c                 | 10 ++++-
+ drivers/usb/misc/onboard_usb_dev.h                 |  6 +++
+ 5 files changed, 39 insertions(+), 34 deletions(-)
+---
+base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+change-id: 20250326-onboard_usb_dev-a7c063a8a515
 
-     do {
-         ...
-     } while();
-
-     control_writeln("DONE");
-
-server:
-     int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
-     control_writeln("LISTENING");
-     control_expectln("DONE");
-     close(s);
-
-Thanks,
-Stefano
+Best regards,
+-- 
+Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
 
 
