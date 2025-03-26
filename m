@@ -1,53 +1,88 @@
-Return-Path: <linux-kernel+bounces-577239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76FCA71A2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:26:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2C2A71ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2987A4828
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:25:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E8C37A69CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBD91F2369;
-	Wed, 26 Mar 2025 15:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB02F1F4626;
+	Wed, 26 Mar 2025 15:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fMKrbAZ9"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fGOJw8BP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825DB14A4C6;
-	Wed, 26 Mar 2025 15:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798AB1F4622
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743002781; cv=none; b=g686PwssVT+RJuTVUevI+LpmA+6BdPL82pTq01fZg11TYhJtSE1th3ocgk0MYseIixa+On+oy0ZIxZLkjJE7cb+G9n0q5bSvguFrNCeWk1RP0y8SgviNGhoLNy8T2opQ/Q+Ub1fd3OiPdbpkMYxCK7QTpl8T/sFbqZsjdzVzuNY=
+	t=1743003437; cv=none; b=KB1AvoGHjbRlNIl5O694Rv4ZUR6Y4Bc168jKYJmIgs3hPrsvFmy5cq17Mz4DwxFUghDsbMRePrahdoKFOsYVXQN+VkM5YOjo9ibOVD7nnVPU7YVmQXVZSI74jwaO9p4r+hYr7eEqQddk1KhslWGO+SABhsuCl0eHIM4hCQSlEQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743002781; c=relaxed/simple;
-	bh=KcLx+LUsuQ+1FVIso4P5u4UhRImurn8WgvxTB/HPrz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vyh0ZJ5lTl9Hx+3iqDQMGl/N/vbclolNcf0A85j0pOCWT7b4ET54u2U8OLIC+EctIkX3s+rsdVscNZOyz7WvCUb9v1BM1rvDpRBBCyQANkzW++7TsHNF9aYm1uOZFLfDpcHAzyWljBuqzWwJpDgnmVbBcSS+pUDiZZcTljtdMV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fMKrbAZ9; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743002776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EZLo1jQQXln+Xf5Ba7tBgf55edk8Etnb6mTfw0jd+O0=;
-	b=fMKrbAZ95CgFQx1idRLbepXmVc+5F+vVd/5nGzLidOuej04JwpEj0X7PHCYyIkPSakfpvt
-	f1FAlskEJ+PoDpuNcerDcjYSN52EF2JAGwbuiHyVCiwAxmxLkVKMU2n8XUcy9xrd9jxj6b
-	SEIB62cQDziFrnhiJRWaGCgve8x50Bw=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] lib/sort.c: Add _nonatomic() variants with cond_resched()
-Date: Wed, 26 Mar 2025 11:26:06 -0400
-Message-ID: <20250326152606.2594920-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1743003437; c=relaxed/simple;
+	bh=etz60a6MvWygM3PUJqxrf9Ighj+E4OBlFZOKYs0hJ/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cv1CbRNJVlpQH38X0yamYUc+Glc/lObDbB/xc/Og31CjnHuAQL4Tvp5koYlGYF3r2KLgf+4LzFCya9zpntMliaxUdOVtl0GeyTrF4wKeuQ0pC+EwsQ8+rjeBQAFzKw48R/VCE9VtoWZcwOB3zwmGB/RD/A/q/pJrZ+hit9Y7XU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fGOJw8BP; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743003436; x=1774539436;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=etz60a6MvWygM3PUJqxrf9Ighj+E4OBlFZOKYs0hJ/k=;
+  b=fGOJw8BP2iavmptqqMv6qETpPv6HVkb9r+ZfH6VLkI68543nYKkTbRL3
+   IEPDP4Zds3dwfG2A2BRgwQYTdMTuEgEZLr/C4Dtes2wWdXB6P/qPJwjOl
+   Y8bvgXLpmMKGL0DQVG0HG5BYQRlTBizLQfsUP/fk6K5dzUfbLWuWJxXKm
+   +Nv/L4XGn1sT1wjbioB17tPptvD3BnefUTEYD2cnhNu2b5kJnFWEuU28d
+   bTukLcMIT2A3L2m99f3+j6Q40gTYmVzm8xLTMFglf2BFOzF/1HqeJQMQm
+   2fdOgF5pf6xJV2vuM72II2z0IcRguZlgXb5zg1fDiT55NIduFFoNjMY5P
+   g==;
+X-CSE-ConnectionGUID: gREOqHeiQNKZYrUXZaucLQ==
+X-CSE-MsgGUID: B4MdLGLhTfCHEo2N58sCmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="55665419"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="55665419"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:37:15 -0700
+X-CSE-ConnectionGUID: r2ZP/49wQz6sR25R0u4h7w==
+X-CSE-MsgGUID: Rvn45KkhT3iChDS164wt0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="129923374"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 08:37:09 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Oren Weil <oren.jer.weil@intel.com>,
+	linux-mtd@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH v7 00/12] mtd: add driver for Intel discrete graphics
+Date: Wed, 26 Mar 2025 17:26:11 +0200
+Message-ID: <20250326152623.3897204-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,136 +90,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Andrew - if you're ok with this patch I'd like to get it in soon as a
-bugfix, I've been getting quite a few reports on this one.
+Add driver for access to Intel discrete graphics card
+internal NVM device.
+Expose device on auxiliary bus by i915 and Xe drivers and
+provide mtd driver to register this device with MTD framework.
 
-I don't much care for the naming though, thoughts there?
+This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+and "spi: add driver for Intel discrete graphics"
+series with connection to the Xe driver and splitting
+the spi driver part to separate module in mtd subsystem.
 
--- >8 --
+This series intended to be pushed through drm-xe-next.
 
-bcachefs calls sort() during recovery to sort all keys it found in the
-journal, and this may be very large - gigabytes on large machines.
+V2: Replace dev_* prints with drm_* prints in drm (xe and i915) patches.
+    Enable NVM device on Battlemage HW (xe driver patch)
+    Fix overwrite register address (xe driver patch)
+    Add Rodrigo's r-b
 
-This has been causing "task blocked" warnings, so needs a
-cond_resched().
+V3: Use devm_pm_runtime_enable to simplify flow.
+    Drop print in i915 unload that was accidentally set as error.
+    Drop HAS_GSC_NVM macro in line with latest Xe changes.
+    Add more Rodrigo's r-b and Miquel's ack.
 
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- include/linux/sort.h | 11 +++++++++++
- lib/sort.c           | 46 +++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 52 insertions(+), 5 deletions(-)
+V4: Add patch that always creates mtd master device
+    and adjust mtd-intel-dg power management to use this device.
 
-diff --git a/include/linux/sort.h b/include/linux/sort.h
-index e163287ac6c1..8e5603b10941 100644
---- a/include/linux/sort.h
-+++ b/include/linux/sort.h
-@@ -13,4 +13,15 @@ void sort(void *base, size_t num, size_t size,
- 	  cmp_func_t cmp_func,
- 	  swap_func_t swap_func);
- 
-+/* Versions that periodically call cond_resched(): */
-+
-+void sort_r_nonatomic(void *base, size_t num, size_t size,
-+		      cmp_r_func_t cmp_func,
-+		      swap_r_func_t swap_func,
-+		      const void *priv);
-+
-+void sort_nonatomic(void *base, size_t num, size_t size,
-+		    cmp_func_t cmp_func,
-+		    swap_func_t swap_func);
-+
- #endif
-diff --git a/lib/sort.c b/lib/sort.c
-index 8e73dc55476b..60b51dac00ec 100644
---- a/lib/sort.c
-+++ b/lib/sort.c
-@@ -186,6 +186,8 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
- 	return i / 2;
- }
- 
-+#include <linux/sched.h>
-+
- /**
-  * sort_r - sort an array of elements
-  * @base: pointer to data to sort
-@@ -212,10 +214,11 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
-  * O(n*n) worst-case behavior and extra memory requirements that make
-  * it less suitable for kernel use.
-  */
--void sort_r(void *base, size_t num, size_t size,
--	    cmp_r_func_t cmp_func,
--	    swap_r_func_t swap_func,
--	    const void *priv)
-+static void __sort_r(void *base, size_t num, size_t size,
-+		     cmp_r_func_t cmp_func,
-+		     swap_r_func_t swap_func,
-+		     const void *priv,
-+		     bool may_schedule)
- {
- 	/* pre-scale counters for performance */
- 	size_t n = num * size, a = (num/2) * size;
-@@ -286,6 +289,9 @@ void sort_r(void *base, size_t num, size_t size,
- 			b = parent(b, lsbit, size);
- 			do_swap(base + b, base + c, size, swap_func, priv);
- 		}
-+
-+		if (may_schedule)
-+			cond_resched();
- 	}
- 
- 	n -= size;
-@@ -293,8 +299,25 @@ void sort_r(void *base, size_t num, size_t size,
- 	if (n == size * 2 && do_cmp(base, base + size, cmp_func, priv) > 0)
- 		do_swap(base, base + size, size, swap_func, priv);
- }
-+
-+void sort_r(void *base, size_t num, size_t size,
-+	    cmp_r_func_t cmp_func,
-+	    swap_r_func_t swap_func,
-+	    const void *priv)
-+{
-+	__sort_r(base, num, size, cmp_func, swap_func, priv, false);
-+}
- EXPORT_SYMBOL(sort_r);
- 
-+void sort_r_nonatomic(void *base, size_t num, size_t size,
-+		      cmp_r_func_t cmp_func,
-+		      swap_r_func_t swap_func,
-+		      const void *priv)
-+{
-+	__sort_r(base, num, size, cmp_func, swap_func, priv, true);
-+}
-+EXPORT_SYMBOL(sort_r_nonatomic);
-+
- void sort(void *base, size_t num, size_t size,
- 	  cmp_func_t cmp_func,
- 	  swap_func_t swap_func)
-@@ -304,6 +327,19 @@ void sort(void *base, size_t num, size_t size,
- 		.swap = swap_func,
- 	};
- 
--	return sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w);
-+	return __sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w, false);
- }
- EXPORT_SYMBOL(sort);
-+
-+void sort_nonatomic(void *base, size_t num, size_t size,
-+		    cmp_func_t cmp_func,
-+		    swap_func_t swap_func)
-+{
-+	struct wrapper w = {
-+		.cmp  = cmp_func,
-+		.swap = swap_func,
-+	};
-+
-+	return __sort_r(base, num, size, _CMP_WRAPPER, SWAP_WRAPPER, &w, true);
-+}
-+EXPORT_SYMBOL(sort_nonatomic);
+V5: Fix master device creation to accomodate for devices without
+    partitions (create partitoned master in this case)
+    Rebase over latest drm-xe-next
+    Add ack's
+V6: Fix master device release (use rigth idr in release)
+    Rebase over latest drm-xe-next
+    Grammar and style fixes
+
+V7: Add patch with non-posted erase support (fix hang on BMG)
+    Rebase over latest drm-xe-next
+
+Abliyev, Reuven (1):
+  drm/xe/nvm: add support for non-posted erase
+
+Alexander Usyskin (11):
+  mtd: core: always create master device
+  mtd: add driver for intel graphics non-volatile memory device
+  mtd: intel-dg: implement region enumeration
+  mtd: intel-dg: implement access functions
+  mtd: intel-dg: register with mtd
+  mtd: intel-dg: align 64bit read and write
+  mtd: intel-dg: wake card on operations
+  drm/i915/nvm: add nvm device for discrete graphics
+  drm/i915/nvm: add support for access mode
+  drm/xe/nvm: add on-die non-volatile memory device
+  drm/xe/nvm: add support for access mode
+
+ MAINTAINERS                           |   7 +
+ drivers/gpu/drm/i915/Makefile         |   4 +
+ drivers/gpu/drm/i915/i915_driver.c    |   6 +
+ drivers/gpu/drm/i915/i915_drv.h       |   3 +
+ drivers/gpu/drm/i915/i915_reg.h       |   1 +
+ drivers/gpu/drm/i915/intel_nvm.c      | 115 ++++
+ drivers/gpu/drm/i915/intel_nvm.h      |  15 +
+ drivers/gpu/drm/xe/Makefile           |   1 +
+ drivers/gpu/drm/xe/regs/xe_gsc_regs.h |   4 +
+ drivers/gpu/drm/xe/xe_device.c        |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h  |   6 +
+ drivers/gpu/drm/xe/xe_heci_gsc.c      |   5 +-
+ drivers/gpu/drm/xe/xe_nvm.c           | 161 +++++
+ drivers/gpu/drm/xe/xe_nvm.h           |  15 +
+ drivers/gpu/drm/xe/xe_pci.c           |   6 +
+ drivers/mtd/devices/Kconfig           |  11 +
+ drivers/mtd/devices/Makefile          |   1 +
+ drivers/mtd/devices/mtd_intel_dg.c    | 884 ++++++++++++++++++++++++++
+ drivers/mtd/mtdcore.c                 | 141 ++--
+ drivers/mtd/mtdcore.h                 |   2 +-
+ drivers/mtd/mtdpart.c                 |  17 +-
+ include/linux/intel_dg_nvm_aux.h      |  29 +
+ 22 files changed, 1385 insertions(+), 54 deletions(-)
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+ create mode 100644 drivers/mtd/devices/mtd_intel_dg.c
+ create mode 100644 include/linux/intel_dg_nvm_aux.h
+
 -- 
-2.49.0
+2.43.0
 
 
