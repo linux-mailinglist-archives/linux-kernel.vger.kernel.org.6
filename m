@@ -1,421 +1,166 @@
-Return-Path: <linux-kernel+bounces-577498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9F1A71DED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:02:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940BCA71DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DBC188F847
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0472169989
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2C824C079;
-	Wed, 26 Mar 2025 18:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437BF24E015;
+	Wed, 26 Mar 2025 18:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="l2dmXFCR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vhciMl9T"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Wi1rPvAf"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC1F23E34C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 18:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F8524DFEC;
+	Wed, 26 Mar 2025 18:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743012141; cv=none; b=QP6VqtKXahUMn7G7DvUiYT2xOo9PP6PeDUSvJ0fqonwYMTaeOp5uMWy/rHCrn+AGs+Rg7b2zuPQaw5dtXUetT2VenAKoeMYhlbaJ+4h76Aa+cUHFQq2kDB2ZQmNc+8hUS5xPJyY4EQQL0uKGfoYRpElbn3S/0zE+QTilQtYofoI=
+	t=1743012150; cv=none; b=NvOt7x14146JlVs9006IgjLedDLVJs0GqDulM6nlTnt3dLCGWqaMCgB501yjRBLuiKFxM6NX2pL4y+eSmG9/IDMV7GLF8Z8jh9yrxjZ2+P6oOgn/h4/wEP5lBQUGVa7+f39MsM6T+9W8ZxG7VzKg6fqHZjS2SiCerlA7rrdyj4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743012141; c=relaxed/simple;
-	bh=biad3HzuhaFgGu9xfqSfJN5c/l/g3QaTrs2tMs0K1iY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Eatsf1D2DB+CKOM9Cu9sdqf7AQzVrT7z6LYD6Dj+TM9r+tg8MfGxP/AuajaClJFVCJhgIFQ8gX62MU31RYH5BQiRpZvltVUKlqBQ4UwNCzhsksTJvTwjRU7stQpmye8T3UiOM+8x/3q/tbvOjuuSWmlFSBsDZaw0ewf0ryrMbro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=l2dmXFCR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vhciMl9T; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 564C6114009D;
-	Wed, 26 Mar 2025 14:02:17 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Wed, 26 Mar 2025 14:02:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1743012137;
-	 x=1743098537; bh=folkTxEknBV+MSNwPp+JwEhz/PCaLSgjK8cYy1qLXnQ=; b=
-	l2dmXFCRSCDD4bFaUdSI8p0ec49KydsSXTThF74zItpryxzyVQ39Vb6F8o+juSsw
-	JyOTbySNceP+6MWzOu+EYtXHsvRPjGo77xtYHEDb6TnOP8vlWtGncKYbkD+ISLke
-	LruntGcc36lZ4mAl1TmYq5N/gmdqENGyrQNtnXhce8G6SlPFSVcsw6hcubL6CqVq
-	u7adRLOHbv2lAlmlKY5HthOssMoAoIYHLbnf9SMDcCEWddCt4J7uRONvXiTldWwX
-	U15EfkhLQiGTb9/51Wn1r+htwe13zp3cZQLDPelKQ2sTxCrvbLUT1hhCszQrRpza
-	Ht7lg+Eyl7Em6KM//MhsWQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743012137; x=
-	1743098537; bh=folkTxEknBV+MSNwPp+JwEhz/PCaLSgjK8cYy1qLXnQ=; b=v
-	hciMl9TAaq8UEVLS8DIvCuYKeCjRufB7R+GItc+cD1H58NkKTXxuh4keI32d6QcH
-	ArjkMqulP8o8y0EJxkVG7uzPZj/2Gkhw0i0ynsaGJJiQ8pWuOTms6x4bmGyaPZCn
-	pOUqb168S/p5AUYGdFuhdtPZ/sQP7UEupUAEWFNkWF/nKeIHPaooujp+Hj0iHYHu
-	SmN7m+hEXWiEPmvW1242BDSP93krBYTroknt8Sg7XNd71sxHH35rOW3MBU5MCBa2
-	jrhXnzHmAm3VQXjDJBiOhxp6eV47ax6A6EhzBPmtCQx5gHw1kwJqXbxIqMCwdvkU
-	pkVd2sUl4UFKRD3FaJQFQ==
-X-ME-Sender: <xms:KEHkZ5dduo_CbMB3J5zxAwBuxEgjeDBaonBv0hWZjoaBD7QNfFyLVQ>
-    <xme:KEHkZ3OfmSOaPatpRog1quWKb6-WrwdvjafMs0hWu1O5P0m2B4V_WDwLBgeMg3WHr
-    PhggVCUTmVDjmEFpj0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeivddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfeltdejgfeitdeuffefieelgfffvdejiefh
-    uddvffelffduuddvffevueetueejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpgh
-    hithhhuhgsrdgtohhmpdhpvghnghhuthhrohhnihigrdguvgenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpd
-    hnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhr
-    vhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-    pdhrtghpthhtohepshhotgeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:KUHkZyiODt2s6TplGG7pyMEYxrx2v9aXXarmXJLnvqYCuWWlgWf5KQ>
-    <xmx:KUHkZy_jrTTMQiKF5UsW0imO1rUsMoeYf4PiJC04tgA3fPoRYaTzOA>
-    <xmx:KUHkZ1u5vRVaXoZgWHThumQ6TGHRMC80zWNyuBzfdKz8lddNvJ361w>
-    <xmx:KUHkZxFKGgH5q0nfHkMQ71Yn0IuHTdKiEUnZmYsbjwEDQO1BonDZ1g>
-    <xmx:KUHkZ9KAgaHKZPZLg-yH3eoiXhP5FFI2ZnaprneGejNfMRBY5bY8IJjN>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E49B72220073; Wed, 26 Mar 2025 14:02:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743012150; c=relaxed/simple;
+	bh=RhuNbGaP4hTzjjx1FURD/5AKxX7bFuR492ohfbODc2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvU+D6jxyTBP5YunFufeFwJ/0RZH0EZpOU+P9YZV222DfIlRkB9g1EsrjrWiuIzKVEPb+I+KNE80QYPn3K34G8hDfyNdXU8vH0uvK+ox0GtUvUT475Q3NkFxy5CRmspbbrikmBttIgcOTeZtywLAXRl4n81k7u6lt3v7ulI7uZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Wi1rPvAf; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=o5J0QNqSSAC9ykc4TNP4ChNUEJr5RFdpsbJKSino8Xg=; b=Wi1rPvAfBMebX2u+gER9qnurCD
+	vqil77x3IHbiFGyalK1aoCoIIgDWbinoLJBN837vbPwNGhoFuSgw+U0x3ROxMFtX3mmRnscWFWtGY
+	uckbbOaYZmSoG6RI4Ek65nncEN1H1u2rbqEBWE8miJmIf15tNQ2moXsfXl/E0WVWwtpWLgdZphL+Y
+	3B3fM53f0thtbgv68P4YkFw6HsB+JPdElspevaY6VjGpMWrj6ZIhHHNhnTqDgJmtRcYRKXuN1plzy
+	h8Hgqxza4jsRihNl+V3yuSl+RuiVX4z+4SsXsaDK6bpWzWJAZ2vsscpFl6EKOrBep4eXSV+Wl/ouK
+	OZ7lT5iw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45352)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1txV4v-0006QK-00;
+	Wed, 26 Mar 2025 18:02:13 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1txV4r-0004c0-0o;
+	Wed, 26 Mar 2025 18:02:09 +0000
+Date: Wed, 26 Mar 2025 18:02:09 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
+ AS21xxx PHYs
+Message-ID: <Z-RBIZSdySXhQzra@shell.armlinux.org.uk>
+References: <20250326002404.25530-1-ansuelsmth@gmail.com>
+ <20250326002404.25530-3-ansuelsmth@gmail.com>
+ <Z-QG4w425UuYXZOX@shell.armlinux.org.uk>
+ <67e412a5.5d0a0220.28146a.e91b@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T2e1b8447a49b63d2
-Date: Wed, 26 Mar 2025 19:00:31 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- soc@lists.linux.dev
-Message-Id: <ab627300-24c0-46fb-a236-f94751afffc1@app.fastmail.com>
-In-Reply-To: <1ef00af5-0196-46c4-95f3-7c6b90f3e293@app.fastmail.com>
-References: <1ef00af5-0196-46c4-95f3-7c6b90f3e293@app.fastmail.com>
-Subject: [GIT PULL 2/4] soc: driver updates for 6.15, part 1
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67e412a5.5d0a0220.28146a.e91b@mx.google.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
+On Wed, Mar 26, 2025 at 03:43:47PM +0100, Christian Marangi wrote:
+> On Wed, Mar 26, 2025 at 01:53:39PM +0000, Russell King (Oracle) wrote:
+> > This probe function allocates devres resources that wil lbe freed when
+> > it returns through the unbinding in patch 1. This is a recipe for
+> > confusion - struct as21xxx_priv must never be used from any of the
+> > "real" driver.
+> > 
+> > I would suggest:
+> > 
+> > 1. document that devres resources will not be preserved when
+> >    phydev->needs_reregister is set true.
+> > 
+> > 2. rename struct as21xxx_priv to struct as21xxx_fw_load_priv to make
+> >    it clear that it's for firmware loading.
+> > 
+> > 3. use a prefix that uniquely identifies those functions that can only
+> >    be called with this structure populated.
+> > 
+> > 4. set phydev->priv to NULL at the end of this probe function to ensure
+> >    no one dereferences the free'd pointer in a "real" driver, which
+> >    could lead to use-after-free errors.
+> > 
+> > In summary, I really don't like this approach - it feels too much of a
+> > hack, _and_ introduces the potential for drivers that makes use of this
+> > to get stuff really very wrong. In my opinion that's not a model that
+> > we should add to the kernel.
+> > 
+> > I'll say again - why can't the PHY firmware be loaded by board firmware.
+> > You've been silent on my feedback on this point. Given that you're
+> > ignoring me... for this patch series...
+> > 
+> > Hard NAK.
+> > 
+> > until you start responding to my review comments.
+> >
+> 
+> No I wasn't ignoring you, the description in v1 for this was very
+> generic and confusing so the idea was to post a real implementation so
+> we could discuss on the code in practice... My comments were done before
+> checking how phy_registration worked so they were only ideas (the
+> implementation changed a lot from what was my idea) Sorry if I gave this
+> impression while I was answering only to Andrew...
+> 
+> The problem of PHY firmware loaded by board firmware is that we
+> introduce lots of assumption on the table. Also doesn't that goes
+> against the idea that the kernel should not assume stuff set by the
+> bootloader (if they can be reset and are not part of the core system?)
+> 
+> From what I'm seeing on devices that have this, SPI is never mounted and
+> bootloader doesn't provide support for this and the thing is loaded only
+> by the OS in a crap way.
+> 
+> Also the PHY doesn't keep the FW with an hardware reset and permit the
+> kernel to load an updated (probably fixed) firmware is only beneficial.
+> (there is plan to upstream firmware to linux-firmware)
+> 
+> I agree that the approach of declaring a "generic" PHY entry and "abuse"
+> the probe function is an HACK, but I also feel using match_phy_device
+> doesn't solve the problem.
+> 
+> Correct me if I'm wrong but match_phy_device will only give true or
+> false, it won't solve the problem of the PHY changing after the FW is
+> loaded.
+> 
+> This current approach permit to provide to the user the exact new OPs of
+> the PHY detected after FW is loaded.
+> 
+> Is it really that bad to introduce the idea that a PHY family require
+> some initial tuneup before it can correctly identified?
 
-  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+It's fragile, really fragile.
 
-are available in the Git repository at:
+phy_device_register() can complete before the module loads, and thus
+setting the flag has no effect.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-drivers-6.15-1
+Try building the PHY driver as a module with the code that registers
+the PHY built-in...
 
-for you to fetch changes up to 2124055fb5c6554cab0fdd7a09235526cacaac23:
-
-  Merge tag 'zynqmp-soc-for-6.15' of https://github.com/Xilinx/linux-xlnx into soc/drivers (2025-03-20 17:53:38 +0100)
-
-----------------------------------------------------------------
-soc: driver updates for 6.15, part 1
-
-These are the updates for SoC specific drivers and related subsystems:
-
- - Firmware driver updates for SCMI, FF-A and SMCCC firmware interfaces,
-   adding support for additional firmware features including SoC
-   identification and FF-A SRI callbacks as well as various bugfixes
-
- - Memory controller updates for Nvidia and Mediatek
-
- - Reset controller support for microchip sam9x7 and imx8qxp/imx8qm
-
- - New hardware support for multiple Mediatek, Renesas and Samsung Exynos chips
-
- - Minor updates on Zynq, Qualcomm, Amlogic, TI, Samsung, Nvidia and Apple chips
-
-There will be a follow up with a few more driver updates that are still
-causing build regressions at the moment.
-
-----------------------------------------------------------------
-Ahmad Fatoum (1):
-      MAINTAINERS: match mxc in file names by IMX / MXC entry
-
-Alexey Minnekhanov (1):
-      soc: qcom: pd-mapper: Add support for SDM630/636
-
-Andrew Davis (1):
-      soc: ti: k3-socinfo: Do not use syscon helper to build regmap
-
-AngeloGioacchino Del Regno (8):
-      soc: mediatek: mtk-mutex: Add DPI1 SOF/EOF to MT8188 mutex tables
-      soc: mediatek: mtk-mmsys: Fix MT8188 VDO1 DPI1 output selection
-      soc: mediatek: mtk-mmsys: Add compile time check for mmsys routes
-      soc: mediatek: mt8188-mmsys: Migrate to MMSYS_ROUTE() macro
-      soc: mediatek: mt8167-mmsys: Fix missing regval in all entries
-      soc: mediatek: mt8365-mmsys: Fix routing table masks and values
-      soc: mediatek: mmsys: Migrate all tables to MMSYS_ROUTE() macro
-      soc: mediatek: mt8188-mmsys: Add support for DSC on VDO0
-
-Arnd Bergmann (21):
-      Merge tag 'renesas-drivers-for-v6.15-tag1' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/drivers
-      Merge tag 'asahi-soc-rtkit-6.15' of https://github.com/AsahiLinux/linux into soc/drivers
-      Merge tag 'smccc-update-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into soc/drivers
-      Merge tag 'scmi-updates-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into soc/drivers
-      Merge tag 'ffa-updates-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into soc/drivers
-      firmware: arm_scmi: use ioread64() instead of ioread64_hi_lo()
-      Merge tag 'mtk-soc-for-v6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux into soc/drivers
-      soc: samsung: include linux/array_size.h where needed
-      reset: imx: fix incorrect module device table
-      Merge tag 'tegra-for-6.15-soc' of https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into soc/drivers
-      Merge tag 'tegra-for-6.15-firmware' of https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into soc/drivers
-      Merge tag 'samsung-drivers-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into soc/drivers
-      Merge tag 'samsung-soc-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into soc/drivers
-      Merge tag 'imx-drivers-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into soc/drivers
-      Merge tag 'ti-driver-soc-for-v6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into soc/drivers
-      Merge tag 'reset-for-v6.15' of git://git.pengutronix.de/pza/linux into soc/drivers
-      Merge tag 'memory-controller-drv-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl into soc/drivers
-      Merge tag 'amlogic-drivers-for-v6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux into soc/drivers
-      Merge tag 'qcom-drivers-for-6.15' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/drivers
-      Merge tag 'qcom-drivers-for-6.15-2' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/drivers
-      Merge tag 'zynqmp-soc-for-6.15' of https://github.com/Xilinx/linux-xlnx into soc/drivers
-
-Asahi Lina (2):
-      soc: apple: rtkit: Check & log more failures
-      soc: apple: rtkit: Pass the crashlog to the crashed() callback
-
-Chenyuan Yang (1):
-      soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
-
-Christophe JAILLET (2):
-      bus: qcom-ssc-block-bus: Remove some duplicated iounmap() calls
-      bus: qcom-ssc-block-bus: Fix the error handling path of qcom_ssc_block_bus_probe()
-
-Claudiu Beznea (2):
-      soc: renesas: Add SYSC driver for Renesas RZ family
-      soc: renesas: rz-sysc: Move RZ/G3S SoC detection to the SYSC driver
-
-Colin Ian King (1):
-      firmware: Exynos ACPM: Fix spelling mistake "Faile" -> "Failed"
-
-Fei Shao (1):
-      soc: mediatek: mtk-socinfo: Restructure SoC attribute information
-
-Frank Li (2):
-      dt-bindings: firmware: imx: add property reset-controller
-      reset: imx: Add SCU reset driver for i.MX8QXP and i.MX8QM
-
-Guillaume La Roque (1):
-      firmware: config: ti-sci: Default set to ARCH_K3 for the ti sci driver
-
-Harshit Mogalapalli (1):
-      soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-
-Hector Martin (1):
-      soc: apple: rtkit: Implement OSLog buffers properly
-
-Ivaylo Ivanov (7):
-      dt-bindings: soc: samsung: usi: add USIv1 and samsung,exynos8895-usi
-      soc: samsung: usi: add a routine for unconfiguring the ip
-      soc: samsung: usi: implement support for USIv1 and exynos8895
-      dt-bindings: soc: samsung: exynos-sysreg: add sysreg compatibles for exynos2200
-      dt-bindings: soc: samsung: exynos-pmu: add exynos2200 compatible
-      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos2200 compatible
-      soc: samsung: exynos-chipid: add exynos2200 SoC support
-
-Janne Grunau (3):
-      soc: apple: rtkit: Add and use PWR_STATE_INIT instead of _ON
-      soc: apple: rtkit: Use high prio work queue
-      soc: apple: rtkit: Cut syslog messages after the first '\0'
-
-Jishnu Prakash (1):
-      dt-bindings: soc: qcom: qcom,pmic-glink: Document SM8750 compatible
-
-John Madieu (3):
-      soc: renesas: rz-sysc: Add support for RZ/G3E family
-      soc: renesas: rz-sysc: Move RZ/V2H SoC detection to the SYS driver
-      soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific extra features
-
-Kaustabh Chakraborty (3):
-      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
-      dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
-      soc: samsung: exynos-chipid: add support for exynos7870
-
-Krzysztof Kozlowski (7):
-      memory: tegra20-emc: Drop redundant platform_get_irq() error printk
-      soc: samsung: Use syscon_regmap_lookup_by_phandle_args
-      soc: qcom: Use str_enable_disable-like helpers
-      Merge branch 'for-v6.15/samsung-soc-dt-bindings' into next/drivers
-      soc: qcom: Do not expose internal servreg_location_entry_ei array
-      soc/tegra: pmc: Use str_enable_disable-like helpers
-      dt-bindings: soc: samsung: exynos-usi: Drop unnecessary status from example
-
-Louis-Alexis Eyraud (4):
-      soc: mediatek: mtk-socinfo: Add entry for MT8370AV/AZA Genio 510
-      soc: mediatek: mtk-socinfo: Add entry for MT8390AV/AZA Genio 700
-      soc: mediatek: mtk-socinfo: Avoid using machine attribute in SoC detection log
-      soc: mediatek: mtk-socinfo: Add extra entry for MT8395AV/ZA Genio 1200
-
-Paul Benoit (1):
-      firmware: smccc: Support optional Arm SMCCC SOC_ID name
-
-Rayyan Ansari (1):
-      dt-bindings: power: qcom,kpss-acc-v2: add qcom,msm8916-acc compatible
-
-Siva Durga Prasad Paladugu (1):
-      firmware: xilinx: Dont send linux address to get fpga config get status
-
-Sudeep Holla (24):
-      firmware: arm_scmi: Relax duplicate name constraint across protocol ids
-      firmware: arm_scmi: Add name and protocol id attributes
-      firmware: arm_scmi: Emit modalias for SCMI devices
-      firmware: arm_ffa: Replace SCMI by FF-A in the macro
-      firmware: arm_ffa: Replace UUID buffer to standard UUID format
-      firmware: arm_ffa: Align sync_send_receive{,2} function prototypes
-      firmware: arm_ffa: Fix big-endian support in __ffa_partition_info_get()
-      firmware: arm_ffa: Fix big-endian support in __ffa_partition_info_regs_get()
-      firmware: arm_ffa: Handle the presence of host partition in the partition info
-      firmware: arm_ffa: Unregister the FF-A devices when cleaning up the partitions
-      firmware: arm_ffa: Helper to check if a partition can receive REQUEST2 messages
-      firmware: arm_ffa: Add support for passing UUID in FFA_MSG_SEND2
-      firmware: arm_ffa: Upgrade FF-A version to v1.2 in the driver
-      firmware: arm_ffa: Reject higher major version as incompatible
-      firmware: arm_ffa: Remove unnecessary declaration of ffa_partitions_cleanup()
-      firmware: arm_ffa: Refactoring to prepare for framework notification support
-      firmware: arm_ffa: Stash ffa_device instead of notify_type in notifier_cb_info
-      firmware: arm_ffa: Add support for {un,}registration of framework notifications
-      firmware: arm_ffa: Add support for handling framework notifications
-      firmware: arm_ffa: Allow multiple UUIDs per partition to register SRI callback
-      firmware: arm_ffa: Handle ffa_notification_get correctly at virtual FF-A instance
-      firmware: arm_ffa: Explicitly cast return value from FFA_VERSION before comparison
-      firmware: arm_ffa: Explicitly cast return value from NOTIFICATION_INFO_GET
-      firmware: arm_ffa: Skip the first/partition ID when parsing vCPU list
-
-Thomas Zimmermann (1):
-      ARM: s3c: Do not include <linux/fb.h>
-
-Tudor Ambarus (7):
-      soc: qcom: ice: introduce devm_of_qcom_ice_get
-      mmc: sdhci-msm: fix dev reference leaked through of_qcom_ice_get
-      scsi: ufs: qcom: fix dev reference leaked through of_qcom_ice_get
-      soc: qcom: ice: make of_qcom_ice_get() static
-      dt-bindings: firmware: add google,gs101-acpm-ipc
-      firmware: add Exynos ACPM protocol driver
-      MAINTAINERS: add entry for the Samsung Exynos ACPM mailbox protocol
-
-Varshini Rajendran (1):
-      dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
-
-Viken Dadhaniya (1):
-      dt-bindings: qcom: geni-se: Add 'firmware-name' property for firmware loading
-
-Viresh Kumar (2):
-      firmware: arm_ffa: Refactor addition of partition information into XArray
-      firmware: arm_ffa: Set dma_mask for ffa devices
-
-Xianwei Zhao (2):
-      dt-bindings: interrupt-controller: Add support for Amlogic A4 and A5 SoCs
-      irqchip: Add support for Amlogic A4 and A5 SoCs
-
-Xueqi Zhang (1):
-      memory: mtk-smi: Add ostd setting for mt8192
-
-Zhu Jun (1):
-      firmware: tegra: bpmp: Fix typo in bpmp-abi.h
-
- .../devicetree/bindings/firmware/fsl,scu.yaml      |  12 +
- .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  50 ++
- .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   2 +
- .../amlogic,meson-gpio-intc.yaml                   |  19 +-
- .../bindings/power/qcom,kpss-acc-v2.yaml           |   4 +-
- .../bindings/reset/atmel,at91sam9260-reset.yaml    |   4 +
- .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml |   5 +
- .../bindings/soc/qcom/qcom,pmic-glink.yaml         |   1 +
- .../bindings/soc/samsung/exynos-pmu.yaml           |   2 +
- .../bindings/soc/samsung/exynos-usi.yaml           | 100 ++-
- .../soc/samsung/samsung,exynos-sysreg.yaml         |   5 +
- MAINTAINERS                                        |  11 +
- arch/arm/mach-s3c/devs.c                           |   1 -
- arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c         |   1 -
- drivers/bus/qcom-ssc-block-bus.c                   |  34 +-
- drivers/firmware/Kconfig                           |   2 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/arm_ffa/bus.c                     |  14 +-
- drivers/firmware/arm_ffa/driver.c                  | 532 ++++++++++----
- drivers/firmware/arm_scmi/bus.c                    |  69 +-
- drivers/firmware/arm_scmi/driver.c                 |  10 -
- drivers/firmware/samsung/Kconfig                   |  14 +
- drivers/firmware/samsung/Makefile                  |   4 +
- drivers/firmware/samsung/exynos-acpm-pmic.c        | 224 ++++++
- drivers/firmware/samsung/exynos-acpm-pmic.h        |  29 +
- drivers/firmware/samsung/exynos-acpm.c             | 769 +++++++++++++++++++++
- drivers/firmware/samsung/exynos-acpm.h             |  23 +
- drivers/firmware/smccc/soc_id.c                    |  80 +++
- drivers/firmware/xilinx/zynqmp.c                   |   6 +-
- drivers/irqchip/irq-meson-gpio.c                   |  48 +-
- drivers/memory/mtk-smi.c                           |  33 +
- drivers/memory/tegra/tegra20-emc.c                 |   4 +-
- drivers/mmc/host/sdhci-msm.c                       |   2 +-
- drivers/nvme/host/apple.c                          |   2 +-
- drivers/reset/Kconfig                              |   7 +
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-imx-scu.c                      | 101 +++
- drivers/soc/apple/rtkit-internal.h                 |   1 +
- drivers/soc/apple/rtkit.c                          | 112 ++-
- drivers/soc/mediatek/mt8167-mmsys.h                |  31 +-
- drivers/soc/mediatek/mt8173-mmsys.h                |  99 ++-
- drivers/soc/mediatek/mt8183-mmsys.h                |  50 +-
- drivers/soc/mediatek/mt8186-mmsys.h                |  88 +--
- drivers/soc/mediatek/mt8188-mmsys.h                | 266 ++++---
- drivers/soc/mediatek/mt8192-mmsys.h                |  71 +-
- drivers/soc/mediatek/mt8195-mmsys.h                | 632 ++++++++---------
- drivers/soc/mediatek/mt8365-mmsys.h                |  84 +--
- drivers/soc/mediatek/mtk-mmsys.h                   |  14 +
- drivers/soc/mediatek/mtk-mutex.c                   |   6 +
- drivers/soc/mediatek/mtk-socinfo.c                 |  22 +-
- drivers/soc/qcom/ice.c                             |  51 +-
- drivers/soc/qcom/pdr_internal.h                    |   1 -
- drivers/soc/qcom/qcom_aoss.c                       |   3 +-
- drivers/soc/qcom/qcom_pd_mapper.c                  |  12 +
- drivers/soc/qcom/qcom_pdr_msg.c                    |   3 +-
- drivers/soc/renesas/Kconfig                        |  18 +
- drivers/soc/renesas/Makefile                       |   4 +
- drivers/soc/renesas/r9a08g045-sysc.c               |  23 +
- drivers/soc/renesas/r9a09g047-sys.c                |  67 ++
- drivers/soc/renesas/r9a09g057-sys.c                |  67 ++
- drivers/soc/renesas/renesas-soc.c                  |  33 +-
- drivers/soc/renesas/rz-sysc.c                      | 137 ++++
- drivers/soc/renesas/rz-sysc.h                      |  46 ++
- drivers/soc/samsung/exynos-asv.c                   |   1 +
- drivers/soc/samsung/exynos-chipid.c                |   5 +
- drivers/soc/samsung/exynos-pmu.c                   |   1 +
- drivers/soc/samsung/exynos-usi.c                   | 108 ++-
- drivers/soc/samsung/exynos3250-pmu.c               |   1 +
- drivers/soc/samsung/exynos5250-pmu.c               |   1 +
- drivers/soc/samsung/exynos5420-pmu.c               |   1 +
- drivers/soc/tegra/pmc.c                            |   3 +-
- drivers/soc/ti/k3-socinfo.c                        |  13 +-
- drivers/ufs/host/ufs-qcom.c                        |   2 +-
- include/dt-bindings/soc/samsung,exynos-usi.h       |  17 +-
- include/linux/arm-smccc.h                          |  40 ++
- include/linux/arm_ffa.h                            |  22 +-
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |  49 ++
- include/linux/soc/apple/rtkit.h                    |   2 +-
- include/soc/qcom/ice.h                             |   3 +-
- include/soc/tegra/bpmp-abi.h                       |   2 +-
- 80 files changed, 3325 insertions(+), 1113 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
- create mode 100644 drivers/firmware/samsung/Kconfig
- create mode 100644 drivers/firmware/samsung/Makefile
- create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.c
- create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.h
- create mode 100644 drivers/firmware/samsung/exynos-acpm.c
- create mode 100644 drivers/firmware/samsung/exynos-acpm.h
- create mode 100644 drivers/reset/reset-imx-scu.c
- create mode 100644 drivers/soc/renesas/r9a08g045-sysc.c
- create mode 100644 drivers/soc/renesas/r9a09g047-sys.c
- create mode 100644 drivers/soc/renesas/r9a09g057-sys.c
- create mode 100644 drivers/soc/renesas/rz-sysc.c
- create mode 100644 drivers/soc/renesas/rz-sysc.h
- create mode 100644 include/linux/firmware/samsung/exynos-acpm-protocol.h
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
