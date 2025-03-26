@@ -1,221 +1,241 @@
-Return-Path: <linux-kernel+bounces-577368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5567DA71C29
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:48:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63982A71C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF2B18852B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471F47AA012
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4524D1F63FE;
-	Wed, 26 Mar 2025 16:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEC71FE474;
+	Wed, 26 Mar 2025 16:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V405WfrB"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="MalDFA0P"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E998527456;
-	Wed, 26 Mar 2025 16:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E7714830A;
+	Wed, 26 Mar 2025 16:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007684; cv=none; b=ga6T/ZMRizVmOoMd5cZyjnFgJFyoUnXpnzcU+elbI9CkxXsl3AzR2xgCuKhYTNLASPtVpsSx4hrWBWEIkQJnr8pkineBR6OMtUaWgalJ8+7mheT1r4Bk0ZKpnDY8mkOabJbU66md7XJjIuBkYVuQaFWe6gWunFfx79ehMkDSuDU=
+	t=1743007763; cv=none; b=dBqNU7ih1q139XQIHQJg0Nfh4B4vrnpKftgCt0oOI8ox1z7efM3TPxvgdEXVUZmN2//ho0W182UY+ynDOrirBXyaStimXYt+EnnS7F/1yEOsKfHGPo6WGQmomZ08EhYxOdVb2hID7NasWN01EcIJtTlw0I9mb94nLQiKDnLOScQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007684; c=relaxed/simple;
-	bh=cfRyOPOXqc7PYO0DilFU5NQHs5+SBJtNvB5Xo7qxAek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5mjlx1lK+5RT8HrndpcGOpHUfz/HO3QIbOo4/7Sck5qxjO6L5vMLnkC5F70vfZRKcLyivdTxTRPk6iP+7qvP3VWZ60v10S4/i/c0VUSIjZWuzpne5rr7lT+4uykZWdvM5zt5mHwRdIQZ4YO1ZL4yfNSOh8t4ivJcmm2VBjkhKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V405WfrB; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so44366d6.0;
-        Wed, 26 Mar 2025 09:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743007682; x=1743612482; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+2YkF4SmIRgXjwjmynNl6QZEvBl38mMpqeEenEb2RQ=;
-        b=V405WfrBVGQ82wOuJMO5iNGcZQBFgohb16hU5EdTvlJrpHqiqBUEw7ESyDJxDn/LEY
-         UtLGCB7VMSmOcathXQBnVpEzXn5bbgcfMe27LActgIt0lO1dou7086wm3Qy18vSyjQSM
-         ooo+O9fVCkVIZCpnc31q2OoYfmfSNDPn/zle6JRzOCH21PT1jF5oU+R2IWgiIDn0YeCu
-         TWSqMWiYvO3Lzk7F51sMO+qqeR737TnAiAFAK0W1gogmwHm4Busw8JqbTkII2VX95mCC
-         T4N2db07LIeStJaI6ltHd8HZEH4GcvjseLikUUWWVkZWxx69AH7hWW1NOAZJ0ZI0B/lJ
-         sPaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743007682; x=1743612482;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+2YkF4SmIRgXjwjmynNl6QZEvBl38mMpqeEenEb2RQ=;
-        b=DaaVmiv8sI9eeqXrqlS9x/pNjKtPZQQOnindtKZVOZn4Nq8+UklWG2c3AV5cV5h3JQ
-         LEjh4i6V2/CHsb9KD/ag6x/2qlK4OgQIdnWTvb1fFgkAp6RGkXlho1tib+naXkzMDXM7
-         r/rVwknnQY3+ZEofymKTMDegvV5HbZP/Nv8C4Zma1aRfTsXu9qC0rHZB6xTVDhf6OwL4
-         NjAGX9Y6ESco6uiShZn/PT9e0XJL7QUtPEdL0aQKc12XaG8Jq7B9Hyuj6BAm4KNSWDvN
-         JE2Fd3FibUY9CvY9vC8gqRf9h7coxWuPgdMz5vdFhh0QH3OmKZO4xSyCgO2EbFolbr04
-         IsXA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6lMqYHxNiOExM6bF7EUWhTQ8o1Y/NDuUGEq2XRMQQO+pbj2PFzUNdQrD6ANwmTwC8ApnzVUAd@vger.kernel.org, AJvYcCXvtpBDNvtNge5+X8qX76bQ8GmU/NF4QLQN0y4TecIVIr7CyDsd0CsFc+rXd94yfhChQKN2wHyQbgnJXf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/YKiWCCyd5ocHZQexw5nyXDIaYkvVk+rKAHWF37Z6Bl4iB77S
-	1NkftthC9tj3oBDPUCJh9gEstAaaCkHDHErb3/HijnIQhTdINuo5
-X-Gm-Gg: ASbGnctshUcrLlho01sI3jvtcXm+dOAtO6NxQPfwHMVYYIfKtpo6VC2g6M56ZK5ScKg
-	tMfvZA+eriy412e5Oz9wHjFLP2Ng3BBDlWx7rDwOgmuXLbbhZWlAtvIlBHUDDDdoAb0VcSnwwnQ
-	ADjkEMCNZAIGMU6LpXkdH5UUKqpMsTuiG85zFidRkndR6LsDW49vIpe9kwi1PX40LVFv6/uYXzH
-	0QVuvNZbVcZ1d0dN/ciz6uqmrl4skoj9ETtXLEXuNfckRLEMljVNISPe/kKVLz1w837sCfaXopf
-	eTF+eMO4uvT1Y+m1LshEVxie6/nxxv1HeX9isfTSpzPLtWFIcRUl4PPxAOyGu9+BVigMxgJY/Pz
-	oCR28DXDmGokIIMByQqVSq09TQmygFxjIcuvccBsLzKZDvg==
-X-Google-Smtp-Source: AGHT+IF9JMMWF4dyntkOBljPWsW+RS38rBexSiSPg9zq1HnSHy6ApSi/nmVeIkXzSpLeOVjTyoOXIA==
-X-Received: by 2002:ad4:5686:0:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6ed23897c41mr1668126d6.21.1743007681506;
-        Wed, 26 Mar 2025 09:48:01 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc5a1dsm69271066d6.79.2025.03.26.09.48.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 09:48:01 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B63001200043;
-	Wed, 26 Mar 2025 12:48:00 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Wed, 26 Mar 2025 12:48:00 -0400
-X-ME-Sender: <xms:wC_kZ2k6MZlZrSFWkORFod8DS-1rAtSfX9OZtvnOsIe1Kcu7J8e_SQ>
-    <xme:wC_kZ91QMqPAnpdkrbWU0U5dXcND-lZqRbMbCDcETd274_55cEVhJ0syBQeOFwdZy
-    DUI0FqQTDNS6WC7nw>
-X-ME-Received: <xmr:wC_kZ0pUL9p7swKYYoUtD8F1LSbN8m_-Uf77NbDVyUBxWMkXBoduOggd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeitdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeel
-    tdfhgfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhlohhnghesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlvghithgroh
-    esuggvsghirghnrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-    pdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrvghhse
-    hmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:wC_kZ6nL_JDWzG5kEZSJvyUStm8nJbBmabdOTL2OdYwA6IOvpt_K0g>
-    <xmx:wC_kZ01RrGSthl4RhOylXVQOxENL_Ie24XIoiubiKFn-ZEDoSCIP6g>
-    <xmx:wC_kZxtoTOgpPJVlK5ndzVUolvp6b75a8bnKOiWfoGPIirze4RwaCg>
-    <xmx:wC_kZwUnkmNfRIBgl6j75mHPIm8qcdL7hVpilreZO8gBtLaDlmsOdA>
-    <xmx:wC_kZ_3nlQvp08yG6mHkg4Rgx4tA0T48z4wMJ8jTC_f6PgWfAnNxpMsk>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Mar 2025 12:48:00 -0400 (EDT)
-Date: Wed, 26 Mar 2025 09:47:59 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, aeh@meta.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
- expedited RCU synchronization
-Message-ID: <Z-QvvzFORBDESCgP@Mac.home>
-References: <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com>
- <Z-Il69LWz6sIand0@Mac.home>
- <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
- <Z-L5ttC9qllTAEbO@boqun-archlinux>
- <f1ae824f-f506-49f7-8864-1adc0f7cbee6@redhat.com>
- <Z-MHHFTS3kcfWIlL@boqun-archlinux>
- <1e4c0df6-cb4d-462c-9019-100044ea8016@redhat.com>
- <Z-OPya5HoqbKmMGj@Mac.home>
- <df237702-55c3-466b-b51e-f3fe46ae03ba@redhat.com>
- <37bbf28f-911a-4fea-b531-b43cdee72915@redhat.com>
+	s=arc-20240116; t=1743007763; c=relaxed/simple;
+	bh=JmDfH/GRvZwV6wsN8zaHDB+4XiPsyvfLR4mRZSAWymU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=lLT4ykA0svsEyzpaxx4eyzoRyODbBfoKIWeIIBmxG2VYU8pNWN6B2pA0IceXLNBUkxsEdsNUaAlSNssFjr4sEc5xBhQiyZR4Bbh7bK4YeXlXlaQ5gfrV8knvotiysPzHBpK9ZJgdfu8WBI69PmR+4BAiAM3kwswej2w94Rnkc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=MalDFA0P; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QBt2SY012691;
+	Wed, 26 Mar 2025 16:48:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=dk201812; bh=mWYf65wum9YG05RQy2xoKrp
+	1dLK3sDGYBOQTnyQI+ao=; b=MalDFA0Pn84XGf3SHD3RvTiCaDDB0Wqsl+03zQM
+	pqxLezJqlwzsn9URFxqnkP1C5H0eJe1BsCiLfIt2tPc3cT2SWNgo9UYziWROb5bb
+	pm929iO7UbYRXmxc1BztY3q68RSjuuXG7YjagZYoDFk4JANOkKmLiaAcAMTwLgpP
+	7LMSHQKavEhv7UT+y11hw5Y7OC3sMWwg1g17oQqMTzXlouTi+qilPeLxuGAEIGeb
+	GSOU1XfIGVVkKnGwxqKa/HkEzUE/S3PZFeHWd0fhrxNy61fkp72GOHz36zsUIG9v
+	LisStg+yOfTwGLbGnczoHacKGX6XO0dCAnEetEJJJZAPKog==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 45kbmy9d6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 26 Mar 2025 16:48:40 +0000 (GMT)
+Received: from
+ 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
+ (172.25.0.133) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 26 Mar 2025 16:48:38 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+Subject: [PATCH v5 00/18] Imagination BXS-4-64 MC1 GPU support
+Date: Wed, 26 Mar 2025 16:48:20 +0000
+Message-ID: <20250326-sets-bxs-4-64-patch-v1-v5-0-e4c46e8280a9@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <37bbf28f-911a-4fea-b531-b43cdee72915@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANQv5GcC/3XNwQrCMAyA4VeRno2kbaqrJ99DPGxp6nrQyTqGI
+ nt3qyIoMsjlD+TLXWXpk2S1XdxVL2PKqTuXcMuF4rY+HwVSKK0MGtJoNGQZMjTXDARrgks9cAu
+ jBiIO0TM756Iqx5deYrq+4P2hdJvy0PW3159RP7dvUqObI8sgkASLUq1d5c0unY6D8Iq7k3qao
+ /lydDXrmOLYGMgFHxvk+OfYj+PQapx1bHE02caGRiKaf4e+HDPvUHGCrzYciWuy/seZpukB47y
+ mpJUBAAA=
+X-Change-ID: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+To: Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster
+	<matt.coster@imgtec.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Vignesh
+ Raghavendra" <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
+        "Michal
+ Wilczynski" <m.wilczynski@samsung.com>,
+        Alessio Belle
+	<alessio.belle@imgtec.com>,
+        Alexandru Dadu <alexandru.dadu@imgtec.com>,
+        "Sarah Walker" <sarah.walker@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6640;
+ i=matt.coster@imgtec.com; h=from:subject:message-id;
+ bh=JmDfH/GRvZwV6wsN8zaHDB+4XiPsyvfLR4mRZSAWymU=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaQ/0X+sIOs+M6M61zRo2tsbcw5MaWGYHsgQYWhVFV+Sc
+ EC37YxCRykLgxgHg6yYIsuOFZYr1P6oaUnc+FUMM4eVCWQIAxenAEzk7mxGhgmzr887FyiYGrNV
+ Z+/a7/MS91Wdtzvf/0/mZoPpVQ9u58kM//OdDkzf8OpS9mHfxSoLxI+VuPsYsnh450S9eZ6dq9P
+ czAcA
+X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
+ fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Proofpoint-ORIG-GUID: AnZ-Mtphwlzz-ka5uzAZ28sE7qOw0Jf9
+X-Authority-Analysis: v=2.4 cv=L+sdQ/T8 c=1 sm=1 tr=0 ts=67e42fe8 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
+ a=4ypaFGEvw_zvJEgvs6UA:9 a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22 a=t8nPyN_e6usw4ciXM-Pk:22
+X-Proofpoint-GUID: AnZ-Mtphwlzz-ka5uzAZ28sE7qOw0Jf9
 
-On Wed, Mar 26, 2025 at 12:40:59PM -0400, Waiman Long wrote:
-> On 3/26/25 11:39 AM, Waiman Long wrote:
-> > On 3/26/25 1:25 AM, Boqun Feng wrote:
-> > > > It looks like you are trying hard to find a use case for hazard pointer in
-> > > > the kernel 🙂
-> > > > 
-> > > Well, if it does the job, why not use it 😉 Also this shows how
-> > > flexible hazard pointers can be.
-> > > 
-> > > At least when using hazard pointers, the reader side of the hash list
-> > > iteration is still lockless. Plus, since the synchronization part
-> > > doesn't need to wait for the RCU readers in the whole system, it will be
-> > > faster (I tried with the protecting-the-whole-hash-list approach as
-> > > well, it's the same result on the tc command). This is why I choose to
-> > > look into hazard pointers. Another mechanism can achieve the similar
-> > > behavior is SRCU, but SRCU is slightly heavier compared to hazard
-> > > pointers in this case (of course SRCU has more functionalities).
-> > > 
-> > > We can provide a lockdep_unregister_key_nosync() without the
-> > > synchronize_rcu() in it and let users do the synchronization, but it's
-> > > going to be hard to enforce and review, especially when someone
-> > > refactors the code and move the free code to somewhere else.
-> > Providing a second API and ask callers to do the right thing is probably
-> > not a good idea and mistake is going to be made sooner or later.
-> > > > Anyway, that may work. The only problem that I see is the issue of nesting
-> > > > of an interrupt context on top of a task context. It is possible that the
-> > > > first use of a raw_spinlock may happen in an interrupt context. If the
-> > > > interrupt happens when the task has set the hazard pointer and iterating the
-> > > > hash list, the value of the hazard pointer may be overwritten. Alternatively
-> > > > we could have multiple slots for the hazard pointer, but that will make the
-> > > > code more complicated. Or we could disable interrupt before setting the
-> > > > hazard pointer.
-> > > Or we can use lockdep_recursion:
-> > > 
-> > > 	preempt_disable();
-> > > 	lockdep_recursion_inc();
-> > > 	barrier();
-> > > 
-> > > 	WRITE_ONCE(*hazptr, ...);
-> > > 
-> > > , it should prevent the re-entrant of lockdep in irq.
-> > That will probably work. Or we can disable irq. I am fine with both.
-> > > > The solution that I am thinking about is to have a simple unfair rwlock to
-> > > > protect just the hash list iteration. lockdep_unregister_key() and
-> > > > lockdep_register_key() take the write lock with interrupt disabled. While
-> > > > is_dynamic_key() takes the read lock. Nesting in this case isn't a problem
-> > > > and we don't need RCU to protect the iteration process and so the last
-> > > > synchronize_rcu() call isn't needed. The level of contention should be low
-> > > > enough that live lock isn't an issue.
-> > > > 
-> > > This could work, one thing though is that locks don't compose. Using a
-> > > hash write_lock in lockdep_unregister_key() will create a lockdep_lock()
-> > > -> "hash write_lock" dependency, and that means you cannot
-> > > lockdep_lock() while you're holding a hash read_lock, although it's
-> > > not the case today, but it certainly complicates the locking design
-> > > inside lockdep where there's no lockdep to help 😉
-> > 
-> > Thinking about it more, doing it in a lockless way is probably a good
-> > idea.
-> > 
-> If we are using hazard pointer for synchronization, should we also take off
-> "_rcu" from the list iteration/insertion/deletion macros to avoid the
-> confusion that RCU is being used?
-> 
+This GPU is found in the TI AM68 family of SoCs, with initial support
+added to the k3-j721s2 devicetree and tested on a TI SK-AM68 board.
 
-We can, but we probably want to introduce a new set of API with suffix
-"_lockless" or something because they will still need a lockless fashion
-similar to RCU list iteration/insertion/deletion.
+A suitable firmware binary can currently be found in the IMG
+linux-firmware repository[1] as powervr/rogue_36.53.104.796_v1.fw.
 
-Regards,
-Boqun
+No new UAPI will be necessary for this platform as it is sufficiently
+similar to the already supported AXE-1-16M.
 
-> Cheers,
-> Longman
-> 
+UMD support is close to being complete. We're now able to pass >95% of
+Vulkan conformance on our Mesa development branch. The compiler has been
+undergoing a significant rework needed to accomodate the BXS-4-64, as
+well as to make it more flexible to support additional Rogue GPUs going
+forward. The first part of this rework landed in Mesa in [2], and the
+next chunk is currently in review in [3].
+
+There are several dt-bindings changes at the beginning of this series.
+We expect the result to be versatile enough to handle all Imagination
+Rogue GPUs while being a strong foundation to build bindings for the
+newer Volcanic architecture (for which we're currently developing
+support).
+
+The DTS changes at the end of the series are marked [DO NOT MERGE]. Once
+the series is reviewed, we will request these be taken through the
+relevant tree.
+
+This version of the series depends on a patch[4] which exists in
+drm-misc-fixes, but has not yet made it back to drm-misc-next (the
+target of this series). That patch adds the function pvr_vm_unmap_obj()
+which is used in patch 14 ("drm/imagination: Add RISC-V firmware
+processor support").
+
+[1]: https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr
+[2]: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32258
+[3]: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33998
+[4]: https://lore.kernel.org/r/20250226-hold-drm_gem_gpuva-lock-for-unmap-v2-1-3fdacded227f@imgtec.com
+
+---
+Changes in v5:
+- Remove extraneous (and error-causing) power-domains minItems
+  constraint (P1)
+- Replace anyOf/const with enum (P2)
+- Link to v4: https://lore.kernel.org/r/20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com
+
+Changes in v4:
+- Update status of UMD support (cover)
+- Fix backwards compatibility of new compatible strings (P1)
+- Fix power-domains property constraints (P1/P2)
+- Fix power-domain-names property constraints (P2)
+- Only invoke pvr_device_safety_irq_clear() if has_safety_events is set
+  (P7)
+- Use pvr_vm_unmap_obj() in pvr_riscv_vm_unmap() (P14)
+- Fix formatting of pvr_riscv_fw_process() signature (P14)
+- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com
+
+Changes in v3:
+- Reorder some patches to ensure the proper sequencing
+- Update status of UMD support (cover)
+- Don't use more specific compatible strings when not required (P1)
+- Avoid ABI break by limiting new required properties to new compatible
+  strings (P2)
+- Move power domain changes to the patch in which they're used (P2/P5)
+- Update register definitions (P3) [Thanks, Alessio!]
+- Don't use more specific compatible strings when not required (P4)
+- Enhanced commit messages (P4)
+- Remove unnecessary example (P5)
+- Add proper fixes for threaded IRQs (P6) [Thanks, Alessio!]
+- Include fix for a separate IRQ issue (P7) [Thanks, Alessio!]
+- Don't enable firmware debug module (was P13 in v2, also in P14)
+- Change from a workaround to a regular codepath (P15)
+- Drop platform overrides framework (was P18 in v2, also in P16)
+- Mark DTS changes [DO NOT MERGE] (P17/P18)
+- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com
+
+Changes in v2:
+- Clarified justification for compatible strings (P1)
+- Simplified clocks constraints (P2)
+- Simplified power-domains constraints (P3/P4)
+- Use normal reg syntax for 64-bit values (P8/P21)
+- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com
+
+---
+Alessio Belle (3):
+      drm/imagination: Update register defs for newer GPUs
+      drm/imagination: Mask GPU IRQs in threaded handler
+      drm/imagination: Handle Rogue safety event IRQs
+
+Matt Coster (14):
+      dt-bindings: gpu: img: Future-proofing enhancements
+      dt-bindings: gpu: img: Add BXS-4-64 devicetree bindings
+      drm/imagination: Use new generic compatible string
+      drm/imagination: Add power domain control
+      drm/imagination: Remove firmware enable_reg
+      drm/imagination: Rename event_mask -> status_mask
+      drm/imagination: Make has_fixed_data_addr a value
+      drm/imagination: Use a lookup table for fw defs
+      drm/imagination: Use callbacks for fw irq handling
+      drm/imagination: Move ELF fw utils to common file
+      drm/imagination: Use cached memory with dma_coherent
+      drm/imagination: Add support for TI AM68 GPU
+      [DO NOT MERGE] arm64: dts: ti: k3-am62: New GPU binding details
+      [DO NOT MERGE] arm64: dts: ti: k3-j721s2: Add GPU node
+
+Sarah Walker (1):
+      drm/imagination: Add RISC-V firmware processor support
+
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml |  81 +++++++++-
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |   4 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  12 ++
+ drivers/gpu/drm/imagination/Makefile               |   2 +
+ drivers/gpu/drm/imagination/pvr_device.c           | 126 ++++++++++++++--
+ drivers/gpu/drm/imagination/pvr_device.h           |  31 +++-
+ drivers/gpu/drm/imagination/pvr_drv.c              |  16 ++
+ drivers/gpu/drm/imagination/pvr_fw.c               |  28 +++-
+ drivers/gpu/drm/imagination/pvr_fw.h               |  85 +++++------
+ drivers/gpu/drm/imagination/pvr_fw_meta.c          |  23 +--
+ drivers/gpu/drm/imagination/pvr_fw_mips.c          |  82 ++--------
+ drivers/gpu/drm/imagination/pvr_fw_riscv.c         | 165 +++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_fw_startstop.c     |  17 +++
+ drivers/gpu/drm/imagination/pvr_fw_util.c          |  67 +++++++++
+ drivers/gpu/drm/imagination/pvr_gem.c              |  10 +-
+ drivers/gpu/drm/imagination/pvr_gem.h              |   6 +-
+ drivers/gpu/drm/imagination/pvr_mmu.c              |   8 +-
+ drivers/gpu/drm/imagination/pvr_power.c            | 114 ++++++++++++++
+ drivers/gpu/drm/imagination/pvr_power.h            |   3 +
+ drivers/gpu/drm/imagination/pvr_rogue_cr_defs.h    | 153 ++++++++++++++++---
+ drivers/gpu/drm/imagination/pvr_rogue_riscv.h      |  41 +++++
+ 21 files changed, 896 insertions(+), 178 deletions(-)
+---
+base-commit: 95f9bc4e0bc812541a7007a29e0de0c5d2a98e12
+change-id: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+
 
