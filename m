@@ -1,228 +1,137 @@
-Return-Path: <linux-kernel+bounces-577192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F77A719AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:04:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29232A719B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332273A9196
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E6D171EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0B71F4E5B;
-	Wed, 26 Mar 2025 14:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305F1F4284;
+	Wed, 26 Mar 2025 14:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmjyCflb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ikzW2MH1"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5941F418C;
-	Wed, 26 Mar 2025 14:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540621F4197;
+	Wed, 26 Mar 2025 14:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743001020; cv=none; b=f248sew1VfVKGI8b52OZ4WgAWcqAFQjSNVoboS+tsZ+HLmVrLEzgMeh3stj5BEVJTzRgM4zxUDeaRW5Sm/ia5TjH3wud04ZB2izOWSYS4bu0JUMxVNPDDPRVgrzRsgsOhbxvh90ZgHyMN14Qje+BiWXz1VOa2Js4Rcxc2XQ1o+w=
+	t=1743001085; cv=none; b=UkE78FUFookTXAxJdkbq3Wan9a5UWwvcacSV/3nRBjnXzm9nOaGiCtWUbhfoBjZwg4QGIb6TC5fgvnj0U8i2L90qkQ3thgDcQD5wexgI8KoDW+zvOyasgG2QEEMiIqXiF8X7FDKfOJyM+wiJIgkbC3gAhpVcMSPPTZwjvGW6xdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743001020; c=relaxed/simple;
-	bh=nF2RjFGpG3A65aMAwOnP1USwdp3nJlYReQNJqbqS1So=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lzk5amsCppmKa+TWqwjqDn20XuOxYf4B6moxRGF1A3CcBTVx/8hn2ZwxIOdBdU7P+XlX6v4TR0r00dpN5UCm6NoPik8N6BTvRJoER7b2OzCfdqpe3TiITpxuagzCWQrlRnFE9V15so1CROzGUHES3pYENjpWyuetUIIDQsz91ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmjyCflb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE3CC4AF0D;
-	Wed, 26 Mar 2025 14:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743001020;
-	bh=nF2RjFGpG3A65aMAwOnP1USwdp3nJlYReQNJqbqS1So=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MmjyCflb+tTlR5MBkQj7dY08iImGGcSdOex2tnRAjv2CwuMydzr+6g+T89hlPyD4T
-	 5lbqYAQY1q4vepYMT/XhJU+lTrqvOgrZmGzGiXtajU4A5oznmqySeZjpuJNR3Q7W/c
-	 2U2gPiGrsFJGXTzlXGKjjC+KX+QA+4YZli8XjIS5v2cXZbLXcPzwTzo/J8qoXDy1wh
-	 6b6w6zSoOQkpRQzMmVs/tly8J3rqdTwfv4skjGW1/KON/IPTMCNxxYNslK00Qlfofy
-	 yGqZAwmI5DoSHSLJz/HeXZfPLBCZzh63fOnqGNF6MKW+cs1HkhqnyVq4TVMetHf2m7
-	 ON5jKJk2k7NaA==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3fea67e64caso4127299b6e.2;
-        Wed, 26 Mar 2025 07:56:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFQ3IKFkWX9FZbuRA+HWh64MYUMhe6TayEp3Q2WWpyCCCLXd6EJj60WtnFa25d6WxcCrk42h0iz6n7hw==@vger.kernel.org, AJvYcCUsxRevZ+ejpNRUMy8NhazkUQQXgTbXLpePYVqN7gBQZcLdYSKpv01VAmfNnkOQJrcSy5w5Af5CCEhnXw==@vger.kernel.org, AJvYcCVChEJmJTZdTJ5OqfnG2PSewBsm9pmt29xQwaHLQ5G/uTjisE7MM/sLi6wO5qZfra97q3sB4rkUYaWKPoz8@vger.kernel.org, AJvYcCVwp3RZp3ZC+bDwG/eZ94WvUEoDzWYWPYXMblauArX6n+OBt5zT2D66pxyeCHwAiU31Ul2z3SADhQCD@vger.kernel.org, AJvYcCX0cwsyE9ey5CeM7lrkerbPazwYOvn+jmjQpwlbx/6jCg1KnqAG46mr0qIHv/enPRbqucV/ertV7AdXcYde@vger.kernel.org, AJvYcCX7AfwD7WMflOS5l5KkmtgMbEOvlbP6hz1Rgj2v11KbDUuq23ACWVXRAWmbE4B9OUJWU4eDJmu/PyRx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeqkWVbRKpeXJOZCXonAVpF5J+j+a2yN6Pl+ibY/uMpqRAT4Vu
-	SuTCwdau/GXFOhzZZ9+ZGTpKFPDHPerpPFWWr2USjpqDsVyY9ymmRfE0axbSObFfVcRm++aQKPP
-	xUOCSBnEapwrrYSbJz7xdi6D2jOU=
-X-Google-Smtp-Source: AGHT+IGmSAoh/NM65izkDPKUI1Bx1s1CpYOoqqHj8rwk1HayiQb7/ZTrzCWxEZIlAbPgY/gZ5IPT5mW0vY7TUSaamgg=
-X-Received: by 2002:a05:6808:2116:b0:3f9:a187:1f5d with SMTP id
- 5614622812f47-3febf79cf75mr13184095b6e.35.1743001019176; Wed, 26 Mar 2025
- 07:56:59 -0700 (PDT)
+	s=arc-20240116; t=1743001085; c=relaxed/simple;
+	bh=QVOXaPoW8j1JbgyK9EX4B0EZ6amjqc8hUERyGWV8bI8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KWmrrK7oesEkqZYRP2k2f5KLHXjjF4v1pnF1V3P5Qg3tjHwd0yJUloYM3HOOuRgfmXdpznmLga1CRsQsu0DQ2bh64TiyG66ol6P4w6TJogH5ADnS80nVjgA0n4F/n9VTWSYnz8pVjwOLd78TFznNk6uFzES59LbY0ObeWSwN5RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ikzW2MH1; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52QEvbdM2222392
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 09:57:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743001057;
+	bh=eXD8bmoxHD/Y0t9zn8pp0a84HOCX8GjkBQKf1mH3xlA=;
+	h=From:To:CC:Subject:Date;
+	b=ikzW2MH1uelOfwc2Eid2VFy4x4CYvmpWtkv42vqU+Uv1pvLY0WdhNoScEBcLpPbfA
+	 Xp+5MrtXP+fqZCRLvpoicF1JYUe4EHGDyKLo4rwMvP8hS0Z4HrOQSGTDoWQvdYEzf2
+	 d/WWYKFNHjUKAalxMwpMCyOvEWH2vUqJkusaiAeM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52QEvbTY097951
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Mar 2025 09:57:37 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Mar 2025 09:57:37 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Mar 2025 09:57:37 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52QEvaSn045765;
+	Wed, 26 Mar 2025 09:57:37 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+        <airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <simona@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+        <s-jain1@ti.com>, <r-donadkar@ti.com>, <j-choudhary@ti.com>,
+        <h-shenoy@ti.com>, <devarsht@ti.com>
+Subject: [PATCH v4 0/3] Add support for AM62L DSS
+Date: Wed, 26 Mar 2025 20:27:33 +0530
+Message-ID: <20250326145736.3659670-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315001931.631210-1-romank@linux.microsoft.com> <20250315001931.631210-12-romank@linux.microsoft.com>
-In-Reply-To: <20250315001931.631210-12-romank@linux.microsoft.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Mar 2025 15:56:48 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
-X-Gm-Features: AQ5f1JraBPSxwGSJAA4KKJZ156j5w2j0joAJRL4jrFqS_Vv7qLwxEV_YVE1Rcsc
-Message-ID: <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
-Subject: Re: [PATCH hyperv-next v6 11/11] PCI: hv: Get vPCI MSI IRQ domain
- from DeviceTree
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
-	conor+dt@kernel.org, dan.carpenter@linaro.org, dave.hansen@linux.intel.com, 
-	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com, 
-	joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, 
-	lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, 
-	mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com, 
-	oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
-	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
-	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
-	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
-	sunilmut@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sat, Mar 15, 2025 at 1:19=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
-.com> wrote:
->
-> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-> arm64. It won't be able to do that in the VTL mode where only DeviceTree
-> can be used.
->
-> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-> case, too.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  drivers/pci/controller/pci-hyperv.c | 73 ++++++++++++++++++++++++++---
->  1 file changed, 67 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller=
-/pci-hyperv.c
-> index 6084b38bdda1..cbff19e8a07c 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -50,6 +50,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/acpi.h>
->  #include <linux/sizes.h>
-> +#include <linux/of_irq.h>
->  #include <asm/mshyperv.h>
->
->  /*
-> @@ -817,9 +818,17 @@ static int hv_pci_vec_irq_gic_domain_alloc(struct ir=
-q_domain *domain,
->         int ret;
->
->         fwspec.fwnode =3D domain->parent->fwnode;
-> -       fwspec.param_count =3D 2;
-> -       fwspec.param[0] =3D hwirq;
-> -       fwspec.param[1] =3D IRQ_TYPE_EDGE_RISING;
-> +       if (is_of_node(fwspec.fwnode)) {
-> +               /* SPI lines for OF translations start at offset 32 */
-> +               fwspec.param_count =3D 3;
-> +               fwspec.param[0] =3D 0;
-> +               fwspec.param[1] =3D hwirq - 32;
-> +               fwspec.param[2] =3D IRQ_TYPE_EDGE_RISING;
-> +       } else {
-> +               fwspec.param_count =3D 2;
-> +               fwspec.param[0] =3D hwirq;
-> +               fwspec.param[1] =3D IRQ_TYPE_EDGE_RISING;
-> +       }
->
->         ret =3D irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
->         if (ret)
-> @@ -887,10 +896,47 @@ static const struct irq_domain_ops hv_pci_domain_op=
-s =3D {
->         .activate =3D hv_pci_vec_irq_domain_activate,
->  };
->
-> +#ifdef CONFIG_OF
-> +
-> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-> +{
-> +       struct device_node *parent;
-> +       struct irq_domain *domain;
-> +
-> +       parent =3D of_irq_find_parent(hv_get_vmbus_root_device()->of_node=
-);
-> +       if (!parent)
-> +               return NULL;
-> +       domain =3D irq_find_host(parent);
-> +       of_node_put(parent);
-> +
-> +       return domain;
-> +}
-> +
-> +#endif
-> +
-> +#ifdef CONFIG_ACPI
-> +
-> +static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
-> +{
-> +       struct irq_domain *domain;
-> +       acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
-> +
-> +       if (acpi_irq_model !=3D ACPI_IRQ_MODEL_GIC)
-> +               return NULL;
-> +       gsi_domain_disp_fn =3D acpi_get_gsi_dispatcher();
-> +       if (!gsi_domain_disp_fn)
-> +               return NULL;
-> +       return irq_find_matching_fwnode(gsi_domain_disp_fn(0),
-> +                                    DOMAIN_BUS_ANY);
-> +}
-> +
-> +#endif
-> +
->  static int hv_pci_irqchip_init(void)
->  {
->         static struct hv_pci_chip_data *chip_data;
->         struct fwnode_handle *fn =3D NULL;
-> +       struct irq_domain *irq_domain_parent =3D NULL;
->         int ret =3D -ENOMEM;
->
->         chip_data =3D kzalloc(sizeof(*chip_data), GFP_KERNEL);
-> @@ -907,9 +953,24 @@ static int hv_pci_irqchip_init(void)
->          * way to ensure that all the corresponding devices are also gone=
- and
->          * no interrupts will be generated.
->          */
-> -       hv_msi_gic_irq_domain =3D acpi_irq_create_hierarchy(0, HV_PCI_MSI=
-_SPI_NR,
-> -                                                         fn, &hv_pci_dom=
-ain_ops,
-> -                                                         chip_data);
-> +#ifdef CONFIG_ACPI
-> +       if (!acpi_disabled)
-> +               irq_domain_parent =3D hv_pci_acpi_irq_domain_parent();
-> +#endif
-> +#if defined(CONFIG_OF)
+This adds support for DSS subsystem present in TI's AM62L SoC
+which supports single display pipeline with DPI output which
+is also routed to DSI Tx controller within the SoC.
 
-Why don't you do
+Change Log:
+V4:
+- Update vid_info struct to keep hw_id and instantiate
+  only for actually existing pipes
 
-#ifdef CONFIG_OF
+V3:
+- Make generic infra to support truncated K3 DSS IP's
+- Remove AM62A updates from AM62L DT binding updates
 
-here for consistency?
+V2:
+- Fix incorrect format of compatible string (comma instead of
+  hyphen) for AM62L SoC
+- Use separate register space and helper functions for AM62L
+  due to minor differences in register offset/bit position differences
+  for first plane
 
-> +       if (!irq_domain_parent)
-> +               irq_domain_parent =3D hv_pci_of_irq_domain_parent();
-> +#endif
-> +       if (!irq_domain_parent) {
-> +               WARN_ONCE(1, "Invalid firmware configuration for VMBus in=
-terrupts\n");
-> +               ret =3D -EINVAL;
-> +               goto free_chip;
-> +       }
-> +
-> +       hv_msi_gic_irq_domain =3D irq_domain_create_hierarchy(
-> +               irq_domain_parent, 0, HV_PCI_MSI_SPI_NR,
-> +               fn, &hv_pci_domain_ops,
-> +               chip_data);
->
->         if (!hv_msi_gic_irq_domain) {
->                 pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domai=
-n\n");
-> --
+Rangediff:
+V3->V4:
+- https://gist.github.com/devarsht/1e75c9e1ac0cdfc01703a0776e31e782
+
+V2->V3:
+- https://gist.github.com/devarsht/24fa8dd2986861efa431352d19ebbb41
+
+V1->V2
+- https://gist.github.com/devarsht/11d47f25ca9fea6976e6284330ddf443
+
+Links to previous versions:
+V3: https://lore.kernel.org/all/20250306132914.1469387-1-devarsht@ti.com/
+V2: https://lore.kernel.org/all/20250204061552.3720261-1-devarsht@ti.com/
+V1: https://lore.kernel.org/all/20241231090432.3649158-1-devarsht@ti.com/
+
+Test logs:
+https://gist.github.com/devarsht/16fe796b8fd3ea8abf5df8e2327d2311
+
+Devarsh Thakkar (3):
+  dt-bindings: display: ti,am65x-dss: Add support for AM62L DSS
+  drm/tidss: Update infrastructure to support K3 DSS cut-down versions
+  drm/tidss: Add support for AM62L display subsystem
+
+ .../bindings/display/ti/ti,am65x-dss.yaml     |  21 ++-
+ drivers/gpu/drm/tidss/tidss_crtc.c            |   8 +-
+ drivers/gpu/drm/tidss/tidss_dispc.c           | 176 ++++++++++++++----
+ drivers/gpu/drm/tidss/tidss_dispc.h           |  13 +-
+ drivers/gpu/drm/tidss/tidss_drv.c             |   1 +
+ drivers/gpu/drm/tidss/tidss_kms.c             |   2 +-
+ drivers/gpu/drm/tidss/tidss_plane.c           |   2 +-
+ 7 files changed, 178 insertions(+), 45 deletions(-)
+
+-- 
+2.39.1
+
 
