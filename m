@@ -1,238 +1,135 @@
-Return-Path: <linux-kernel+bounces-577157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F32A71949
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD5A7194F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E81A17B468
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B4017BA9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB711F561B;
-	Wed, 26 Mar 2025 14:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED651F63FE;
+	Wed, 26 Mar 2025 14:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D4dluHTv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lM0R5Wl5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DDC1F5429;
-	Wed, 26 Mar 2025 14:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2C41F3BA5;
+	Wed, 26 Mar 2025 14:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000160; cv=none; b=jZSsd98Orr3UEUJZy97ZnXgdQtXqpVB9WEwVa8nZ+L7WZ1+kGEGVOP87Da4GSF4vr+qDxr6z5duzlUrxJ6V/TcQjfyNrB/oQ3j5qMJPgvDpRRgUQ1A/Fy6mSn9f4kEKN7mjAHItlGyBsRCOKA+bOURM8YZ4vHdtUQFRgXdWLhmA=
+	t=1743000194; cv=none; b=sOIta1l/o5vSARWWeGQWe6GsamI1Eitry4g5xKRhxljnCgGt8jek0FAW+TnliFyIbiX2tqUrYNWrHJKJTZTla2Oy4zKHsz7oltgGh7jECPPOYYe4ULwvwDoM99Qj9jhaDJN2rYseeTpMbiWRLPIfNZ1gxcOqr74AELVsFQF9wUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000160; c=relaxed/simple;
-	bh=fO+T098FYVSpidte82Cl7XAYJYBGFd6cvOWlwdBJhVM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nODQXVTHvrRs4I9o/PgxPQYR179fTXiyrxdsNcRwubbF685hMhvjdxLrBRdG7ym1LbUsBOfYyQozP7itmCyHwKLO8FmT3WRVZRGDEAIhiDEIQadRhywRvXToq70PyRiFQLlw1Y6C/CJBiYDz20uTj3fB0wVSDCyf21V/F891Cp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D4dluHTv; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743000158; x=1774536158;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=fO+T098FYVSpidte82Cl7XAYJYBGFd6cvOWlwdBJhVM=;
-  b=D4dluHTv/mw77Q9z3pi8hSi15ge6Ar7zcfFgOqv5WVpHfXew6cNYq7JE
-   CUUWId6cwsetueUPRbYNWipe2hnDxjItvI8HPl3LtwME6ZAfUlVTfVWdZ
-   77BOdP2F2quWtPWWZsEgHFk56YkXeK3qXp0Jykjqwj+6cWiPpHxoHDYl+
-   J5DYzB4ppKpu7I6qe1S1GZk7vx+6aJ4cyX5feKy+r7mo9dfYnAtVMWlO9
-   /84OlcqtQPRKRGh7CEXvTHierB3VtN2LjBcVBGRwOAVsBeLKWKvYfSxOw
-   YJifhJT6Dr26/j7HY4RoyUkq3t/8snsmqVfKEfOt/tRLhUzpxQZ8O2eVG
-   Q==;
-X-CSE-ConnectionGUID: nj/LJ8z6TnOvGz8SlYvNEw==
-X-CSE-MsgGUID: z6DtYj7mREq4vAz812Aq1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43528107"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="43528107"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:42:38 -0700
-X-CSE-ConnectionGUID: +HxL5WenRVSu9WCTn6FpfQ==
-X-CSE-MsgGUID: DPivtZ0QQUCAC7N5Ud3X+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="125259860"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:42:32 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 26 Mar 2025 16:42:28 +0200 (EET)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v6 1/6] PCI/IOV: Restore VF resizable BAR state after
- reset
-In-Reply-To: <20250320110854.3866284-2-michal.winiarski@intel.com>
-Message-ID: <b10b559c-cb23-d21e-d6ee-e060eb0b6b5b@linux.intel.com>
-References: <20250320110854.3866284-1-michal.winiarski@intel.com> <20250320110854.3866284-2-michal.winiarski@intel.com>
+	s=arc-20240116; t=1743000194; c=relaxed/simple;
+	bh=f0gPCfiuw07TFCMPMlro6o7dIC6mTUxDA2RqL0P51j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQTgHx7uyg+MUFvjAfqmMB0ROspZV4f6wcumQizniSi2n+3LRy0P79G2+UjT28GYLj2xsGoC8XuaGn1k54jOOZAgckC5gKafA0ZlNqQrMOQteobRkI8o7xPjhl4/FeSSSwyMCApNC88Wa/ws551DxCkFR1kRpPDK7+ktYARZuFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lM0R5Wl5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0545C4CEE2;
+	Wed, 26 Mar 2025 14:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743000193;
+	bh=f0gPCfiuw07TFCMPMlro6o7dIC6mTUxDA2RqL0P51j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lM0R5Wl5kHgDO47mQ1sq1a3xtustJMG8Dw5JG81R6ZGZY7q48v3caNqkS55mrN3XN
+	 4A6FwBPYC+WqXxsmf1aTS2N9/KFUqNwIBBVCX1VUi2kscdXLzWD/jF9v+V0KlT4NKf
+	 SadjqxWSZFP6b6P+mTp5PpeXIpijdQrDU+sAk4Ltj3HmKkmMsoo1ozLjZsi82W7HCb
+	 crbn7k4wgmWSurHz6ElIZd8TlVPOr0fLIy9tk7rKHxLkGeNGUKH98Tch5XWaCQsGT/
+	 pmtJuIgHO8AZo7V+XvoH+IOT10DGtTXjcCJ9dmcS4B5zpbctLl2k/xx20LReo0Bq3W
+	 wCfofCt29Uwnw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1txRyN-000000006s6-1tuL;
+	Wed, 26 Mar 2025 15:43:16 +0100
+Date: Wed, 26 Mar 2025 15:43:15 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Clayton Craft <clayton@craftyguy.net>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
+ events
+Message-ID: <Z-QSg7LH8u7uAfLg@hovoldconsulting.com>
+References: <20250324132448.6134-1-johan+linaro@kernel.org>
+ <dd1bc01c-75f4-4071-a2ac-534a12dd3029@craftyguy.net>
+ <Z-JqCUu13US1E5wY@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-577007019-1743000148=:942"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-JqCUu13US1E5wY@hovoldconsulting.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Mar 25, 2025 at 09:32:10AM +0100, Johan Hovold wrote:
+> On Mon, Mar 24, 2025 at 10:05:44AM -0700, Clayton Craft wrote:
+> > On 3/24/25 06:24, Johan Hovold wrote:
+> > > The PMIC GLINK driver is currently generating DisplayPort hotplug
+> > > notifications whenever something is connected to (or disconnected from)
+> > > a port regardless of the type of notification sent by the firmware.
+> > > 
+> > > These notifications are forwarded to user space by the DRM subsystem as
+> > > connector "change" uevents:
+> 
+> > > ---
+> > > 
+> > > Clayton reported seeing display flickering with recent RC kernels, which
+> > > may possibly be related to these spurious events being generated with
+> > > even greater frequency.
+> > > 
+> > > That still remains to be fully understood, but the spurious events, that
+> > > on the X13s are generated every 90 seconds, should be fixed either way.
+> > 
+> > When a display/dock (which has ethernet) is connected, I see this 
+> > hotplug change event 2 times (every 30 seconds) which I think you said 
+> > this is expected now?
+> 
+> I didn't realise you were also using a display/dock. Bjorn mentioned
+> that he has noticed issues with one of his monitors (e.g. built-in hub
+> reenumerating repeatedly iirc) which may be related.
+> 
+> I see these pairs of identical notification when connecting the stock
+> charger to one of the ports directly, and I noticed that they repeat
+> every 90 seconds here. After plugging and unplugging a bunch of devices
+> I think they stopped at one point, but they were there again after a
+> reboot.
+> 
+> So there's something going on with the PMIC GLINK firmware or driver on
+> the X13s. I did not see these repeated messages on the T14s with just a
+> charger (and I don't have a dock to test with).
 
---8323328-577007019-1743000148=:942
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+With this patch enabling UCSI on sc8280xp:
 
-On Thu, 20 Mar 2025, Micha=C5=82 Winiarski wrote:
+	https://lore.kernel.org/lkml/20250326124944.6338-1-johan+linaro@kernel.org/
 
-> Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
-> the system firmware or the PCI subsystem itself.
->=20
-> Add the capability ID and restore it as a part of IOV state.
->
-> See PCIe r4.0, sec 9.3.7.4.
+most of the periodic orientation notifications for the port with the
+charger connected appears to be gone on the X13s (note that the T14s
+already has UCSI enabled).
 
-Usually it's best o refer to latest gen doc, the section number seems to=20
-be the same also in r6.2.
+I get one to three notification 90 seconds after boot with the charger
+connected (and two notifications when reconnecting it) but that appears
+to be it.
 
-This didn't refer to spec section that specified VF Rebar ext capability
-(7.8.7) though. I think it should and it would also be good to mention the=
-=20
-capability layout is the same as with the rebar cap.
+Perhaps you can give that one a try with your docks and monitors as
+well, Clayton and Bjorn.
+ 
+> > Not sure about you seeing it every 90s vs my 30s... anyways, I no longer 
+> > see these events when a PD charger is connected though, so this patch 
+> > seems to help with that!
+> 
+> Just so I understand you correctly here, you're no longer seeing the
+> repeated uevents with this patch? Both when using a dock and when using
+> a charger directly?
+> 
+> Did it help with the display flickering too? Was that only on the
+> external display?
 
-> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> ---
->  drivers/pci/iov.c             | 30 +++++++++++++++++++++++++++++-
->  drivers/pci/pci.h             |  1 +
->  include/uapi/linux/pci_regs.h |  1 +
->  3 files changed, 31 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> index 121540f57d4bf..bf95387993cd5 100644
-> --- a/drivers/pci/iov.c
-> +++ b/drivers/pci/iov.c
-> @@ -7,6 +7,7 @@
->   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
->   */
-> =20
-> +#include <linux/bitfield.h>
->  #include <linux/pci.h>
->  #include <linux/slab.h>
->  #include <linux/export.h>
-> @@ -830,6 +831,7 @@ static int sriov_init(struct pci_dev *dev, int pos)
->  =09pci_read_config_byte(dev, pos + PCI_SRIOV_FUNC_LINK, &iov->link);
->  =09if (pci_pcie_type(dev) =3D=3D PCI_EXP_TYPE_RC_END)
->  =09=09iov->link =3D PCI_DEVFN(PCI_SLOT(dev->devfn), iov->link);
-> +=09iov->vf_rebar_cap =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VF_=
-REBAR);
-> =20
->  =09if (pdev)
->  =09=09iov->dev =3D pci_dev_get(pdev);
-> @@ -868,6 +870,30 @@ static void sriov_release(struct pci_dev *dev)
->  =09dev->sriov =3D NULL;
->  }
-> =20
-> +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
-> +{
-> +=09unsigned int pos, nbars, i;
-> +=09u32 ctrl;
-> +
-> +=09pos =3D dev->sriov->vf_rebar_cap;
-> +=09if (!pos)
-> +=09=09return;
-> +
-> +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-> +
-> +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
-> +=09=09int bar_idx, size;
-> +
-> +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
-> +=09=09bar_idx =3D FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
-> +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
-> +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
-> +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-> +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
-
-I started to wonder if we'd still want to have the VF Rebar ones in=20
-uapi/linux/pci_regs.h (despite the same capability layout):
-
-/*
- * PCI Resizable BAR and PCI VF Resizable BAR extended capabilities have=20
- * the same layout of fields.
- */
-#define PCI_VF_REBAR_CTRL=09=09PCI_REBAR_CTRL
-#define PCI_VF_REBAR_CTRL_BAR_IDX=09PCI_REBAR_CTRL_BAR_IDX
-etc.
-
-as then it would be possible grep to pick up only the relevant lines.
-
-I'd not duplicate _SHIFT defines though. FIELD_PREP/GET() in general does=
-=20
-not need _SHIFT defines at all and they are just duplicated information.
-
-> +=09}
-> +}
-> +
->  static void sriov_restore_state(struct pci_dev *dev)
->  {
->  =09int i;
-> @@ -1027,8 +1053,10 @@ resource_size_t pci_sriov_resource_alignment(struc=
-t pci_dev *dev, int resno)
->   */
->  void pci_restore_iov_state(struct pci_dev *dev)
->  {
-> -=09if (dev->is_physfn)
-> +=09if (dev->is_physfn) {
-> +=09=09sriov_restore_vf_rebar_state(dev);
->  =09=09sriov_restore_state(dev);
-> +=09}
->  }
-> =20
->  /**
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index b81e99cd4b62a..adc54bb2c8b34 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -482,6 +482,7 @@ struct pci_sriov {
->  =09u16=09=09subsystem_vendor; /* VF subsystem vendor */
->  =09u16=09=09subsystem_device; /* VF subsystem device */
->  =09resource_size_t=09barsz[PCI_SRIOV_NUM_BARS];=09/* VF BAR size */
-> +=09u16=09=09vf_rebar_cap;=09/* VF Resizable BAR capability offset */
->  =09bool=09=09drivers_autoprobe; /* Auto probing of VFs by driver */
->  };
-> =20
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.=
-h
-> index ba326710f9c8b..bb2a334e50386 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -745,6 +745,7 @@
->  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
->  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
->  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
-> +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
->  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
->  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
->  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Management=
- */
-
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-577007019-1743000148=:942--
+Johan
 
