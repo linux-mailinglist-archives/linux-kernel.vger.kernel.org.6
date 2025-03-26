@@ -1,225 +1,127 @@
-Return-Path: <linux-kernel+bounces-576755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39347A71405
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452D5A71409
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4BF1898ADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC23B479C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7001ACED7;
-	Wed, 26 Mar 2025 09:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC411AF0AE;
+	Wed, 26 Mar 2025 09:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SK/madfa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6/f1qHXt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AO80ImJI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oBobONKO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EslX+LhK"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538611A2398
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553E31A2398
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982362; cv=none; b=aXYzdp3piMw7Q+3/9mryYb/o5Vt6csWd4kQaOLOzghnvrhuPgGaE5pLCrg7mLhoqz1ZmkNgJO1nSHUDs+gF4euBWKtlCy0DSqN/crvJYYJWCKBkucv0yAVZT68mnhNAIWgW+u7m7f634prvoQJ8W/7OHFAH3NCjREpsHYeOzAKQ=
+	t=1742982375; cv=none; b=hase3oNb5zoX8ss+dWA5m7nkDDhynT1RgfDj/LoyVWLadvBh/XWR1bEZp3/1KlbqZ8MdXreRNwSApr3Kk2bcDQcCzNB5MN7jShGEmRIzNGpC1012Ja84tJOYLaBrgpaWMd4s5KH9KIU+1YlL1/z1Dv+XOT+ahjLZV0T8KI77KPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982362; c=relaxed/simple;
-	bh=xrQALF0xZASC9lAzNDjlGBs1HM4EQBjOhLb9lRIB3q0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ujxrC5l6uWcekpx6ticaQcTIODbkVDnH/HZD6wgBbDkhJOAcz/ApOUtZmb5YTxyc3ZdYQ44L7FU70OcENI7evAac/fIcCHUIfqPys9qP6krHqz/DgAFUGFJvLX6/UWpEYiFxuGD6id7Nfsu2sRhJNjh7RW3nTPfZ0DsquSV9EXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SK/madfa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6/f1qHXt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AO80ImJI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oBobONKO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DDF4E21179;
-	Wed, 26 Mar 2025 09:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742982358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=SK/madfar9BpCWtIJ03hVqbDl6MPi+zZJJyTnFnLRCKTaC3yRlZeL72aZRJ6JXoYhfdesG
-	rWSSShP6Vfdmf9xSl1JNwKmmF3jImPpQpiHkQ35vT38Bp6SFDUT33iuPkbSo9zACZQ8RJB
-	IyTmt7v2oecwWHdLF9KZPqWvJI7ma6I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742982358;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=6/f1qHXtdxCLwH3Ea3F8ZDOJNecVF8rzvOrMm2xuLR1r3i8hd3CO1lr+rZ9Kq8KE7NEZTB
-	f/Pe6yXwf9nzTuAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AO80ImJI;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oBobONKO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742982357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=AO80ImJIaDXtTkLrSDBtnF2p/4ZftnNh3LGY3J0VLlJSurGzuW/Ei26aTteq3CwOB1LdR+
-	vYEAcY8Spi/k8apowjVa1W/VlaKi31Y/b0Fcq+hmR+cdls+saCmDPR3oeOoiz6lSQV7f87
-	5nqBILwnfzL+DMdFCtcoeXbaB1XNJuU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742982357;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=oBobONKOTS7L4WLiticidbETpD/OSDYPgaB3tzjLVWupUvMNltTcJlOcXfy4VLeQSkAbYw
-	cIo/ehfo9FZg7+Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 912D11374A;
-	Wed, 26 Mar 2025 09:45:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7DSvIdXM42fnaQAAD6G6ig
-	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 09:45:57 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Nicolai Stange <nstange@suse.de>,  Mimi Zohar <zohar@linux.ibm.com>,
-  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
-  James Bottomley <James.Bottomley@hansenpartnership.com>,
-  linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 07/13] tpm: enable bank selection for PCR extend
-In-Reply-To: <Z-Bx_-EvcfCzWqr7@kernel.org> (Jarkko Sakkinen's message of "Sun,
-	23 Mar 2025 22:41:35 +0200")
-References: <20250323140911.226137-1-nstange@suse.de>
-	<20250323140911.226137-8-nstange@suse.de>
-	<Z-Bx_-EvcfCzWqr7@kernel.org>
-Date: Wed, 26 Mar 2025 10:45:57 +0100
-Message-ID: <87h63gp1ka.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1742982375; c=relaxed/simple;
+	bh=gJIYGQR+RiGM0XJWCm7NWAzwfhYCn3x9TxE2VX287jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XBoZG5WWhsuaO6WCtCbFzi3AexqnJp+lMEJw/JhlP63tWWK8f3AZHc6R+RC5JwXHnakDaNGy3si5v+E+6tprZ6Mwqjo+K9adNH5qtTQJqOF3hcBgK1Ws8yl7L6vHxUlzlJL4wmUWr3+jy3Hf/m9EFxjaYHX4Lx8y8rOtDZImLUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EslX+LhK; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so919132366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742982371; x=1743587171; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9/kXXpYh2KweuiB5zHwjY0q/TjqrU3OfimILMTsVvAo=;
+        b=EslX+LhKXdrPfZT36eafoi5lnJKtuJIdH0X+vutYf208eI3Um4drcmiL/leOFxKuQ/
+         iHL7RHrVkkP6ecOsOAdixpOJn3plizjTP9ohyiHn+vi1HM5ivMEvAysv2FQ1ScXwN3DX
+         7cCi+qk7ab5XAQhORW96if/0RQBjIw1cctobq22k+tHJtuipVFOkO3J5jszdeMgF27Gb
+         qfEDy79uih87UjqXP1DDo3OON4eFuUumqTd60iWzdBKoPoG/kut6F7XSn39M208dMsS5
+         fj5vmRMMk9BR5FleJ6cFPoH/YN8/ZoIE4L/JXG+oDEv1UhdPikKJdOzeulFav8a5GJlT
+         U+lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742982371; x=1743587171;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/kXXpYh2KweuiB5zHwjY0q/TjqrU3OfimILMTsVvAo=;
+        b=ejp+57zJKthE4A+C6QphCVy+0yOkv+Bz+uNHomyUo9XGXzq1PpFm75r6RCwV0DN2Te
+         1f/deIzUOwDWsb5tbLhXeJx62FhZJUDNjQrlDBbLkk5KAS1Uip+06A0PeuEQa8l83T6d
+         0JrNdv+ISI1DQ1+UXZt4C5XXz4b5dohqLnLRXNwICoaAvNF9mi4LrxNdSR7Ys+P3ZN1l
+         9SYEQmBxjfVB+07SJpW187U2mpCkB8JfCE+7l84nB7CMOAlyU8Sa9TFGkGjl1wijdLrT
+         L58xUdVQEIWp2DwbBlLoOsG0C5zKb9zlvRCJvJWk9G58ZsVfde0soPC6cvSnpvB5SRwI
+         SRZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP/uSryLA7OAZvotkqioZUFGrx67qy/9AEJhsiSwx9KseISaNdwre8a7/7PCTnROvDw11K9aAtqad5x9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2bvIrNEmiA0gy8PAsgXxkJKdquC0tHR1R+I86J2fZVR7DTofF
+	Vzh10kTMZci5FxksmcZkTUUzCLXHacOJTVWjWlxZZ9Sc58rc0fjicPg9B2ZzeZU=
+X-Gm-Gg: ASbGncs1nUqIV0k77hNMAy7u2VhtdxTmRtAX2MOqXwDvuIVA8dVzPZJ/rfD3XlXw342
+	2H14Oyfn2z6Q+rDkauhqSWyz2XCVkojRGJ++7h4DEujdVODrZargCh0u55nncGa2n6Vm5fVlxdZ
+	CfaWPt7H8WHCHmoMO2CDuqkbCfG/nJKmpXx3W85IFQUVfIM13OsRlWe5sQh4JxcXudLDGEwcvPB
+	hvpCYX4V+YpwC1XDq8V9fJ5R5cXLi58zPFUGggCAgAoQ+oKMgdNqHtynxFb5xja77gWLkMhTrrj
+	I8pnusGCoHit4/9XFxwrGjlasR+q/9yg3hAs3cN6RdjNiEp0/dB2klArV6V4kJPc+vpa1ODphVR
+	hmjrmOLfJJFzG
+X-Google-Smtp-Source: AGHT+IHx/kCnyQhbohYhyZQ+ypuL87ESt4h+TC7om1KV6AWAGl0sRqBA5fm81htRzwYvpmm4nlJCag==
+X-Received: by 2002:a17:907:3dab:b0:ac3:3cfc:a59a with SMTP id a640c23a62f3a-ac3f26b18e4mr1876478266b.45.1742982371410;
+        Wed, 26 Mar 2025 02:46:11 -0700 (PDT)
+Received: from ?IPV6:2a02:3033:273:9b44:1f61:c513:306b:cf0e? ([2a02:3033:273:9b44:1f61:c513:306b:cf0e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbdca5dsm997614466b.137.2025.03.26.02.46.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 02:46:11 -0700 (PDT)
+Message-ID: <59f34bce-1069-446f-92ee-934cbad3d7ac@suse.com>
+Date: Wed, 26 Mar 2025 10:46:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-0.81 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	INVALID_MSGID(1.70)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,linux.ibm.com,huawei.com,gmail.com,oracle.com,hansenpartnership.com,vger.kernel.org];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: DDF4E21179
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -0.81
-X-Spam-Level: 
-
-Jarkko Sakkinen <jarkko@kernel.org> writes:
-
-> On Sun, Mar 23, 2025 at 03:09:05PM +0100, Nicolai Stange wrote:
->> The existing tpm_pcr_extend() extends all of a PCR's allocated banks with
->> the corresponding digest from the provided digests[] argument.
->
-> Why not "just" tpm_pcr_extend(). We don't have a concept of
-> "non-existing tpm_pcr_extend()".
->
-> "tpm_pcr_extend() extends the allocated PCR banks ..."
->
-> or something.
-
-Right.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: usb: usbnet: restore usb%d name exception for
+ local mac addresses
+To: Dominique Martinet <dominique.martinet@atmark-techno.com>,
+ Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Ahmed Naseef <naseefkm@gmail.com>
+References: <20250326-usbnet_rename-v2-1-57eb21fcff26@atmark-techno.com>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <20250326-usbnet_rename-v2-1-57eb21fcff26@atmark-techno.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
->>=20
->> An upcoming code change to IMA will introduce the need to skip over those
->
-> Don't talk about upcoming code changes. Just explain why IMA depends on
-> the change.
 
-Ok.
-
-
->> banks it does not have a hash algorithm implementation available for.
->>=20
->> Introduce tpm_pcr_extend_sel() to support this.
->>=20
->> tpm_pcr_extend_sel() also expects a digests[] array, always being the
->> number of allocated PCR banks in size, just as it's the case for the
->> existing tpm_pcr_extend(). In addition to that however, it takes a
->> 'banks_skip_mask', and will skip the extension of any bank having its
->> corresponding bit set there.
->>=20
->> Signed-off-by: Nicolai Stange <nstange@suse.de>
->> ---
->>  drivers/char/tpm/tpm-interface.c | 29 +++++++++++++++++++++++++++--
->>  drivers/char/tpm/tpm.h           |  3 ++-
->>  drivers/char/tpm/tpm2-cmd.c      | 29 +++++++++++++++++++++++++++--
->>  include/linux/tpm.h              |  3 +++
->>  4 files changed, 59 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-int=
-erface.c
->> index b1daa0d7b341..88b4496de1df 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -314,6 +314,26 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>   */
->>  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->>  		   struct tpm_digest *digests)
->> +{
->> +	return tpm_pcr_extend_sel(chip, pcr_idx, digests, 0);
->> +}
->> +EXPORT_SYMBOL_GPL(tpm_pcr_extend);
->
-> I'd add just an extra argument to tpm_pcr_extend().
-
-Perfect, will do.
-
-Thanks!
-
-Nicolai
-
---=20
-SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
-rnberg, Germany
-GF: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG N=C3=BCrnberg)
+On 26.03.25 09:32, Dominique Martinet wrote:
+> commit 8a7d12d674ac ("net: usb: usbnet: fix name regression") assumed
+> that local addresses always came from the kernel, but some devices hand
+> out local mac addresses so we ended up with point-to-point devices with
+> a mac set by the driver, renaming to eth%d when they used to be named
+> usb%d.
+> 
+> Userspace should not rely on device name, but for the sake of stability
+> restore the local mac address check portion of the naming exception:
+> point to point devices which either have no mac set by the driver or
+> have a local mac handed out by the driver will keep the usb%d name.
+> 
+> (some USB LTE modems are known to hand out a stable mac from the locally
+> administered range; that mac appears to be random (different for
+> mulitple devices) and can be reset with device-specific commands, so
+> while such devices would benefit from getting a OUI reserved, we have
+> to deal with these and might as well preserve the existing behavior
+> to avoid breaking fragile openwrt configurations and such on upgrade.)
+> 
+> Link: https://lkml.kernel.org/r/20241203130457.904325-1-asmadeus@codewreck.org
+> Fixes: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
+> Cc: stable@vger.kernel.org
+> Tested-by: Ahmed Naseef <naseefkm@gmail.com>
+> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 
