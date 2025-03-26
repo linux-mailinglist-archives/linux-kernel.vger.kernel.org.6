@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-577358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00B0A71C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:42:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE2FA71C0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C213F1898A01
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA34B16CCB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB9C1F463C;
-	Wed, 26 Mar 2025 16:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3141F583C;
+	Wed, 26 Mar 2025 16:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="gStzZ2jW"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rq8lWHdp"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79CF1F416D;
-	Wed, 26 Mar 2025 16:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8771547E7;
+	Wed, 26 Mar 2025 16:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007354; cv=none; b=AFvHEn91eBwHYiwApsn8q1yDyVCCX0kBvuDGcCe0NMnhNhN1F0Kmwp6m+tQPHYR5dzdzDfw07dTDVOjZUm3FFOVbyIcUy3WyDIeGxxeGoK3/3Sssxsejuu8Nhf4uvg+MHR379lxdqDxB44x23IIiBnjYMys+j6zTsPwC+3wXtN4=
+	t=1743007390; cv=none; b=cEUJvQDqhz9sTKsw12JYk0iYAOFqsOeADUC951SVhiSdX/GyokTe7C1xyJZkRdEBNmVPtYmPojIJr0sKP5niGHn7md70K3Z8h/dtvE0S+ahj71Q4N9GSUtgbX9zK7ZKenJRPSS0n3cMpyBlZ9gcDm9sIzPZM6DuwmmIVp8yQIyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007354; c=relaxed/simple;
-	bh=X2DxkO3Z0ZiZDUVuslfUvsTVKz2yIhEjymSgEAgeaLY=;
+	s=arc-20240116; t=1743007390; c=relaxed/simple;
+	bh=5LaXNLW37E2EEaddRWCUX09i5J874uRaHchU5pVY+P0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=olH5cRwnlPmJpFO6OAD3cOntBloEngKRRl2OK4vh2slJnD5G0wCDwbRCZgbET8oy+iWqqz7Ngv/axp2cY4CFsQHdy09daoKDNtTDV2YDVWn/gTl28d4zCQzO6VHBCgpsZFTe4zkJxhh/7s+exam7S7sElmC03jxQd7E2qDkrBGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=gStzZ2jW; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB251102EBA43;
-	Wed, 26 Mar 2025 17:42:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1743007350; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=hbMcfALOKLAN5Mw8Wpa0WVyi0wWl2REb7L9X3HcdnTo=;
-	b=gStzZ2jWmk/ps9fxv0Xdm24uIRj7EOfQSWtMlG4q2HLsqIK2ipKvs4dCZOhcH48Xz4Akop
-	wZht0GqxbGAcTqflnmDst9lZMj4ssC+c2h4TNql7nk7YcZ/g4BBXJjwaohk9tmc6drgS+F
-	r4/yQYYfRaDnaO4pAVJ5cpB7FzGj2svJUqjW7jS8fjIi4cuuXmXqkrHJfZWtssJLItZJyV
-	avTkPNmh8A0BO7pSa1z7n2zU9IT2S1QWERGrsiTv4TapRXaN4oZ3QuOMMtvEDv0FvRdwhL
-	bQ0nrWYofK1SRcIpEz10neiS94keFeipxh4K1y6+oo/qyBJZ3xJ64JpgNTnF1A==
-Date: Wed, 26 Mar 2025 17:42:28 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spidev: Add compatible for LWE's btt device
-Message-ID: <20250326174228.14dfdf8c@wsk>
-In-Reply-To: <5661510e-3aea-4c07-88d6-2c3efccadb37@sirena.org.uk>
-References: <20250221155644.1168860-1-lukma@denx.de>
-	<5661510e-3aea-4c07-88d6-2c3efccadb37@sirena.org.uk>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=pAvgQhj7dT0zAx9wj611i/nyWHsAmOPoy1c115HppeaJNw3UzLRBQlaktuPZIyjvMbO3lHj3SPFUjzMnJhJS4oLhaB/YJYVj/VxW3uKRTZ4crDHTctMIN/fizIqzhEUebALqIORBYGWpH728oD21qOONngc6+QBIId9v2bXlVSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rq8lWHdp; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5DC0242D46;
+	Wed, 26 Mar 2025 16:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743007381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hjKXwDgvk3pdIxFfT6ggKwXmZB2CLaZ9TOBwOFL7yIs=;
+	b=Rq8lWHdpvOVWYeg7riGtJTI+acq1/fmtn++wNgbJAqF9lD9bSWUzOBCr0FeszVEQaiQHP8
+	4JCexxQJy/DWx0c+J33z8UlwysohKktZUxjSXdApqHOuCzmiGhOOJ3XTzd4FFIJX24cEyV
+	qnbV1GboNUyojBkp9j/Y516j7DB/3GZHRcbtsAwn1Nl/VFao5Z00cIvsXqC3RD4YtnqoP1
+	NjDfUEgzokjQzCua1f/B6a+Vv54i4rAMz0NzpG9+aiOci4w2MtkgP5tROuXP0ZjgPyIZju
+	rTu9N/l0t1GKQNjKy/OpNX6sVzcmP8nu182di4RqMQugdLNC3icGwfY/z0Y2Eg==
+Date: Wed, 26 Mar 2025 17:42:57 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, <m-leonard@ti.com>,
+ <praneeth@ti.com>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <khilman@baylibre.com>,
+ <rogerq@kernel.org>, <lgirdwood@gmail.com>, <linux-omap@vger.kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <tony@atomide.com>,
+ <andreas@kemnade.info>, <aaro.koskinen@iki.fi>, <broonie@kernel.org>, Lee
+ Jones <lee@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 0/5] Add TI TPS65214 & TPS65215 PMIC MFD Driver
+ Support
+Message-ID: <20250326174257.33f74e81@kmaincent-XPS-13-7390>
+In-Reply-To: <c0f28cb1-d2a8-4583-937d-4908e4b70b4a@ti.com>
+References: <20250206173725.386720-1-s-ramamoorthy@ti.com>
+	<173928615760.2233464.12306998726512431222.b4-ty@kernel.org>
+	<7f33b5c7-b1a7-4db9-9e19-e30cbb0066ab@ti.com>
+	<471cdd13-3250-46b1-b7a0-a4f236a47773@kernel.org>
+	<c0f28cb1-d2a8-4583-937d-4908e4b70b4a@ti.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TbvFq.HIl7AIxb9_22=7h/N";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
-
---Sig_/TbvFq.HIl7AIxb9_22=7h/N
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeitdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmeekfeegrgemsggvvddvmegrtdgvugemkeguvdgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemkeefgegrmegsvgdvvdemrgdtvggumeekugdvrgdphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepshdqrhgrmhgrmhhoohhrthhhhiesthhirdgtohhmpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmqdhlvghon
+ hgrrhgusehtihdrtghomhdprhgtphhtthhopehprhgrnhgvvghthhesthhirdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Mark,
+On Thu, 6 Mar 2025 16:56:56 -0600
+Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
 
-> On Fri, Feb 21, 2025 at 04:56:44PM +0100, Lukasz Majewski wrote:
-> > The Liebherr's BTT devices are using spidev to communicate via
-> > SPI to monitoring devices. Extend compatibles to allow proper
-> > DTS description. =20
+> Hi,
 >=20
-> This is fine but we need a bindings document update too
-> (trivial-devices.yaml should be fine I think).
+> On 3/6/2025 1:26 AM, Krzysztof Kozlowski wrote:
+> > On 05/03/2025 22:09, Shree Ramamoorthy wrote: =20
+> >> Hi Lee,
+> >>
+> >>
+> >> On 2/11/25 9:02 AM, Lee Jones wrote: =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+> >> Would you be able to remove this series from your branch & replace it =
+with
+> >> this v6 [0], so Mark Brown will be able to apply the dependent regulat=
+or
+> >> series [1]? Thank you! =20
+> > You replied 3 weeks later. If something was applied not as it should,
+> > you ought to reply IMMEDIATELY, not 3 weeks after.
+> >
+> > The trees are mostly immutable after publishing.
+> >
+> > Best regards,
+> > Krzysztof =20
+>=20
+> Completely understand, sorry for re-sending the first 5 patches that were
+> already applied! I'll wait for the next merge window, so there won't be
+> dependencies between the MFD and regulator tree then.
 
-I've just resend the update for trival-devices.yaml.
-https://lore.kernel.org/linux-devicetree/20250326140930.2587775-1-lukma@den=
-x.de/T/#u
+Hello Shree,
 
-Hopefully you can pull it soon.
+I think what you should have asked here was a to use an immutable tag to let
+Mark uses this tag to merge the regulator part of the series on top of it.
+We use immutable tag when work need to be merged thought several Linux
+merge tree.
 
-Best regards,
+It seems Lee does not remove the MFD support so now that we are in the merge
+window, you just need to wait two weeks and repost the regulator part.
 
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/TbvFq.HIl7AIxb9_22=7h/N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfkLnQACgkQAR8vZIA0
-zr25kQf/cOf4hhdmDPZdvK50au5ouoJer5+qchALJYHNbPPJiz2SOnTORGBTMIin
-asIWsLFA/0khJ998ok64v5e8TRqulltQxLAgZjf858QPpC3T0KXrBuXg+oGADSik
-8Ioqs5dqKB/1hUCfu1sTxqUgS7sYjYCmEhjZnJEyklCtreyRwxjHpqhrvwBz7WOZ
-u1wzMvNa0e+6Juqqh24QbkWC3/j8RsrMnU4r9FS3l6FukeCpBP/oqJm14u56KQOH
-a1LQmVwsMm5yDNOjSFHmDCgV7Na/kXMBexLUaQ7idw2mcQudkd1/8l4I0OrTzoqD
-0DgzwaYgtG8dFvgr4EehPu+BFvwdbA==
-=umD7
------END PGP SIGNATURE-----
-
---Sig_/TbvFq.HIl7AIxb9_22=7h/N--
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
