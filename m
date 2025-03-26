@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-577274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212D9A71AE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:43:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20470A71AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2073084236D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034B43BA058
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04411FDA7E;
-	Wed, 26 Mar 2025 15:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3851FECC2;
+	Wed, 26 Mar 2025 15:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QCZ/1a3p"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B661F583A;
-	Wed, 26 Mar 2025 15:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tql2Tv4G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD921F874C;
+	Wed, 26 Mar 2025 15:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743003451; cv=none; b=mb5wpHfIPA4SXVCIBHKF2mKgvRd2GrJrWsL74VkfCPCJHERZDsMZai/ylB5ZffV9Ngd6gRAs7ZgnWIAtAoP7EXFTmUktTAd18+sAYTSa/ZI51bCO6pBwa4X9EDni4nVKnC/wLDwf+8iww7eS1Xlo/x8M7ZjfoMDCBqi9svLvbns=
+	t=1743003481; cv=none; b=fjbLqSc1+Kx/SfBmdZD+Xk6gYv5N4tGdSloYSO+u3DouW/CE4rTutNq4XSaHt+nX6WBxTLYUFELx95xNf26bsf0BuR7J28/SqHXaXOMPXuGKmkEVByUGuiVVibomaEtLMpzMrONvGofFt3gUzAplOvqnJgrNgO0pT/1UVEsqjVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743003451; c=relaxed/simple;
-	bh=X7FAEgRsV2xbboJ7QKOztmy6O5MW3v9XOfceR4QGwks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HYVB6x44gE4rKHzJcLxHvMSuDeclHUqkTGg/jvU3+nLvr8vyqHP7p99TFhf5XEokWIkzBXOQxNfKOucxfZtRiVz5VV4EC6sFsZEj8hAE/6iBPrHOaYm+ajIWrTr50hSupHUXteVvbhX7/sExJtTx1DkEUKy97HwLA4qJHFuuq4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QCZ/1a3p; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 204B22036597;
-	Wed, 26 Mar 2025 08:37:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 204B22036597
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743003449;
-	bh=WjzFIgjV9jVjkAChBrIFVJQnAYd6k3ZAKIpA/MaT4yo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QCZ/1a3p+ZIUFWcAhkJvic5IwY8U0ufXEKXOuGNNCfYPOL2C8wZRVb0oHeZ26p7MN
-	 55ghDNm1zZbkc7h9pH8j0WaY5qfjqpwdKTYWPi2UX1+7ck4WlgOZl7f4IIiSvY3N3U
-	 3LSW1a2/cC6In4mf7262M02Vm2HMR/pY2ogrm5bY=
-Message-ID: <83b983a4-064e-4a81-9c58-239b630eb299@linux.microsoft.com>
-Date: Wed, 26 Mar 2025 08:37:28 -0700
+	s=arc-20240116; t=1743003481; c=relaxed/simple;
+	bh=kqyu7iIKKcrq0py45Bc1ihHEX3l7PlNXupd3mSuHM/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgllUPtih0Srs1YE7peG/CmQbwFXpk5LaJVxmYJ1KcgwgOFwG4bFUvxwNX8qGwARsrFkkEb4XscbwI1TlupCVy9n5W45yuVFyvj5gAIifmma11G5bA7frHCG13vh11rhE2PkVqifDl1CVkIw8A0wXJVsPL7l8yOfysBZMJn1vQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tql2Tv4G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AE0C4CEE2;
+	Wed, 26 Mar 2025 15:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743003481;
+	bh=kqyu7iIKKcrq0py45Bc1ihHEX3l7PlNXupd3mSuHM/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tql2Tv4Gvc5tL9W7/XKvSDorRJIiOp4xBj+KE2MMa/4GrTt6HbTJGlVchnzqVa/6k
+	 06ldhRv0vT8+AB3WiP5cGsjlVnqK4RJM5+o//bCBu5/MstN86ywFP3zUcVqLj0w3m0
+	 rBmaSkLj9TA+foV0N6r1Fv6PX6bqOl8qCt2h7m8o2GE314d3FuNDzYRfrEWn3yWw1r
+	 m/2MIRKyagwpNP0AtdTBET43WSsYwmtDbXo3Qjwr0F9innFqpiQN6r2xXrUZQFQzUf
+	 cOlPEDVngqgPJ9fog10wX5zL2UlCja6iOo/RiPMDZ95mCLfsjuhFDEA47+aeWQWDAv
+	 5KRPAupo96keg==
+Date: Wed, 26 Mar 2025 08:37:56 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] wcslen() prototype in string.h
+Message-ID: <20250326153756.GB1105284@ax162>
+References: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
+ <20250325-string-add-wcslen-for-llvm-opt-v1-2-b8f1e2c17888@kernel.org>
+ <Z-LXHssrcpdtFqqn@smile.fi.intel.com>
+ <20250325165847.GA2603000@ax162>
+ <Z-LiWDbrEvVaTLZU@smile.fi.intel.com>
+ <20250325214516.GA672870@ax162>
+ <20250326003303.GA2394@ax162>
+ <Z-PCCCAPS4uvL3jZ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v6 11/11] PCI: hv: Get vPCI MSI IRQ domain
- from DeviceTree
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dan.carpenter@linaro.org,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
- kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org,
- mingo@redhat.com, oliver.upton@linux.dev, robh@kernel.org,
- ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
- tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
- yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250315001931.631210-1-romank@linux.microsoft.com>
- <20250315001931.631210-12-romank@linux.microsoft.com>
- <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <CAJZ5v0jNEO2VcwmMXLZaS+Kqg3iBgHcWb65f90HKUADtPuvgqA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-PCCCAPS4uvL3jZ@smile.fi.intel.com>
 
-
-
-On 3/26/2025 7:56 AM, Rafael J. Wysocki wrote:
-> On Sat, Mar 15, 2025 at 1:19 AM Roman Kisel <romank@linux.microsoft.com> wrote:
-
-[...]
-
->> -                                                         chip_data);
->> +#ifdef CONFIG_ACPI
->> +       if (!acpi_disabled)
->> +               irq_domain_parent = hv_pci_acpi_irq_domain_parent();
->> +#endif
->> +#if defined(CONFIG_OF)
+On Wed, Mar 26, 2025 at 10:59:52AM +0200, Andy Shevchenko wrote:
+> On Tue, Mar 25, 2025 at 05:33:03PM -0700, Nathan Chancellor wrote:
+> >  #define _LINUX_NLS_H
+> >  
+> >  #include <linux/init.h>
 > 
-> Why don't you do
+> As I just replied to your previous mail, consider fixing this list as well
+> by adding module.h and types.h.
 > 
-> #ifdef CONFIG_OF
+> ...
 > 
-> here for consistency?
+> Overall, can you browse the Ingo's series [1] for the stuff related to this,
+> if any?
 > 
+> I would avoid doing double efforts or different approaches if we already have
+> something ready.
 
-Agree, that'd be easier on the eyes :) Will fix in the next version,
-thanks for the suggestion!
+In Ingo's last fast-headers tree [1], nls.h only has export.h and init.h
+included, so it does not look like anything around this was changed from
+what I can tell.
 
->> +       if (!irq_domain_parent)
->> +               irq_domain_parent = hv_pci_of_irq_domain_parent();
->> +#endif
->> +       if (!irq_domain_parent) {
->> +               WARN_ONCE(1, "Invalid firmware configuration for VMBus interrupts\n");
->> +               ret = -EINVAL;
->> +               goto free_chip;
->> +       }
->> +
->> +       hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
->> +               irq_domain_parent, 0, HV_PCI_MSI_SPI_NR,
->> +               fn, &hv_pci_domain_ops,
->> +               chip_data);
->>
->>          if (!hv_msi_gic_irq_domain) {
->>                  pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
->> --
+types.h is going to be included via the new nls_types.h and while it
+does definitely look like module.h should be included, I do not really
+have the time and build capacity at the moment to incorporate testing
+that change into this series. I will stick with these two changes for
+now then I, you, or someone else can revisit cleaning up nls.h later.
 
--- 
-Thank you,
-Roman
+[1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/mingo/tip.git/tree/include/linux/nls.h?h=sched/headers
 
+Cheers,
+Nathan
 
