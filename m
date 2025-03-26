@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-576857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F686A71541
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:02:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280C8A71542
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFBD1189461E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0388516B7CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E856BA50;
-	Wed, 26 Mar 2025 11:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2731D07BA;
+	Wed, 26 Mar 2025 11:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTfzV32p"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1UKvcNzQ"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DC71C8626
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE0619CCF5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986899; cv=none; b=pKJXyViJDrRWNw3nH5O+ZWQUAOQ9glAnXTSQw9xsxA+qf21nFVXn5xhP5zsSWV2t1lcXQnDJOI3ZUFTeT58EBGWpKEa5PAE1KVRpGqwWSPOv85NU6jGfcRvq34DFjF0z3OOUfjAd7t2sDYueCc49gbQT9+mz4wgvElZ0HqH6yr0=
+	t=1742987096; cv=none; b=q+qB9uBsNuOQoLbWVFkHgaKkLPkto+zgMpgAIwRB4zdzU5YSFU/SOWh6POhDjlzJr7CTfsSeVc57JhZfkslQxeMkzBzZoHTEIfb3WhtX0pEkmUKYoUGLboZPbSRvlX1x6PNPyXsfj4rc99aRSCSZppbYoRDsWcNpxn8B0EPqV+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986899; c=relaxed/simple;
+	s=arc-20240116; t=1742987096; c=relaxed/simple;
 	bh=BzkNRZWNuEiabasgiSZ/Ec4yahGJSxfYCNxx10zT7gA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dzoT+BMij5xXALqtByolUYWNXFKtcMTIiZNyT9SsI3HYvmbSuDSaPR2XM3BTvE2inopLf9QYj9vTn0E8qdU8aMBVWXeEG/YQLYf/z/kGJSTsEvdS3AYAQaxfwJouY0i+QoSaQ6szmiE3dIuOzxanATImto9PaRIUTXmfqEy0tfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTfzV32p; arc=none smtp.client-ip=209.85.128.74
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=M4vi/If+pTU7USUdjDNwEJ6w4S9EkYDGNz0/ITSgHGab5GRX6WkUTzIfzNrTSN23Ju6r1Ttx1tw4562S7VV7hjDqQ84MNr25IlHxfdRB81VBimpH2tRrSy0OIB33RglTzGZKGF/lfEngK2DsBlt4Hcpnic4B0qZBG98oPZ4pYPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1UKvcNzQ; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d4d15058dso48220765e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:01:37 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4394c489babso31123405e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742986896; x=1743591696; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742987093; x=1743591893; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
         bh=m8s0QIY71zWKro6xSXQRXZSeXe5WAyMtXk+LtoR8l9A=;
-        b=oTfzV32pUynTSAxo6xfOT2X4fOFrupk7j/dkEVAwkPViz4XkQjkpdn9G2rAD8veM3G
-         BdXZ3sxmSUjQHf+9zzANGkeVei8mlIdg32VHve7jq4EAPu+/QQTwP5TSs9aI5BgroeeJ
-         BhYlK04m9s824yPt5LoMEFa6EuRKJLE44xIczl3/Kx2NLvGILUZvyg/YCPuHPEUvy0dK
-         5/uvj0iVFo0lKrayMzTy73RwVK6coOpS2qLpyR5m58T1RzFMCWXaNp6gjZO4dro9CGR1
-         D8gAwkYKp3By3XKB70cY1W+kaMauJjOU31xdktsVYQp1LYpeFt1gfMOc4RnHqab1BFZr
-         sUVg==
+        b=1UKvcNzQ+Ywlq6Kqh+073r1lrhCkOEsQfNvUZ5LKS8j/J7JSYAE+aFiX+BvkubaQ8W
+         Xd+N8DNv5ou6uIcpxOTkQ3Yz+IAvVGx0lp9c7bL10cSk8VQymUHfFeIg+l0iYdCpoL/E
+         psoiaAPX4sX9zgsTJbKD8sLz4moNu/MJP5afvpBUY1w7YSRNtNR28ZczByoQFh1ZotvF
+         BwIBiQK/4zkyR8Lh4vgeQ7tgs81P6GGeE5bwjb278d9Y9D2V8yQu/5BBZ9qgnd7RGq3a
+         c841RKtQGrQrzPMSumHGXTOnD/Hty9AWGUc6d6SeRNMbF17BIjSCFaZwtYycJpleljEH
+         SqiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742986896; x=1743591696;
+        d=1e100.net; s=20230601; t=1742987093; x=1743591893;
         h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
         bh=m8s0QIY71zWKro6xSXQRXZSeXe5WAyMtXk+LtoR8l9A=;
-        b=K/QzORwTi7picw3XERma5kYHT9zmJa48poZqjfjYlyeDaad0eSLV+VJlhmhi6aBG7V
-         2T3qIrMDJsIQp/wUdKOWinh2m155SNuyGj5VRXObJSYPIkCjbMTmfFnYngDXxXO/pQBi
-         cK7Cj18MPXbqpl5OKttMuy1hstd0q1IDPAgO+TzG0byxp/c4mL7+V2GNJVk1LUf+VUrh
-         g9IN2l3UDz2ZcscnSGmm+iS8om5m6xO5bnPyg78OztkTnZciEkP6sm31Dw3OqGd5PB5/
-         QfjhsoHgumlxDYDLImF2L1TDhjp9zBuQEma3wh9CckxBcp881FvHoQKxOBpMTtu8pu/9
-         FK5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWOWY9rH5foF9/6bMxh5HmJn1vDT9ch5dJcHeKCkjuM5+LTlPIHXVLQeYEP3wWet8peF+kKZOwfSzfHkZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLVrIyqfgYxy4ruQ8xVlwl2FyFpCNetujBxsRBOAnCQef2P/G4
-	xvck9N3w9Z+78VTstKxrqELMylAwS0V7jTQ/RL+y/hXVo5ZpcHtQWMF5vgnJOI+lhqqhhK35KA=
+        b=d6ZSJNBM4t1TA3lESWSFTGT6oXEk6IHvykwVs+N2Ukp3U/1GVw8dWDxoiBX/g3Cq6L
+         Q+oTysvOehz6IinVx47tvJjl2jU9UNpb76P5u9nDJQ2pQhXkPgzeW8jbttUKvw4jG+Qt
+         2g8PuchI8U0rKqBgxLY1SsqQzJM9kto50UyVcA+5swxPrEOGXejLqM7QQGMTLYwqp4oX
+         bPADczOC8AV50v7Bg1KLjKXoA6X/eg2tN6/tk7RGMrWDH1Wr0BAfLSPKC+97VgYIXg3L
+         oICCX0oDOfHRq86F+ivH6q7mSZipxCAYifnbIT1mXn9qCwkwMRBvaHCPt5cIwZauHOlT
+         JM3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUz5iMJmPY3yZuu3jRNObs2+JM4T7Hr9FBaie4GKXTQzj8HhxVvY1QC5rNUT33bh2Q1wSPNquZEiESFmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy62v13EHLpuktGV4L35ANUReKoiwJS5T5OTob70syOuKTZKEH
+	epzkYf+qvcwgl4hhqDFHxtOuy/REaWBGkyT6p6DnB4gd+yyJSMB+G9ucXyv/6Z8+N9M5toxWLw=
 	=
-X-Google-Smtp-Source: AGHT+IGBA2oNDwoX3vAaJuxLHM6l0qsvxKSEmFmpM5Wmf4mD/taDlkLFT9vj4nHDL4Q52ah1LmKUKhke0w==
-X-Received: from wrqb8.prod.google.com ([2002:a5d:40c8:0:b0:391:3d79:3021])
- (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:5885:0:b0:390:f4f9:8396
- with SMTP id ffacd0b85a97d-3997f912d09mr21778026f8f.28.1742986895818; Wed, 26
- Mar 2025 04:01:35 -0700 (PDT)
-Date: Wed, 26 Mar 2025 11:00:58 +0000
+X-Google-Smtp-Source: AGHT+IFE7QB78vQyOL/wlLJW8RVd/ZNnGkr6KLJbVri+z1rNmymt2uSjxG1NGSBhHuOotLBvKBi8D1fjsw==
+X-Received: from wmcq22.prod.google.com ([2002:a05:600c:c116:b0:43d:b30:d2df])
+ (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:cc6:b0:43d:16a0:d82c
+ with SMTP id 5b1f17b1804b1-43d509e6539mr206451605e9.2.1742987093272; Wed, 26
+ Mar 2025 04:04:53 -0700 (PDT)
+Date: Wed, 26 Mar 2025 11:04:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,8 +70,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250326110059.3773318-1-keirf@google.com>
-Subject: [PATCH] arm64: mops: Do not dereference src reg for a set operation
+Message-ID: <20250326110448.3792396-1-keirf@google.com>
+Subject: [PATCH v2] arm64: mops: Do not dereference src reg for a set operation
 From: Keir Fraser <keirf@google.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: Keir Fraser <keirf@google.com>, Kristina Martsenko <kristina.martsenko@arm.com>, 
