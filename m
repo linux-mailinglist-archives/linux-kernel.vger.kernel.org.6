@@ -1,556 +1,946 @@
-Return-Path: <linux-kernel+bounces-577079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A193A71815
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:07:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11317A717FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652253A483F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1D61894955
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAAE1EFF98;
-	Wed, 26 Mar 2025 14:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED551F1510;
+	Wed, 26 Mar 2025 14:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kz+MlTam"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTar/JGK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93933187876;
-	Wed, 26 Mar 2025 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887F314A09C;
+	Wed, 26 Mar 2025 14:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998024; cv=none; b=Y8fUavvNfwsK172uRx6eD2d0u0nmzktcrh7zBmoPuA6DRMJsA0yIiBhWSyCznYRuWUsdAZmQ6FOc0fgAisBzZfbv9kbt6jPVPeWG6Fso0IZ/QieE2AuVVTP1KgftTn+GppumssQJqlIHAjkFzf5B5SShEC/D5xomzvtDks9qUXY=
+	t=1742997621; cv=none; b=u3cCF6cX4eYrp0NFFf39Wq1+GX/6dTiVcLxuOIKBjhtj2wTA7qDmuYu5mGmZ8KayRIZd0FHz17KaZEvzrZSEBgx49mgD/3Txo1Ql0B4oAevfvhidjSg8pqd4yVOXV8L3up2SadllEHCB2JipRXVwkcT5Ess/gK6j0V0v/9w5VEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998024; c=relaxed/simple;
-	bh=5Dy3e01ZqWRkJMYkOCiJkNVEqowWn6MqPCFMtDszpRM=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=lqNI0wgSHQuUEZd/UkM2YMeM7bVDZR2f0ruWiY0/v2pbcewjahcZhZo9F4cGuzbfQq/qfctlPAEEJ6f4atIGPlVjmcrWC0bmYzxie5z1ipCBcji11HR4vBu7QExNTfA6AHsDoDSqCeGIN+Hj0vdOJEABQnyGUVgJkOpopK2gRiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kz+MlTam; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742998023; x=1774534023;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5Dy3e01ZqWRkJMYkOCiJkNVEqowWn6MqPCFMtDszpRM=;
-  b=kz+MlTam9r19v0pIwK7FICU15EIrAu8GwogSn4lIzoniVNWyZDnR7z0U
-   lrEUG0FzI/de3fYODRovDgdJDBAuWUZKJMGvyE3N1zFyIjjA0p0/+1vYk
-   I5jjn9eXnLfQ8oAsOqLin3C35F6W0e66gQ6vHonuYxQc5RGyJ/jzSUJ0+
-   MDFF1pl/hH03/lohJRXeY9P6ExfB6DC2Ki3es/jonkvwanLp2zlGh31DP
-   /8gikKJHNnH5ZTx8ApoDmbTU0h/goimg1opOGyWG0G2qvmKj5OMOcvFbw
-   fX1OoJ12cXF6bXVzBLV471c5Lfl1iztZRKHVnDw4di3bFzQXPva2Mv6E3
-   A==;
-X-CSE-ConnectionGUID: bC/oIXPpTlq07NY0M0Dqig==
-X-CSE-MsgGUID: WCc/qecERdWwYdiYtrZUFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="47941977"
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="47941977"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:07:03 -0700
-X-CSE-ConnectionGUID: TjCskTLVSPiwjcMkj8E2jA==
-X-CSE-MsgGUID: CqxseajRTX+OG7KY6BQp6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
-   d="scan'208";a="129903829"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 07:06:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Wed, 26 Mar 2025 15:59:34 +0200
-Subject: [GIT PULL] platform-drivers-x86 for v6.15-1
-Message-ID: <pdx86-pr-20250326155934-163925309@linux.intel.com>
+	s=arc-20240116; t=1742997621; c=relaxed/simple;
+	bh=G81GSw372LzmaUKI8Hs4RmtKtsgbXY3OIT9rzFA+4tA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPr92VtIjwczG5RsQG5/hZiKAgaG6Fk4cY0UI+17/+jRAWXZ4POX+FZSxr2kTYyzxXAHk0MiUZzDFwUMjE1iVzCf4Xb2Ph/r+3Ixbom6aKlYnwoJRe+divJNvs42q55SN/hkJdZIFjEjwPW+tZhHMd2nRhOe32w0C8Azwk/lCXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTar/JGK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0FAC4CEE2;
+	Wed, 26 Mar 2025 14:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742997620;
+	bh=G81GSw372LzmaUKI8Hs4RmtKtsgbXY3OIT9rzFA+4tA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MTar/JGKwJQqc6FY9o3EFNPKuCGzkkKNkB0o6m+oibbaksbF39SPuRtuXYOpR/tUc
+	 5cy+8wjPToGjvzthkBoih0d9fXX5SBvG8u2QFTl54Fl9CiFQdwMRNleonEDKFVxL8h
+	 Bi7TrfXI3PlrC4CWhWQMPuDRhXUxX6+zTbtf3ttI9mEDzaY3Bdnra77EYcI1f1bs2z
+	 +rg9he57IY5E+Ng+js8nTi1ZrylzDuAuzjDuQiUSQrWqKfyKBqoDDJ5ukuOgtZQhIs
+	 v23AH4+Uy4SrzAp5QbNVnwUxsUbSmGg7D0psM/lQqHERh+08FxTDRoepdoqjDLBHOw
+	 Wckh2wWmZ1HrA==
+Date: Wed, 26 Mar 2025 14:00:15 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 2/3] net: phy: Add support for Aeonsemi
+ AS21xxx PHYs
+Message-ID: <20250326140015.GD892515@horms.kernel.org>
+References: <20250326002404.25530-1-ansuelsmth@gmail.com>
+ <20250326002404.25530-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi Linus,
-
-Here is the main PDx86 PR for v6.15.
-
-Highlights:
-
- - alienware-wmi: Refactor and split WMAX/legacy drivers
-
- - dell-ddv:
-
-    - Correct +0.1 offset in temperature
-
-    - Use the power supply extension mechanism for battery temperatures
-
- - intel/pmc:
-
-    - Refactor init to mostly use a common init function
-
-    - Add support for Arrow Lake U/H
-
-    - Add support for Panther Lake
-
- - intel/sst:
-
-    - Improve multi die handling
-
-    - Prefix header search path with sysroot (fixes cross-compiling)
-
- - lenovo-wmi-hotkey-utilities: Support for mic & audio mute LEDs
-
- - samsung-galaxybook: Add driver for Samsung Galaxy Book series
-
- - wmi:
-
-    - Rework WCxx/WExx ACPI method handling
-
-    - Enable data block collection when the data block is set
-
- - platform/arm:
-
-    - Add Huawei Matebook E Go EC driver
-
- - platform/mellanox:
-
-    - Relocate to drivers/platform/mellanox/
-
-    - mlxbf-bootctl: RTC battery status sysfs support
-
- - Miscellaneous cleanups / refactoring / improvements
-
-Regards, i.
-
-
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-1
-
-for you to fetch changes up to 2c30357e755b087217c7643fda2b8aea6d6deda4:
-
-  platform/x86: x86-android-tablets: Add select POWER_SUPPLY to Kconfig (2025-03-24 15:51:15 +0200)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.15-1
-
-Highlights:
-
- - alienware-wmi: Refactor and split WMAX/legacy drivers
-
- - dell-ddv:
-
-    - Correct +0.1 offset in temperature
-
-    - Use the power supply extension mechanism for battery temperatures
-
- - intel/pmc:
-
-    - Refactor init to mostly use a common init function
-
-    - Add support for Arrow Lake U/H
-
-    - Add support for Panther Lake
-
- - intel/sst:
-
-    - Improve multi die handling
-
-    - Prefix header search path with sysroot (fixes cross-compiling)
-
- - lenovo-wmi-hotkey-utilities: Support for mic & audio mute LEDs
-
- - samsung-galaxybook: Add driver for Samsung Galaxy Book series
-
- - wmi:
-
-    - Rework WCxx/WExx ACPI method handling
-
-    - Enable data block collection when the data block is set
-
- - platform/arm:
-
-    - Add Huawei Matebook E Go EC driver
-
- - platform/mellanox:
-
-    - Relocate to drivers/platform/mellanox/
-
-    - mlxbf-bootctl: RTC battery status sysfs support
-
- - Miscellaneous cleanups / refactoring / improvements
-
-The following is an automated shortlog grouped by driver:
-
-alienware-wmi:
- -  Add a state container for LED control feature
- -  Add a state container for thermal control methods
- -  Add alienware-wmi.h
- -  Add WMI Drivers
- -  Refactor hdmi, amplifier, deepslp methods
- -  Refactor LED control methods
- -  Refactor thermal control methods
- -  Rename alienware-wmi.c
- -  Split DMI table
- -  Split the alienware-wmi driver
- -  Update alienware-wmi config entries
- -  Update header and module information
-
-amd/pmc:
- -  fix leak in probe()
- -  Move macros and structures to the PMC header file
- -  Notify user when platform does not support s0ix transition
- -  Remove unnecessary line breaks
- -  Use managed APIs for mutex
-
-amd/pmf:
- -  convert timeouts to secs_to_jiffies()
-
-amd:
- -  Use *-y instead of *-objs in Makefiles
-
-arm64:
- -  add Huawei Matebook E Go EC driver
-
-arm64: dts: qcom: gaokun3:
- -  Add Embedded Controller node
-
-compal-laptop:
- -  Do not include <linux/fb.h>
-
-dell-ddv:
- -  Fix temperature calculation
- -  Use devm_battery_hook_register
- -  Use the power supply extension mechanism
-
-dell: dell-wmi-sysman:
- -  Use *-y instead of *-objs in Makefile
-
-dell:
- -  Modify Makefile alignment
- -  Use *-y instead of *-objs in Makefile
-
-dell-uart-backlight:
- -  Make dell_uart_bl_serdev_driver static
-
-dt-bindings: platform:
- -  Add Huawei Matebook E Go EC
-
-hp-bioscfg:
- -  Replace deprecated strncpy() with strscpy()
- -  Use wmi_instance_count()
-
-hp:
- -  Use *-y instead of *-objs in Makefile
-
-hwmon:
- -  (hp-wmi-sensors) Use the WMI bus API when accessing sensors
-
-ideapad-laptop:
- -  use dev_groups to register attribute groups
-
-int3472:
- -  Call "func" "con_id" instead
-
-intel/pmc:
- -  Add Arrow Lake U/H support to intel_pmc_core driver
- -  Add Panther Lake support to intel_pmc_core
- -  Create generic_core_init() for all platforms
- -  Make tgl_core_generic_init() static
- -  Move arch specific action to init function
- -  Remove duplicate enum
- -  Remove simple init functions
- -  Remove unnecessary declarations in header
- -  Remove unneeded extern keyword in header
-
-intel:
- -  Use *-y instead of *-objs in Makefile
-
-irqdomain: platform/x86:
- -  Switch to irq_domain_create_linear()
-
-lenovo-wmi-hotkey-utilities.c:
- -  Support for mic and audio mute LEDs
-
-lenovo-yoga-tab2-pro-1380-fastcharger:
- -  Make symbol static
-
-MAINTAINERS:
- -  Add documentation reference for Mellanox platform
- -  Update ALIENWARE WMI DRIVER entry
-
-mellanox:
- -  Relocate mlx-platform driver
-
-mlxbf-bootctl:
- -  Support sysfs entries for RTC battery status
-
-mlx-platform:
- -  Change register name
- -  Cosmetic changes
-
-samsung-galaxybook:
- -  Add samsung-galaxybook driver
- -  Fix block_recording not supported logic
-
-sonypi:
- -  Use str_on_off() helper in sonypi_display_info()
-
-think-lmi:
- -  Use ACPI object when extracting strings
- -  Use WMI bus API when accessing BIOS settings
-
-thinkpad_acpi:
- -  check the return value of devm_mutex_init()
- -  convert timeouts to secs_to_jiffies()
- -  Do not include <linux/fb.h>
- -  Move HWMON initialization to tpacpi_hwmon_pdriver's probe
- -  Move subdriver initialization to tpacpi_pdriver's probe.
-
-tools/power/x86/intel-speed-select:
- -  Die ID for IO dies
- -  Fix the condition to check multi die system
- -  Prefix header search path with sysroot
- -  Prevent increasing MAX_DIE_PER_PACKAGE
- -  v1.22 release
-
-wmi:
- -  Call WCxx methods when setting data blocks
- -  Rework WCxx/WExx ACPI method handling
- -  Update documentation regarding the GUID-based API
- -  Use devres to disable the WMI device
-
-x86-android-tablets:
- -  Add select POWER_SUPPLY to Kconfig
-
-Merges:
- -  Merge branch 'fixes' into for-next
- -  Merge branch 'intel-sst' of https://github.com/spandruvada/linux-kernel into review-ilpo-next
-
-----------------------------------------------------------------
-Armin Wolf (11):
-      hwmon: (hp-wmi-sensors) Use the WMI bus API when accessing sensors
-      platform/x86: think-lmi: Use ACPI object when extracting strings
-      platform/x86: think-lmi: Use WMI bus API when accessing BIOS settings
-      platform/x86: hp-bioscfg: Use wmi_instance_count()
-      platform/x86: wmi: Use devres to disable the WMI device
-      platform/x86: wmi: Rework WCxx/WExx ACPI method handling
-      platform/x86: wmi: Call WCxx methods when setting data blocks
-      platform/x86: wmi: Update documentation regarding the GUID-based API
-      platform/x86: dell-ddv: Fix temperature calculation
-      platform/x86: dell-ddv: Use devm_battery_hook_register
-      platform/x86: dell-ddv: Use the power supply extension mechanism
-
-Bartosz Golaszewski (1):
-      platform/x86: thinkpad_acpi: check the return value of devm_mutex_init()
-
-Dan Carpenter (1):
-      platform/x86/amd/pmc: fix leak in probe()
-
-Dmitry Kandybka (1):
-      platform/x86/intel: pmc: fix ltr decode in pmc_core_ltr_show()
-
-Easwar Hariharan (2):
-      platform/x86: thinkpad_acpi: convert timeouts to secs_to_jiffies()
-      platform/x86/amd/pmf: convert timeouts to secs_to_jiffies()
-
-Fedor Pchelkin (1):
-      platform/x86: ideapad-laptop: pass a correct pointer to the driver data
-
-Hans de Goede (1):
-      platform/x86: x86-android-tablets: Add select POWER_SUPPLY to Kconfig
-
-Ilpo Järvinen (4):
-      Merge branch 'fixes' into for-next
-      platform/x86: lenovo-yoga-tab2-pro-1380-fastcharger: Make symbol static
-      platform/x86: dell-uart-backlight: Make dell_uart_bl_serdev_driver static
-      Merge branch 'intel-sst' of https://github.com/spandruvada/linux-kernel into review-ilpo-next
-
-Jackie Dong (1):
-      platform/x86:lenovo-wmi-hotkey-utilities.c: Support for mic and audio mute LEDs
-
-Jiri Slaby (SUSE) (1):
-      irqdomain: platform/x86: Switch to irq_domain_create_linear()
-
-Jithu Joseph (1):
-      platform/x86/intel/ifs: Update documentation with image download path
-
-Joshua Grisham (2):
-      platform/x86: samsung-galaxybook: Add samsung-galaxybook driver
-      platform/x86: samsung-galaxybook: Fix block_recording not supported logic
-
-Khem Raj (1):
-      tools/power/x86/intel-speed-select: Prefix header search path with sysroot
-
-Kurt Borja (21):
-      platform/x86: alienware-wmi: Add a state container for LED control feature
-      platform/x86: alienware-wmi: Add WMI Drivers
-      platform/x86: alienware-wmi: Add a state container for thermal control methods
-      platform/x86: alienware-wmi: Refactor LED control methods
-      platform/x86: alienware-wmi: Refactor hdmi, amplifier, deepslp methods
-      platform/x86: alienware-wmi: Refactor thermal control methods
-      platform/x86: alienware-wmi: Split DMI table
-      MAINTAINERS: Update ALIENWARE WMI DRIVER entry
-      platform/x86: Rename alienware-wmi.c
-      platform/x86: Add alienware-wmi.h
-      platform/x86: Split the alienware-wmi driver
-      platform/x86: dell: Modify Makefile alignment
-      platform/x86: Update alienware-wmi config entries
-      platform/x86: alienware-wmi: Update header and module information
-      platform/x86: dell: Use *-y instead of *-objs in Makefile
-      platform/x86: thinkpad_acpi: Move subdriver initialization to tpacpi_pdriver's probe.
-      platform/x86: thinkpad_acpi: Move HWMON initialization to tpacpi_hwmon_pdriver's probe
-      platform/x86: dell: dell-wmi-sysman: Use *-y instead of *-objs in Makefile
-      platform/x86: amd: Use *-y instead of *-objs in Makefiles
-      platform/x86: hp: Use *-y instead of *-objs in Makefile
-      platform/x86: intel: Use *-y instead of *-objs in Makefile
-
-Mark Pearson (2):
-      platform/x86: thinkpad_acpi: Support for V9 DYTC platform profiles
-      platform/x86: thinkpad_acpi: Fix registration of tpacpi platform driver
-
-Ovidiu Panait (1):
-      platform/x86: ideapad-laptop: use dev_groups to register attribute groups
-
-Pengyu Luo (3):
-      dt-bindings: platform: Add Huawei Matebook E Go EC
-      platform: arm64: add Huawei Matebook E Go EC driver
-      arm64: dts: qcom: gaokun3: Add Embedded Controller node
-
-Sakari Ailus (3):
-      platform/x86: int3472: Use correct type for "polarity", call it gpio_flags
-      platform/x86: int3472: Call "reset" GPIO "enable" for INT347E
-      platform/x86: int3472: Call "func" "con_id" instead
-
-Shyam Sundar S K (4):
-      platform/x86/amd/pmc: Notify user when platform does not support s0ix transition
-      platform/x86/amd/pmc: Move macros and structures to the PMC header file
-      platform/x86/amd/pmc: Remove unnecessary line breaks
-      platform/x86/amd/pmc: Use managed APIs for mutex
-
-Srinivas Pandruvada (4):
-      tools/power/x86/intel-speed-select: Prevent increasing MAX_DIE_PER_PACKAGE
-      tools/power/x86/intel-speed-select: Fix the condition to check multi die system
-      tools/power/x86/intel-speed-select: Die ID for IO dies
-      tools/power/x86/intel-speed-select: v1.22 release
-
-Sybil Isabel Dorsett (1):
-      platform/x86: thinkpad_acpi: Fix invalid fan speed on ThinkPad X120e
-
-Thomas Zimmermann (2):
-      platform/x86: compal-laptop: Do not include <linux/fb.h>
-      platform/x86: thinkpad-acpi: Do not include <linux/fb.h>
-
-Thorsten Blum (2):
-      sonypi: Use str_on_off() helper in sonypi_display_info()
-      platform/x86: hp-bioscfg: Replace deprecated strncpy() with strscpy()
-
-Vadim Pasternak (4):
-      mellanox: Relocate mlx-platform driver
-      platform: mellanox: mlx-platform: Cosmetic changes
-      platform: mellanox: mlx-platform: Change register name
-      MAINTAINERS: Add documentation reference for Mellanox platform
-
-Xi Pardee (9):
-      platform/x86:intel/pmc: Make tgl_core_generic_init() static
-      platform/x86/intel/pmc: Remove duplicate enum
-      platform/x86:intel/pmc: Create generic_core_init() for all platforms
-      platform/x86/intel/pmc: Remove simple init functions
-      platform/x86/intel/pmc: Add Arrow Lake U/H support to intel_pmc_core driver
-      platform/x86:intel/pmc: Move arch specific action to init function
-      platform/x86/intel/pmc: Add Panther Lake support to intel_pmc_core
-      platform/x86/intel/pmc: Remove unnecessary declarations in header
-      platform/x86/intel/pmc: Remove unneeded extern keyword in header
-
-Xiangrong Li (1):
-      mlxbf-bootctl: Support sysfs entries for RTC battery status
-
- .../ABI/testing/sysfs-platform-mellanox-bootctl    |   10 +
- Documentation/admin-guide/laptops/index.rst        |    1 +
- .../admin-guide/laptops/samsung-galaxybook.rst     |  174 +++
- .../bindings/platform/huawei,gaokun-ec.yaml        |  124 ++
- Documentation/wmi/acpi-interface.rst               |    3 +
- Documentation/wmi/driver-development-guide.rst     |    4 +
- MAINTAINERS                                        |   31 +-
- .../boot/dts/qcom/sc8280xp-huawei-gaokun3.dts      |  163 +++
- drivers/char/sonypi.c                              |   11 +-
- drivers/hwmon/hp-wmi-sensors.c                     |    4 +-
- drivers/platform/arm64/Kconfig                     |   21 +
- drivers/platform/arm64/Makefile                    |    1 +
- drivers/platform/arm64/huawei-gaokun-ec.c          |  825 ++++++++++++
- drivers/platform/mellanox/Kconfig                  |   13 +
- drivers/platform/mellanox/Makefile                 |    1 +
- drivers/platform/{x86 => mellanox}/mlx-platform.c  |   17 +-
- drivers/platform/mellanox/mlxbf-bootctl.c          |   20 +
- drivers/platform/mellanox/mlxbf-bootctl.h          |    5 +
- drivers/platform/x86/Kconfig                       |   41 +-
- drivers/platform/x86/Makefile                      |    7 +-
- drivers/platform/x86/amd/Makefile                  |    2 +-
- drivers/platform/x86/amd/hsmp/Makefile             |    6 +-
- drivers/platform/x86/amd/pmc/Makefile              |    6 +-
- drivers/platform/x86/amd/pmc/pmc.c                 |  113 +-
- drivers/platform/x86/amd/pmc/pmc.h                 |   82 ++
- drivers/platform/x86/amd/pmf/Makefile              |    8 +-
- drivers/platform/x86/amd/pmf/acpi.c                |    2 +-
- drivers/platform/x86/asus-tf103c-dock.c            |    2 +-
- drivers/platform/x86/compal-laptop.c               |    1 -
- drivers/platform/x86/dell/Kconfig                  |   30 +-
- drivers/platform/x86/dell/Makefile                 |   45 +-
- drivers/platform/x86/dell/alienware-wmi-base.c     |  491 +++++++
- drivers/platform/x86/dell/alienware-wmi-legacy.c   |   95 ++
- drivers/platform/x86/dell/alienware-wmi-wmax.c     |  768 +++++++++++
- drivers/platform/x86/dell/alienware-wmi.c          | 1249 -----------------
- drivers/platform/x86/dell/alienware-wmi.h          |  117 ++
- drivers/platform/x86/dell/dell-uart-backlight.c    |    2 +-
- drivers/platform/x86/dell/dell-wmi-ddv.c           |   84 +-
- drivers/platform/x86/dell/dell-wmi-sysman/Makefile |    2 +-
- drivers/platform/x86/hp/hp-bioscfg/Makefile        |    2 +-
- drivers/platform/x86/hp/hp-bioscfg/bioscfg.c       |   15 +-
- drivers/platform/x86/ideapad-laptop.c              |   25 +-
- drivers/platform/x86/intel/ifs/Makefile            |    2 +-
- drivers/platform/x86/intel/ifs/ifs.h               |    9 +-
- drivers/platform/x86/intel/int3472/discrete.c      |  105 +-
- drivers/platform/x86/intel/pmc/Makefile            |    2 +-
- drivers/platform/x86/intel/pmc/adl.c               |   56 +-
- drivers/platform/x86/intel/pmc/arl.c               |  137 +-
- drivers/platform/x86/intel/pmc/cnp.c               |   29 +-
- drivers/platform/x86/intel/pmc/core.c              |  119 +-
- drivers/platform/x86/intel/pmc/core.h              |  199 +--
- drivers/platform/x86/intel/pmc/icl.c               |   24 +-
- drivers/platform/x86/intel/pmc/lnl.c               |   67 +-
- drivers/platform/x86/intel/pmc/mtl.c               |  109 +-
- drivers/platform/x86/intel/pmc/ptl.c               |  550 ++++++++
- drivers/platform/x86/intel/pmc/spt.c               |   45 +-
- drivers/platform/x86/intel/pmc/tgl.c               |   59 +-
- drivers/platform/x86/lenovo-wmi-hotkey-utilities.c |  212 +++
- .../x86/lenovo-yoga-tab2-pro-1380-fastcharger.c    |    2 +-
- drivers/platform/x86/samsung-galaxybook.c          | 1425 ++++++++++++++++++++
- drivers/platform/x86/think-lmi.c                   |   51 +-
- drivers/platform/x86/think-lmi.h                   |    2 +
- drivers/platform/x86/thinkpad_acpi.c               |  242 ++--
- drivers/platform/x86/wmi.c                         |  143 +-
- drivers/platform/x86/x86-android-tablets/Kconfig   |    1 +
- include/linux/platform_data/huawei-gaokun-ec.h     |   79 ++
- tools/power/x86/intel-speed-select/Makefile        |    2 +-
- tools/power/x86/intel-speed-select/isst-config.c   |   22 +-
- tools/power/x86/intel-speed-select/isst-display.c  |   11 +-
- 69 files changed, 6100 insertions(+), 2227 deletions(-)
- create mode 100644 Documentation/admin-guide/laptops/samsung-galaxybook.rst
- create mode 100644 Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
- create mode 100644 drivers/platform/arm64/huawei-gaokun-ec.c
- rename drivers/platform/{x86 => mellanox}/mlx-platform.c (99%)
- create mode 100644 drivers/platform/x86/dell/alienware-wmi-base.c
- create mode 100644 drivers/platform/x86/dell/alienware-wmi-legacy.c
- create mode 100644 drivers/platform/x86/dell/alienware-wmi-wmax.c
- delete mode 100644 drivers/platform/x86/dell/alienware-wmi.c
- create mode 100644 drivers/platform/x86/dell/alienware-wmi.h
- create mode 100644 drivers/platform/x86/intel/pmc/ptl.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
- create mode 100644 drivers/platform/x86/samsung-galaxybook.c
- create mode 100644 include/linux/platform_data/huawei-gaokun-ec.h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326002404.25530-3-ansuelsmth@gmail.com>
+
+On Wed, Mar 26, 2025 at 01:23:58AM +0100, Christian Marangi wrote:
+> Add support for Aeonsemi AS21xxx 10G C45 PHYs. These PHYs intergate
+
+nit: integrate
+
+> an IPC to setup some configuration and require special handling to
+> sync with the parity bit. The parity bit is a way the IPC use to
+> follow correct order of command sent.
+> 
+> Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
+> AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
+> AS21210PB1 that all register with the PHY ID 0x7500 0x7510
+> before the firmware is loaded.
+> 
+> They all support up to 5 LEDs with various HW mode supported.
+> 
+> While implementing it was found some strange coincidence with using the
+> same logic for implementing C22 in MMD regs in Broadcom PHYs.
+> 
+> For reference here the AS21xxx PHY name logic:
+> 
+> AS21x1xxB1
+>     ^ ^^
+>     | |J: Supports SyncE/PTP
+>     | |P: No SyncE/PTP support
+>     | 1: Supports 2nd Serdes
+>     | 2: Not 2nd Serdes support
+>     0: 10G, 5G, 2.5G
+>     5: 5G, 2.5G
+>     2: 2.5G
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+...
+
+> diff --git a/drivers/net/phy/as21xxx.c b/drivers/net/phy/as21xxx.c
+
+...
+
+Please consider limiting line lengths to 80 columns which is still preferred
+for Networking code. There is an option to checkpatch for this.
+
+> +
+> +#define VEND1_FW_START_ADDR		0x100
+> +
+> +#define VEND1_GLB_REG_MDIO_INDIRECT_ADDRCMD 0x101
+> +#define VEND1_GLB_REG_MDIO_INDIRECT_LOAD 0x102
+> +
+> +#define VEND1_GLB_REG_MDIO_INDIRECT_STATUS 0x103
+> +
+> +#define VEND1_PTP_CLK			0x142
+> +#define   VEND1_PTP_CLK_EN		BIT(6)
+> +
+> +/* 5 LED at step of 0x20
+> + * FE: Fast-Ethernet (10/100)
+> + * GE: Gigabit-Ethernet (1000)
+> + * NG: New-Generation (2500/5000/10000)
+> + */
+> +#define VEND1_LED_REG(_n)		(0x1800 + ((_n) * 0x10))
+> +#define   VEND1_LED_REG_A_EVENT		GENMASK(15, 11)
+> +#define VEND1_LED_CONF			0x1881
+> +#define   VEND1_LED_CONFG_BLINK		GENMASK(7, 0)
+> +
+> +#define VEND1_SPEED_STATUS		0x4002
+> +#define   VEND1_SPEED_MASK		GENMASK(7, 0)
+> +#define   VEND1_SPEED_10000		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x3)
+> +#define   VEND1_SPEED_5000		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x5)
+> +#define   VEND1_SPEED_2500		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x9)
+> +#define   VEND1_SPEED_1000		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x10)
+> +#define   VEND1_SPEED_100		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x20)
+> +#define   VEND1_SPEED_10		FIELD_PREP_CONST(VEND1_SPEED_MASK, 0x0)
+> +
+> +#define VEND1_IPC_CMD			0x5801
+> +#define   AEON_IPC_CMD_PARITY		BIT(15)
+> +#define   AEON_IPC_CMD_SIZE		GENMASK(10, 6)
+> +#define   AEON_IPC_CMD_OPCODE		GENMASK(5, 0)
+> +
+> +#define IPC_CMD_NOOP			0x0  /* Do nothing */
+> +#define IPC_CMD_INFO			0x1  /* Get Firmware Version */
+> +#define IPC_CMD_SYS_CPU			0x2  /* SYS_CPU */
+> +#define IPC_CMD_BULK_DATA		0xa  /* Pass bulk data in ipc registers. */
+> +#define IPC_CMD_BULK_WRITE		0xc  /* Write bulk data to memory */
+> +#define IPC_CMD_CFG_PARAM		0x1a /* Write config parameters to memory */
+> +#define IPC_CMD_NG_TESTMODE		0x1b /* Set NG test mode and tone */
+> +#define IPC_CMD_TEMP_MON		0x15 /* Temperature monitoring function */
+> +#define IPC_CMD_SET_LED			0x23 /* Set led */
+> +
+> +#define VEND1_IPC_STS			0x5802
+> +#define   AEON_IPC_STS_PARITY		BIT(15)
+> +#define   AEON_IPC_STS_SIZE		GENMASK(14, 10)
+> +#define   AEON_IPC_STS_OPCODE		GENMASK(9, 4)
+> +#define   AEON_IPC_STS_STATUS		GENMASK(3, 0)
+> +#define   AEON_IPC_STS_STATUS_RCVD	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0x1)
+> +#define   AEON_IPC_STS_STATUS_PROCESS	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0x2)
+> +#define   AEON_IPC_STS_STATUS_SUCCESS	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0x4)
+> +#define   AEON_IPC_STS_STATUS_ERROR	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0x8)
+> +#define   AEON_IPC_STS_STATUS_BUSY	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0xe)
+> +#define   AEON_IPC_STS_STATUS_READY	FIELD_PREP_CONST(AEON_IPC_STS_STATUS, 0xf)
+> +
+> +#define VEND1_IPC_DATA0			0x5808
+> +#define VEND1_IPC_DATA1			0x5809
+> +#define VEND1_IPC_DATA2			0x580a
+> +#define VEND1_IPC_DATA3			0x580b
+> +#define VEND1_IPC_DATA4			0x580c
+> +#define VEND1_IPC_DATA5			0x580d
+> +#define VEND1_IPC_DATA6			0x580e
+> +#define VEND1_IPC_DATA7			0x580f
+> +#define VEND1_IPC_DATA(_n)		(VEND1_IPC_DATA0 + (_n))
+> +
+> +/* Sub command of CMD_INFO */
+> +#define IPC_INFO_VERSION		0x1
+> +
+> +/* Sub command of CMD_SYS_CPU */
+> +#define IPC_SYS_CPU_REBOOT		0x3
+> +#define IPC_SYS_CPU_IMAGE_OFST		0x4
+> +#define IPC_SYS_CPU_IMAGE_CHECK		0x5
+> +#define IPC_SYS_CPU_PHY_ENABLE		0x6
+> +
+> +/* Sub command of CMD_CFG_PARAM */
+> +#define IPC_CFG_PARAM_DIRECT		0x4
+> +
+> +/* CFG DIRECT sub command */
+> +#define IPC_CFG_PARAM_DIRECT_NG_PHYCTRL	0x1
+> +#define IPC_CFG_PARAM_DIRECT_CU_AN	0x2
+> +#define IPC_CFG_PARAM_DIRECT_SDS_PCS	0x3
+> +#define IPC_CFG_PARAM_DIRECT_AUTO_EEE	0x4
+> +#define IPC_CFG_PARAM_DIRECT_SDS_PMA	0x5
+> +#define IPC_CFG_PARAM_DIRECT_DPC_RA	0x6
+> +#define IPC_CFG_PARAM_DIRECT_DPC_PKT_CHK 0x7
+> +#define IPC_CFG_PARAM_DIRECT_DPC_SDS_WAIT_ETH 0x8
+> +#define IPC_CFG_PARAM_DIRECT_WDT	0x9
+> +#define IPC_CFG_PARAM_DIRECT_SDS_RESTART_AN 0x10
+> +#define IPC_CFG_PARAM_DIRECT_TEMP_MON	0x11
+> +#define IPC_CFG_PARAM_DIRECT_WOL	0x12
+> +
+> +/* Sub command of CMD_TEMP_MON */
+> +#define IPC_CMD_TEMP_MON_GET		0x4
+> +
+> +#define AS21XXX_MDIO_AN_C22		0xffe0
+> +
+> +#define PHY_ID_AS21XXX			0x75009410
+> +/* AS21xxx ID Legend
+> + * AS21x1xxB1
+> + *     ^ ^^
+> + *     | |J: Supports SyncE/PTP
+> + *     | |P: No SyncE/PTP support
+> + *     | 1: Supports 2nd Serdes
+> + *     | 2: Not 2nd Serdes support
+> + *     0: 10G, 5G, 2.5G
+> + *     5: 5G, 2.5G
+> + *     2: 2.5G
+> + */
+> +#define PHY_ID_AS21011JB1		0x75009402
+> +#define PHY_ID_AS21011PB1		0x75009412
+> +#define PHY_ID_AS21010JB1		0x75009422
+> +#define PHY_ID_AS21010PB1		0x75009432
+> +#define PHY_ID_AS21511JB1		0x75009442
+> +#define PHY_ID_AS21511PB1		0x75009452
+> +#define PHY_ID_AS21510JB1		0x75009462
+> +#define PHY_ID_AS21510PB1		0x75009472
+> +#define PHY_ID_AS21210JB1		0x75009482
+> +#define PHY_ID_AS21210PB1		0x75009492
+> +#define PHY_VENDOR_AEONSEMI		0x75009400
+> +
+> +#define AEON_MAX_LDES			5
+> +#define AEON_IPC_DELAY			10000
+> +#define AEON_IPC_TIMEOUT		(AEON_IPC_DELAY * 100)
+> +#define AEON_IPC_DATA_MAX		(8 * sizeof(u16))
+> +
+> +#define AEON_BOOT_ADDR			0x1000
+> +#define AEON_CPU_BOOT_ADDR		0x2000
+> +#define AEON_CPU_CTRL_FW_LOAD		(BIT(4) | BIT(2) | BIT(1) | BIT(0))
+> +#define AEON_CPU_CTRL_FW_START		BIT(0)
+> +
+> +enum as21xxx_led_event {
+> +	VEND1_LED_REG_A_EVENT_ON_10 = 0x0,
+> +	VEND1_LED_REG_A_EVENT_ON_100,
+> +	VEND1_LED_REG_A_EVENT_ON_1000,
+> +	VEND1_LED_REG_A_EVENT_ON_2500,
+> +	VEND1_LED_REG_A_EVENT_ON_5000,
+> +	VEND1_LED_REG_A_EVENT_ON_10000,
+> +	VEND1_LED_REG_A_EVENT_ON_FE_GE,
+> +	VEND1_LED_REG_A_EVENT_ON_NG,
+> +	VEND1_LED_REG_A_EVENT_ON_FULL_DUPLEX,
+> +	VEND1_LED_REG_A_EVENT_ON_COLLISION,
+> +	VEND1_LED_REG_A_EVENT_BLINK_TX,
+> +	VEND1_LED_REG_A_EVENT_BLINK_RX,
+> +	VEND1_LED_REG_A_EVENT_BLINK_ACT,
+> +	VEND1_LED_REG_A_EVENT_ON_LINK,
+> +	VEND1_LED_REG_A_EVENT_ON_LINK_BLINK_ACT,
+> +	VEND1_LED_REG_A_EVENT_ON_LINK_BLINK_RX,
+> +	VEND1_LED_REG_A_EVENT_ON_FE_GE_BLINK_ACT,
+> +	VEND1_LED_REG_A_EVENT_ON_NG_BLINK_ACT,
+> +	VEND1_LED_REG_A_EVENT_ON_NG_BLINK_FE_GE,
+> +	VEND1_LED_REG_A_EVENT_ON_FD_BLINK_COLLISION,
+> +	VEND1_LED_REG_A_EVENT_ON,
+> +	VEND1_LED_REG_A_EVENT_OFF,
+> +};
+> +
+> +struct as21xxx_led_pattern_info {
+> +	unsigned int pattern;
+> +	u16 val;
+> +};
+> +
+> +struct as21xxx_priv {
+> +	bool parity_status;
+> +	/* Protect concurrent IPC access */
+> +	struct mutex ipc_lock;
+> +};
+> +
+> +static struct as21xxx_led_pattern_info as21xxx_led_supported_pattern[] = {
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_10
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_100),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_100
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_1000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_1000
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_2500),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_2500
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_5000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_5000
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_10000
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_LINK
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10) |
+> +			   BIT(TRIGGER_NETDEV_LINK_100) |
+> +			   BIT(TRIGGER_NETDEV_LINK_1000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_FE_GE
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_2500) |
+> +			   BIT(TRIGGER_NETDEV_LINK_5000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_10000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_NG
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_FULL_DUPLEX),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_FULL_DUPLEX
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_TX),
+> +		.val = VEND1_LED_REG_A_EVENT_BLINK_TX
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_BLINK_RX
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_TX) |
+> +			   BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_BLINK_ACT
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10) |
+> +			   BIT(TRIGGER_NETDEV_LINK_100) |
+> +			   BIT(TRIGGER_NETDEV_LINK_1000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_2500) |
+> +			   BIT(TRIGGER_NETDEV_LINK_5000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_10000),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_LINK
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10) |
+> +			   BIT(TRIGGER_NETDEV_LINK_100) |
+> +			   BIT(TRIGGER_NETDEV_LINK_1000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_2500) |
+> +			   BIT(TRIGGER_NETDEV_LINK_5000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_10000) |
+> +			   BIT(TRIGGER_NETDEV_TX) |
+> +			   BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_LINK_BLINK_ACT
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10) |
+> +			   BIT(TRIGGER_NETDEV_LINK_100) |
+> +			   BIT(TRIGGER_NETDEV_LINK_1000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_2500) |
+> +			   BIT(TRIGGER_NETDEV_LINK_5000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_10000) |
+> +			   BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_LINK_BLINK_RX
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_10) |
+> +			   BIT(TRIGGER_NETDEV_LINK_100) |
+> +			   BIT(TRIGGER_NETDEV_LINK_1000) |
+> +			   BIT(TRIGGER_NETDEV_TX) |
+> +			   BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_FE_GE_BLINK_ACT
+> +	},
+> +	{
+> +		.pattern = BIT(TRIGGER_NETDEV_LINK_2500) |
+> +			   BIT(TRIGGER_NETDEV_LINK_5000) |
+> +			   BIT(TRIGGER_NETDEV_LINK_10000) |
+> +			   BIT(TRIGGER_NETDEV_TX) |
+> +			   BIT(TRIGGER_NETDEV_RX),
+> +		.val = VEND1_LED_REG_A_EVENT_ON_NG_BLINK_ACT
+> +	}
+> +};
+> +
+> +static int aeon_firmware_boot(struct phy_device *phydev, const u8 *data, size_t size)
+> +{
+> +	int i, ret;
+> +	u16 val;
+> +
+> +	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_CPU_CTRL,
+> +			     VEND1_GLB_CPU_CTRL_MASK, AEON_CPU_CTRL_FW_LOAD);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_FW_START_ADDR,
+> +			    AEON_BOOT_ADDR);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_MDIO_INDIRECT_ADDRCMD,
+> +			     0x3ffc, 0xc000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_MDIO_INDIRECT_STATUS);
+> +	if (val > 1) {
+> +		phydev_err(phydev, "wrong origin mdio_indirect_status: %x\n", val);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Firmware is always aligned to u16 */
+> +	for (i = 0; i < size; i += 2) {
+> +		val = data[i + 1] << 8 | data[i];
+> +
+> +		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_MDIO_INDIRECT_LOAD, val);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_CPU_RESET_ADDR_LO_BASEADDR,
+> +			    lower_16_bits(AEON_CPU_BOOT_ADDR));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_CPU_RESET_ADDR_HI_BASEADDR,
+> +			    upper_16_bits(AEON_CPU_BOOT_ADDR));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLB_REG_CPU_CTRL,
+> +			      VEND1_GLB_CPU_CTRL_MASK, AEON_CPU_CTRL_FW_START);
+> +}
+> +
+> +static int aeon_firmware_load(struct phy_device *phydev)
+> +{
+> +	struct device *dev = &phydev->mdio.dev;
+> +	const struct firmware *fw;
+> +	const char *fw_name;
+> +	int ret;
+> +
+> +	ret = of_property_read_string(dev->of_node, "firmware-name",
+> +				      &fw_name);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = request_firmware(&fw, fw_name, dev);
+> +	if (ret) {
+> +		phydev_err(phydev, "failed to find FW file %s (%d)\n",
+> +			   fw_name, ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = aeon_firmware_boot(phydev, fw->data, fw->size);
+> +
+> +	release_firmware(fw);
+> +
+> +	return ret;
+> +}
+> +
+> +static inline int aeon_ipcs_wait_cmd(struct phy_device *phydev, bool parity_status)
+> +{
+> +	u16 val;
+> +
+> +	/* Exit condition logic:
+> +	 * - Wait for parity bit equal
+> +	 * - Wait for status success, error OR ready
+> +	 */
+> +	return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1, VEND1_IPC_STS, val,
+> +					 FIELD_GET(AEON_IPC_STS_PARITY, val) == parity_status &&
+> +					 (val & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_RCVD &&
+> +					 (val & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_PROCESS &&
+> +					 (val & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_BUSY,
+> +					 AEON_IPC_DELAY, AEON_IPC_TIMEOUT, false);
+> +}
+> +
+> +static int aeon_ipc_send_cmd(struct phy_device *phydev, u32 cmd,
+> +			     u16 *ret_sts)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	bool curr_parity;
+> +	int ret;
+> +
+> +	/* The IPC sync by using a single parity bit.
+> +	 * Each CMD have alternately this bit set or clear
+> +	 * to understand correct flow and packet order.
+> +	 */
+> +	curr_parity = priv->parity_status;
+> +	if (priv->parity_status)
+> +		cmd |= AEON_IPC_CMD_PARITY;
+> +
+> +	/* Always update parity for next packet */
+> +	priv->parity_status = !priv->parity_status;
+> +
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_CMD, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for packet to be processed */
+> +	usleep_range(AEON_IPC_DELAY, AEON_IPC_DELAY + 5000);
+> +
+> +	/* With no ret_sts, ignore waiting for packet completion
+> +	 * (ipc parity bit sync)
+> +	 */
+> +	if (!ret_sts)
+> +		return 0;
+> +
+> +	ret = aeon_ipcs_wait_cmd(phydev, curr_parity);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_STS);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*ret_sts = ret;
+> +	if ((*ret_sts & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_SUCCESS)
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_ipc_send_msg(struct phy_device *phydev, u16 opcode,
+> +			     u16 *data, unsigned int data_len, u16 *ret_sts)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	u32 cmd;
+> +	int ret;
+> +	int i;
+> +
+> +	/* IPC have a max of 8 register to transfer data,
+> +	 * make sure we never exceed this.
+> +	 */
+> +	if (data_len > AEON_IPC_DATA_MAX)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	for (i = 0; i < data_len / sizeof(u16); i++)
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i),
+> +			      data[i]);
+> +
+> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, data_len) |
+> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, opcode);
+> +	ret = aeon_ipc_send_cmd(phydev, cmd, ret_sts);
+> +	if (ret)
+> +		phydev_err(phydev, "failed to send ipc msg for %x: %d\n", opcode, ret);
+> +
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int aeon_ipc_rcv_msg(struct phy_device *phydev, u16 ret_sts,
+> +			    u16 *data)
+> +{
+> +	unsigned int size = FIELD_GET(AEON_IPC_STS_SIZE, ret_sts);
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	int ret;
+> +	int i;
+> +
+> +	if ((ret_sts & AEON_IPC_STS_STATUS) == AEON_IPC_STS_STATUS_ERROR)
+> +		return -EINVAL;
+> +
+> +	/* Prevent IPC from stack smashing the kernel */
+> +	if (size > AEON_IPC_DATA_MAX)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	for (i = 0; i < DIV_ROUND_UP(size, sizeof(u16)); i++) {
+> +		ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i));
+> +		if (ret < 0) {
+> +			size = ret;
+> +			goto out;
+> +		}
+> +
+> +		data[i] = ret;
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	return size;
+> +}
+> +
+> +/* Logic to sync parity bit with IPC.
+> + * We send 2 NOP cmd with same partity and we wait for IPC
+> + * to handle the packet only for the second one. This way
+> + * we make sure we are sync for every next cmd.
+> + */
+> +static int aeon_ipc_sync_parity(struct phy_device *phydev)
+> +{
+> +	struct as21xxx_priv *priv = phydev->priv;
+> +	u16 ret_sts;
+> +	u32 cmd;
+> +	int ret;
+> +
+> +	mutex_lock(&priv->ipc_lock);
+> +
+> +	/* Send NOP with no parity */
+> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, 0) |
+> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, IPC_CMD_NOOP);
+> +	aeon_ipc_send_cmd(phydev, cmd, NULL);
+> +
+> +	/* Reset packet parity */
+> +	priv->parity_status = false;
+> +
+> +	/* Send second NOP with no parity */
+> +	ret = aeon_ipc_send_cmd(phydev, cmd, &ret_sts);
+> +
+> +	mutex_unlock(&priv->ipc_lock);
+> +
+> +	/* We expect to return -EFAULT */
+> +	if (ret != -EFAULT)
+> +		return ret;
+> +
+> +	if ((ret_sts & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_READY)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_ipc_get_fw_version(struct phy_device *phydev)
+> +{
+> +	u16 ret_data[8], data[1];
+> +	u16 ret_sts;
+> +	int ret;
+> +
+> +	data[0] = IPC_INFO_VERSION;
+> +	ret = aeon_ipc_send_msg(phydev, IPC_CMD_INFO, data, sizeof(data),
+> +				&ret_sts);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_rcv_msg(phydev, ret_sts, ret_data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	phydev_info(phydev, "Firmware Version: %s\n", (char *)ret_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aeon_dpc_ra_enable(struct phy_device *phydev)
+> +{
+> +	u16 data[2];
+> +	u16 ret_sts;
+> +
+> +	data[0] = IPC_CFG_PARAM_DIRECT;
+> +	data[1] = IPC_CFG_PARAM_DIRECT_DPC_RA;
+> +
+> +	return aeon_ipc_send_msg(phydev, IPC_CMD_CFG_PARAM, data,
+> +				 sizeof(data), &ret_sts);
+> +}
+> +
+> +static int as21xxx_probe(struct phy_device *phydev)
+> +{
+> +	struct as21xxx_priv *priv;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(&phydev->mdio.dev,
+> +			    sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +	phydev->priv = priv;
+> +
+> +	ret = devm_mutex_init(&phydev->mdio.dev,
+> +			      &priv->ipc_lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_firmware_load(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_sync_parity(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, VEND1_PTP_CLK,
+> +			       VEND1_PTP_CLK_EN);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_dpc_ra_enable(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aeon_ipc_get_fw_version(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	phydev->needs_reregister = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int as21xxx_read_link(struct phy_device *phydev, int *bmcr)
+> +{
+> +	int status;
+> +
+> +	/* Normal C22 BMCR report inconsistent data, use
+> +	 * the mapped C22 in C45 to have more consistent link info.
+> +	 */
+> +	*bmcr = phy_read_mmd(phydev, MDIO_MMD_AN,
+> +			     AS21XXX_MDIO_AN_C22 + MII_BMCR);
+> +	if (*bmcr < 0)
+> +		return *bmcr;
+> +
+> +	/* Autoneg is being started, therefore disregard current
+> +	 * link status and report link as down.
+> +	 */
+> +	if (*bmcr & BMCR_ANRESTART) {
+> +		phydev->link = 0;
+> +		return 0;
+> +	}
+> +
+> +	status = phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_STAT1);
+> +	if (status < 0)
+> +		return status;
+> +
+> +	phydev->link = !!(status & MDIO_STAT1_LSTATUS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int as21xxx_read_c22_lpa(struct phy_device *phydev)
+> +{
+> +	int lpagb;
+> +
+> +	/* MII_STAT1000 are only filled in the mapped C22
+> +	 * in C45, use that to fill lpagb values and check.
+> +	 */
+> +	lpagb = phy_read_mmd(phydev, MDIO_MMD_AN,
+> +			     AS21XXX_MDIO_AN_C22 + MII_STAT1000);
+> +	if (lpagb < 0)
+> +		return lpagb;
+> +
+> +	if (lpagb & LPA_1000MSFAIL) {
+> +		int adv = phy_read_mmd(phydev, MDIO_MMD_AN,
+> +				       AS21XXX_MDIO_AN_C22 + MII_CTRL1000);
+> +
+> +		if (adv < 0)
+> +			return adv;
+> +
+> +		if (adv & CTL1000_ENABLE_MASTER)
+> +			phydev_err(phydev, "Master/Slave resolution failed, maybe conflicting manual settings?\n");
+> +		else
+> +			phydev_err(phydev, "Master/Slave resolution failed\n");
+> +		return -ENOLINK;
+> +	}
+> +
+> +	mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising,
+> +					lpagb);
+> +
+> +	return 0;
+> +}
+> +
+> +static int as21xxx_read_status(struct phy_device *phydev)
+> +{
+> +	int bmcr, old_link = phydev->link;
+> +	int ret;
+> +
+> +	ret = as21xxx_read_link(phydev, &bmcr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* why bother the PHY if nothing can have changed */
+> +	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
+> +		return 0;
+> +
+> +	phydev->speed = SPEED_UNKNOWN;
+> +	phydev->duplex = DUPLEX_UNKNOWN;
+> +	phydev->pause = 0;
+> +	phydev->asym_pause = 0;
+> +
+> +	if (phydev->autoneg == AUTONEG_ENABLE) {
+> +		ret = genphy_c45_read_lpa(phydev);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = as21xxx_read_c22_lpa(phydev);
+> +		if (ret)
+> +			return ret;
+> +
+> +		phy_resolve_aneg_linkmode(phydev);
+> +	} else {
+> +		int speed;
+> +
+> +		linkmode_zero(phydev->lp_advertising);
+> +
+> +		speed = phy_read_mmd(phydev, MDIO_MMD_VEND1,
+> +				     VEND1_SPEED_STATUS);
+> +		if (speed < 0)
+> +			return speed;
+> +
+> +		switch (speed & VEND1_SPEED_STATUS) {
+> +		case VEND1_SPEED_10000:
+> +			phydev->speed = SPEED_10000;
+> +			phydev->duplex = DUPLEX_FULL;
+> +			break;
+> +		case VEND1_SPEED_5000:
+> +			phydev->speed = SPEED_5000;
+> +			phydev->duplex = DUPLEX_FULL;
+> +			break;
+> +		case VEND1_SPEED_2500:
+> +			phydev->speed = SPEED_2500;
+> +			phydev->duplex = DUPLEX_FULL;
+> +			break;
+> +		case VEND1_SPEED_1000:
+> +			phydev->speed = SPEED_1000;
+> +			if (bmcr & BMCR_FULLDPLX)
+> +				phydev->duplex = DUPLEX_FULL;
+> +			else
+> +				phydev->duplex = DUPLEX_HALF;
+> +			break;
+> +		case VEND1_SPEED_100:
+> +			phydev->speed = SPEED_100;
+> +			phydev->duplex = DUPLEX_FULL;
+> +			break;
+> +		case VEND1_SPEED_10:
+> +			phydev->speed = SPEED_10;
+> +			phydev->duplex = DUPLEX_FULL;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int as21xxx_led_brightness_set(struct phy_device *phydev,
+> +				      u8 index, enum led_brightness value)
+> +{
+> +	u16 val = VEND1_LED_REG_A_EVENT_OFF;
+> +
+> +	if (index > AEON_MAX_LDES)
+> +		return -EINVAL;
+> +
+> +	if (value)
+> +		val = VEND1_LED_REG_A_EVENT_ON;
+> +
+> +	return phy_modify_mmd(phydev, MDIO_MMD_VEND1,
+> +			      VEND1_LED_REG(index),
+> +			      VEND1_LED_REG_A_EVENT,
+> +			      FIELD_PREP(VEND1_LED_REG_A_EVENT, val));
+> +}
+> +
+> +static int as21xxx_led_hw_is_supported(struct phy_device *phydev, u8 index,
+> +				       unsigned long rules)
+> +{
+> +	int i;
+> +
+> +	if (index > AEON_MAX_LDES)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(as21xxx_led_supported_pattern); i++)
+> +		if (rules == as21xxx_led_supported_pattern[i].pattern)
+> +			return 0;
+> +
+> +	return -EOPNOTSUPP;
+> +}
+> +
+
+> +static int as21xxx_led_hw_control_get(struct phy_device *phydev, u8 index,
+> +				      unsigned long *rules)
+> +{
+> +	u16 val;
+> +	int i;
+> +
+> +	if (index > AEON_MAX_LDES)
+> +		return -EINVAL;
+> +
+> +	val = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_LED_REG(index));
+> +	if (val < 0)
+
+val is unsigned so this condition is never met.
+
+Flagged by Smatch.
+
+> +		return val;
+> +
+> +	val = FIELD_GET(VEND1_LED_REG_A_EVENT, val);
+> +	for (i = 0; i < ARRAY_SIZE(as21xxx_led_supported_pattern); i++)
+> +		if (val == as21xxx_led_supported_pattern[i].val) {
+> +			*rules = as21xxx_led_supported_pattern[i].pattern;
+> +			return 0;
+> +		}
+> +
+> +	/* Should be impossible */
+> +	return -EINVAL;
+> +}
+
+...
+
+> +static int as21xxx_led_polarity_set(struct phy_device *phydev, int index,
+> +				    unsigned long modes)
+> +{
+> +	bool led_active_low;
+> +	u16 mask, val = 0;
+> +	u32 mode;
+> +
+> +	if (index > AEON_MAX_LDES)
+> +		return -EINVAL;
+> +
+> +	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+> +		switch (mode) {
+> +		case PHY_LED_ACTIVE_LOW:
+> +			led_active_low = true;
+> +			break;
+> +		case PHY_LED_ACTIVE_HIGH: /* default mode */
+> +			led_active_low = false;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	mask = VEND1_GLB_CPU_CTRL_LED_POLARITY(index);
+> +	if (led_active_low)
+
+Perhaps it cannot happen, but if the loop above iterates zero times
+then led_active_low will be uninitialised here.
+
+Also flagged by Smatch.
+
+> +		val = VEND1_GLB_CPU_CTRL_LED_POLARITY(index);
+> +
+> +	return phy_modify_mmd(phydev, MDIO_MMD_VEND1,
+> +			      VEND1_GLB_REG_CPU_CTRL,
+> +			      mask, val);
+> +}
+
+...
+
+Please note that net-next is currently closed for the merge-window.
+So please wait for it to re-open before posting patches for it.
+
+RFCs are welcome any time.
+
+-- 
+pw-bot: changes-requested
 
