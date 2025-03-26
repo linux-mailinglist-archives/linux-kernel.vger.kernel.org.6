@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-576856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D48A7153B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:01:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F686A71541
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 12:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE1516BD72
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFBD1189461E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F073D1DCB09;
-	Wed, 26 Mar 2025 11:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E856BA50;
+	Wed, 26 Mar 2025 11:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtMwMZpl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTfzV32p"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E291BEF74;
-	Wed, 26 Mar 2025 11:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DC71C8626
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 11:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742986863; cv=none; b=G/GbEuPUfC98Rkd3Nr5TzH57SkZKCXY0HCb9jJs/ng20/EJ7knu2teFWvObx0mvJiHyRUSvE0RyVdoL8W1ev81BuDtmGlsStRaTpHeV65uEjxHTa6jLu9TuOqnrI2JlWqiX0jEnIzA+7AHgDziAsebmdkpDoGi/d9ejTryv0qGM=
+	t=1742986899; cv=none; b=pKJXyViJDrRWNw3nH5O+ZWQUAOQ9glAnXTSQw9xsxA+qf21nFVXn5xhP5zsSWV2t1lcXQnDJOI3ZUFTeT58EBGWpKEa5PAE1KVRpGqwWSPOv85NU6jGfcRvq34DFjF0z3OOUfjAd7t2sDYueCc49gbQT9+mz4wgvElZ0HqH6yr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742986863; c=relaxed/simple;
-	bh=i5EM31pPlZ7zaytBldZoUh4/6CAZrGXC0cCO7MtVZYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evy5x5CGFa5FqKqcr9S+wYInSjRFuDa0jKoOGU6fxUIjYXA8aVWhYwV/07xfgvbkr3ld9lGdXL9yUGrSLZBKiVkMLHv3/dAFmZXBlouHizrCjPQCzv62wT83dXwbjWeYwDWa6djl5JJWU2yXIr8RfbNd+HfvcuPeiXxbh/DgyKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtMwMZpl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC91C4CEE2;
-	Wed, 26 Mar 2025 11:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742986863;
-	bh=i5EM31pPlZ7zaytBldZoUh4/6CAZrGXC0cCO7MtVZYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jtMwMZplUGaTHjvxtXkF+OmwLt/B2vyVDNY/Z3nr0U01+2RPN9SJte6qEgGszG6Tc
-	 Av6yzEFyFnep8Zq+g5vji8Fm+Jyq7efIBIaqnSILPVpshpYx0pdDHGU0EIoVqTJHrp
-	 /65cV47mgkEX8mSkaTMJKwBo1Euy/ksvUz72wbS30yBVC8mrQLlfzuDOIhvsdf50Io
-	 U7D0DrqP6OVhVz9u7Gyxfns4PCxK1YZBuCPYc71N6/j85KuFt7VqozRDdPKwyIpdzg
-	 Wl8nGIBKNAl9wCqTY1RWv5imTIyuoMK5LgGZi8WqwBHr8XpfavhYnhZezTqT/xwKrA
-	 vg49qnev6SUdg==
-Date: Wed, 26 Mar 2025 11:00:57 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
- simple-mfd syscon on PolarFire SoC
-Message-ID: <20250326-tricycle-hesitate-e58633e62545@spud>
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
- <20250321-ramrod-scabby-a1869f9979b6@spud>
- <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
- <20250325-feline-roundworm-dc391b755673@spud>
- <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
+	s=arc-20240116; t=1742986899; c=relaxed/simple;
+	bh=BzkNRZWNuEiabasgiSZ/Ec4yahGJSxfYCNxx10zT7gA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dzoT+BMij5xXALqtByolUYWNXFKtcMTIiZNyT9SsI3HYvmbSuDSaPR2XM3BTvE2inopLf9QYj9vTn0E8qdU8aMBVWXeEG/YQLYf/z/kGJSTsEvdS3AYAQaxfwJouY0i+QoSaQ6szmiE3dIuOzxanATImto9PaRIUTXmfqEy0tfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTfzV32p; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d4d15058dso48220765e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 04:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742986896; x=1743591696; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m8s0QIY71zWKro6xSXQRXZSeXe5WAyMtXk+LtoR8l9A=;
+        b=oTfzV32pUynTSAxo6xfOT2X4fOFrupk7j/dkEVAwkPViz4XkQjkpdn9G2rAD8veM3G
+         BdXZ3sxmSUjQHf+9zzANGkeVei8mlIdg32VHve7jq4EAPu+/QQTwP5TSs9aI5BgroeeJ
+         BhYlK04m9s824yPt5LoMEFa6EuRKJLE44xIczl3/Kx2NLvGILUZvyg/YCPuHPEUvy0dK
+         5/uvj0iVFo0lKrayMzTy73RwVK6coOpS2qLpyR5m58T1RzFMCWXaNp6gjZO4dro9CGR1
+         D8gAwkYKp3By3XKB70cY1W+kaMauJjOU31xdktsVYQp1LYpeFt1gfMOc4RnHqab1BFZr
+         sUVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742986896; x=1743591696;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m8s0QIY71zWKro6xSXQRXZSeXe5WAyMtXk+LtoR8l9A=;
+        b=K/QzORwTi7picw3XERma5kYHT9zmJa48poZqjfjYlyeDaad0eSLV+VJlhmhi6aBG7V
+         2T3qIrMDJsIQp/wUdKOWinh2m155SNuyGj5VRXObJSYPIkCjbMTmfFnYngDXxXO/pQBi
+         cK7Cj18MPXbqpl5OKttMuy1hstd0q1IDPAgO+TzG0byxp/c4mL7+V2GNJVk1LUf+VUrh
+         g9IN2l3UDz2ZcscnSGmm+iS8om5m6xO5bnPyg78OztkTnZciEkP6sm31Dw3OqGd5PB5/
+         QfjhsoHgumlxDYDLImF2L1TDhjp9zBuQEma3wh9CckxBcp881FvHoQKxOBpMTtu8pu/9
+         FK5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWOWY9rH5foF9/6bMxh5HmJn1vDT9ch5dJcHeKCkjuM5+LTlPIHXVLQeYEP3wWet8peF+kKZOwfSzfHkZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLVrIyqfgYxy4ruQ8xVlwl2FyFpCNetujBxsRBOAnCQef2P/G4
+	xvck9N3w9Z+78VTstKxrqELMylAwS0V7jTQ/RL+y/hXVo5ZpcHtQWMF5vgnJOI+lhqqhhK35KA=
+	=
+X-Google-Smtp-Source: AGHT+IGBA2oNDwoX3vAaJuxLHM6l0qsvxKSEmFmpM5Wmf4mD/taDlkLFT9vj4nHDL4Q52ah1LmKUKhke0w==
+X-Received: from wrqb8.prod.google.com ([2002:a5d:40c8:0:b0:391:3d79:3021])
+ (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:5885:0:b0:390:f4f9:8396
+ with SMTP id ffacd0b85a97d-3997f912d09mr21778026f8f.28.1742986895818; Wed, 26
+ Mar 2025 04:01:35 -0700 (PDT)
+Date: Wed, 26 Mar 2025 11:00:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nlJEEonkgyvP8Dzi"
-Content-Disposition: inline
-In-Reply-To: <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250326110059.3773318-1-keirf@google.com>
+Subject: [PATCH] arm64: mops: Do not dereference src reg for a set operation
+From: Keir Fraser <keirf@google.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Keir Fraser <keirf@google.com>, Kristina Martsenko <kristina.martsenko@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Will Deacon <will@kernel.org>, stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+The source register is not used for SET* and reading it can result in
+a UBSAN out-of-bounds array access error, specifically when the MOPS
+exception is taken from a SET* sequence with XZR (reg 31) as the
+source. Architecturally this is the only case where a src/dst/size
+field in the ESR can be reported as 31.
 
---nlJEEonkgyvP8Dzi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Prior to 2de451a329cf662b the code in do_el0_mops() was benign as the
+use of pt_regs_read_reg() prevented the out-of-bounds access.
 
-On Wed, Mar 26, 2025 at 07:53:55AM +0100, Krzysztof Kozlowski wrote:
-> On 25/03/2025 17:03, Conor Dooley wrote:
-> > On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
-> >> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
-> >>> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg=
- register region
-> >>> +
-> >>> +maintainers:
-> >>> +  - Conor Dooley <conor.dooley@microchip.com>
-> >>> +
-> >>> +description:
-> >>> +  An wide assortment of registers that control elements of the MSS o=
-n PolarFire
-> >>> +  SoC, including pinmuxing, resets and clocks among others.
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    items:
-> >>> +      - const: microchip,mpfs-mss-top-sysreg
-> >>> +      - const: syscon
-> >>> +      - const: simple-mfd
-> >>
-> >> You need to list the children if you use simple-mfd. Commit msg
-> >> mentioned clock controller, so where is it?
-> >=20
-> > I don't think a child node is required here, there's not enough
->=20
-> Then this is not a simple-mfd.
+Fixes: 2de451a329cf662b ("KVM: arm64: Add handler for MOPS exceptions")
+Cc: Kristina Martsenko <kristina.martsenko@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Keir Fraser <keirf@google.com>
+---
+ arch/arm64/include/asm/traps.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The pinctrl will have one, whenever I get around to actually working on
-that. I can leave the simple-mfd out until I establish exactly what
-that's going to look like if that's what you want?
+diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
+index d780d1bd2eac..82cf1f879c61 100644
+--- a/arch/arm64/include/asm/traps.h
++++ b/arch/arm64/include/asm/traps.h
+@@ -109,10 +109,9 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
+ 	int dstreg = ESR_ELx_MOPS_ISS_DESTREG(esr);
+ 	int srcreg = ESR_ELx_MOPS_ISS_SRCREG(esr);
+ 	int sizereg = ESR_ELx_MOPS_ISS_SIZEREG(esr);
+-	unsigned long dst, src, size;
++	unsigned long dst, size;
+ 
+ 	dst = regs->regs[dstreg];
+-	src = regs->regs[srcreg];
+ 	size = regs->regs[sizereg];
+ 
+ 	/*
+@@ -129,6 +128,7 @@ static inline void arm64_mops_reset_regs(struct user_pt_regs *regs, unsigned lon
+ 		}
+ 	} else {
+ 		/* CPY* instruction */
++		unsigned long src = regs->regs[srcreg];
+ 		if (!(option_a ^ wrong_option)) {
+ 			/* Format is from Option B */
+ 			if (regs->pstate & PSR_N_BIT) {
+-- 
+2.49.0.395.g12beb8f557-goog
 
---nlJEEonkgyvP8Dzi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+PeaQAKCRB4tDGHoIJi
-0t7jAQCCLwmHuZCd9933PeQR17AUr1HNZd3fYK3blMGPPpfn5wD/dNQnm3RNPn8P
-lY3prJBqUjp9Wxq+q1mGw/BIyBKFlwY=
-=i6NH
------END PGP SIGNATURE-----
-
---nlJEEonkgyvP8Dzi--
 
