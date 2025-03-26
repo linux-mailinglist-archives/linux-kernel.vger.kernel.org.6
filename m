@@ -1,217 +1,239 @@
-Return-Path: <linux-kernel+bounces-576819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81356A714C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:25:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EDAA714C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 11:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A19C67A692E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40198175DF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5158F1B4242;
-	Wed, 26 Mar 2025 10:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QjKjprAo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F001B423E;
+	Wed, 26 Mar 2025 10:25:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E401A5B9C;
-	Wed, 26 Mar 2025 10:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05701B21B4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 10:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984703; cv=none; b=p1kFFUU0OpvKOLBAvjmrM3iSrX60yDXBZg3ynNyH+t8c+7ebfjo/dXIUCOYxL0uh9Z5FuAw34ujLoSzVfwjHqDNLqgjLfQ/95bUTYB+RGAHBk9Ib6mbLixifxwZJ6J6wzYcS+s8NNSpIe2BBkPBwDJ++0WTJMQxhW1I6ZO62UHU=
+	t=1742984740; cv=none; b=hKucgXFDZpk5R/Bic1c/PjeSmGfsElEr873b1lEpeTWex9zHtRGfBJ4ELyhWog18+/ZMFvcX3ZJcRVaFGGEoOiA0+bauO8OJruoBtt1FZRIHLWm7oseJIVwU3LPpaZsFtmsOackh/FhnuIL1JroV9ZQRPxViRJ3JP/+mCFFWwNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984703; c=relaxed/simple;
-	bh=HMpe+g8ayCMDDvXkSRNbqGD7K/UHAGzeFcPhq77IeGU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mhZUTNfYWp70PkHUsePZSTzmtSG2G9Y7rYXtln4Xpl6uWKJagO/IKS2dHP73qSU8CgwDlPmU4x4nkUFZOEb6uxoBJaz5N1KEFU2+y2hp78nxaTb8iFSLj4INsJIK6E3+xxuRcJfHnW4aqdbkhl7Dsqr0ADV+uduqncWaPWxhDEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QjKjprAo; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742984702; x=1774520702;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=HMpe+g8ayCMDDvXkSRNbqGD7K/UHAGzeFcPhq77IeGU=;
-  b=QjKjprAoExhvdTGZdQnLuL1vfHr1FMoEo9Cw1jfJS63LkgnCjIppF1qR
-   iIq2J3Rq1PfJyNuKGiTweZXBEthKERjGLYSjjjWgFoDrXvFu28pf+Wu/3
-   lW172vpq71o6jHwS3mkRMGwi2O69mg1Lefss8I48umn08uRoUrRpXm9wT
-   6v3WpZdz5AT2INGWGwwgrm+0qjlOd6t+RInkJNTGGABrQhmqCUFkRmJEV
-   a6MmKnDFUY9TCCQZf6qaBsurjA6pYk2ZY6QY2+LOMMO8czUQoFETHLOaJ
-   URTnidPEXuUer2/+E3iZTtgXBVcxzVFi93QFN14UX2Cq37w0xafj+c/7x
-   A==;
-X-CSE-ConnectionGUID: O7kMXzWITH6b//HbCVznXQ==
-X-CSE-MsgGUID: oeL1VnFzRqeoZUDg8+dQAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="48140934"
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="48140934"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:25:01 -0700
-X-CSE-ConnectionGUID: NgYfe/fvSKuobzxo72HPeA==
-X-CSE-MsgGUID: mWSjzESDQai1nBTapwA3VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,277,1736841600"; 
-   d="scan'208";a="125234310"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.5])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 03:24:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 26 Mar 2025 12:24:53 +0200 (EET)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v5 09/11] HID: asus: add basic RGB support
-In-Reply-To: <CAGwozwF8PZczpqOFm3ONDdJTVCgcWOZ8mXrASbmiAXUhQvOhdg@mail.gmail.com>
-Message-ID: <43c4dd17-de34-804f-7080-b287ac4a0cac@linux.intel.com>
-References: <20250325184601.10990-1-lkml@antheas.dev> <20250325184601.10990-10-lkml@antheas.dev> <f04e6a59-cb72-9ca9-2c98-85702b6194fa@linux.intel.com> <CAGwozwF8PZczpqOFm3ONDdJTVCgcWOZ8mXrASbmiAXUhQvOhdg@mail.gmail.com>
+	s=arc-20240116; t=1742984740; c=relaxed/simple;
+	bh=wuFLlvUXlFpsXneQRdiEzeRYO/930T9m8+BICitSVn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FazfG99PpYMIpZ2EWQuIGyWau4TN0Ak2l2i8E851QLhTYVz9akUNSyur5hZVEPzUcheufzNudWPjf8xPQbv+F9MlC3VQiTAQ6XBUVh+3+fVuci6Vx4+GttYlZIS6RFgYkBwGW+CoApLZyJvIHmBcfy+N2cqShlGCk9Xv6lxSFKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1txNwp-0008Ep-B0; Wed, 26 Mar 2025 11:25:23 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1txNwo-001jOU-1d;
+	Wed, 26 Mar 2025 11:25:22 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1txNwo-000552-2V;
+	Wed, 26 Mar 2025 11:25:22 +0100
+Date: Wed, 26 Mar 2025 11:25:22 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: bus: add documentation for the IMX
+ AIPSTZ bridge
+Message-ID: <20250326102522.rtsffb37wvolhwd4@pengutronix.de>
+References: <20250324162556.30972-1-laurentiumihalcea111@gmail.com>
+ <20250324162556.30972-2-laurentiumihalcea111@gmail.com>
+ <20250325032303.GA1624882-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1308369930-1742984693=:942"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325032303.GA1624882-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Laurentiu,
 
---8323328-1308369930-1742984693=:942
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+On 25-03-24, Rob Herring wrote:
+> On Mon, Mar 24, 2025 at 12:25:52PM -0400, Laurentiu Mihalcea wrote:
+> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > 
+> > Add documentation for IMX AIPSTZ bridge.
+> > 
+> > Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > ---
+> >  .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 107 ++++++++++++++++++
+> >  1 file changed, 107 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+> > new file mode 100644
+> > index 000000000000..c0427dfcdaca
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+> > @@ -0,0 +1,107 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bus/fsl,imx8mp-aipstz.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Secure AHB to IP Slave bus (AIPSTZ) bridge
+> > +
+> > +description:
+> > +  The secure AIPS bridge (AIPSTZ) acts as a bridge for AHB masters
+> > +  issuing transactions to IP Slave peripherals. Additionally, this module
+> > +  offers access control configurations meant to restrict which peripherals
+> > +  a master can access.
+> 
+> Wrap at 80 chars.
+> 
+> > +
+> > +maintainers:
+> > +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: fsl,imx8mp-aipstz
+> > +
+> > +  reg:
+> > +    maxItems: 2
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: bus
+> > +      - const: ac
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 1
+> > +
+> > +  "#access-controller-cells":
+> > +    const: 0
+> 
+> With 0 cells, how do you identify which device it is?
+> 
+> > +
+> > +  ranges: true
+> > +
+> > +# borrowed from simple-bus.yaml, no additional requirements for children
+> > +patternProperties:
+> > +  "@(0|[1-9a-f][0-9a-f]*)$":
+> > +    type: object
+> > +    additionalProperties: true
+> > +    properties:
+> > +      reg:
+> > +        items:
+> > +          minItems: 2
+> > +          maxItems: 4
+> > +        minItems: 1
+> > +        maxItems: 1024
+> > +      ranges:
+> > +        oneOf:
+> > +          - items:
+> > +              minItems: 3
+> > +              maxItems: 7
+> > +            minItems: 1
+> > +            maxItems: 1024
+> > +          - $ref: /schemas/types.yaml#/definitions/flag
+> > +    anyOf:
+> > +      - required:
+> > +          - reg
+> > +      - required:
+> > +          - ranges
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - power-domains
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +  - "#access-controller-cells"
+> > +  - ranges
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/imx8mp-clock.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    bus@30c00000 {
+> > +        compatible = "fsl,imx8mp-aipstz";
+> > +        reg = <0x30c00000 0x400000>, <0x30df0000 0x10000>;
+> 
+> It doesn't look like you have any registers in the 1st entry, but they 
+> are child devices? Then you should use ranges and drop it here:
+> 
+> ranges = <0x0 0x30c00000 0x400000>;
+> 
+> 
+> > +        reg-names = "bus", "ac";
 
-On Wed, 26 Mar 2025, Antheas Kapenekakis wrote:
-> On Wed, 26 Mar 2025 at 09:54, Ilpo J=C3=A4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
-> >
-> > On Tue, 25 Mar 2025, Antheas Kapenekakis wrote:
-> >
-> > > Adds basic RGB support to hid-asus through multi-index. The interface
-> > > works quite well, but has not gone through much stability testing.
-> > > Applied on demand, if userspace does not touch the RGB sysfs, not
-> > > even initialization is done. Ensuring compatibility with existing
-> > > userspace programs.
-> > >
-> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > ---
-> > >  drivers/hid/Kconfig    |   1 +
-> > >  drivers/hid/hid-asus.c | 171 +++++++++++++++++++++++++++++++++++++--=
---
-> > >  2 files changed, 156 insertions(+), 16 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> > > index dfc245867a46a..d324c6ab997de 100644
+Thanks for picking up my suggestion :) IMHO it does look more logical
+now. I wasn't aware of the 'ranges' property else I would have suggested
+you to use this property instead of having two regs, sorry. Once you
+changed it to ranges we can drop the 'reg-names' as well since you only
+need to supply the 'ac' register space.
 
-> > > +     };
-> > > +     unsigned long flags;
-> > > +     uint8_t colors[3];
-> > > +     bool rgb_init, rgb_set;
-> > > +     int ret;
-> > > +
-> > > +     spin_lock_irqsave(&led->lock, flags);
-> > > +     rgb_init =3D led->rgb_init;
-> > > +     rgb_set =3D led->rgb_set;
-> > > +     led->rgb_set =3D false;
-> > > +     colors[0] =3D led->rgb_colors[0];
-> > > +     colors[1] =3D led->rgb_colors[1];
-> > > +     colors[2] =3D led->rgb_colors[2];
-> > > +     spin_unlock_irqrestore(&led->lock, flags);
-> > > +
-> > > +     if (!rgb_set)
-> > > +             return;
-> > > +
-> > > +     if (rgb_init) {
-> > > +             ret =3D asus_kbd_init(led->hdev, FEATURE_KBD_LED_REPORT=
-_ID1);
-> > > +             if (ret < 0) {
-> > > +                     hid_err(led->hdev, "Asus failed to init RGB: %d=
-\n", ret);
-> > > +                     return;
-> > > +             }
-> > > +             spin_lock_irqsave(&led->lock, flags);
-> > > +             led->rgb_init =3D false;
-> > > +             spin_unlock_irqrestore(&led->lock, flags);
-> > > +     }
-> > > +
-> > > +     /* Protocol is: 54b3 zone (0=3Dall) mode (0=3Dsolid) RGB */
-> >
-> > BTW, this comment is very cryptic to me and I'm unable to connect it wi=
-th
-> > the code below. My only guess is that each non-parenthesized word is
-> > explaining one index but things don't add up given what rgb_buf[0][0] a=
-nd
-> > [0][1] have.
->=20
-> Maybe i fatfingered 54 and it should be 5a. Protocol is 54b3 zone mode
-> R G B. So colors go to indexes 4, 5, 6
+Regards,
+  Marco
 
-Ah. I suggest you add the spaces between the bytes to make it more=20
-obvious. Although, this could be a constructed as struct as well in which=
-=20
-case the struct itself would document the format without need to=20
-cryptic comments nor use of numeric indexes.
-
-> > > +     rgb_buf[0][4] =3D colors[0];
-> > > +     rgb_buf[0][5] =3D colors[1];
-> > > +     rgb_buf[0][6] =3D colors[2];
-> > > +
-> > > +     for (size_t i =3D 0; i < ARRAY_SIZE(rgb_buf); i++) {
-> > > +             ret =3D asus_kbd_set_report(led->hdev, rgb_buf[i], size=
-of(rgb_buf[i]));
-> > > +             if (ret < 0) {
-> > > +                     hid_err(led->hdev, "Asus failed to set RGB: %d\=
-n", ret);
-> > > +                     return;
-> > > +             }
-> > > +     }
-> > > +}
-
-> > >       ret =3D asus_hid_register_listener(&drvdata->kbd_backlight->lis=
-tener);
-> > > -     if (ret < 0) {
-> > > -             /* No need to have this still around */
-> > > -             devm_kfree(&hdev->dev, drvdata->kbd_backlight);
-> > > +     /* Asus-wmi might not be accessible so this is not fatal. */
-> > > +     if (!ret)
-> > > +             hid_warn(hdev, "Asus-wmi brightness listener not regist=
-ered\n");
-> >
-> > Is the condition correct way around given the message?
->=20
-> You are right.
->=20
-> > Please also note that you don't need to send an update every day or so
-> > after minor comments like this. We're in merge window currently which
-> > means I likely won't be applying any next material until -rc1 has been
-> > released.
->=20
-> If this is 6.16 material I am happy to put a pause on this for the
-> next 1-3 weeks.
-
-You don't need to "pause" for the merge window, in some subsystem=20
-there's mandatory pause during merge window but I find that unnecessary.
-I know people on pdx86 do review during merge window so no need to wait=20
-when working with patches related to pdx86. Just don't expect patches=20
-get applied during the merge window or right after it (the latter tends to=
-=20
-be the most busiest time of cycle for me) :-).
-
-It's more about the frequency, how often to send a series which is=20
-relatively large. Large number of versions end up just filling inboxes=20
-(and patchwork's pending patches list) and we don't have time to read them=
-=20
-all through so I suggest waiting like 3 days at minimum between versions=20
-when the series is large or complex to give time to go through the series.
-
-This is not a hard rule, so if there are e.g. many significant changes,=20
-feel free to "violate" it in that case.
-
---=20
- i.
-
---8323328-1308369930-1742984693=:942--
+> > +        power-domains = <&pgc_audio>;
+> > +        #address-cells = <1>;
+> > +        #size-cells = <1>;
+> > +        #access-controller-cells = <0>;
+> > +        ranges;
+> > +
+> > +        dma-controller@30e00000 {
+> > +            compatible = "fsl,imx8mp-sdma", "fsl,imx8mq-sdma";
+> > +            reg = <0x30e00000 0x10000>;
+> > +            #dma-cells = <3>;
+> > +            clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SDMA3_ROOT>,
+> > +                     <&clk IMX8MP_CLK_AUDIO_ROOT>;
+> > +            clock-names = "ipg", "ahb";
+> > +            interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> > +            fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> 
+> No 'access-controllers' here?
+> 
+> > +        };
+> > +    };
+> > -- 
+> > 2.34.1
+> > 
+> 
 
