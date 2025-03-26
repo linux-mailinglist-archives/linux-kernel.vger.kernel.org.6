@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-576765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5CAA71431
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:54:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC0CA7142C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 10:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B893A1899B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847E63B3E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 09:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682B91A5B9E;
-	Wed, 26 Mar 2025 09:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E7D1A83F5;
+	Wed, 26 Mar 2025 09:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kQs7lNn3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTBozQ01"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F3D15C15F;
-	Wed, 26 Mar 2025 09:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7562915C15F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 09:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982847; cv=none; b=ABwDYpy3tgHyQ2PueyY0VDczJJsHsv7QyC8j3YTVV3IRxLdUgCmKie1HkGnT9zQJY6aeQO3BPXiflFyZuvJGS7rVsJMCSiWQbKohg4PpGa09HrnV3k82nR/+2+75g+Rv7oayDvta3LLVN2IAsU58HgonySXi2rKzelsq7cfDIR0=
+	t=1742982843; cv=none; b=NWOJ3kae8YmyvEB7XQixIwKXEZPhuQ2ntMcCwsSF1RUdY1qafzvk/jNIoqMMHddtjl/NJbvT6KdJ/u2J/JFrrkdKF1fr32hk6+mJV69vCO9B1WmV37AVTijjXpZ5BTOogwE8rgW6Bq4c6nTwxqwQZ4VzppwU80s2qXjinFrSwsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982847; c=relaxed/simple;
-	bh=k3xOx2L5T5uwhIlLEsuP7+yjMjaqocpL/LO1sdtSp6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B23FkWuBQKupWBei8N8+PraFFyI/9zuGzQlw+koHI1d8kUqRHtzZeuDoIIWANZaJjA53L+TQOkuo4+b/wepfcjA8Lro7u52mVm2vnIU9SwoJjeSS5E4B1eRvvu/Nm6tvVsAxG10nP9G7mrCGVSG61y6ahdW+rfKlAmTMZik4mSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kQs7lNn3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73Aof014495;
-	Wed, 26 Mar 2025 09:53:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ceZG7l6B0d1+aYQcqeMCmDD0PGRx5R8qbIHuQdIywsg=; b=kQs7lNn3wot6jpCw
-	TxzSYiigHdUuOOzzRMfCRqdwW8eOPrsYwK+wBwroqug3aMJ9ozZHufa+wwkdmasF
-	JOpYO+fMO8i142VdbNDshvTJo4OK7kwzO4KlvzKcXDbQ4JC1WF5uiT2ba4tui43t
-	fzc2T61+0edmUvS8/+5gLLIrDN+Kawk3/5z0em9Q5qW07/rHouufBKymL1heDCoi
-	hzw95JS2XKj68Ypah0covKGfOPwkLQ/RoTnEj+tZJY5VihAs6aV63BMJaK3onD2X
-	IwiGKjkdKI6iT7HzxJDD/a7sjxFX7aKo0Am791yO3HuyYvLAdB1VHy0C8yJQUlsf
-	OfPYWQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45mb9mrrwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 09:53:50 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q9rnfL023987
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 09:53:49 GMT
-Received: from [10.217.217.240] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Mar
- 2025 02:53:45 -0700
-Message-ID: <33c03e94-5e8b-44cf-be32-fb571ca73a17@quicinc.com>
-Date: Wed, 26 Mar 2025 15:23:30 +0530
+	s=arc-20240116; t=1742982843; c=relaxed/simple;
+	bh=Do401Dto4eRSvtWazEdu6e192DKWa4YpzeqwJ406zZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iuD8DiuxXHqnsnWIr53w9u2AI9tBXXsF5F48QpkEJnwjWGBDzo7nb2SvVXEoQiWL5rFc6vCRPRY7ymnaYyjAFGcEtOTkbol9lDmrBsmCOETy6ukXyc2h2OTx7Iw/ovdbDP3m3+WWhyfRONyg4UV3GWjKFEL6IIQhViK/DpIUer0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTBozQ01; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbb12bea54so924731766b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 02:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742982839; x=1743587639; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yjXPiRIp8YYDhIIaTUKI9YmEVChKDwNiiPGSatLAKIA=;
+        b=hTBozQ01hw/r8dhwoRtXPlP0d97h4uIxyLqFJ3OY7R60GK+kKC50ZTpUaRiUizfZhI
+         AWjXwP3ZGiPJtrXE8pcOxX1Zthw9b9jA8U/KFTpnDg1P1oBGPTDphj0xwx/QKemBDfre
+         8X75ghAfyFhdZjoFSKPRqD0OxThf1r6mSB5Afpua5U1/hRH+qmXNYkT6XXXzlzdhKrj5
+         drHwjzaQstyIh0NWpO7VqIAMhqBPupFZemwqgermFoLMDc0skaeF119v8byKRTBYt+Tl
+         vPZUxilMD5I+05TX2WEvfd5Nh3jICAMBCPQZJnopPSt3HD4lM5Xv2OcoGu3tGGhT1U/2
+         l+sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742982839; x=1743587639;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yjXPiRIp8YYDhIIaTUKI9YmEVChKDwNiiPGSatLAKIA=;
+        b=PTeF31iwhMUp669cRLhBu4Hvl2ap4YZTnLybMrDiqUAOQE4dB1sjqYr/WyhauHbI4Y
+         tHTdgygK/FPH5Px1gzKwxCVyoTEZAh5D8Bl7mgMuxpPdOoUgfd/Q1nUr+FWpPE92lJIa
+         2pVc8iyb2Sx1YzNKOtpTiQePKm1vzd0lBTtwIAufsVUjUQjf0Hufa8IXo2fYjles7T8b
+         rcDFYV3ConLmO5sgLjZ1HmDEhTVzFNG97pnwfm6ObD0zZIqHN5dhMfgA0v9CZIoCHfRC
+         FsacR+QAogr11PKqd8kXQEWPlY79gyEQr9bu0Rq3RH8UHUseUbCVJ/neHdeacD+dlcWh
+         eOSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVCxDlS+Y91vAwHevWgLpBI5a+bShWXl5NHKaQwBQ+eLwBpSmzUozG+jgFzCGmVvyiZ2n206qU5TgCzJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqwTC/zhAaReMZx72j8hw7zydGzC/vKepzko1ElVf7wG9syHtj
+	b1/A8upqlkBva6m+JAcxpdeNvepSYBVM5UyVKovYU2znH04kKt7R1Z8909a5
+X-Gm-Gg: ASbGncuUFLwb/2vHxF3/oaDQTNGQg75dtfODvbij3kusW178/V9J5m0FG2xYqow5LlH
+	hJXJj5DJCs8SBPGkLYcH/5Xn1iBi41xu/JvSVznZoZkY0TFMblDcFn5HBZQFnYirboit+Dx7sNS
+	VE2k4yIObz2RiJ6ROeaIjb+NPPmv/Zl7jaRmHOSvzcoP+kssC6v06a1XVjNO6C1KPNOc/yVl+FQ
+	G8hEGNzsJC3fFqzBt/dKpmdQ1NeanKn8vYT0XMysudoswlOqQOXrc8JAeVIqu96OoioFKUuvHKu
+	CvwPvNmZeugGMo7m/OzsZtMEK9o89wzjccL3kNW+iqr7mrxIjA==
+X-Google-Smtp-Source: AGHT+IFZQfqPmKMBaA5lUpDx8wSPCrGqm+FenqOZLIhKis+yFvTwmUpU0KWJCXNfGlHGxrAzmuiCyg==
+X-Received: by 2002:a17:907:7295:b0:ac6:dd5c:bdfc with SMTP id a640c23a62f3a-ac6dd5cec3cmr389055766b.50.1742982839262;
+        Wed, 26 Mar 2025 02:53:59 -0700 (PDT)
+Received: from HP-650 ([105.112.122.183])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb52c24sm987282466b.114.2025.03.26.02.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 02:53:58 -0700 (PDT)
+Date: Wed, 26 Mar 2025 10:53:45 +0100
+From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Julia Lawall <julia.lawall@inria.fr>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8723bs: remove braces around single statements
+Message-ID: <Z+POqQpWsgMRz/UT@HP-650>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: qcom: Add quirks for Samsung UFS devices
-To: Bart Van Assche <bvanassche@acm.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <quic_rampraka@quicinc.com>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
-References: <20250325083857.23653-1-quic_mapa@quicinc.com>
- <c0691392-1523-4863-a722-d4f4640e4e28@acm.org>
-Content-Language: en-US
-From: MANISH PANDEY <quic_mapa@quicinc.com>
-In-Reply-To: <c0691392-1523-4863-a722-d4f4640e4e28@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=cs+bk04i c=1 sm=1 tr=0 ts=67e3ceae cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=knVEYwfTpz3OwYGDc58A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 5pM4El_C-nyUT3i7996LadfatyjJQgU-
-X-Proofpoint-ORIG-GUID: 5pM4El_C-nyUT3i7996LadfatyjJQgU-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_02,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 mlxlogscore=589 malwarescore=0 lowpriorityscore=0
- clxscore=1011 adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The code contains braces around single statements in the if blocks
+which are unnecessary according to the Linux kernel coding style.
 
+Remove the braces to improve readability and maintain consistency.
 
-On 3/25/2025 5:12 PM, Bart Van Assche wrote:
-> On 3/25/25 4:38 AM, Manish Pandey wrote:
->> Introduce quirks for Samsung UFS devices to override PA hibern8 time,
->> PA TX HSG1 sync length, and TX_HS_EQUALIZER for the Qualcomm UFS Host
->> controller. These adjustments are essential to maintain the proper
->> functionality of Samsung UFS devices for Qualcomm UFS Host controller.
-> 
-> Which of these quirks are required for all host controllers and which of
-> these quirks are only required for Qualcomm host controllers?
-> 
+Reported by checkpatch:
 
-PA_TX_HSG1_SYNC_LENGTH and PA_TX_DEEMPHASIS_TUNING are specific to the 
-Qualcomm host controller.
+WARNING: braces {} are not necessary for single statement blocks
 
-The QUIRK_PA_HIBER8TIME may also be necessary for other SoC vendors host 
-controllers. For instance, the ufs-exynos.c file implements a similar 
-approach in the fsd_ufs_post_link() function:
+Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+---
+Changes in v2:
+	- Remove extra blank line
 
-ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A7), max_rx_hibern8_time_cap + 1);
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-https://lore.kernel.org/lkml/001101d874c1$3d850eb0$b88f2c10$@samsung.com/
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index c60e179bb2e1..74a8fcf18e84 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -56,9 +56,8 @@ int _ips_leave(struct adapter *padapter)
+ 		pwrpriv->ips_leave_cnts++;
 
-Should we consider moving the QUIRK_PA_HIBER8TIME quirk to the ufshcd 
-driver? Please advise.
+ 		result = rtw_ips_pwr_up(padapter);
+-		if (result == _SUCCESS) {
++		if (result == _SUCCESS)
+ 			pwrpriv->rf_pwrstate = rf_on;
+-		}
+ 		pwrpriv->bips_processing = false;
 
->> +    equalizer_val = (gear == 5) ? DEEMPHASIS_3_5_dB : NO_DEEMPHASIS;
-> > I think that the parenthesis can be removed from the above statement
-> without reducing readability of the code.
-> 
-> Thanks,
-> 
-> Bart.
+ 		pwrpriv->bkeepfwalive = false;
+@@ -549,9 +548,8 @@ void LeaveAllPowerSaveMode(struct adapter *Adapter)
 
-equalizer_val = gear == 5 ? DEEMPHASIS_3_5_dB : NO_DEEMPHASIS;
-equalizer_val = (gear == 5) ? DEEMPHASIS_3_5_dB : NO_DEEMPHASIS;
+ 		LPS_Leave_check(Adapter);
+ 	} else {
+-		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off) {
++		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off)
+ 			ips_leave(Adapter);
+-		}
+ 	}
+ }
 
-i have used parenthesis for better readability and to make the 
-conditional expression more explicit.
-
-Thanks
-Manish
+--
+2.34.1
 
 
