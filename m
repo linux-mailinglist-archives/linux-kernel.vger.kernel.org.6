@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-577305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2C7A71B2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0919A71B32
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 16:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8343A5191
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:54:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE07118879AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D521F4C98;
-	Wed, 26 Mar 2025 15:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EDC1F4629;
+	Wed, 26 Mar 2025 15:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="h2mDSSnc"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGwZ5lSe"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F84114A4C6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49E41F4174;
+	Wed, 26 Mar 2025 15:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743004462; cv=none; b=fHO9g/foQOqvidkcTfj4ylrCXH3M7x6DMl8MmEEuPjK54y9JrMoyOy7a2eAe9DHrTGDuZHUHh/oS+4rPP++uy2oJGqMRo6ZC0slSexBqePM6xhGCHo0VPVljfONK66t9lHd8gd5C4VJNpgTZo98oubhqEcqfcKdz+tyYfsM0VWE=
+	t=1743004462; cv=none; b=k/N5iEwP5h0g8n0zm8EdD1kFZ+wslsPHCEBK0/LKJ60+9z0zHNDVArxobUwHYjYYAr8DcBsVAf2d0pexu/sXqAzMU8iYFSefyMpZqsTu9phMDWBZPYsOmZ8fRDNPW6MfabVyagkGPmqUjZAHXOWCFTgEJcGTlcMd+9EuC5zZFFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743004462; c=relaxed/simple;
-	bh=FDUGpv8wkh/L+zMY5NUyNY08daDDaIIU0e+pvQ9oYY8=;
+	bh=9x9x8oHWYuKJdHOwmFwOsSLmgI+sYfN1A6BLjyDwKtE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DQr2CB0J+KjsnGqBSVT8TJr4YfyiD4KUGsgszGbnBRzoOxDAMsqNblf+6hPW+FXxki4pMo50J9TMUJRqA/8hXfVgIEqRJZ20jg2k4MstdZFq7GNGMAYvlCo7Tb/Ada6EBHho3rBjulCJS8gmO4X/63w+yD91b1v06PgLQvNkjz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=h2mDSSnc; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=zSLh
-	6u4uG99qS3Ry66qHxhfF2ZHYx/p/tn5fAPvS/l8=; b=h2mDSSnclj1MbnFQxta1
-	sCPwt85MjWu75wLtwX+zd4fkTII+ZZilK4FjkrDY//3Rlr2g5qRFl0/MBMz/jMng
-	v5MAmMYS9INt2nMfSVrqzpoKXBiRZ+cXrdZxCDvdK6hK2dXIbTIm2kVgHXkyOtk0
-	djQLFRZazRVKxP+BHqWUT0kqrE8DqdGJSubN1oNA1dtbNrAOkifdN+7+ghmb6sZq
-	V2ST7/Axd5GaHmH+clfvXilpbiw5kGsh0KsA8nJvG5h4jp3PALiR4EiW/Y641ST/
-	YHe3AfyuGnqW46PM/XYdXxm1Gyx6HzqTG2n732dQLYl/R0ewiURj8ugbybhqtYbb
-	og==
-Received: (qmail 3662529 invoked from network); 26 Mar 2025 16:54:10 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Mar 2025 16:54:10 +0100
-X-UD-Smtp-Session: l3s3148p1@rV0S2UAxBNIujnsv
-Date: Wed, 26 Mar 2025 16:54:09 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v2] media: dvb: usb: Fix WARNING in
- dib0700_i2c_xfer/usb_submit_urb
-Message-ID: <Z-QjIRoOWpoWaL6l@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-References: <6bb3b80b-a808-4992-8666-535ed9a5c980@rowland.harvard.edu>
- <67e2fed5.050a0220.a7ebc.0053.GAE@google.com>
- <29db5fdc-13c9-45f0-9183-c80d637725c6@rowland.harvard.edu>
- <Z-MKiV0Ei5lmWik6@shikoro>
- <d0fd60d7-5660-42ed-b1c7-4dfd6b8e74b0@rowland.harvard.edu>
- <Z-MrfICsY06DZV-2@shikoro>
- <f8e975a0-87d2-4f83-b580-6858050a252d@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLx4Pb1QjXABKaRmd9NUclp11sjKFiuJbHK84myytF/wilQIX8sYN9dcWKuP547gtbacYuhvX0QhJteYywxoD28o4ja3hN1vuAh1Eu0qr7Km644I8/iDNhkbSiPj6Fnr+U26IMU5uDwLut2byZZyeJGJ/cp66hn7uDgcnlTYG7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGwZ5lSe; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-226185948ffso1149235ad.0;
+        Wed, 26 Mar 2025 08:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743004460; x=1743609260; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNsjzDh0Jt7vawFiBJDr9YacuCr7SCZoVydDMOKNNLw=;
+        b=DGwZ5lSeOj1f5qgjObpUT3R8K0/IAHDLLxahnZLpvqdkbOWayJtO/Ll1X5XYI0Y5vC
+         8zyChogJ9NmhFtDtvsaW879jBv15tzAix5z92ppjO5oV101VJWi8PHELMUlOEWPze4Ao
+         OiPafQ6N2VmlpfTWeJfXwfSxkzPf7MoM9KER5CrLonOciyVzyrujl6m9Xya4BdW4sNyZ
+         o82WU3MUH7aQOp/mj7z45gDCZlwud4H2bbQ0xENsF9phBdjdMl78AoW4B1seSHOG+PGd
+         qF22gxA9MrAFeWLuQKsaafOG60l9Ob5YuFWjUkOmufYV1pBayiD8p+n2bc8r6duiirSr
+         j2ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743004460; x=1743609260;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kNsjzDh0Jt7vawFiBJDr9YacuCr7SCZoVydDMOKNNLw=;
+        b=Fwv2MxzIJPjL/bvZw/4+noxg07noAq8xcD/vPltDwHF7EhPD1y5EKz1mgUQ9UfMpvw
+         oeGUh9jt1ppeAdWliGqCmJ+F38tIOAgFfNrEmLlXtChiTvNElEp/U4XFLlnPiPyovdVg
+         eUc3b0fbNANEyXJcaP0F2Ys7y6xFCpTyDSJqXci1tAtZ7hKr97l1jhRq9SZgtFdfF3+f
+         gclDEI+rr2Di6yIUJm8wY7ls3cC1pr5yZRlC9No/Ntxc1nZ6X1hF/JSdwe5nDc110/6N
+         20wfVkVrwUHaWNB8Q9+H5yGzIy1P1Pqcrs5rmUbZ6Jn88QYeQ4bZPkLlCVDIqZ3aUZXm
+         fIaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRvSkYKcVdSpS6mtDEnL4F+vs3En5fmmz1h3x5OtLBRSDjvvxO5uMZoDn/ayXg8QkIHzeyUsPjci3LhXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGwI8xiO/On5NU9so3OguJbYVysm2o0/6JKMKxXPmrIZ/M1Dv/
+	cOpbhhqwBm/4XYwY1TkuTKcj2YYzANaGjbpiciC8yJwkWnaXc3Wl
+X-Gm-Gg: ASbGncvzVMa+kgDtxskmSgNuWlVFruF1O5P3/yDCsjawAALOW1ZFZ/C35z8kuTdsBZ5
+	tbp9N4C1YBkzkGbwCPflZdNF8DmaYJaotRlgS6HczreXiJxURao3WkpWZug2vtm3gWfZTCYsKAH
+	BHIVSIg0hGmP1ourShuLWC++tUYSRu3UAuMz4bbbu1jO1xYtfQGAmtGYGEO3WvGnKEis8xQGo1s
+	4wqWmOJtQiqQwnjAL0cVH5fUofyK51yChbVP6wkCM6Xsh2HNh4Od9THoSYgfecqO+nAvljDEJ95
+	nLW7vSSGeYXotbCjvtVermzCog/JkMgYHlsajWNW9nM/qFPjF4o6pSFF70Csou7vRyjeV7pZ
+X-Google-Smtp-Source: AGHT+IFibG/Hx3o4bDgzRVNPX+Xrit8AxA5bv6NYILxcH6jexjFBP0Ia4h5wCjCa0+Dtf5uszJ1IBw==
+X-Received: by 2002:a17:903:98d:b0:220:c813:dfce with SMTP id d9443c01a7336-22804946d7cmr523815ad.39.1743004459669;
+        Wed, 26 Mar 2025 08:54:19 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f45949sm111467035ad.63.2025.03.26.08.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 08:54:19 -0700 (PDT)
+Date: Wed, 26 Mar 2025 23:54:15 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] lib/sort.c: Add _nonatomic() variants with cond_resched()
+Message-ID: <Z+QjJxcnAkeGIbCT@visitorckw-System-Product-Name>
+References: <20250326152606.2594920-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6+vuiCGawqSgBAHG"
-Content-Disposition: inline
-In-Reply-To: <f8e975a0-87d2-4f83-b580-6858050a252d@rowland.harvard.edu>
-
-
---6+vuiCGawqSgBAHG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250326152606.2594920-1-kent.overstreet@linux.dev>
 
-On Wed, Mar 26, 2025 at 11:28:19AM -0400, Alan Stern wrote:
-> The syzbot fuzzer reported a WARNING related to the dib0700 dvb-usb
-> driver:
->=20
-> usb 1-1: BOGUS control dir, pipe 80000f80 doesn't match bRequestType c0
-> WARNING: CPU: 1 PID: 5901 at drivers/usb/core/urb.c:413 usb_submit_urb+0x=
-11d9/0x18c0 drivers/usb/core/urb.c:411
-> ...
-> Call Trace:
->  <TASK>
->  usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
->  usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
->  usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
->  dib0700_ctrl_rd drivers/media/usb/dvb-usb/dib0700_core.c:95 [inline]
->  dib0700_i2c_xfer_legacy drivers/media/usb/dvb-usb/dib0700_core.c:315 [in=
-line]
->  dib0700_i2c_xfer+0xc53/0x1060 drivers/media/usb/dvb-usb/dib0700_core.c:3=
-61
->  __i2c_transfer+0x866/0x2220
->  i2c_transfer+0x271/0x3b0 drivers/i2c/i2c-core-base.c:2315
->  i2cdev_ioctl_rdwr+0x452/0x710 drivers/i2c/i2c-dev.c:306
->  i2cdev_ioctl+0x759/0x9f0 drivers/i2c/i2c-dev.c:467
->  vfs_ioctl fs/ioctl.c:51 [inline]
->=20
-> Evidently the fuzzer submitted an I2C transfer containing a length-0
-> read message.  The dib0700 driver translated this more or less
-> literally into a length-0 USB read request.  But the USB protocol does
-> not allow reads to have length 0; all length-0 transfers are
-> considered to be writes.  Hence the WARNING above.
->=20
-> Fix the problem by adding the I2C_AQ_NO_ZERO_LEN_READ adapter quirk
-> flag to all the USB I2C adapter devices managed by dvb-usb-i2c.c,
-> following Wolfram Sang's suggestion.  This tells the I2C core not to
-> allow length-0 read messages.
->=20
-> Reported-by: syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com
-> Tested-by: syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com
-> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> Link: https://lore.kernel.org/linux-usb/67e1a1f5.050a0220.a7ebc.0029.GAE@=
-google.com/
+On Wed, Mar 26, 2025 at 11:26:06AM -0400, Kent Overstreet wrote:
+> Andrew - if you're ok with this patch I'd like to get it in soon as a
+> bugfix, I've been getting quite a few reports on this one.
+> 
+> I don't much care for the naming though, thoughts there?
+> 
+> -- >8 --
+> 
+> bcachefs calls sort() during recovery to sort all keys it found in the
+> journal, and this may be very large - gigabytes on large machines.
+> 
+> This has been causing "task blocked" warnings, so needs a
+> cond_resched().
+> 
+> Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  include/linux/sort.h | 11 +++++++++++
+>  lib/sort.c           | 46 +++++++++++++++++++++++++++++++++++++++-----
+>  2 files changed, 52 insertions(+), 5 deletions(-)
+> 
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+I don't have strong opinions on this, but I recall that UBIFS had a
+similar issue with list_sort(), and they addressed it by calling
+cond_resched() within the compare function. Would that approach be
+simpler and more appropriate than introducing a new API in the library
+code?
 
-Thanks for taking care of it!
-
-
---6+vuiCGawqSgBAHG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfkIx4ACgkQFA3kzBSg
-KbZQlA/9F/3h5gABvKbiy6ojaD5HfokFTVzFJ/YjhFlvQTXoyoZRIH4BxNRWH2v7
-nVafhaGZ9ynojOtXwxASFODJLRgaEQmB3+8Bot9brgaV0ei9TY8mVknRK3mCby/I
-a7YtMM5QsLtlrr3NB6jegE5qKhCKRtLOArYseRGh+fnpb2FkL8rnnZt/p9IsiiVe
-8zVDnBBpc7BjrRuD7bg9zANX53YTlLjVQ2VhxzMyyvxIkUBneMWxxoqgFOSG9OEz
-VlrioknZ6zxjBHBzlzliQylbRUWPBq6Cn4Rt20ST/VaMWg8tPPP/CLKDIvGeq0be
-R3YU67eSLmuj56uk8OVmnJcf1To4LCyeT3yvvsrVhNu72olMYwxP+tRabhxVphwL
-6eWL1jdJt1BbfSdNXCiKiP6l3hD0bKz04N3tj+bIyLHRiUxd474+H4Vgzzped/j1
-4734hpxf5QWsz35CVGAMXGZl7sr39lhB3cU2RZQsigUferCMwz4pD78u19TbkFpz
-Vx/EPpxLSpCHBE/UimG2hEpr5/R8e23D44Bu6diZpeFoRVa75MO9fi78RAUqk5we
-cduCy7Ciuhagp+a0Im+OkxoVuk/7u/3/dMUgr9Kh2yRKKhuuD8Tljss32sHBJpDb
-QpLjPlpdqKoGSts9dr/K8HRm5PBX62WA668VkkUnZLjSutYjW0I=
-=Qco2
------END PGP SIGNATURE-----
-
---6+vuiCGawqSgBAHG--
+Regards,
+Kuan-Wei
 
