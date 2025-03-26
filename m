@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-577084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB7BA71823
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:12:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5FDA71826
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF77F1714BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FEE172718
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A90B1E505;
-	Wed, 26 Mar 2025 14:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A971F1911;
+	Wed, 26 Mar 2025 14:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="LsfbF1jE"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKABfhct"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57F1F099F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944C018EB0;
+	Wed, 26 Mar 2025 14:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998315; cv=none; b=oFYxm7bwcg7gWVPrZpQlTJcG2sGnpq782WZBx2M8qV1DLQlYe1WXBdYowt17/COAE4VDoR5P/L/VBETa52b55UJAtTR3/SRNfq044qh2Q34QuoiKUGu975BFSk7Z00mDPQ7lRaqKXJ5spJeaQ+wkMsAVK5+tkeFzO9K2vbiMZsY=
+	t=1742998353; cv=none; b=JeunvFaNe+okY9rMhc4vRn0lSeKfQYi8QdH3ivbhToe6Z9PXPj0XE2b0aVH2xa9rfPxXttNKO5AbnyRdJTNO+LgWCje1H87WmqJkH+88DVM87xMPAi3slCJmrNZfIR205yO9/gHpKHciJmWNvAgH3QXC5cGGGCQ7cTZ2BI0oCjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998315; c=relaxed/simple;
-	bh=yXtz2926jy2R/WRj7oe5ZqUVxpPtrQBW9y6HOZP7ZoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BsdDsXmHrAtS/29GQ3/59PTxpuW51OMS/VY4ytq3n8bISoNVK5aS89UrWTixo5jKdzjxCsNbsnGXXkHXmhT57ZcO+X9++8BBq61c8BPXR+StDoD9uxGYD+cvKR7cfaUEfFJmXouVDQmAWp1Z+POspQs6ESiAZdXVNdb0rQZh03k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=LsfbF1jE; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47663aeff1bso66508241cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1742998312; x=1743603112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yJeop5/9lZPmW3LTcIpQF3Z1hxE5T9Z8IMFMo+YuI4=;
-        b=LsfbF1jEVeiuL+tlTAsWiZ2nb32IyF2R1p43AY2uU9f8NuSl5XUDNxVD1taAjR2QuO
-         Wpx88Cn/Tyq9HOUBJoRcNCfKnOR7ANUeMLNFZ0OT9gOU78392NnJpl22uhpvZETToP6V
-         qNr5fPk/kLZXHSBfAoLw9a5PHPtTVAClqxxJTumuvncLbbFdpDzOZIH4Btizi/dtbmEd
-         6WXnODS4kNm60O3YKUwU49Dhfbez+F5YhCGQt9KA3Kn70bWClMAMz5LL3gJ4HwRkVmVZ
-         jrV6wJjpFzmSgI6wHwmpSJpkWzNb/ivW1IhxQf5n6fudf11Lb4shg/cbk4gy4/PBnR/X
-         5t0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742998312; x=1743603112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/yJeop5/9lZPmW3LTcIpQF3Z1hxE5T9Z8IMFMo+YuI4=;
-        b=qXpaCswhwB1lbXSKCysSu/7hfzuQQLdVQeQQBwYQCDEUxOwrZj7bM7ZLPYDtZgZy32
-         t35IWZkJLhM0mEHe+K41Cahxvq9RK1xcyxwXF6XkNxDctK0JwDdBcJ1c1MKhJ3eTts+3
-         gkeBZdal1A1GOaXS8nKl7IWqTboAkUt5xNsEK3Xjr6x8axwLQ2iymRfTnmcE3f4Es5yF
-         f6eIGjv/SNk19tvsMUEGicwZ0KxsKqz126FAwiE5f3ifgOGm+nSIH1k4DI+6F9lFLcHX
-         J2faEjXStbTITHSCSMXRqKO8KnMGZFqLf5t8AriROQ67BWPbwDeACUBkMjTMrmLhenE/
-         K/nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrSr5uP/Zt2tS868/WejEgtLFRbbJ9DRyCzuUeCmuHiUZO60oMzoLW2r0IueGQKoJ0CMb4ZOtRVY7wpM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnG1fzX80lXJXfsex06/uTaVCcuDUrwzsRBm+ktLh27eT7o7aH
-	8CBkDmn+5kRbFIiteA+1fH7VneZF3VUjYR/D/9pCNVdVFeKau+evdLH7v2RiCA==
-X-Gm-Gg: ASbGncssLpSGDPsNhObJFHBJ+uQnlaJb72S43damFP9IoFJbTza/7RfEdqCdl24dpZz
-	DmJ1adgR8njn3GrsLFR7x8V12g8LSy051EtWCkSbgOP3EQGK8DyUTyzICZxPm3exqchI2t74MYF
-	Zf9SV1wGFcFh5d8tCuFZXLzX3rxOmP8GizjeSSO/+oZ+hBP1971eFUelJT/Ue8k7zHFUhkU2OgM
-	3RIjJdzfnuoUdMQQaok+oNjF0TGfmR9bsS5oxtoiSSJrW1WRn1K68HKBJs8uyRgOqSNbwkb1bra
-	LxMHX5+m9V2wCN+HD1KXnqulU9pM/pBsrKyK5UBSXfbrNJ3sXp0tX4UAAEY4Vbg=
-X-Google-Smtp-Source: AGHT+IFZCtFXRFi1B9VodvEj5Mj7HA1YzrBpLpz2+TIPt+Odd8LHmFlysvBHDrxXPsEe1PHedgDd0A==
-X-Received: by 2002:a05:622a:248e:b0:476:b56d:eb46 with SMTP id d75a77b69052e-4771dd77d25mr324475231cf.15.1742998311539;
-        Wed, 26 Mar 2025 07:11:51 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d15a193sm72082021cf.14.2025.03.26.07.11.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 07:11:51 -0700 (PDT)
-Date: Wed, 26 Mar 2025 10:11:48 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Mingcong Bai <jeffbai@aosc.io>
-Subject: Re: [PATCH] USB: OHCI: Add quirk for LS7A OHCI controller (rev 0x02)
-Message-ID: <ab64291d-2684-4558-8362-9195cce1de07@rowland.harvard.edu>
-References: <20250326102355.2320755-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1742998353; c=relaxed/simple;
+	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h6D6oICdxgJCERUnnvC5RpB9ioDqozBVuhnMM/QhCyn2oDVEApaeop1WrO5WVTrBN2hzdTrChA5pVYvfu8nrBU4pv4eAabaDSEIlVXnOICRYOTdjfhoHWFiKYvCmg2aqibUVxQRQzX/hsvS9cuJZs75J/J6bKiHjR56TbffN7qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKABfhct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7141C4CEE2;
+	Wed, 26 Mar 2025 14:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742998353;
+	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CKABfhctp9RkWeycV6li1QBPsIcjaYadrPGg7X6d052msqvdJddCXOo4ae8/jHXPq
+	 IdAAOIYgCF09DPH8f+gcfVeOtcx9QWKQHGBxthWN1VGOb25SGPoShAYmclCszsSycp
+	 yILPvYj3eCGPzuaEiB+rbYZq427YXxOdgBLWlhOcjo1d0k/D5dH8zdl00sq+6BaKqF
+	 igYUCSmctKnQh2fhoDRnp1ySn4Zc4a3Q6xBch5CQp4B3kMWPgTW9k1RndiQ9ImD3HM
+	 RWFoVgXHOfav9CF4QYRKhzE9Hzwas+bQ2VZ+lFJfQ+hlkkah+EIYYU29Huj7BmVxDt
+	 lTWODQ7ZvZ5jA==
+Message-ID: <6073eb68-560c-4864-92d7-c6f61b187f6d@kernel.org>
+Date: Wed, 26 Mar 2025 15:12:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326102355.2320755-1-chenhuacai@loongson.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
+ accessing ::hws[] in probe()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 06:23:55PM +0800, Huacai Chen wrote:
-> The OHCI controller (rev 0x02) under LS7A PCI host has a hardware flaw.
-> MMIO register with offset 0x60/0x64 is treated as legacy PS2-compatible
-> keyboard/mouse interface, which confuse the OHCI controller. Since OHCI
-> only use a 4KB BAR resource indeed, the LS7A OHCI controller's 32KB BAR
-> is wrapped around (the second 4KB BAR space is the same as the first 4KB
-> internally). So we can add an 4KB offset (0x1000) to the OHCI registers
-> (from the PCI BAR resource) as a quirk.
+On 26/03/2025 13:08, André Draszik wrote:
+> With UBSAN enabled, we're getting the following trace:
 > 
-> Cc: stable@vger.kernel.org
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Mingcong Bai <jeffbai@aosc.io>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  drivers/usb/host/ohci-pci.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>     UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
+>     index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
 > 
-> diff --git a/drivers/usb/host/ohci-pci.c b/drivers/usb/host/ohci-pci.c
-> index 900ea0d368e0..38e535aa09fe 100644
-> --- a/drivers/usb/host/ohci-pci.c
-> +++ b/drivers/usb/host/ohci-pci.c
-> @@ -165,6 +165,15 @@ static int ohci_quirk_amd700(struct usb_hcd *hcd)
->  	return 0;
->  }
->  
-> +static int ohci_quirk_loongson(struct usb_hcd *hcd)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(hcd->self.controller);
-> +
-> +	hcd->regs += (pdev->revision == 0x2) ? 0x1000 : 0x0;
-
-Please add a comment explaining why the quirk is needed and how it fixes 
-the problem.
-
-Alan Stern
-
-> +
-> +	return 0;
-> +}
-> +
->  static int ohci_quirk_qemu(struct usb_hcd *hcd)
->  {
->  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-> @@ -224,6 +233,10 @@ static const struct pci_device_id ohci_pci_quirks[] = {
->  		PCI_DEVICE(PCI_VENDOR_ID_ATI, 0x4399),
->  		.driver_data = (unsigned long)ohci_quirk_amd700,
->  	},
-> +	{
-> +		PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, 0x7a24),
-> +		.driver_data = (unsigned long)ohci_quirk_loongson,
-> +	},
->  	{
->  		.vendor		= PCI_VENDOR_ID_APPLE,
->  		.device		= 0x003f,
-> -- 
-> 2.47.1
+> This is because commit f316cdff8d67 ("clk: Annotate struct
+> clk_hw_onecell_data with __counted_by") annotated the hws member of
+> that struct with __counted_by, which informs the bounds sanitizer about
+> the number of elements in hws, so that it can warn when hws is accessed
+> out of bounds.
 > 
+> As noted in that change, the __counted_by member must be initialised
+> with the number of elements before the first array access happens,
+> otherwise there will be a warning from each access prior to the
+> initialisation because the number of elements is zero. This occurs in
+> s2mps11_clk_probe() due to ::num being assigned after ::hws access.
+> 
+> Move the assignment to satisfy the requirement of assign-before-access.
+> 
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
