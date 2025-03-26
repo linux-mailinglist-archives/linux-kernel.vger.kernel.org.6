@@ -1,106 +1,156 @@
-Return-Path: <linux-kernel+bounces-577168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0869A7197A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:56:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E26A7198E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 15:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F00D11887572
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2034D16B9C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 14:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D011EEA36;
-	Wed, 26 Mar 2025 14:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5321F2C3B;
+	Wed, 26 Mar 2025 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="ivsKx9cX"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B8qKfZkW"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5561C8638
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF4E1E502
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000529; cv=none; b=QKxmSyXN+96HUhGo3+bWwBTuiJ5qb8ZLz8TYxY6YNHawCbrb1wrcyeXwU9QKADitUWfoqZaKksLWvgsE5+UDEyvzUC78gh7CeFRp/iSXpBEr38TLDUYsqxOrQxOR1B9rG8pe/hxqa/sgtvrAnrqOHUi0c9CqKuvzGvJQklaMP10=
+	t=1743000883; cv=none; b=gzA1UneQhwKQSDoEb7HXvC9X9mCBqRmo23HnSCiIYuA6D8vVGUmknx2CPcjqMZr8Ipk7ydxgQiP4ADzZJlZLK5bXl5HOTu8dm8uJIHooEoGhrhY0b50pebYYcfbN924lfyqoNR6mAMiYOQSPIcMQlA7JjlW0in/mE0/tF0hNGIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000529; c=relaxed/simple;
-	bh=F4yfnC01yAQPXo3tQEauTSdmUQQmT4GSDWCA+pDcd8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X2eIollmzm1AxB32b3tqhDpQBsJJjlepBUCmsA7J6q9vRIGEgtg4j9yA3dUA+x1AUPtwohnbtnPLLTEAFBMk2ivtbhPQbuXqxE2Kx+ZSBRHcXuwqvka1P5uIiiE1tRFVx6dZTmTEGNy+aztddeJn3iVSeGwyBXZsY2D78Qz1Yd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=ivsKx9cX; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-477282401b3so52776181cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 07:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1743000525; x=1743605325; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s4L90UXo/Eloa6bFLe63wlh9gsUHXreX60bjxNb5DKY=;
-        b=ivsKx9cXwNjWZY+PA27oeQpzwB/c9P805GSJZFqRvi1cCldT4VNki5LX3GeH4SRGeW
-         t0D8+SOGkDSB1kVQSSViuqp1h7iv3wZ1phmeubxuKNz+aHPG0LsGneAptI8GX1T4iulV
-         4CEO6WdZ9uC49VyZlRWsnJPpQFW59yIbBVvrxvYxPfBwrT5kdfeRaU2JkttSfd/SCzli
-         4tnHyZj2q0djXB6zB14js3mRHKVxDxp680T3YKxX1+IyJPWBnfvB70AyfFkkHxI7L49k
-         dXgBNU+CNrBY9Icu/Qyam0bp/ItUv6l9rgsiqHyOBlJcHonbsAcp3xWdOBnBhYoPaKD+
-         5Row==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743000525; x=1743605325;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s4L90UXo/Eloa6bFLe63wlh9gsUHXreX60bjxNb5DKY=;
-        b=Wl95uDMV+T2cACb5CXf1BCyOPdAqShi8svDKQSP8jsDlbyYKu7sTzrA3QaBcSVqSm6
-         RrOwY2SREueg6IJFMhHg+9TG3zjVoMyKLVK5llRaftyOG18Rt2K8RSlh6mBNRoc4Cuyj
-         3PSvgpbVz31tTnrAeKhChm9vOQ+kxHJofmBeA4CVUNvrHf/bWlTsWunZQvdBA2C0QcbL
-         g8xQnFQ0DAAfKJTBkzB1g9RlSlBGELQiTeCzIrQ899QKg/IKycMp7WzYJ273/V1MAXA3
-         swZOKLxSq1eMuMnguX2pZWp6+RuAhEAW/Us3UfmyeNcfjD+8ZrJXqm8V9Np3VYEnnLya
-         tBQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCHc9dYNYJA5APCQ85x9IELtTJFko6Keqy0LXPk0+xObICxq9YXdWwYGUYtUlkomb5JEHkWuZPMMleEP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Pa7cPr3uukg7mRPZ+rAl67mqF+bagS3nYqT061ftxqR3MH2H
-	jtNDgvzsg0J5fHGxN7iXq26+r/GYItHVb3rKPZF22Ur5B3CRfpR8AutpLYVeyPc5d7RIPHVcQlB
-	DbK6aH+cAs2rPLYjZ9o1pzmPnoRZBlpej8wgCbA==
-X-Gm-Gg: ASbGncv9sMrVJnx9kg+bu8nZ1XkKi0Q4Wh5NiAQL5GGu4bgxqEemdjpzBZJ9tUnfh2A
-	LnnyaEpXxbIFPU8ydal9IKbTovFW2+rOVKVOLWA+HR99H3VkDRNUe/Y3HdroSe4jutKlYjOvAy9
-	E/v+D0cdfLf1pq125Su+cFATRBqWh36JGernc=
-X-Google-Smtp-Source: AGHT+IE/in8kAs9sUqWx2S+TIM+LTl3sNiBhEhAtSNAuElUMT/X5dBkUTEwjbBFN/tuBh1MnZZanWSfFlEopABMrt2Y=
-X-Received: by 2002:a05:622a:260f:b0:476:91d8:230e with SMTP id
- d75a77b69052e-4771de62880mr403362231cf.52.1743000525452; Wed, 26 Mar 2025
- 07:48:45 -0700 (PDT)
+	s=arc-20240116; t=1743000883; c=relaxed/simple;
+	bh=AGunnTLAw5lTuH6SsD/sMvxG9Gr1cJo6gPHAUcIVnFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=cy2SIcxzOaQny9rLI9NRL47yXaMGd8+RQw+ZNyoHOreIZFfoRJxMY2knH0g41WfZ4ht8ADCN7dzLH1Z/vsIqZQ9XyQaA9fYW5DehtzJ9N9ShPpLV4nCDaS6Hjm3tAh2v7TVmJZTOP267IHWd00IiUFA7FaFI85IpF1HwOWyHYTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=B8qKfZkW; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250326144921epoutp03551c184e29b60cd03d353e64085945b3~wYcaUdo4l2128721287epoutp03L
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:49:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250326144921epoutp03551c184e29b60cd03d353e64085945b3~wYcaUdo4l2128721287epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743000561;
+	bh=PvMcIFBpghuJtM2xf/uXNWsaSErjxIY7zcXBIjwPBxw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=B8qKfZkW9HoJyF1/sXAkBx2t0kzRq2Y+GCp6phehgCUA0qnGvYlIWr2aLiNvhRvk3
+	 jg2blhoN30NjRK15vpwOQPswtU4X9/XFhLrG/nIXcVZuaOTi/3o6vcIx2Yk4dqXlCt
+	 DQLBhoj8GczccZiM6R/2emUYeqDTJ42vO4/ZDijQ=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250326144920epcas1p1600652c78cdba835e964c248d4be8405~wYcZgqUcf2108921089epcas1p1U;
+	Wed, 26 Mar 2025 14:49:20 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.227]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZN8nX0l02z6B9m4; Wed, 26 Mar
+	2025 14:49:20 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.1D.10189.FE314E76; Wed, 26 Mar 2025 23:49:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784~wYcYJKFtO2109021090epcas1p19;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250326144918epsmtrp10915de4994d13fa30065075f8a332688~wYcYIanw42811128111epsmtrp1x;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+X-AuditID: b6c32a35-737e8700000027cd-eb-67e413ef0064
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.70.07818.EE314E76; Wed, 26 Mar 2025 23:49:18 +0900 (KST)
+Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
+	[10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250326144918epsmtip101730a348a9d61efdbe7a43f38ed3c30~wYcX7tfee2376823768epsmtip1j;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+From: Sungjong Seo <sj1557.seo@samsung.com>
+To: linkinjeon@kernel.org, yuezhang.mo@sony.com
+Cc: sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cpgs@samsung.com, Sungjong Seo
+	<sj1557.seo@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH] exfat: fix potential wrong error return from get_block
+Date: Wed, 26 Mar 2025 23:48:48 +0900
+Message-Id: <20250326144848.3219740-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304150444.3788920-1-ryan.roberts@arm.com> <20250304150444.3788920-4-ryan.roberts@arm.com>
-In-Reply-To: <20250304150444.3788920-4-ryan.roberts@arm.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 26 Mar 2025 10:48:08 -0400
-X-Gm-Features: AQ5f1JqVDILCP1zyFTP-RFlE3wANS6rYR-F_g2XERE3hhejEgMHeH_4cyMuLPCw
-Message-ID: <CA+CK2bA3ctd6+G9DrJZ3RvnehPCrf7hEJ3boFJ5pkMTZyVmDSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 03/11] mm/page_table_check: Batch-check pmds/puds just
- like ptes
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMJsWRmVeSWpSXmKPExsWy7bCmnu4H4SfpBhs2M1m8PKRpMXHaUmaL
+	PXtPslhc3jWHzWLLvyOsFi8+bGCzWLDxEaPF9TcPWR04PHbOusvusWlVJ5tH35ZVjB7tE3Yy
+	e3zeJBfAGtXAaJNYlJyRWZaqkJqXnJ+SmZduqxQa4qZroaSQkV9cYqsUbWhopGdoYK5nZGSk
+	Z2oUa2VkqqSQl5ibaqtUoQvVq6RQlFwAVJtbWQw0ICdVDyquV5yal+KQlV8Kcr9ecWJucWle
+	ul5yfq6SQlliTinQCCX9hG+MGbePnWQreM9WcWvlBaYGxi2sXYycHBICJhJbHh4Ds4UEdjBK
+	fGphhLA/MUrsn+PSxcgFZH9jlFi4oI8dpqFh4VZGiMReRomDDZeYIZx2Jokzx7aAtbMJaEss
+	b1oGlODgEBHQl2hpqgKpYRZYySixalMjM0iNsIC7xLxHt8FWswioSszZ3Q5m8wrYSjTOb4A6
+	T15i5qXv7BBxQYmTM5+wgNjMQPHmrbOZIWousUtc7GWEsF0kLp+fDHWpsMSr41ugbCmJl/1t
+	7CBHSAh0M0oc//iOBSIxg1FiSYcDhG0v0dzazAZyNLOApsT6XfoQu/gk3n3tgbqHV6Jh42+o
+	mYISp691g/0IEu9oE4IIq0h8/7CTBWbtlR9XmSBsD4mTvxYwQ0I3VqL3xGGmCYwKs5B8NgvJ
+	Z7MQjljAyLyKUSy1oDg3PbXYsMAQOYo3MYLTq5bpDsaJbz/oHWJk4mA8xCjBwawkwnuM9WG6
+	EG9KYmVValF+fFFpTmrxIcZkYFhPZJYSTc4HJvi8knhDMzNLC0sjE0NjM0NDwsImlgYmZkYm
+	FsaWxmZK4rwXtrWkCwmkJ5akZqemFqQWwWxh4uCUamDKX828t/tfvqTNpPo7+w57rp4u2Vz8
+	ZeN89Sdbvotp3eI85OYVZiK8+qHgRa/dNf2bZx948fxRRsYCxSf+lnUy+TV3dk39pmTPU/FB
+	8NCDift9XCfr/RPsncIbLGeQdEU4q+3XpM09ActX7j1+7Zbg3rizttaHj32YI3w7T0B0+dEP
+	e0x1y3z0Il5HmDy8fPiyi3p8yIue1dPKq1ecmBHr3+Nro37h4ouLe/73PA+uuPJmo/l0nYNZ
+	qr2rPqxlv9Ow4FFv0/ETeRsN9m5XLlToTG/qWBl9r8M3JeL9T5Pb77oqpM0XGK9+N/eJl5+z
+	2Q9Jt7agN30Xeu0f3F3X5sgV9pY7+RVzssyZTsEvpt67lViKMxINtZiLihMB9kR97WYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSnO474SfpBtNmmVm8PKRpMXHaUmaL
+	PXtPslhc3jWHzWLLvyOsFi8+bGCzWLDxEaPF9TcPWR04PHbOusvusWlVJ5tH35ZVjB7tE3Yy
+	e3zeJBfAGsVlk5Kak1mWWqRvl8CVcfvYSbaC92wVt1ZeYGpg3MLaxcjJISFgItGwcCtjFyMX
+	h5DAbkaJvQeOsXQxcgAlpCQO7tOEMIUlDh8uhihpZZI42neAHaSXTUBbYnnTMmYQW0TAUGLD
+	4r3sIEXMAusZJZqerWADSQgLuEvMe3QbbBmLgKrEnN3tYDavgK1E4/wGqCPkJWZe+s4OEReU
+	ODnzCQuIzQwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucmGxYY5qWW6xUn5haX5qXrJefn
+	bmIEB6uWxg7Gd9+a9A8xMnEwHmKU4GBWEuE9xvowXYg3JbGyKrUoP76oNCe1+BCjNAeLkjjv
+	SsOIdCGB9MSS1OzU1ILUIpgsEwenVAOTqPCpY7+mbbl9ybZqv3/PonyXr6yeVRuKTaKj82Ym
+	RB2NL7DOtvvTrOAl6VxZYHBPd92BlhTfrbdDCkvjJjYZXTq+zKf7uV+D85uIOa12FR6/f0a6
+	buGdkS7E5RZY2WTQxJN2WuH6hC3rZkTFdvhr3MiJmCjhIvNR741OvWbBqniW/sZrxW9ZE2WN
+	VqpPS98jEJ+X+FrgybGVBlfZ4x+18nX2WVhWnHTkfCE+q61iy8FV/hbRgr8dDH+2/95TGrRU
+	xN6Kp2XWeYerewVv9kz4EDy7aVHEZWumt9abPymJMNhLR6vwr2Zb7/LkQGJQxI/jJrOnXNG5
+	mBY0Id/isvC+03mnvBh/7V0V/H/rDCWW4oxEQy3mouJEAFlDL0fFAgAA
+X-CMS-MailID: 20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784
+References: <CGME20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784@epcas1p1.samsung.com>
 
-> -void __page_table_check_pud_set(struct mm_struct *mm, pud_t *pudp, pud_t pud)
-> +void __page_table_check_puds_set(struct mm_struct *mm, pud_t *pudp, pud_t pud,
-> +               unsigned int nr)
->  {
-> +       unsigned int i;
-> +       unsigned long stride = PUD_SIZE >> PAGE_SHIFT;
+If there is no error, get_block() should return 0. However, when bh_read()
+returns 1, get_block() also returns 1 in the same manner.
 
-nit: please order declarations from longest to shortest, it usually
-helps with readability. (here and in pmd)
+Let's set err to 0, if there is no error from bh_read()
 
-Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Pasha
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index f3fdba9f4d21..a23677de4544 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -391,6 +391,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 			/* Zero unwritten part of a block */
+ 			memset(bh_result->b_data + size, 0,
+ 			       bh_result->b_size - size);
++
++			err = 0;
+ 		} else {
+ 			/*
+ 			 * The range has not been written, clear the mapped flag
+-- 
+2.25.1
+
 
