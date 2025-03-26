@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-577633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B104DA71FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:55:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792E9A71FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 20:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D0D1899BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:55:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5932E1768E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 19:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA1224EF75;
-	Wed, 26 Mar 2025 19:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D40C23E226;
+	Wed, 26 Mar 2025 19:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="BN0sZyrp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dZThqn65"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9B22E337C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018898; cv=pass; b=QkKQZ/5uL3yXpqPYp3IcteAi9Nq6PtPc4rRX0Rc19zBt7J3WLKDAPxg6FCuPHtHPMoX9jzRIHZ8sOo6g5RqKYjOdv3uJPjBnNHCAO/X5eqvC0T8E1lzgsjwse/Z08KxxCFxAv53FIxBggeEMreTJupWKXutkT2aikHfUi28XZc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018898; c=relaxed/simple;
-	bh=Dy0J6EBrPQWCBVq9Slx+LWeV6rTwnEG6MDzoQ5GyC0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UnZqaEo1Yp5rmAD2spT1MO+cFMJgXtIsmbZ1bG4FiYE+hdSZubuEherNhjKUk3qgg9AGKGcBAeomeEp6uIrxArzj9UTFzCIUSHDnmV/u5YS4OAzF9zzJu1Md/aW2oQSdtyhwy0jAp41cMLSBGHxIfFGnM3uRhzzEC3NCiijZcfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=BN0sZyrp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743018874; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=carkWtiol7Q6Etgnz18adBGw7YwbrRsciQm0GpsF7Ffgbfnbn85C4n6J4ZDvYkeqlLFqFXiDyeo9ZxFfYPoe+MmduF8YP81xznk+0ihqgGyULjrKN+EOZk4a9W90UUb09MhPZHx4C5IOvgyi9hN8LMsHy7n3z6aQ/uoN2698mPY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743018874; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iWHtsRfC6sDeLCSXa8Igd46o0WY5wleHKKN8wZjwzWo=; 
-	b=k2OPFthXhz+BwvZ6G5wpRr42R8nICmVLRAfcjcLv1SBln6h7uCof+UvJMAkonf4jBuCS2t8TtAYO4J5KF44GyQ3mnWwOHCHDCosoT1rKY96/sakdM/8fknwlC0+xsifAhYAl1qtze4xW+PZEdPEwZJ4Q3zglYASnvfXRSDSeXio=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743018874;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=iWHtsRfC6sDeLCSXa8Igd46o0WY5wleHKKN8wZjwzWo=;
-	b=BN0sZyrpUhLauOFR/PvagqgfCxqvjZZcXLFFrDlC557mlg+KM83XxoOhXC1wYFCv
-	i3Jebm9yeoCdXk58yd+sKFJHAaBh75YN75nvlnGkwWjxYI/8/VJtnyV1YMQ3v0Nmo0L
-	5LKuGG+5zDu2RD3UvzHc9MPZPIo57PGdG2JC5DBw=
-Received: by mx.zohomail.com with SMTPS id 17430188720701011.2938235750142;
-	Wed, 26 Mar 2025 12:54:32 -0700 (PDT)
-Message-ID: <e4f41400-b300-43ee-843f-8bc407aa9f76@collabora.com>
-Date: Wed, 26 Mar 2025 22:54:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604EB253349;
+	Wed, 26 Mar 2025 19:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743018926; cv=none; b=uUVZ+8VdLWsMEQOuLqOSZhJP+Y8qVyEWuGWpGx1HlzGWU13VAFRLvZxM4b4OW99Og+82o6y4GAk7oW7UCj82TOoWiUafymFrERYrPyhn4PbqxoPcPimc6b7ZnIfBRL2SVKWVQABrIgDcg+aEAbJuadMQW91pR5CFA1M2gaN1REE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743018926; c=relaxed/simple;
+	bh=adRAAix6DeWY9R1nR5Lr77KnAVY0W1YpaMjDvN5WTIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2iyxj01N9V+Ye4V/jR5+xK7C/p9Ksk9naW8VOMFhMKt+49dnUVZm4Mv3kXZaG5n+WCTKylqeJh6/AOtKLSfrFmOZV8p8fWrGyAOL+BbxiKZcwv5fZVNZOUR+2VuoxwpAHGPb+Carb+1yJfUIYGHSdSe7Eq0ZrOnCKifhMlfX2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dZThqn65; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743018925; x=1774554925;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=adRAAix6DeWY9R1nR5Lr77KnAVY0W1YpaMjDvN5WTIk=;
+  b=dZThqn65mJcPmlJspNv64Be5FnLJGW3YCaRNvEtMyShf3gzb2bHhMtcr
+   W0yt6666NVU5Zs4dTXX7qrJy6vOrDjn0ab2ujSKlLNfKUy1mguwcGNwZW
+   Ik9l8o8GeYf77/BdGuKfahqhumcZe1G0ptZ7zal+SIdpzlxyCU2X8TK3t
+   6i51K2CKuOdXg3m4E978lMkdQVhIGM3EeGy21izxgM3VtuMVOh5f62duW
+   5io9uKpMN3hEFrVqPEhrUMGu00kzz8ANjHS/HCsI+/Hly6/4hzopm8PqO
+   xsO2HUzsD9wtdXvwRDhzREMji0SUJyVFYGsxWz5LZDqKSy1PcsPaYYEsr
+   g==;
+X-CSE-ConnectionGUID: Bd0tpBjISpe/DUPE2QUwDg==
+X-CSE-MsgGUID: E7sohhqfTF+foiFUB3eakw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="66792896"
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="66792896"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2025 12:55:24 -0700
+X-CSE-ConnectionGUID: YKrBgZ7ZRxyXZACYfzbeyg==
+X-CSE-MsgGUID: Q93VQfcJTcKsad2r+r8xXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,278,1736841600"; 
+   d="scan'208";a="130090910"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 26 Mar 2025 12:55:21 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txWqN-00061n-0h;
+	Wed, 26 Mar 2025 19:55:19 +0000
+Date: Thu, 27 Mar 2025 03:54:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: Re: [PATCH v5 04/11] platform/x86: asus-wmi: Add support for
+ multiple kbd RGB handlers
+Message-ID: <202503270313.owOkR15i-lkp@intel.com>
+References: <20250325184601.10990-5-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 3/6] drm/shmem: Implement sparse allocation of
- pages for shmem objects
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250326021433.772196-1-adrian.larumbe@collabora.com>
- <20250326021433.772196-4-adrian.larumbe@collabora.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250326021433.772196-4-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325184601.10990-5-lkml@antheas.dev>
 
-On 3/26/25 05:14, Adrián Larumbe wrote:
-> +static struct sg_table *
-> +drm_gem_shmem_sparse_get_sgt_range(struct drm_gem_shmem_object *shmem,
-> +				   unsigned int n_pages, pgoff_t page_offset,
-> +				   gfp_t gfp)
-> +{
-> +	struct drm_gem_object *obj = &shmem->base;
-> +	struct sg_table *sgt;
-> +	int ret;
-> +
-> +	if (drm_WARN_ON(obj->dev, !shmem->sparse))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* If the page range wasn't allocated, then bail out immediately */
-> +	if (xa_load(&shmem->xapages, page_offset) == NULL)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	sgt = kzalloc(sizeof(*sgt), GFP_NOWAIT);
+Hi Antheas,
 
-You likely meant to use the gfp arg here.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 38fec10eb60d687e30c8c6b5420d86e8149f7557]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-refactor-init-sequence-per-spec/20250326-025845
+base:   38fec10eb60d687e30c8c6b5420d86e8149f7557
+patch link:    https://lore.kernel.org/r/20250325184601.10990-5-lkml%40antheas.dev
+patch subject: [PATCH v5 04/11] platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+config: i386-randconfig-062-20250326 (https://download.01.org/0day-ci/archive/20250327/202503270313.owOkR15i-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250327/202503270313.owOkR15i-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503270313.owOkR15i-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/platform/x86/asus-wmi.c:1498:21: sparse: sparse: symbol 'asus_ref' was not declared. Should it be static?
+   drivers/platform/x86/asus-wmi.c:2576:33: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __le32 [usertype] @@
+   drivers/platform/x86/asus-wmi.c:2576:33: sparse:     expected unsigned int [usertype] val
+   drivers/platform/x86/asus-wmi.c:2576:33: sparse:     got restricted __le32 [usertype]
+
+vim +/asus_ref +1498 drivers/platform/x86/asus-wmi.c
+
+  1497	
+> 1498	struct asus_hid_ref asus_ref = {
+  1499		.listeners = LIST_HEAD_INIT(asus_ref.listeners),
+  1500		.asus = NULL,
+  1501		.lock = __SPIN_LOCK_UNLOCKED(asus_ref.lock),
+  1502	};
+  1503	
 
 -- 
-Best regards,
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
