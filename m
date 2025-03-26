@@ -1,128 +1,162 @@
-Return-Path: <linux-kernel+bounces-577478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B83AA71DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:48:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F85CA71DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6508188C338
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671A4841750
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC09B23F434;
-	Wed, 26 Mar 2025 17:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FA82405EC;
+	Wed, 26 Mar 2025 17:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aMSBvJQZ"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyr/IoiK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D73017E4;
-	Wed, 26 Mar 2025 17:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9A317E4;
+	Wed, 26 Mar 2025 17:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743011158; cv=none; b=le6UdtNUPIxk6BHtG2VJi2tBZfR/ofOOwys6iDOhSC9l3GUUCX2c3wAioYC/4uL7TyC7pI0yMANm10xL4MtIbs3M1R6XBYc0Bm2cuvvme6U95PzFtBMpejwne8j5id7miK2Vm0dgmgJ832Sb8KajnsgRbtHT0TNb+vvm6YLK3+Y=
+	t=1743011175; cv=none; b=EaXOGnZTLM+bCT9Ktrn12hccEhLedIG5yU3BUCENUbeVxDKepuky8yEzhEh4r6YbPLHi+1m5Ev8ROQcRfNvoMQEH/9v9ggFtXWqOmI8sQhePXq3Z+X4fxGMEDmPHEABx7Jce5cgUHUiLOzZnXHElqeHvC2wNeQHnnPFsuYxTrd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743011158; c=relaxed/simple;
-	bh=t1iLPADlrRh7sTkLR+8K2hYQjsHR9MdLT3BhEufi6uY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YuP0moeR8JKfq/7/+ikkpdcmur3liaXln2yYWx2E0YKDf+9l5MNqogQWsYZkcMlBX2VqAnyzQTalErJV5YL+Qztvm6YJLyhIwTmIINnnlvAtU+OvDwP+Z+NEK+cNyKnDrcrlHgrBSfCUducnWUMiUzsIZDX4gr6CzXmKRAHqKws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aMSBvJQZ; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3E79210246DBA;
-	Wed, 26 Mar 2025 18:45:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1743011154; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=H2uGHhEWg3JZ/p8Dt7d9szFu3FMB52FFPqrpmORpQ8A=;
-	b=aMSBvJQZByJxxa9rDE0UHlPGY9xvTFLXnmGeZg2qR59XMscq6ggfcXSetM6lLMrLC3mUKl
-	vZSBOK2Ld/1tScvTiyLVpeNZUHU+PfhaB+e/9+h7rBBvIa6Jy/bl3RlT5+ZwQHY1Qg6Lzi
-	IEK+k6MJ2zjbFDIYsA8WNyLftzzZbS+yF/ys6ORRM2Op8NYcJywIX5yollJ45PvZsvoiX9
-	DMJX3WQbgVEX4UOiVlaS85mLREDqIdtHv9Eg+fX17Wvc67Bjg+yUch9l7ZP936PGPRZTUL
-	a34vC8u8BU1hNAkudOgOlDTaBeYR7WfPiQV16B3/itcTj4klOD7Uv8wHdJufeQ==
-Date: Wed, 26 Mar 2025 18:45:53 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spi: spidev: Add compatible for LWE's btt device
-Message-ID: <20250326184553.0756c496@wsk>
-In-Reply-To: <83685ed2-f41a-456c-8a22-0ac069304386@sirena.org.uk>
-References: <20250326174228.14dfdf8c@wsk>
-	<20250326172445.2693640-1-lukma@denx.de>
-	<83685ed2-f41a-456c-8a22-0ac069304386@sirena.org.uk>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743011175; c=relaxed/simple;
+	bh=miEtypO9MxoEkP52+ubXko+kh6EpUHlD9UatETGQKD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DBRL+Nu43ZSYYhz8astRZQYyk+AsWmtmhaEaA4l0NnDiHYD/zLJ56StITccRaa18tI6tbjyw3euzUq5xwQNcJjJg6RLrHa3A7Icls6dW0E7/G/Y8IG4gmj3ZIObyvWIIb//hk6Xguz7sVHE69V0A6Blpwhg3l44q4UGYprr+nto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyr/IoiK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1340C4CEEF;
+	Wed, 26 Mar 2025 17:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743011173;
+	bh=miEtypO9MxoEkP52+ubXko+kh6EpUHlD9UatETGQKD4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fyr/IoiK4o9xnAdq94zUAuLJAiYDLNI1cnzYTrWQlAuQLpEHXRjhU0KFBjWiU+D88
+	 qSN2sCcP1GvHTrl7C6xQJtX9DvND0MZaH+2VYiLhe5sXQPrZ5XB9/oiyJVs8ninzPV
+	 F6jJyuE0IwykP2sCsR0Kn5LmRivb2BlAcA1nosSlULBZTZJ1XjQuYmkw07xoaQkHNn
+	 wsWuvRI2XPeMicRp9JvidtyhL6WCWbKJqa3vkS5lnwl/09UuOZBXVLKRj8UDV+T1CX
+	 WlsiPWHVFIv6WAFV8zhoGP5+bi4A4/bM0ViNs892Pd5XYAmf+nHTujMEqGzmwISuS3
+	 O783XCioVWMEA==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2c7b2c14455so18198fac.2;
+        Wed, 26 Mar 2025 10:46:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVTw3/Du27KAWAof4E9KM7tmKF38gZFY7Fk4CQ0Rc5iDR6bqSy28BpY0BXHgWoKXmiwK3gq82r9HU0=@vger.kernel.org, AJvYcCW1PwZC/vQiw7JkPbbsSRJINZZHBhLdK7NG+pg+DK2WmTDNOVP2SdqWX+LLsCldsK7oHzWIxPW5pO0WgB+v@vger.kernel.org, AJvYcCWfYyCTX9eF6cp/iufuEijCcnH1sHfa5gih/TwXZGvfAlr/iXwUvYoKoM8j+J8gf08BdGlatS7DO2DCvQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPRoNI+wbnX0KQO4H4WJEDZBVvQcN+LVT2bfmjTjUZCUP6Msmk
+	+wwfzdNREzLFjzOuN2OUZ1+1ILT4YocGfJO2CdAkk+Qq4kxvaJ0xWXQN/Wk8WIWV6Hyp/rJuE6P
+	dY60463klvNe3WVKF9HaobthXiXs=
+X-Google-Smtp-Source: AGHT+IHjCYJ1aKIQUcyrZ9BAzILIIir/5TxXFuxPsahNtlrZl9NR8jJkSDlN0NEYnz5mztENBCa9lEbR2dlli4PK3Xw=
+X-Received: by 2002:a05:6870:e38d:b0:297:2719:deb6 with SMTP id
+ 586e51a60fabf-2c847efaa2cmr313369fac.1.1743011173183; Wed, 26 Mar 2025
+ 10:46:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2TmOQDCUmF/H18MMAiJ03ic";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
-
---Sig_/2TmOQDCUmF/H18MMAiJ03ic
-Content-Type: text/plain; charset=US-ASCII
+References: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com> <f18607ca-30dc-43de-be77-fec69968aeec@arm.com>
+ <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
+ <1ae51ccc-66cc-4551-b649-2f5883e2f5a2@acm.org> <SJ2PR11MB7670B2AEFF7C0DABE6856F258DA62@SJ2PR11MB7670.namprd11.prod.outlook.com>
+ <ad852ef9-5207-4b70-8834-2db6aa5e1a51@arm.com>
+In-Reply-To: <ad852ef9-5207-4b70-8834-2db6aa5e1a51@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Mar 2025 18:46:01 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hXGUbAM6vTti0D5uyX+-TfHg3NaSLSeZMj27Y9upbNdg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo4d-ADi4h4thY6vmh5kvUiEf_ukqBmctJVztaOo2801xKRgKlhBK2zi3g
+Message-ID: <CAJZ5v0hXGUbAM6vTti0D5uyX+-TfHg3NaSLSeZMj27Y9upbNdg@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
+ fast I/O devices
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "King, Colin" <colin.king@intel.com>, Bart Van Assche <bvanassche@acm.org>, 
+	Jens Axboe <axboe@kernel.dk>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Wed, Mar 26, 2025 at 5:26=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 3/26/25 15:04, King, Colin wrote:
+> > Hi,
+> >
+> >> -----Original Message-----
+> >> From: Bart Van Assche <bvanassche@acm.org>
+> >> Sent: 23 March 2025 12:36
+> >> To: King, Colin <colin.king@intel.com>; Christian Loehle
+> >> <christian.loehle@arm.com>; Jens Axboe <axboe@kernel.dk>; Rafael J.
+> >> Wysocki <rafael@kernel.org>; Daniel Lezcano <daniel.lezcano@linaro.org=
+>;
+> >> linux-block@vger.kernel.org; linux-pm@vger.kernel.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention=
+ for
+> >> fast I/O devices
+> >>
+> >> On 3/17/25 3:03 AM, King, Colin wrote:
+> >>> This code is optional, one can enable it or disable it via the config
+> >>> option. Also, even when it is built-in one can disable it by writing =
+0 to the
+> >> sysfs file
+> >>>    /sys/devices/system/cpu/cpuidle/psd_cpu_lat_timeout_ms
+> >>
+> >> I'm not sure we need even more configuration knobs in sysfs.
+> >
+> > It's useful for enabling / disabling the functionality, as well as some=
+ form of tuning for slower I/O devices, so I think it is justifiable.
+> >
+> >> How are users
+> >> expected to find this configuration option? How should they decide whe=
+ther
+> >> to enable or to disable it?
+> >
+> > I can send a V2 with some documentation if that's required.
+> >
+> >>
+> >> Please take a look at this proposal and let me know whether this would=
+ solve
+> >> the issue that you are looking into: "[LSF/MM/BPF Topic] Energy- Effic=
+ient I/O"
+> >> (https://lore.kernel.org/linux-block/ad1018b6-7c0b-4d70-
+> >> b845-c869287d3cf3@acm.org/). The only disadvantage of this approach
+> >> compared to the cpuidle patch is that it requires RPM (runtime power
+> >> management) to be enabled. Maybe I should look into modifying the
+> >> approach such that it does not rely on RPM.
+> >
+> > I've had a look, the scope of my patch is a bit wider.  If my patch get=
+s accepted I'm
+> > going to also look at putting the psd call into other devices (such as =
+network devices) to
+> > also stop deep states while these devices are busy.  Since the code is =
+very lightweight I
+> > was hoping this was going to be relatively easy and simple to use in va=
+rious devices in the future.
+>
+> IMO this needs to be a lot more fine-grained then, both in terms of which=
+ devices or even
+> IO is affected (Surely some IO is fine with at least *some* latency) but =
+also how aggressive
+> we are in blocking.
+> Just looking at some common latency/residency of idle states out there I =
+don't think
+> it's reasonable to force polling for a 3-10ms (rounding up with the jiffi=
+e) period.
+> Playing devil's advocate if the system is under some thermal/power pressu=
+re we might
+> actually reduce throughput by burning so much power on this.
+> This seems like the stuff that is easily convincing because it improves t=
+hroughput and
+> then taking care of power afterwards is really hard. :/
 
-> On Wed, Mar 26, 2025 at 06:24:45PM +0100, Lukasz Majewski wrote:
->=20
-> > Changes for v2:
-> > - Use 'lwn' vendor prefix instead of 'lwe' (as the former one is
-> > already well used in Linux sources). =20
->=20
-> Are you sure?
+I agree and recall the iowait thing that you've recently eliminated
+from the menu governor.  Its purpose was ostensibly very similar and
+it had similar issues.
 
-Yes, the lwn is already present for a quite few years for this company.
-The lwe is just the different branch.
-
->=20
-> Note also that as previously mentioned I expect to see a binding
-> document update too which doesn't appear to be here.
->=20
-
-I've just send it to be accepted to trivial-devices.yaml
-
-> Please don't send new patches in reply to old patches or serieses,
-> this makes it harder for both people and tools to understand what is
-> going on - it can bury things in mailboxes and make it difficult to
-> keep track of what current patches are, both for the new patches and
-> the old ones.
-
-Ok, I thought that it would be the opposite - that you would see v2 as
-the reply to the old one - especially that the change is just a single
-letter.
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/2TmOQDCUmF/H18MMAiJ03ic
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfkPVEACgkQAR8vZIA0
-zr00NQgAhPs6iLe5eGeJbcOnS+YaVgIIuosnstmqfPtM4c2H9vVehP1fyt6p0+6e
-NcD1H2VXAz78n0ur9Ba2/FLfIJl8xDNT8npBxybJVvEPy6xWEkcxIcKkqYkuV0xB
-oXeXTuWcK9p8Amqm35OInDjBrIie5rKpMpYxhJ1HeVeD7EgDGNQc3rMW+jBXN2DL
-2U9fnw6rg1xOQPnJX0RsRgZCUT4Z6PyuzvjlnoNv20JMchJx12PnXbds46iFYAhQ
-MflE7bsOZWxHxXAIwu4yEAY8hsBegOXDPQedaLLSx8s+mkuhraYqyqkzYYLnRs5h
-aUPENLEL3T4ikgu6LdrV6Ag2Pngvng==
-=uKOe
------END PGP SIGNATURE-----
-
---Sig_/2TmOQDCUmF/H18MMAiJ03ic--
+Besides, any piece of kernel code today can add a CPU latency QoS
+request, either per CPU or globally, and manage it as desired.  The
+hard part is to know when to use it and what limit to set through it.
 
