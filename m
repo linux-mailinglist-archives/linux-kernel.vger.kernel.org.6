@@ -1,77 +1,90 @@
-Return-Path: <linux-kernel+bounces-577471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A971A71D7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:42:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B840A71DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 18:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF38F16C229
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57AE33AAC7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 17:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9C1F3BAE;
-	Wed, 26 Mar 2025 17:42:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9CD23E33B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 17:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CDF1F8721;
+	Wed, 26 Mar 2025 17:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M9WGQumN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925A71F6699;
+	Wed, 26 Mar 2025 17:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743010922; cv=none; b=rQk4bWZ5yFzfyyJRnaYtBwUo2QebDb2fhNrhvl5DnJJaOwEnBijDJvTChOToWRXVbtTKHZk5CVI3Mjf5+dWuOjybxpswxutHL0orGWKxGXtWLmOvUyEvLAq1ioY+c9O+Sgm20HHOmPG8w9hBfXJzKrS18g1cNlaVipv4ZLE9o1c=
+	t=1743011055; cv=none; b=b2rs93dns/4JVmThKVqQLBb5lSJOSlh7V+FVDix1G6Eed+ekbKMM7RXRM72eldOjTSzAYK9C7i6VAf1m8NOJoSUsFgRyLsaKbapo3lnZ/z8+Rj9tgGK582IrEln1jda95/9Sv/oSkeE7PfZyGA+nc+/yMei076B+5h9+EJeCw/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743010922; c=relaxed/simple;
-	bh=qwnXpELhDtfHGnp5wUmQSlCWRvVcTBt4FaL11rFw+Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0qPqcp9OrtcyORchWUV/PjDfMgbADyzlSh6IqTB5YtaT7bdLwrcEXerWGmNbE+jHae5jFJXcFowcPlEu0heYKOqE2R67qkXFBwgmW73Ezg65mpSqGFIuygPsMxdWtEBH3eMc9WO9avcl94tyjujJJ7qtJlgoQdBE+xr7SYlE/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764B1C4CEE2;
-	Wed, 26 Mar 2025 17:42:01 +0000 (UTC)
-Date: Wed, 26 Mar 2025 13:42:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Konstantin Ryabitsev <mricon@kernel.org>
-Subject: Re: [GIT PULL] arm64 updates 6.15-rc1
-Message-ID: <20250326134247.675f8d1c@gandalf.local.home>
-In-Reply-To: <CAHk-=wiXEvC2r=Sa_tpYjd=g+AxZDxxjSdq1WADTvZYZ9oUi_g@mail.gmail.com>
-References: <20250325195322.3243734-1-catalin.marinas@arm.com>
-	<CAADWXX-0hMgpyeQw_7Ko14hNMciqSnKJAROEWS5vwAdMKUt_zw@mail.gmail.com>
-	<Z-NHugcLdLqkEHFR@arm.com>
-	<CAHk-=wg_HipugbtswxFnekQy2g_ksKKXj+yht8naj2FEMtRMgA@mail.gmail.com>
-	<20250326124025.1966bf8a@gandalf.local.home>
-	<CAHk-=whwmmU+hv1SyMoyr8yAGP2JiAAP+g5BZaMajzAukzrM9w@mail.gmail.com>
-	<20250326131200.1c86c657@gandalf.local.home>
-	<CAHk-=wiXEvC2r=Sa_tpYjd=g+AxZDxxjSdq1WADTvZYZ9oUi_g@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743011055; c=relaxed/simple;
+	bh=c1Wbi75LGrSeGt/aV3kfRa3hRUD3htYxVSNPBoaB634=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Y51HAv7prCcHCTvNmR9IhjDJP5Z2ysjIZAMxPdR6Yn5mSfng0hA6itGNjKXeUFT7W0RVRQ6zTXqnRTe6WATz2JPyugHdSy4Yi0o3Qv4aGGLjJujlf2EQdgwumqyDweB/bi8Q5PNVQ6OenfUAbaaIHgA5unENKM4ukf9TrYnkME4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M9WGQumN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 15F8E203657D; Wed, 26 Mar 2025 10:44:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 15F8E203657D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1743011054;
+	bh=7ON7Lx5WziLX9EyB39yTlXH5hwR0+Sud+i4xgixsKG8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M9WGQumNi47gap5ynxpBiSPoi9A7h59COPaUozisoG3pNa4ayhAqz+N47V5iFaPFo
+	 jhZxBd7KpvZXyPcKivd+8FE1wkvQTCUtBAAH4qL/jZtK3JJ7Xud1Do44o91RaQWCc2
+	 jtaWEF4StgNIuxFV2cGAPjuuyumn9cwZzW79iyRI=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.12 000/115] 6.12.21-rc2 review
+Date: Wed, 26 Mar 2025 10:44:14 -0700
+Message-Id: <1743011054-4428-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20250326154546.724728617@linuxfoundation.org>
+References: <20250326154546.724728617@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Mar 2025 10:25:22 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+The kernel, bpf tool, perf tool, and kselftest builds fine for v6.12.21-rc2 on x86 and arm64 Azure VM.
 
-> On Wed, 26 Mar 2025 at 10:11, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > So it definitely goes through kernel.org.
-> >
-> > But it has no DKIM headers.  
-> 
-> Funky.
-> 
-> There's definitely something strange going on, because your *previous*
-> email to me did have the DKIM signature:
+Kernel binary size for x86 build:
+text      data      bss      dec       hex      filename
+27757173  17715502  6393856  51866531  3176ba3  vmlinux
 
-That's because I had manually changed my "From:" from "rostedt@goodmis.org"
-to "rostedt@kernel.org", which in my test emails, added the DKIM signatures.
+Kernel binary size for arm64 build:
+text      data      bss      dec       hex      filename
+36395528  14996573  1052816  52444917  3203ef5  vmlinux
 
--- Steve
+
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+
+
+
+
+Thanks,
+Hardik
 
