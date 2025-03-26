@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-576393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEEDA70EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:51:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A867A70E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 02:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B7E189AF91
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051D23AECD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 01:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D97F74C14;
-	Wed, 26 Mar 2025 01:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF8813AA5D;
+	Wed, 26 Mar 2025 01:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="J0rSfn1O"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="P3rn/UvG"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D9517E4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE1E56F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 01:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742953844; cv=pass; b=I/mdQBkw3MA9/jR93PNsJcE2UHSY8z3jF1J60J6yqT2TKiC699Ew0WoO+nYwh+U4jNQqcYG3tO6IFpm4UZYyhwA8HgoXIr1h7tjkXQtT1PFV8CQQN4ZPUfGtQJVeUv1yjZCx32zGJsM/O3OgEVXsW/3kwFMGhXWxKA9yVdUIfN0=
+	t=1742953847; cv=pass; b=L56GgNmvz3C6Ha2ASs52mEPqYC7QrKQZ2zwHu3xd+YX4HKijlfXGt3tE4+/L5BKTgoVquXacTzq5Q0PJmVNCX9ez+ndGtUHoQJqlb/AdjzzVwzxRj8cz/cL7z+5TJKJyDi8PBqgtapL8fwZwtailXZCEiRpyBd66ENOHPjfvlME=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742953844; c=relaxed/simple;
-	bh=leXL0YOUGKS3mkm5UCH4AbWyYSEzGeXYl5rNKD1s/sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z7WEdjZ5i3L0boo0G0VYbjQXS7cLJV/BKmglEBO0cH2Kxhyasfbb5meCOl6N5HjWq6McDHZCUr7w0Ql78WwACq34agcBUmbdMaoy+HR2rv/BpwR4IUSKw08vSdWa+bAnvrM4TscxinNnsejpspRDp6hcbT9WS9i9J1gcG3QhmhA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=J0rSfn1O; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1742953847; c=relaxed/simple;
+	bh=WiElSeMUOyEGNFlsbiNmliVgwdj8BFm+q52issSF4+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ovvmZANn/gwvWg1ap2ablMc+14m82NW/d5RWrfJA7Q8Jf3R2prGDi07ObRN3uqboxmKMPpXjkZiqj5YiWHYqHBeJpSR794Mf3mLAG7eBJFYf78t7Z5SOjQ1N9N33hgY1oeTSpkJ6wBH5+9rgHJa5sdfeyJCnAXXOcMNrTRVmPOU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=P3rn/UvG; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742953821; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1742953827; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=UBdJktvaB2aVHmIgmMGueJcXiP5a7HCF5tEltKL/WFHeRz1iI0CkQbYGhTxLpVPcEzXxDgcRlJhUB8WcqrvrhpkFxdTUUo0CtkVr1Co45i+iMOYSp5xGTiFRnVq8gvRDjJZQR3JXXv6Q/zZ1sFz+t8j9ycN9Rs6G1hfI6D7riyE=
+	b=B1MLcSqipPQpu6A4nqcIb55jteYccNLAsMiJ5Tm0krkMD4eeUA9l1EpwhWzgV5eMBR6cRX6G37tBwlMxKzh33J59x8Butf7rmDwiZRVRljePoXRRXm1kfXu3cT2kF+CpGCBrdQ2n66556pb2rRIPlNeJk/leLgwiaBqCaxSuCPQ=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742953821; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MMqG/V3rFBVDqfrlMRzLq3y3NkP6nqJWgulgefkL1Ms=; 
-	b=NqqM9XssXvh8+U6O2CQUiZGKBAnxPf/9Y2W5hI2ijIbzoykLD+ljnC8bNp3sAXlibLic2bjKaKZ7QQPi85HkZQubsg1RYN8CxqLCTQms6eD0NGW2E+J9CkmcbzdhQx9W64yOD+DdIj+jq7HKPwPbiZfW+WiQaBCnpt2lr8x6NqU=
+	t=1742953827; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l+DegcWS6jElhGW6hWqdl4HD0X6U581FmZGc7lb2pgs=; 
+	b=MKIH0CDdScfMwytDkH8Yh9xtF4A1yNmeLFxj2WMam4fmmW1045zk/x8LyCcohfuWKoCjUCaGJ0Us0DE944sLGYVKgOSIbuG8OJg0qYs48aWV3I8fKVJ4eR3vfrik6yu6p+qWroUjYUWTl+FYteM1vblXkegd3dDGY8e8Ghs0xwg=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
 	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742953821;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742953827;
 	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=MMqG/V3rFBVDqfrlMRzLq3y3NkP6nqJWgulgefkL1Ms=;
-	b=J0rSfn1O/VAPJvNE8CxPB44G+yu35g+sYeaPe90ijc+fUjecuH6Kal9jgR66/pL+
-	ygknO4RbtIHtQlMBsDm0u386inWJiBOBU6v/kZNnS7vD0WBmWt991ysdaGtGGIB3fz8
-	Z66RIb6W5U3vt0h28vR6DCdK31QR7jXV9qdyrSCc=
-Received: by mx.zohomail.com with SMTPS id 1742953819782444.3851239137857;
-	Tue, 25 Mar 2025 18:50:19 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=l+DegcWS6jElhGW6hWqdl4HD0X6U581FmZGc7lb2pgs=;
+	b=P3rn/UvGTsfPa3I9srK14xXOlrjke8z2UTnKfGYoVrZD5jolnGrtKYh3r8NWWuhj
+	zZYF6Q3DdoT4OZdqvs8d/KODFHLWvOP8zbMMEf7sq2SYIV0MWtEDCkElAC/PWCaA1Nq
+	i1CfbTgYm+PiEgXV6REa+/UbUvQq11BgGEcCffmM=
+Received: by mx.zohomail.com with SMTPS id 1742953824533990.002553575539;
+	Tue, 25 Mar 2025 18:50:24 -0700 (PDT)
 From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To: David Airlie <airlied@redhat.com>,
 	Gerd Hoffmann <kraxel@redhat.com>,
@@ -60,10 +61,12 @@ Cc: dri-devel@lists.freedesktop.org,
 	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH v1 1/2] drm/virtio: Don't attach GEM to a non-created context in gem_object_open()
-Date: Wed, 26 Mar 2025 04:49:01 +0300
-Message-ID: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
+Subject: [PATCH v1 2/2] drm/virtio: Fix missed dmabuf unpinning in error path of prepare_fb()
+Date: Wed, 26 Mar 2025 04:49:02 +0300
+Message-ID: <20250326014902.379339-2-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
+References: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,42 +76,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-The vfpriv->ctx_id is always initialized to a non-zero value. Check whether
-context was created before attaching GEM to this context ID. This left
-unnoticed previously because host silently skips attachment if context
-doesn't exist, still we shouldn't do that for consistency.
+Unpin imported dmabuf on fence allocation failure in prepare_fb().
 
-Fixes: 086b9f27f0ab ("drm/virtio: Don't create a context with default param if context_init is supported")
+Fixes: 4a696a2ee646 ("drm/virtio: Add prepare and cleanup routines for imported dmabuf obj")
 Cc: <stable@vger.kernel.org> # v6.14+
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_gem.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_plane.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index dde8fc1a3689..90c99d83c4cf 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -115,13 +115,14 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
- 	if (!vgdev->has_context_init)
- 		virtio_gpu_create_context(obj->dev, file);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+index a6f5a78f436a..dc1d91639931 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -342,6 +342,16 @@ static int virtio_gpu_prepare_imported_obj(struct drm_plane *plane,
+ 	return ret;
+ }
  
--	objs = virtio_gpu_array_alloc(1);
--	if (!objs)
--		return -ENOMEM;
--	virtio_gpu_array_add_obj(objs, obj);
-+	if (vfpriv->context_created) {
-+		objs = virtio_gpu_array_alloc(1);
-+		if (!objs)
-+			return -ENOMEM;
-+		virtio_gpu_array_add_obj(objs, obj);
++static void virtio_gpu_cleanup_imported_obj(struct drm_gem_object *obj)
++{
++	struct dma_buf_attachment *attach = obj->import_attach;
++	struct dma_resv *resv = attach->dmabuf->resv;
++
++	dma_resv_lock(resv, NULL);
++	dma_buf_unpin(attach);
++	dma_resv_unlock(resv);
++}
++
+ static int virtio_gpu_plane_prepare_fb(struct drm_plane *plane,
+ 				       struct drm_plane_state *new_state)
+ {
+@@ -376,23 +386,16 @@ static int virtio_gpu_plane_prepare_fb(struct drm_plane *plane,
+ 		vgplane_st->fence = virtio_gpu_fence_alloc(vgdev,
+ 						     vgdev->fence_drv.context,
+ 						     0);
+-		if (!vgplane_st->fence)
++		if (!vgplane_st->fence) {
++			if (obj->import_attach)
++				virtio_gpu_cleanup_imported_obj(obj);
+ 			return -ENOMEM;
++		}
+ 	}
  
--	if (vfpriv->ctx_id)
- 		virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx_id, objs);
-+	}
+ 	return 0;
+ }
  
- out_notify:
- 	virtio_gpu_notify(vgdev);
+-static void virtio_gpu_cleanup_imported_obj(struct drm_gem_object *obj)
+-{
+-	struct dma_buf_attachment *attach = obj->import_attach;
+-	struct dma_resv *resv = attach->dmabuf->resv;
+-
+-	dma_resv_lock(resv, NULL);
+-	dma_buf_unpin(attach);
+-	dma_resv_unlock(resv);
+-}
+-
+ static void virtio_gpu_plane_cleanup_fb(struct drm_plane *plane,
+ 					struct drm_plane_state *state)
+ {
 -- 
 2.49.0
 
